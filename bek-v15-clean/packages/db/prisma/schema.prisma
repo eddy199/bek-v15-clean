@@ -12,6 +12,7 @@ model account {
   id                    String    @id
   accountId             String
   providerId            String
+  issuer                 String?
   userId                String
   accessToken           String?
   refreshToken          String?
