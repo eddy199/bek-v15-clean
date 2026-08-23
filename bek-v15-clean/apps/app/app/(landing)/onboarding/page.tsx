@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 };
 
 // La ligne ci-dessous est désactivée pour éviter l'erreur de compilation
-// export const instant = false;
 
 export default async function OnboardingPage() {
 	await requireMailboxAccess();

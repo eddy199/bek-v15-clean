@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 	title: "Grant access",
 };
 
-export const instant = false;
 
 const DESCRIPTION: Record<string, string> = {
 	google:
