@@ -1,0 +1,6 @@
+{
+  "name": "find-slills",
+  "command": "find-slills",
+  "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\".",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

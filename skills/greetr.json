@@ -1,0 +1,6 @@
+{
+  "name": "greetr",
+  "command": "greetr",
+  "description": "Greets the user with a friendly, personalized welcome message.",
+  "prompt": "Tu es un agent expert spécialisé dans : Greets the user with a friendly, personalized welcome message..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

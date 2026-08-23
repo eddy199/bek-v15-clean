@@ -1,0 +1,6 @@
+{
+  "name": "teltel-send-sms-text-message",
+  "command": "teltel-send-sms-text-message",
+  "description": "Send SMS text messages via TelTel (teltel.io) using the REST API (api.teltel.io)",
+  "prompt": "Tu es un agent expert spécialisé dans : Send SMS text messages via TelTel (teltel.io) using the REST API (api.teltel.io).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

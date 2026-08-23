@@ -1,0 +1,6 @@
+{
+  "name": "unsearch",
+  "command": "unsearch",
+  "description": "Search the web, scrape content, and conduct deep research using the UnSearch API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search the web, scrape content, and conduct deep research using the UnSearch API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

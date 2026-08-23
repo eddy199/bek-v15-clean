@@ -1,0 +1,6 @@
+{
+  "name": "devboxes",
+  "command": "devboxes",
+  "description": "Manage development environment containers (devboxes) with web-accessible VSCode, VNC, and app routing via Traefik.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage development environment containers (devboxes) with web-accessible VSCode, VNC, and app routing via Traefik..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

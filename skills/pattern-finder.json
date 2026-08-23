@@ -1,0 +1,6 @@
+{
+  "name": "pattern-finder",
+  "command": "pattern-finder",
+  "description": "Discover what two sources agree on — find the signal.",
+  "prompt": "Tu es un agent expert spécialisé dans : Discover what two sources agree on — find the signal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

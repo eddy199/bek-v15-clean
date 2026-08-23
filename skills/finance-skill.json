@@ -1,0 +1,6 @@
+{
+  "name": "finance-skill",
+  "command": "finance-skill",
+  "description": "Personal finance memory layer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Personal finance memory layer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

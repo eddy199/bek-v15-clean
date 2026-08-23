@@ -1,0 +1,6 @@
+{
+  "name": "finishing-a-development-branch",
+  "command": "finishing-a-development-branch",
+  "description": "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

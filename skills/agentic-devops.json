@@ -1,0 +1,6 @@
+{
+  "name": "agentic-devops",
+  "command": "agentic-devops",
+  "description": "Production-grade agent DevOps toolkit — Docker, process management, log analysis, and health monitoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Production-grade agent DevOps toolkit — Docker, process management, log analysis, and health monitoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agency-guardian",
+  "command": "agency-guardian",
+  "description": "Gentle reminders to stay human while using AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Gentle reminders to stay human while using AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

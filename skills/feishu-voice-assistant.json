@@ -1,0 +1,6 @@
+{
+  "name": "feishu-voice-assistant",
+  "command": "feishu-voice-assistant",
+  "description": "Sends voice messages (audio) to Feishu chats using Duby TTS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sends voice messages (audio) to Feishu chats using Duby TTS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

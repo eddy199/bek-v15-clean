@@ -1,0 +1,6 @@
+{
+  "name": "soul-generator",
+  "command": "soul-generator",
+  "description": "Personalize your Agent with dozens of presets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Personalize your Agent with dozens of presets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

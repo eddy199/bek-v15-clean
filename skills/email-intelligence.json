@@ -1,0 +1,6 @@
+{
+  "name": "email-intelligence",
+  "command": "email-intelligence",
+  "description": "Analyze email inbox health with weather metaphors, spam/signal classification, email debt scoring, and ghost.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze email inbox health with weather metaphors, spam/signal classification, email debt scoring, and ghost..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "context-sentinel",
+  "command": "context-sentinel",
+  "description": "Monitors session context and automatically manages model switching based on a cascading protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitors session context and automatically manages model switching based on a cascading protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

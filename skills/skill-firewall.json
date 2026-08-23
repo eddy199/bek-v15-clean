@@ -1,0 +1,6 @@
+{
+  "name": "skill-firewall",
+  "command": "skill-firewall",
+  "description": "Security layer that prevents prompt injection from external skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security layer that prevents prompt injection from external skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

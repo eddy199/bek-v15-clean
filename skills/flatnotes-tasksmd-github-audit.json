@@ -1,0 +1,6 @@
+{
+  "name": "flatnotes-tasksmd-github-audit",
+  "command": "flatnotes-tasksmd-github-audit",
+  "description": "Thoroughly audit Tasks.md +.",
+  "prompt": "Tu es un agent expert spécialisé dans : Thoroughly audit Tasks.md +..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

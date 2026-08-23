@@ -1,0 +1,6 @@
+{
+  "name": "food-cal-order",
+  "command": "food-cal-order",
+  "description": "Order food delivery via browser automation, triggered by calendar events.",
+  "prompt": "Tu es un agent expert spécialisé dans : Order food delivery via browser automation, triggered by calendar events..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

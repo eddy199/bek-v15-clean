@@ -1,0 +1,6 @@
+{
+  "name": "otta-cli",
+  "command": "otta-cli",
+  "description": "Use `otta-cli` to automate `otta.fi` workflows from terminal.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use `otta-cli` to automate `otta.fi` workflows from terminal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

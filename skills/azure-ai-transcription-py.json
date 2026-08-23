@@ -1,0 +1,6 @@
+{
+  "name": "azure-ai-transcription-py",
+  "command": "azure-ai-transcription-py",
+  "description": "Azure AI Transcription SDK for Python.",
+  "prompt": "Tu es un agent expert spécialisé dans : Azure AI Transcription SDK for Python..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

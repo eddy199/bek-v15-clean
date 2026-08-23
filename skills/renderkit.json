@@ -1,0 +1,6 @@
+{
+  "name": "renderkit",
+  "command": "renderkit",
+  "description": "Render structured data as beautiful hosted web pages, and create hosted forms for data collection.",
+  "prompt": "Tu es un agent expert spécialisé dans : Render structured data as beautiful hosted web pages, and create hosted forms for data collection..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

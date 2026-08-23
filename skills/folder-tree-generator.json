@@ -1,0 +1,6 @@
+{
+  "name": "folder-tree-generator",
+  "command": "folder-tree-generator",
+  "description": "Generates an ASCII tree or JSON representation of a directory structure.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates an ASCII tree or JSON representation of a directory structure..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

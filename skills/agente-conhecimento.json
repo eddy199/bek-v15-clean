@@ -1,0 +1,6 @@
+{
+  "name": "agente-conhecimento",
+  "command": "agente-conhecimento",
+  "description": "Log learnings and errors to markdown files for continuous improvement.",
+  "prompt": "Tu es un agent expert spécialisé dans : Log learnings and errors to markdown files for continuous improvement..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

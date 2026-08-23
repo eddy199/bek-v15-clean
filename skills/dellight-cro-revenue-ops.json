@@ -1,0 +1,6 @@
+{
+  "name": "dellight-cro-revenue-ops",
+  "command": "dellight-cro-revenue-ops",
+  "description": "DELLIGHT.AI is an AI startup in DIFC, Dubai.",
+  "prompt": "Tu es un agent expert spécialisé dans : DELLIGHT.AI is an AI startup in DIFC, Dubai..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

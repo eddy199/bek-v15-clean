@@ -1,0 +1,6 @@
+{
+  "name": "monet-ai",
+  "command": "monet-ai",
+  "description": "Monet AI - AI content generation API for video, image and music.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monet AI - AI content generation API for video, image and music..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

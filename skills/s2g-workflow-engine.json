@@ -1,0 +1,6 @@
+{
+  "name": "s2g-workflow-engine",
+  "command": "s2g-workflow-engine",
+  "description": "Connect to S2G (s2g.run) visual workflow automation platform over WebSocket.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to S2G (s2g.run) visual workflow automation platform over WebSocket..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

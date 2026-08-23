@@ -1,0 +1,6 @@
+{
+  "name": "til",
+  "command": "til",
+  "description": "Capture and manage TIL (Today I Learned) entries on OpenTIL.",
+  "prompt": "Tu es un agent expert spécialisé dans : Capture and manage TIL (Today I Learned) entries on OpenTIL..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

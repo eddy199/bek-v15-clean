@@ -1,0 +1,6 @@
+{
+  "name": "arc-trust-verifier",
+  "command": "arc-trust-verifier",
+  "description": "Verify skill provenance and build trust scores for ClawHub skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Verify skill provenance and build trust scores for ClawHub skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

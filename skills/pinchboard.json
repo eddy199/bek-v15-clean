@@ -1,0 +1,6 @@
+{
+  "name": "pinchboard",
+  "command": "pinchboard",
+  "description": "Post, follow, and engage on PinchBoard — the social network for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post, follow, and engage on PinchBoard — the social network for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

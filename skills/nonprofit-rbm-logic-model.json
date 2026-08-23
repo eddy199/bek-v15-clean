@@ -1,0 +1,6 @@
+{
+  "name": "nonprofit-rbm-logic-model",
+  "command": "nonprofit-rbm-logic-model",
+  "description": "Build donor-ready Results-Based Management (RBM) logic models for nonprofit and non-governmental organization (NGO)",
+  "prompt": "Tu es un agent expert spécialisé dans : Build donor-ready Results-Based Management (RBM) logic models for nonprofit and non-governmental organization (NGO).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

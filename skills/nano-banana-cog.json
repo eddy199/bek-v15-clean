@@ -1,0 +1,6 @@
+{
+  "name": "nano-banana-cog",
+  "command": "nano-banana-cog",
+  "description": "Nano Banana × CellCog.",
+  "prompt": "Tu es un agent expert spécialisé dans : Nano Banana × CellCog..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

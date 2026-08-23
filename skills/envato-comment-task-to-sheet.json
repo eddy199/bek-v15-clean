@@ -1,0 +1,6 @@
+{
+  "name": "envato-comment-task-to-sheet",
+  "command": "envato-comment-task-to-sheet",
+  "description": "This skill analyzes ThemeForest / CodeCanyon comments and converts them into structured development tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill analyzes ThemeForest / CodeCanyon comments and converts them into structured development tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

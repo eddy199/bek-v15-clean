@@ -1,0 +1,6 @@
+{
+  "name": "fennecseo-audit",
+  "command": "fennecseo-audit",
+  "description": "Uses Fennec SEO Auditor results to audit a URL.",
+  "prompt": "Tu es un agent expert spécialisé dans : Uses Fennec SEO Auditor results to audit a URL..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "dcg-guard",
+  "command": "dcg-guard",
+  "description": "Hard-blocks dangerous shell commands (rm -rf, git push --force, etc.) before execution via OpenClaw's.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hard-blocks dangerous shell commands (rm -rf, git push --force, etc.) before execution via OpenClaw's..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

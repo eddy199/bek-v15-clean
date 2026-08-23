@@ -1,0 +1,6 @@
+{
+  "name": "upbit-market-data-skill",
+  "command": "upbit-market-data-skill",
+  "description": "A CLI-based OpenClaw skill that fetches quotation/market data from the Upbit Open API.",
+  "prompt": "Tu es un agent expert spécialisé dans : A CLI-based OpenClaw skill that fetches quotation/market data from the Upbit Open API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

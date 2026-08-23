@@ -1,0 +1,6 @@
+{
+  "name": "aister-vector-memory",
+  "command": "aister-vector-memory",
+  "description": "Vector memory for Aister — search by meaning, not by grep!",
+  "prompt": "Tu es un agent expert spécialisé dans : Vector memory for Aister — search by meaning, not by grep!.\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

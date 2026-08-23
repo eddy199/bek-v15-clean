@@ -1,0 +1,6 @@
+{
+  "name": "gmail-skill",
+  "command": "gmail-skill",
+  "description": "Gmail automation: summarize, labels, spam purge, filing, deletion, permanent delete.",
+  "prompt": "Tu es un agent expert spécialisé dans : Gmail automation: summarize, labels, spam purge, filing, deletion, permanent delete..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "firefly",
+  "command": "firefly",
+  "description": "Fetch meeting transcripts, summaries, and action items from Firefly AI (fireflies.ai)",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch meeting transcripts, summaries, and action items from Firefly AI (fireflies.ai).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

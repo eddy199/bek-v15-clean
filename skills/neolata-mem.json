@@ -1,0 +1,6 @@
+{
+  "name": "neolata-mem",
+  "command": "neolata-mem",
+  "description": "Graph-native memory engine for AI agents — hybrid vector+keyword search, biological decay, Zettelkasten linking.",
+  "prompt": "Tu es un agent expert spécialisé dans : Graph-native memory engine for AI agents — hybrid vector+keyword search, biological decay, Zettelkasten linking..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

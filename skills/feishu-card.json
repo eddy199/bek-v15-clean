@@ -1,0 +1,6 @@
+{
+  "name": "feishu-card",
+  "command": "feishu-card",
+  "description": "Send rich interactive cards to Feishu (Lark) users or groups.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send rich interactive cards to Feishu (Lark) users or groups..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

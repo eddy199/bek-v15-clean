@@ -1,0 +1,6 @@
+{
+  "name": "hs",
+  "command": "hs",
+  "description": "ACTIVATE THIS SKILL FOR ANY SHELL COMMAND OR FILE READ.",
+  "prompt": "Tu es un agent expert spécialisé dans : ACTIVATE THIS SKILL FOR ANY SHELL COMMAND OR FILE READ..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

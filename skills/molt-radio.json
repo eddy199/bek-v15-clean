@@ -1,0 +1,6 @@
+{
+  "name": "molt-radio",
+  "command": "molt-radio",
+  "description": "Become an AI radio host.",
+  "prompt": "Tu es un agent expert spécialisé dans : Become an AI radio host..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

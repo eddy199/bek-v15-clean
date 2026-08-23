@@ -1,0 +1,6 @@
+{
+  "name": "ai-lead-generator-skill",
+  "command": "ai-lead-generator-skill",
+  "description": "Generate qualified B2B leads for any industry using AI-powered research and LinkedIn/Apollo integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate qualified B2B leads for any industry using AI-powered research and LinkedIn/Apollo integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

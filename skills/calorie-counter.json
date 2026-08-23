@@ -1,0 +1,6 @@
+{
+  "name": "calorie-counter",
+  "command": "calorie-counter",
+  "description": "Track daily calorie and protein intake, set goals, and log.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track daily calorie and protein intake, set goals, and log..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

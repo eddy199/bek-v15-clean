@@ -1,0 +1,6 @@
+{
+  "name": "daily-memory-save",
+  "command": "daily-memory-save",
+  "description": "Periodically reviews conversation history and writes memory files to maintain agent continuity across sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Periodically reviews conversation history and writes memory files to maintain agent continuity across sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

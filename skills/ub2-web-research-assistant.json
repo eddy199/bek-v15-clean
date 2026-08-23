@@ -1,0 +1,6 @@
+{
+  "name": "ub2-web-research-assistant",
+  "command": "ub2-web-research-assistant",
+  "description": "A skill that enables Claw to perform structured web research on any topic, synthesize findings from multiple.",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill that enables Claw to perform structured web research on any topic, synthesize findings from multiple..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

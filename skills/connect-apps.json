@@ -1,0 +1,6 @@
+{
+  "name": "connect-apps",
+  "command": "connect-apps",
+  "description": "Connect Claude to external apps like Gmail, Slack, GitHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect Claude to external apps like Gmail, Slack, GitHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

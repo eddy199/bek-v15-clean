@@ -1,0 +1,6 @@
+{
+  "name": "broedkrumme-kalibr",
+  "command": "broedkrumme-kalibr",
+  "description": "Agent self-improvement and telemetry.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent self-improvement and telemetry..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

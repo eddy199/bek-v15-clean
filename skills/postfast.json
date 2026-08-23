@@ -1,0 +1,6 @@
+{
+  "name": "postfast",
+  "command": "postfast",
+  "description": "Schedule and manage social media posts across TikTok, Instagram, Facebook, X (Twitter), YouTube, LinkedIn, Threads.",
+  "prompt": "Tu es un agent expert spécialisé dans : Schedule and manage social media posts across TikTok, Instagram, Facebook, X (Twitter), YouTube, LinkedIn, Threads..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "triggercmd",
+  "command": "triggercmd",
+  "description": "Control TRIGGERcmd computers remotely by listing and running commands via the TRIGGERcmd REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control TRIGGERcmd computers remotely by listing and running commands via the TRIGGERcmd REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "i-love-you-mom",
+  "command": "i-love-you-mom",
+  "description": "Automated monthly photo-to-Mixtiles pipeline.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated monthly photo-to-Mixtiles pipeline..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

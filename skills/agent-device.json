@@ -1,0 +1,6 @@
+{
+  "name": "agent-device",
+  "command": "agent-device",
+  "description": "Automates interactions for iOS simulators/devices and Android emulators/devices.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automates interactions for iOS simulators/devices and Android emulators/devices..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

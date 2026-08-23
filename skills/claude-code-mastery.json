@@ -1,0 +1,6 @@
+{
+  "name": "claude-code-mastery",
+  "command": "claude-code-mastery",
+  "description": "Master Claude Code for coding tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Master Claude Code for coding tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

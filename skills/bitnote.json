@@ -1,0 +1,6 @@
+{
+  "name": "bitnote",
+  "command": "bitnote",
+  "description": "Decentralized encrypted memory for agents—truly own your secrets, identity, and memories.",
+  "prompt": "Tu es un agent expert spécialisé dans : Decentralized encrypted memory for agents—truly own your secrets, identity, and memories..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

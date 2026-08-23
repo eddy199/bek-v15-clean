@@ -1,0 +1,6 @@
+{
+  "name": "bria-ai",
+  "command": "bria-ai",
+  "description": "Controllable image generation and editing with Bria.ai commercially-safe AI models.",
+  "prompt": "Tu es un agent expert spécialisé dans : Controllable image generation and editing with Bria.ai commercially-safe AI models..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "gcp-fullstack",
+  "command": "gcp-fullstack",
+  "description": "Full-stack super agent for projects on Google Cloud Platform with GitHub and Cloudflare — covers scaffolding.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full-stack super agent for projects on Google Cloud Platform with GitHub and Cloudflare — covers scaffolding..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

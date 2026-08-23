@@ -1,0 +1,6 @@
+{
+  "name": "agent-task-tracker",
+  "command": "agent-task-tracker",
+  "description": "Proactive task state management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Proactive task state management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

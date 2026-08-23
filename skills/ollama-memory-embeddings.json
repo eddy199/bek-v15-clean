@@ -1,0 +1,6 @@
+{
+  "name": "ollama-memory-embeddings",
+  "command": "ollama-memory-embeddings",
+  "description": "Configure OpenClaw memory search to use Ollama as the embeddings server (OpenAI-compatible /v1/embeddings) instead.",
+  "prompt": "Tu es un agent expert spécialisé dans : Configure OpenClaw memory search to use Ollama as the embeddings server (OpenAI-compatible /v1/embeddings) instead..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

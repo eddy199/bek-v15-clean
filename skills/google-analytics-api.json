@@ -1,0 +1,6 @@
+{
+  "name": "google-analytics-api",
+  "command": "google-analytics-api",
+  "description": "Google Analytics API integration with managed.",
+  "prompt": "Tu es un agent expert spécialisé dans : Google Analytics API integration with managed..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

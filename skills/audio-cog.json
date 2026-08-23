@@ -1,0 +1,6 @@
+{
+  "name": "audio-cog",
+  "command": "audio-cog",
+  "description": "AI audio generation powered by CellCog.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI audio generation powered by CellCog..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "near-cli-tools",
+  "command": "near-cli-tools",
+  "description": "NEAR Protocol CLI installation and setup guide.",
+  "prompt": "Tu es un agent expert spécialisé dans : NEAR Protocol CLI installation and setup guide..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

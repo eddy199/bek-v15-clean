@@ -1,0 +1,6 @@
+{
+  "name": "monad-development",
+  "command": "monad-development",
+  "description": "Builds dapps on Monad blockchain.",
+  "prompt": "Tu es un agent expert spécialisé dans : Builds dapps on Monad blockchain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

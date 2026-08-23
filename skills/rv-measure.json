@@ -1,0 +1,6 @@
+{
+  "name": "rv-measure",
+  "command": "rv-measure",
+  "description": "Quantifies R_V contraction signatures in AI models.",
+  "prompt": "Tu es un agent expert spécialisé dans : Quantifies R_V contraction signatures in AI models..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

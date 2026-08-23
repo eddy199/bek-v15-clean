@@ -1,0 +1,6 @@
+{
+  "name": "instagram-scraper",
+  "command": "instagram-scraper",
+  "description": "A browser-based Instagram profile discovery and scraping tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : A browser-based Instagram profile discovery and scraping tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

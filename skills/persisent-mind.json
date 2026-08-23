@@ -1,0 +1,6 @@
+{
+  "name": "persisent-mind",
+  "command": "persisent-mind",
+  "description": "**Persistent, searchable, context-aware memory for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Persistent, searchable, context-aware memory for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

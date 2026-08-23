@@ -1,0 +1,6 @@
+{
+  "name": "sol-scribe",
+  "command": "sol-scribe",
+  "description": "Book writing companion for long-form creative projects — chapter planning, narrative consistency, and AI-assisted drafti",
+  "prompt": "Tu es un agent expert spécialisé dans : Book writing companion for long-form creative projects — chapter planning, narrative consistency, and AI-assisted drafting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

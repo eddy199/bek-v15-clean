@@ -1,0 +1,6 @@
+{
+  "name": "envios",
+  "command": "envios",
+  "description": "Usar cuando el usuario pregunte sobre envíos, cómo enviar un pedido, tiempos de entrega, zonas de cobertura.",
+  "prompt": "Tu es un agent expert spécialisé dans : Usar cuando el usuario pregunte sobre envíos, cómo enviar un pedido, tiempos de entrega, zonas de cobertura..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

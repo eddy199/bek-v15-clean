@@ -1,0 +1,6 @@
+{
+  "name": "autonomous-agent",
+  "command": "autonomous-agent",
+  "description": "CornerStone MCP x402 skill for agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : CornerStone MCP x402 skill for agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "verk",
+  "command": "verk",
+  "description": "Manage tasks, projects, and workflows in Verk — AI-powered task management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage tasks, projects, and workflows in Verk — AI-powered task management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

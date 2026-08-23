@@ -1,0 +1,6 @@
+{
+  "name": "robonet-workbench",
+  "command": "robonet-workbench",
+  "description": "Use Robonet's MCP server to build, backtest, optimize, and deploy trading strategies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Robonet's MCP server to build, backtest, optimize, and deploy trading strategies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

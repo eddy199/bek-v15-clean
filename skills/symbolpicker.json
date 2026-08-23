@@ -1,0 +1,6 @@
+{
+  "name": "symbolpicker",
+  "command": "symbolpicker",
+  "description": "Expert guidance on SymbolPicker, a native SwiftUI SF Symbol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Expert guidance on SymbolPicker, a native SwiftUI SF Symbol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

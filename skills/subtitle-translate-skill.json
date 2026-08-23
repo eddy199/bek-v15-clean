@@ -1,0 +1,6 @@
+{
+  "name": "subtitle-translate-skill",
+  "command": "subtitle-translate-skill",
+  "description": "Translate SRT subtitle files using LLM APIs with OpenAI-compatible format.",
+  "prompt": "Tu es un agent expert spécialisé dans : Translate SRT subtitle files using LLM APIs with OpenAI-compatible format..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

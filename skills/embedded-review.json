@@ -1,0 +1,6 @@
+{
+  "name": "embedded-review",
+  "command": "embedded-review",
+  "description": "Embedded/firmware code review with memory safety, interrupt, and hardware checklists.",
+  "prompt": "Tu es un agent expert spécialisé dans : Embedded/firmware code review with memory safety, interrupt, and hardware checklists..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

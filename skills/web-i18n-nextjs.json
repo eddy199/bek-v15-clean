@@ -1,0 +1,6 @@
+{
+  "name": "web-i18n-nextjs",
+  "command": "web-i18n-nextjs",
+  "description": "Internationalization (i18n) guide for Next.js / Node.js web applications using the App Router.",
+  "prompt": "Tu es un agent expert spécialisé dans : Internationalization (i18n) guide for Next.js / Node.js web applications using the App Router..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

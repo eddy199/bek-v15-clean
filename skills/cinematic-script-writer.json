@@ -1,0 +1,6 @@
+{
+  "name": "cinematic-script-writer",
+  "command": "cinematic-script-writer",
+  "description": "Create professional cinematic scripts for AI video generation with character consistency and cinematography.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create professional cinematic scripts for AI video generation with character consistency and cinematography..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "nadmail",
+  "command": "nadmail",
+  "description": "NadMail - Email for AI Agents on Monad.",
+  "prompt": "Tu es un agent expert spécialisé dans : NadMail - Email for AI Agents on Monad..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

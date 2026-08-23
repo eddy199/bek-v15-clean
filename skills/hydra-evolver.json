@@ -1,0 +1,6 @@
+{
+  "name": "hydra-evolver",
+  "command": "hydra-evolver",
+  "description": "A Proxmox-native orchestration skill that turns any home lab.",
+  "prompt": "Tu es un agent expert spécialisé dans : A Proxmox-native orchestration skill that turns any home lab..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

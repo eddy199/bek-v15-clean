@@ -1,0 +1,6 @@
+{
+  "name": "neutron-agent-memory",
+  "command": "neutron-agent-memory",
+  "description": "Store and retrieve agent memory using Neutron API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Store and retrieve agent memory using Neutron API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

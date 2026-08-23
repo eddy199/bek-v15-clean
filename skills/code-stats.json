@@ -1,0 +1,6 @@
+{
+  "name": "code-stats",
+  "command": "code-stats",
+  "description": "Visualizes repository complexity by counting files, lines of code, and grouping by extension.",
+  "prompt": "Tu es un agent expert spécialisé dans : Visualizes repository complexity by counting files, lines of code, and grouping by extension..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "dropshipping-mentor-nick-skill",
+  "command": "dropshipping-mentor-nick-skill",
+  "description": "The complete AI Business Mentor.",
+  "prompt": "Tu es un agent expert spécialisé dans : The complete AI Business Mentor..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

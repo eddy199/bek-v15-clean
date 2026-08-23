@@ -1,0 +1,6 @@
+{
+  "name": "airweave",
+  "command": "airweave",
+  "description": "Context retrieval layer for AI agents across users' applications.",
+  "prompt": "Tu es un agent expert spécialisé dans : Context retrieval layer for AI agents across users' applications..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

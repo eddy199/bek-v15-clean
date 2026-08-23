@@ -1,0 +1,6 @@
+{
+  "name": "microsoft-skill-creator",
+  "command": "microsoft-skill-creator",
+  "description": "Create agent skills for Microsoft technologies using Learn MCP tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create agent skills for Microsoft technologies using Learn MCP tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

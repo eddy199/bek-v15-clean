@@ -1,0 +1,6 @@
+{
+  "name": "office-to-md-v2",
+  "command": "office-to-md-v2",
+  "description": "Convert office documents (PDF, DOC, DOCX, PPTX) to Markdown format.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert office documents (PDF, DOC, DOCX, PPTX) to Markdown format..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

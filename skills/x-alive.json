@@ -1,0 +1,6 @@
+{
+  "name": "x-alive",
+  "command": "x-alive",
+  "description": "Bring your AI agent to life on X/Twitter.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bring your AI agent to life on X/Twitter..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

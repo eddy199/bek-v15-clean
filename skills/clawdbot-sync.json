@@ -1,0 +1,6 @@
+{
+  "name": "clawdbot-sync",
+  "command": "clawdbot-sync",
+  "description": "Synchronize memory, preferences, and skills between multiple.",
+  "prompt": "Tu es un agent expert spécialisé dans : Synchronize memory, preferences, and skills between multiple..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

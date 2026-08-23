@@ -1,0 +1,6 @@
+{
+  "name": "image-gen",
+  "command": "image-gen",
+  "description": "Generate images using multiple AI models — Midjourney (via Legnext.ai), Flux, SDXL, Nano Banana (Gemini)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images using multiple AI models — Midjourney (via Legnext.ai), Flux, SDXL, Nano Banana (Gemini).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

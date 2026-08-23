@@ -1,0 +1,6 @@
+{
+  "name": "dagny-nostr-nak",
+  "command": "dagny-nostr-nak",
+  "description": "Manage Nostr posting and engagement via the nak CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Nostr posting and engagement via the nak CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

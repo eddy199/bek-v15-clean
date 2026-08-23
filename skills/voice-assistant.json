@@ -1,0 +1,6 @@
+{
+  "name": "voice-assistant",
+  "command": "voice-assistant",
+  "description": "Real-time voice assistant for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time voice assistant for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

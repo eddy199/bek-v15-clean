@@ -1,0 +1,6 @@
+{
+  "name": "depression-support",
+  "command": "depression-support",
+  "description": "Daily support for depression with mood tracking.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily support for depression with mood tracking..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

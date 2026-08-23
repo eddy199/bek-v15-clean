@@ -1,0 +1,6 @@
+{
+  "name": "living-room-smoke-detector",
+  "command": "living-room-smoke-detector",
+  "description": "Simple smoke/fire detector for living room.",
+  "prompt": "Tu es un agent expert spécialisé dans : Simple smoke/fire detector for living room..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

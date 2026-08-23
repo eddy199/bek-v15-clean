@@ -1,0 +1,6 @@
+{
+  "name": "mercury-payments",
+  "command": "mercury-payments",
+  "description": "Pay invoices via Mercury Bank API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pay invoices via Mercury Bank API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

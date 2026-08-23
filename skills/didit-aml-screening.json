@@ -1,0 +1,6 @@
+{
+  "name": "didit-aml-screening",
+  "command": "didit-aml-screening",
+  "description": "Integrate Didit AML Screening standalone API to screen individuals or companies against global watchlists.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate Didit AML Screening standalone API to screen individuals or companies against global watchlists..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

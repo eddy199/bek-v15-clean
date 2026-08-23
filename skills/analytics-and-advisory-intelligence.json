@@ -1,0 +1,6 @@
+{
+  "name": "analytics-and-advisory-intelligence",
+  "command": "analytics-and-advisory-intelligence",
+  "description": "Cross-client analytics for Greek accounting firms.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cross-client analytics for Greek accounting firms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

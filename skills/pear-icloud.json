@@ -1,0 +1,6 @@
+{
+  "name": "pear-icloud",
+  "command": "pear-icloud",
+  "description": "iCloud Calendar, Reminders & Contacts via Pear.",
+  "prompt": "Tu es un agent expert spécialisé dans : iCloud Calendar, Reminders & Contacts via Pear..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

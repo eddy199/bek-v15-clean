@@ -1,0 +1,6 @@
+{
+  "name": "microsoft365",
+  "command": "microsoft365",
+  "description": "Microsoft 365 integration for Outlook, Calendar, Contacts, and OneDrive via Microsoft Graph API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Microsoft 365 integration for Outlook, Calendar, Contacts, and OneDrive via Microsoft Graph API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

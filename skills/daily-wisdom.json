@@ -1,0 +1,6 @@
+{
+  "name": "daily-wisdom",
+  "command": "daily-wisdom",
+  "description": "Daily wisdom, anecdotes & historical stories delivered via cron.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily wisdom, anecdotes & historical stories delivered via cron..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

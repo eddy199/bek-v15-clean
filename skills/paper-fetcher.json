@@ -1,0 +1,6 @@
+{
+  "name": "paper-fetcher",
+  "command": "paper-fetcher",
+  "description": "Fetch academic papers from Sci-Hub given a DOI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch academic papers from Sci-Hub given a DOI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

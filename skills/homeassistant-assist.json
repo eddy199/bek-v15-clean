@@ -1,0 +1,6 @@
+{
+  "name": "homeassistant-assist",
+  "command": "homeassistant-assist",
+  "description": "Control Home Assistant smart home devices using the Assist (Conversation) API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Home Assistant smart home devices using the Assist (Conversation) API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agent-os",
+  "command": "agent-os",
+  "description": "Persistent agent operating system for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent agent operating system for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

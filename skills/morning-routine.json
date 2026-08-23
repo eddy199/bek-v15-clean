@@ -1,0 +1,6 @@
+{
+  "name": "morning-routine",
+  "command": "morning-routine",
+  "description": "Build a powerful morning routine with habit checklists.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build a powerful morning routine with habit checklists..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

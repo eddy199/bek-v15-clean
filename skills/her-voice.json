@@ -1,0 +1,6 @@
+{
+  "name": "her-voice",
+  "command": "her-voice",
+  "description": "Give your agent a voice.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give your agent a voice..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

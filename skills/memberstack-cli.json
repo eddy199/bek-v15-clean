@@ -1,0 +1,6 @@
+{
+  "name": "memberstack-cli",
+  "command": "memberstack-cli",
+  "description": "Use the Memberstack CLI to manage Memberstack accounts from the terminal.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the Memberstack CLI to manage Memberstack accounts from the terminal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

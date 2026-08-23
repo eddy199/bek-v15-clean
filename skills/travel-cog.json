@@ -1,0 +1,6 @@
+{
+  "name": "travel-cog",
+  "command": "travel-cog",
+  "description": "Real travel planning needs real research — not recycled blog listicles. #1 on DeepResearch Bench (Feb 2026) applied.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real travel planning needs real research — not recycled blog listicles. #1 on DeepResearch Bench (Feb 2026) applied..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "image-gen-guide",
+  "command": "image-gen-guide",
+  "description": "Complete guide to local AI image generation with Ollama — no API keys, 100% private.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete guide to local AI image generation with Ollama — no API keys, 100% private..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

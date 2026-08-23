@@ -1,0 +1,6 @@
+{
+  "name": "geometry",
+  "command": "geometry",
+  "description": "Generate AI images from text prompts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI images from text prompts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "kai-tw-figma",
+  "command": "kai-tw-figma",
+  "description": "Interact with the Figma REST API to read files, export layers/components as images, and retrieve comments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with the Figma REST API to read files, export layers/components as images, and retrieve comments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

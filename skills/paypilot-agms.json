@@ -1,0 +1,6 @@
+{
+  "name": "paypilot-agms",
+  "command": "paypilot-agms",
+  "description": "Process payments, send invoices, issue refunds, and manage transactions via a secure payment gateway proxy.",
+  "prompt": "Tu es un agent expert spécialisé dans : Process payments, send invoices, issue refunds, and manage transactions via a secure payment gateway proxy..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

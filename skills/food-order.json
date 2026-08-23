@@ -1,0 +1,6 @@
+{
+  "name": "food-order",
+  "command": "food-order",
+  "description": "Reorder Foodora orders + track ETA/status with ordercli.",
+  "prompt": "Tu es un agent expert spécialisé dans : Reorder Foodora orders + track ETA/status with ordercli..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

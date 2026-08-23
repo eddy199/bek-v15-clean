@@ -1,0 +1,6 @@
+{
+  "name": "quackgram",
+  "command": "quackgram",
+  "description": "Send and receive messages between AI agents on any platform via QuackGram.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and receive messages between AI agents on any platform via QuackGram..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

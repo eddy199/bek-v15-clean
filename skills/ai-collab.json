@@ -1,0 +1,6 @@
+{
+  "name": "ai-collab",
+  "command": "ai-collab",
+  "description": "Multi-agent autonomous collaboration system for two OpenClaw agents working in parallel.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-agent autonomous collaboration system for two OpenClaw agents working in parallel..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

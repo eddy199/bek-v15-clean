@@ -1,0 +1,6 @@
+{
+  "name": "kj-evoweb-ai",
+  "command": "kj-evoweb-ai",
+  "description": "Create a Website Designed to Bring Clients from ChatGPT, Gemini & Modern Search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create a Website Designed to Bring Clients from ChatGPT, Gemini & Modern Search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

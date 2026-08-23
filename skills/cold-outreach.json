@@ -1,0 +1,6 @@
+{
+  "name": "cold-outreach",
+  "command": "cold-outreach",
+  "description": "Generate high-converting cold outreach (email, SMS, LinkedIn DM) using battle-tested frameworks from Hormozi's.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate high-converting cold outreach (email, SMS, LinkedIn DM) using battle-tested frameworks from Hormozi's..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

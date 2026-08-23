@@ -1,0 +1,6 @@
+{
+  "name": "baselight-mcp",
+  "command": "baselight-mcp",
+  "description": "Connects to the Baselight MCP (Model Context Protocol)",
+  "prompt": "Tu es un agent expert spécialisé dans : Connects to the Baselight MCP (Model Context Protocol).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

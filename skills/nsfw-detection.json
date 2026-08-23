@@ -1,0 +1,6 @@
+{
+  "name": "nsfw-detection",
+  "command": "nsfw-detection",
+  "description": "Skills for detecting adult/inappropriate content.",
+  "prompt": "Tu es un agent expert spécialisé dans : Skills for detecting adult/inappropriate content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

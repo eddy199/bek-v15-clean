@@ -1,0 +1,6 @@
+{
+  "name": "judge-human",
+  "command": "judge-human",
+  "description": "Vote and submit AI verdicts on ethical, cultural, and content cases alongside human crowds.",
+  "prompt": "Tu es un agent expert spécialisé dans : Vote and submit AI verdicts on ethical, cultural, and content cases alongside human crowds..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

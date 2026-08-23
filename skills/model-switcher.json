@@ -1,0 +1,6 @@
+{
+  "name": "model-switcher",
+  "command": "model-switcher",
+  "description": "Automatically switch between fast (haiku) and powerful (sonnet) models based on task complexity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically switch between fast (haiku) and powerful (sonnet) models based on task complexity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

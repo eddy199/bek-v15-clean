@@ -1,0 +1,6 @@
+{
+  "name": "anova-oven",
+  "command": "anova-oven",
+  "description": "Control Anova Precision Ovens and Precision Cookers (sous vide)",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Anova Precision Ovens and Precision Cookers (sous vide).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

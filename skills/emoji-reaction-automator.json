@@ -1,0 +1,6 @@
+{
+  "name": "emoji-reaction-automator",
+  "command": "emoji-reaction-automator",
+  "description": "Suggests emoji reactions for text messages based on sentiment analysis (positive, negative, funny, neutral)",
+  "prompt": "Tu es un agent expert spécialisé dans : Suggests emoji reactions for text messages based on sentiment analysis (positive, negative, funny, neutral).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

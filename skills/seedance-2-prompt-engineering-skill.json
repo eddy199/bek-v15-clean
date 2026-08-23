@@ -1,0 +1,6 @@
+{
+  "name": "seedance-2-prompt-engineering-skill",
+  "command": "seedance-2-prompt-engineering-skill",
+  "description": "Create high-control English prompts for **Seedance 2.0** and **Seedance 2.0 Fast** using multimodal references.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create high-control English prompts for **Seedance 2.0** and **Seedance 2.0 Fast** using multimodal references..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

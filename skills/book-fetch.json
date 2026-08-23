@@ -1,0 +1,6 @@
+{
+  "name": "book-fetch",
+  "command": "book-fetch",
+  "description": "Download ebooks (epub/pdf) from Anna's Archive and upload them to MEGA automatically.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download ebooks (epub/pdf) from Anna's Archive and upload them to MEGA automatically..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

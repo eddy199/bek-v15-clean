@@ -1,0 +1,6 @@
+{
+  "name": "broken-link-checker",
+  "command": "broken-link-checker",
+  "description": "verify external URLs (http/https) for availability (200-399 status code).",
+  "prompt": "Tu es un agent expert spécialisé dans : verify external URLs (http/https) for availability (200-399 status code)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "navifare-hidden-flight-deals",
+  "command": "navifare-hidden-flight-deals",
+  "description": "Verify and compare flight prices across multiple booking sites using Navifare.",
+  "prompt": "Tu es un agent expert spécialisé dans : Verify and compare flight prices across multiple booking sites using Navifare..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "hergunmac",
+  "command": "hergunmac",
+  "description": "Access AI-powered football match predictions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access AI-powered football match predictions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

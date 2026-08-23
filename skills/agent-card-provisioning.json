@@ -1,0 +1,6 @@
+{
+  "name": "agent-card-provisioning",
+  "command": "agent-card-provisioning",
+  "description": "Provision virtual payment cards for AI agents on-demand.",
+  "prompt": "Tu es un agent expert spécialisé dans : Provision virtual payment cards for AI agents on-demand..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

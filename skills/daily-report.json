@@ -1,0 +1,6 @@
+{
+  "name": "daily-report",
+  "command": "daily-report",
+  "description": "Track progress, report metrics, manage memory.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track progress, report metrics, manage memory..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

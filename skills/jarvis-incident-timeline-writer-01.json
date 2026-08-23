@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-incident-timeline-writer-01",
+  "command": "jarvis-incident-timeline-writer-01",
+  "description": "Create precise incident timelines from logs and notes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create precise incident timelines from logs and notes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

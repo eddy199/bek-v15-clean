@@ -1,0 +1,6 @@
+{
+  "name": "banana-farmer",
+  "command": "banana-farmer",
+  "description": "Stock momentum scanner and portfolio intelligence.",
+  "prompt": "Tu es un agent expert spécialisé dans : Stock momentum scanner and portfolio intelligence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

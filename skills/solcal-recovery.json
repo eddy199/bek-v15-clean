@@ -1,0 +1,6 @@
+{
+  "name": "solcal-recovery",
+  "command": "solcal-recovery",
+  "description": "OpenClaw repair toolkit — automated diagnostics, backup/restore, and guided AI-assisted recovery.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw repair toolkit — automated diagnostics, backup/restore, and guided AI-assisted recovery..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

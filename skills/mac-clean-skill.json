@@ -1,0 +1,6 @@
+{
+  "name": "mac-clean-skill",
+  "command": "mac-clean-skill",
+  "description": "Cleans up system caches, trash, and old downloads on macOS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cleans up system caches, trash, and old downloads on macOS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

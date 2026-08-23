@@ -1,0 +1,6 @@
+{
+  "name": "ipfs-client",
+  "command": "ipfs-client",
+  "description": "Read-only IPFS queries — fetch files, inspect metadata, explore DAGs, and resolve IPNS names via local or public.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read-only IPFS queries — fetch files, inspect metadata, explore DAGs, and resolve IPNS names via local or public..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

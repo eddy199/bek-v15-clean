@@ -1,0 +1,6 @@
+{
+  "name": "ft-reader",
+  "command": "ft-reader",
+  "description": "Use this skill to perform deep, structured, and bilingual analysis of top articles from Financial Times (ft.com).",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill to perform deep, structured, and bilingual analysis of top articles from Financial Times (ft.com)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

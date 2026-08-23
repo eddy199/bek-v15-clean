@@ -1,0 +1,6 @@
+{
+  "name": "nas-agent-sync",
+  "command": "nas-agent-sync",
+  "description": "Synology NAS integration for OpenClaw — centralized file storage for multi-agent teams via SSH.",
+  "prompt": "Tu es un agent expert spécialisé dans : Synology NAS integration for OpenClaw — centralized file storage for multi-agent teams via SSH..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

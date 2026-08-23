@@ -1,0 +1,6 @@
+{
+  "name": "sophiie",
+  "command": "sophiie",
+  "description": "Manage your Sophiie sales pipeline — leads, inquiries, appointments, FAQs, policies, SMS, and calls via the Sophiie.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage your Sophiie sales pipeline — leads, inquiries, appointments, FAQs, policies, SMS, and calls via the Sophiie..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

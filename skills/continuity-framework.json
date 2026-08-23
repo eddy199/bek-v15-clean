@@ -1,0 +1,6 @@
+{
+  "name": "continuity-framework",
+  "command": "continuity-framework",
+  "description": "Asynchronous reflection and memory integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Asynchronous reflection and memory integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

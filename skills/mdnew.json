@@ -1,0 +1,6 @@
+{
+  "name": "mdnew",
+  "command": "mdnew",
+  "description": "Fetch clean, agent-optimized Markdown from any URL using the markdown.new service.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch clean, agent-optimized Markdown from any URL using the markdown.new service..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

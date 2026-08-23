@@ -1,0 +1,6 @@
+{
+  "name": "pls-canvas-design",
+  "command": "pls-canvas-design",
+  "description": "Generates visual art and posters by expressing original design philosophies as meticulously crafted PNG or PDF.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates visual art and posters by expressing original design philosophies as meticulously crafted PNG or PDF..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

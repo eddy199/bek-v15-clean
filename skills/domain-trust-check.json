@@ -1,0 +1,6 @@
+{
+  "name": "domain-trust-check",
+  "command": "domain-trust-check",
+  "description": "Check any URL for phishing, malware, brand abuse, and scams before visiting. Powered by the Outtake Trust API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check any URL for phishing, malware, brand abuse, and scams before visiting. Powered by the Outtake Trust API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

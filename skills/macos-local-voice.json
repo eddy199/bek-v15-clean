@@ -1,0 +1,6 @@
+{
+  "name": "macos-local-voice",
+  "command": "macos-local-voice",
+  "description": "Local STT and TTS on macOS using native Apple capabilities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local STT and TTS on macOS using native Apple capabilities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

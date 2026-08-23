@@ -1,0 +1,6 @@
+{
+  "name": "uk-prayer-times",
+  "command": "uk-prayer-times",
+  "description": "Get instant, accurate Islamic prayer times for any UK location.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get instant, accurate Islamic prayer times for any UK location..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

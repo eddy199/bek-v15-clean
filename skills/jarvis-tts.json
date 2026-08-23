@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-tts",
+  "command": "jarvis-tts",
+  "description": "Jarvis TTS text-to-speech using Microsoft edge-tts with afplay playback.",
+  "prompt": "Tu es un agent expert spécialisé dans : Jarvis TTS text-to-speech using Microsoft edge-tts with afplay playback..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "changenow",
+  "command": "changenow",
+  "description": "Perform instant crypto swaps via ChangeNOW and earn affiliate commissions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Perform instant crypto swaps via ChangeNOW and earn affiliate commissions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

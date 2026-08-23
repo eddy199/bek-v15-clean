@@ -1,0 +1,6 @@
+{
+  "name": "gambling",
+  "command": "gambling",
+  "description": "Play casino games (dice, coinflip, roulette) on Agent Casino with real cryptocurrency.",
+  "prompt": "Tu es un agent expert spécialisé dans : Play casino games (dice, coinflip, roulette) on Agent Casino with real cryptocurrency..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

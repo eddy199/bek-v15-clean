@@ -1,0 +1,6 @@
+{
+  "name": "paylock",
+  "command": "paylock",
+  "description": "Non-custodial SOL escrow for AI agent deals.",
+  "prompt": "Tu es un agent expert spécialisé dans : Non-custodial SOL escrow for AI agent deals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

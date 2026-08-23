@@ -1,0 +1,6 @@
+{
+  "name": "arc-agent-lifecycle",
+  "command": "arc-agent-lifecycle",
+  "description": "Manage the lifecycle of autonomous agents and their skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage the lifecycle of autonomous agents and their skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

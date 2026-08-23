@@ -1,0 +1,6 @@
+{
+  "name": "wechat-search",
+  "command": "wechat-search",
+  "description": "Search WeChat Official Account articles using OpenClaw's web search, Tavily API, and web fetch capabilities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search WeChat Official Account articles using OpenClaw's web search, Tavily API, and web fetch capabilities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

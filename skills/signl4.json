@@ -1,0 +1,6 @@
+{
+  "name": "signl4",
+  "command": "signl4",
+  "description": "Send and close SIGNL4 alerts using the SIGNL4 inbound webhook (team secret in URL).",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and close SIGNL4 alerts using the SIGNL4 inbound webhook (team secret in URL)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "instagram-analyzer",
+  "command": "instagram-analyzer",
+  "description": "A comprehensive Instagram profile and post analysis tool with engagement metrics, view tracking, and Reels-focused.",
+  "prompt": "Tu es un agent expert spécialisé dans : A comprehensive Instagram profile and post analysis tool with engagement metrics, view tracking, and Reels-focused..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

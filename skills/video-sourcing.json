@@ -1,0 +1,6 @@
+{
+  "name": "video-sourcing",
+  "command": "video-sourcing",
+  "description": "Run the Video Sourcing Agent with deterministic, concise chat UX for /video_sourcing using a pinned self-bootstrap.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run the Video Sourcing Agent with deterministic, concise chat UX for /video_sourcing using a pinned self-bootstrap..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "linkswarm",
+  "command": "linkswarm",
+  "description": "Agent-to-agent backlink exchange network.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent-to-agent backlink exchange network..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

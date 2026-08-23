@@ -1,0 +1,6 @@
+{
+  "name": "gradient-inference",
+  "command": "gradient-inference",
+  "description": "Community skill (unofficial) for DigitalOcean Gradient AI Serverless Inference.",
+  "prompt": "Tu es un agent expert spécialisé dans : Community skill (unofficial) for DigitalOcean Gradient AI Serverless Inference..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

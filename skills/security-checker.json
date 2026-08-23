@@ -1,0 +1,6 @@
+{
+  "name": "security-checker",
+  "command": "security-checker",
+  "description": "Security scanner for Python skills before publishing to ClawHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security scanner for Python skills before publishing to ClawHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

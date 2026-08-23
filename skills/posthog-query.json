@@ -1,0 +1,6 @@
+{
+  "name": "posthog-query",
+  "command": "posthog-query",
+  "description": "Run SQL queries against PostHog product analytics data using the PostHog CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run SQL queries against PostHog product analytics data using the PostHog CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "estimate-builder-qmohd",
+  "command": "estimate-builder-qmohd",
+  "description": "Build construction project estimates.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build construction project estimates..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

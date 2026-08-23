@@ -1,0 +1,6 @@
+{
+  "name": "ggshield-scanner",
+  "command": "ggshield-scanner",
+  "description": "Detect 500+ types of hardcoded secrets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detect 500+ types of hardcoded secrets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

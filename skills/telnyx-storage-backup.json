@@ -1,0 +1,6 @@
+{
+  "name": "telnyx-storage-backup",
+  "command": "telnyx-storage-backup",
+  "description": "Backup and restore your OpenClaw workspace to Telnyx Storage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Backup and restore your OpenClaw workspace to Telnyx Storage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

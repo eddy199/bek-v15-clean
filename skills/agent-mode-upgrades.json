@@ -1,0 +1,6 @@
+{
+  "name": "agent-mode-upgrades",
+  "command": "agent-mode-upgrades",
+  "description": "A comprehensive upgrade to OpenClaw's agentic capabilities with persistent state, automatic planning, approval.",
+  "prompt": "Tu es un agent expert spécialisé dans : A comprehensive upgrade to OpenClaw's agentic capabilities with persistent state, automatic planning, approval..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

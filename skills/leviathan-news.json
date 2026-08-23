@@ -1,0 +1,6 @@
+{
+  "name": "leviathan-news",
+  "command": "leviathan-news",
+  "description": "Crowdsourced crypto news API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Crowdsourced crypto news API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

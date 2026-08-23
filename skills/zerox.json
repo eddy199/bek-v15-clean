@@ -1,0 +1,6 @@
+{
+  "name": "zerox",
+  "command": "zerox",
+  "description": "Convert documents (PDF, DOCX, PPTX, images, etc.) to Markdown using the zerox library.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert documents (PDF, DOCX, PPTX, images, etc.) to Markdown using the zerox library..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "instagram-reels",
+  "command": "instagram-reels",
+  "description": "Download Instagram Reels, transcribe audio, and extract captions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download Instagram Reels, transcribe audio, and extract captions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "workflow-tools",
+  "command": "workflow-tools",
+  "description": "Work smarter with loop detection, parallel decisions, and file size analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Work smarter with loop detection, parallel decisions, and file size analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

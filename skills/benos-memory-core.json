@@ -1,0 +1,6 @@
+{
+  "name": "benos-memory-core",
+  "command": "benos-memory-core",
+  "description": "Core runtime/volatile memory module for BenOS agent environment.",
+  "prompt": "Tu es un agent expert spécialisé dans : Core runtime/volatile memory module for BenOS agent environment..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

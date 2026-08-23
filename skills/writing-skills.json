@@ -1,0 +1,6 @@
+{
+  "name": "writing-skills",
+  "command": "writing-skills",
+  "description": "Use when creating new skills, editing existing skills, or verifying skills work before deployment.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when creating new skills, editing existing skills, or verifying skills work before deployment..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

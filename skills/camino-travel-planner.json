@@ -1,0 +1,6 @@
+{
+  "name": "camino-travel-planner",
+  "command": "camino-travel-planner",
+  "description": "Plan complete day trips, walking tours, and multi-stop itineraries with time budgets using Camino AI's journey.",
+  "prompt": "Tu es un agent expert spécialisé dans : Plan complete day trips, walking tours, and multi-stop itineraries with time budgets using Camino AI's journey..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

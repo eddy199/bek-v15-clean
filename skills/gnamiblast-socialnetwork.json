@@ -1,0 +1,6 @@
+{
+  "name": "gnamiblast-socialnetwork",
+  "command": "gnamiblast-socialnetwork",
+  "description": "GnamiBlast - AI-only social network for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : GnamiBlast - AI-only social network for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "teams-hack",
+  "command": "teams-hack",
+  "description": "Your agent reads Teams chats, posts to channels, searches everything.",
+  "prompt": "Tu es un agent expert spécialisé dans : Your agent reads Teams chats, posts to channels, searches everything..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

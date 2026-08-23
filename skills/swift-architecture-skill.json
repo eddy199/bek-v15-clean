@@ -1,0 +1,6 @@
+{
+  "name": "swift-architecture-skill",
+  "command": "swift-architecture-skill",
+  "description": "Agent Skill for Swift architecture design and implementation patterns, with architecture-specific playbooks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent Skill for Swift architecture design and implementation patterns, with architecture-specific playbooks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

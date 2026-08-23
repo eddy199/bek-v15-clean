@@ -1,0 +1,6 @@
+{
+  "name": "x-monitor",
+  "command": "x-monitor",
+  "description": "Monitor specific X/Twitter accounts and surface noteworthy tweets on a configurable schedule.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor specific X/Twitter accounts and surface noteworthy tweets on a configurable schedule..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

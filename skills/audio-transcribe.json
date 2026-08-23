@@ -1,0 +1,6 @@
+{
+  "name": "audio-transcribe",
+  "command": "audio-transcribe",
+  "description": "Auto-transcribe voice messages using faster-whisper (local, no API key needed).",
+  "prompt": "Tu es un agent expert spécialisé dans : Auto-transcribe voice messages using faster-whisper (local, no API key needed)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

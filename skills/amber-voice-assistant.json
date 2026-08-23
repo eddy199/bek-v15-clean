@@ -1,0 +1,6 @@
+{
+  "name": "amber-voice-assistant",
+  "command": "amber-voice-assistant",
+  "description": "Phone-capable AI agent for OpenClaw — the most complete phone skill available.",
+  "prompt": "Tu es un agent expert spécialisé dans : Phone-capable AI agent for OpenClaw — the most complete phone skill available..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

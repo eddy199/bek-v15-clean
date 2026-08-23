@@ -1,0 +1,6 @@
+{
+  "name": "deapi",
+  "command": "deapi",
+  "description": "The cheapest AI media API on the market.",
+  "prompt": "Tu es un agent expert spécialisé dans : The cheapest AI media API on the market..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "2nd-brain",
+  "command": "2nd-brain",
+  "description": "Personal knowledge base for capturing and retrieving information about people, places, restaurants, games, tech.",
+  "prompt": "Tu es un agent expert spécialisé dans : Personal knowledge base for capturing and retrieving information about people, places, restaurants, games, tech..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

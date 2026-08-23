@@ -1,0 +1,6 @@
+{
+  "name": "trip-protocol",
+  "command": "trip-protocol",
+  "description": "Psychedelic NFTs on Monad that temporarily rewrite your agent's SOUL.md.",
+  "prompt": "Tu es un agent expert spécialisé dans : Psychedelic NFTs on Monad that temporarily rewrite your agent's SOUL.md..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "boss-ai-agent",
+  "command": "boss-ai-agent",
+  "description": "AI management middleware with 14 mentors and 9 culture packs.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI management middleware with 14 mentors and 9 culture packs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

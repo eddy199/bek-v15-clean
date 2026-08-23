@@ -1,0 +1,6 @@
+{
+  "name": "tokenmeter",
+  "command": "tokenmeter",
+  "description": "Track AI token usage and costs across providers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track AI token usage and costs across providers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

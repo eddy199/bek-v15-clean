@@ -1,0 +1,6 @@
+{
+  "name": "captcha-ai",
+  "command": "captcha-ai",
+  "description": "Issue ClawPrint reverse-CAPTCHA challenges to verify.",
+  "prompt": "Tu es un agent expert spécialisé dans : Issue ClawPrint reverse-CAPTCHA challenges to verify..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "friday-router",
+  "command": "friday-router",
+  "description": "Your AI's Smart Traffic Director—precisely matching OpenClaw tasks to the perfect LLM.",
+  "prompt": "Tu es un agent expert spécialisé dans : Your AI's Smart Traffic Director—precisely matching OpenClaw tasks to the perfect LLM..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

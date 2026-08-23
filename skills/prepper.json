@@ -1,0 +1,6 @@
+{
+  "name": "prepper",
+  "command": "prepper",
+  "description": "Consult the ollama dolphin-llama3 model for survival, emergency preparedness, and prepper-related questions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Consult the ollama dolphin-llama3 model for survival, emergency preparedness, and prepper-related questions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

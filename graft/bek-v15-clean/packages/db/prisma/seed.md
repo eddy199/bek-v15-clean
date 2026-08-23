@@ -1,0 +1,22 @@
+# bek-v15-clean/packages/db/prisma/seed.ts
+
+- makeRandom · function · L12-L20 — function makeRandom(seed: number): () => number
+- pick · function · L24-L28 — function pick<T>(items: readonly T[]): T
+- chance · function · L30-L32 — function chance(probability: number): boolean
+- integer · function · L34-L36 — function integer(min: number, max: number): number
+- daysFromNow · function · L41-L46 — function daysFromNow(days: number, jitterHours = 0): Date
+- SeedCompany · type · L54-L61 — type SeedCompany = { name: string; domain: string; industry: string; city: string; country: string; countryCode: string; };
+- slug · function · L328-L336 — function slug(value: string): string
+- seedOwners · function · L338-L365 — async function seedOwners(): Promise<string[]>
+- seedCompanies · function · L367-L395 — async function seedCompanies( ownerIds: string[], ): Promise<{ id: string; name: string; domain: string }[]>
+- seedIcons · function · L397-L421 — async function seedIcons( companies: { id: string; domain: string | null; iconUrl: string | null }[], ): Promise<void>
+- SeededContact · type · L423-L423 — type SeededContact = { id: string; companyId: string };
+- seedContacts · function · L425-L470 — async function seedContacts( companies: { id: string; domain: string }[], ownerIds: string[], ): Promise<SeededContact[]>
+- SeededDeal · type · L472-L477 — type SeededDeal = { id: string; companyId: string; ownerId: string; closed: boolean; };
+- seedRates · function · L491-L535 — async function seedRates(): Promise<number>
+- money · function · L537-L556 — function money(usdAmount: number, currency: string)
+- seedDeals · function · L558-L644 — async function seedDeals( companies: { id: string; name: string }[], contacts: SeededContact[], ownerIds: string[], ): Promise<SeededDeal[]>
+- seedActivities · function · L646-L763 — async function seedActivities( companies: { id: string }[], contacts: SeededContact[], deals: SeededDeal[], ownerIds: string[], ): Promise<number>
+- ActivityRow · type · L658-L671 — type ActivityRow = { type: ActivityType; subject: string | null; body: string | null; occurredAt: Date | null; dueAt: Date | null; completedAt: Date | null; companyId: string | null; contactId: string | null; dealId: string | null; createdById: string; createdAt: Date; meta?: { from: DealStage; to: DealStage }; };
+- base · function · L675-L686 — base = (companyId: string, createdById: string, createdAt: Date)
+- main · function · L765-L777 — async function main()

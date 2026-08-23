@@ -1,0 +1,6 @@
+{
+  "name": "code-1-0-4",
+  "command": "code-1-0-4",
+  "description": "Coding workflow with planning, implementation, verification, and testing for clean software development.",
+  "prompt": "Tu es un agent expert spécialisé dans : Coding workflow with planning, implementation, verification, and testing for clean software development..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

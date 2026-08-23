@@ -1,0 +1,6 @@
+{
+  "name": "eachlabs-image-generation",
+  "command": "eachlabs-image-generation",
+  "description": "Generate images with Flux, GPT Image, Gemini, Imagen.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images with Flux, GPT Image, Gemini, Imagen..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

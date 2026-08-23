@@ -1,0 +1,6 @@
+{
+  "name": "vtl-image-analysis",
+  "command": "vtl-image-analysis",
+  "description": "Measure compositional structure in AI-generated images using the Visual Thinking Lens (VTL) framework.",
+  "prompt": "Tu es un agent expert spécialisé dans : Measure compositional structure in AI-generated images using the Visual Thinking Lens (VTL) framework..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

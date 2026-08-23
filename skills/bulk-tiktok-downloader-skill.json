@@ -1,0 +1,6 @@
+{
+  "name": "bulk-tiktok-downloader-skill",
+  "command": "bulk-tiktok-downloader-skill",
+  "description": "Bulk download TikTok videos from a text file of URLs using yt-dlp.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bulk download TikTok videos from a text file of URLs using yt-dlp..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "google-maps-reviews-api-skill",
+  "command": "google-maps-reviews-api-skill",
+  "description": "This skill is designed to help users automatically extract reviews from Google Maps via the Google Maps Reviews API.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill is designed to help users automatically extract reviews from Google Maps via the Google Maps Reviews API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

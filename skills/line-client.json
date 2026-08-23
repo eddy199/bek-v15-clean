@@ -1,0 +1,6 @@
+{
+  "name": "line-client",
+  "command": "line-client",
+  "description": "LINE messaging integration via Chrome extension gateway.",
+  "prompt": "Tu es un agent expert spécialisé dans : LINE messaging integration via Chrome extension gateway..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "odoo-reporting",
+  "command": "odoo-reporting",
+  "description": "Query Odoo data including salesperson performance, customer analytics, orders, invoices, CRM, accounting, VAT.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Odoo data including salesperson performance, customer analytics, orders, invoices, CRM, accounting, VAT..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mh-weather",
+  "command": "mh-weather",
+  "description": "Get current weather and forecasts via wttr.in or Open-Meteo.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get current weather and forecasts via wttr.in or Open-Meteo..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

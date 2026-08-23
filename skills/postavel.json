@@ -1,0 +1,6 @@
+{
+  "name": "postavel",
+  "command": "postavel",
+  "description": "Connect to Postavel social media management platform via MCP (Model Context Protocol)",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to Postavel social media management platform via MCP (Model Context Protocol).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

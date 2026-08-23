@@ -1,0 +1,6 @@
+{
+  "name": "forage-shopping",
+  "command": "forage-shopping",
+  "description": "Search and compare products across merchants.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and compare products across merchants..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

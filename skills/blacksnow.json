@@ -1,0 +1,6 @@
+{
+  "name": "blacksnow",
+  "command": "blacksnow",
+  "description": "Detects pre-news ambient risk signals across human, legal.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detects pre-news ambient risk signals across human, legal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

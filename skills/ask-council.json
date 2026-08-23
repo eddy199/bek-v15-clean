@@ -1,0 +1,6 @@
+{
+  "name": "ask-council",
+  "command": "ask-council",
+  "description": "Ask LLM Council a question directly from Telegram/chat — get the chairman's synthesized answer without opening.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ask LLM Council a question directly from Telegram/chat — get the chairman's synthesized answer without opening..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

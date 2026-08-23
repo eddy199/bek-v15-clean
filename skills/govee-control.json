@@ -1,0 +1,6 @@
+{
+  "name": "govee-control",
+  "command": "govee-control",
+  "description": "Script-free Govee OpenAPI setup and control guide.",
+  "prompt": "Tu es un agent expert spécialisé dans : Script-free Govee OpenAPI setup and control guide..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

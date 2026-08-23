@@ -1,0 +1,6 @@
+{
+  "name": "build-session",
+  "command": "build-session",
+  "description": "A framework for productive autonomous agent sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : A framework for productive autonomous agent sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

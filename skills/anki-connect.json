@@ -1,0 +1,6 @@
+{
+  "name": "anki-connect",
+  "command": "anki-connect",
+  "description": "Interact with Anki flashcard decks via the AnkiConnect REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Anki flashcard decks via the AnkiConnect REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

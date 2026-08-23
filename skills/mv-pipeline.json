@@ -1,0 +1,6 @@
+{
+  "name": "mv-pipeline",
+  "command": "mv-pipeline",
+  "description": "End-to-end automated Music Video pipeline.",
+  "prompt": "Tu es un agent expert spécialisé dans : End-to-end automated Music Video pipeline..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

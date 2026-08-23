@@ -1,0 +1,6 @@
+{
+  "name": "research-report",
+  "command": "research-report",
+  "description": "Research technical projects/papers and generate comprehensive reports with PDF export.",
+  "prompt": "Tu es un agent expert spécialisé dans : Research technical projects/papers and generate comprehensive reports with PDF export..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

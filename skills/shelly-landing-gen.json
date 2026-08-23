@@ -1,0 +1,6 @@
+{
+  "name": "shelly-landing-gen",
+  "command": "shelly-landing-gen",
+  "description": "Generate complete, responsive HTML landing pages from a product name, tagline, and description.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate complete, responsive HTML landing pages from a product name, tagline, and description..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ai-notes-video",
+  "command": "ai-notes-video",
+  "description": "The video AI notes tool is provided by Baidu.",
+  "prompt": "Tu es un agent expert spécialisé dans : The video AI notes tool is provided by Baidu..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

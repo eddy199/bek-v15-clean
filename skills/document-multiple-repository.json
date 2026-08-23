@@ -1,0 +1,6 @@
+{
+  "name": "document-multiple-repository",
+  "command": "document-multiple-repository",
+  "description": "Gera documentação técnica consolidada para sistemas de software com múltiplos repositórios (frontend, backend.",
+  "prompt": "Tu es un agent expert spécialisé dans : Gera documentação técnica consolidada para sistemas de software com múltiplos repositórios (frontend, backend..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "baidu-baike-data",
+  "command": "baidu-baike-data",
+  "description": "The Baidu Baike Component is a knowledge service tool designed to query authoritative encyclopedia explanations.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Baidu Baike Component is a knowledge service tool designed to query authoritative encyclopedia explanations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

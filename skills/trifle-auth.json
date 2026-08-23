@@ -1,0 +1,6 @@
+{
+  "name": "trifle-auth",
+  "command": "trifle-auth",
+  "description": "Authenticate with the Trifle API using Sign-In with Ethereum (SIWE)",
+  "prompt": "Tu es un agent expert spécialisé dans : Authenticate with the Trifle API using Sign-In with Ethereum (SIWE).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

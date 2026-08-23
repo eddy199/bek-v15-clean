@@ -1,0 +1,6 @@
+{
+  "name": "namecheap-dns",
+  "command": "namecheap-dns",
+  "description": "Safe DNS record management for Namecheap domains.",
+  "prompt": "Tu es un agent expert spécialisé dans : Safe DNS record management for Namecheap domains..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

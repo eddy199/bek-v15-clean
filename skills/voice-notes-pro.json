@@ -1,0 +1,6 @@
+{
+  "name": "voice-notes-pro",
+  "command": "voice-notes-pro",
+  "description": "Inteligentna transkrypcja i kategoryzacja notatek gosowych z WhatsApp.",
+  "prompt": "Tu es un agent expert spécialisé dans : Inteligentna transkrypcja i kategoryzacja notatek gosowych z WhatsApp..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

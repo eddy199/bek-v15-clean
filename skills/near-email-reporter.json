@@ -1,0 +1,6 @@
+{
+  "name": "near-email-reporter",
+  "command": "near-email-reporter",
+  "description": "Send NEAR reports and alerts via email with SMTP configuration, scheduling, and automatic reporting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send NEAR reports and alerts via email with SMTP configuration, scheduling, and automatic reporting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "12306",
+  "command": "12306",
+  "description": "Query China Railway 12306 for train schedules, remaining tickets, and station info.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query China Railway 12306 for train schedules, remaining tickets, and station info..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

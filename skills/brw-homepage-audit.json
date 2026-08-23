@@ -1,0 +1,6 @@
+{
+  "name": "brw-homepage-audit",
+  "command": "brw-homepage-audit",
+  "description": "Quick conversion audit for any homepage or landing page.",
+  "prompt": "Tu es un agent expert spécialisé dans : Quick conversion audit for any homepage or landing page..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

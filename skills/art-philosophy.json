@@ -1,0 +1,6 @@
+{
+  "name": "art-philosophy",
+  "command": "art-philosophy",
+  "description": "Auto-learns your visual language.",
+  "prompt": "Tu es un agent expert spécialisé dans : Auto-learns your visual language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

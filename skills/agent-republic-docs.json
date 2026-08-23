@@ -1,0 +1,6 @@
+{
+  "name": "agent-republic-docs",
+  "command": "agent-republic-docs",
+  "description": "Docs-only guide to Agent Republic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Docs-only guide to Agent Republic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

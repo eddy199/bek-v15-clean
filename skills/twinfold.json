@@ -1,0 +1,6 @@
+{
+  "name": "twinfold",
+  "command": "twinfold",
+  "description": "Control Twinfold — AI-powered social media content platform — from your agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Twinfold — AI-powered social media content platform — from your agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

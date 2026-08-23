@@ -1,0 +1,6 @@
+{
+  "name": "camino-safety-checker",
+  "command": "camino-safety-checker",
+  "description": "Find 24-hour businesses, well-lit public areas, transit stations, police stations, and hospitals near any location.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find 24-hour businesses, well-lit public areas, transit stations, police stations, and hospitals near any location..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

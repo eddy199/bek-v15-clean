@@ -1,0 +1,6 @@
+{
+  "name": "security-scanner",
+  "command": "security-scanner",
+  "description": "Automated security scanning and vulnerability detection for web applications, APIs, and infrastructure.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated security scanning and vulnerability detection for web applications, APIs, and infrastructure..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

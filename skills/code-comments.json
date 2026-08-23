@@ -1,0 +1,6 @@
+{
+  "name": "code-comments",
+  "command": "code-comments",
+  "description": "Generate code comments and docs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate code comments and docs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

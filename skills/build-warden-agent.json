@@ -1,0 +1,6 @@
+{
+  "name": "build-warden-agent",
+  "command": "build-warden-agent",
+  "description": "Build original LangGraph agents for Warden Protocol and prepare them for publishing in Warden Studio.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build original LangGraph agents for Warden Protocol and prepare them for publishing in Warden Studio..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

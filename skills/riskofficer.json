@@ -1,0 +1,6 @@
+{
+  "name": "riskofficer",
+  "command": "riskofficer",
+  "description": "Manage investment portfolios, calculate risk metrics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage investment portfolios, calculate risk metrics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

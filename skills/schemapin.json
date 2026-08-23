@@ -1,0 +1,6 @@
+{
+  "name": "schemapin",
+  "command": "schemapin",
+  "description": "**Purpose**: This guide helps AI assistants quickly integrate SchemaPin into applications for cryptographic tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Purpose**: This guide helps AI assistants quickly integrate SchemaPin into applications for cryptographic tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

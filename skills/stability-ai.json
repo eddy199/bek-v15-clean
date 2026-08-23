@@ -1,0 +1,6 @@
+{
+  "name": "stability-ai",
+  "command": "stability-ai",
+  "description": "Generate high-quality images via Stability AI API (SDXL, SD3, Stable Image Core)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate high-quality images via Stability AI API (SDXL, SD3, Stable Image Core).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

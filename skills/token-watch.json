@@ -1,0 +1,6 @@
+{
+  "name": "token-watch",
+  "command": "token-watch",
+  "description": "**Track, analyze, and optimize token usage and costs across AI providers.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Track, analyze, and optimize token usage and costs across AI providers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "comfyui",
+  "command": "comfyui",
+  "description": "Send a workflow request to ComfyUI and return image results.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send a workflow request to ComfyUI and return image results..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

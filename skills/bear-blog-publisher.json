@@ -1,0 +1,6 @@
+{
+  "name": "bear-blog-publisher",
+  "command": "bear-blog-publisher",
+  "description": "Publish blog posts to Bear Blog platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish blog posts to Bear Blog platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

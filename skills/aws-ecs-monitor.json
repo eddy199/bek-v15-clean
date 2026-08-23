@@ -1,0 +1,6 @@
+{
+  "name": "aws-ecs-monitor",
+  "command": "aws-ecs-monitor",
+  "description": "AWS ECS production health monitoring with CloudWatch.",
+  "prompt": "Tu es un agent expert spécialisé dans : AWS ECS production health monitoring with CloudWatch..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

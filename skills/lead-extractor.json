@@ -1,0 +1,6 @@
+{
+  "name": "lead-extractor",
+  "command": "lead-extractor",
+  "description": "Extract structured real-estate lead records from parsed message objects.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract structured real-estate lead records from parsed message objects..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

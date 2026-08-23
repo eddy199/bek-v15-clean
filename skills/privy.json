@@ -1,0 +1,6 @@
+{
+  "name": "privy",
+  "command": "privy",
+  "description": "Create and manage agentic wallets with Privy.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage agentic wallets with Privy..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

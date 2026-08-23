@@ -1,0 +1,6 @@
+{
+  "name": "leak-check",
+  "command": "leak-check",
+  "description": "Scan session logs for leaked credentials.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan session logs for leaked credentials..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

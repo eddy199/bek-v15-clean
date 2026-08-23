@@ -1,0 +1,6 @@
+{
+  "name": "charts",
+  "command": "charts",
+  "description": "Generate professional technical analysis charts with candlesticks, Fibonacci retracement, moving averages (SMA 20/50)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional technical analysis charts with candlesticks, Fibonacci retracement, moving averages (SMA 20/50).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

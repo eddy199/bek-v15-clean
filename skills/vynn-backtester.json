@@ -1,0 +1,6 @@
+{
+  "name": "vynn-backtester",
+  "command": "vynn-backtester",
+  "description": "Run trading strategy backtests with natural language — powered by Vynn.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run trading strategy backtests with natural language — powered by Vynn..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

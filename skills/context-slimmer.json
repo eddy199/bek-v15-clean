@@ -1,0 +1,6 @@
+{
+  "name": "context-slimmer",
+  "command": "context-slimmer",
+  "description": "Audit and slim down always-loaded context files (AGENTS.md, TOOLS.md, USER.md, MEMORY.md, HEARTBEAT.md, SOUL.md.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit and slim down always-loaded context files (AGENTS.md, TOOLS.md, USER.md, MEMORY.md, HEARTBEAT.md, SOUL.md..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

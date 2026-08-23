@@ -1,0 +1,6 @@
+{
+  "name": "dotnet-expert",
+  "command": "dotnet-expert",
+  "description": "Use when building .NET 8/9 applications, ASP.NET Core APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when building .NET 8/9 applications, ASP.NET Core APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

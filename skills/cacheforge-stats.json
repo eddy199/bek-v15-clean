@@ -1,0 +1,6 @@
+{
+  "name": "cacheforge-stats",
+  "command": "cacheforge-stats",
+  "description": "CacheForge terminal dashboard — usage, savings, and performance metrics.",
+  "prompt": "Tu es un agent expert spécialisé dans : CacheForge terminal dashboard — usage, savings, and performance metrics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

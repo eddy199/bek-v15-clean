@@ -1,0 +1,6 @@
+{
+  "name": "brevo",
+  "command": "brevo",
+  "description": "Brevo (formerly Sendinblue) email marketing API for managing contacts, lists,.",
+  "prompt": "Tu es un agent expert spécialisé dans : Brevo (formerly Sendinblue) email marketing API for managing contacts, lists,..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

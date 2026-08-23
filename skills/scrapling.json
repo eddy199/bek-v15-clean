@@ -1,0 +1,6 @@
+{
+  "name": "scrapling",
+  "command": "scrapling",
+  "description": "Adaptive web scraping framework with anti-bot bypass and spider crawling.",
+  "prompt": "Tu es un agent expert spécialisé dans : Adaptive web scraping framework with anti-bot bypass and spider crawling..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

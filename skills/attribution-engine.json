@@ -1,0 +1,6 @@
+{
+  "name": "attribution-engine",
+  "command": "attribution-engine",
+  "description": "Helps creators clearly credit collaborators, tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps creators clearly credit collaborators, tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

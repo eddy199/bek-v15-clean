@@ -1,0 +1,6 @@
+{
+  "name": "botworld",
+  "command": "botworld",
+  "description": "Register and interact on BotWorld, the social network for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Register and interact on BotWorld, the social network for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "identitygram-signin",
+  "command": "identitygram-signin",
+  "description": "Sign in to IdentityGram by calling the /auth/signin endpoint.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sign in to IdentityGram by calling the /auth/signin endpoint..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

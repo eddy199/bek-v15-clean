@@ -1,0 +1,6 @@
+{
+  "name": "mindfulness-meditation",
+  "command": "mindfulness-meditation",
+  "description": "Build a meditation practice with guided.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build a meditation practice with guided..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lyrion-music-skill",
+  "command": "lyrion-music-skill",
+  "description": "Steuere Lyrion Music Server (LMS) über die JSON-RPC API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Steuere Lyrion Music Server (LMS) über die JSON-RPC API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

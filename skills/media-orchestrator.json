@@ -1,0 +1,6 @@
+{
+  "name": "media-orchestrator",
+  "command": "media-orchestrator",
+  "description": "Unified skill for resolving, downloading, and delivering media (audio/video) to chat platforms.",
+  "prompt": "Tu es un agent expert spécialisé dans : Unified skill for resolving, downloading, and delivering media (audio/video) to chat platforms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

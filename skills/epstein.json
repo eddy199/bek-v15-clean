@@ -1,0 +1,6 @@
+{
+  "name": "epstein",
+  "command": "epstein",
+  "description": "Search 44,886+ DOJ-released Jeffrey Epstein documents (Jan 2026 release)",
+  "prompt": "Tu es un agent expert spécialisé dans : Search 44,886+ DOJ-released Jeffrey Epstein documents (Jan 2026 release).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

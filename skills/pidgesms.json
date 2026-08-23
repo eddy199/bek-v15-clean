@@ -1,0 +1,6 @@
+{
+  "name": "pidgesms",
+  "command": "pidgesms",
+  "description": "Send and read SMS text messages via an Android phone using pidge.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and read SMS text messages via an Android phone using pidge..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

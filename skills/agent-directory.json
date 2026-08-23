@@ -1,0 +1,6 @@
+{
+  "name": "agent-directory",
+  "command": "agent-directory",
+  "description": "The directory for AI agent services.",
+  "prompt": "Tu es un agent expert spécialisé dans : The directory for AI agent services..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

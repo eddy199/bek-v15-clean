@@ -1,0 +1,6 @@
+{
+  "name": "office-document-specialist-suite",
+  "command": "office-document-specialist-suite",
+  "description": "Advanced suite for creating, editing, and analyzing Microsoft Office documents (Word, Excel, PowerPoint)",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced suite for creating, editing, and analyzing Microsoft Office documents (Word, Excel, PowerPoint).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

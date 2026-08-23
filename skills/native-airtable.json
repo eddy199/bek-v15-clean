@@ -1,0 +1,6 @@
+{
+  "name": "native-airtable",
+  "command": "native-airtable",
+  "description": "Read Airtable bases, tables, and records directly via the Airtable API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read Airtable bases, tables, and records directly via the Airtable API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

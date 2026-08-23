@@ -1,0 +1,6 @@
+{
+  "name": "apple-search-ads-skill",
+  "command": "apple-search-ads-skill",
+  "description": "Manage Apple Search Ads campaigns, ad groups, keywords, and reports via the asa-cli tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Apple Search Ads campaigns, ad groups, keywords, and reports via the asa-cli tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

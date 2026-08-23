@@ -1,0 +1,6 @@
+{
+  "name": "enhanced-memory",
+  "command": "enhanced-memory",
+  "description": "Enhanced memory search with hybrid vector+keyword scoring, temporal routing, filepath scoring, adaptive weighting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enhanced memory search with hybrid vector+keyword scoring, temporal routing, filepath scoring, adaptive weighting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

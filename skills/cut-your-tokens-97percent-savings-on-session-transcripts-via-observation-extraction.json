@@ -1,0 +1,6 @@
+{
+  "name": "cut-your-tokens-97percent-savings-on-session-transcripts-via-observation-extraction",
+  "command": "cut-your-tokens-97percent-savings-on-session-transcripts-via-observation-extraction",
+  "description": "Claw Compactor v6.0 — 50%+ savings through rule-based compression, dictionary encoding, session observation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Claw Compactor v6.0 — 50%+ savings through rule-based compression, dictionary encoding, session observation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

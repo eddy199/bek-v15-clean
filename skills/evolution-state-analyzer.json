@@ -1,0 +1,6 @@
+{
+  "name": "evolution-state-analyzer",
+  "command": "evolution-state-analyzer",
+  "description": "Analyzes the evolution memory graph for stagnation patterns, recurring failures, and success plateaus.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyzes the evolution memory graph for stagnation patterns, recurring failures, and success plateaus..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

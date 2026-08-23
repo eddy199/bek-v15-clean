@@ -1,0 +1,6 @@
+{
+  "name": "skillnet",
+  "command": "skillnet",
+  "description": "Search, download, create, evaluate, and analyze reusable agent skills via SkillNet.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, download, create, evaluate, and analyze reusable agent skills via SkillNet..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

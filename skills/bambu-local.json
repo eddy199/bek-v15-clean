@@ -1,0 +1,6 @@
+{
+  "name": "bambu-local",
+  "command": "bambu-local",
+  "description": "Control Bambu Lab 3D printers locally via MQTT.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Bambu Lab 3D printers locally via MQTT..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

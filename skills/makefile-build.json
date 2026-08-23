@@ -1,0 +1,6 @@
+{
+  "name": "makefile-build",
+  "command": "makefile-build",
+  "description": "Write Makefiles for any project type.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write Makefiles for any project type..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

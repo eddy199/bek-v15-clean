@@ -1,0 +1,6 @@
+{
+  "name": "deai-image",
+  "command": "deai-image",
+  "description": "Detect and remove AI fingerprints from AI-generated images.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detect and remove AI fingerprints from AI-generated images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

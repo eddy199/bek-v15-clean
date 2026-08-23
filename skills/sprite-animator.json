@@ -1,0 +1,6 @@
+{
+  "name": "sprite-animator",
+  "command": "sprite-animator",
+  "description": "Generate animated pixel art sprites from any image using AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate animated pixel art sprites from any image using AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

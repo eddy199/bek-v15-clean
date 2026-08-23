@@ -1,0 +1,6 @@
+{
+  "name": "epistemic-council",
+  "command": "epistemic-council",
+  "description": "Use this skill for all Epistemic Council pipeline operations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill for all Epistemic Council pipeline operations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

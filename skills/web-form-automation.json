@@ -1,0 +1,6 @@
+{
+  "name": "web-form-automation",
+  "command": "web-form-automation",
+  "description": "Automate web form interactions including login, file upload, text input, and form submission using Playwright.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate web form interactions including login, file upload, text input, and form submission using Playwright..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

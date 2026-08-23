@@ -1,0 +1,6 @@
+{
+  "name": "desearch-web-search",
+  "command": "desearch-web-search",
+  "description": "Search the web and get real-time SERP-style results with titles, URLs, and snippets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search the web and get real-time SERP-style results with titles, URLs, and snippets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

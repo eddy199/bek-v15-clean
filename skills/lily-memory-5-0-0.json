@@ -1,0 +1,6 @@
+{
+  "name": "lily-memory-5-0-0",
+  "command": "lily-memory-5-0-0",
+  "description": "Persistent memory plugin for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent memory plugin for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

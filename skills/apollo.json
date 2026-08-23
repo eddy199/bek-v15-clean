@@ -1,0 +1,6 @@
+{
+  "name": "apollo",
+  "command": "apollo",
+  "description": "Interact with Apollo.io REST API (people/org enrichment, search, lists).",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Apollo.io REST API (people/org enrichment, search, lists)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

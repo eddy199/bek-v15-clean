@@ -1,0 +1,6 @@
+{
+  "name": "app-store-optimization",
+  "command": "app-store-optimization",
+  "description": "App Store Optimization toolkit.",
+  "prompt": "Tu es un agent expert spécialisé dans : App Store Optimization toolkit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

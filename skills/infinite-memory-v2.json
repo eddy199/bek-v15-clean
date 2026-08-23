@@ -1,0 +1,6 @@
+{
+  "name": "infinite-memory-v2",
+  "command": "infinite-memory-v2",
+  "description": "High-precision memory with 100% recall accuracy for long contexts.",
+  "prompt": "Tu es un agent expert spécialisé dans : High-precision memory with 100% recall accuracy for long contexts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

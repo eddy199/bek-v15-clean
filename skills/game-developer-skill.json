@@ -1,0 +1,6 @@
+{
+  "name": "game-developer-skill",
+  "command": "game-developer-skill",
+  "description": "Use when building game systems, implementing Unity/Unreal features, or optimizing game performance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when building game systems, implementing Unity/Unreal features, or optimizing game performance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

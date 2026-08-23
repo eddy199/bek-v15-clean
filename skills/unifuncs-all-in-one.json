@@ -1,0 +1,6 @@
+{
+  "name": "unifuncs-all-in-one",
+  "command": "unifuncs-all-in-one",
+  "description": "Default web reading, AI search, and deep research tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Default web reading, AI search, and deep research tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

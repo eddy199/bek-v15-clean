@@ -1,0 +1,6 @@
+{
+  "name": "web-multi-search",
+  "command": "web-multi-search",
+  "description": "Search the web using multiple search engines simultaneously (Bing, Yahoo, Startpage, Aol, Ask)",
+  "prompt": "Tu es un agent expert spécialisé dans : Search the web using multiple search engines simultaneously (Bing, Yahoo, Startpage, Aol, Ask).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,31 @@
+# bek-v15-clean/apps/api/src/tracking/tracking.service.ts
+
+- TrackedDomainRow · interface · L35-L41 — interface TrackedDomainRow
+- TrackingSettings · interface · L43-L62 — interface TrackingSettings
+- VisitedPage · interface · L64-L69 — interface VisitedPage
+- TouchSummary · interface · L71-L79 — interface TouchSummary
+- WebsiteActivity · interface · L81-L89 — interface WebsiteActivity
+- SourceRow · interface · L91-L96 — interface SourceRow
+- FoundInContainer · interface · L98-L101 — interface FoundInContainer
+- VerifyResult · type · L103-L118 — type VerifyResult = | { status: "found"; host: string; responseMs: number; allowed: boolean; pageView: boolean; container: FoundInContainer | null; } | { status: "missing"; host: string; responseMs: number; containers: string[]; } | { status: "unreachable"; host: string; detail: string };
+- TrackingService · class · L121-L567 — class TrackingService
+- constructor · method · L122-L125 — constructor( @InjectDatabase() private readonly db: Db, private readonly config: TrackingConfigService, )
+- settings · method · L127-L186 — async settings(userId: string): Promise<TrackingSettings>
+- setFlag · method · L188-L217 — async setFlag( userId: string, flag: | "crossDomain" | "limitToDomains" | "cookieSubdomains" | "secureCookies" | "honourDnt" | "paused", enabled: boolean, ): Promise<void>
+- setCookieDays · method · L219-L233 — async setCookieDays(userId: string, days: number): Promise<void>
+- addDomain · method · L235-L272 — async addDomain( userId: string, input: { host: string; scope: DomainScope }, ): Promise<TrackedDomainRow>
+- removeDomain · method · L274-L291 — async removeDomain(userId: string, id: string): Promise<void>
+- rotateSiteId · method · L293-L297 — async rotateSiteId(userId: string): Promise<{ siteId: string }>
+- verify · method · L299-L368 — async verify(userId: string, url: string): Promise<VerifyResult>
+- inContainers · method · L370-L392 — private async inContainers( containers: string[], siteId: string, ): Promise<FoundInContainer | null>
+- activityForCompany · method · L394-L401 — async activityForCompany(companyId: string): Promise<WebsiteActivity>
+- activityForContact · method · L403-L410 — async activityForContact(contactId: string): Promise<WebsiteActivity>
+- activityFor · method · L412-L493 — private async activityFor(visitorIds: string[]): Promise<WebsiteActivity>
+- sources · method · L495-L549 — async sources(userId: string): Promise<SourceRow[]>
+- assertCanManage · method · L551-L557 — private async assertCanManage(userId: string): Promise<void>
+- roleOf · method · L559-L566 — private async roleOf(userId: string): Promise<WorkspaceRole | null>
+- summarise · function · L569-L588 — function summarise(touch: { source: string | null; medium: string | null; campaign: string | null; landing: string | null; referrer: string | null; at: Date | null; }): TouchSummary | null
+- scriptUrl · function · L590-L592 — function scriptUrl(): string
+- snippet · function · L594-L596 — function snippet(siteId: string): string
+- absolute · function · L598-L612 — function absolute(input: string): URL | null
+- mentions · function · L614-L616 — function mentions(body: string, siteId: string): boolean

@@ -1,0 +1,6 @@
+{
+  "name": "financial-planning",
+  "command": "financial-planning",
+  "description": "Plan and manage the finances of a solopreneur business.",
+  "prompt": "Tu es un agent expert spécialisé dans : Plan and manage the finances of a solopreneur business..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

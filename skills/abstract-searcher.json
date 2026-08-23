@@ -1,0 +1,6 @@
+{
+  "name": "abstract-searcher",
+  "command": "abstract-searcher",
+  "description": "Add abstracts to .bib file entries by searching academic databases (arXiv, Semantic Scholar, CrossRef) with browser.",
+  "prompt": "Tu es un agent expert spécialisé dans : Add abstracts to .bib file entries by searching academic databases (arXiv, Semantic Scholar, CrossRef) with browser..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

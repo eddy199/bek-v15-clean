@@ -1,0 +1,6 @@
+{
+  "name": "qfc-order",
+  "command": "qfc-order",
+  "description": "Automate QFC (qfc.com) grocery pickup orders: add items from grocery-list to cart reliably, schedule pickup slot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate QFC (qfc.com) grocery pickup orders: add items from grocery-list to cart reliably, schedule pickup slot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

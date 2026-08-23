@@ -1,0 +1,6 @@
+{
+  "name": "solo-leveling",
+  "command": "solo-leveling",
+  "description": "Solo Leveling — a life RPG skill that turns real-world habits into an addictive progression system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Solo Leveling — a life RPG skill that turns real-world habits into an addictive progression system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mupibox-media-db",
+  "command": "mupibox-media-db",
+  "description": "Manage MuPiBox media database (data.json) through the MuPiBox backend API: list, add, remove, move, edit fields.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage MuPiBox media database (data.json) through the MuPiBox backend API: list, add, remove, move, edit fields..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

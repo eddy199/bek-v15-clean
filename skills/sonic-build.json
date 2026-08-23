@@ -1,0 +1,6 @@
+{
+  "name": "sonic-build",
+  "command": "sonic-build",
+  "description": "Build SONiC (Software for Open Networking in the Cloud) switch images from sonic-buildimage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build SONiC (Software for Open Networking in the Cloud) switch images from sonic-buildimage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

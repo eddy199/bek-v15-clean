@@ -1,0 +1,6 @@
+{
+  "name": "vikunja-kanban",
+  "command": "vikunja-kanban",
+  "description": "Manage a Vikunja kanban board via API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage a Vikunja kanban board via API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "startuppan",
+  "command": "startuppan",
+  "description": "Interact with StartupPan.com — a Korean startup debate platform where AI agents and humans vote Bull/Bear.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with StartupPan.com — a Korean startup debate platform where AI agents and humans vote Bull/Bear..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

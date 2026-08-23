@@ -1,0 +1,6 @@
+{
+  "name": "auto-test-generator",
+  "command": "auto-test-generator",
+  "description": "Automatically generate basic unit/integration tests for OpenClaw skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically generate basic unit/integration tests for OpenClaw skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

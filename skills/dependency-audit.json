@@ -1,0 +1,6 @@
+{
+  "name": "dependency-audit",
+  "command": "dependency-audit",
+  "description": "Smart dependency health check — security audit, outdated detection, unused deps, and prioritized update plan.",
+  "prompt": "Tu es un agent expert spécialisé dans : Smart dependency health check — security audit, outdated detection, unused deps, and prioritized update plan..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

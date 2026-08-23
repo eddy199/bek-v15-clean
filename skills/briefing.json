@@ -1,0 +1,6 @@
+{
+  "name": "briefing",
+  "command": "briefing",
+  "description": "Daily briefing: gathers calendar (gcalcli-calendar), active todos (todo-management), and weather.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily briefing: gathers calendar (gcalcli-calendar), active todos (todo-management), and weather..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

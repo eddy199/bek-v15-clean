@@ -1,0 +1,6 @@
+{
+  "name": "android-transfer-skill",
+  "command": "android-transfer-skill",
+  "description": "Securely transfers files from macOS to Android with checksum verification and path validation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Securely transfers files from macOS to Android with checksum verification and path validation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

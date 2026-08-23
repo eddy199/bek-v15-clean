@@ -1,0 +1,6 @@
+{
+  "name": "thingsboard-skill",
+  "command": "thingsboard-skill",
+  "description": "Manage ThingsBoard devices, dashboards, telemetry.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage ThingsBoard devices, dashboards, telemetry..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

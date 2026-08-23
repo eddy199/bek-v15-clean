@@ -1,0 +1,6 @@
+{
+  "name": "skill-store",
+  "command": "skill-store",
+  "description": "Smart skill installation advisor for ClawHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Smart skill installation advisor for ClawHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

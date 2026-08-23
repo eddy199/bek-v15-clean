@@ -1,0 +1,6 @@
+{
+  "name": "tg-groupchat-setup",
+  "command": "tg-groupchat-setup",
+  "description": "Configure a MoltBot agent to participate in a Telegram group chat.",
+  "prompt": "Tu es un agent expert spécialisé dans : Configure a MoltBot agent to participate in a Telegram group chat..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

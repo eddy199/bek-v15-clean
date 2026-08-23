@@ -1,0 +1,6 @@
+{
+  "name": "calendar-hold-sync",
+  "command": "calendar-hold-sync",
+  "description": "Sync one or more source Google calendars into private Busy hold events in one or more target calendars using gog.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sync one or more source Google calendars into private Busy hold events in one or more target calendars using gog..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

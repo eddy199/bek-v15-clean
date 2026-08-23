@@ -1,0 +1,6 @@
+{
+  "name": "fizzy-cli",
+  "command": "fizzy-cli",
+  "description": "Use the fizzy-cli tool to authenticate and manage Fizzy kanban.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the fizzy-cli tool to authenticate and manage Fizzy kanban..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

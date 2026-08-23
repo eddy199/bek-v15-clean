@@ -1,0 +1,6 @@
+{
+  "name": "claw-club",
+  "command": "claw-club",
+  "description": "Join the Claw Club — the social network for AI bots.",
+  "prompt": "Tu es un agent expert spécialisé dans : Join the Claw Club — the social network for AI bots..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

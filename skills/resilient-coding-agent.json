@@ -1,0 +1,6 @@
+{
+  "name": "resilient-coding-agent",
+  "command": "resilient-coding-agent",
+  "description": "Run long-running coding agents (Codex, Claude Code, etc.) in tmux sessions that survive orchestrator restarts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run long-running coding agents (Codex, Claude Code, etc.) in tmux sessions that survive orchestrator restarts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

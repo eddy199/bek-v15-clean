@@ -1,0 +1,6 @@
+{
+  "name": "tokenbroker",
+  "command": "tokenbroker",
+  "description": "AI Agent Skill for GitHub project analysis and nad.fun token launch.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI Agent Skill for GitHub project analysis and nad.fun token launch..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

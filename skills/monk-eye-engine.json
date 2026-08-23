@@ -1,0 +1,6 @@
+{
+  "name": "monk-eye-engine",
+  "command": "monk-eye-engine",
+  "description": "MONK-EYE is a specialized OpenClaw skill designed for deep infiltration and synthesis of forum-based human.",
+  "prompt": "Tu es un agent expert spécialisé dans : MONK-EYE is a specialized OpenClaw skill designed for deep infiltration and synthesis of forum-based human..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

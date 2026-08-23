@@ -1,0 +1,6 @@
+{
+  "name": "model-guard",
+  "command": "model-guard",
+  "description": "Automatically monitors Anti-Gravity model quotas and switches the default model to the one with the highest.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically monitors Anti-Gravity model quotas and switches the default model to the one with the highest..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

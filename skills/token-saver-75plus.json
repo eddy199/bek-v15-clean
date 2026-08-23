@@ -1,0 +1,6 @@
+{
+  "name": "token-saver-75plus",
+  "command": "token-saver-75plus",
+  "description": "Always-on token optimization + model routing protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Always-on token optimization + model routing protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

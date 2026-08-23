@@ -1,0 +1,6 @@
+{
+  "name": "reva",
+  "command": "reva",
+  "description": "Complete Reva wallet management - passwordless authentication, PayID name claiming, multi-chain crypto transfers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Reva wallet management - passwordless authentication, PayID name claiming, multi-chain crypto transfers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

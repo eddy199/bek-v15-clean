@@ -1,0 +1,6 @@
+{
+  "name": "my-nano-image",
+  "command": "my-nano-image",
+  "description": "Generate/edit images with Nano Banana Pro (Gemini 3 Pro Image)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate/edit images with Nano Banana Pro (Gemini 3 Pro Image).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

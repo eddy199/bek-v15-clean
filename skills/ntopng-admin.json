@@ -1,0 +1,6 @@
+{
+  "name": "ntopng-admin",
+  "command": "ntopng-admin",
+  "description": "Professional network monitoring and device identification using ntopng Redis data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Professional network monitoring and device identification using ntopng Redis data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

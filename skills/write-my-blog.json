@@ -1,0 +1,6 @@
+{
+  "name": "write-my-blog",
+  "command": "write-my-blog",
+  "description": "Enables the agent to create, manage, and publish a full-featured blog autonomously.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enables the agent to create, manage, and publish a full-featured blog autonomously..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

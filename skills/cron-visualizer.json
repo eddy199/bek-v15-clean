@@ -1,0 +1,6 @@
+{
+  "name": "cron-visualizer",
+  "command": "cron-visualizer",
+  "description": "Visualizes system cron jobs on a 24h timeline to identify overlaps and bottlenecks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Visualizes system cron jobs on a 24h timeline to identify overlaps and bottlenecks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

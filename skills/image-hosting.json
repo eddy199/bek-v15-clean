@@ -1,0 +1,6 @@
+{
+  "name": "image-hosting",
+  "command": "image-hosting",
+  "description": "Upload images to img402.dev and get a public URL.",
+  "prompt": "Tu es un agent expert spécialisé dans : Upload images to img402.dev and get a public URL..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "clawaudit",
+  "command": "clawaudit",
+  "description": "Official repo for clawaudit, coming soon as an automated security.",
+  "prompt": "Tu es un agent expert spécialisé dans : Official repo for clawaudit, coming soon as an automated security..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

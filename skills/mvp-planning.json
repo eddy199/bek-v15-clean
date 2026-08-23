@@ -1,0 +1,6 @@
+{
+  "name": "mvp-planning",
+  "command": "mvp-planning",
+  "description": "Plan and scope a Minimum Viable Product for a solopreneur.",
+  "prompt": "Tu es un agent expert spécialisé dans : Plan and scope a Minimum Viable Product for a solopreneur..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

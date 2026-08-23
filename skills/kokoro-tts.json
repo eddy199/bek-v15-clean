@@ -1,0 +1,6 @@
+{
+  "name": "kokoro-tts",
+  "command": "kokoro-tts",
+  "description": "Generate spoken audio from text using the local Kokoro TTS engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate spoken audio from text using the local Kokoro TTS engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

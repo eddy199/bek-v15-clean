@@ -1,0 +1,6 @@
+{
+  "name": "timely",
+  "command": "timely",
+  "description": "Manage Apple Reminders from the command line with geofencing support.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Apple Reminders from the command line with geofencing support..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

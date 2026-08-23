@@ -1,0 +1,6 @@
+{
+  "name": "vikunja-tasks",
+  "command": "vikunja-tasks",
+  "description": "Manage tasks and projects on a self-hosted Vikunja instance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage tasks and projects on a self-hosted Vikunja instance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

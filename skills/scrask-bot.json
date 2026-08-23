@@ -1,0 +1,6 @@
+{
+  "name": "scrask-bot",
+  "command": "scrask-bot",
+  "description": "When the user sends a screenshot via Telegram, parse it using Gemini (fast, default) with automatic Claude fallback.",
+  "prompt": "Tu es un agent expert spécialisé dans : When the user sends a screenshot via Telegram, parse it using Gemini (fast, default) with automatic Claude fallback..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

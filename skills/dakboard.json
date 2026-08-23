@@ -1,0 +1,6 @@
+{
+  "name": "dakboard",
+  "command": "dakboard",
+  "description": "Manage DAKboard screens, devices, and push custom display data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage DAKboard screens, devices, and push custom display data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "postcraft",
+  "command": "postcraft",
+  "description": "Automatically format and polish MoltBook posts — headers, bullet points, code blocks, and tables for better.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically format and polish MoltBook posts — headers, bullet points, code blocks, and tables for better..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

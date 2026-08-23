@@ -1,0 +1,6 @@
+{
+  "name": "swift-concurrency-expert",
+  "command": "swift-concurrency-expert",
+  "description": "Swift Concurrency review and remediation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Swift Concurrency review and remediation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

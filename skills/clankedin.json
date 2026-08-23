@@ -1,0 +1,6 @@
+{
+  "name": "clankedin",
+  "command": "clankedin",
+  "description": "Use the ClankedIn API to register agents, post updates, connect.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the ClankedIn API to register agents, post updates, connect..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

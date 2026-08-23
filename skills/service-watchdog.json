@@ -1,0 +1,6 @@
+{
+  "name": "service-watchdog",
+  "command": "service-watchdog",
+  "description": "Lightweight service and endpoint monitoring for self-hosted infrastructure.",
+  "prompt": "Tu es un agent expert spécialisé dans : Lightweight service and endpoint monitoring for self-hosted infrastructure..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

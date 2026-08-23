@@ -1,0 +1,6 @@
+{
+  "name": "agent-passport",
+  "command": "agent-passport",
+  "description": "OAuth for the agentic era — consent-gating for ALL sensitive agent actions including purchases, emails, file.",
+  "prompt": "Tu es un agent expert spécialisé dans : OAuth for the agentic era — consent-gating for ALL sensitive agent actions including purchases, emails, file..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

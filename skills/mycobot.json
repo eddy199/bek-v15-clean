@@ -1,0 +1,6 @@
+{
+  "name": "mycobot",
+  "command": "mycobot",
+  "description": "WhatsApp Business API integration with managed OAuth.",
+  "prompt": "Tu es un agent expert spécialisé dans : WhatsApp Business API integration with managed OAuth..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

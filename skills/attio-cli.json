@@ -1,0 +1,6 @@
+{
+  "name": "attio-cli",
+  "command": "attio-cli",
+  "description": "Interact with your Attio CRM workspace via the attio-cli.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with your Attio CRM workspace via the attio-cli..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

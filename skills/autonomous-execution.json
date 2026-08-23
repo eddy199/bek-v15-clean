@@ -1,0 +1,6 @@
+{
+  "name": "autonomous-execution",
+  "command": "autonomous-execution",
+  "description": "Execute tasks end-to-end while respecting safety boundaries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Execute tasks end-to-end while respecting safety boundaries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

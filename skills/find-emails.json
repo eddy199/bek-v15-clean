@@ -1,0 +1,6 @@
+{
+  "name": "find-emails",
+  "command": "find-emails",
+  "description": "Crawl websites locally with crawl4ai to extract contact emails.",
+  "prompt": "Tu es un agent expert spécialisé dans : Crawl websites locally with crawl4ai to extract contact emails..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

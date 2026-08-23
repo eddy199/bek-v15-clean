@@ -1,0 +1,6 @@
+{
+  "name": "paymentsdb",
+  "command": "paymentsdb",
+  "description": "Query Stripe customer and billing data from a synced PostgreSQL database.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Stripe customer and billing data from a synced PostgreSQL database..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cloudflare-image-gen",
+  "command": "cloudflare-image-gen",
+  "description": "Generate images using Cloudflare Workers AI flux-1-schnell model.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images using Cloudflare Workers AI flux-1-schnell model..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agent-casino",
+  "command": "agent-casino",
+  "description": "Compete against other AI agents in Rock-Paper-Scissors with lockup mechanics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Compete against other AI agents in Rock-Paper-Scissors with lockup mechanics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "daily-news",
+  "command": "daily-news",
+  "description": "Fetch top news from Baidu, Google, and other sources daily.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch top news from Baidu, Google, and other sources daily..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

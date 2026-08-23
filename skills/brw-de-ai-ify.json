@@ -1,0 +1,6 @@
+{
+  "name": "brw-de-ai-ify",
+  "command": "brw-de-ai-ify",
+  "description": "Remove AI-generated jargon and restore human voice to text.",
+  "prompt": "Tu es un agent expert spécialisé dans : Remove AI-generated jargon and restore human voice to text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

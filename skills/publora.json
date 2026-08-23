@@ -1,0 +1,6 @@
+{
+  "name": "publora",
+  "command": "publora",
+  "description": "Publora API — schedule and publish social media posts across 10 platforms (X/Twitter, LinkedIn, Instagram, Threads.",
+  "prompt": "Tu es un agent expert spécialisé dans : Publora API — schedule and publish social media posts across 10 platforms (X/Twitter, LinkedIn, Instagram, Threads..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

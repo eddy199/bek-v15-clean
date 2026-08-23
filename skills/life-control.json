@@ -1,0 +1,6 @@
+{
+  "name": "life-control",
+  "command": "life-control",
+  "description": "Orchestrate the Life Control CLI skill for OpenClaw agent fleets: initialize the Life Control database, register.",
+  "prompt": "Tu es un agent expert spécialisé dans : Orchestrate the Life Control CLI skill for OpenClaw agent fleets: initialize the Life Control database, register..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "porteden-email",
+  "command": "porteden-email",
+  "description": "PortEden Secure Email CLI for email management - Gmail, Outlook & Exchange - list, search, read, send, reply.",
+  "prompt": "Tu es un agent expert spécialisé dans : PortEden Secure Email CLI for email management - Gmail, Outlook & Exchange - list, search, read, send, reply..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

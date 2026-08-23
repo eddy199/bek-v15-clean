@@ -1,0 +1,6 @@
+{
+  "name": "brew-audit",
+  "command": "brew-audit",
+  "description": "Audit Homebrew installation — outdated packages, cleanup opportunities, and health checks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit Homebrew installation — outdated packages, cleanup opportunities, and health checks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

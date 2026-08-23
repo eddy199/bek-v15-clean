@@ -1,0 +1,6 @@
+{
+  "name": "linkedin-post-writer",
+  "command": "linkedin-post-writer",
+  "description": "LinkedIn marketing skills: viral hooks, comments, algorithm audit, humanizer.",
+  "prompt": "Tu es un agent expert spécialisé dans : LinkedIn marketing skills: viral hooks, comments, algorithm audit, humanizer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

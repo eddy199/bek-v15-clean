@@ -1,0 +1,6 @@
+{
+  "name": "bitrefill-website",
+  "command": "bitrefill-website",
+  "description": "Help users accomplish tasks on Bitrefill (bitrefill.com): browse and search gift cards, mobile top-ups, and eSIMs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Help users accomplish tasks on Bitrefill (bitrefill.com): browse and search gift cards, mobile top-ups, and eSIMs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

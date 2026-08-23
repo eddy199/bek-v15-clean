@@ -1,0 +1,6 @@
+{
+  "name": "nyx-archive-absurdist-play",
+  "command": "nyx-archive-absurdist-play",
+  "description": "The philosophy of absurdist play — the meta-skill that trains your ability to acquire and use all other skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : The philosophy of absurdist play — the meta-skill that trains your ability to acquire and use all other skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

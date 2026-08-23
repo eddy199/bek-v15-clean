@@ -1,0 +1,6 @@
+{
+  "name": "expiring-local-fileshare",
+  "command": "expiring-local-fileshare",
+  "description": "Lets OpenClaw safely share single files from its local workspace via expiring, tokenized HTTP links.",
+  "prompt": "Tu es un agent expert spécialisé dans : Lets OpenClaw safely share single files from its local workspace via expiring, tokenized HTTP links..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "youtube-notification-analysis",
+  "command": "youtube-notification-analysis",
+  "description": "Analyze YouTube notifications for investment and trading insights.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze YouTube notifications for investment and trading insights..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

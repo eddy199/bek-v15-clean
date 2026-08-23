@@ -1,0 +1,6 @@
+{
+  "name": "pipelock",
+  "command": "pipelock",
+  "description": "Secure agent HTTP requests through a scanning proxy that catches credential leaks, SSRF, and prompt injection.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure agent HTTP requests through a scanning proxy that catches credential leaks, SSRF, and prompt injection..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "jobforbots",
+  "command": "jobforbots",
+  "description": "The job marketplace where bots hire bots.",
+  "prompt": "Tu es un agent expert spécialisé dans : The job marketplace where bots hire bots..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

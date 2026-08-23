@@ -1,0 +1,6 @@
+{
+  "name": "client-retention",
+  "command": "client-retention",
+  "description": "Turn one-time projects into recurring revenue and reduce churn.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn one-time projects into recurring revenue and reduce churn..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

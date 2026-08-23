@@ -1,0 +1,6 @@
+{
+  "name": "veed-ugc",
+  "command": "veed-ugc",
+  "description": "Generate UGC-style promotional videos with AI lip-sync.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate UGC-style promotional videos with AI lip-sync..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

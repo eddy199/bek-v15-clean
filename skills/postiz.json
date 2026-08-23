@@ -1,0 +1,6 @@
+{
+  "name": "postiz",
+  "command": "postiz",
+  "description": "Schedule social media posts and threads across 28+ platforms.",
+  "prompt": "Tu es un agent expert spécialisé dans : Schedule social media posts and threads across 28+ platforms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

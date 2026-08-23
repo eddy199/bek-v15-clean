@@ -1,0 +1,6 @@
+{
+  "name": "opencal",
+  "command": "opencal",
+  "description": "Log meals, check nutrition progress, and manage calorie goals in the OpenCal app — hands-free via your AI agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Log meals, check nutrition progress, and manage calorie goals in the OpenCal app — hands-free via your AI agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

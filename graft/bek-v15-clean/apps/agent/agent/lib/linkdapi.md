@@ -1,0 +1,23 @@
+# bek-v15-clean/apps/agent/agent/lib/linkdapi.ts
+
+- Profile · type · L4-L17 — type Profile = { slug: string; profileUrl: string; fullName: string | null; firstName: string | null; lastName: string | null; headline: string | null; location: string | null; urn: string | null; followerCount: number | null; connectionsCount: number | null; photoUrl: string | null; positions: { name: string; url: string | null }[]; };
+- Company · type · L19-L26 — type Company = { id: string | null; name: string | null; universalName: string | null; tagline: string | null; description: string | null; linkedinUrl: string | null; };
+- Experience · type · L28-L33 — type Experience = { title: string | null; company: string | null; dateRange: string | null; location: string | null; };
+- Outcome · type · L35-L38 — type Outcome<T> = | { ok: true; data: T } | { ok: false; missing: true } | { ok: false; missing: false; reason: string };
+- key · function · L40-L42 — function key(): string | null
+- linkedinEnabled · function · L44-L46 — function linkedinEnabled(): boolean
+- slugFromProfileUrl · function · L48-L64 — function slugFromProfileUrl(raw: string | null): string | null
+- getProfile · function · L66-L92 — async function getProfile(slug: string): Promise<Outcome<Profile>>
+- getExperience · function · L94-L118 — async function getExperience( urn: string, ): Promise<Outcome<Experience[]>>
+- lookupCompany · function · L120-L134 — async function lookupCompany( query: string, ): Promise<Outcome<{ id: string; displayName: string }[]>>
+- getCompany · function · L136-L155 — async function getCompany(nameOrId: string): Promise<Outcome<Company>>
+- call · function · L157-L204 — async function call<T>( path: string, params: Record<string, string>, ): Promise<Outcome<T>>
+- RawProfile · type · L206-L216 — type RawProfile = { fullName?: unknown; firstName?: unknown; lastName?: unknown; headline?: unknown; location?: unknown; urn?: unknown; followerCount?: unknown; connectionsCount?: unknown; CurrentPositions?: { name?: string; url?: unknown }[] | null; } & Record<string, unknown>;
+- profilePhotoUrl · function · L232-L252 — function profilePhotoUrl(raw: Record<string, unknown>): string | null
+- firstUrl · function · L254-L274 — function firstUrl(value: unknown): string | null
+- RawExperienceRow · type · L276-L283 — type RawExperienceRow = { title?: unknown; companyName?: unknown; company?: unknown; dateRange?: unknown; duration?: unknown; location?: unknown; };
+- RawExperience · type · L285-L287 — type RawExperience = | RawExperienceRow[] | { experience?: RawExperienceRow[]; experiences?: RawExperienceRow[] };
+- RawLookup · type · L288-L288 — type RawLookup = { companies?: { id?: string; displayName?: string }[] | null };
+- RawCompany · type · L289-L296 — type RawCompany = { id?: unknown; name?: unknown; universalName?: unknown; tagline?: unknown; description?: unknown; linkedinUrl?: unknown; };
+- str · function · L298-L300 — function str(value: unknown): string | null
+- int · function · L302-L304 — function int(value: unknown): number | null

@@ -1,0 +1,6 @@
+{
+  "name": "smart-daily-assistant",
+  "command": "smart-daily-assistant",
+  "description": "When user asks to set reminders, save quick notes, get morning briefing, draft messages, use quick reply templates.",
+  "prompt": "Tu es un agent expert spécialisé dans : When user asks to set reminders, save quick notes, get morning briefing, draft messages, use quick reply templates..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

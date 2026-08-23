@@ -1,0 +1,6 @@
+{
+  "name": "web-scraper-as-a-service",
+  "command": "web-scraper-as-a-service",
+  "description": "Build client-ready web scrapers with clean data output.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build client-ready web scrapers with clean data output..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

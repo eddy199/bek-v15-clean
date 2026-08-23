@@ -1,0 +1,6 @@
+{
+  "name": "golden-master",
+  "command": "golden-master",
+  "description": "Track source-of-truth relationships between files — know.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track source-of-truth relationships between files — know..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

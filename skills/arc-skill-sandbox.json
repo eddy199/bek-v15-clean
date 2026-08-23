@@ -1,0 +1,6 @@
+{
+  "name": "arc-skill-sandbox",
+  "command": "arc-skill-sandbox",
+  "description": "Test untrusted skills in an isolated environment before installing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Test untrusted skills in an isolated environment before installing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

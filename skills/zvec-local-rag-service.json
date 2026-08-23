@@ -1,0 +1,6 @@
+{
+  "name": "zvec-local-rag-service",
+  "command": "zvec-local-rag-service",
+  "description": "Operate an always-on local semantic-search service using zvec + Ollama embeddings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Operate an always-on local semantic-search service using zvec + Ollama embeddings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "trawl",
+  "command": "trawl",
+  "description": "Autonomous lead generation through agent social networks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous lead generation through agent social networks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

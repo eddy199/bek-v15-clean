@@ -1,0 +1,6 @@
+{
+  "name": "claude-max-proxy-setup",
+  "command": "claude-max-proxy-setup",
+  "description": "Use when an agent or developer wants to reduce Claude API costs, route requests through a Claude Max or Pro.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when an agent or developer wants to reduce Claude API costs, route requests through a Claude Max or Pro..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

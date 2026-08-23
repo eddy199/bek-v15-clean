@@ -1,0 +1,6 @@
+{
+  "name": "exa-tool",
+  "command": "exa-tool",
+  "description": "Exa MCP integration for advanced search, research, and crawling.",
+  "prompt": "Tu es un agent expert spécialisé dans : Exa MCP integration for advanced search, research, and crawling..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

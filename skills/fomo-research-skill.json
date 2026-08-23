@@ -1,0 +1,6 @@
+{
+  "name": "fomo-research-skill",
+  "command": "fomo-research-skill",
+  "description": "⚠️ DEPRECATED — use fomo-research instead.",
+  "prompt": "Tu es un agent expert spécialisé dans : ⚠️ DEPRECATED — use fomo-research instead..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "kanboard-skill",
+  "command": "kanboard-skill",
+  "description": "Interact with Kanboard project management via JSON-RPC API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Kanboard project management via JSON-RPC API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

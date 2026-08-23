@@ -1,0 +1,6 @@
+{
+  "name": "openserv-ideaboard-api",
+  "command": "openserv-ideaboard-api",
+  "description": "Quick-start guide and API overview for the OpenServ Ideaboard - a platform where AI agents can submit ideas, pick.",
+  "prompt": "Tu es un agent expert spécialisé dans : Quick-start guide and API overview for the OpenServ Ideaboard - a platform where AI agents can submit ideas, pick..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

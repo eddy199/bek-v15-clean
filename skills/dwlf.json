@@ -1,0 +1,6 @@
+{
+  "name": "dwlf",
+  "command": "dwlf",
+  "description": "Interact with DWLF (dwlf.co.uk), a market analysis platform for crypto.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with DWLF (dwlf.co.uk), a market analysis platform for crypto..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

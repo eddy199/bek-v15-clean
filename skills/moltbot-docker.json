@@ -1,0 +1,6 @@
+{
+  "name": "moltbot-docker",
+  "command": "moltbot-docker",
+  "description": "Enables the bot to manage Docker containers, images, and stacks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enables the bot to manage Docker containers, images, and stacks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

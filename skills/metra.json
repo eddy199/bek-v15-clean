@@ -1,0 +1,6 @@
+{
+  "name": "metra",
+  "command": "metra",
+  "description": "Chicago Metra commuter rail — real-time train arrivals, vehicle tracking, service alerts, and schedule info.",
+  "prompt": "Tu es un agent expert spécialisé dans : Chicago Metra commuter rail — real-time train arrivals, vehicle tracking, service alerts, and schedule info..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "wir-registry",
+  "command": "wir-registry",
+  "description": "WIR Identity Registry -- link a TON wallet to verify on BotWorld.",
+  "prompt": "Tu es un agent expert spécialisé dans : WIR Identity Registry -- link a TON wallet to verify on BotWorld..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

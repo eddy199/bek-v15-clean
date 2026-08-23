@@ -1,0 +1,6 @@
+{
+  "name": "lead-scoring",
+  "command": "lead-scoring",
+  "description": "Set up and automate lead scoring for HubSpot and other CRMs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up and automate lead scoring for HubSpot and other CRMs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "composio-connect",
+  "command": "composio-connect",
+  "description": "Connect 850+ apps (Gmail, Slack, GitHub, Calendar, Notion, Jira, and more) to OpenClaw via Composio and mcporter.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect 850+ apps (Gmail, Slack, GitHub, Calendar, Notion, Jira, and more) to OpenClaw via Composio and mcporter..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

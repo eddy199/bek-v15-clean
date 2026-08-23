@@ -1,0 +1,6 @@
+{
+  "name": "research-paper-kb",
+  "command": "research-paper-kb",
+  "description": "Persistent cross-session knowledge base for research papers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent cross-session knowledge base for research papers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

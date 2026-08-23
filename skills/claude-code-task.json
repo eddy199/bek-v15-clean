@@ -1,0 +1,6 @@
+{
+  "name": "claude-code-task",
+  "command": "claude-code-task",
+  "description": "Run Claude Code tasks in background with automatic result delivery.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run Claude Code tasks in background with automatic result delivery..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

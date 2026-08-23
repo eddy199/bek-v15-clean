@@ -1,0 +1,6 @@
+{
+  "name": "agent-team-orchestration",
+  "command": "agent-team-orchestration",
+  "description": "Orchestrate multi-agent teams with defined roles, task lifecycles, handoff protocols, and review workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Orchestrate multi-agent teams with defined roles, task lifecycles, handoff protocols, and review workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

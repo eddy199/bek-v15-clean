@@ -1,0 +1,6 @@
+{
+  "name": "lb-zod-skill",
+  "command": "lb-zod-skill",
+  "description": "Complete Zod validation library documentation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Zod validation library documentation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

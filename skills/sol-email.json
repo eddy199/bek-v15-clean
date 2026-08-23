@@ -1,0 +1,6 @@
+{
+  "name": "sol-email",
+  "command": "sol-email",
+  "description": "Read and send emails via himalaya (Maildir) and SMTP. Real inbox, real replies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read and send emails via himalaya (Maildir) and SMTP. Real inbox, real replies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "chaos-mind",
+  "command": "chaos-mind",
+  "description": "Hybrid search memory system for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hybrid search memory system for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

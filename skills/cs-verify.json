@@ -1,0 +1,6 @@
+{
+  "name": "cs-verify",
+  "command": "cs-verify",
+  "description": "Verify factual claims against live data sources.",
+  "prompt": "Tu es un agent expert spécialisé dans : Verify factual claims against live data sources..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

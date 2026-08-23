@@ -1,0 +1,6 @@
+{
+  "name": "check-analytics",
+  "command": "check-analytics",
+  "description": "Audit existing Google Analytics implementation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit existing Google Analytics implementation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

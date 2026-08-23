@@ -1,0 +1,6 @@
+{
+  "name": "email-capture-generator",
+  "command": "email-capture-generator",
+  "description": "Build high-converting lead magnets, squeeze pages, and email capture funnels using proven 5-section conversion.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build high-converting lead magnets, squeeze pages, and email capture funnels using proven 5-section conversion..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

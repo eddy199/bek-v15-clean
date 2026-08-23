@@ -1,0 +1,6 @@
+{
+  "name": "nak",
+  "command": "nak",
+  "description": "The Nostr Army Knife (nak) CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Nostr Army Knife (nak) CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

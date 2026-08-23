@@ -1,0 +1,6 @@
+{
+  "name": "cst-time",
+  "command": "cst-time",
+  "description": "Provides methods and tools for obtaining local host CST (China Standard Time)",
+  "prompt": "Tu es un agent expert spécialisé dans : Provides methods and tools for obtaining local host CST (China Standard Time).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

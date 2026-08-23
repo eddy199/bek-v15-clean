@@ -1,0 +1,6 @@
+{
+  "name": "smart-models",
+  "command": "smart-models",
+  "description": "Intelligent multi-model router — automatically selects the best AI model based on task type (vision, image.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intelligent multi-model router — automatically selects the best AI model based on task type (vision, image..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

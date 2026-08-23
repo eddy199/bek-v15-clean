@@ -1,0 +1,6 @@
+{
+  "name": "ksef-accountant-en",
+  "command": "ksef-accountant-en",
+  "description": "National e-Invoice System (KSeF) accounting assistant in English.",
+  "prompt": "Tu es un agent expert spécialisé dans : National e-Invoice System (KSeF) accounting assistant in English..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "kj-web-design-guidelines",
+  "command": "kj-web-design-guidelines",
+  "description": "Review UI code for Web Interface Guidelines compliance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Review UI code for Web Interface Guidelines compliance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

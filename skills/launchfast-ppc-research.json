@@ -1,0 +1,6 @@
+{
+  "name": "launchfast-ppc-research",
+  "command": "launchfast-ppc-research",
+  "description": "Amazon PPC keyword research using the LaunchFast MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Amazon PPC keyword research using the LaunchFast MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

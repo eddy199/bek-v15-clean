@@ -1,0 +1,6 @@
+{
+  "name": "seedance2-api",
+  "command": "seedance2-api",
+  "description": "Out-of-the-box Seedance 2.0 API skill — just one API key to generate AI videos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Out-of-the-box Seedance 2.0 API skill — just one API key to generate AI videos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

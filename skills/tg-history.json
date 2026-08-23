@@ -1,0 +1,6 @@
+{
+  "name": "tg-history",
+  "command": "tg-history",
+  "description": "Efficiently extract and read Telegram group chat history as text, bypassing screenshots/OCR for zero-token-waste.",
+  "prompt": "Tu es un agent expert spécialisé dans : Efficiently extract and read Telegram group chat history as text, bypassing screenshots/OCR for zero-token-waste..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "anti-tempmail",
+  "command": "anti-tempmail",
+  "description": "Validate email addresses against temporary/disposable email providers using AntiTempMail API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Validate email addresses against temporary/disposable email providers using AntiTempMail API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

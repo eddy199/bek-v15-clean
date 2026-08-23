@@ -1,0 +1,6 @@
+{
+  "name": "critical-article-writer",
+  "command": "critical-article-writer",
+  "description": "Generate draft articles, outlines.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate draft articles, outlines..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

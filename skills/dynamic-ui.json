@@ -1,0 +1,6 @@
+{
+  "name": "dynamic-ui",
+  "command": "dynamic-ui",
+  "description": "Render tables, charts, stats, cards, and dashboards as images using HTML templates and wkhtmltoimage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Render tables, charts, stats, cards, and dashboards as images using HTML templates and wkhtmltoimage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

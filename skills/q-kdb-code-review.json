@@ -1,0 +1,6 @@
+{
+  "name": "q-kdb-code-review",
+  "command": "q-kdb-code-review",
+  "description": "AI-powered code review for Q/kdb+ — catch bugs in the most terse language in finance.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered code review for Q/kdb+ — catch bugs in the most terse language in finance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

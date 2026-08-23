@@ -1,0 +1,6 @@
+{
+  "name": "yt-to-blog",
+  "command": "yt-to-blog",
+  "description": "Full content pipeline: YouTube URL → transcript → blog post → Substack draft → X/Twitter thread → vertical video.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full content pipeline: YouTube URL → transcript → blog post → Substack draft → X/Twitter thread → vertical video..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

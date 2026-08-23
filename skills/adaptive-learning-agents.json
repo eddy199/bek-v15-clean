@@ -1,0 +1,6 @@
+{
+  "name": "adaptive-learning-agents",
+  "command": "adaptive-learning-agents",
+  "description": "**Learn from errors and corrections in real-time.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Learn from errors and corrections in real-time..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

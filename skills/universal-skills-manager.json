@@ -1,0 +1,6 @@
+{
+  "name": "universal-skills-manager",
+  "command": "universal-skills-manager",
+  "description": "The master coordinator for AI skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : The master coordinator for AI skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

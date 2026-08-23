@@ -1,0 +1,6 @@
+{
+  "name": "duffel",
+  "command": "duffel",
+  "description": "Search, book, and manage flights via the Duffel Flights API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, book, and manage flights via the Duffel Flights API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

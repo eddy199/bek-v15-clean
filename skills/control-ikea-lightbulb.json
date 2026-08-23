@@ -1,0 +1,6 @@
+{
+  "name": "control-ikea-lightbulb",
+  "command": "control-ikea-lightbulb",
+  "description": "Control IKEA/TP-Link Kasa smart bulbs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control IKEA/TP-Link Kasa smart bulbs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

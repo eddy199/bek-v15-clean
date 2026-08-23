@@ -1,0 +1,6 @@
+{
+  "name": "system-watchdog",
+  "command": "system-watchdog",
+  "description": "System resource monitoring that detects wasteful or suspicious processes.",
+  "prompt": "Tu es un agent expert spécialisé dans : System resource monitoring that detects wasteful or suspicious processes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

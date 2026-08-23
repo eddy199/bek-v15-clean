@@ -1,0 +1,6 @@
+{
+  "name": "message-injector",
+  "command": "message-injector",
+  "description": "OpenClaw plugin that prepends custom text to every user message before it reaches the agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw plugin that prepends custom text to every user message before it reaches the agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

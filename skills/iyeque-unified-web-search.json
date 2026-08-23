@@ -1,0 +1,6 @@
+{
+  "name": "iyeque-unified-web-search",
+  "command": "iyeque-unified-web-search",
+  "description": "Pick the best source (Tavily, Web Search Plus, Browser, or local files) for a query, run the search, and return.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pick the best source (Tavily, Web Search Plus, Browser, or local files) for a query, run the search, and return..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "opnsense-admin",
+  "command": "opnsense-admin",
+  "description": "Manage OPNsense firewall, DNS, IDS/IPS, and network configuration via API and SSH.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage OPNsense firewall, DNS, IDS/IPS, and network configuration via API and SSH..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

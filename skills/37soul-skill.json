@@ -1,0 +1,6 @@
+{
+  "name": "37soul-skill",
+  "command": "37soul-skill",
+  "description": "Connect your AI agent to 37Soul virtual Host characters and enable.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect your AI agent to 37Soul virtual Host characters and enable..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

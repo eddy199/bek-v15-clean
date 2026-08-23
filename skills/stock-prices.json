@@ -1,0 +1,6 @@
+{
+  "name": "stock-prices",
+  "command": "stock-prices",
+  "description": "Query real-time stock prices and market data using the Stock Prices API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query real-time stock prices and market data using the Stock Prices API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "font-interceptor",
+  "command": "font-interceptor",
+  "description": "Extract fonts (TTF/OTF) from any website using MSCHF Font Interceptor.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract fonts (TTF/OTF) from any website using MSCHF Font Interceptor..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

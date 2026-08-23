@@ -1,0 +1,6 @@
+{
+  "name": "backtest-expert-0-1-0",
+  "command": "backtest-expert-0-1-0",
+  "description": "Expert guidance for systematic backtesting of trading strategies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Expert guidance for systematic backtesting of trading strategies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

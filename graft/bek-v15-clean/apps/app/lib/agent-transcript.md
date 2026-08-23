@@ -1,0 +1,43 @@
+# bek-v15-clean/apps/app/lib/agent-transcript.ts
+
+- TranscriptItem · type · L9-L28 — type TranscriptItem = | { kind: "said"; id: string; mine: boolean; text: string } | { kind: "reasoned"; id: string; streaming: boolean; text: string } | { kind: "asked"; id: string; question: EveMessageInputRequest; } | { kind: "did"; id: string; label: string; input: Record<string, unknown> | null; output: unknown; tone: Tone; pending: boolean; sources: Source[]; tool: string; errorText: string | null; };
+- Tone · type · L30-L30 — type Tone = "neutral" | "success" | "warning";
+- Source · type · L32-L36 — type Source = { url: string; title: string; network: "linkedin" | "github" | "web"; };
+- AgentTurnFailure · type · L38-L41 — type AgentTurnFailure = { code: string; kind: "rate-limit" | "restricted" | "credits" | "unknown"; };
+- AgentStreamEvent · type · L43-L46 — type AgentStreamEvent = { type: string; data?: unknown; };
+- humanise · function · L90-L93 — function humanise(tool: string): string
+- TranscriptMessage · type · L95-L99 — type TranscriptMessage = { id: string; mine: boolean; items: TranscriptItem[]; };
+- ConversationTimelineItem · type · L101-L105 — type ConversationTimelineItem< TSubmission extends { id: string; createdAt: string }, > = | { kind: "submission"; id: string; submission: TSubmission } | { kind: "assistant"; id: string; message: EveMessage };
+- messagesFromEvents · function · L107-L116 — function messagesFromEvents( events: readonly MessageStreamEvent[], ): readonly EveMessage[]
+- eventStreamSettled · function · L126-L131 — function eventStreamSettled( events: readonly { type: string }[], ): boolean
+- conversationTimeline · function · L133-L196 — function conversationTimeline< TSubmission extends { id: string; createdAt: string }, >( submissions: readonly TSubmission[], events: readonly MessageStreamEvent[], messages: readonly EveMessage[], ): ConversationTimelineItem<TSubmission>[]
+- toTranscript · function · L198-L264 — function toTranscript( messages: readonly EveMessage[], ): TranscriptMessage[]
+- partId · function · L266-L277 — function partId( messageId: string, part: EveMessagePart, index: number, ): string
+- toolName · function · L279-L284 — function toolName(part: EveMessagePart): string
+- describe · function · L288-L294 — function describe(part: EveMessagePart): string
+- outcomeTone · function · L296-L306 — function outcomeTone(part: EveMessagePart): Tone
+- sourcesOf · function · L308-L332 — function sourcesOf(part: EveMessagePart): Source[]
+- pendingQuestion · function · L334-L345 — function pendingQuestion(messages: readonly EveMessage[])
+- latestTurnFailure · function · L347-L381 — function latestTurnFailure( events: readonly AgentStreamEvent[], ): AgentTurnFailure | null
+- output · function · L383-L387 — function output(part: EveMessagePart): Record<string, unknown> | null
+- input · function · L389-L393 — function input(part: EveMessagePart): Record<string, unknown> | null
+- errorTextOf · function · L395-L399 — function errorTextOf(part: EveMessagePart): string | null
+- recordOf · function · L401-L405 — function recordOf(value: unknown): Record<string, unknown>
+- stringOf · function · L407-L409 — function stringOf(value: unknown): string | null
+- timestampOf · function · L411-L414 — function timestampOf(value: string): number
+- hostOf · function · L416-L422 — function hostOf(url: string): string
+- DealListItem · type · L424-L448 — type DealListItem = { id: string; name: string; stage: string; amount: number | null; currency: string; company: { id: string; name: string; domain: string | null; iconUrl: string | null; iconDarkUrl: string | null; iconTone: string | null; logoUrl: string | null; }; owner: { id: string; name: string; email: string; image: string | null; } | null; daysSinceLastActivity: number; neverActive: boolean; expectedCloseDate: string | null; };
+- DealListResult · type · L450-L460 — type DealListResult = { asOf: string; criteria: { status: string; inactiveForDays: number | null; companyId: string | null; ownerId: string | null; }; deals: DealListItem[]; hasMore: boolean; };
+- dealListResultOf · function · L462-L491 — function dealListResultOf(value: unknown): DealListResult | null
+- groupDealListPages · function · L493-L519 — function groupDealListPages( pages: readonly { itemId: string; value: DealListResult }[], ): { itemId: string; value: DealListResult }[]
+- mergeDealListResultPages · function · L521-L540 — function mergeDealListResultPages( results: readonly DealListResult[], ): DealListResult[]
+- stripMarkdownTables · function · L542-L568 — function stripMarkdownTables(markdown: string): string
+- splitMarkdownTable · function · L570-L597 — function splitMarkdownTable(markdown: string): { after: string; before: string; found: boolean; }
+- dealListItemOf · function · L599-L662 — function dealListItemOf(value: unknown): DealListItem | null
+- numberOf · function · L664-L666 — function numberOf(value: unknown): number | null
+- nullableNumberOf · function · L668-L670 — function nullableNumberOf(value: unknown): number | null | undefined
+- nullableStringOf · function · L672-L674 — function nullableStringOf(value: unknown): string | null | undefined
+- isMarkdownTableSeparator · function · L676-L678 — function isMarkdownTableSeparator(line: string): boolean
+- isMarkdownTableRow · function · L680-L683 — function isMarkdownTableRow(line: string): boolean
+- normaliseMarkdown · function · L685-L687 — function normaliseMarkdown(markdown: string): string
+- resolveThread · function · L691-L708 — function resolveThread<T extends { id: string }>({ conversations, fromUrl, landedOn, }: { conversations: readonly T[]; fromUrl: string | null; landedOn: string | null; }): { openId: string | null; current: T | null }

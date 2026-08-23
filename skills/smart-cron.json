@@ -1,0 +1,6 @@
+{
+  "name": "smart-cron",
+  "command": "smart-cron",
+  "description": "Schedule any OpenClaw task using plain English.",
+  "prompt": "Tu es un agent expert spécialisé dans : Schedule any OpenClaw task using plain English..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

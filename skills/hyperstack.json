@@ -1,0 +1,6 @@
+{
+  "name": "hyperstack",
+  "command": "hyperstack",
+  "description": "The Agent Provenance Graph for AI agents — the only memory layer where agents can prove what they knew, trace why.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Agent Provenance Graph for AI agents — the only memory layer where agents can prove what they knew, trace why..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

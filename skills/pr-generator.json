@@ -1,0 +1,6 @@
+{
+  "name": "pr-generator",
+  "command": "pr-generator",
+  "description": "Generate QR codes from text, URLs, or images.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate QR codes from text, URLs, or images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,32 @@
+# ============================================
+# Blueprint Render — API NestJS
+# Chemin : E:\\crm-release\\render.yaml
+# ============================================
+services:
+  - type: web
+    name: crm-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/api/Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: PORT
+        value: "3001"
+      - key: NODE_ENV
+        value: "production"
+      - key: AGENT_URL
+        sync: false
+        # Remplacer par l'URL Render de l'agent
+        # Exemple : https://crm-agent-xxx.onrender.com
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: BETTER_AUTH_SECRET
+        sync: false
+      - key: BETTER_AUTH_URL
+        sync: false
+        # Exemple : https://crm-api-xxx.onrender.com

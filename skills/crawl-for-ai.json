@@ -1,0 +1,6 @@
+{
+  "name": "crawl-for-ai",
+  "command": "crawl-for-ai",
+  "description": "Web scraping using local Crawl4AI instance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Web scraping using local Crawl4AI instance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

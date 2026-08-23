@@ -1,0 +1,6 @@
+{
+  "name": "ollama-x-z-image-turbo",
+  "command": "ollama-x-z-image-turbo",
+  "description": "Génère des images via **Ollama** (modèle `x/z-image-turbo`) et les envoie sur WhatsApp.",
+  "prompt": "Tu es un agent expert spécialisé dans : Génère des images via **Ollama** (modèle `x/z-image-turbo`) et les envoie sur WhatsApp..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

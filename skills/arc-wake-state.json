@@ -1,0 +1,6 @@
+{
+  "name": "arc-wake-state",
+  "command": "arc-wake-state",
+  "description": "Persist agent state across crashes, context deaths, and restarts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persist agent state across crashes, context deaths, and restarts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

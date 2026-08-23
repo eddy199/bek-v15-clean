@@ -1,0 +1,6 @@
+{
+  "name": "gumroad-analytics",
+  "command": "gumroad-analytics",
+  "description": "Pull analytics from Gumroad API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pull analytics from Gumroad API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

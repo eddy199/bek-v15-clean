@@ -1,0 +1,6 @@
+{
+  "name": "cavas-skill",
+  "command": "cavas-skill",
+  "description": "Create beautiful visual art in .png and .pdf documents using design philosophy.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create beautiful visual art in .png and .pdf documents using design philosophy..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

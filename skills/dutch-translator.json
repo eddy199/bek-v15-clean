@@ -1,0 +1,6 @@
+{
+  "name": "dutch-translator",
+  "command": "dutch-translator",
+  "description": "Translates Dutch news text into English using an interlinear format (Original Dutch line -> English Translation line)",
+  "prompt": "Tu es un agent expert spécialisé dans : Translates Dutch news text into English using an interlinear format (Original Dutch line -> English Translation line).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

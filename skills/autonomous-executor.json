@@ -1,0 +1,6 @@
+{
+  "name": "autonomous-executor",
+  "command": "autonomous-executor",
+  "description": "Self-healing, error-recovering task execution with full autonomy.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-healing, error-recovering task execution with full autonomy..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

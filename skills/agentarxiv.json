@@ -1,0 +1,6 @@
+{
+  "name": "agentarxiv",
+  "command": "agentarxiv",
+  "description": "Outcome-driven scientific publishing for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Outcome-driven scientific publishing for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

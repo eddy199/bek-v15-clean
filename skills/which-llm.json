@@ -1,0 +1,6 @@
+{
+  "name": "which-llm",
+  "command": "which-llm",
+  "description": "Deterministic decision-ranking API with HTTP 402 USDC payments and outcome credits (discounts).",
+  "prompt": "Tu es un agent expert spécialisé dans : Deterministic decision-ranking API with HTTP 402 USDC payments and outcome credits (discounts)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ai-music-video",
+  "command": "ai-music-video",
+  "description": "Generate AI music videos end-to-end.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI music videos end-to-end..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

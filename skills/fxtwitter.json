@@ -1,0 +1,6 @@
+{
+  "name": "fxtwitter",
+  "command": "fxtwitter",
+  "description": "Fetch tweet/post data from X (Twitter) links using the fxTwitter API (api.fxtwitter.com)",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch tweet/post data from X (Twitter) links using the fxTwitter API (api.fxtwitter.com).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

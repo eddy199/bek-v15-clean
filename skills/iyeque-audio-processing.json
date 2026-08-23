@@ -1,0 +1,6 @@
+{
+  "name": "iyeque-audio-processing",
+  "command": "iyeque-audio-processing",
+  "description": "Audio ingestion, analysis, transformation, and generation (Transcribe, TTS, VAD, Features).",
+  "prompt": "Tu es un agent expert spécialisé dans : Audio ingestion, analysis, transformation, and generation (Transcribe, TTS, VAD, Features)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

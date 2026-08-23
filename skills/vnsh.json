@@ -1,0 +1,6 @@
+{
+  "name": "vnsh",
+  "command": "vnsh",
+  "description": "Securely share files via encrypted, expiring links.",
+  "prompt": "Tu es un agent expert spécialisé dans : Securely share files via encrypted, expiring links..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

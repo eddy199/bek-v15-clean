@@ -1,0 +1,6 @@
+{
+  "name": "medical-research-toolkit",
+  "command": "medical-research-toolkit",
+  "description": "Query 14+ biomedical databases for drug repurposing, target discovery, clinical trials, and literature research.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query 14+ biomedical databases for drug repurposing, target discovery, clinical trials, and literature research..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

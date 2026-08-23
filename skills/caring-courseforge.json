@@ -1,0 +1,6 @@
+{
+  "name": "caring-courseforge",
+  "command": "caring-courseforge",
+  "description": "Create and manage online courses via the CourseForge API (caringcourseforge.com)",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage online courses via the CourseForge API (caringcourseforge.com).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

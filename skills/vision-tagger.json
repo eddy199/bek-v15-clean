@@ -1,0 +1,6 @@
+{
+  "name": "vision-tagger",
+  "command": "vision-tagger",
+  "description": "Tag and annotate images using Apple Vision framework (macOS only)",
+  "prompt": "Tu es un agent expert spécialisé dans : Tag and annotate images using Apple Vision framework (macOS only).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "funky-fund-flamingo",
+  "command": "funky-fund-flamingo",
+  "description": "Repair-first self-evolution for OpenClaw — audit logs, memory, and skills; run measurable mutation cycles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Repair-first self-evolution for OpenClaw — audit logs, memory, and skills; run measurable mutation cycles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

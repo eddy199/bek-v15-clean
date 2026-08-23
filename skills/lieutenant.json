@@ -1,0 +1,6 @@
+{
+  "name": "lieutenant",
+  "command": "lieutenant",
+  "description": "AI agent security and trust verification.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent security and trust verification..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

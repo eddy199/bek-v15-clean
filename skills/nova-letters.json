@@ -1,0 +1,6 @@
+{
+  "name": "nova-letters",
+  "command": "nova-letters",
+  "description": "Write reflective letters to your future self.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write reflective letters to your future self..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

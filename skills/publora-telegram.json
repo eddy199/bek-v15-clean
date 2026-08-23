@@ -1,0 +1,6 @@
+{
+  "name": "publora-telegram",
+  "command": "publora-telegram",
+  "description": "Post or schedule content to a Telegram channel using the Publora API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post or schedule content to a Telegram channel using the Publora API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

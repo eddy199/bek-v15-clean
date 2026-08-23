@@ -1,0 +1,6 @@
+{
+  "name": "billy-emergency-repair",
+  "command": "billy-emergency-repair",
+  "description": "- Neill explicitly requests Billy system repair.",
+  "prompt": "Tu es un agent expert spécialisé dans : - Neill explicitly requests Billy system repair..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

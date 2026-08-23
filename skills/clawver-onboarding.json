@@ -1,0 +1,6 @@
+{
+  "name": "clawver-onboarding",
+  "command": "clawver-onboarding",
+  "description": "Set up a new Clawver store.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up a new Clawver store..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

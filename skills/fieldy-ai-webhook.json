@@ -1,0 +1,6 @@
+{
+  "name": "fieldy-ai-webhook",
+  "command": "fieldy-ai-webhook",
+  "description": "Wire a Fieldy webhook transform into Moltbot hooks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Wire a Fieldy webhook transform into Moltbot hooks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

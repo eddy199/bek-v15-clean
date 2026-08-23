@@ -1,0 +1,6 @@
+{
+  "name": "rollhub-casino",
+  "command": "rollhub-casino",
+  "description": "Provably fair crypto casino API for AI agents and humans.",
+  "prompt": "Tu es un agent expert spécialisé dans : Provably fair crypto casino API for AI agents and humans..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

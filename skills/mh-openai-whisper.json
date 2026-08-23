@@ -1,0 +1,6 @@
+{
+  "name": "mh-openai-whisper",
+  "command": "mh-openai-whisper",
+  "description": "Local speech-to-text with the Whisper CLI (no API key).",
+  "prompt": "Tu es un agent expert spécialisé dans : Local speech-to-text with the Whisper CLI (no API key)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

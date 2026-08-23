@@ -1,0 +1,6 @@
+{
+  "name": "mayguard",
+  "command": "mayguard",
+  "description": "A security auditor for agent skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : A security auditor for agent skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

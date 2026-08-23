@@ -1,0 +1,6 @@
+{
+  "name": "emily-radix-assistant",
+  "command": "emily-radix-assistant",
+  "description": "Query Radix DLT blockchain data including wallet balances and performance, token prices and market movers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Radix DLT blockchain data including wallet balances and performance, token prices and market movers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "crypto-market-analyzer",
+  "command": "crypto-market-analyzer",
+  "description": "Cryptocurrency market analysis for Bitcoin and Ethereum.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cryptocurrency market analysis for Bitcoin and Ethereum..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "rhandus-file-management",
+  "command": "rhandus-file-management",
+  "description": "Google Drive file management for OpenClaw using gog CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Google Drive file management for OpenClaw using gog CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

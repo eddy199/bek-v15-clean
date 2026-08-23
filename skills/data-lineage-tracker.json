@@ -1,0 +1,6 @@
+{
+  "name": "data-lineage-tracker",
+  "command": "data-lineage-tracker",
+  "description": "Track data origin, transformations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track data origin, transformations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

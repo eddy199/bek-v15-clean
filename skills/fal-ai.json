@@ -1,0 +1,6 @@
+{
+  "name": "fal-ai",
+  "command": "fal-ai",
+  "description": "Generate images, videos, and audio via fal.ai API (FLUX, SDXL, Whisper, etc.).",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images, videos, and audio via fal.ai API (FLUX, SDXL, Whisper, etc.)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "fzf-fuzzy-finder",
+  "command": "fzf-fuzzy-finder",
+  "description": "Command-line fuzzy finder for interactive filtering.",
+  "prompt": "Tu es un agent expert spécialisé dans : Command-line fuzzy finder for interactive filtering..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

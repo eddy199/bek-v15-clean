@@ -1,0 +1,6 @@
+{
+  "name": "tutti",
+  "command": "tutti",
+  "description": "Orchestrate multiple AI coding agents (Claude Code, Codex, Aider) from a single config — launch teams, run workflows, tr",
+  "prompt": "Tu es un agent expert spécialisé dans : Orchestrate multiple AI coding agents (Claude Code, Codex, Aider) from a single config — launch teams, run workflows, track capacity, and manage handoffs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

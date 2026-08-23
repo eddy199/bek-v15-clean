@@ -1,0 +1,6 @@
+{
+  "name": "ima-knowledge-ai",
+  "command": "ima-knowledge-ai",
+  "description": "AI content brief and production guide for video, image, and audio.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI content brief and production guide for video, image, and audio..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

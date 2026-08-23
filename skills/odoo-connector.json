@@ -1,0 +1,6 @@
+{
+  "name": "odoo-connector",
+  "command": "odoo-connector",
+  "description": "Full-featured Odoo 19 ERP connector for OpenClaw - Sales, CRM, Purchase, Inventory, Projects, HR, Fleet.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full-featured Odoo 19 ERP connector for OpenClaw - Sales, CRM, Purchase, Inventory, Projects, HR, Fleet..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mlx-audio-server",
+  "command": "mlx-audio-server",
+  "description": "A fast, accurate, and fully local OpenAI-compatible API.",
+  "prompt": "Tu es un agent expert spécialisé dans : A fast, accurate, and fully local OpenAI-compatible API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

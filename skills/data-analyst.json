@@ -1,0 +1,6 @@
+{
+  "name": "data-analyst",
+  "command": "data-analyst",
+  "description": "Data visualization, report generation, SQL queries, and spreadsheet.",
+  "prompt": "Tu es un agent expert spécialisé dans : Data visualization, report generation, SQL queries, and spreadsheet..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

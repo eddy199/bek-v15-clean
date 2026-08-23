@@ -1,0 +1,6 @@
+{
+  "name": "workcrm",
+  "command": "workcrm",
+  "description": "A lightweight, local-first CRM with an explicit confirmation gate.",
+  "prompt": "Tu es un agent expert spécialisé dans : A lightweight, local-first CRM with an explicit confirmation gate..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

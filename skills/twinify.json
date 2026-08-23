@@ -1,0 +1,6 @@
+{
+  "name": "twinify",
+  "command": "twinify",
+  "description": "Create AI digital twins of real people from WhatsApp chat history exports.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create AI digital twins of real people from WhatsApp chat history exports..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

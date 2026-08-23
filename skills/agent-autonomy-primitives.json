@@ -1,0 +1,6 @@
+{
+  "name": "agent-autonomy-primitives",
+  "command": "agent-autonomy-primitives",
+  "description": "Build long-running autonomous agent loops using ClawVault primitives (tasks, projects, memory types, templates.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build long-running autonomous agent loops using ClawVault primitives (tasks, projects, memory types, templates..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

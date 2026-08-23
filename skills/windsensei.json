@@ -1,0 +1,6 @@
+{
+  "name": "windsensei",
+  "command": "windsensei",
+  "description": "Check wind and weather conditions for wind sports (kitesurfing, wingfoiling, surfing)",
+  "prompt": "Tu es un agent expert spécialisé dans : Check wind and weather conditions for wind sports (kitesurfing, wingfoiling, surfing).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

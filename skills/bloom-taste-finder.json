@@ -1,0 +1,6 @@
+{
+  "name": "bloom-taste-finder",
+  "command": "bloom-taste-finder",
+  "description": "Bloom Taste Finder — discover your builder taste across 4 spectrums and get a personalized tool stack.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bloom Taste Finder — discover your builder taste across 4 spectrums and get a personalized tool stack..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "bluepages",
+  "command": "bluepages",
+  "description": "Look up wallet address <> Twitter/Farcaster identity mappings via Bluepages.fyi.",
+  "prompt": "Tu es un agent expert spécialisé dans : Look up wallet address <> Twitter/Farcaster identity mappings via Bluepages.fyi..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

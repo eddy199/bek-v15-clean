@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-skill-extractor",
+  "command": "arxiv-skill-extractor",
+  "description": "Automates the process of extracting reusable skill code from arXiv papers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automates the process of extracting reusable skill code from arXiv papers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

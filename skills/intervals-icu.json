@@ -1,0 +1,6 @@
+{
+  "name": "intervals-icu",
+  "command": "intervals-icu",
+  "description": "Complete guide for accessing and managing training data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete guide for accessing and managing training data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

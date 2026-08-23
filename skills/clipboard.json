@@ -1,0 +1,6 @@
+{
+  "name": "clipboard",
+  "command": "clipboard",
+  "description": "Interact with the system clipboard (text only) using `xclip` from any OpenClaw session.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with the system clipboard (text only) using `xclip` from any OpenClaw session..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

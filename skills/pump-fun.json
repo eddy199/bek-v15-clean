@@ -1,0 +1,6 @@
+{
+  "name": "pump-fun",
+  "command": "pump-fun",
+  "description": "Buy, sell, and launch tokens on Pump.fun using the PumpPortal API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Buy, sell, and launch tokens on Pump.fun using the PumpPortal API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "brew-install",
+  "command": "brew-install",
+  "description": "Install missing binaries via dnf (Fedora/Bazzite package manager).",
+  "prompt": "Tu es un agent expert spécialisé dans : Install missing binaries via dnf (Fedora/Bazzite package manager)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

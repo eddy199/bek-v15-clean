@@ -1,0 +1,6 @@
+{
+  "name": "newman",
+  "command": "newman",
+  "description": "Automated API testing with Postman collections via Newman CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated API testing with Postman collections via Newman CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

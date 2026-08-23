@@ -1,0 +1,6 @@
+{
+  "name": "mh-bear-notes",
+  "command": "mh-bear-notes",
+  "description": "Create, search, and manage Bear notes via grizzly CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, search, and manage Bear notes via grizzly CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

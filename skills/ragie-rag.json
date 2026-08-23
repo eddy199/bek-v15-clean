@@ -1,0 +1,6 @@
+{
+  "name": "ragie-rag",
+  "command": "ragie-rag",
+  "description": "Execute Retrieval-Augmented Generation (RAG) using Ragie.ai.",
+  "prompt": "Tu es un agent expert spécialisé dans : Execute Retrieval-Augmented Generation (RAG) using Ragie.ai..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

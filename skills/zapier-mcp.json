@@ -1,0 +1,6 @@
+{
+  "name": "zapier-mcp",
+  "command": "zapier-mcp",
+  "description": "Connect 8,000+ apps via Zapier MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect 8,000+ apps via Zapier MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

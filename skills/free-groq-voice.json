@@ -1,0 +1,6 @@
+{
+  "name": "free-groq-voice",
+  "command": "free-groq-voice",
+  "description": "FREE voice recognition using Groq's complimentary Whisper API.",
+  "prompt": "Tu es un agent expert spécialisé dans : FREE voice recognition using Groq's complimentary Whisper API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

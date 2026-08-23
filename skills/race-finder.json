@@ -1,0 +1,6 @@
+{
+  "name": "race-finder",
+  "command": "race-finder",
+  "description": "Find upcoming races — running, trail, triathlon, cycling, swimming, and obstacle courses.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find upcoming races — running, trail, triathlon, cycling, swimming, and obstacle courses..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

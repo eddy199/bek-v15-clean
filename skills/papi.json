@@ -1,0 +1,6 @@
+{
+  "name": "papi",
+  "command": "papi",
+  "description": "Complete WhatsApp automation API with microservices architecture.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete WhatsApp automation API with microservices architecture..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

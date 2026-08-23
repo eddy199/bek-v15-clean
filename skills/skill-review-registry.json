@@ -1,0 +1,6 @@
+{
+  "name": "skill-review-registry",
+  "command": "skill-review-registry",
+  "description": "Public review registry for OpenClaw skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Public review registry for OpenClaw skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agent-task-manager",
+  "command": "agent-task-manager",
+  "description": "Manages and orchestrates multi-step, stateful agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manages and orchestrates multi-step, stateful agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

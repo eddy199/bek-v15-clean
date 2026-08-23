@@ -1,0 +1,6 @@
+{
+  "name": "oc-content-repurposer",
+  "command": "oc-content-repurposer",
+  "description": "Repurpose any blog post or article into multiple social media formats.",
+  "prompt": "Tu es un agent expert spécialisé dans : Repurpose any blog post or article into multiple social media formats..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

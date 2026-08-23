@@ -1,0 +1,6 @@
+{
+  "name": "encrypted-docs",
+  "command": "encrypted-docs",
+  "description": "End-to-end encrypted .md documents for agents & humans to collaborate.",
+  "prompt": "Tu es un agent expert spécialisé dans : End-to-end encrypted .md documents for agents & humans to collaborate..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

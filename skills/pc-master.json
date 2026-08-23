@@ -1,0 +1,6 @@
+{
+  "name": "pc-master",
+  "command": "pc-master",
+  "description": "Control the Windows PC from WSL2.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control the Windows PC from WSL2..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

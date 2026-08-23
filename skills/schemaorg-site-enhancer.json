@@ -1,0 +1,6 @@
+{
+  "name": "schemaorg-site-enhancer",
+  "command": "schemaorg-site-enhancer",
+  "description": "Enhances agent-built websites with proper schema.org structured data for SEO, rich snippets, and search engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enhances agent-built websites with proper schema.org structured data for SEO, rich snippets, and search engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

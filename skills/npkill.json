@@ -1,0 +1,6 @@
+{
+  "name": "npkill",
+  "command": "npkill",
+  "description": "Clean up node_modules and .next folders to free up disk space using npkill.",
+  "prompt": "Tu es un agent expert spécialisé dans : Clean up node_modules and .next folders to free up disk space using npkill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

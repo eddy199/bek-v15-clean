@@ -1,0 +1,6 @@
+{
+  "name": "ai-podcast",
+  "command": "ai-podcast",
+  "description": "PDF to podcast and text to podcast in a natural two-person format with MagicPodcast.",
+  "prompt": "Tu es un agent expert spécialisé dans : PDF to podcast and text to podcast in a natural two-person format with MagicPodcast..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

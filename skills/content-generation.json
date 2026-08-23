@@ -1,0 +1,6 @@
+{
+  "name": "content-generation",
+  "command": "content-generation",
+  "description": "Generate high-quality content across multiple formats.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate high-quality content across multiple formats..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

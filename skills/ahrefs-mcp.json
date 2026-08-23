@@ -1,0 +1,6 @@
+{
+  "name": "ahrefs-mcp",
+  "command": "ahrefs-mcp",
+  "description": "Access Ahrefs SEO data through Model Context Protocol (MCP) for comprehensive SEO analysis, keyword research.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Ahrefs SEO data through Model Context Protocol (MCP) for comprehensive SEO analysis, keyword research..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

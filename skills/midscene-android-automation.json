@@ -1,0 +1,6 @@
+{
+  "name": "midscene-android-automation",
+  "command": "midscene-android-automation",
+  "description": "Vision-driven Android device automation using Midscene.",
+  "prompt": "Tu es un agent expert spécialisé dans : Vision-driven Android device automation using Midscene..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

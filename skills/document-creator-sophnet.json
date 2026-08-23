@@ -1,0 +1,6 @@
+{
+  "name": "document-creator-sophnet",
+  "command": "document-creator-sophnet",
+  "description": "An integrated document creation skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : An integrated document creation skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

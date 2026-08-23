@@ -1,0 +1,6 @@
+{
+  "name": "nft-tracker",
+  "command": "nft-tracker",
+  "description": "Track NFT collection prices, floor prices, and sales data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track NFT collection prices, floor prices, and sales data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

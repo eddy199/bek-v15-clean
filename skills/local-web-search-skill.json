@@ -1,0 +1,6 @@
+{
+  "name": "local-web-search-skill",
+  "command": "local-web-search-skill",
+  "description": "Free local web search via DuckDuckGo HTML scraping with no API key.",
+  "prompt": "Tu es un agent expert spécialisé dans : Free local web search via DuckDuckGo HTML scraping with no API key..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

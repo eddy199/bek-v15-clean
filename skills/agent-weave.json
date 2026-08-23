@@ -1,0 +1,6 @@
+{
+  "name": "agent-weave",
+  "command": "agent-weave",
+  "description": "Master-Worker Agent Cluster for parallel task execution.",
+  "prompt": "Tu es un agent expert spécialisé dans : Master-Worker Agent Cluster for parallel task execution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

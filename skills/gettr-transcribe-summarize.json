@@ -1,0 +1,6 @@
+{
+  "name": "gettr-transcribe-summarize",
+  "command": "gettr-transcribe-summarize",
+  "description": "Download audio from a GETTR post.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download audio from a GETTR post..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

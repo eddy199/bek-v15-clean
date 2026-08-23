@@ -1,0 +1,6 @@
+{
+  "name": "soccer-cli",
+  "command": "soccer-cli",
+  "description": "A CLI to check soccer scores, game details, and player stats from your terminal.",
+  "prompt": "Tu es un agent expert spécialisé dans : A CLI to check soccer scores, game details, and player stats from your terminal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

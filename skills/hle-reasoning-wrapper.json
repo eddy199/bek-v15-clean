@@ -1,0 +1,6 @@
+{
+  "name": "hle-reasoning-wrapper",
+  "command": "hle-reasoning-wrapper",
+  "description": "Wraps HLE benchmark questions in a structured Chain-of-Thought (CoT) reasoning process.",
+  "prompt": "Tu es un agent expert spécialisé dans : Wraps HLE benchmark questions in a structured Chain-of-Thought (CoT) reasoning process..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

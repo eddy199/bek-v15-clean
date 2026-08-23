@@ -1,0 +1,6 @@
+{
+  "name": "customer-feedback",
+  "command": "customer-feedback",
+  "description": "Collect, analyze, and act on customer feedback to improve your product and business.",
+  "prompt": "Tu es un agent expert spécialisé dans : Collect, analyze, and act on customer feedback to improve your product and business..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

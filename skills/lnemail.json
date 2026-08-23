@@ -1,0 +1,6 @@
+{
+  "name": "lnemail",
+  "command": "lnemail",
+  "description": "Setup and use anonymous email accounts on LNemail.net using Bitcoin Lightning payments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Setup and use anonymous email accounts on LNemail.net using Bitcoin Lightning payments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

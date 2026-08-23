@@ -1,0 +1,6 @@
+{
+  "name": "android-3d-developer",
+  "command": "android-3d-developer",
+  "description": "Help build and optimize 3D games and interactive experiences on Android, using engines and frameworks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Help build and optimize 3D games and interactive experiences on Android, using engines and frameworks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

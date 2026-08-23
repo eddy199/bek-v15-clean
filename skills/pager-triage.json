@@ -1,0 +1,6 @@
+{
+  "name": "pager-triage",
+  "command": "pager-triage",
+  "description": "AI-powered incident triage for PagerDuty.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered incident triage for PagerDuty..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

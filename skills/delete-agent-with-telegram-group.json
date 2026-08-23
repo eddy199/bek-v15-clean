@@ -1,0 +1,6 @@
+{
+  "name": "delete-agent-with-telegram-group",
+  "command": "delete-agent-with-telegram-group",
+  "description": "Safely and thoroughly delete an OpenClaw agent and its artifacts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Safely and thoroughly delete an OpenClaw agent and its artifacts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "brainstorming-2",
+  "command": "brainstorming-2",
+  "description": "Socratic design refinement before coding.",
+  "prompt": "Tu es un agent expert spécialisé dans : Socratic design refinement before coding..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

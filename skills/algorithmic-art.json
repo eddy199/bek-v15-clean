@@ -1,0 +1,6 @@
+{
+  "name": "algorithmic-art",
+  "command": "algorithmic-art",
+  "description": "Creating algorithmic art using p5.js with seeded randomness.",
+  "prompt": "Tu es un agent expert spécialisé dans : Creating algorithmic art using p5.js with seeded randomness..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

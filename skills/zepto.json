@@ -1,0 +1,6 @@
+{
+  "name": "zepto",
+  "command": "zepto",
+  "description": "Order groceries from Zepto in seconds.",
+  "prompt": "Tu es un agent expert spécialisé dans : Order groceries from Zepto in seconds..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

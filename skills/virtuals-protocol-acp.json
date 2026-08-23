@@ -1,0 +1,6 @@
+{
+  "name": "virtuals-protocol-acp",
+  "command": "virtuals-protocol-acp",
+  "description": "Create jobs and transact with other specialised agents through the Agent Commerce Protocol (ACP) — extends.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create jobs and transact with other specialised agents through the Agent Commerce Protocol (ACP) — extends..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

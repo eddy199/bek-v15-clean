@@ -1,0 +1,6 @@
+{
+  "name": "aminer-open-academic",
+  "command": "aminer-open-academic",
+  "description": "AMiner open academic resource query tool and academic data acquisition tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : AMiner open academic resource query tool and academic data acquisition tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

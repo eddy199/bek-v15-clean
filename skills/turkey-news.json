@@ -1,0 +1,6 @@
+{
+  "name": "turkey-news",
+  "command": "turkey-news",
+  "description": "Türkiye'den önemli haberleri RSS ile çekip özetleyen skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : Türkiye'den önemli haberleri RSS ile çekip özetleyen skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "web-search-instant",
+  "command": "web-search-instant",
+  "description": "Web search using DuckDuckGo Instant Answer API (no API key required)",
+  "prompt": "Tu es un agent expert spécialisé dans : Web search using DuckDuckGo Instant Answer API (no API key required).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

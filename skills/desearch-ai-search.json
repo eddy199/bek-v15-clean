@@ -1,0 +1,6 @@
+{
+  "name": "desearch-ai-search",
+  "command": "desearch-ai-search",
+  "description": "AI-powered search that aggregates and summarizes results from multiple sources including web, X/Twitter, Reddit.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered search that aggregates and summarizes results from multiple sources including web, X/Twitter, Reddit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

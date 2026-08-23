@@ -1,0 +1,6 @@
+{
+  "name": "zhipu-asr",
+  "command": "zhipu-asr",
+  "description": "Automatic Speech Recognition (ASR) using Zhipu AI (BigModel) GLM-ASR model.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatic Speech Recognition (ASR) using Zhipu AI (BigModel) GLM-ASR model..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "visualization",
+  "command": "visualization",
+  "description": "AI-driven professional data visualization for financial analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-driven professional data visualization for financial analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

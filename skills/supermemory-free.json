@@ -1,0 +1,6 @@
+{
+  "name": "supermemory-free",
+  "command": "supermemory-free",
+  "description": "Cloud knowledge backup and retrieval using Supermemory.ai free tier.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cloud knowledge backup and retrieval using Supermemory.ai free tier..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

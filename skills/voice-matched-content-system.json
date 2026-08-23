@@ -1,0 +1,6 @@
+{
+  "name": "voice-matched-content-system",
+  "command": "voice-matched-content-system",
+  "description": "Extract someone's authentic writing voice from samples, build a complete Voice DNA profile, then generate content.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract someone's authentic writing voice from samples, build a complete Voice DNA profile, then generate content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

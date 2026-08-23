@@ -1,0 +1,6 @@
+{
+  "name": "near-agent-skills",
+  "command": "near-agent-skills",
+  "description": "Comprehensive agentic skills for NEAR Protocol, including gas optimization and on-chain analytics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive agentic skills for NEAR Protocol, including gas optimization and on-chain analytics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

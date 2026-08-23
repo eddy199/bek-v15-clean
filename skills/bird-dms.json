@@ -1,0 +1,6 @@
+{
+  "name": "bird-dms",
+  "command": "bird-dms",
+  "description": "An add-on to the Bird skill that lets your agent check its X/Twitter DM.",
+  "prompt": "Tu es un agent expert spécialisé dans : An add-on to the Bird skill that lets your agent check its X/Twitter DM..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

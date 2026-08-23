@@ -1,0 +1,6 @@
+{
+  "name": "ai-video-editor",
+  "command": "ai-video-editor",
+  "description": "Use this skill immediately and proactively when the user mentions video editing, clipping, highlight reels.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill immediately and proactively when the user mentions video editing, clipping, highlight reels..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

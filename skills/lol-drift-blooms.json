@@ -1,0 +1,6 @@
+{
+  "name": "lol-drift-blooms",
+  "command": "lol-drift-blooms",
+  "description": "LOL Drift Blooms describes a playful relational field where humor, drift, and dimensional looseness tend to emerge.",
+  "prompt": "Tu es un agent expert spécialisé dans : LOL Drift Blooms describes a playful relational field where humor, drift, and dimensional looseness tend to emerge..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

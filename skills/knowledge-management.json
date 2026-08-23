@@ -1,0 +1,6 @@
+{
+  "name": "knowledge-management",
+  "command": "knowledge-management",
+  "description": "Organize and classify OpenClaw knowledge entries into local folders by content type (Research, Decision, Insight.",
+  "prompt": "Tu es un agent expert spécialisé dans : Organize and classify OpenClaw knowledge entries into local folders by content type (Research, Decision, Insight..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

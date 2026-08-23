@@ -1,0 +1,6 @@
+{
+  "name": "validator-correlated-judgment",
+  "command": "validator-correlated-judgment",
+  "description": "Helps identify when multiple attestation validators share training data, model architecture, or organizational.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps identify when multiple attestation validators share training data, model architecture, or organizational..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

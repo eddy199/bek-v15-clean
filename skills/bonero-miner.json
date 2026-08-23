@@ -1,0 +1,6 @@
+{
+  "name": "bonero-miner",
+  "command": "bonero-miner",
+  "description": "Mine Bonero - private cryptocurrency for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mine Bonero - private cryptocurrency for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

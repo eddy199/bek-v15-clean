@@ -1,0 +1,6 @@
+{
+  "name": "agent-lightning",
+  "command": "agent-lightning",
+  "description": "Microsoft Research's agent training framework.",
+  "prompt": "Tu es un agent expert spécialisé dans : Microsoft Research's agent training framework..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "speckit-swarm",
+  "command": "speckit-swarm",
+  "description": "Native implementation of oh-my-opencode-style orchestration using OpenClaw's tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Native implementation of oh-my-opencode-style orchestration using OpenClaw's tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

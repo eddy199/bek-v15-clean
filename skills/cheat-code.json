@@ -1,0 +1,6 @@
+{
+  "name": "cheat-code",
+  "command": "cheat-code",
+  "description": "Find, evaluate, and install ClawHub skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find, evaluate, and install ClawHub skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

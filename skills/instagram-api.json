@@ -1,0 +1,6 @@
+{
+  "name": "instagram-api",
+  "command": "instagram-api",
+  "description": "Post to Instagram (Feed, Story, Reels, Carousel) and Threads using the official Meta Graph API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post to Instagram (Feed, Story, Reels, Carousel) and Threads using the official Meta Graph API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "citedy-seo-agent",
+  "command": "citedy-seo-agent",
+  "description": "Connect your AI agent to Citedy's SEO content platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect your AI agent to Citedy's SEO content platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "japanese-tutor",
+  "command": "japanese-tutor",
+  "description": "Interactive Japanese learning assistant.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interactive Japanese learning assistant..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

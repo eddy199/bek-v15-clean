@@ -1,0 +1,6 @@
+{
+  "name": "nemo",
+  "command": "nemo",
+  "description": "Search engine for MCP tools and agent skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search engine for MCP tools and agent skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

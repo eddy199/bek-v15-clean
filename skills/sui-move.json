@@ -1,0 +1,6 @@
+{
+  "name": "sui-move",
+  "command": "sui-move",
+  "description": "Sui blockchain and Move smart contract development.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sui blockchain and Move smart contract development..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

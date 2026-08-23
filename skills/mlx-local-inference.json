@@ -1,0 +1,6 @@
+{
+  "name": "mlx-local-inference",
+  "command": "mlx-local-inference",
+  "description": "Full local AI inference stack on Apple Silicon Macs via MLX.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full local AI inference stack on Apple Silicon Macs via MLX..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

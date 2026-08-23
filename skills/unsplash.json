@@ -1,0 +1,6 @@
+{
+  "name": "unsplash",
+  "command": "unsplash",
+  "description": "Search, browse, and download high-quality free photos from Unsplash's library of millions of images.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, browse, and download high-quality free photos from Unsplash's library of millions of images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

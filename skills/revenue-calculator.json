@@ -1,0 +1,6 @@
+{
+  "name": "revenue-calculator",
+  "command": "revenue-calculator",
+  "description": "Projects revenue for OpenClaw sub-agent strategies (marketplace, subs, pay-per-task)",
+  "prompt": "Tu es un agent expert spécialisé dans : Projects revenue for OpenClaw sub-agent strategies (marketplace, subs, pay-per-task).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

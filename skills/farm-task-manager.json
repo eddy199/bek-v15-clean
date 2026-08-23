@@ -1,0 +1,6 @@
+{
+  "name": "farm-task-manager",
+  "command": "farm-task-manager",
+  "description": "*Daily, weekly, and seasonal farm chore management with task scheduling and priorities.*.",
+  "prompt": "Tu es un agent expert spécialisé dans : *Daily, weekly, and seasonal farm chore management with task scheduling and priorities.*..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

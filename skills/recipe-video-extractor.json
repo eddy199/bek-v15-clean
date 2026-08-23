@@ -1,0 +1,6 @@
+{
+  "name": "recipe-video-extractor",
+  "command": "recipe-video-extractor",
+  "description": "Extract a structured cooking recipe from a shared video URL when the user sends `recipe <url>`.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract a structured cooking recipe from a shared video URL when the user sends `recipe <url>`..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

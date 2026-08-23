@@ -1,0 +1,6 @@
+{
+  "name": "gep-immune-auditor",
+  "command": "gep-immune-auditor",
+  "description": "Security audit agent for GEP/EvoMap ecosystem.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security audit agent for GEP/EvoMap ecosystem..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

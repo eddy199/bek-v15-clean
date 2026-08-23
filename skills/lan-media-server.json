@@ -1,0 +1,6 @@
+{
+  "name": "lan-media-server",
+  "command": "lan-media-server",
+  "description": "Share images, screenshots, and files from the AI workspace to users on the local network via HTTP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Share images, screenshots, and files from the AI workspace to users on the local network via HTTP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

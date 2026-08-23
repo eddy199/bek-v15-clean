@@ -1,0 +1,6 @@
+{
+  "name": "rollhub-analyst",
+  "command": "rollhub-analyst",
+  "description": "Research and backtest gambling strategies on provably fair crypto casino.",
+  "prompt": "Tu es un agent expert spécialisé dans : Research and backtest gambling strategies on provably fair crypto casino..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

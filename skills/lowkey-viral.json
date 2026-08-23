@@ -1,0 +1,6 @@
+{
+  "name": "lowkey-viral",
+  "command": "lowkey-viral",
+  "description": "Create short-form social media videos and photo carousel slideshows using the lowkey viral API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create short-form social media videos and photo carousel slideshows using the lowkey viral API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

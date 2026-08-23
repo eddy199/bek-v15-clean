@@ -1,0 +1,6 @@
+{
+  "name": "bort-agent",
+  "command": "bort-agent",
+  "description": "Interact with BORT AI agents on BNB Chain via BAP-578.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with BORT AI agents on BNB Chain via BAP-578..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

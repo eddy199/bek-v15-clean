@@ -1,0 +1,6 @@
+{
+  "name": "safe-update",
+  "command": "safe-update",
+  "description": "Update OpenClaw from source code.",
+  "prompt": "Tu es un agent expert spécialisé dans : Update OpenClaw from source code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ipcam",
+  "command": "ipcam",
+  "description": "ONVIF PTZ control + RTSP capture + camera discovery.",
+  "prompt": "Tu es un agent expert spécialisé dans : ONVIF PTZ control + RTSP capture + camera discovery..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

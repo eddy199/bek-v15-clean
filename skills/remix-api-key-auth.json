@@ -1,0 +1,6 @@
+{
+  "name": "remix-api-key-auth",
+  "command": "remix-api-key-auth",
+  "description": "Configure and verify bearer API key authentication for Remix agent publishing workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Configure and verify bearer API key authentication for Remix agent publishing workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

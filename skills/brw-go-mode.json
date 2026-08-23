@@ -1,0 +1,6 @@
+{
+  "name": "brw-go-mode",
+  "command": "brw-go-mode",
+  "description": "Give me a goal.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give me a goal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-project-guardian",
+  "command": "sovereign-project-guardian",
+  "description": "Project health and best practices enforcer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Project health and best practices enforcer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

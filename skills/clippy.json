@@ -1,0 +1,6 @@
+{
+  "name": "clippy",
+  "command": "clippy",
+  "description": "Microsoft 365 / Outlook CLI for calendar and email.",
+  "prompt": "Tu es un agent expert spécialisé dans : Microsoft 365 / Outlook CLI for calendar and email..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

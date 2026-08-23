@@ -1,0 +1,6 @@
+{
+  "name": "link-brain",
+  "command": "link-brain",
+  "description": "Local knowledge base for links.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local knowledge base for links..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

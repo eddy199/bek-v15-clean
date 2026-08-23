@@ -1,0 +1,6 @@
+{
+  "name": "wiz-light-control",
+  "command": "wiz-light-control",
+  "description": "Controls Wiz smart bulbs (turn on/off, RGB colors, disco mode) via local WiFi.",
+  "prompt": "Tu es un agent expert spécialisé dans : Controls Wiz smart bulbs (turn on/off, RGB colors, disco mode) via local WiFi..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

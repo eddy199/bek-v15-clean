@@ -1,0 +1,6 @@
+{
+  "name": "kaspa",
+  "command": "kaspa",
+  "description": "Simple wallet for Kaspa blockchain.",
+  "prompt": "Tu es un agent expert spécialisé dans : Simple wallet for Kaspa blockchain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

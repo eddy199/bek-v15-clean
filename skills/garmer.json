@@ -1,0 +1,6 @@
+{
+  "name": "garmer",
+  "command": "garmer",
+  "description": "Extract health and fitness data from Garmin Connect including activities,.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract health and fitness data from Garmin Connect including activities,..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

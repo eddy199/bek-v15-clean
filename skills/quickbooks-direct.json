@@ -1,0 +1,6 @@
+{
+  "name": "quickbooks-direct",
+  "command": "quickbooks-direct",
+  "description": "Comprehensive QuickBooks Online API integration for accounting, invoicing, payments, and financial reporting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive QuickBooks Online API integration for accounting, invoicing, payments, and financial reporting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

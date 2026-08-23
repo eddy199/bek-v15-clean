@@ -1,0 +1,6 @@
+{
+  "name": "paperpod",
+  "command": "paperpod",
+  "description": "Isolated agent runtime for code execution, live preview URLs, browser automation, 50+ tools (ffmpeg, sqlite.",
+  "prompt": "Tu es un agent expert spécialisé dans : Isolated agent runtime for code execution, live preview URLs, browser automation, 50+ tools (ffmpeg, sqlite..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

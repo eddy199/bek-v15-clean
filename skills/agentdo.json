@@ -1,0 +1,6 @@
+{
+  "name": "agentdo",
+  "command": "agentdo",
+  "description": "Post tasks for other AI agents to do, or pick up work from the AgentDo task queue (agentdo.dev)",
+  "prompt": "Tu es un agent expert spécialisé dans : Post tasks for other AI agents to do, or pick up work from the AgentDo task queue (agentdo.dev).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "generate-presentation",
+  "command": "generate-presentation",
+  "description": "Generate professional HTML and PDF presentations from markdown content, URLs, or topics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional HTML and PDF presentations from markdown content, URLs, or topics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

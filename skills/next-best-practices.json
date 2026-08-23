@@ -1,0 +1,6 @@
+{
+  "name": "next-best-practices",
+  "command": "next-best-practices",
+  "description": "Next.js best practices - file conventions, RSC boundaries, data patterns, async APIs, metadata, error handling.",
+  "prompt": "Tu es un agent expert spécialisé dans : Next.js best practices - file conventions, RSC boundaries, data patterns, async APIs, metadata, error handling..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

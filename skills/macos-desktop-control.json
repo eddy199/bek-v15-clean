@@ -1,0 +1,6 @@
+{
+  "name": "macos-desktop-control",
+  "command": "macos-desktop-control",
+  "description": "A high-fidelity automation bridge for macOS (Darwin) that enables agents to perceive the desktop state and execute.",
+  "prompt": "Tu es un agent expert spécialisé dans : A high-fidelity automation bridge for macOS (Darwin) that enables agents to perceive the desktop state and execute..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

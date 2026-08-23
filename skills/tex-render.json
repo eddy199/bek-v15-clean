@@ -1,0 +1,6 @@
+{
+  "name": "tex-render",
+  "command": "tex-render",
+  "description": "Renders LaTeX math to PNG, JPEG, WebP, or AVIF images using MathJax (TeX→SVG) and @svg-fns/svg2img.",
+  "prompt": "Tu es un agent expert spécialisé dans : Renders LaTeX math to PNG, JPEG, WebP, or AVIF images using MathJax (TeX→SVG) and @svg-fns/svg2img..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

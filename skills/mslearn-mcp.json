@@ -1,0 +1,6 @@
+{
+  "name": "mslearn-mcp",
+  "command": "mslearn-mcp",
+  "description": "Connect to Microsoft Learn MCP Server to search Microsoft documentation, fetch specific doc pages, and find code.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to Microsoft Learn MCP Server to search Microsoft documentation, fetch specific doc pages, and find code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

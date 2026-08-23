@@ -1,0 +1,6 @@
+{
+  "name": "kagi-summarizer",
+  "command": "kagi-summarizer",
+  "description": "Summarize any URL or text using Kagi's Universal Summarizer API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Summarize any URL or text using Kagi's Universal Summarizer API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

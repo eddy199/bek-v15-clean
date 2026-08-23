@@ -1,0 +1,6 @@
+{
+  "name": "aisp",
+  "command": "aisp",
+  "description": "Enables AI agents to interact with AISP (Agent Inference Sharing Protocol) for renting or providing DIEM API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enables AI agents to interact with AISP (Agent Inference Sharing Protocol) for renting or providing DIEM API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

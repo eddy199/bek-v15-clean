@@ -1,0 +1,6 @@
+{
+  "name": "aria2-json-rpc",
+  "command": "aria2-json-rpc",
+  "description": "Interact with aria2 download manager via JSON-RPC 2.0.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with aria2 download manager via JSON-RPC 2.0..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

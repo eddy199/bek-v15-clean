@@ -1,0 +1,6 @@
+{
+  "name": "0g-compute",
+  "command": "0g-compute",
+  "description": "Use cheap, TEE-verified AI models from the 0G Compute Network as OpenClaw providers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use cheap, TEE-verified AI models from the 0G Compute Network as OpenClaw providers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

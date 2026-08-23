@@ -1,0 +1,6 @@
+{
+  "name": "git-workflows",
+  "command": "git-workflows",
+  "description": "Advanced git operations beyond add/commit/push.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced git operations beyond add/commit/push..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

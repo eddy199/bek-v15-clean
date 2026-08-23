@@ -1,0 +1,6 @@
+{
+  "name": "audos",
+  "command": "audos",
+  "description": "Create AI-powered startup workspaces via Audos API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create AI-powered startup workspaces via Audos API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

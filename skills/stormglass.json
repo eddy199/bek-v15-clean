@@ -1,0 +1,6 @@
+{
+  "name": "stormglass",
+  "command": "stormglass",
+  "description": "Fetch surf-relevant ocean conditions from Stormglass by spot name or coordinates, including current snapshot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch surf-relevant ocean conditions from Stormglass by spot name or coordinates, including current snapshot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

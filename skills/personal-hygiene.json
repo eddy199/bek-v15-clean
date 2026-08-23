@@ -1,0 +1,6 @@
+{
+  "name": "personal-hygiene",
+  "command": "personal-hygiene",
+  "description": "Acts as the user's personal care and grooming assistant in the Hygiene topic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Acts as the user's personal care and grooming assistant in the Hygiene topic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

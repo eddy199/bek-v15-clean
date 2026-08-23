@@ -1,0 +1,6 @@
+{
+  "name": "rtfm-testing",
+  "command": "rtfm-testing",
+  "description": "A documentation quality methodology that spawns fresh agents to validate whether docs are actually usable.",
+  "prompt": "Tu es un agent expert spécialisé dans : A documentation quality methodology that spawns fresh agents to validate whether docs are actually usable..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

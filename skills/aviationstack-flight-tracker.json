@@ -1,0 +1,6 @@
+{
+  "name": "aviationstack-flight-tracker",
+  "command": "aviationstack-flight-tracker",
+  "description": "Track flights in real-time.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track flights in real-time..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

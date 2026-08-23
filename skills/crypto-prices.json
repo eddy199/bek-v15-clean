@@ -1,0 +1,6 @@
+{
+  "name": "crypto-prices",
+  "command": "crypto-prices",
+  "description": "Fetch live cryptocurrency and commodity prices using the local `crypto_prices.py` module.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch live cryptocurrency and commodity prices using the local `crypto_prices.py` module..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

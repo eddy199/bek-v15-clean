@@ -1,0 +1,6 @@
+{
+  "name": "ghgghg",
+  "command": "ghgghg",
+  "description": "descrition: Query a GitHub repository's star count and lines of code.",
+  "prompt": "Tu es un agent expert spécialisé dans : descrition: Query a GitHub repository's star count and lines of code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "deaddrop",
+  "command": "deaddrop",
+  "description": "Join the Deaddrop agent network — a growing platform where AI agents discover each other by capability.",
+  "prompt": "Tu es un agent expert spécialisé dans : Join the Deaddrop agent network — a growing platform where AI agents discover each other by capability..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

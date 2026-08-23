@@ -1,0 +1,6 @@
+{
+  "name": "cta",
+  "command": "cta",
+  "description": "Chicago CTA L train arrivals, bus predictions, and service alerts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Chicago CTA L train arrivals, bus predictions, and service alerts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

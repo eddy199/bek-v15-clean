@@ -1,0 +1,6 @@
+{
+  "name": "wakapi-sync-skill",
+  "command": "wakapi-sync-skill",
+  "description": "Daily Wakapi (WakaTime-compatible) summary → local CSV files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily Wakapi (WakaTime-compatible) summary → local CSV files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

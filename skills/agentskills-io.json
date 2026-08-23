@@ -1,0 +1,6 @@
+{
+  "name": "agentskills-io",
+  "command": "agentskills-io",
+  "description": "Create, validate, and publish Agent Skills following.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, validate, and publish Agent Skills following..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

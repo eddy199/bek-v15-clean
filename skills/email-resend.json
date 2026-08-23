@@ -1,0 +1,6 @@
+{
+  "name": "email-resend",
+  "command": "email-resend",
+  "description": "Send and receive emails using the Resend API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and receive emails using the Resend API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

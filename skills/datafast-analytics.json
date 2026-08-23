@@ -1,0 +1,6 @@
+{
+  "name": "datafast-analytics",
+  "command": "datafast-analytics",
+  "description": "Query DataFast website analytics and visitor data via the DataFast API for metrics, time series, realtime stats.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query DataFast website analytics and visitor data via the DataFast API for metrics, time series, realtime stats..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

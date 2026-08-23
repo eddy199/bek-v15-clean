@@ -1,0 +1,6 @@
+{
+  "name": "dancetech",
+  "command": "dancetech",
+  "description": "Complete agentic dance engineering system for Krump: automated posts, community engagement, league tracking.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete agentic dance engineering system for Krump: automated posts, community engagement, league tracking..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

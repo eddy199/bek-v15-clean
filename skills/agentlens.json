@@ -1,0 +1,6 @@
+{
+  "name": "agentlens",
+  "command": "agentlens",
+  "description": "Navigate and understand codebases using agentlens hierarchical.",
+  "prompt": "Tu es un agent expert spécialisé dans : Navigate and understand codebases using agentlens hierarchical..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "video-captions-reelwords",
+  "command": "video-captions-reelwords",
+  "description": "Generate captions for short-form videos using the ReelWords (reelwords.ai) Caption API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate captions for short-form videos using the ReelWords (reelwords.ai) Caption API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

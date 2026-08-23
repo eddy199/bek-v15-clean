@@ -1,0 +1,6 @@
+{
+  "name": "solo-content-gen",
+  "command": "solo-content-gen",
+  "description": "Generate social media content pack from PRD — LinkedIn post, Reddit answer draft, and Twitter/X thread.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate social media content pack from PRD — LinkedIn post, Reddit answer draft, and Twitter/X thread..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

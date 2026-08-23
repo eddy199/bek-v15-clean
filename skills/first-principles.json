@@ -1,0 +1,6 @@
+{
+  "name": "first-principles",
+  "command": "first-principles",
+  "description": "Strip problems to foundational truths, then rebuild reasoning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Strip problems to foundational truths, then rebuild reasoning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "claude-code-launcher",
+  "command": "claude-code-launcher",
+  "description": "Launch Claude Code in a new terminal window with Remote Control enabled.",
+  "prompt": "Tu es un agent expert spécialisé dans : Launch Claude Code in a new terminal window with Remote Control enabled..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

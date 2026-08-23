@@ -1,0 +1,6 @@
+{
+  "name": "architecture-research",
+  "command": "architecture-research",
+  "description": "Research the architecture of a codebase or system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Research the architecture of a codebase or system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agentpayy",
+  "command": "agentpayy",
+  "description": "The Economic OS for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Economic OS for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

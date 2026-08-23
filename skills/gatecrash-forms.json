@@ -1,0 +1,6 @@
+{
+  "name": "gatecrash-forms",
+  "command": "gatecrash-forms",
+  "description": "CLI-first form builder with BYOK philosophy.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI-first form builder with BYOK philosophy..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

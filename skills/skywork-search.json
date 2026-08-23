@@ -1,0 +1,6 @@
+{
+  "name": "skywork-search",
+  "command": "skywork-search",
+  "description": "AI-powered web search for real-time information — retrieve up-to-date content.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered web search for real-time information — retrieve up-to-date content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

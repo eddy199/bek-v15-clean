@@ -1,0 +1,6 @@
+{
+  "name": "roundtable-adaptive",
+  "command": "roundtable-adaptive",
+  "description": "Adaptive multi-model AI roundtable.",
+  "prompt": "Tu es un agent expert spécialisé dans : Adaptive multi-model AI roundtable..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

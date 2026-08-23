@@ -1,0 +1,6 @@
+{
+  "name": "quiver",
+  "command": "quiver",
+  "description": "Query alternative financial data from Quiver Quantitative (Congress trading, Lobbying, Government Contracts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query alternative financial data from Quiver Quantitative (Congress trading, Lobbying, Government Contracts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

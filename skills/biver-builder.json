@@ -1,0 +1,6 @@
+{
+  "name": "biver-builder",
+  "command": "biver-builder",
+  "description": "Welcome to the **Biver API** — the public REST API for the Biver landing page builder platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Welcome to the **Biver API** — the public REST API for the Biver landing page builder platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

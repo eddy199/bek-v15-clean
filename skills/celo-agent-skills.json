@@ -1,0 +1,6 @@
+{
+  "name": "celo-agent-skills",
+  "command": "celo-agent-skills",
+  "description": "End-to-end Celo development playbook (Feb 2026)",
+  "prompt": "Tu es un agent expert spécialisé dans : End-to-end Celo development playbook (Feb 2026).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

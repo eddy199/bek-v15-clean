@@ -1,0 +1,6 @@
+{
+  "name": "variflight",
+  "command": "variflight",
+  "description": "Query flight information, train tickets, and travel data using Variflight (飞常准) HTTP API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query flight information, train tickets, and travel data using Variflight (飞常准) HTTP API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

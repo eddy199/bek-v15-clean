@@ -1,0 +1,6 @@
+{
+  "name": "ziptax",
+  "command": "ziptax",
+  "description": "Look up U.S. sales tax rates using the ZipTax API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Look up U.S. sales tax rates using the ZipTax API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "knuspr-cli",
+  "command": "knuspr-cli",
+  "description": "Manage grocery shopping on Knuspr.de via the knuspr-cli.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage grocery shopping on Knuspr.de via the knuspr-cli..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

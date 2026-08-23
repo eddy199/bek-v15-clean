@@ -1,0 +1,6 @@
+{
+  "name": "miranda-elevenlabs-speech",
+  "command": "miranda-elevenlabs-speech",
+  "description": "Text-to-Speech and Speech-to-Text using ElevenLabs AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-Speech and Speech-to-Text using ElevenLabs AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

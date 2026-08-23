@@ -1,0 +1,6 @@
+{
+  "name": "macro-regime-detector",
+  "command": "macro-regime-detector",
+  "description": "Detect the current macro regime (Risk-On, Risk-Off, Inflationary, Deflationary, Stagflation) using multi-source.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detect the current macro regime (Risk-On, Risk-Off, Inflationary, Deflationary, Stagflation) using multi-source..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

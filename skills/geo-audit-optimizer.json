@@ -1,0 +1,6 @@
+{
+  "name": "geo-audit-optimizer",
+  "command": "geo-audit-optimizer",
+  "description": "GEO audit for AI search visibility.",
+  "prompt": "Tu es un agent expert spécialisé dans : GEO audit for AI search visibility..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

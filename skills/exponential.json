@@ -1,0 +1,6 @@
+{
+  "name": "exponential",
+  "command": "exponential",
+  "description": "Manage tasks, projects, and workspaces in Exponential via the `exponential` CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage tasks, projects, and workspaces in Exponential via the `exponential` CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

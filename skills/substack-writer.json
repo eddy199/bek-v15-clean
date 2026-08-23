@@ -1,0 +1,6 @@
+{
+  "name": "substack-writer",
+  "command": "substack-writer",
+  "description": "Write long-form Substack newsletters about GenAI, education, edtech, and their intersections.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write long-form Substack newsletters about GenAI, education, edtech, and their intersections..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

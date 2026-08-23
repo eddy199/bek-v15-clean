@@ -1,0 +1,6 @@
+{
+  "name": "canonical-data-map",
+  "command": "canonical-data-map",
+  "description": "Single source of truth for all paths, naming conventions, and data formats across the OpenClaw Greek Accounting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Single source of truth for all paths, naming conventions, and data formats across the OpenClaw Greek Accounting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

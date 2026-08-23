@@ -1,0 +1,6 @@
+{
+  "name": "nas-master",
+  "command": "nas-master",
+  "description": "A hardware-aware, hybrid (SMB + SSH) suite for ASUSTOR NAS metadata.",
+  "prompt": "Tu es un agent expert spécialisé dans : A hardware-aware, hybrid (SMB + SSH) suite for ASUSTOR NAS metadata..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

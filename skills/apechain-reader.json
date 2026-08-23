@@ -1,0 +1,6 @@
+{
+  "name": "apechain-reader",
+  "command": "apechain-reader",
+  "description": "Advanced multi-chain wallet analyzer with USD pricing, collection names, ENS support, and sophisticated bot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced multi-chain wallet analyzer with USD pricing, collection names, ENS support, and sophisticated bot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

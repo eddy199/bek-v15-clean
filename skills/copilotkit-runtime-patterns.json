@@ -1,0 +1,6 @@
+{
+  "name": "copilotkit-runtime-patterns",
+  "command": "copilotkit-runtime-patterns",
+  "description": "Server-side runtime patterns for CopilotKit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Server-side runtime patterns for CopilotKit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

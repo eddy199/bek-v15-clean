@@ -1,0 +1,6 @@
+{
+  "name": "google-maps-search-api",
+  "command": "google-maps-search-api",
+  "description": "This skill is designed to help users.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill is designed to help users..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

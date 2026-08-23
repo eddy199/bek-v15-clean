@@ -1,0 +1,6 @@
+{
+  "name": "sfx-generator",
+  "command": "sfx-generator",
+  "description": "Generates sound effects from a text description using the ElevenLabs API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates sound effects from a text description using the ElevenLabs API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

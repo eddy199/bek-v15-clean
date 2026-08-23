@@ -1,0 +1,6 @@
+{
+  "name": "pencil-renderer",
+  "command": "pencil-renderer",
+  "description": "Render DNA codes to Pencil .pen frames.",
+  "prompt": "Tu es un agent expert spécialisé dans : Render DNA codes to Pencil .pen frames..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

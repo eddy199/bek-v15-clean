@@ -1,0 +1,6 @@
+{
+  "name": "volcengine-web-search",
+  "command": "volcengine-web-search",
+  "description": "Using volcengine web_search.py script to search web and get the result, prepare clear and specific `query`.Run.",
+  "prompt": "Tu es un agent expert spécialisé dans : Using volcengine web_search.py script to search web and get the result, prepare clear and specific `query`.Run..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

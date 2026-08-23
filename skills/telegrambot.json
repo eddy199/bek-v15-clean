@@ -1,0 +1,6 @@
+{
+  "name": "telegrambot",
+  "command": "telegrambot",
+  "description": "Manage and secure local high-privilege storage serving workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage and secure local high-privilege storage serving workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

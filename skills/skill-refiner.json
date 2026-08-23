@@ -1,0 +1,6 @@
+{
+  "name": "skill-refiner",
+  "command": "skill-refiner",
+  "description": "Audit and fix all skills in the workspace for compliance with skill-creator requirements.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit and fix all skills in the workspace for compliance with skill-creator requirements..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

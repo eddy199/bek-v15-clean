@@ -1,0 +1,6 @@
+{
+  "name": "spotlight",
+  "command": "spotlight",
+  "description": "Search files and content using macOS Spotlight indexing (mdfind)",
+  "prompt": "Tu es un agent expert spécialisé dans : Search files and content using macOS Spotlight indexing (mdfind).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

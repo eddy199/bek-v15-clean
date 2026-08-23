@@ -1,0 +1,6 @@
+{
+  "name": "control4-home",
+  "command": "control4-home",
+  "description": "Control a Control4 smart home via pyControl4 (lights, relays, room media) using local Python wrappers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control a Control4 smart home via pyControl4 (lights, relays, room media) using local Python wrappers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

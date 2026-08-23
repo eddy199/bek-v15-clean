@@ -1,0 +1,6 @@
+{
+  "name": "aeo-prompt-research-free",
+  "command": "aeo-prompt-research-free",
+  "description": "Discover which AI prompts and topics matter for a brand's Answer Engine Optimization (AEO) using only free tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Discover which AI prompts and topics matter for a brand's Answer Engine Optimization (AEO) using only free tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

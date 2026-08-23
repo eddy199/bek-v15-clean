@@ -1,0 +1,6 @@
+{
+  "name": "xiaohongshu-title",
+  "command": "xiaohongshu-title",
+  "description": "Maximize CTR (Click-Through Rate) by leveraging emotional hooks and platform algorithms.",
+  "prompt": "Tu es un agent expert spécialisé dans : Maximize CTR (Click-Through Rate) by leveraging emotional hooks and platform algorithms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

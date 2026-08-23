@@ -1,0 +1,6 @@
+{
+  "name": "finance-tracker",
+  "command": "finance-tracker",
+  "description": "Complete personal finance management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete personal finance management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

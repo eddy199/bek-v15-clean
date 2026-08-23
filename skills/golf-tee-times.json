@@ -1,0 +1,6 @@
+{
+  "name": "golf-tee-times",
+  "command": "golf-tee-times",
+  "description": "Search for golf tee times and deals near any location.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search for golf tee times and deals near any location..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

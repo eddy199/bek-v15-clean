@@ -1,0 +1,6 @@
+{
+  "name": "bot-status-api-test",
+  "command": "bot-status-api-test",
+  "description": "Deploy a lightweight status API that exposes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy a lightweight status API that exposes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

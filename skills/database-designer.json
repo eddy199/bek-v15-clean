@@ -1,0 +1,6 @@
+{
+  "name": "database-designer",
+  "command": "database-designer",
+  "description": "A comprehensive database design skill that provides expert-level analysis, optimization, and migration capabilities.",
+  "prompt": "Tu es un agent expert spécialisé dans : A comprehensive database design skill that provides expert-level analysis, optimization, and migration capabilities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

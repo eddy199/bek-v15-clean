@@ -1,0 +1,6 @@
+{
+  "name": "comfyui-local",
+  "command": "comfyui-local",
+  "description": "Generate high-quality images using a local ComfyUI instance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate high-quality images using a local ComfyUI instance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "molt-trust",
+  "command": "molt-trust",
+  "description": "The Analytics Engine for Moltbook.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Analytics Engine for Moltbook..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

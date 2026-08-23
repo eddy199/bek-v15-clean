@@ -1,0 +1,6 @@
+{
+  "name": "clawemail",
+  "command": "clawemail",
+  "description": "Google Workspace via ClawEmail — Gmail, Drive, Docs, Sheets, Slides.",
+  "prompt": "Tu es un agent expert spécialisé dans : Google Workspace via ClawEmail — Gmail, Drive, Docs, Sheets, Slides..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

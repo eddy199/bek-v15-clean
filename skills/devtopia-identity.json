@@ -1,0 +1,6 @@
+{
+  "name": "devtopia-identity",
+  "command": "devtopia-identity",
+  "description": "Manage wallet-backed on-chain agent identity with Devtopia ID.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage wallet-backed on-chain agent identity with Devtopia ID..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

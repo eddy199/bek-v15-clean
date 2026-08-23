@@ -1,0 +1,6 @@
+{
+  "name": "add-wish",
+  "command": "add-wish",
+  "description": "Save any product to a universal wishlist.",
+  "prompt": "Tu es un agent expert spécialisé dans : Save any product to a universal wishlist..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

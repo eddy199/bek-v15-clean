@@ -1,0 +1,6 @@
+{
+  "name": "funds",
+  "command": "funds",
+  "description": "Search and monitor Funda.nl housing listings via a local agent-friendly HTTP gateway.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and monitor Funda.nl housing listings via a local agent-friendly HTTP gateway..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

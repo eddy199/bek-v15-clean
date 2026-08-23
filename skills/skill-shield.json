@@ -1,0 +1,6 @@
+{
+  "name": "skill-shield",
+  "command": "skill-shield",
+  "description": "Security audit tool for ClawHub skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security audit tool for ClawHub skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

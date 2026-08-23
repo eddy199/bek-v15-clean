@@ -1,0 +1,6 @@
+{
+  "name": "x-bookmarks",
+  "command": "x-bookmarks",
+  "description": "Fetch, summarize, and manage X/Twitter bookmarks via bird CLI or X API v2.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch, summarize, and manage X/Twitter bookmarks via bird CLI or X API v2..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ha-integration-patterns",
+  "command": "ha-integration-patterns",
+  "description": "Home Assistant custom integration patterns and architectural decisions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Home Assistant custom integration patterns and architectural decisions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

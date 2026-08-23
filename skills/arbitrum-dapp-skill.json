@@ -1,0 +1,6 @@
+{
+  "name": "arbitrum-dapp-skill",
+  "command": "arbitrum-dapp-skill",
+  "description": "Opinionated guide for building dApps on Arbitrum using Stylus (Rust) and/or Solidity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Opinionated guide for building dApps on Arbitrum using Stylus (Rust) and/or Solidity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

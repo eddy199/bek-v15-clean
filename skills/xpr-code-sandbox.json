@@ -1,0 +1,6 @@
+{
+  "name": "xpr-code-sandbox",
+  "command": "xpr-code-sandbox",
+  "description": "Execute JavaScript code in a sandboxed VM for data processing and computation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Execute JavaScript code in a sandboxed VM for data processing and computation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

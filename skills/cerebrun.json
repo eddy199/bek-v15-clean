@@ -1,0 +1,6 @@
+{
+  "name": "cerebrun",
+  "command": "cerebrun",
+  "description": "MCP client for Cerebrun - comprehensive personal context and memory management system.",
+  "prompt": "Tu es un agent expert spécialisé dans : MCP client for Cerebrun - comprehensive personal context and memory management system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

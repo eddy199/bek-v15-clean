@@ -1,0 +1,6 @@
+{
+  "name": "disposable-email-for-agents",
+  "command": "disposable-email-for-agents",
+  "description": "Disposable email inboxes for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Disposable email inboxes for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

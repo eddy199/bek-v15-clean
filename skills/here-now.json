@@ -1,0 +1,6 @@
+{
+  "name": "here-now",
+  "command": "here-now",
+  "description": "Publish files and folders to the web instantly.",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish files and folders to the web instantly..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

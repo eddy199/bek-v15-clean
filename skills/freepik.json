@@ -1,0 +1,6 @@
+{
+  "name": "freepik",
+  "command": "freepik",
+  "description": "Generate images, videos, icons, audio, and more using Freepik's AI API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images, videos, icons, audio, and more using Freepik's AI API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "multi-agent-parallel-build",
+  "command": "multi-agent-parallel-build",
+  "description": "Orchestrate multiple coding agents (Claude Code, Codex, etc.) in parallel waves to build UI pages, API endpoints.",
+  "prompt": "Tu es un agent expert spécialisé dans : Orchestrate multiple coding agents (Claude Code, Codex, etc.) in parallel waves to build UI pages, API endpoints..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

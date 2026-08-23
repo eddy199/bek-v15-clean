@@ -1,0 +1,6 @@
+{
+  "name": "sport-mode",
+  "command": "sport-mode",
+  "description": "Activate \"Sport Mode\" for high-frequency monitoring (default 3m heartbeat) and auto-cleanup.",
+  "prompt": "Tu es un agent expert spécialisé dans : Activate \"Sport Mode\" for high-frequency monitoring (default 3m heartbeat) and auto-cleanup..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "zfs",
+  "command": "zfs",
+  "description": "ZFS filesystem administration, pool management, dataset configuration, snapshots, replication, encryption.",
+  "prompt": "Tu es un agent expert spécialisé dans : ZFS filesystem administration, pool management, dataset configuration, snapshots, replication, encryption..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

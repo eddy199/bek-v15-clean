@@ -1,0 +1,6 @@
+{
+  "name": "local-file-rag-basic",
+  "command": "local-file-rag-basic",
+  "description": "High-performance local File RAG suite (Basic Edition).",
+  "prompt": "Tu es un agent expert spécialisé dans : High-performance local File RAG suite (Basic Edition)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

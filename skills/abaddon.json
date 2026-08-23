@@ -1,0 +1,6 @@
+{
+  "name": "abaddon",
+  "command": "abaddon",
+  "description": "Red team security mode for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Red team security mode for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

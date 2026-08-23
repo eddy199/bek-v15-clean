@@ -1,0 +1,6 @@
+{
+  "name": "compost-tracker",
+  "command": "compost-tracker",
+  "description": "Track compost piles, monitor temperature, record turns, and manage your organic waste decomposition.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track compost piles, monitor temperature, record turns, and manage your organic waste decomposition..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

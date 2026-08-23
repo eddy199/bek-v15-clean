@@ -1,0 +1,6 @@
+{
+  "name": "nas-movie-download",
+  "command": "nas-movie-download",
+  "description": "Search and download movies via Jackett.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and download movies via Jackett..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

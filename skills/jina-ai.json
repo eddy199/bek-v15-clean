@@ -1,0 +1,6 @@
+{
+  "name": "jina-ai",
+  "command": "jina-ai",
+  "description": "Web reading and searching via Jina AI APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Web reading and searching via Jina AI APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

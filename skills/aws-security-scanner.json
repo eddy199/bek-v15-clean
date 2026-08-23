@@ -1,0 +1,6 @@
+{
+  "name": "aws-security-scanner",
+  "command": "aws-security-scanner",
+  "description": "Scan AWS accounts for security.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan AWS accounts for security..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "entr",
+  "command": "entr",
+  "description": "Run arbitrary commands when files change.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run arbitrary commands when files change..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

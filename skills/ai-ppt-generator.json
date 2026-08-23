@@ -1,0 +1,6 @@
+{
+  "name": "ai-ppt-generator",
+  "command": "ai-ppt-generator",
+  "description": "The awesome PPT format generation tool provided by baidu.",
+  "prompt": "Tu es un agent expert spécialisé dans : The awesome PPT format generation tool provided by baidu..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

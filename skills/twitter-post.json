@@ -1,0 +1,6 @@
+{
+  "name": "twitter-post",
+  "command": "twitter-post",
+  "description": "Post tweets to Twitter/X via the official API v2 (OAuth 1.0a)",
+  "prompt": "Tu es un agent expert spécialisé dans : Post tweets to Twitter/X via the official API v2 (OAuth 1.0a).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

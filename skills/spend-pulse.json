@@ -1,0 +1,6 @@
+{
+  "name": "spend-pulse",
+  "command": "spend-pulse",
+  "description": "Proactive spending alerts via Plaid.",
+  "prompt": "Tu es un agent expert spécialisé dans : Proactive spending alerts via Plaid..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

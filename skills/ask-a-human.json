@@ -1,0 +1,6 @@
+{
+  "name": "ask-a-human",
+  "command": "ask-a-human",
+  "description": "Request judgment from random humans when uncertain.",
+  "prompt": "Tu es un agent expert spécialisé dans : Request judgment from random humans when uncertain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

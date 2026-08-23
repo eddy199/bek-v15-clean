@@ -1,0 +1,6 @@
+{
+  "name": "enterprise-legal-guardrails",
+  "command": "enterprise-legal-guardrails",
+  "description": "Legal/compliance guardrails for outbound OpenClaw actions (anti-spam, defamation, privacy, financial claims).",
+  "prompt": "Tu es un agent expert spécialisé dans : Legal/compliance guardrails for outbound OpenClaw actions (anti-spam, defamation, privacy, financial claims)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

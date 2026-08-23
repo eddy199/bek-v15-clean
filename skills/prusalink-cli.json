@@ -1,0 +1,6 @@
+{
+  "name": "prusalink-cli",
+  "command": "prusalink-cli",
+  "description": "OpenClaw skill: local PrusaLink CLI (curl wrapper) for status/upload/print using Digest auth (user/password)",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw skill: local PrusaLink CLI (curl wrapper) for status/upload/print using Digest auth (user/password).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

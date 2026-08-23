@@ -1,0 +1,6 @@
+{
+  "name": "comfyui-runner",
+  "command": "comfyui-runner",
+  "description": "Start/stop/status for a ComfyUI instance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Start/stop/status for a ComfyUI instance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

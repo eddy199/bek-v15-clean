@@ -1,0 +1,6 @@
+{
+  "name": "video-ad-producer",
+  "command": "video-ad-producer",
+  "description": "This skill enables Claude to transform a **text brief** into a fully produced.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables Claude to transform a **text brief** into a fully produced..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

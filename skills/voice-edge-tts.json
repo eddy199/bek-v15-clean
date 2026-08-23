@@ -1,0 +1,6 @@
+{
+  "name": "voice-edge-tts",
+  "command": "voice-edge-tts",
+  "description": "Text-to-speech skill using Microsoft Edge TTS engine with real-time streaming playback support.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-speech skill using Microsoft Edge TTS engine with real-time streaming playback support..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

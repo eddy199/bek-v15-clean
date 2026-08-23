@@ -1,0 +1,6 @@
+{
+  "name": "mh-session-logs",
+  "command": "mh-session-logs",
+  "description": "Search and analyze your own session logs (older/parent conversations) using jq.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and analyze your own session logs (older/parent conversations) using jq..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

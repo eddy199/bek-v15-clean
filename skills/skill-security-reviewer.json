@@ -1,0 +1,6 @@
+{
+  "name": "skill-security-reviewer",
+  "command": "skill-security-reviewer",
+  "description": "<!-- Skill Security Reviewer | Version 3.0.0 | Author: chris@zast.ai -->.",
+  "prompt": "Tu es un agent expert spécialisé dans : <!-- Skill Security Reviewer | Version 3.0.0 | Author: chris@zast.ai -->..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

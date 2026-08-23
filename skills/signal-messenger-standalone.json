@@ -1,0 +1,6 @@
+{
+  "name": "signal-messenger-standalone",
+  "command": "signal-messenger-standalone",
+  "description": "Full Signal messenger integration for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full Signal messenger integration for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

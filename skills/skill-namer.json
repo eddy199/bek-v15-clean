@@ -1,0 +1,6 @@
+{
+  "name": "skill-namer",
+  "command": "skill-namer",
+  "description": "Generate short, molty-native names for skills, ENS domains, and agent-economy primitives when the obvious words.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate short, molty-native names for skills, ENS domains, and agent-economy primitives when the obvious words..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

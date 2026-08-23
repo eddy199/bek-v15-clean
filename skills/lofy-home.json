@@ -1,0 +1,6 @@
+{
+  "name": "lofy-home",
+  "command": "lofy-home",
+  "description": "Smart home control for the Lofy AI assistant — scene modes (study, chill, sleep, morning, grind), device management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Smart home control for the Lofy AI assistant — scene modes (study, chill, sleep, morning, grind), device management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

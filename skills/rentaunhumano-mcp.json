@@ -1,0 +1,6 @@
+{
+  "name": "rentaunhumano-mcp",
+  "command": "rentaunhumano-mcp",
+  "description": "Hire Spanish-speaking humans for real-world tasks in Latin America.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hire Spanish-speaking humans for real-world tasks in Latin America..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

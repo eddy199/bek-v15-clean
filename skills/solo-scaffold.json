@@ -1,0 +1,6 @@
+{
+  "name": "solo-scaffold",
+  "command": "solo-scaffold",
+  "description": "Generate complete project from PRD + stack template — directory structure, configs, CLAUDE.md, git repo, and GitHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate complete project from PRD + stack template — directory structure, configs, CLAUDE.md, git repo, and GitHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "token-saver",
+  "command": "token-saver",
+  "description": "Reduce OpenClaw AI costs with model-aware optimization.",
+  "prompt": "Tu es un agent expert spécialisé dans : Reduce OpenClaw AI costs with model-aware optimization..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

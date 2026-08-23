@@ -1,0 +1,6 @@
+{
+  "name": "meihua-yishu",
+  "command": "meihua-yishu",
+  "description": "Traditional Chinese \"Mei Hua Yi Shu\" (Plum Blossom Divination) based on specific time calculation (Hour/Minute).",
+  "prompt": "Tu es un agent expert spécialisé dans : Traditional Chinese \"Mei Hua Yi Shu\" (Plum Blossom Divination) based on specific time calculation (Hour/Minute)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

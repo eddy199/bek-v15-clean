@@ -1,0 +1,6 @@
+{
+  "name": "0xwork",
+  "command": "0xwork",
+  "description": "Find and complete paid tasks on the 0xWork decentralized marketplace (Base chain, USDC escrow)",
+  "prompt": "Tu es un agent expert spécialisé dans : Find and complete paid tasks on the 0xWork decentralized marketplace (Base chain, USDC escrow).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

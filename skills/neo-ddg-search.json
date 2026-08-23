@@ -1,0 +1,6 @@
+{
+  "name": "neo-ddg-search",
+  "command": "neo-ddg-search",
+  "description": "Search the web using DuckDuckGo.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search the web using DuckDuckGo..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

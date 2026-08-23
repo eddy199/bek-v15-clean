@@ -1,0 +1,6 @@
+{
+  "name": "ig-realtor-recruiting-outreach",
+  "command": "ig-realtor-recruiting-outreach",
+  "description": "Build compliant Instagram DM outreach campaigns to recruit realtors into brokerage downlines (e.g., eXp Realty.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build compliant Instagram DM outreach campaigns to recruit realtors into brokerage downlines (e.g., eXp Realty..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

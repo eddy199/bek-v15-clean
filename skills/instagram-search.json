@@ -1,0 +1,6 @@
+{
+  "name": "instagram-search",
+  "command": "instagram-search",
+  "description": "Instagram Search — Search 400M+ Instagram posts, reels, and profiles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Instagram Search — Search 400M+ Instagram posts, reels, and profiles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

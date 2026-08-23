@@ -1,0 +1,6 @@
+{
+  "name": "twenty-oauth-mastery",
+  "command": "twenty-oauth-mastery",
+  "description": "**Author**: Generated from extensive OAuth debugging sessions in OpenCode.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Author**: Generated from extensive OAuth debugging sessions in OpenCode..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

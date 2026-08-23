@@ -1,0 +1,6 @@
+{
+  "name": "teamwork",
+  "command": "teamwork",
+  "description": "Dynamically creates and manages AI agent teams for complex tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Dynamically creates and manages AI agent teams for complex tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

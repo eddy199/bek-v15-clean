@@ -1,0 +1,6 @@
+{
+  "name": "cleanup",
+  "command": "cleanup",
+  "description": "Remove all stored Kradleverse sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Remove all stored Kradleverse sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

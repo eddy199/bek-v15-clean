@@ -1,0 +1,6 @@
+{
+  "name": "bitwarden",
+  "command": "bitwarden",
+  "description": "Access and manage Bitwarden/Vaultwarden passwords securely.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access and manage Bitwarden/Vaultwarden passwords securely..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

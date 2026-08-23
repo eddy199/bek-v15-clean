@@ -1,0 +1,6 @@
+{
+  "name": "nordvpn",
+  "command": "nordvpn",
+  "description": "Control NordVPN on Linux via the `nordvpn` CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control NordVPN on Linux via the `nordvpn` CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

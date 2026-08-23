@@ -1,0 +1,6 @@
+{
+  "name": "screen-vision",
+  "command": "screen-vision",
+  "description": "macOS Local OCR & Automation Tool using Vision Framework.",
+  "prompt": "Tu es un agent expert spécialisé dans : macOS Local OCR & Automation Tool using Vision Framework..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

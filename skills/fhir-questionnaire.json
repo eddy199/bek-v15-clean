@@ -1,0 +1,6 @@
+{
+  "name": "fhir-questionnaire",
+  "command": "fhir-questionnaire",
+  "description": "Helps creating FHIR conforming questionnaire definitions from plain requirement ideation docs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps creating FHIR conforming questionnaire definitions from plain requirement ideation docs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

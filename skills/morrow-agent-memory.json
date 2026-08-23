@@ -1,0 +1,6 @@
+{
+  "name": "morrow-agent-memory",
+  "command": "morrow-agent-memory",
+  "description": "Memory architecture for persistent agent continuity across sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Memory architecture for persistent agent continuity across sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

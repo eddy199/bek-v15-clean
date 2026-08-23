@@ -1,0 +1,6 @@
+{
+  "name": "get-you-some-britches",
+  "command": "get-you-some-britches",
+  "description": "Use this skill any time I start complaining.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill any time I start complaining..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

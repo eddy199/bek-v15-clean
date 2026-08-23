@@ -1,0 +1,6 @@
+{
+  "name": "sparkbtcbot-proxy-deploy",
+  "command": "sparkbtcbot-proxy-deploy",
+  "description": "Deploy a serverless Spark Bitcoin L2 proxy on Vercel with spending limits, auth, and Redis logging.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy a serverless Spark Bitcoin L2 proxy on Vercel with spending limits, auth, and Redis logging..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

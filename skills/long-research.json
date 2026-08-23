@@ -1,0 +1,6 @@
+{
+  "name": "long-research",
+  "command": "long-research",
+  "description": "[BETA] Deep research that actually reads pages instead of summarizing search results.",
+  "prompt": "Tu es un agent expert spécialisé dans : [BETA] Deep research that actually reads pages instead of summarizing search results..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

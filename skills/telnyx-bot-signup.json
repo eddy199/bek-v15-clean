@@ -1,0 +1,6 @@
+{
+  "name": "telnyx-bot-signup",
+  "command": "telnyx-bot-signup",
+  "description": "Automated Telnyx bot account signup via Proof of Work challenge.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated Telnyx bot account signup via Proof of Work challenge..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

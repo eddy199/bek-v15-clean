@@ -1,0 +1,6 @@
+{
+  "name": "venice-models",
+  "command": "venice-models",
+  "description": "Explore Venice AI's available models - LLMs, image generators, video, TTS, ASR, and embeddings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Explore Venice AI's available models - LLMs, image generators, video, TTS, ASR, and embeddings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

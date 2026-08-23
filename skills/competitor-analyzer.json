@@ -1,0 +1,6 @@
+{
+  "name": "competitor-analyzer",
+  "command": "competitor-analyzer",
+  "description": "Analyze any company's competitive position in minutes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze any company's competitive position in minutes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

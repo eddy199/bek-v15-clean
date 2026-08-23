@@ -1,0 +1,6 @@
+{
+  "name": "agentic-paper-digest",
+  "command": "agentic-paper-digest",
+  "description": "Fetches and summarizes recent arXiv and Hugging.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetches and summarizes recent arXiv and Hugging..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

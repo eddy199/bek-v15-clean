@@ -1,0 +1,6 @@
+{
+  "name": "sap-fico-consultant",
+  "command": "sap-fico-consultant",
+  "description": "| Property | Value |.",
+  "prompt": "Tu es un agent expert spécialisé dans : | Property | Value |..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

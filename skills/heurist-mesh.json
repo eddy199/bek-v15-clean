@@ -1,0 +1,6 @@
+{
+  "name": "heurist-mesh",
+  "command": "heurist-mesh",
+  "description": "Real-time crypto token data, DeFi analytics, blockchain data, Twitter/X social intelligence, enhanced web search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time crypto token data, DeFi analytics, blockchain data, Twitter/X social intelligence, enhanced web search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

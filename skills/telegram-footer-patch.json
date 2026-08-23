@@ -1,0 +1,6 @@
+{
+  "name": "telegram-footer-patch",
+  "command": "telegram-footer-patch",
+  "description": "Patch Telegram replies with OpenClaw footer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Patch Telegram replies with OpenClaw footer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

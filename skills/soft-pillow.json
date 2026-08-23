@@ -1,0 +1,6 @@
+{
+  "name": "soft-pillow",
+  "command": "soft-pillow",
+  "description": "Use when the user asks about their sleep data, dream history, or wants to query sleep entries from the Soft Pillow app.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks about their sleep data, dream history, or wants to query sleep entries from the Soft Pillow app..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

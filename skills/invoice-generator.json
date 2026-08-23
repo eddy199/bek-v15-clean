@@ -1,0 +1,6 @@
+{
+  "name": "invoice-generator",
+  "command": "invoice-generator",
+  "description": "Generate professional PDF invoices from JSON.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional PDF invoices from JSON..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

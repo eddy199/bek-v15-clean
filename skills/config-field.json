@@ -1,0 +1,6 @@
+{
+  "name": "config-field",
+  "command": "config-field",
+  "description": "Validate OpenClaw configuration fields against the official Zod schema.",
+  "prompt": "Tu es un agent expert spécialisé dans : Validate OpenClaw configuration fields against the official Zod schema..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

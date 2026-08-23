@@ -1,0 +1,6 @@
+{
+  "name": "mac-node-snapshot",
+  "command": "mac-node-snapshot",
+  "description": "A robust, permission-friendly method to capture macOS screens via OpenClaw screen.record.",
+  "prompt": "Tu es un agent expert spécialisé dans : A robust, permission-friendly method to capture macOS screens via OpenClaw screen.record..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "social-media-content-calendar",
+  "command": "social-media-content-calendar",
+  "description": "Generate structured social media content calendars with platform-specific posts, hashtags, and scheduling.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate structured social media content calendars with platform-specific posts, hashtags, and scheduling..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

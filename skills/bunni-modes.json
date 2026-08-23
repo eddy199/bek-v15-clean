@@ -1,0 +1,6 @@
+{
+  "name": "bunni-modes",
+  "command": "bunni-modes",
+  "description": "A persona and model-switching toolkit featuring Bunni, your bubbly cyber-security assistant.",
+  "prompt": "Tu es un agent expert spécialisé dans : A persona and model-switching toolkit featuring Bunni, your bubbly cyber-security assistant..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

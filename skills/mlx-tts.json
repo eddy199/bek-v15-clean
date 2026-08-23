@@ -1,0 +1,6 @@
+{
+  "name": "mlx-tts",
+  "command": "mlx-tts",
+  "description": "Text-To-Speech with MLX (Apple Silicon) and opensource models (default QWen3-TTS) locally.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-To-Speech with MLX (Apple Silicon) and opensource models (default QWen3-TTS) locally..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

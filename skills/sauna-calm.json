@@ -1,0 +1,6 @@
+{
+  "name": "sauna-calm",
+  "command": "sauna-calm",
+  "description": "Calm frustrated users with breathing exercises and Sauna.ai reminders.",
+  "prompt": "Tu es un agent expert spécialisé dans : Calm frustrated users with breathing exercises and Sauna.ai reminders..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

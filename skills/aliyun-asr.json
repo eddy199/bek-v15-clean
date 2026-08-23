@@ -1,0 +1,6 @@
+{
+  "name": "aliyun-asr",
+  "command": "aliyun-asr",
+  "description": "Pure Aliyun ASR skill for voice message transcription, supports multiple channels including Feishu.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pure Aliyun ASR skill for voice message transcription, supports multiple channels including Feishu..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

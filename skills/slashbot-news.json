@@ -1,0 +1,6 @@
+{
+  "name": "slashbot-news",
+  "command": "slashbot-news",
+  "description": "DEPRECATED — Use https://clawhub.ai/alphabot-ai/slashbot instead.",
+  "prompt": "Tu es un agent expert spécialisé dans : DEPRECATED — Use https://clawhub.ai/alphabot-ai/slashbot instead..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

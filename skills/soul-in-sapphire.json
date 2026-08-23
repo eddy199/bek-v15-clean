@@ -1,0 +1,6 @@
+{
+  "name": "soul-in-sapphire",
+  "command": "soul-in-sapphire",
+  "description": "Generic long-term memory (LTM) operations for OpenClaw using Notion (2025-09-03 data_sources)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generic long-term memory (LTM) operations for OpenClaw using Notion (2025-09-03 data_sources).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

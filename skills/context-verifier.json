@@ -1,0 +1,6 @@
+{
+  "name": "context-verifier",
+  "command": "context-verifier",
+  "description": "Know the file you're editing is the file you think it is — verify integrity before you act.",
+  "prompt": "Tu es un agent expert spécialisé dans : Know the file you're editing is the file you think it is — verify integrity before you act..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

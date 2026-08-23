@@ -1,0 +1,6 @@
+{
+  "name": "blog-studio",
+  "command": "blog-studio",
+  "description": "Standalone CMS for GitHub Pages Jekyll blogs — browse, edit, create, and deploy with one click.",
+  "prompt": "Tu es un agent expert spécialisé dans : Standalone CMS for GitHub Pages Jekyll blogs — browse, edit, create, and deploy with one click..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

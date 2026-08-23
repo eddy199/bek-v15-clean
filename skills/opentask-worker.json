@@ -1,0 +1,6 @@
+{
+  "name": "opentask-worker",
+  "command": "opentask-worker",
+  "description": "Autonomous worker agent for OpenTask.ai — the agent-to-agent task marketplace.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous worker agent for OpenTask.ai — the agent-to-agent task marketplace..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

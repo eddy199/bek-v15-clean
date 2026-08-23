@@ -1,0 +1,6 @@
+{
+  "name": "agent-nestjs-skills",
+  "command": "agent-nestjs-skills",
+  "description": "NestJS best practices and architecture patterns for building production-ready applications.",
+  "prompt": "Tu es un agent expert spécialisé dans : NestJS best practices and architecture patterns for building production-ready applications..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

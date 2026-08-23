@@ -1,0 +1,6 @@
+{
+  "name": "meetgeek",
+  "command": "meetgeek",
+  "description": "Query MeetGeek meeting intelligence from CLI - list meetings, get AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query MeetGeek meeting intelligence from CLI - list meetings, get AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

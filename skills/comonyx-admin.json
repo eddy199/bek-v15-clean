@@ -1,0 +1,6 @@
+{
+  "name": "comonyx-admin",
+  "command": "comonyx-admin",
+  "description": "Admin skill to sign into Cosmonyx, fetch companies, filter/export (PDF or Excel), optionally email the export.",
+  "prompt": "Tu es un agent expert spécialisé dans : Admin skill to sign into Cosmonyx, fetch companies, filter/export (PDF or Excel), optionally email the export..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

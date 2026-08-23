@@ -1,0 +1,6 @@
+{
+  "name": "kalibr",
+  "command": "kalibr",
+  "description": "Ship agents that fix themselves.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ship agents that fix themselves..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

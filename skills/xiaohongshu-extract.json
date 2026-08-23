@@ -1,0 +1,6 @@
+{
+  "name": "xiaohongshu-extract",
+  "command": "xiaohongshu-extract",
+  "description": "Extract metadata from Xiaohongshu (XHS) share or discovery URLs by parsing window.__INITIAL_STATE__ and returning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract metadata from Xiaohongshu (XHS) share or discovery URLs by parsing window.__INITIAL_STATE__ and returning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

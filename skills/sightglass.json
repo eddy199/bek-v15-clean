@@ -1,0 +1,6 @@
+{
+  "name": "sightglass",
+  "command": "sightglass",
+  "description": "Your AI coding agent just added 47 dependencies to your project.",
+  "prompt": "Tu es un agent expert spécialisé dans : Your AI coding agent just added 47 dependencies to your project..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

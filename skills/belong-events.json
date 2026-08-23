@@ -1,0 +1,6 @@
+{
+  "name": "belong-events",
+  "command": "belong-events",
+  "description": "Create, discover, and manage events with NFT tickets on the Belong platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, discover, and manage events with NFT tickets on the Belong platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

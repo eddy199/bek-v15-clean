@@ -1,0 +1,6 @@
+{
+  "name": "goyfiles-epstein",
+  "command": "goyfiles-epstein",
+  "description": "Core GOYFILES external-bot contract (endpoint-first onboarding, strict agent behavior, direct tool mode.",
+  "prompt": "Tu es un agent expert spécialisé dans : Core GOYFILES external-bot contract (endpoint-first onboarding, strict agent behavior, direct tool mode..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

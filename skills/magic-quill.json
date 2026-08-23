@@ -1,0 +1,6 @@
+{
+  "name": "magic-quill",
+  "command": "magic-quill",
+  "description": "Generate OpenClaw Spellbook YAML theme mappings from a topic (game/movie/franchise/etc.) or a URL.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate OpenClaw Spellbook YAML theme mappings from a topic (game/movie/franchise/etc.) or a URL..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

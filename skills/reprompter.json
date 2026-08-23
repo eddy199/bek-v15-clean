@@ -1,0 +1,6 @@
+{
+  "name": "reprompter",
+  "command": "reprompter",
+  "description": "Transform messy prompts into well-structured, effective prompts — single or multi-agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform messy prompts into well-structured, effective prompts — single or multi-agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

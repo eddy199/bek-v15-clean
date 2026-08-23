@@ -1,0 +1,6 @@
+{
+  "name": "photo-captions",
+  "command": "photo-captions",
+  "description": "Generate platform-tuned social media captions for photography.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate platform-tuned social media captions for photography..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

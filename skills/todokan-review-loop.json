@@ -1,0 +1,6 @@
+{
+  "name": "todokan-review-loop",
+  "command": "todokan-review-loop",
+  "description": "Process Todokan task and thought boards with a review-loop workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Process Todokan task and thought boards with a review-loop workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "gizmolab-tools",
+  "command": "gizmolab-tools",
+  "description": "Use GizmoLab's free blockchain developer tools at tools.gizmolab.io and Web3 UI components at ui.gizmolab.io.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use GizmoLab's free blockchain developer tools at tools.gizmolab.io and Web3 UI components at ui.gizmolab.io..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

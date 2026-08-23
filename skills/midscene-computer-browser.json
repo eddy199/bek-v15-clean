@@ -1,0 +1,6 @@
+{
+  "name": "midscene-computer-browser",
+  "command": "midscene-computer-browser",
+  "description": "Vision-driven browser automation using Midscene.",
+  "prompt": "Tu es un agent expert spécialisé dans : Vision-driven browser automation using Midscene..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

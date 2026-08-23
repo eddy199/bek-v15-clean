@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-seo-audit",
+  "command": "sovereign-seo-audit",
+  "description": "Comprehensive SEO auditor that analyzes technical SEO, on-page optimization, content quality, and site architecture.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive SEO auditor that analyzes technical SEO, on-page optimization, content quality, and site architecture..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

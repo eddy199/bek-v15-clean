@@ -1,0 +1,6 @@
+{
+  "name": "zenplus-health",
+  "command": "zenplus-health",
+  "description": "Workplace wellness for stress, anxiety, and burnout - mindfulness exercises, breathing techniques, mood check-ins.",
+  "prompt": "Tu es un agent expert spécialisé dans : Workplace wellness for stress, anxiety, and burnout - mindfulness exercises, breathing techniques, mood check-ins..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

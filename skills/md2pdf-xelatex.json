@@ -1,0 +1,6 @@
+{
+  "name": "md2pdf-xelatex",
+  "command": "md2pdf-xelatex",
+  "description": "Convert Markdown files to PDF with full LaTeX math formula rendering and CJK (Chinese/Japanese/Korean) support.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert Markdown files to PDF with full LaTeX math formula rendering and CJK (Chinese/Japanese/Korean) support..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

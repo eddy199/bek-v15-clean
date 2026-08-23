@@ -1,0 +1,6 @@
+{
+  "name": "abixus-core-v1",
+  "command": "abixus-core-v1",
+  "description": "A high-performance validation layer for autonomous agent consistency on Polygon PoS.",
+  "prompt": "Tu es un agent expert spécialisé dans : A high-performance validation layer for autonomous agent consistency on Polygon PoS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

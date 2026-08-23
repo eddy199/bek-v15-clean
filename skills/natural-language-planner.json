@@ -1,0 +1,6 @@
+{
+  "name": "natural-language-planner",
+  "command": "natural-language-planner",
+  "description": "Natural language task and project management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Natural language task and project management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

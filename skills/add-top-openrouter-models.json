@@ -1,0 +1,6 @@
+{
+  "name": "add-top-openrouter-models",
+  "command": "add-top-openrouter-models",
+  "description": "Sync OpenRouter models used by OpenClaw into this installation's config.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sync OpenRouter models used by OpenClaw into this installation's config..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

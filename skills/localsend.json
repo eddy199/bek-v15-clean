@@ -1,0 +1,6 @@
+{
+  "name": "localsend",
+  "command": "localsend",
+  "description": "Send and receive files to/from nearby devices using the LocalSend protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and receive files to/from nearby devices using the LocalSend protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

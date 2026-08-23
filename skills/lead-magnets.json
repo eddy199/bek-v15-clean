@@ -1,0 +1,6 @@
+{
+  "name": "lead-magnets",
+  "command": "lead-magnets",
+  "description": "Design lead magnets that attract qualified prospects and convert them to paying customers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Design lead magnets that attract qualified prospects and convert them to paying customers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

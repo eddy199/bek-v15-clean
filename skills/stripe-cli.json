@@ -1,0 +1,6 @@
+{
+  "name": "stripe-cli",
+  "command": "stripe-cli",
+  "description": "A universal Moltbot skill wrapping Stripe CLI for payment processing, webhook testing, and API operations.",
+  "prompt": "Tu es un agent expert spécialisé dans : A universal Moltbot skill wrapping Stripe CLI for payment processing, webhook testing, and API operations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

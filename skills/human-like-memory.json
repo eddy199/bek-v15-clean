@@ -1,0 +1,6 @@
+{
+  "name": "human-like-memory",
+  "command": "human-like-memory",
+  "description": "This skill provides long-term memory capabilities for conversations.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill provides long-term memory capabilities for conversations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

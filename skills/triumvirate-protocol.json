@@ -1,0 +1,6 @@
+{
+  "name": "triumvirate-protocol",
+  "command": "triumvirate-protocol",
+  "description": "Identity-aware debate system for multi-architecture AI discourse.",
+  "prompt": "Tu es un agent expert spécialisé dans : Identity-aware debate system for multi-architecture AI discourse..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

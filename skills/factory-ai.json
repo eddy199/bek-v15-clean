@@ -1,0 +1,6 @@
+{
+  "name": "factory-ai",
+  "command": "factory-ai",
+  "description": "Use Factory AI's droid CLI for software engineering tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Factory AI's droid CLI for software engineering tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "meeting-autopilot",
+  "command": "meeting-autopilot",
+  "description": "Turn meeting transcripts into operational outputs — action items, decisions, follow-up email drafts, and ticket.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn meeting transcripts into operational outputs — action items, decisions, follow-up email drafts, and ticket..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

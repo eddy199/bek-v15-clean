@@ -1,0 +1,6 @@
+{
+  "name": "azhua-skill-vetter",
+  "command": "azhua-skill-vetter",
+  "description": "Security-first skill vetting for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security-first skill vetting for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "gekko",
+  "command": "gekko",
+  "description": "AI-powered DeFi portfolio manager for Base network.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered DeFi portfolio manager for Base network..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

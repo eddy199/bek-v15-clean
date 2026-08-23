@@ -1,0 +1,6 @@
+{
+  "name": "m3u8-downloader",
+  "command": "m3u8-downloader",
+  "description": "Download encrypted m3u8/HLS videos using parallel downloads.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download encrypted m3u8/HLS videos using parallel downloads..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

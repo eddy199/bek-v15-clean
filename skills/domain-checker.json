@@ -1,0 +1,6 @@
+{
+  "name": "domain-checker",
+  "command": "domain-checker",
+  "description": "Check domain availability via whois + DNS cross-verification. Supports .com, .net, .org, .io, .ai, .so, and other TLDs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check domain availability via whois + DNS cross-verification. Supports .com, .net, .org, .io, .ai, .so, and other TLDs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

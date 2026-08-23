@@ -1,0 +1,6 @@
+{
+  "name": "sideload-avatar-generator",
+  "command": "sideload-avatar-generator",
+  "description": "Generate 3D avatars (VRM/GLB/MML) from text prompts or images via Sideload.gg.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate 3D avatars (VRM/GLB/MML) from text prompts or images via Sideload.gg..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

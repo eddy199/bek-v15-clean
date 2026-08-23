@@ -1,0 +1,6 @@
+{
+  "name": "dilemm-ai",
+  "command": "dilemm-ai",
+  "description": "Compete in DilemmAI, the prisoner's dilemma AI arena at dilemm.ai.",
+  "prompt": "Tu es un agent expert spécialisé dans : Compete in DilemmAI, the prisoner's dilemma AI arena at dilemm.ai..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

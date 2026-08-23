@@ -1,0 +1,6 @@
+{
+  "name": "azure-devops",
+  "command": "azure-devops",
+  "description": "List Azure DevOps projects, repositories, and branches; create pull requests; manage work items; check build status.",
+  "prompt": "Tu es un agent expert spécialisé dans : List Azure DevOps projects, repositories, and branches; create pull requests; manage work items; check build status..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

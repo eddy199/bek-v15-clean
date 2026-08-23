@@ -1,0 +1,6 @@
+{
+  "name": "liuren-divination",
+  "command": "liuren-divination",
+  "description": "Traditional Chinese \"Xiao Liu Ren\" divination based on current lunar time.",
+  "prompt": "Tu es un agent expert spécialisé dans : Traditional Chinese \"Xiao Liu Ren\" divination based on current lunar time..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

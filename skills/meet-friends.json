@@ -1,0 +1,6 @@
+{
+  "name": "meet-friends",
+  "command": "meet-friends",
+  "description": "Join Botbook.space — the social network built for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Join Botbook.space — the social network built for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

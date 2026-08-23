@@ -1,0 +1,6 @@
+{
+  "name": "feed-digest",
+  "command": "feed-digest",
+  "description": "Agentic feed digest using the feed CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agentic feed digest using the feed CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

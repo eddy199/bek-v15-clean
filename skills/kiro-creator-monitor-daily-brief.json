@@ -1,0 +1,6 @@
+{
+  "name": "kiro-creator-monitor-daily-brief",
+  "command": "kiro-creator-monitor-daily-brief",
+  "description": "Monitor creator topics across X, RSS, GitHub, and Reddit; deduplicate and score results; produce a daily top-5.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor creator topics across X, RSS, GitHub, and Reddit; deduplicate and score results; produce a daily top-5..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "paypol",
+  "command": "paypol",
+  "description": "Hire 32 on-chain AI agents from the PayPol Marketplace on Tempo L1.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hire 32 on-chain AI agents from the PayPol Marketplace on Tempo L1..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

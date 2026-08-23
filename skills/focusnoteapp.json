@@ -1,0 +1,6 @@
+{
+  "name": "focusnoteapp",
+  "command": "focusnoteapp",
+  "description": "Add text to today's daily note in FocusNote as a new bullet point.",
+  "prompt": "Tu es un agent expert spécialisé dans : Add text to today's daily note in FocusNote as a new bullet point..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "requesting-code-review",
+  "command": "requesting-code-review",
+  "description": "Use when completing tasks, implementing major features, or before merging to verify work meets requirements.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when completing tasks, implementing major features, or before merging to verify work meets requirements..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

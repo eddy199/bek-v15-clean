@@ -1,0 +1,6 @@
+{
+  "name": "alibaba-cloud-model-setup",
+  "command": "alibaba-cloud-model-setup",
+  "description": "Configure OpenClaw (including historical Moltbot/Clawdbot paths) to use Alibaba Cloud Model Studio through a strict.",
+  "prompt": "Tu es un agent expert spécialisé dans : Configure OpenClaw (including historical Moltbot/Clawdbot paths) to use Alibaba Cloud Model Studio through a strict..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

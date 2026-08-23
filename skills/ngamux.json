@@ -1,0 +1,6 @@
+{
+  "name": "ngamux",
+  "command": "ngamux",
+  "description": "Build and modify web services using ngamux, a simple HTTP router for Go.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build and modify web services using ngamux, a simple HTTP router for Go..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

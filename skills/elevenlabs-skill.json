@@ -1,0 +1,6 @@
+{
+  "name": "elevenlabs-skill",
+  "command": "elevenlabs-skill",
+  "description": "Text-to-speech, sound effects, music generation, voice.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-speech, sound effects, music generation, voice..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

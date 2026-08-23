@@ -1,0 +1,6 @@
+{
+  "name": "bookkeeper",
+  "command": "bookkeeper",
+  "description": "Meta-skill for pre-accounting automation by orchestrating gmail, deepread-ocr, stripe-api, and xero.",
+  "prompt": "Tu es un agent expert spécialisé dans : Meta-skill for pre-accounting automation by orchestrating gmail, deepread-ocr, stripe-api, and xero..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

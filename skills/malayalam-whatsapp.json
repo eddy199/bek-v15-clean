@@ -1,0 +1,6 @@
+{
+  "name": "malayalam-whatsapp",
+  "command": "malayalam-whatsapp",
+  "description": "WhatsApp വഴി വരുന്ന മലയാളം / Manglish സന്ദേശങ്ങൾ.",
+  "prompt": "Tu es un agent expert spécialisé dans : WhatsApp വഴി വരുന്ന മലയാളം / Manglish സന്ദേശങ്ങൾ..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

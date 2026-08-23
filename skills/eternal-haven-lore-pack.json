@@ -1,0 +1,6 @@
+{
+  "name": "eternal-haven-lore-pack",
+  "command": "eternal-haven-lore-pack",
+  "description": "Eternal Haven Chronicles lore + mythic persona pack.",
+  "prompt": "Tu es un agent expert spécialisé dans : Eternal Haven Chronicles lore + mythic persona pack..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

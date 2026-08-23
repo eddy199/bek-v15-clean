@@ -1,0 +1,6 @@
+{
+  "name": "subagent-overseer",
+  "command": "subagent-overseer",
+  "description": "Monitor sub-agent health and progress via a pull-based bash daemon.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor sub-agent health and progress via a pull-based bash daemon..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "email-finder",
+  "command": "email-finder",
+  "description": "Find email addresses for a domain by combining website scraping, search dorking, pattern guessing, DNS analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find email addresses for a domain by combining website scraping, search dorking, pattern guessing, DNS analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

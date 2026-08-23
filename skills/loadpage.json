@@ -1,0 +1,6 @@
+{
+  "name": "loadpage",
+  "command": "loadpage",
+  "description": "Remove signs of AI-generated writing from text.",
+  "prompt": "Tu es un agent expert spécialisé dans : Remove signs of AI-generated writing from text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

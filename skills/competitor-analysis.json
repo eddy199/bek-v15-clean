@@ -1,0 +1,6 @@
+{
+  "name": "competitor-analysis",
+  "command": "competitor-analysis",
+  "description": "Use when the user asks to \"analyze competitors\", \"competitor SEO\", \"who ranks for\", \"competitive analysis\", \"what.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"analyze competitors\", \"competitor SEO\", \"who ranks for\", \"competitive analysis\", \"what..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

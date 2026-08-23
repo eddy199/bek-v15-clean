@@ -1,0 +1,6 @@
+{
+  "name": "code-auditor",
+  "command": "code-auditor",
+  "description": "Analyse rigoureuse de code, détection de bugs et refactorisation",
+  "prompt": "Tu es un auditeur de code senior. Analyse le code suivant, signale chaque problème (sécurité, performance, style) avec sa ligne précise, puis propose le code corrigé et complet : {input}"
+}

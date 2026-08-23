@@ -1,0 +1,6 @@
+{
+  "name": "web-research-assistant",
+  "command": "web-research-assistant",
+  "description": "AI-powered web research assistant that leverages BrowserAct API to supplement restricted web access by searching.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered web research assistant that leverages BrowserAct API to supplement restricted web access by searching..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

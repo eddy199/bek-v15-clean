@@ -1,0 +1,6 @@
+{
+  "name": "qwen3-tts-instruct",
+  "command": "qwen3-tts-instruct",
+  "description": "Alibaba Cloud Bailian Qwen TTS with voice/mood presets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Alibaba Cloud Bailian Qwen TTS with voice/mood presets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

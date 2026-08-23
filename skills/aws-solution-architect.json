@@ -1,0 +1,6 @@
+{
+  "name": "aws-solution-architect",
+  "command": "aws-solution-architect",
+  "description": "Design AWS architectures for startups.",
+  "prompt": "Tu es un agent expert spécialisé dans : Design AWS architectures for startups..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

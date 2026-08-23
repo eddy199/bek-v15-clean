@@ -1,0 +1,6 @@
+{
+  "name": "lygo-champion-omnisiren-silent-storm",
+  "command": "lygo-champion-omnisiren-silent-storm",
+  "description": "LYGO Δ9 Council Champion persona helper (OMNIΣIREN, The Silent Storm)",
+  "prompt": "Tu es un agent expert spécialisé dans : LYGO Δ9 Council Champion persona helper (OMNIΣIREN, The Silent Storm).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

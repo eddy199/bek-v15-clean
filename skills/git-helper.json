@@ -1,0 +1,6 @@
+{
+  "name": "git-helper",
+  "command": "git-helper",
+  "description": "Common git operations as a skill (status, pull, push, branch, log).",
+  "prompt": "Tu es un agent expert spécialisé dans : Common git operations as a skill (status, pull, push, branch, log)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "trustlog-guard",
+  "command": "trustlog-guard",
+  "description": "Financial governance for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Financial governance for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

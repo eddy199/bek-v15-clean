@@ -1,0 +1,6 @@
+{
+  "name": "homeassistant-cli",
+  "command": "homeassistant-cli",
+  "description": "Advanced Home Assistant control using the official hass-cli tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced Home Assistant control using the official hass-cli tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

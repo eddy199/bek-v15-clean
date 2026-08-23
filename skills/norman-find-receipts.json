@@ -1,0 +1,6 @@
+{
+  "name": "norman-find-receipts",
+  "command": "norman-find-receipts",
+  "description": "Find and attach missing receipts for business transactions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find and attach missing receipts for business transactions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

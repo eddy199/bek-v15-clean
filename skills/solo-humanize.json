@@ -1,0 +1,6 @@
+{
+  "name": "solo-humanize",
+  "command": "solo-humanize",
+  "description": "Strip AI writing patterns from text — em dashes, stock phrases, promotional inflation, performed authenticity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Strip AI writing patterns from text — em dashes, stock phrases, promotional inflation, performed authenticity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

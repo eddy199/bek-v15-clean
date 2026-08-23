@@ -1,0 +1,6 @@
+{
+  "name": "audio-conductor",
+  "command": "audio-conductor",
+  "description": "Intelligently dispatches requests to the appropriate audio generation model (Music, Sound Effects, or TTS)",
+  "prompt": "Tu es un agent expert spécialisé dans : Intelligently dispatches requests to the appropriate audio generation model (Music, Sound Effects, or TTS).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

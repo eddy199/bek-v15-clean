@@ -1,0 +1,6 @@
+{
+  "name": "morning-email-rollup",
+  "command": "morning-email-rollup",
+  "description": "Daily morning rollup of important emails.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily morning rollup of important emails..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

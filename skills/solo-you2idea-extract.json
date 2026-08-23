@@ -1,0 +1,6 @@
+{
+  "name": "solo-you2idea-extract",
+  "command": "solo-you2idea-extract",
+  "description": "Extract startup ideas from YouTube videos via solograph MCP — index, search, and analyze video transcripts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract startup ideas from YouTube videos via solograph MCP — index, search, and analyze video transcripts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

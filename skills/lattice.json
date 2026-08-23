@@ -1,0 +1,6 @@
+{
+  "name": "lattice",
+  "command": "lattice",
+  "description": "Initialize and manage Lattice organizations — a file-based operating system for AI agent teams that enables stable.",
+  "prompt": "Tu es un agent expert spécialisé dans : Initialize and manage Lattice organizations — a file-based operating system for AI agent teams that enables stable..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

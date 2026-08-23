@@ -1,0 +1,6 @@
+{
+  "name": "finally-offline",
+  "command": "finally-offline",
+  "description": "Browse culture articles and generate personalized HTML newsletters via MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Browse culture articles and generate personalized HTML newsletters via MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

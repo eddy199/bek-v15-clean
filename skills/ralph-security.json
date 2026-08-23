@@ -1,0 +1,6 @@
+{
+  "name": "ralph-security",
+  "command": "ralph-security",
+  "description": "Comprehensive security audit with 100 iterations (~30-60 min)",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive security audit with 100 iterations (~30-60 min).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

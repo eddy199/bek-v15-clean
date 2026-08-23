@@ -1,0 +1,6 @@
+{
+  "name": "shipstation-orders",
+  "command": "shipstation-orders",
+  "description": "Monitor ShipStation orders, detect issues, and send alerts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor ShipStation orders, detect issues, and send alerts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "azure-identity-py",
+  "command": "azure-identity-py",
+  "description": "Azure Identity SDK for Python authentication.",
+  "prompt": "Tu es un agent expert spécialisé dans : Azure Identity SDK for Python authentication..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

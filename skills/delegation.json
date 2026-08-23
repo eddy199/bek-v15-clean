@@ -1,0 +1,6 @@
+{
+  "name": "delegation",
+  "command": "delegation",
+  "description": "Architecture-first workflow for delegating complex projects to AI coding agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Architecture-first workflow for delegating complex projects to AI coding agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "comfyui-imagegen",
+  "command": "comfyui-imagegen",
+  "description": "Generate images via ComfyUI API (localhost:8188) using Flux2 workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images via ComfyUI API (localhost:8188) using Flux2 workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

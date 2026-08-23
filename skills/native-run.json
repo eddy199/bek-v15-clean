@@ -1,0 +1,6 @@
+{
+  "name": "native-run",
+  "command": "native-run",
+  "description": "Native Run is an OpenClaw skill that allows executing native commands.",
+  "prompt": "Tu es un agent expert spécialisé dans : Native Run is an OpenClaw skill that allows executing native commands..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

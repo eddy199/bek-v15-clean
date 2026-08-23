@@ -1,0 +1,6 @@
+{
+  "name": "near-best-practices",
+  "command": "near-best-practices",
+  "description": "Comprehensive NEAR best practices guide with 100+ terms covering wallet security, smart contracts, and DeFi safety.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive NEAR best practices guide with 100+ terms covering wallet security, smart contracts, and DeFi safety..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

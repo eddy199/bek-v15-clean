@@ -1,0 +1,6 @@
+{
+  "name": "arc-workflow-orchestrator",
+  "command": "arc-workflow-orchestrator",
+  "description": "Chain skills into automated pipelines with conditional logic, error handling, and audit logging.",
+  "prompt": "Tu es un agent expert spécialisé dans : Chain skills into automated pipelines with conditional logic, error handling, and audit logging..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

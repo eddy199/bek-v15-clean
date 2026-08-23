@@ -1,0 +1,6 @@
+{
+  "name": "pipx-desktop-agent",
+  "command": "pipx-desktop-agent",
+  "description": "Control mouse, keyboard, and screen for desktop automation tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control mouse, keyboard, and screen for desktop automation tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

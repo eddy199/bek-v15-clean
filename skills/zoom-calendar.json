@@ -1,0 +1,6 @@
+{
+  "name": "zoom-calendar",
+  "command": "zoom-calendar",
+  "description": "Create Zoom meetings and add them to Google Calendar events with proper conferenceData (icon, video entry, notes).",
+  "prompt": "Tu es un agent expert spécialisé dans : Create Zoom meetings and add them to Google Calendar events with proper conferenceData (icon, video entry, notes)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

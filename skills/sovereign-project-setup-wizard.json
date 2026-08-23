@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-project-setup-wizard",
+  "command": "sovereign-project-setup-wizard",
+  "description": "An interactive project scaffolding tool that generates complete, production-ready.",
+  "prompt": "Tu es un agent expert spécialisé dans : An interactive project scaffolding tool that generates complete, production-ready..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

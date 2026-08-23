@@ -1,0 +1,6 @@
+{
+  "name": "senior-security",
+  "command": "senior-security",
+  "description": "Security engineering toolkit for threat modeling, vulnerability analysis, secure architecture, and penetration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security engineering toolkit for threat modeling, vulnerability analysis, secure architecture, and penetration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

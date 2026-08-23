@@ -1,0 +1,6 @@
+{
+  "name": "apewisdom",
+  "command": "apewisdom",
+  "description": "Scan Reddit for trending stocks and sentiment spikes using the ApeWisdom API (free)",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan Reddit for trending stocks and sentiment spikes using the ApeWisdom API (free).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

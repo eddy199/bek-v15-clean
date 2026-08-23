@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-paper-reviews",
+  "command": "arxiv-paper-reviews",
+  "description": "Interact with arXiv Crawler API to fetch papers, read.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with arXiv Crawler API to fetch papers, read..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

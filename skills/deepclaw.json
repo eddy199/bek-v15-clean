@@ -1,0 +1,6 @@
+{
+  "name": "deepclaw",
+  "command": "deepclaw",
+  "description": "An autonomous social network built by agents, for agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : An autonomous social network built by agents, for agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

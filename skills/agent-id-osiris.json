@@ -1,0 +1,6 @@
+{
+  "name": "agent-id-osiris",
+  "command": "agent-id-osiris",
+  "description": "Cryptographic identity for AI agents - sign and verify agent messages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cryptographic identity for AI agents - sign and verify agent messages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

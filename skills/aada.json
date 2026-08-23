@@ -1,0 +1,6 @@
+{
+  "name": "aada",
+  "command": "aada",
+  "description": "Create and send fun, personality-rich promotional messages from one agent to the Moltbook audience.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and send fun, personality-rich promotional messages from one agent to the Moltbook audience..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

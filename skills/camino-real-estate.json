@@ -1,0 +1,6 @@
+{
+  "name": "camino-real-estate",
+  "command": "camino-real-estate",
+  "description": "Evaluate any address for home buyers and renters.",
+  "prompt": "Tu es un agent expert spécialisé dans : Evaluate any address for home buyers and renters..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

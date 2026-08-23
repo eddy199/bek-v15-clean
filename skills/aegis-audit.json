@@ -1,0 +1,6 @@
+{
+  "name": "aegis-audit",
+  "command": "aegis-audit",
+  "description": "Deep behavioral security audit for AI agent skills and MCP tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deep behavioral security audit for AI agent skills and MCP tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

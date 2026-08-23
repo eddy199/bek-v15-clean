@@ -1,0 +1,6 @@
+{
+  "name": "paythefly",
+  "command": "paythefly",
+  "description": "Create crypto payment & withdrawal links for your app.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create crypto payment & withdrawal links for your app..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

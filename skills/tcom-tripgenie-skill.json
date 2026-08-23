@@ -1,0 +1,6 @@
+{
+  "name": "tcom-tripgenie-skill",
+  "command": "tcom-tripgenie-skill",
+  "description": "TripGenie skill — handles hotel booking, flight search, attraction recommendation and travel consultation.",
+  "prompt": "Tu es un agent expert spécialisé dans : TripGenie skill — handles hotel booking, flight search, attraction recommendation and travel consultation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

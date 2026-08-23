@@ -1,0 +1,6 @@
+{
+  "name": "line-rich-messages",
+  "command": "line-rich-messages",
+  "description": "Comprehensive guide for LINE Rich UI features (Flex Messages, buttons, quick replies, and markdown auto-conversion).",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive guide for LINE Rich UI features (Flex Messages, buttons, quick replies, and markdown auto-conversion)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

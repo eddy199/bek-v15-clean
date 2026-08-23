@@ -1,0 +1,6 @@
+{
+  "name": "remix-agent-publish",
+  "command": "remix-agent-publish",
+  "description": "Build Remix games for remix.gg with the server-api v1 agents REST API and Farcade game SDK requirements.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build Remix games for remix.gg with the server-api v1 agents REST API and Farcade game SDK requirements..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

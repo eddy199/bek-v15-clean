@@ -1,0 +1,6 @@
+{
+  "name": "model-matrix",
+  "command": "model-matrix",
+  "description": "Weighted model-routing matrix for OpenClaw (cost-aware, policy-aware, daily scorecard template).",
+  "prompt": "Tu es un agent expert spécialisé dans : Weighted model-routing matrix for OpenClaw (cost-aware, policy-aware, daily scorecard template)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

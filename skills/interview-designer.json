@@ -1,0 +1,6 @@
+{
+  "name": "interview-designer",
+  "command": "interview-designer",
+  "description": "Analyze resumes and design interview strategies using evidence-based methodology.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze resumes and design interview strategies using evidence-based methodology..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "didit-proof-of-address",
+  "command": "didit-proof-of-address",
+  "description": "Integrate Didit Proof of Address standalone API to verify address documents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate Didit Proof of Address standalone API to verify address documents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

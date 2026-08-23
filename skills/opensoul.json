@@ -1,0 +1,6 @@
+{
+  "name": "opensoul",
+  "command": "opensoul",
+  "description": "OpenSoul is a toolkit that provides AI agents with an immutable \"soul\" - an encrypted, blockchain-based audit log.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenSoul is a toolkit that provides AI agents with an immutable \"soul\" - an encrypted, blockchain-based audit log..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

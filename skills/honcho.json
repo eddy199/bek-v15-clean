@@ -1,0 +1,6 @@
+{
+  "name": "honcho",
+  "command": "honcho",
+  "description": "Install the @honcho-ai/openclaw-honcho plugin and migrate legacy file-based memory to Honcho.",
+  "prompt": "Tu es un agent expert spécialisé dans : Install the @honcho-ai/openclaw-honcho plugin and migrate legacy file-based memory to Honcho..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

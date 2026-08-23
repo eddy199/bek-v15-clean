@@ -1,0 +1,6 @@
+{
+  "name": "follow-up-boss",
+  "command": "follow-up-boss",
+  "description": "CLI for interacting with the Follow Up Boss API.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI for interacting with the Follow Up Boss API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

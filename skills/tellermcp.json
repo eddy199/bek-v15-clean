@@ -1,0 +1,6 @@
+{
+  "name": "tellermcp",
+  "command": "tellermcp",
+  "description": "Expose the Teller delta-neutral + lending Model Context Protocol server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Expose the Teller delta-neutral + lending Model Context Protocol server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

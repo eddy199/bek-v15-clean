@@ -1,0 +1,6 @@
+{
+  "name": "ollama-model-tuner",
+  "command": "ollama-model-tuner",
+  "description": "Optimize Ollama models/prompts using local datasets, eval metrics, and iterative tuning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Optimize Ollama models/prompts using local datasets, eval metrics, and iterative tuning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

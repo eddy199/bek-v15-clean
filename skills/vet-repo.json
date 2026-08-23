@@ -1,0 +1,6 @@
+{
+  "name": "vet-repo",
+  "command": "vet-repo",
+  "description": "Scan repository agent configuration files for known malicious patterns.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan repository agent configuration files for known malicious patterns..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

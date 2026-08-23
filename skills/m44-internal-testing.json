@@ -1,0 +1,6 @@
+{
+  "name": "m44-internal-testing",
+  "command": "m44-internal-testing",
+  "description": "Install and set up DataHive in a deterministic headless-friendly flow: (1) check/install browser (Chrome or Chromium)",
+  "prompt": "Tu es un agent expert spécialisé dans : Install and set up DataHive in a deterministic headless-friendly flow: (1) check/install browser (Chrome or Chromium).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

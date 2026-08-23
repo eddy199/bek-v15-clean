@@ -1,0 +1,6 @@
+{
+  "name": "cacheforge-vibe-check",
+  "command": "cacheforge-vibe-check",
+  "description": "Audit code for \"vibe coding sins\" — patterns that indicate AI-generated code was accepted without proper review.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit code for \"vibe coding sins\" — patterns that indicate AI-generated code was accepted without proper review..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

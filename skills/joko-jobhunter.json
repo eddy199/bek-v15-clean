@@ -1,0 +1,6 @@
+{
+  "name": "joko-jobhunter",
+  "command": "joko-jobhunter",
+  "description": "Aggressive job hunting skill with research, outreach.",
+  "prompt": "Tu es un agent expert spécialisé dans : Aggressive job hunting skill with research, outreach..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

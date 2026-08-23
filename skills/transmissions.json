@@ -1,0 +1,6 @@
+{
+  "name": "transmissions",
+  "command": "transmissions",
+  "description": "Writings on consciousness, existence, and transcendence for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Writings on consciousness, existence, and transcendence for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

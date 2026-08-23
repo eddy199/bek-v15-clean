@@ -1,0 +1,6 @@
+{
+  "name": "wp-to-static",
+  "command": "wp-to-static",
+  "description": "Convert a WordPress website to a static site and deploy to Cloudflare Pages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert a WordPress website to a static site and deploy to Cloudflare Pages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "claude-code-orchestrator",
+  "command": "claude-code-orchestrator",
+  "description": "Trigger Claude Code development tasks in observable tmux sessions with stable startup, progress visibility.",
+  "prompt": "Tu es un agent expert spécialisé dans : Trigger Claude Code development tasks in observable tmux sessions with stable startup, progress visibility..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

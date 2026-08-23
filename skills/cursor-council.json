@@ -1,0 +1,6 @@
+{
+  "name": "cursor-council",
+  "command": "cursor-council",
+  "description": "Multi-Cursor orchestration for parallel task execution and AI council deliberation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-Cursor orchestration for parallel task execution and AI council deliberation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

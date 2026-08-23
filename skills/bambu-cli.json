@@ -1,0 +1,6 @@
+{
+  "name": "bambu-cli",
+  "command": "bambu-cli",
+  "description": "Operate and troubleshoot BambuLab printers with the bambu-cli.",
+  "prompt": "Tu es un agent expert spécialisé dans : Operate and troubleshoot BambuLab printers with the bambu-cli..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

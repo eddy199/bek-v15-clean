@@ -1,0 +1,6 @@
+{
+  "name": "baml-codegen",
+  "command": "baml-codegen",
+  "description": "Use when generating BAML code for type-safe LLM extraction, classification, RAG, or agent workflows - creates.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when generating BAML code for type-safe LLM extraction, classification, RAG, or agent workflows - creates..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

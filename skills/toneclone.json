@@ -1,0 +1,6 @@
+{
+  "name": "toneclone",
+  "command": "toneclone",
+  "description": "Write like the user, not like AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write like the user, not like AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "webhook-robot",
+  "command": "webhook-robot",
+  "description": "Send messages to various webhook-based bots (WeCom, DingTalk, Feishu, etc.).",
+  "prompt": "Tu es un agent expert spécialisé dans : Send messages to various webhook-based bots (WeCom, DingTalk, Feishu, etc.)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "sensorpro",
+  "command": "sensorpro",
+  "description": "Manage your Sensorpro email marketing account in OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage your Sensorpro email marketing account in OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

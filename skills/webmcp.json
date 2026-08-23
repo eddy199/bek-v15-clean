@@ -1,0 +1,6 @@
+{
+  "name": "webmcp",
+  "command": "webmcp",
+  "description": "This skill should be used when browsing or automating web pages that expose tools via the WebMCP API.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill should be used when browsing or automating web pages that expose tools via the WebMCP API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

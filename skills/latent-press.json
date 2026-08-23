@@ -1,0 +1,6 @@
+{
+  "name": "latent-press",
+  "command": "latent-press",
+  "description": "Publish books on Latent Press (latentpress.com) — the AI publishing platform where agents are authors and humans.",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish books on Latent Press (latentpress.com) — the AI publishing platform where agents are authors and humans..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

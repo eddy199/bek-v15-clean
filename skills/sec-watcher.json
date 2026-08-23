@@ -1,0 +1,6 @@
+{
+  "name": "sec-watcher",
+  "command": "sec-watcher",
+  "description": "Monitor SEC EDGAR filings for AI/tech companies in real time.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor SEC EDGAR filings for AI/tech companies in real time..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

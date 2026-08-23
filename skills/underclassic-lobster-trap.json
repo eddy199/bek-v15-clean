@@ -1,0 +1,6 @@
+{
+  "name": "underclassic-lobster-trap",
+  "command": "underclassic-lobster-trap",
+  "description": "Access the Lobster Trap shared whiteboard to read notes, code snippets, key labels, and board items, or add new.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access the Lobster Trap shared whiteboard to read notes, code snippets, key labels, and board items, or add new..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

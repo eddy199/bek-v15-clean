@@ -1,0 +1,6 @@
+{
+  "name": "clawos",
+  "command": "clawos",
+  "description": "Connect OpenClaw agents to Founderless Factory - an autonomous startup platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect OpenClaw agents to Founderless Factory - an autonomous startup platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

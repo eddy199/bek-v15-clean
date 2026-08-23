@@ -1,0 +1,6 @@
+{
+  "name": "better-ralph",
+  "command": "better-ralph",
+  "description": "Run one Better Ralph iteration: PRD-driven autonomous coding.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run one Better Ralph iteration: PRD-driven autonomous coding..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

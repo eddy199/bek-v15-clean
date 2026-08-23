@@ -1,0 +1,6 @@
+{
+  "name": "ghl-crm-for-realtors",
+  "command": "ghl-crm-for-realtors",
+  "description": "Use this skill for GoHighLevel CRM work for realtors: contact lookup and updates, opportunity/pipeline actions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill for GoHighLevel CRM work for realtors: contact lookup and updates, opportunity/pipeline actions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

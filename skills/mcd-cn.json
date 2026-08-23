@@ -1,0 +1,6 @@
+{
+  "name": "mcd-cn",
+  "command": "mcd-cn",
+  "description": "Query McDonald's China MCP server via the mcd-cn CLI for campaign calendars,.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query McDonald's China MCP server via the mcd-cn CLI for campaign calendars,..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

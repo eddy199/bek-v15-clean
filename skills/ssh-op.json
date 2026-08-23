@@ -1,0 +1,6 @@
+{
+  "name": "ssh-op",
+  "command": "ssh-op",
+  "description": "Use the ssh-op helper script to load an SSH private key from 1Password (op) into an in-memory ssh-agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the ssh-op helper script to load an SSH private key from 1Password (op) into an in-memory ssh-agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

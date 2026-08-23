@@ -1,0 +1,6 @@
+{
+  "name": "stealthy-google-search",
+  "command": "stealthy-google-search",
+  "description": "Google search via Scrapling’s StealthyFetcher/StealthySession.",
+  "prompt": "Tu es un agent expert spécialisé dans : Google search via Scrapling’s StealthyFetcher/StealthySession..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

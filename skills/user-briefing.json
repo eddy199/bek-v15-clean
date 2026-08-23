@@ -1,0 +1,6 @@
+{
+  "name": "user-briefing",
+  "command": "user-briefing",
+  "description": "Fetch weather, calendar events, emails, and tasks to create a personalized morning briefing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch weather, calendar events, emails, and tasks to create a personalized morning briefing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

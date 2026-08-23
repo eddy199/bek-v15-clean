@@ -1,0 +1,6 @@
+{
+  "name": "mcp-workflow",
+  "command": "mcp-workflow",
+  "description": "Workflow automation using MCP (Model Context Protocol) patterns inspired by Jason Zhou.",
+  "prompt": "Tu es un agent expert spécialisé dans : Workflow automation using MCP (Model Context Protocol) patterns inspired by Jason Zhou..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

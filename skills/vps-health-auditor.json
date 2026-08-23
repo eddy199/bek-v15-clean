@@ -1,0 +1,6 @@
+{
+  "name": "vps-health-auditor",
+  "command": "vps-health-auditor",
+  "description": "Runs comprehensive diagnostics (CPU, RAM, disk, network, services, uptime) via SSH/local exec, analyzes with Ollama.",
+  "prompt": "Tu es un agent expert spécialisé dans : Runs comprehensive diagnostics (CPU, RAM, disk, network, services, uptime) via SSH/local exec, analyzes with Ollama..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cad-agent",
+  "command": "cad-agent",
+  "description": "Rendering server for AI agents doing CAD work.",
+  "prompt": "Tu es un agent expert spécialisé dans : Rendering server for AI agents doing CAD work..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

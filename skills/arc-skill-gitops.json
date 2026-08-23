@@ -1,0 +1,6 @@
+{
+  "name": "arc-skill-gitops",
+  "command": "arc-skill-gitops",
+  "description": "Automated deployment, rollback, and version management for agent workflows and skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated deployment, rollback, and version management for agent workflows and skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

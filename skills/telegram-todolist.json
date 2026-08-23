@@ -1,0 +1,6 @@
+{
+  "name": "telegram-todolist",
+  "command": "telegram-todolist",
+  "description": "Telegram bot Todo List manager.",
+  "prompt": "Tu es un agent expert spécialisé dans : Telegram bot Todo List manager..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "telcall-twilio",
+  "command": "telcall-twilio",
+  "description": "Make emergency phone calls via Twilio.",
+  "prompt": "Tu es un agent expert spécialisé dans : Make emergency phone calls via Twilio..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

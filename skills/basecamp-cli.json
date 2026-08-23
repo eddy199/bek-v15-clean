@@ -1,0 +1,6 @@
+{
+  "name": "basecamp-cli",
+  "command": "basecamp-cli",
+  "description": "Manage Basecamp (via bc3 API / 37signals Launchpad) projects.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Basecamp (via bc3 API / 37signals Launchpad) projects..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

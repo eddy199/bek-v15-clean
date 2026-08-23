@@ -1,0 +1,6 @@
+{
+  "name": "video-download",
+  "command": "video-download",
+  "description": "Download videos from 1800+ websites and generate subtitles using Faster Whisper AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download videos from 1800+ websites and generate subtitles using Faster Whisper AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

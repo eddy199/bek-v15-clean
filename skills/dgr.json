@@ -1,0 +1,6 @@
+{
+  "name": "dgr",
+  "command": "dgr",
+  "description": "Audit-ready decision artifacts for LLM outputs — assumptions, risks,.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit-ready decision artifacts for LLM outputs — assumptions, risks,..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

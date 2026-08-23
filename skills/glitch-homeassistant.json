@@ -1,0 +1,6 @@
+{
+  "name": "glitch-homeassistant",
+  "command": "glitch-homeassistant",
+  "description": "Control smart home devices via Home Assistant API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control smart home devices via Home Assistant API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

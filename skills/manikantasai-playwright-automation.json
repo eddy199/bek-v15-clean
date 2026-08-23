@@ -1,0 +1,6 @@
+{
+  "name": "manikantasai-playwright-automation",
+  "command": "manikantasai-playwright-automation",
+  "description": "Browser automation using Playwright API directly.",
+  "prompt": "Tu es un agent expert spécialisé dans : Browser automation using Playwright API directly..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

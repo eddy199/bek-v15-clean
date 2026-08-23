@@ -1,0 +1,6 @@
+{
+  "name": "app-store-screenshot-generation",
+  "command": "app-store-screenshot-generation",
+  "description": "Generate App Store and Google Play screenshot assets using each::sense AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate App Store and Google Play screenshot assets using each::sense AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "openai-image-cli",
+  "command": "openai-image-cli",
+  "description": "Generate, edit, and manage images via OpenAI's GPT Image and DALL-E models.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate, edit, and manage images via OpenAI's GPT Image and DALL-E models..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

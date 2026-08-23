@@ -1,0 +1,6 @@
+{
+  "name": "ned-analytics",
+  "command": "ned-analytics",
+  "description": "Query your Shopify store's sales, profitability, customers, and marketing data through Ned's API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query your Shopify store's sales, profitability, customers, and marketing data through Ned's API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

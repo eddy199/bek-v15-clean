@@ -1,0 +1,6 @@
+{
+  "name": "qwen3-tts-local-inference",
+  "command": "qwen3-tts-local-inference",
+  "description": "Generate speech from text using Qwen3-TTS via direct Python inference — no server required.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate speech from text using Qwen3-TTS via direct Python inference — no server required..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

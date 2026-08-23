@@ -1,0 +1,6 @@
+{
+  "name": "git-summary",
+  "command": "git-summary",
+  "description": "Get a quick summary of the current Git repository including status.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get a quick summary of the current Git repository including status..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

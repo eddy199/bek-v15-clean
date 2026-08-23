@@ -1,0 +1,6 @@
+{
+  "name": "admet-prediction",
+  "command": "admet-prediction",
+  "description": "ADMET (Absorption, Distribution, Metabolism, Excretion, Toxicity) prediction for drug candidates.",
+  "prompt": "Tu es un agent expert spécialisé dans : ADMET (Absorption, Distribution, Metabolism, Excretion, Toxicity) prediction for drug candidates..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

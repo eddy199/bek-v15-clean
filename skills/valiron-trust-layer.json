@@ -1,0 +1,6 @@
+{
+  "name": "valiron-trust-layer",
+  "command": "valiron-trust-layer",
+  "description": "Intercept and authorize outgoing machine-to-machine payments (x402 or similar) using @valiron/sdk trust decisions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intercept and authorize outgoing machine-to-machine payments (x402 or similar) using @valiron/sdk trust decisions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

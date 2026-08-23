@@ -1,0 +1,6 @@
+{
+  "name": "zapper",
+  "command": "zapper",
+  "description": "Query DeFi portfolio data across 50+ chains via Zapper's GraphQL API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query DeFi portfolio data across 50+ chains via Zapper's GraphQL API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

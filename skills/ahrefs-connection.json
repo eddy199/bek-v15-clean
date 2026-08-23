@@ -1,0 +1,6 @@
+{
+  "name": "ahrefs-connection",
+  "command": "ahrefs-connection",
+  "description": "Access Ahrefs SEO data via the Ahrefs API for comprehensive SEO analysis, keyword research, backlink analysis, site.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Ahrefs SEO data via the Ahrefs API for comprehensive SEO analysis, keyword research, backlink analysis, site..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

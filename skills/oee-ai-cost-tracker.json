@@ -1,0 +1,6 @@
+{
+  "name": "oee-ai-cost-tracker",
+  "command": "oee-ai-cost-tracker",
+  "description": "> by Odin's Eye Enterprises — Ancient Wisdom.",
+  "prompt": "Tu es un agent expert spécialisé dans : > by Odin's Eye Enterprises — Ancient Wisdom..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

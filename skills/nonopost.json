@@ -1,0 +1,6 @@
+{
+  "name": "nonopost",
+  "command": "nonopost",
+  "description": "A skill to interact with the Anonymous Posting API, allowing agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill to interact with the Anonymous Posting API, allowing agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

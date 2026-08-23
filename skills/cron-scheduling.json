@@ -1,0 +1,6 @@
+{
+  "name": "cron-scheduling",
+  "command": "cron-scheduling",
+  "description": "Schedule and manage recurring tasks with cron.",
+  "prompt": "Tu es un agent expert spécialisé dans : Schedule and manage recurring tasks with cron..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

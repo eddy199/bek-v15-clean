@@ -1,0 +1,6 @@
+{
+  "name": "twitter-api",
+  "command": "twitter-api",
+  "description": "Cookie-based Twitter/X automation toolkit (timeline, notifications, posting, follow ops) for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cookie-based Twitter/X automation toolkit (timeline, notifications, posting, follow ops) for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "pls-copy-editing",
+  "command": "pls-copy-editing",
+  "description": "[TODO: Complete and informative explanation of what the skill does and when to use it.",
+  "prompt": "Tu es un agent expert spécialisé dans : [TODO: Complete and informative explanation of what the skill does and when to use it..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

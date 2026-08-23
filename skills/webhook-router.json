@@ -1,0 +1,6 @@
+{
+  "name": "webhook-router",
+  "command": "webhook-router",
+  "description": "A general-purpose webhook receiver that routes incoming webhooks from any source to appropriate handlers.",
+  "prompt": "Tu es un agent expert spécialisé dans : A general-purpose webhook receiver that routes incoming webhooks from any source to appropriate handlers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lraivisto-researchvault",
+  "command": "lraivisto-researchvault",
+  "description": "High-velocity research orchestration engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : High-velocity research orchestration engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

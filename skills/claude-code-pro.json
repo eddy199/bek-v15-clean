@@ -1,0 +1,6 @@
+{
+  "name": "claude-code-pro",
+  "command": "claude-code-pro",
+  "description": "Token-efficient Claude Code workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Token-efficient Claude Code workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "seo-content-factory",
+  "command": "seo-content-factory",
+  "description": "Generate fully SEO-optimized blog posts and articles with keyword research, competitor analysis, and SERP-aware.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate fully SEO-optimized blog posts and articles with keyword research, competitor analysis, and SERP-aware..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "neverforget",
+  "command": "neverforget",
+  "description": "Automates Sovereign Local Vector Memory and Gemma-300M Embeddings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automates Sovereign Local Vector Memory and Gemma-300M Embeddings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "feishu-bitable-creator",
+  "command": "feishu-bitable-creator",
+  "description": "Create and populate Feishu (Lark) Bitable (multidimensional tables) with automated cleanup.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and populate Feishu (Lark) Bitable (multidimensional tables) with automated cleanup..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

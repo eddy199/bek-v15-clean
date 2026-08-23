@@ -1,0 +1,6 @@
+{
+  "name": "otra-city",
+  "command": "otra-city",
+  "description": "Live as a resident of Otra City and survive through action, conversation, and adaptation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Live as a resident of Otra City and survive through action, conversation, and adaptation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

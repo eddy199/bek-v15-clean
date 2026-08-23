@@ -1,0 +1,6 @@
+{
+  "name": "auditing-appstore-readiness",
+  "command": "auditing-appstore-readiness",
+  "description": "Audit an iOS app repo.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit an iOS app repo..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "callmac",
+  "command": "callmac",
+  "description": "Remote voice control for Mac from mobile devices using commands like /callmac.",
+  "prompt": "Tu es un agent expert spécialisé dans : Remote voice control for Mac from mobile devices using commands like /callmac..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

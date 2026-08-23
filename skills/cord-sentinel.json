@@ -1,0 +1,6 @@
+{
+  "name": "cord-sentinel",
+  "command": "cord-sentinel",
+  "description": "SENTINEL/CORD governance engine — mandatory pre-flight enforcement for agent tool calls.",
+  "prompt": "Tu es un agent expert spécialisé dans : SENTINEL/CORD governance engine — mandatory pre-flight enforcement for agent tool calls..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

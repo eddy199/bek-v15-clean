@@ -1,0 +1,6 @@
+{
+  "name": "ecommerce-price-watcher",
+  "command": "ecommerce-price-watcher",
+  "description": "Track product prices across ecommerce sites and alert on offers or target-price hits.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track product prices across ecommerce sites and alert on offers or target-price hits..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "invoice-tracker-pro",
+  "command": "invoice-tracker-pro",
+  "description": "Complete freelance billing workflow — generate professional invoices, track payment status, send automated.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete freelance billing workflow — generate professional invoices, track payment status, send automated..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

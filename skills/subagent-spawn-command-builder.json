@@ -1,0 +1,6 @@
+{
+  "name": "subagent-spawn-command-builder",
+  "command": "subagent-spawn-command-builder",
+  "description": "Build sessions_spawn command payloads from JSON profiles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build sessions_spawn command payloads from JSON profiles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

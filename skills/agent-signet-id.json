@@ -1,0 +1,6 @@
+{
+  "name": "agent-signet-id",
+  "command": "agent-signet-id",
+  "description": "Register with Signet to receive a trust score and API key.",
+  "prompt": "Tu es un agent expert spécialisé dans : Register with Signet to receive a trust score and API key..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

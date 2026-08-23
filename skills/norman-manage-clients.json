@@ -1,0 +1,6 @@
+{
+  "name": "norman-manage-clients",
+  "command": "norman-manage-clients",
+  "description": "Manage business clients - list, search, create, or update client information.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage business clients - list, search, create, or update client information..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

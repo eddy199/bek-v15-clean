@@ -1,0 +1,6 @@
+{
+  "name": "next-cache-components",
+  "command": "next-cache-components",
+  "description": "Next.js 16 Cache Components - PPR, use cache directive, cacheLife, cacheTag, updateTag.",
+  "prompt": "Tu es un agent expert spécialisé dans : Next.js 16 Cache Components - PPR, use cache directive, cacheLife, cacheTag, updateTag..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

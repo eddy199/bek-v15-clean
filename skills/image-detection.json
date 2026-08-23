@@ -1,0 +1,6 @@
+{
+  "name": "image-detection",
+  "command": "image-detection",
+  "description": "Skills for analyzing and detecting AI-generated images.",
+  "prompt": "Tu es un agent expert spécialisé dans : Skills for analyzing and detecting AI-generated images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

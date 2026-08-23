@@ -1,0 +1,6 @@
+{
+  "name": "feishu-whiteboard",
+  "command": "feishu-whiteboard",
+  "description": "Allows creating and manipulating Feishu Whiteboards.",
+  "prompt": "Tu es un agent expert spécialisé dans : Allows creating and manipulating Feishu Whiteboards..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

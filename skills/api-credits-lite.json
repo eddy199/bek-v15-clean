@@ -1,0 +1,6 @@
+{
+  "name": "api-credits-lite",
+  "command": "api-credits-lite",
+  "description": "Display API credit balances for 5 core providers (Anthropic, OpenAI, OpenRouter, Mistral, Groq) with video game.",
+  "prompt": "Tu es un agent expert spécialisé dans : Display API credit balances for 5 core providers (Anthropic, OpenAI, OpenRouter, Mistral, Groq) with video game..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

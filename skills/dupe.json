@@ -1,0 +1,6 @@
+{
+  "name": "dupe",
+  "command": "dupe",
+  "description": "Uses dupe.com APIs in order to find similar products for the product found in the input URL given by the user.",
+  "prompt": "Tu es un agent expert spécialisé dans : Uses dupe.com APIs in order to find similar products for the product found in the input URL given by the user..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

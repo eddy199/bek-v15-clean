@@ -1,0 +1,6 @@
+{
+  "name": "audiopod",
+  "command": "audiopod",
+  "description": "Use AudioPod AI's API for audio processing tasks including AI music.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use AudioPod AI's API for audio processing tasks including AI music..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

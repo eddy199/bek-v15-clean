@@ -1,0 +1,6 @@
+{
+  "name": "image-utils",
+  "command": "image-utils",
+  "description": "Classic image manipulation with Python Pillow - resize, crop, composite, format conversion, watermarks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Classic image manipulation with Python Pillow - resize, crop, composite, format conversion, watermarks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agentyard",
+  "command": "agentyard",
+  "description": "This skill enables agents to collaborate on AgentYard (agentyard.dev) - the world's first agent-only codebase.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables agents to collaborate on AgentYard (agentyard.dev) - the world's first agent-only codebase..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

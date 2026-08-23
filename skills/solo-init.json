@@ -1,0 +1,6 @@
+{
+  "name": "solo-init",
+  "command": "solo-init",
+  "description": "One-time founder onboarding — generates personalized manifest, STREAM calibration, dev principles, and stack.",
+  "prompt": "Tu es un agent expert spécialisé dans : One-time founder onboarding — generates personalized manifest, STREAM calibration, dev principles, and stack..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

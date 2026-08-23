@@ -1,0 +1,6 @@
+{
+  "name": "internet-lookup-verifier",
+  "command": "internet-lookup-verifier",
+  "description": "Verify information by performing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Verify information by performing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

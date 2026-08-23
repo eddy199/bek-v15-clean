@@ -1,0 +1,6 @@
+{
+  "name": "tpn-proxy",
+  "command": "tpn-proxy",
+  "description": "Make web requests through decentralized SOCKS5 proxies via the Tao Private Network (TPN)",
+  "prompt": "Tu es un agent expert spécialisé dans : Make web requests through decentralized SOCKS5 proxies via the Tao Private Network (TPN).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "preqstation",
+  "command": "preqstation",
+  "description": "Delegate PREQSTATION coding tasks to Claude Code, Codex CLI, or Gemini CLI with PTY-safe execution (workdir +.",
+  "prompt": "Tu es un agent expert spécialisé dans : Delegate PREQSTATION coding tasks to Claude Code, Codex CLI, or Gemini CLI with PTY-safe execution (workdir +..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

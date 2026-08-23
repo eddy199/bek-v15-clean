@@ -1,0 +1,6 @@
+{
+  "name": "session-history",
+  "command": "session-history",
+  "description": "Search and browse past conversation history across all sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and browse past conversation history across all sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "drakeling",
+  "command": "drakeling",
+  "description": "Check on your Drakeling companion creature, send it care, or see how it is feeling.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check on your Drakeling companion creature, send it care, or see how it is feeling..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

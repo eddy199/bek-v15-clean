@@ -1,0 +1,6 @@
+{
+  "name": "echo-repeater",
+  "command": "echo-repeater",
+  "description": "Echo the user's input back to them with optional formatting like \"Echo:\" or \"You said:\" as a prefix.",
+  "prompt": "Tu es un agent expert spécialisé dans : Echo the user's input back to them with optional formatting like \"Echo:\" or \"You said:\" as a prefix..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

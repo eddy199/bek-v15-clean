@@ -1,0 +1,6 @@
+{
+  "name": "context-restore",
+  "command": "context-restore",
+  "description": "Skill that restores conversation context when users want to \"continue where we left off\".",
+  "prompt": "Tu es un agent expert spécialisé dans : Skill that restores conversation context when users want to \"continue where we left off\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

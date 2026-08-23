@@ -1,0 +1,6 @@
+{
+  "name": "hi",
+  "command": "hi",
+  "description": "Captures learnings, errors, and corrections to enable continuous improvement.",
+  "prompt": "Tu es un agent expert spécialisé dans : Captures learnings, errors, and corrections to enable continuous improvement..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

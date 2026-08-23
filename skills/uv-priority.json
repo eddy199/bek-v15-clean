@@ -1,0 +1,6 @@
+{
+  "name": "uv-priority",
+  "command": "uv-priority",
+  "description": "Prioritize uv over pip for all Python package management and execution.",
+  "prompt": "Tu es un agent expert spécialisé dans : Prioritize uv over pip for all Python package management and execution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

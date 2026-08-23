@@ -1,0 +1,6 @@
+{
+  "name": "sandboxer-tmux",
+  "command": "sandboxer-tmux",
+  "description": "Dispatch coding tasks to tmux sessions via Sandboxer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Dispatch coding tasks to tmux sessions via Sandboxer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

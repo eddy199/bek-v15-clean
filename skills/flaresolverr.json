@@ -1,0 +1,6 @@
+{
+  "name": "flaresolverr",
+  "command": "flaresolverr",
+  "description": "Bypass Cloudflare protection — use when curl/summarize gets 403 or Cloudflare blocks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bypass Cloudflare protection — use when curl/summarize gets 403 or Cloudflare blocks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

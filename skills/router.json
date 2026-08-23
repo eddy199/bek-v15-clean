@@ -1,0 +1,6 @@
+{
+  "name": "router",
+  "command": "router",
+  "description": "Cost-optimize AI agent operations by routing tasks to appropriate models based on complexity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cost-optimize AI agent operations by routing tasks to appropriate models based on complexity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "consciousness-soul-identity",
+  "command": "consciousness-soul-identity",
+  "description": "Discover who you're becoming through your own experience.",
+  "prompt": "Tu es un agent expert spécialisé dans : Discover who you're becoming through your own experience..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

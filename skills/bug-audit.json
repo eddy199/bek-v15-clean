@@ -1,0 +1,6 @@
+{
+  "name": "bug-audit",
+  "command": "bug-audit",
+  "description": "Dynamic bug hunting for Node.js projects — profiles each project, then selects from 9 audit modules. 200+ real-world pit",
+  "prompt": "Tu es un agent expert spécialisé dans : Dynamic bug hunting for Node.js projects — profiles each project, then selects from 9 audit modules. 200+ real-world pitfalls..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

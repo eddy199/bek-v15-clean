@@ -1,0 +1,6 @@
+{
+  "name": "expanso-tls-inspect",
+  "command": "expanso-tls-inspect",
+  "description": "Inspect TLS certificate (expiry, SANs, chain, cipher)",
+  "prompt": "Tu es un agent expert spécialisé dans : Inspect TLS certificate (expiry, SANs, chain, cipher).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

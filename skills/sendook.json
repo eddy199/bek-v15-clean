@@ -1,0 +1,6 @@
+{
+  "name": "sendook",
+  "command": "sendook",
+  "description": "Read and send emails from an existing Sendook inbox.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read and send emails from an existing Sendook inbox..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

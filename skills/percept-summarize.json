@@ -1,0 +1,6 @@
+{
+  "name": "percept-summarize",
+  "command": "percept-summarize",
+  "description": "Automatic conversation summaries with entity extraction and relationship mapping.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatic conversation summaries with entity extraction and relationship mapping..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

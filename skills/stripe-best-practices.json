@@ -1,0 +1,6 @@
+{
+  "name": "stripe-best-practices",
+  "command": "stripe-best-practices",
+  "description": "Best practices for building Stripe payment integrations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Best practices for building Stripe payment integrations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

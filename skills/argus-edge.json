@@ -1,0 +1,6 @@
+{
+  "name": "argus-edge",
+  "command": "argus-edge",
+  "description": "Argus-style prediction market edge detection and betting strategy.",
+  "prompt": "Tu es un agent expert spécialisé dans : Argus-style prediction market edge detection and betting strategy..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

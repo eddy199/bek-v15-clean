@@ -1,0 +1,6 @@
+{
+  "name": "tfl",
+  "command": "tfl",
+  "description": "London TfL transit — real-time Tube arrivals, bus predictions, line status, service disruptions, journey planning.",
+  "prompt": "Tu es un agent expert spécialisé dans : London TfL transit — real-time Tube arrivals, bus predictions, line status, service disruptions, journey planning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

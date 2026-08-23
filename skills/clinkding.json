@@ -1,0 +1,6 @@
+{
+  "name": "clinkding",
+  "command": "clinkding",
+  "description": "Manage linkding bookmarks - save URLs, search, tag, organize.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage linkding bookmarks - save URLs, search, tag, organize..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

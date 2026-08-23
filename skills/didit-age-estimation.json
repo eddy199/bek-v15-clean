@@ -1,0 +1,6 @@
+{
+  "name": "didit-age-estimation",
+  "command": "didit-age-estimation",
+  "description": "Integrate Didit Age Estimation standalone API to estimate a person's age from a facial image.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate Didit Age Estimation standalone API to estimate a person's age from a facial image..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

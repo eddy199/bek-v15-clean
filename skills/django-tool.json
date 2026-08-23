@@ -1,0 +1,6 @@
+{
+  "name": "django-tool",
+  "command": "django-tool",
+  "description": "This project eliminates the time wasted on creating virtual machines and setting up environments from scratch.",
+  "prompt": "Tu es un agent expert spécialisé dans : This project eliminates the time wasted on creating virtual machines and setting up environments from scratch..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

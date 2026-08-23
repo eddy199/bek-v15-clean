@@ -1,0 +1,6 @@
+{
+  "name": "wayfound",
+  "command": "wayfound",
+  "description": "Lightweight self-supervision that piggybacks on your existing memory system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Lightweight self-supervision that piggybacks on your existing memory system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

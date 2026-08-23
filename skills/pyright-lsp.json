@@ -1,0 +1,6 @@
+{
+  "name": "pyright-lsp",
+  "command": "pyright-lsp",
+  "description": "Python language server (Pyright) providing static type checking, code intelligence, and LSP diagnostics for .py and .",
+  "prompt": "Tu es un agent expert spécialisé dans : Python language server (Pyright) providing static type checking, code intelligence, and LSP diagnostics for .py and ..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

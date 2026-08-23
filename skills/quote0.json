@@ -1,0 +1,6 @@
+{
+  "name": "quote0",
+  "command": "quote0",
+  "description": "Control MindReset Dot Quote/0 through the local quote0.js script and Dot Developer Platform APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control MindReset Dot Quote/0 through the local quote0.js script and Dot Developer Platform APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

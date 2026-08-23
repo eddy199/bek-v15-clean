@@ -1,0 +1,6 @@
+{
+  "name": "secure-api-calls",
+  "command": "secure-api-calls",
+  "description": "Call any API without leaking credentials.",
+  "prompt": "Tu es un agent expert spécialisé dans : Call any API without leaking credentials..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

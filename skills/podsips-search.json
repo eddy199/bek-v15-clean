@@ -1,0 +1,6 @@
+{
+  "name": "podsips-search",
+  "command": "podsips-search",
+  "description": "Search podcast transcripts and retrieve episode data via the PodSips API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search podcast transcripts and retrieve episode data via the PodSips API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

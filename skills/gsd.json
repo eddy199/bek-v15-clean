@@ -1,0 +1,6 @@
+{
+  "name": "gsd",
+  "command": "gsd",
+  "description": "Get Shit Done - Full project planning and execution workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get Shit Done - Full project planning and execution workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

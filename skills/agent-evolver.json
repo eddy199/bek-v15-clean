@@ -1,0 +1,6 @@
+{
+  "name": "agent-evolver",
+  "command": "agent-evolver",
+  "description": "AI Agent self-evolution engine that enables agents to learn from experience, detect problems, extract insights.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI Agent self-evolution engine that enables agents to learn from experience, detect problems, extract insights..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

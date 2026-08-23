@@ -1,0 +1,6 @@
+{
+  "name": "wisediag-medocr",
+  "command": "wisediag-medocr",
+  "description": "Convert PDF files to Markdown using WiseDiag MedOcr API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert PDF files to Markdown using WiseDiag MedOcr API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

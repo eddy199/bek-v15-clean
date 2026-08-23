@@ -1,0 +1,6 @@
+{
+  "name": "lb-better-auth-skill",
+  "command": "lb-better-auth-skill",
+  "description": "Complete Better Auth documentation in markdown format.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Better Auth documentation in markdown format..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cold-outreach-skill",
+  "command": "cold-outreach-skill",
+  "description": "Meta-skill for orchestrating Apollo API, LinkedIn API, YC Cold Outreach, and MachFive Cold Email into a complete.",
+  "prompt": "Tu es un agent expert spécialisé dans : Meta-skill for orchestrating Apollo API, LinkedIn API, YC Cold Outreach, and MachFive Cold Email into a complete..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

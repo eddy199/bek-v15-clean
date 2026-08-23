@@ -1,0 +1,6 @@
+{
+  "name": "telnyx-freemium-upgrade",
+  "command": "telnyx-freemium-upgrade",
+  "description": "Automatically upgrade Telnyx account from freemium to professional tier.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically upgrade Telnyx account from freemium to professional tier..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

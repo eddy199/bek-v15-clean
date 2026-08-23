@@ -1,0 +1,6 @@
+{
+  "name": "oc-skill",
+  "command": "oc-skill",
+  "description": "Generate AI videos, images & music. 60+ models including Sora, Veo 3, Kling, Seedance, GPT Image, Suno v5.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI videos, images & music. 60+ models including Sora, Veo 3, Kling, Seedance, GPT Image, Suno v5..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

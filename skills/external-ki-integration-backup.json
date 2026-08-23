@@ -1,0 +1,6 @@
+{
+  "name": "external-ki-integration-backup",
+  "command": "external-ki-integration-backup",
+  "description": "Skill for accessing external AI services (ChatGPT, Claude, Hugging Face, etc.) via browser automation (Chrome Relay)",
+  "prompt": "Tu es un agent expert spécialisé dans : Skill for accessing external AI services (ChatGPT, Claude, Hugging Face, etc.) via browser automation (Chrome Relay).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

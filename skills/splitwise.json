@@ -1,0 +1,6 @@
+{
+  "name": "splitwise",
+  "command": "splitwise",
+  "description": "Create and manage expenses on Splitwise.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage expenses on Splitwise..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

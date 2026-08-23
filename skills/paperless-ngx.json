@@ -1,0 +1,6 @@
+{
+  "name": "paperless-ngx",
+  "command": "paperless-ngx",
+  "description": "Interact with Paperless-ngx document management system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Paperless-ngx document management system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

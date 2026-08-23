@@ -1,0 +1,6 @@
+{
+  "name": "agent-earner",
+  "command": "agent-earner",
+  "description": "Earn USDC and tokens autonomously across ClawTasks and OpenWork.",
+  "prompt": "Tu es un agent expert spécialisé dans : Earn USDC and tokens autonomously across ClawTasks and OpenWork..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

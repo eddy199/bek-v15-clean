@@ -1,0 +1,6 @@
+{
+  "name": "context-clean-up",
+  "command": "context-clean-up",
+  "description": "Use when: you suspect OpenClaw prompt context is bloating (slow replies, high cost, repeated transcript noise)",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when: you suspect OpenClaw prompt context is bloating (slow replies, high cost, repeated transcript noise).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

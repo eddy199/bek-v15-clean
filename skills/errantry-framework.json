@@ -1,0 +1,6 @@
+{
+  "name": "errantry-framework",
+  "command": "errantry-framework",
+  "description": "Mythological framework mapping Diane Duane's Young Wizards magic system to AI architecture patterns.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mythological framework mapping Diane Duane's Young Wizards magic system to AI architecture patterns..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

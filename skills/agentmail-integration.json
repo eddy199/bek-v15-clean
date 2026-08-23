@@ -1,0 +1,6 @@
+{
+  "name": "agentmail-integration",
+  "command": "agentmail-integration",
+  "description": "Integrate AgentMail API for AI agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate AgentMail API for AI agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

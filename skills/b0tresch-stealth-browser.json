@@ -1,0 +1,6 @@
+{
+  "name": "b0tresch-stealth-browser",
+  "command": "b0tresch-stealth-browser",
+  "description": "Anti-detection web browsing that bypasses bot detection, CAPTCHAs, and IP blocks using puppeteer-extra with stealth.",
+  "prompt": "Tu es un agent expert spécialisé dans : Anti-detection web browsing that bypasses bot detection, CAPTCHAs, and IP blocks using puppeteer-extra with stealth..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mobula",
+  "command": "mobula",
+  "description": "Real-time crypto market data, wallet portfolio tracking, and token analytics across 88+ blockchains.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time crypto market data, wallet portfolio tracking, and token analytics across 88+ blockchains..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

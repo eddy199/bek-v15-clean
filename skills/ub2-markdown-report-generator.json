@@ -1,0 +1,6 @@
+{
+  "name": "ub2-markdown-report-generator",
+  "command": "ub2-markdown-report-generator",
+  "description": "A skill that enables Claw to compile information from multiple sources into a polished, well-structured Markdown.",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill that enables Claw to compile information from multiple sources into a polished, well-structured Markdown..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

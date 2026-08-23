@@ -1,0 +1,6 @@
+{
+  "name": "advisory-council",
+  "command": "advisory-council",
+  "description": "**You MUST actually execute the Python command using your shell/exec tool.** Read the real output.",
+  "prompt": "Tu es un agent expert spécialisé dans : **You MUST actually execute the Python command using your shell/exec tool.** Read the real output..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

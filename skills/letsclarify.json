@@ -1,0 +1,6 @@
+{
+  "name": "letsclarify",
+  "command": "letsclarify",
+  "description": "Collect structured human input — approvals, decisions, reviews, data — via web forms.",
+  "prompt": "Tu es un agent expert spécialisé dans : Collect structured human input — approvals, decisions, reviews, data — via web forms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

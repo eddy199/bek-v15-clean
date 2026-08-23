@@ -1,0 +1,6 @@
+{
+  "name": "browsh",
+  "command": "browsh",
+  "description": "A modern text-based browser.",
+  "prompt": "Tu es un agent expert spécialisé dans : A modern text-based browser..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

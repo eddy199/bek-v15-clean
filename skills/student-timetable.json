@@ -1,0 +1,6 @@
+{
+  "name": "student-timetable",
+  "command": "student-timetable",
+  "description": "Student timetable manager for self or parent-managed child profiles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Student timetable manager for self or parent-managed child profiles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

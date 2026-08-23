@@ -1,0 +1,6 @@
+{
+  "name": "copilotkit-react",
+  "command": "copilotkit-react",
+  "description": "CopilotKit React best practices for agentic applications.",
+  "prompt": "Tu es un agent expert spécialisé dans : CopilotKit React best practices for agentic applications..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

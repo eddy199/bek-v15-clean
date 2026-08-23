@@ -1,0 +1,6 @@
+{
+  "name": "sokosumi",
+  "command": "sokosumi",
+  "description": "Hire sub-agents from Sokosumi marketplace to perform specialized tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hire sub-agents from Sokosumi marketplace to perform specialized tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

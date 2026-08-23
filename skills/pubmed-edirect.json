@@ -1,0 +1,6 @@
+{
+  "name": "pubmed-edirect",
+  "command": "pubmed-edirect",
+  "description": "Search and retrieve literature from PubMed using NCBI's EDirect command-line tools. ⚠️ Advanced skill requiring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and retrieve literature from PubMed using NCBI's EDirect command-line tools. ⚠️ Advanced skill requiring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

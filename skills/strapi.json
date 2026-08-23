@@ -1,0 +1,6 @@
+{
+  "name": "strapi",
+  "command": "strapi",
+  "description": "Manage Strapi CMS content through the official @strapi/client SDK.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Strapi CMS content through the official @strapi/client SDK..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

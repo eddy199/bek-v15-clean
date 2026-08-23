@@ -1,0 +1,6 @@
+{
+  "name": "lg-thinq",
+  "command": "lg-thinq",
+  "description": "Control LG smart appliances via ThinQ API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control LG smart appliances via ThinQ API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

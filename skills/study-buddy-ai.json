@@ -1,0 +1,6 @@
+{
+  "name": "study-buddy-ai",
+  "command": "study-buddy-ai",
+  "description": "When user asks to study, create flashcards, take a quiz, make notes, revise, set study timer, track study hours.",
+  "prompt": "Tu es un agent expert spécialisé dans : When user asks to study, create flashcards, take a quiz, make notes, revise, set study timer, track study hours..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

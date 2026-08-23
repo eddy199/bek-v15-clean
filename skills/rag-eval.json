@@ -1,0 +1,6 @@
+{
+  "name": "rag-eval",
+  "command": "rag-eval",
+  "description": "Evaluate your RAG pipeline quality using Ragas metrics (faithfulness, answer relevancy, context precision).",
+  "prompt": "Tu es un agent expert spécialisé dans : Evaluate your RAG pipeline quality using Ragas metrics (faithfulness, answer relevancy, context precision)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

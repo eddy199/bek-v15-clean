@@ -1,0 +1,6 @@
+{
+  "name": "finance",
+  "command": "finance",
+  "description": "Track stocks, ETFs, indices, crypto (where available), and FX pairs with caching + provider fallbacks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track stocks, ETFs, indices, crypto (where available), and FX pairs with caching + provider fallbacks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

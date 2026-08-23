@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-quest-master",
+  "command": "sovereign-quest-master",
+  "description": "You are the Quest Master.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are the Quest Master..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

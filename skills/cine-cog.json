@@ -1,0 +1,6 @@
+{
+  "name": "cine-cog",
+  "command": "cine-cog",
+  "description": "If you can imagine it, CellCog can film.",
+  "prompt": "Tu es un agent expert spécialisé dans : If you can imagine it, CellCog can film..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

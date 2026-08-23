@@ -1,0 +1,6 @@
+{
+  "name": "expanso-sentiment-score",
+  "command": "expanso-sentiment-score",
+  "description": "\"Score text sentiment from -1 (negative) to +1 (positive)\".",
+  "prompt": "Tu es un agent expert spécialisé dans : \"Score text sentiment from -1 (negative) to +1 (positive)\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

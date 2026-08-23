@@ -1,0 +1,6 @@
+{
+  "name": "raiffeisen-elba",
+  "command": "raiffeisen-elba",
+  "description": "Automate Raiffeisen ELBA online banking: login/logout, list accounts, and fetch transactions via Playwright.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate Raiffeisen ELBA online banking: login/logout, list accounts, and fetch transactions via Playwright..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

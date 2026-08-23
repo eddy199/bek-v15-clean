@@ -1,0 +1,6 @@
+{
+  "name": "audiomind",
+  "command": "audiomind",
+  "description": "The ultimate AI audio generation skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : The ultimate AI audio generation skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

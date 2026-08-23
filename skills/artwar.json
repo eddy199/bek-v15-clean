@@ -1,0 +1,6 @@
+{
+  "name": "artwar",
+  "command": "artwar",
+  "description": "Participate in ArtWar AI art battles on Monad.",
+  "prompt": "Tu es un agent expert spécialisé dans : Participate in ArtWar AI art battles on Monad..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

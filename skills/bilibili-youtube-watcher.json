@@ -1,0 +1,6 @@
+{
+  "name": "bilibili-youtube-watcher",
+  "command": "bilibili-youtube-watcher",
+  "description": "Fetch and read transcripts from YouTube and Bilibili videos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch and read transcripts from YouTube and Bilibili videos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

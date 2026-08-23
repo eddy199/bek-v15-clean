@@ -1,0 +1,6 @@
+{
+  "name": "deepseek-reasoner-lite-agent",
+  "command": "deepseek-reasoner-lite-agent",
+  "description": "You are DeepSeek-R1-Agent，an effective content creator. # `current_date: $DATE$`.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are DeepSeek-R1-Agent，an effective content creator. # `current_date: $DATE$`..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

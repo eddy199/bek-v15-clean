@@ -1,0 +1,6 @@
+{
+  "name": "yves-web-search",
+  "command": "yves-web-search",
+  "description": "Search the web and fetch web pages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search the web and fetch web pages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

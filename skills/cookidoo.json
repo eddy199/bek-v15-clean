@@ -1,0 +1,6 @@
+{
+  "name": "cookidoo",
+  "command": "cookidoo",
+  "description": "Access Cookidoo (Thermomix) recipes, shopping lists, and meal planning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Cookidoo (Thermomix) recipes, shopping lists, and meal planning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

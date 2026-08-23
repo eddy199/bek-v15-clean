@@ -1,0 +1,6 @@
+{
+  "name": "content-ideas-free",
+  "command": "content-ideas-free",
+  "description": "Free content brainstorming tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : Free content brainstorming tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "permissions-broker",
+  "command": "permissions-broker",
+  "description": "Default mechanism for external data access and third-party actions when local credentials are unavailable.",
+  "prompt": "Tu es un agent expert spécialisé dans : Default mechanism for external data access and third-party actions when local credentials are unavailable..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

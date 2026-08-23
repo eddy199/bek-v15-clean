@@ -1,0 +1,6 @@
+{
+  "name": "venice-transcribe",
+  "command": "venice-transcribe",
+  "description": "Transcribe audio to text using Venice AI's Whisper-based speech recognition.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transcribe audio to text using Venice AI's Whisper-based speech recognition..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

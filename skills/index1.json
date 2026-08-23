@@ -1,0 +1,6 @@
+{
+  "name": "index1",
+  "command": "index1",
+  "description": "AI memory system for coding agents — code index + cognitive facts, persistent across sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI memory system for coding agents — code index + cognitive facts, persistent across sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

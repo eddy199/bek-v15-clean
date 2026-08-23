@@ -1,0 +1,6 @@
+{
+  "name": "box-cli",
+  "command": "box-cli",
+  "description": "Box CLI skill for working with files, folders, metadata,.",
+  "prompt": "Tu es un agent expert spécialisé dans : Box CLI skill for working with files, folders, metadata,..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

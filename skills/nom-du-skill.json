@@ -1,0 +1,6 @@
+{
+  "name": "nom-du-skill",
+  "command": "nom-du-skill",
+  "description": "Courte description",
+  "prompt": "Consignes précises pour l'IA : {input}"
+}

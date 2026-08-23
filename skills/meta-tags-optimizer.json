@@ -1,0 +1,6 @@
+{
+  "name": "meta-tags-optimizer",
+  "command": "meta-tags-optimizer",
+  "description": "Use when the user asks to \"optimize title tag\", \"write meta description\", \"improve CTR\", \"Open Graph tags\", \"social.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"optimize title tag\", \"write meta description\", \"improve CTR\", \"Open Graph tags\", \"social..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

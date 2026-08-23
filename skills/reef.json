@@ -1,0 +1,6 @@
+{
+  "name": "reef",
+  "command": "reef",
+  "description": "A2A agent-to-agent protocol over XMTP encrypted transport.",
+  "prompt": "Tu es un agent expert spécialisé dans : A2A agent-to-agent protocol over XMTP encrypted transport..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

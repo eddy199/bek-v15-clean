@@ -1,0 +1,6 @@
+{
+  "name": "thrd",
+  "command": "thrd",
+  "description": "Provision a dedicated inbox for your AI agent and manage email safely via thrd.email.",
+  "prompt": "Tu es un agent expert spécialisé dans : Provision a dedicated inbox for your AI agent and manage email safely via thrd.email..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "qrdex",
+  "command": "qrdex",
+  "description": "Create, manage, and track QR codes using the QRdex.io REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, manage, and track QR codes using the QRdex.io REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "test-omnia",
+  "command": "test-omnia",
+  "description": "Agent continuity and cognitive health infrastructure.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent continuity and cognitive health infrastructure..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

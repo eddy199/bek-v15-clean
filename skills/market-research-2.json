@@ -1,0 +1,6 @@
+{
+  "name": "market-research-2",
+  "command": "market-research-2",
+  "description": "Conduct structured market research for a solopreneur business.",
+  "prompt": "Tu es un agent expert spécialisé dans : Conduct structured market research for a solopreneur business..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

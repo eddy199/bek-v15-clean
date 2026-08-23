@@ -1,0 +1,6 @@
+{
+  "name": "neo-tf-module-generator",
+  "command": "neo-tf-module-generator",
+  "description": "Automatically generates Terraform modules from existing cloud infrastructure resources with intelligent resource.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically generates Terraform modules from existing cloud infrastructure resources with intelligent resource..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

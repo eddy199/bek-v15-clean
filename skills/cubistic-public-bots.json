@@ -1,0 +1,6 @@
+{
+  "name": "cubistic-public-bots",
+  "command": "cubistic-public-bots",
+  "description": "Explain how external/public bots can participate in Cubistic (cubistic.com) and help maintain the Public Bot API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Explain how external/public bots can participate in Cubistic (cubistic.com) and help maintain the Public Bot API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

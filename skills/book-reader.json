@@ -1,0 +1,6 @@
+{
+  "name": "book-reader",
+  "command": "book-reader",
+  "description": "Read books (epub, pdf, txt) from various sources with progress tracking.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read books (epub, pdf, txt) from various sources with progress tracking..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

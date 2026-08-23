@@ -1,0 +1,6 @@
+{
+  "name": "android-adb",
+  "command": "android-adb",
+  "description": "Control Android devices via ADB with support for UI layout analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Android devices via ADB with support for UI layout analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

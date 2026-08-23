@@ -1,0 +1,6 @@
+{
+  "name": "opentweet-x-poster",
+  "command": "opentweet-x-poster",
+  "description": "Post to X (Twitter) using the OpenTweet API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post to X (Twitter) using the OpenTweet API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "social-sentiment",
+  "command": "social-sentiment",
+  "description": "Sentiment analysis for brands and products across Twitter, Reddit, and Instagram.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sentiment analysis for brands and products across Twitter, Reddit, and Instagram..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

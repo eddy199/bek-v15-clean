@@ -1,0 +1,6 @@
+{
+  "name": "checkly-cli-skills",
+  "command": "checkly-cli-skills",
+  "description": "Comprehensive Checkly CLI command reference and Monitoring as Code workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive Checkly CLI command reference and Monitoring as Code workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

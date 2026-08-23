@@ -1,0 +1,6 @@
+{
+  "name": "india-location-normalizer",
+  "command": "india-location-normalizer",
+  "description": "Normalize Indian real-estate location text into canonical city and locality fields (Mumbai and Pune v1)",
+  "prompt": "Tu es un agent expert spécialisé dans : Normalize Indian real-estate location text into canonical city and locality fields (Mumbai and Pune v1).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

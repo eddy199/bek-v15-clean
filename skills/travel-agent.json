@@ -1,0 +1,6 @@
+{
+  "name": "travel-agent",
+  "command": "travel-agent",
+  "description": "Find, book, and change flights for your human via email.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find, book, and change flights for your human via email..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

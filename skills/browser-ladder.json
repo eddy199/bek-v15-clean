@@ -1,0 +1,6 @@
+{
+  "name": "browser-ladder",
+  "command": "browser-ladder",
+  "description": "Climb the browser ladder — start free, escalate.",
+  "prompt": "Tu es un agent expert spécialisé dans : Climb the browser ladder — start free, escalate..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

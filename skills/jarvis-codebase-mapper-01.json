@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-codebase-mapper-01",
+  "command": "jarvis-codebase-mapper-01",
+  "description": "Map unfamiliar codebases into modules, owners, and entrypoints.",
+  "prompt": "Tu es un agent expert spécialisé dans : Map unfamiliar codebases into modules, owners, and entrypoints..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

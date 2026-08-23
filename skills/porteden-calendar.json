@@ -1,0 +1,6 @@
+{
+  "name": "porteden-calendar",
+  "command": "porteden-calendar",
+  "description": "PortEden Secure Calendar CLI for calendar management - Google Calendar, Microsoft Outlook & Exchange - list.",
+  "prompt": "Tu es un agent expert spécialisé dans : PortEden Secure Calendar CLI for calendar management - Google Calendar, Microsoft Outlook & Exchange - list..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

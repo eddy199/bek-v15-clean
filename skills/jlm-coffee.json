@@ -1,0 +1,6 @@
+{
+  "name": "jlm-coffee",
+  "command": "jlm-coffee",
+  "description": "Search specialty coffee shops in Jerusalem by amenities and hours.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search specialty coffee shops in Jerusalem by amenities and hours..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

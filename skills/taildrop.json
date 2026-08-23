@@ -1,0 +1,6 @@
+{
+  "name": "taildrop",
+  "command": "taildrop",
+  "description": "Download files from Tailscale Taildrop inbox to local storage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download files from Tailscale Taildrop inbox to local storage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

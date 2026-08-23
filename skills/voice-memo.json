@@ -1,0 +1,6 @@
+{
+  "name": "voice-memo",
+  "command": "voice-memo",
+  "description": "Manage voice memos — add transcriptions, search, and list recent memos with summaries and action items.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage voice memos — add transcriptions, search, and list recent memos with summaries and action items..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

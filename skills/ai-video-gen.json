@@ -1,0 +1,6 @@
+{
+  "name": "ai-video-gen",
+  "command": "ai-video-gen",
+  "description": "End-to-end AI video generation - create videos from text.",
+  "prompt": "Tu es un agent expert spécialisé dans : End-to-end AI video generation - create videos from text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

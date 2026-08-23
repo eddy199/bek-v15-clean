@@ -1,0 +1,6 @@
+{
+  "name": "arccos-golf",
+  "command": "arccos-golf",
+  "description": "Analyze Arccos Golf performance data including club distances, strokes gained metrics, scoring patterns.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze Arccos Golf performance data including club distances, strokes gained metrics, scoring patterns..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

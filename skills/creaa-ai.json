@@ -1,0 +1,6 @@
+{
+  "name": "creaa-ai",
+  "command": "creaa-ai",
+  "description": "Generate and edit images + generate videos via Creaa API (Nano Banana 2, Sora 2, Seedance 2.0, Veo 3.1).",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate and edit images + generate videos via Creaa API (Nano Banana 2, Sora 2, Seedance 2.0, Veo 3.1)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

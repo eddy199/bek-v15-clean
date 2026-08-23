@@ -1,0 +1,6 @@
+{
+  "name": "best-image",
+  "command": "best-image",
+  "description": "Best quality AI image generation (~$0.12-0.20/image)",
+  "prompt": "Tu es un agent expert spécialisé dans : Best quality AI image generation (~$0.12-0.20/image).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

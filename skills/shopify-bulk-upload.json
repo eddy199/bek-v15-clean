@@ -1,0 +1,6 @@
+{
+  "name": "shopify-bulk-upload",
+  "command": "shopify-bulk-upload",
+  "description": "Bulk upload products to Shopify stores.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bulk upload products to Shopify stores..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

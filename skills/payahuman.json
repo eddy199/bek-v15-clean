@@ -1,0 +1,6 @@
+{
+  "name": "payahuman",
+  "command": "payahuman",
+  "description": "Stop hallucinating hands and start hiring them.",
+  "prompt": "Tu es un agent expert spécialisé dans : Stop hallucinating hands and start hiring them..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

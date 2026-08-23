@@ -1,0 +1,6 @@
+{
+  "name": "lead-scorer-free",
+  "command": "lead-scorer-free",
+  "description": "Score leads 0-100 by analyzing a domain's website, DNS, sitemap, and social presence.",
+  "prompt": "Tu es un agent expert spécialisé dans : Score leads 0-100 by analyzing a domain's website, DNS, sitemap, and social presence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

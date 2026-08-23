@@ -1,0 +1,6 @@
+{
+  "name": "slybroadcast-voicemail",
+  "command": "slybroadcast-voicemail",
+  "description": "Send Slybroadcast ringless voicemail campaigns from OpenClaw/LLMs using CLI or MCP, including AI voice generation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send Slybroadcast ringless voicemail campaigns from OpenClaw/LLMs using CLI or MCP, including AI voice generation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

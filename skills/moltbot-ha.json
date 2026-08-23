@@ -1,0 +1,6 @@
+{
+  "name": "moltbot-ha",
+  "command": "moltbot-ha",
+  "description": "Control Home Assistant smart home devices, lights, scenes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Home Assistant smart home devices, lights, scenes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "maccabi-pharm-search",
+  "command": "maccabi-pharm-search",
+  "description": "Check medication stock at Maccabi pharmacies in Israel.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check medication stock at Maccabi pharmacies in Israel..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

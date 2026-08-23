@@ -1,0 +1,6 @@
+{
+  "name": "plsreadme",
+  "command": "plsreadme",
+  "description": "Share markdown files and text as clean, readable web links via plsreadme.com.",
+  "prompt": "Tu es un agent expert spécialisé dans : Share markdown files and text as clean, readable web links via plsreadme.com..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

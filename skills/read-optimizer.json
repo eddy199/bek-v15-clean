@@ -1,0 +1,6 @@
+{
+  "name": "read-optimizer",
+  "command": "read-optimizer",
+  "description": "Optimizes file reading operations by providing smarter read strategies (head/tail/grep/diff) to reduce token usage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Optimizes file reading operations by providing smarter read strategies (head/tail/grep/diff) to reduce token usage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

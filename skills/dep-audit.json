@@ -1,0 +1,6 @@
+{
+  "name": "dep-audit",
+  "command": "dep-audit",
+  "description": "Audit project dependencies for known vulnerabilities (CVEs)",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit project dependencies for known vulnerabilities (CVEs).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

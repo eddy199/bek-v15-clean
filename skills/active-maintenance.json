@@ -1,0 +1,6 @@
+{
+  "name": "active-maintenance",
+  "command": "active-maintenance",
+  "description": "**Automated system health and memory metabolism for OpenClaw.**.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Automated system health and memory metabolism for OpenClaw.**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

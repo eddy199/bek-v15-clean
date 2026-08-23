@@ -1,0 +1,6 @@
+{
+  "name": "curiosity-engine",
+  "command": "curiosity-engine",
+  "description": "Curiosity-driven reasoning enhancement for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Curiosity-driven reasoning enhancement for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "gitmap",
+  "command": "gitmap",
+  "description": "Version control for ArcGIS web maps — exposed as native OpenClaw tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Version control for ArcGIS web maps — exposed as native OpenClaw tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

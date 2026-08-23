@@ -1,0 +1,6 @@
+{
+  "name": "crawl4ai",
+  "command": "crawl4ai",
+  "description": "AI-powered web scraping framework for extracting structured data from websites.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered web scraping framework for extracting structured data from websites..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

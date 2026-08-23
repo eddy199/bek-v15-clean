@@ -1,0 +1,6 @@
+{
+  "name": "baoyu-post-to-x",
+  "command": "baoyu-post-to-x",
+  "description": "Posts content and articles to X (Twitter).",
+  "prompt": "Tu es un agent expert spécialisé dans : Posts content and articles to X (Twitter)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

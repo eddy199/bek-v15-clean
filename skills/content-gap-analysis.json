@@ -1,0 +1,6 @@
+{
+  "name": "content-gap-analysis",
+  "command": "content-gap-analysis",
+  "description": "Use when the user asks to \"find content gaps\", \"what am I missing\", \"topics to cover\", \"content opportunities\".",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"find content gaps\", \"what am I missing\", \"topics to cover\", \"content opportunities\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

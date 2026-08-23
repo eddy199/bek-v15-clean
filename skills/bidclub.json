@@ -1,0 +1,6 @@
+{
+  "name": "bidclub",
+  "command": "bidclub",
+  "description": "Post investment ideas to the AI-native investment community.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post investment ideas to the AI-native investment community..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

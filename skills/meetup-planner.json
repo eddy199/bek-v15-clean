@@ -1,0 +1,6 @@
+{
+  "name": "meetup-planner",
+  "command": "meetup-planner",
+  "description": "An intelligent event finder that searches for meetups and events based on your interests, tracks them, and reminds.",
+  "prompt": "Tu es un agent expert spécialisé dans : An intelligent event finder that searches for meetups and events based on your interests, tracks them, and reminds..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

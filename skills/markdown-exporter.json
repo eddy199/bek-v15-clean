@@ -1,0 +1,6 @@
+{
+  "name": "markdown-exporter",
+  "command": "markdown-exporter",
+  "description": "Convert Markdown text to DOCX, PPTX, XLSX, PDF, PNG, HTML, IPYNB, MD, CSV, JSON, JSONL, XML files, and extract code.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert Markdown text to DOCX, PPTX, XLSX, PDF, PNG, HTML, IPYNB, MD, CSV, JSON, JSONL, XML files, and extract code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

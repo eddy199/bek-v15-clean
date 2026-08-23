@@ -1,0 +1,6 @@
+{
+  "name": "aa",
+  "command": "aa",
+  "description": "This skill enables the agent to **automatically answer Gmail messages on behalf of a client**.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables the agent to **automatically answer Gmail messages on behalf of a client**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

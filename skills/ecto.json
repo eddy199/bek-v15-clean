@@ -1,0 +1,6 @@
+{
+  "name": "ecto",
+  "command": "ecto",
+  "description": "Ghost.io blog management via Admin API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ghost.io blog management via Admin API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

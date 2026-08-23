@@ -1,0 +1,6 @@
+{
+  "name": "birdbuddy",
+  "command": "birdbuddy",
+  "description": "Query your Bird Buddy smart bird feeder - check status, battery, food level, and see recent bird visitors.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query your Bird Buddy smart bird feeder - check status, battery, food level, and see recent bird visitors..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

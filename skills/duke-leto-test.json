@@ -1,0 +1,6 @@
+{
+  "name": "duke-leto-test",
+  "command": "duke-leto-test",
+  "description": "Test skill to verify ClawHub publishing works correctly.",
+  "prompt": "Tu es un agent expert spécialisé dans : Test skill to verify ClawHub publishing works correctly..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

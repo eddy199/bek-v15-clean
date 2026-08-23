@@ -1,0 +1,6 @@
+{
+  "name": "neo-docker-to-k8s-manifests",
+  "command": "neo-docker-to-k8s-manifests",
+  "description": "Automatically generate optimized Kubernetes deployment manifests from Dockerfile and docker-compose configurations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically generate optimized Kubernetes deployment manifests from Dockerfile and docker-compose configurations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

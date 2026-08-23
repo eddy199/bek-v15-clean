@@ -1,0 +1,6 @@
+{
+  "name": "handsfree-windows-control",
+  "command": "handsfree-windows-control",
+  "description": "Guide skill for controlling native Windows apps (UIA) and web browsers (Playwright) via the handsfree-windows CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Guide skill for controlling native Windows apps (UIA) and web browsers (Playwright) via the handsfree-windows CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

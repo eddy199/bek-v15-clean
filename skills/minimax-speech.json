@@ -1,0 +1,6 @@
+{
+  "name": "minimax-speech",
+  "command": "minimax-speech",
+  "description": "Manage MiniMax Speech 2.8 T2A (text-to-audio) and voice catalog lookups.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage MiniMax Speech 2.8 T2A (text-to-audio) and voice catalog lookups..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

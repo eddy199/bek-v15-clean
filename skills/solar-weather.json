@@ -1,0 +1,6 @@
+{
+  "name": "solar-weather",
+  "command": "solar-weather",
+  "description": "Monitor solar weather conditions including geomagnetic storms, solar flares, aurora forecasts, and solar wind data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor solar weather conditions including geomagnetic storms, solar flares, aurora forecasts, and solar wind data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

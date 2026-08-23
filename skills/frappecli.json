@@ -1,0 +1,6 @@
+{
+  "name": "frappecli",
+  "command": "frappecli",
+  "description": "CLI for Frappe Framework / ERPNext instances.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI for Frappe Framework / ERPNext instances..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

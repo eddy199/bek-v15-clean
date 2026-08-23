@@ -1,0 +1,6 @@
+{
+  "name": "index1-doctor",
+  "command": "index1-doctor",
+  "description": "Diagnose index1 environment - check Python, Ollama, models, index health.",
+  "prompt": "Tu es un agent expert spécialisé dans : Diagnose index1 environment - check Python, Ollama, models, index health..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

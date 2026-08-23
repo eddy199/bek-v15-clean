@@ -1,0 +1,6 @@
+{
+  "name": "fsxmemory",
+  "command": "fsxmemory",
+  "description": "Structured memory system for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Structured memory system for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

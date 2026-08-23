@@ -1,0 +1,6 @@
+{
+  "name": "crypto-agent-payments",
+  "command": "crypto-agent-payments",
+  "description": "Create wallets, transfer tokens, and enable payments between agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create wallets, transfer tokens, and enable payments between agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

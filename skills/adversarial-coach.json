@@ -1,0 +1,6 @@
+{
+  "name": "adversarial-coach",
+  "command": "adversarial-coach",
+  "description": "Adversarial implementation review based on Block's g3.",
+  "prompt": "Tu es un agent expert spécialisé dans : Adversarial implementation review based on Block's g3..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

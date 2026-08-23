@@ -1,0 +1,6 @@
+{
+  "name": "telegram-ops",
+  "command": "telegram-ops",
+  "description": "Telegram Bot API operations for forum management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Telegram Bot API operations for forum management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

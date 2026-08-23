@@ -1,0 +1,6 @@
+{
+  "name": "insaiai-intelligent-editing",
+  "command": "insaiai-intelligent-editing",
+  "description": "Use when performing video/audio processing tasks including transcoding, filtering, streaming, metadata.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when performing video/audio processing tasks including transcoding, filtering, streaming, metadata..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

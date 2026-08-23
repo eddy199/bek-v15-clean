@@ -1,0 +1,6 @@
+{
+  "name": "asdasdsasdasa12312",
+  "command": "asdasdsasdasa12312",
+  "description": "Before using the skill, make sure you have installed the required libraries for the skill to work properly.",
+  "prompt": "Tu es un agent expert spécialisé dans : Before using the skill, make sure you have installed the required libraries for the skill to work properly..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

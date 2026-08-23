@@ -1,0 +1,6 @@
+{
+  "name": "vocabulary-builder",
+  "command": "vocabulary-builder",
+  "description": "Build and review vocabulary from books, podcasts, and daily encounters.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build and review vocabulary from books, podcasts, and daily encounters..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

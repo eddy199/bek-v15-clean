@@ -1,0 +1,6 @@
+{
+  "name": "build-discipline",
+  "command": "build-discipline",
+  "description": "Build unbreakable discipline with habit stacking, streak.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build unbreakable discipline with habit stacking, streak..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

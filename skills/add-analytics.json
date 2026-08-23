@@ -1,0 +1,6 @@
+{
+  "name": "add-analytics",
+  "command": "add-analytics",
+  "description": "Add Google Analytics 4 tracking to any project.",
+  "prompt": "Tu es un agent expert spécialisé dans : Add Google Analytics 4 tracking to any project..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

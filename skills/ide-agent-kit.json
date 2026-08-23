@@ -1,0 +1,6 @@
+{
+  "name": "ide-agent-kit",
+  "command": "ide-agent-kit",
+  "description": "Filesystem message bus and webhook relay for cross-IDE agent coordination.",
+  "prompt": "Tu es un agent expert spécialisé dans : Filesystem message bus and webhook relay for cross-IDE agent coordination..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

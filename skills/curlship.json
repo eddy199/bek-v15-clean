@@ -1,0 +1,6 @@
+{
+  "name": "curlship",
+  "command": "curlship",
+  "description": "Submit products to CurlShip, the bot-friendly SaaS directory.",
+  "prompt": "Tu es un agent expert spécialisé dans : Submit products to CurlShip, the bot-friendly SaaS directory..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mta",
+  "command": "mta",
+  "description": "NYC MTA transit — real-time subway arrivals, bus predictions, service alerts, and route info for the New York City.",
+  "prompt": "Tu es un agent expert spécialisé dans : NYC MTA transit — real-time subway arrivals, bus predictions, service alerts, and route info for the New York City..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

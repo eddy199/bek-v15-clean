@@ -1,0 +1,6 @@
+{
+  "name": "lead-gen-crm",
+  "command": "lead-gen-crm",
+  "description": "End-to-end lead generation and CRM pipeline automation for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : End-to-end lead generation and CRM pipeline automation for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

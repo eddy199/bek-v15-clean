@@ -1,0 +1,6 @@
+{
+  "name": "tootoo-skill",
+  "command": "tootoo-skill",
+  "description": "Sync your TooToo codex and monitor agent alignment with your values.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sync your TooToo codex and monitor agent alignment with your values..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

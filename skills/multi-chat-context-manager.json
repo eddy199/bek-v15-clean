@@ -1,0 +1,6 @@
+{
+  "name": "multi-chat-context-manager",
+  "command": "multi-chat-context-manager",
+  "description": "CLI tool to store and retrieve conversation contexts per channel/user.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI tool to store and retrieve conversation contexts per channel/user..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "aisa-twitter-skill",
+  "command": "aisa-twitter-skill",
+  "description": "Search X (Twitter) in real time, extract relevant posts, and publish tweets/replies instantly—perfect for social.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search X (Twitter) in real time, extract relevant posts, and publish tweets/replies instantly—perfect for social..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

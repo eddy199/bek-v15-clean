@@ -1,0 +1,6 @@
+{
+  "name": "thor-generator",
+  "command": "thor-generator",
+  "description": "This skill allows the assistant to generate high-quality images using the local ComfyUI \"Thor\" pipeline.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill allows the assistant to generate high-quality images using the local ComfyUI \"Thor\" pipeline..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

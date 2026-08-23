@@ -1,0 +1,6 @@
+{
+  "name": "elliott-wave-principle",
+  "command": "elliott-wave-principle",
+  "description": "Provides expert guidance on applying the Elliott Wave Principle to financial market analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Provides expert guidance on applying the Elliott Wave Principle to financial market analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

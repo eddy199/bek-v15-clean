@@ -1,0 +1,6 @@
+{
+  "name": "mediator",
+  "command": "mediator",
+  "description": "Intercept and filter communications from difficult contacts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intercept and filter communications from difficult contacts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "posthog",
+  "command": "posthog",
+  "description": "Interact with PostHog analytics via its REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with PostHog analytics via its REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

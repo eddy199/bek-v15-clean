@@ -1,0 +1,6 @@
+{
+  "name": "porteden",
+  "command": "porteden",
+  "description": "PortEden CLI for calendar and email management - Gmail, Outlook & Exchange - list, search, create, update, delete.",
+  "prompt": "Tu es un agent expert spécialisé dans : PortEden CLI for calendar and email management - Gmail, Outlook & Exchange - list, search, create, update, delete..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

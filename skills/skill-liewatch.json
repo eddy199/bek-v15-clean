@@ -1,0 +1,6 @@
+{
+  "name": "skill-liewatch",
+  "command": "skill-liewatch",
+  "description": "Play the LIE.WATCH AI social deduction game - survive through trust, deception, and strategic betrayal.",
+  "prompt": "Tu es un agent expert spécialisé dans : Play the LIE.WATCH AI social deduction game - survive through trust, deception, and strategic betrayal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

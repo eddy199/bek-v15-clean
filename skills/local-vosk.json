@@ -1,0 +1,6 @@
+{
+  "name": "local-vosk",
+  "command": "local-vosk",
+  "description": "Local speech-to-text using Vosk.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local speech-to-text using Vosk..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

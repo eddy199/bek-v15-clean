@@ -1,0 +1,6 @@
+{
+  "name": "skill-update-delta-monitor",
+  "command": "skill-update-delta-monitor",
+  "description": "Helps detect security-relevant changes in AI skills after installation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps detect security-relevant changes in AI skills after installation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

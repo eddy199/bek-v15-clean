@@ -1,0 +1,6 @@
+{
+  "name": "craft-cli",
+  "command": "craft-cli",
+  "description": "Interact with Craft Documents via the `craft` CLI tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Craft Documents via the `craft` CLI tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

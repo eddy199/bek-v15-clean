@@ -1,0 +1,6 @@
+{
+  "name": "perplexity-research",
+  "command": "perplexity-research",
+  "description": "Conduct deep research using Perplexity Agent API with web search, reasoning, and multi-model analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Conduct deep research using Perplexity Agent API with web search, reasoning, and multi-model analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

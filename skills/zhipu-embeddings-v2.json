@@ -1,0 +1,6 @@
+{
+  "name": "zhipu-embeddings-v2",
+  "command": "zhipu-embeddings-v2",
+  "description": "Use Zhipu (智谱) web embeddings API for embeddingsing the internet.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Zhipu (智谱) web embeddings API for embeddingsing the internet..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

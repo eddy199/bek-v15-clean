@@ -1,0 +1,6 @@
+{
+  "name": "greek-document-ocr",
+  "command": "greek-document-ocr",
+  "description": "Greek-language OCR using Tesseract.",
+  "prompt": "Tu es un agent expert spécialisé dans : Greek-language OCR using Tesseract..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

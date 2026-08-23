@@ -1,0 +1,6 @@
+{
+  "name": "agent-takeover",
+  "command": "agent-takeover",
+  "description": "How to perform a live agent takeover of the Clawfinger voice gateway — dial, inject greetings, handle turns.",
+  "prompt": "Tu es un agent expert spécialisé dans : How to perform a live agent takeover of the Clawfinger voice gateway — dial, inject greetings, handle turns..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

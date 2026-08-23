@@ -1,0 +1,6 @@
+{
+  "name": "capa-officer",
+  "command": "capa-officer",
+  "description": "CAPA system management for medical device QMS.",
+  "prompt": "Tu es un agent expert spécialisé dans : CAPA system management for medical device QMS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

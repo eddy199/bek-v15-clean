@@ -1,0 +1,6 @@
+{
+  "name": "linkdapi",
+  "command": "linkdapi",
+  "description": "Work with LinkdAPI Python SDK for accessing LinkedIn professional profile.",
+  "prompt": "Tu es un agent expert spécialisé dans : Work with LinkdAPI Python SDK for accessing LinkedIn professional profile..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

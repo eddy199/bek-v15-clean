@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-refactor-planner-01",
+  "command": "jarvis-refactor-planner-01",
+  "description": "Plan low-risk refactors with seams, tests, and rollback points.",
+  "prompt": "Tu es un agent expert spécialisé dans : Plan low-risk refactors with seams, tests, and rollback points..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

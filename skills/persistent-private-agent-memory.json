@@ -1,0 +1,6 @@
+{
+  "name": "persistent-private-agent-memory",
+  "command": "persistent-private-agent-memory",
+  "description": "Run a local Agent Memory Service for persistent self-improvement with proper Ed25519 cryptography.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run a local Agent Memory Service for persistent self-improvement with proper Ed25519 cryptography..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "claw-conductor",
+  "command": "claw-conductor",
+  "description": "Always-on autonomous development orchestrator.",
+  "prompt": "Tu es un agent expert spécialisé dans : Always-on autonomous development orchestrator..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

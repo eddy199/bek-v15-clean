@@ -1,0 +1,6 @@
+{
+  "name": "deck-builder",
+  "command": "deck-builder",
+  "description": "AI agent for deck builder tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent for deck builder tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

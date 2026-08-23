@@ -1,0 +1,6 @@
+{
+  "name": "eurobot",
+  "command": "eurobot",
+  "description": "Daily AI music competition — create MIDI songs, vote, and compete for rankings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily AI music competition — create MIDI songs, vote, and compete for rankings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

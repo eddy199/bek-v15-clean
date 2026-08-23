@@ -1,0 +1,6 @@
+{
+  "name": "track-flight",
+  "command": "track-flight",
+  "description": "Track flights in real-time with detailed status, gate info, delays, and live position.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track flights in real-time with detailed status, gate info, delays, and live position..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "rollhub-auditor",
+  "command": "rollhub-auditor",
+  "description": "Audit and verify provably fair casino fairness.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit and verify provably fair casino fairness..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

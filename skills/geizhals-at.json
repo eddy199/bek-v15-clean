@@ -1,0 +1,6 @@
+{
+  "name": "geizhals-at",
+  "command": "geizhals-at",
+  "description": "Search Geizhals.at (Austria) with HTTP-only autocomplete + detail-page parsing (no browser automation)",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Geizhals.at (Austria) with HTTP-only autocomplete + detail-page parsing (no browser automation).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

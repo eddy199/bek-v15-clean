@@ -1,0 +1,6 @@
+{
+  "name": "openmeteo-weather",
+  "command": "openmeteo-weather",
+  "description": "Get current weather, hourly and daily forecasts for any city or coordinates worldwide.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get current weather, hourly and daily forecasts for any city or coordinates worldwide..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "primitives-dsl",
+  "command": "primitives-dsl",
+  "description": "Universal game architecture DSL with six primitives (LOOP, TILEGRID, CONTROLBLOCK, POOL, EVENT, DISPATCHER)",
+  "prompt": "Tu es un agent expert spécialisé dans : Universal game architecture DSL with six primitives (LOOP, TILEGRID, CONTROLBLOCK, POOL, EVENT, DISPATCHER).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

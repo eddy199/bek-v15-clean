@@ -1,0 +1,6 @@
+{
+  "name": "apify-competitor-intelligence",
+  "command": "apify-competitor-intelligence",
+  "description": "Analyze competitor strategies, content, pricing, ads, and market positioning across Google Maps, Booking.com.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze competitor strategies, content, pricing, ads, and market positioning across Google Maps, Booking.com..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

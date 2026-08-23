@@ -1,0 +1,6 @@
+{
+  "name": "claude-watchdog",
+  "command": "claude-watchdog",
+  "description": "Monitor the Claude API for outages and latency spikes with rich Telegram alerts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor the Claude API for outages and latency spikes with rich Telegram alerts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

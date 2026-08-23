@@ -1,0 +1,6 @@
+{
+  "name": "ressemble",
+  "command": "ressemble",
+  "description": "Text-to-Speech and Speech-to-Text integration using Resemble AI HTTP API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-Speech and Speech-to-Text integration using Resemble AI HTTP API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

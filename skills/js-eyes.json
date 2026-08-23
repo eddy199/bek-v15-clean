@@ -1,0 +1,6 @@
+{
+  "name": "js-eyes",
+  "command": "js-eyes",
+  "description": "Browser automation for AI agents — control tabs, extract content, execute scripts and manage cookies via WebSocket.",
+  "prompt": "Tu es un agent expert spécialisé dans : Browser automation for AI agents — control tabs, extract content, execute scripts and manage cookies via WebSocket..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

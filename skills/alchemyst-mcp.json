@@ -1,0 +1,6 @@
+{
+  "name": "alchemyst-mcp",
+  "command": "alchemyst-mcp",
+  "description": "Use this skill whenever you need to store, retrieve, search, or view persistent context using the Alchemyst AI MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill whenever you need to store, retrieve, search, or view persistent context using the Alchemyst AI MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "dl",
+  "command": "dl",
+  "description": "Download Video/Music from YouTube/Bilibili/X/etc.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download Video/Music from YouTube/Bilibili/X/etc..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

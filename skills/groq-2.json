@@ -1,0 +1,6 @@
+{
+  "name": "groq-2",
+  "command": "groq-2",
+  "description": "To use this skill, say `Groq: <your prompt>`.",
+  "prompt": "Tu es un agent expert spécialisé dans : To use this skill, say `Groq: <your prompt>`..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

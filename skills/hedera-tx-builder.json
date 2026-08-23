@@ -1,0 +1,6 @@
+{
+  "name": "hedera-tx-builder",
+  "command": "hedera-tx-builder",
+  "description": "Build and sign Hedera transactions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build and sign Hedera transactions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

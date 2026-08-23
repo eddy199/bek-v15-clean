@@ -1,0 +1,6 @@
+{
+  "name": "stock-copilot-pro",
+  "command": "stock-copilot-pro",
+  "description": "OpenClaw stock analysis skill for US/HK/CN markets.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw stock analysis skill for US/HK/CN markets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

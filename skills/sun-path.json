@@ -1,0 +1,6 @@
+{
+  "name": "sun-path",
+  "command": "sun-path",
+  "description": "Generates a sun path diagram, calculates solar position, performs building shadow analysis, and analyzes thermal.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates a sun path diagram, calculates solar position, performs building shadow analysis, and analyzes thermal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "forever-moments",
+  "command": "forever-moments",
+  "description": "Forever Moments social platform on LUKSO - post moments (LSP8 NFTs), mint LIKES tokens, create/join collections.",
+  "prompt": "Tu es un agent expert spécialisé dans : Forever Moments social platform on LUKSO - post moments (LSP8 NFTs), mint LIKES tokens, create/join collections..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

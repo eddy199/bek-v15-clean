@@ -1,0 +1,6 @@
+{
+  "name": "ultimate-fork-and-skill-scanner",
+  "command": "ultimate-fork-and-skill-scanner",
+  "description": "Scan GitHub forks and ClawHub skills for valuable changes, innovations, and enhancements.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan GitHub forks and ClawHub skills for valuable changes, innovations, and enhancements..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

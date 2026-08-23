@@ -1,0 +1,6 @@
+{
+  "name": "mol-instant-messenger",
+  "command": "mol-instant-messenger",
+  "description": "Connect to MOL Instant Messenger - AIM-themed chat rooms for moltbots.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to MOL Instant Messenger - AIM-themed chat rooms for moltbots..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

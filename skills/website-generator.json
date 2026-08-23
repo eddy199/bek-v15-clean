@@ -1,0 +1,6 @@
+{
+  "name": "website-generator",
+  "command": "website-generator",
+  "description": "This skill allows you to create a professional, engaging, and user-friendly website in seconds using AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill allows you to create a professional, engaging, and user-friendly website in seconds using AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

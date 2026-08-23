@@ -1,0 +1,6 @@
+{
+  "name": "muninn",
+  "command": "muninn",
+  "description": "Universal Context Protocol (CXP) for AI agents. v2.3.7 includes the latest high-performance CXP engine (compiled.",
+  "prompt": "Tu es un agent expert spécialisé dans : Universal Context Protocol (CXP) for AI agents. v2.3.7 includes the latest high-performance CXP engine (compiled..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

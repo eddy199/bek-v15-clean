@@ -1,0 +1,6 @@
+{
+  "name": "cron-doctor",
+  "command": "cron-doctor",
+  "description": "Diagnose and triage cron job failures.",
+  "prompt": "Tu es un agent expert spécialisé dans : Diagnose and triage cron job failures..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

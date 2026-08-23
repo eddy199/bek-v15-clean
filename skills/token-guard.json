@@ -1,0 +1,6 @@
+{
+  "name": "token-guard",
+  "command": "token-guard",
+  "description": "<!-- 🌌 Aoineco-Verified | S-DNA: AOI-2026-0213-SDNA-TG01 -->.",
+  "prompt": "Tu es un agent expert spécialisé dans : <!-- 🌌 Aoineco-Verified | S-DNA: AOI-2026-0213-SDNA-TG01 -->..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

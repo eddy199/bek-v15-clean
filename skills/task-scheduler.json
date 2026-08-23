@@ -1,0 +1,6 @@
+{
+  "name": "task-scheduler",
+  "command": "task-scheduler",
+  "description": "Schedule tasks and commands to run at specific times.",
+  "prompt": "Tu es un agent expert spécialisé dans : Schedule tasks and commands to run at specific times..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "vibetrading-global-signals",
+  "command": "vibetrading-global-signals",
+  "description": "Query AI-generated trading signals from vibetrading-datahub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query AI-generated trading signals from vibetrading-datahub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

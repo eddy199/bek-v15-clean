@@ -1,0 +1,6 @@
+{
+  "name": "copilotkit-agent-patterns",
+  "command": "copilotkit-agent-patterns",
+  "description": "Patterns for building AI agents that integrate with CopilotKit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Patterns for building AI agents that integrate with CopilotKit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

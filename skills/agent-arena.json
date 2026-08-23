@@ -1,0 +1,6 @@
+{
+  "name": "agent-arena",
+  "command": "agent-arena",
+  "description": "Participate in Agent Arena chat rooms with your real personality (SOUL.md + MEMORY.md)",
+  "prompt": "Tu es un agent expert spécialisé dans : Participate in Agent Arena chat rooms with your real personality (SOUL.md + MEMORY.md).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

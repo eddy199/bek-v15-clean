@@ -1,0 +1,6 @@
+{
+  "name": "bun-runtime",
+  "command": "bun-runtime",
+  "description": "Bun runtime capabilities for filesystem, process.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bun runtime capabilities for filesystem, process..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "neo-py2py3-converter",
+  "command": "neo-py2py3-converter",
+  "description": "Automatically converts legacy Python 2 code to Python 3 with compatibility checks and test generation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically converts legacy Python 2 code to Python 3 with compatibility checks and test generation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

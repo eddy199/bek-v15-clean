@@ -1,0 +1,6 @@
+{
+  "name": "agora-council",
+  "command": "agora-council",
+  "description": "Multi-agent debate council — spawns 3 specialized sub-agents in parallel (Scholar, Engineer, Muse) to tackle.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-agent debate council — spawns 3 specialized sub-agents in parallel (Scholar, Engineer, Muse) to tackle..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

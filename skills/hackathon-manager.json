@@ -1,0 +1,6 @@
+{
+  "name": "hackathon-manager",
+  "command": "hackathon-manager",
+  "description": "Track hackathon deadlines, manage submission checklists, and monitor progress.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track hackathon deadlines, manage submission checklists, and monitor progress..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

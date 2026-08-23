@@ -1,0 +1,6 @@
+{
+  "name": "openmeteo-sh-weather-advanced",
+  "command": "openmeteo-sh-weather-advanced",
+  "description": "Advanced weather from free OpenMeteo API: historical data, detailed variable selection, model choice, past-days.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced weather from free OpenMeteo API: historical data, detailed variable selection, model choice, past-days..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

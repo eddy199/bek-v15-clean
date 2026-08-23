@@ -1,0 +1,6 @@
+{
+  "name": "hostex",
+  "command": "hostex",
+  "description": "Hostex (hostex.io) OpenAPI v3.0 skill for querying and managing vacation rental properties, room types.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hostex (hostex.io) OpenAPI v3.0 skill for querying and managing vacation rental properties, room types..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

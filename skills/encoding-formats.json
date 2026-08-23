@@ -1,0 +1,6 @@
+{
+  "name": "encoding-formats",
+  "command": "encoding-formats",
+  "description": "Encode, decode, and convert between data formats.",
+  "prompt": "Tu es un agent expert spécialisé dans : Encode, decode, and convert between data formats..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

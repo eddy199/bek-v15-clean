@@ -1,0 +1,6 @@
+{
+  "name": "startup-0to1",
+  "command": "startup-0to1",
+  "description": "Alias for raon-os — AI-powered startup companion for Korean founders.",
+  "prompt": "Tu es un agent expert spécialisé dans : Alias for raon-os — AI-powered startup companion for Korean founders..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

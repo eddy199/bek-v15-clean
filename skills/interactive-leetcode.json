@@ -1,0 +1,6 @@
+{
+  "name": "interactive-leetcode",
+  "command": "interactive-leetcode",
+  "description": "Use when the user wants to practice LeetCode problems, submit solutions, or set up LeetCode integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user wants to practice LeetCode problems, submit solutions, or set up LeetCode integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

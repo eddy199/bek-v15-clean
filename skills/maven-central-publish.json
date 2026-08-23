@@ -1,0 +1,6 @@
+{
+  "name": "maven-central-publish",
+  "command": "maven-central-publish",
+  "description": "Comprehensive guide and toolkit for publishing Java artifacts to Maven Central using the modern Central Portal.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive guide and toolkit for publishing Java artifacts to Maven Central using the modern Central Portal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

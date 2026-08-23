@@ -1,0 +1,6 @@
+{
+  "name": "usc-booking-api",
+  "command": "usc-booking-api",
+  "description": "Scannt deine Urban Sports Club Venues, zeigt Kurse mit direkten Booking-Links und kann Kurse buchen und stornieren.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scannt deine Urban Sports Club Venues, zeigt Kurse mit direkten Booking-Links und kann Kurse buchen und stornieren..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

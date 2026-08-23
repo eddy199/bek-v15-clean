@@ -1,0 +1,6 @@
+{
+  "name": "pos-arcology-forge",
+  "command": "pos-arcology-forge",
+  "description": "PoW-verified Elysium Arcology Planner + Hub.",
+  "prompt": "Tu es un agent expert spécialisé dans : PoW-verified Elysium Arcology Planner + Hub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "iss-tracker",
+  "command": "iss-tracker",
+  "description": "Get the real-time location (latitude/longitude) of the International Space Station.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get the real-time location (latitude/longitude) of the International Space Station..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "m365-pnp-cli",
+  "command": "m365-pnp-cli",
+  "description": "CLI for Microsoft 365 - Manage Microsoft 365 tenant, SharePoint Online, Teams, OneDrive.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI for Microsoft 365 - Manage Microsoft 365 tenant, SharePoint Online, Teams, OneDrive..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

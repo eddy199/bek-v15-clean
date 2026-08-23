@@ -1,0 +1,6 @@
+{
+  "name": "presale-one-pass-orchestrator",
+  "command": "presale-one-pass-orchestrator",
+  "description": "Run or supervise a one-pass Codex implementation with preflight gates, stepwise plan execution, and strict QA.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run or supervise a one-pass Codex implementation with preflight gates, stepwise plan execution, and strict QA..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

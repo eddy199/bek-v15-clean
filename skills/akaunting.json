@@ -1,0 +1,6 @@
+{
+  "name": "akaunting",
+  "command": "akaunting",
+  "description": "Interact with Akaunting open-source accounting software via REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Akaunting open-source accounting software via REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

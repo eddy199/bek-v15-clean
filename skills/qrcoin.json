@@ -1,0 +1,6 @@
+{
+  "name": "qrcoin",
+  "command": "qrcoin",
+  "description": "Interact with QR Coin auctions on Base.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with QR Coin auctions on Base..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "auto-shorts-repurposer",
+  "command": "auto-shorts-repurposer",
+  "description": "Repurpose long-form video or audio into short-form clip plans with timestamps, hooks, captions, and packaging notes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Repurpose long-form video or audio into short-form clip plans with timestamps, hooks, captions, and packaging notes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

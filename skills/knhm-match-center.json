@@ -1,0 +1,6 @@
+{
+  "name": "knhm-match-center",
+  "command": "knhm-match-center",
+  "description": "Query Dutch field hockey match schedules and results from KNHB Match Center (hockeyweerelt.nl)",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Dutch field hockey match schedules and results from KNHB Match Center (hockeyweerelt.nl).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

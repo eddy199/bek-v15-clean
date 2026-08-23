@@ -1,0 +1,6 @@
+{
+  "name": "alibaba-supplier-outreach",
+  "command": "alibaba-supplier-outreach",
+  "description": "Find Alibaba suppliers via LaunchFast, contact them with optimized outreach messages, check their replies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find Alibaba suppliers via LaunchFast, contact them with optimized outreach messages, check their replies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

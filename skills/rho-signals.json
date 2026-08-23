@@ -1,0 +1,6 @@
+{
+  "name": "rho-signals",
+  "command": "rho-signals",
+  "description": "Real-time crypto TA signals for BTC, ETH, SOL, XRP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time crypto TA signals for BTC, ETH, SOL, XRP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

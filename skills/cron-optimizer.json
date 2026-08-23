@@ -1,0 +1,6 @@
+{
+  "name": "cron-optimizer",
+  "command": "cron-optimizer",
+  "description": "Optimizes system cron jobs by removing stale, disabled, or redundant entries to reduce exec noise.",
+  "prompt": "Tu es un agent expert spécialisé dans : Optimizes system cron jobs by removing stale, disabled, or redundant entries to reduce exec noise..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

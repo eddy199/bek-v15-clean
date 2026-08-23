@@ -1,0 +1,6 @@
+{
+  "name": "videogames",
+  "command": "videogames",
+  "description": "A skill to lookup video game information, prices, compatibility, and duration.",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill to lookup video game information, prices, compatibility, and duration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

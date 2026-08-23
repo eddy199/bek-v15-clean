@@ -1,0 +1,6 @@
+{
+  "name": "diataxis-writing",
+  "command": "diataxis-writing",
+  "description": "Diataxis documentation framework practice guide.",
+  "prompt": "Tu es un agent expert spécialisé dans : Diataxis documentation framework practice guide..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

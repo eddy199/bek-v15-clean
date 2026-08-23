@@ -1,0 +1,6 @@
+{
+  "name": "core-prompt-patcher",
+  "command": "core-prompt-patcher",
+  "description": "**Dynamic SOUL.md-based persona injector** - Automatically syncs your workspace SOUL.md into OpenClaw's core system.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Dynamic SOUL.md-based persona injector** - Automatically syncs your workspace SOUL.md into OpenClaw's core system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

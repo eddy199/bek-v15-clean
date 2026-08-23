@@ -1,0 +1,6 @@
+{
+  "name": "apipick-public-holidays",
+  "command": "apipick-public-holidays",
+  "description": "Query public holidays for any country and year using the apipick Public Holidays API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query public holidays for any country and year using the apipick Public Holidays API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

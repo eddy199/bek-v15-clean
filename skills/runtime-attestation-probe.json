@@ -1,0 +1,6 @@
+{
+  "name": "runtime-attestation-probe",
+  "command": "runtime-attestation-probe",
+  "description": "Helps validate that agent behavior at runtime matches the capabilities and constraints declared in its attestation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps validate that agent behavior at runtime matches the capabilities and constraints declared in its attestation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

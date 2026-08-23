@@ -1,0 +1,6 @@
+{
+  "name": "kleo-static-files",
+  "command": "kleo-static-files",
+  "description": "Host static files on subdomains with optional.",
+  "prompt": "Tu es un agent expert spécialisé dans : Host static files on subdomains with optional..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

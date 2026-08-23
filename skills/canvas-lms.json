@@ -1,0 +1,6 @@
+{
+  "name": "canvas-lms",
+  "command": "canvas-lms",
+  "description": "Access Canvas LMS (Instructure) for course data, assignments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Canvas LMS (Instructure) for course data, assignments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

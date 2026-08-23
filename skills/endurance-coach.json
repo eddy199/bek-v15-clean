@@ -1,0 +1,6 @@
+{
+  "name": "endurance-coach",
+  "command": "endurance-coach",
+  "description": "Create personalized triathlon, marathon, and ultra-endurance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create personalized triathlon, marathon, and ultra-endurance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mh-apple-notes",
+  "command": "mh-apple-notes",
+  "description": "Manage Apple Notes via the `memo` CLI on macOS (create, view, edit, delete, search, move, and export notes)",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Apple Notes via the `memo` CLI on macOS (create, view, edit, delete, search, move, and export notes).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

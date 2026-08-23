@@ -1,0 +1,6 @@
+{
+  "name": "stanley-druckenmiller-workflow",
+  "command": "stanley-druckenmiller-workflow",
+  "description": "Druckenmiller style market analysis in natural Chinese with a living PM memo voice.",
+  "prompt": "Tu es un agent expert spécialisé dans : Druckenmiller style market analysis in natural Chinese with a living PM memo voice..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

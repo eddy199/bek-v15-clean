@@ -1,0 +1,6 @@
+{
+  "name": "azure-image-gen",
+  "command": "azure-image-gen",
+  "description": "Generate images using Azure OpenAI DALL-E.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images using Azure OpenAI DALL-E..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "meal-suggester",
+  "command": "meal-suggester",
+  "description": "Quick dinner companion blending taste profiles, inventory tracking, and learning-based recipe rotation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Quick dinner companion blending taste profiles, inventory tracking, and learning-based recipe rotation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

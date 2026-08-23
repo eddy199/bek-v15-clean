@@ -1,0 +1,6 @@
+{
+  "name": "country-info",
+  "command": "country-info",
+  "description": "Get country data — population, languages, currencies, capital, flag, and more using REST Countries API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get country data — population, languages, currencies, capital, flag, and more using REST Countries API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

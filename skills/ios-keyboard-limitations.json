@@ -1,0 +1,6 @@
+{
+  "name": "ios-keyboard-limitations",
+  "command": "ios-keyboard-limitations",
+  "description": "iOS keyboard extension technical limitations and workarounds.",
+  "prompt": "Tu es un agent expert spécialisé dans : iOS keyboard extension technical limitations and workarounds..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

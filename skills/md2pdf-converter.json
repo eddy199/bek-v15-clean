@@ -1,0 +1,6 @@
+{
+  "name": "md2pdf-converter",
+  "command": "md2pdf-converter",
+  "description": "Offline Markdown to PDF converter with FULL Unicode support using Pandoc + WeasyPrint + local Twemoji cache (3660.",
+  "prompt": "Tu es un agent expert spécialisé dans : Offline Markdown to PDF converter with FULL Unicode support using Pandoc + WeasyPrint + local Twemoji cache (3660..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lifi-skill",
+  "command": "lifi-skill",
+  "description": "v4 - Use LI.FI API for cross-chain and same-chain swaps, bridges, and contract calls.",
+  "prompt": "Tu es un agent expert spécialisé dans : v4 - Use LI.FI API for cross-chain and same-chain swaps, bridges, and contract calls..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

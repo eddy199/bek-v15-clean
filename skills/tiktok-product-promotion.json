@@ -1,0 +1,6 @@
+{
+  "name": "tiktok-product-promotion",
+  "command": "tiktok-product-promotion",
+  "description": "Hire TikTok influencers for product reviews, demonstrations, unboxing videos, and conversion-focused promotional.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hire TikTok influencers for product reviews, demonstrations, unboxing videos, and conversion-focused promotional..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

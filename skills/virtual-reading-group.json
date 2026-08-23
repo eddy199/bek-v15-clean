@@ -1,0 +1,6 @@
+{
+  "name": "virtual-reading-group",
+  "command": "virtual-reading-group",
+  "description": "Orchestrate a multi-agent virtual academic reading group.",
+  "prompt": "Tu es un agent expert spécialisé dans : Orchestrate a multi-agent virtual academic reading group..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

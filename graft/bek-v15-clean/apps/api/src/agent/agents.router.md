@@ -1,0 +1,21 @@
+# bek-v15-clean/apps/api/src/agent/agents.router.ts
+
+- AgentsRouter · class · L29-L148 — class AgentsRouter
+- constructor · method · L30-L35 — constructor( @Inject(AgentDefinitionsService) private readonly agents: AgentDefinitionsService, @Inject(AgentRunsService) private readonly runs: AgentRunsService, )
+- list · method · L38-L40 — async list(@Ctx() ctx: AuthedTrpcContext)
+- revise · method · L43-L48 — async revise( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof agentReviseInput>, )
+- files · method · L51-L53 — async files(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- saveFile · method · L56-L61 — async saveFile( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof agentSaveFileInput>, )
+- byId · method · L64-L66 — async byId(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- history · method · L69-L74 — async history( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof agentHistoryInput>, )
+- activity · method · L77-L82 — async activity( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof agentHistoryInput>, )
+- update · method · L85-L90 — async update( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof agentUpdateInput>, )
+- deploy · method · L93-L98 — async deploy( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof agentDeployInput>, )
+- pause · method · L101-L103 — async pause(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- resume · method · L106-L108 — async resume(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- archive · method · L111-L113 — async archive(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- restore · method · L116-L118 — async restore(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- remove · method · L121-L123 — async remove(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- runNow · method · L126-L131 — async runNow( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof agentRunNowInput>, )
+- retryRun · method · L134-L139 — async retryRun( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof agentRetryRunInput>, )
+- cancelRun · method · L142-L147 — async cancelRun( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof agentCancelRunInput>, )

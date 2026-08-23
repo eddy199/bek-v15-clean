@@ -1,0 +1,6 @@
+{
+  "name": "ezcto-smart-web-reader",
+  "command": "ezcto-smart-web-reader",
+  "description": "Agent web access acceleration layer — reads any URL as structured JSON.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent web access acceleration layer — reads any URL as structured JSON..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

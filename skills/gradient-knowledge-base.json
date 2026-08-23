@@ -1,0 +1,6 @@
+{
+  "name": "gradient-knowledge-base",
+  "command": "gradient-knowledge-base",
+  "description": "Community skill (unofficial) for DigitalOcean Gradient Knowledge Bases.",
+  "prompt": "Tu es un agent expert spécialisé dans : Community skill (unofficial) for DigitalOcean Gradient Knowledge Bases..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

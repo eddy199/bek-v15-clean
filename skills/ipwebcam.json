@@ -1,0 +1,6 @@
+{
+  "name": "ipwebcam",
+  "command": "ipwebcam",
+  "description": "Transform an Android phone with IP Webcam into an intelligent Edge AI security system with OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform an Android phone with IP Webcam into an intelligent Edge AI security system with OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

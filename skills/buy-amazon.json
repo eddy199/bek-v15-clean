@@ -1,0 +1,6 @@
+{
+  "name": "buy-amazon",
+  "command": "buy-amazon",
+  "description": "Need to buy something from Amazon? Search and shop on Amazon.com — compare prices and ratings, add items to cart.",
+  "prompt": "Tu es un agent expert spécialisé dans : Need to buy something from Amazon? Search and shop on Amazon.com — compare prices and ratings, add items to cart..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

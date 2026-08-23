@@ -1,0 +1,6 @@
+{
+  "name": "call-claude-sonnet-4-agent",
+  "command": "call-claude-sonnet-4-agent",
+  "description": "AI agent for call claude sonnet 4 agent tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent for call claude sonnet 4 agent tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

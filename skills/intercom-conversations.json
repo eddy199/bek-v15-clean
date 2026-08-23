@@ -1,0 +1,6 @@
+{
+  "name": "intercom-conversations",
+  "command": "intercom-conversations",
+  "description": "Clawhub loads this Node module and calls `default(input)`.",
+  "prompt": "Tu es un agent expert spécialisé dans : Clawhub loads this Node module and calls `default(input)`..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

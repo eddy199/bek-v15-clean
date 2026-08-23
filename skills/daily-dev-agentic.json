@@ -1,0 +1,6 @@
+{
+  "name": "daily-dev-agentic",
+  "command": "daily-dev-agentic",
+  "description": "daily.dev Agentic Learning - continuous self-improvement through daily.dev feeds.",
+  "prompt": "Tu es un agent expert spécialisé dans : daily.dev Agentic Learning - continuous self-improvement through daily.dev feeds..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

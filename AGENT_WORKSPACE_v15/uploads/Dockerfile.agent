@@ -1,0 +1,20 @@
+# ============================================
+# Dockerfile Agent Python
+# Chemin : E:\\workspacekimi\\Dockerfile
+# ============================================
+
+FROM python:3.11-slim
+WORKDIR /app
+
+# Dépendances
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Code source
+COPY app.py .
+
+ENV PORT=8765
+EXPOSE 8765
+
+# Production-ready avec Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8765", "--workers", "1", "--threads", "4", "--timeout", "120", "app:app"]

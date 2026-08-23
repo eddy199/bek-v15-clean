@@ -1,0 +1,6 @@
+{
+  "name": "lite-sqlite",
+  "command": "lite-sqlite",
+  "description": "Fast lightweight local SQLite database for OpenClaw agents with minimal RAM and storage usage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fast lightweight local SQLite database for OpenClaw agents with minimal RAM and storage usage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

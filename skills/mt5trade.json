@@ -1,0 +1,6 @@
+{
+  "name": "mt5trade",
+  "command": "mt5trade",
+  "description": "Call local MT5 trading HTTP API (signal → draft → confirm) with safety confirmation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Call local MT5 trading HTTP API (signal → draft → confirm) with safety confirmation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

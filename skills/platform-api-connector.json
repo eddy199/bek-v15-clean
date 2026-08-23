@@ -1,0 +1,6 @@
+{
+  "name": "platform-api-connector",
+  "command": "platform-api-connector",
+  "description": "Connect to social media and content platform APIs by navigating developer portals, creating apps, obtaining OAuth.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to social media and content platform APIs by navigating developer portals, creating apps, obtaining OAuth..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

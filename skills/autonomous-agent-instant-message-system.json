@@ -1,0 +1,6 @@
+{
+  "name": "autonomous-agent-instant-message-system",
+  "command": "autonomous-agent-instant-message-system",
+  "description": "Prismer Cloud provides three core capabilities: **Context** (web fetching/search), **Parse** (document OCR)",
+  "prompt": "Tu es un agent expert spécialisé dans : Prismer Cloud provides three core capabilities: **Context** (web fetching/search), **Parse** (document OCR).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

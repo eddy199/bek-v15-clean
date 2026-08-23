@@ -1,0 +1,6 @@
+{
+  "name": "design-assets",
+  "command": "design-assets",
+  "description": "Create and edit graphic design assets: icons, favicons, images.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and edit graphic design assets: icons, favicons, images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cybercentry-private-data-verification",
+  "command": "cybercentry-private-data-verification",
+  "description": "Cybercentry Private Data Verification on ACP - Real-time Zero-Knowledge Proof generation and text integrity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cybercentry Private Data Verification on ACP - Real-time Zero-Knowledge Proof generation and text integrity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

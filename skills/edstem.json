@@ -1,0 +1,6 @@
+{
+  "name": "edstem",
+  "command": "edstem",
+  "description": "Fetch, sync, and organize EdStem discussion threads for any course or institution.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch, sync, and organize EdStem discussion threads for any course or institution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

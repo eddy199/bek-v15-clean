@@ -1,0 +1,6 @@
+{
+  "name": "wallabag",
+  "command": "wallabag",
+  "description": "Manage Wallabag bookmarks through the Wallabag Developer API with OAuth2 authentication, including creating.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Wallabag bookmarks through the Wallabag Developer API with OAuth2 authentication, including creating..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

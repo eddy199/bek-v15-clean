@@ -1,0 +1,6 @@
+{
+  "name": "japan-news-mcp",
+  "command": "japan-news-mcp",
+  "description": "Get Japanese financial and business news from Yahoo News Japan, NHK, Reuters Japan, and Toyo Keizai (東洋経済) — search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get Japanese financial and business news from Yahoo News Japan, NHK, Reuters Japan, and Toyo Keizai (東洋経済) — search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

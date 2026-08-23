@@ -1,0 +1,6 @@
+{
+  "name": "shortcut-skill",
+  "command": "shortcut-skill",
+  "description": "Access and manage Shortcut.com (formerly Clubhouse) project management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access and manage Shortcut.com (formerly Clubhouse) project management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

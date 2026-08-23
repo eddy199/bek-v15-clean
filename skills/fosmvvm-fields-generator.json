@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-fields-generator",
+  "command": "fosmvvm-fields-generator",
+  "description": "Generate FOSMVVM Fields protocols with validation rules, FormField definitions, and localized messages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate FOSMVVM Fields protocols with validation rules, FormField definitions, and localized messages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "simple-random-interaction-designer",
+  "command": "simple-random-interaction-designer",
+  "description": "Decide whether OpenClaw should send a spontaneous ping to the user during periodic checks, and choose a randomized.",
+  "prompt": "Tu es un agent expert spécialisé dans : Decide whether OpenClaw should send a spontaneous ping to the user during periodic checks, and choose a randomized..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

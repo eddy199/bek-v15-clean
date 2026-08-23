@@ -1,0 +1,6 @@
+{
+  "name": "courtroom",
+  "command": "courtroom",
+  "description": "AI Courtroom for behavioral oversight.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI Courtroom for behavioral oversight..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

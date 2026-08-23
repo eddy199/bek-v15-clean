@@ -1,0 +1,6 @@
+{
+  "name": "mindgardener",
+  "command": "mindgardener",
+  "description": "Local-first long-term memory for autonomous agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local-first long-term memory for autonomous agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

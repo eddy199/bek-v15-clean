@@ -1,0 +1,6 @@
+{
+  "name": "overlap-check",
+  "command": "overlap-check",
+  "description": "Check for existing issues and PRs before creating new ones.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check for existing issues and PRs before creating new ones..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

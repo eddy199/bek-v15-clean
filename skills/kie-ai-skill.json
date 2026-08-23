@@ -1,0 +1,6 @@
+{
+  "name": "kie-ai-skill",
+  "command": "kie-ai-skill",
+  "description": "Unified API access to multiple AI models via kie.ai - image generation (Nano Banana Pro, Flux, 4o-image) at 30-80%.",
+  "prompt": "Tu es un agent expert spécialisé dans : Unified API access to multiple AI models via kie.ai - image generation (Nano Banana Pro, Flux, 4o-image) at 30-80%..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

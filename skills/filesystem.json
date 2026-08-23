@@ -1,0 +1,6 @@
+{
+  "name": "filesystem",
+  "command": "filesystem",
+  "description": "Advanced filesystem operations for listing files, searching content, batch processing, and directory analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced filesystem operations for listing files, searching content, batch processing, and directory analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

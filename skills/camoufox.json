@@ -1,0 +1,6 @@
+{
+  "name": "camoufox",
+  "command": "camoufox",
+  "description": "Anti-detect browser automation using Camoufox (Firefox-based).",
+  "prompt": "Tu es un agent expert spécialisé dans : Anti-detect browser automation using Camoufox (Firefox-based)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

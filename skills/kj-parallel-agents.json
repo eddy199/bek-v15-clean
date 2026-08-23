@@ -1,0 +1,6 @@
+{
+  "name": "kj-parallel-agents",
+  "command": "kj-parallel-agents",
+  "description": "Dispatch multiple subagents for independent tasks simultaneously.",
+  "prompt": "Tu es un agent expert spécialisé dans : Dispatch multiple subagents for independent tasks simultaneously..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

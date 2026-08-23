@@ -1,0 +1,6 @@
+{
+  "name": "xiaohongshutools",
+  "command": "xiaohongshutools",
+  "description": "XiaoHongShu (Little Red Book) data collection and interaction toolkit.",
+  "prompt": "Tu es un agent expert spécialisé dans : XiaoHongShu (Little Red Book) data collection and interaction toolkit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

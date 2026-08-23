@@ -1,0 +1,6 @@
+{
+  "name": "business-model-canvas",
+  "command": "business-model-canvas",
+  "description": "Build, fill, stress-test, and iterate.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build, fill, stress-test, and iterate..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "xy-pubmed-pdf-downloader",
+  "command": "xy-pubmed-pdf-downloader",
+  "description": "Download PDFs from PubMed Central (PMC) and Europe PMC.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download PDFs from PubMed Central (PMC) and Europe PMC..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

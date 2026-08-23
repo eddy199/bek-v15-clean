@@ -1,0 +1,6 @@
+{
+  "name": "greek-individual-taxes",
+  "command": "greek-individual-taxes",
+  "description": "Comprehensive Greek individual tax return processing skill for employed individuals.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive Greek individual tax return processing skill for employed individuals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

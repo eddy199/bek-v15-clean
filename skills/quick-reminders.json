@@ -1,0 +1,6 @@
+{
+  "name": "quick-reminders",
+  "command": "quick-reminders",
+  "description": "Zero-LLM one-shot reminders (<48h) via nohup sleep + openclaw message send, operated.",
+  "prompt": "Tu es un agent expert spécialisé dans : Zero-LLM one-shot reminders (<48h) via nohup sleep + openclaw message send, operated..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

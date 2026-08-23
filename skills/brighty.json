@@ -1,0 +1,6 @@
+{
+  "name": "brighty",
+  "command": "brighty",
+  "description": "Banking interface for AI bots and automation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Banking interface for AI bots and automation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

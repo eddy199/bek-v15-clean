@@ -1,0 +1,6 @@
+{
+  "name": "vivid-business-account-opening",
+  "command": "vivid-business-account-opening",
+  "description": "Open a Vivid Business account via a remote MCP server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Open a Vivid Business account via a remote MCP server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

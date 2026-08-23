@@ -1,0 +1,6 @@
+{
+  "name": "k8s-memory-tune",
+  "command": "k8s-memory-tune",
+  "description": "**触发词**: oomkilled, memory_limit, jvm_heap, container_memory, k8s 内存.",
+  "prompt": "Tu es un agent expert spécialisé dans : **触发词**: oomkilled, memory_limit, jvm_heap, container_memory, k8s 内存..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

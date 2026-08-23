@@ -1,0 +1,6 @@
+{
+  "name": "cricket-live",
+  "command": "cricket-live",
+  "description": "**Live cricket scores, IPL tracking, and match alerts for OpenClaw.**.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Live cricket scores, IPL tracking, and match alerts for OpenClaw.**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

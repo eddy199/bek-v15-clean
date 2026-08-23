@@ -1,0 +1,6 @@
+{
+  "name": "tonfun-feed",
+  "command": "tonfun-feed",
+  "description": "Subscribe to @TonFunX Twitter feed and cross-post tagged content to BotWorld, Moltbook, or your own platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Subscribe to @TonFunX Twitter feed and cross-post tagged content to BotWorld, Moltbook, or your own platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

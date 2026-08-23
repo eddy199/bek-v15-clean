@@ -1,0 +1,6 @@
+{
+  "name": "rps12345",
+  "command": "rps12345",
+  "description": "Play a text-based game of rock–paper–scissors against the user and keep score.",
+  "prompt": "Tu es un agent expert spécialisé dans : Play a text-based game of rock–paper–scissors against the user and keep score..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

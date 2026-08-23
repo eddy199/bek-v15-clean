@@ -1,0 +1,6 @@
+{
+  "name": "ai-daily-briefing",
+  "command": "ai-daily-briefing",
+  "description": "Start every day focused.",
+  "prompt": "Tu es un agent expert spécialisé dans : Start every day focused..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

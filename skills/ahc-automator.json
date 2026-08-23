@@ -1,0 +1,6 @@
+{
+  "name": "ahc-automator",
+  "command": "ahc-automator",
+  "description": "Custom automation workflows for Alan Harper Composites.",
+  "prompt": "Tu es un agent expert spécialisé dans : Custom automation workflows for Alan Harper Composites..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

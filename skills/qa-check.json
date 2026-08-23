@@ -1,0 +1,6 @@
+{
+  "name": "qa-check",
+  "command": "qa-check",
+  "description": "Mandatory quality assurance for all dev work before publishing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mandatory quality assurance for all dev work before publishing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

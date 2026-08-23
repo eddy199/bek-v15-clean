@@ -1,0 +1,6 @@
+{
+  "name": "praxis-gws",
+  "command": "praxis-gws",
+  "description": "Google Workspace CLI for Gmail, Calendar, and Drive.",
+  "prompt": "Tu es un agent expert spécialisé dans : Google Workspace CLI for Gmail, Calendar, and Drive..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

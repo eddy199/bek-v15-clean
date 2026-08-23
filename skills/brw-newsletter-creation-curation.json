@@ -1,0 +1,6 @@
+{
+  "name": "brw-newsletter-creation-curation",
+  "command": "brw-newsletter-creation-curation",
+  "description": "Industry-adaptive B2B newsletter creation with stage, role, and geography-aware workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Industry-adaptive B2B newsletter creation with stage, role, and geography-aware workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

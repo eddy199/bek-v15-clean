@@ -1,0 +1,6 @@
+{
+  "name": "podcast-chaptering-highlights",
+  "command": "podcast-chaptering-highlights",
+  "description": "Create chapters, highlights, and show notes from podcast audio or transcripts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create chapters, highlights, and show notes from podcast audio or transcripts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

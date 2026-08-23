@@ -1,0 +1,6 @@
+{
+  "name": "config-validator",
+  "command": "config-validator",
+  "description": "A utility skill to validate OpenClaw configuration files (`openclaw.json`, `.env`, `package.json`) and ensure.",
+  "prompt": "Tu es un agent expert spécialisé dans : A utility skill to validate OpenClaw configuration files (`openclaw.json`, `.env`, `package.json`) and ensure..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

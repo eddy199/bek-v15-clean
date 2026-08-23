@@ -1,0 +1,6 @@
+{
+  "name": "m365-spam-manager",
+  "command": "m365-spam-manager",
+  "description": "Microsoft 365 spam folder manager for Outlook/Exchange mailboxes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Microsoft 365 spam folder manager for Outlook/Exchange mailboxes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

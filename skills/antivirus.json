@@ -1,0 +1,6 @@
+{
+  "name": "antivirus",
+  "command": "antivirus",
+  "description": "Scan installed OpenClaw skills for malicious code patterns including ClickFix social engineering, reverse shell (RAT)",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan installed OpenClaw skills for malicious code patterns including ClickFix social engineering, reverse shell (RAT).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lel-mail",
+  "command": "lel-mail",
+  "description": "Send and read email via a combination of python and bash scripts which makes use of the main agent for reasoning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and read email via a combination of python and bash scripts which makes use of the main agent for reasoning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

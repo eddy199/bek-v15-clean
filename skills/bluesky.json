@@ -1,0 +1,6 @@
+{
+  "name": "bluesky",
+  "command": "bluesky",
+  "description": "Complete Bluesky CLI: post, reply, like, repost, follow, block, mute, search,.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Bluesky CLI: post, reply, like, repost, follow, block, mute, search,..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

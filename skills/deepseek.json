@@ -1,0 +1,6 @@
+{
+  "name": "deepseek",
+  "command": "deepseek",
+  "description": "Integrates DeepSeek API with OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrates DeepSeek API with OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

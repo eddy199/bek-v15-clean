@@ -1,0 +1,6 @@
+{
+  "name": "autogame-tales",
+  "command": "autogame-tales",
+  "description": "Generates short, atmospheric ghost stories or micro-fiction based on random prompts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates short, atmospheric ghost stories or micro-fiction based on random prompts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

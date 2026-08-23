@@ -1,0 +1,6 @@
+{
+  "name": "plvr-event-discovery-safe",
+  "command": "plvr-event-discovery-safe",
+  "description": "Discover and compare live events on plvr.io by date, city, genre, and budget using the public web flow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Discover and compare live events on plvr.io by date, city, genre, and budget using the public web flow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

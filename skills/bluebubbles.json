@@ -1,0 +1,6 @@
+{
+  "name": "bluebubbles",
+  "command": "bluebubbles",
+  "description": "Build or update the BlueBubbles external channel plugin.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build or update the BlueBubbles external channel plugin..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "synology-surveillance-skill",
+  "command": "synology-surveillance-skill",
+  "description": "Steuere Synology Surveillance Station Kameras über die Web API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Steuere Synology Surveillance Station Kameras über die Web API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

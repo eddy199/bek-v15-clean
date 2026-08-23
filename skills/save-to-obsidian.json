@@ -1,0 +1,6 @@
+{
+  "name": "save-to-obsidian",
+  "command": "save-to-obsidian",
+  "description": "Saves markdown content to remote Obsidian vault via SSH.",
+  "prompt": "Tu es un agent expert spécialisé dans : Saves markdown content to remote Obsidian vault via SSH..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

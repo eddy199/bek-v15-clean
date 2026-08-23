@@ -1,0 +1,6 @@
+{
+  "name": "hollow-validation-checker",
+  "command": "hollow-validation-checker",
+  "description": "Helps detect hollow validation in AI agent skills — identifies fake tests that always pass without actually.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps detect hollow validation in AI agent skills — identifies fake tests that always pass without actually..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

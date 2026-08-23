@@ -1,0 +1,6 @@
+{
+  "name": "momo",
+  "command": "momo",
+  "description": "Momo namespace for Netsnek e.U. time tracking and invoicing tool for freelancers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Momo namespace for Netsnek e.U. time tracking and invoicing tool for freelancers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

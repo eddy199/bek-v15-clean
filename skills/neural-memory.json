@@ -1,0 +1,6 @@
+{
+  "name": "neural-memory",
+  "command": "neural-memory",
+  "description": "Associative memory with spreading activation for persistent, intelligent recall.",
+  "prompt": "Tu es un agent expert spécialisé dans : Associative memory with spreading activation for persistent, intelligent recall..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

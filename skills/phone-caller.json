@@ -1,0 +1,6 @@
+{
+  "name": "phone-caller",
+  "command": "phone-caller",
+  "description": "Make AI-powered outbound phone calls using ElevenLabs voice + GPT brain + Twilio.",
+  "prompt": "Tu es un agent expert spécialisé dans : Make AI-powered outbound phone calls using ElevenLabs voice + GPT brain + Twilio..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

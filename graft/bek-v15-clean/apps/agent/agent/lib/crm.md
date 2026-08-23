@@ -1,0 +1,12 @@
+# bek-v15-clean/apps/agent/agent/lib/crm.ts
+
+- WorkItem · type · L5-L18 — type WorkItem = { id: string; fullName: string; email: string | null; title: string | null; companyName: string | null; companyDomain: string | null; linkedinUrl: string | null; needs: { identity: boolean; brief: boolean; socials: boolean; }; };
+- contactsNeedingWork · function · L20-L59 — async function contactsNeedingWork(limit: number): Promise<WorkItem[]>
+- personForVerification · function · L61-L87 — async function personForVerification( contactId: string, ): Promise<Person | null>
+- contactProfileSlug · function · L89-L101 — async function contactProfileSlug( contactId: string, ): Promise<{ slug: string; profileUrl: string } | null>
+- linkedinSlug · function · L103-L107 — function linkedinSlug(url: string | null): string | null
+- CrmHistory · type · L109-L157 — type CrmHistory = { contact: { fullName: string; email: string | null; title: string | null; companyName: string | null; company: { id: string; name: string; domain: string | null; industry: string | null; } | null; }; deals: { id: string; name: string; stage: string; role: string | null; amount: number | null; currency: string; expectedCloseDate: string | null; }[]; threads: { subject: string | null; messageCount: number; lastMessageAt: string; messages: { direction: string; from: string; fromName: string | null; sentAt: string; body: string | null; }[]; }[]; meetings: { title: string | null; startsAt: string; attended: boolean; attendees: { email: string; name: string | null }[]; }[]; stats: { emails: number; theyReplied: boolean; lastReplyAt: string | null; meetings: number; nextMeetingAt: string | null; }; colleagues: { id: string; name: string; title: string | null }[]; };
+- readCrmHistory · function · L159-L324 — async function readCrmHistory( contactId: string, options: { threads?: number; messagesPerThread?: number; includeEmail?: boolean; includeCalendar?: boolean; } = {}, ): Promise<CrmHistory | null>
+- stampSocialsChecked · function · L326-L331 — async function stampSocialsChecked(contactId: string): Promise<void>
+- setEnrichmentStatus · function · L333-L348 — async function setEnrichmentStatus( contactId: string, status: EnrichmentStatus, error?: string, ): Promise<void>
+- writeTimelineNote · function · L350-L383 — async function writeTimelineNote( contactId: string, subject: string, body: string, meta: Record<string, unknown> = {}, ): Promise<string | null>

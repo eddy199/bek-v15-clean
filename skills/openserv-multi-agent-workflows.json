@@ -1,0 +1,6 @@
+{
+  "name": "openserv-multi-agent-workflows",
+  "command": "openserv-multi-agent-workflows",
+  "description": "Multi-agent workflow examples to work together on the OpenServ Platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-agent workflow examples to work together on the OpenServ Platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

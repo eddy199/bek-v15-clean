@@ -1,0 +1,6 @@
+{
+  "name": "entradex",
+  "command": "entradex",
+  "description": "Use the EntradeX CLI for DNSE workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the EntradeX CLI for DNSE workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

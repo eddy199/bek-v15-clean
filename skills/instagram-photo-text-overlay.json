@@ -1,0 +1,6 @@
+{
+  "name": "instagram-photo-text-overlay",
+  "command": "instagram-photo-text-overlay",
+  "description": "Overlay text on photos for Instagram posts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Overlay text on photos for Instagram posts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

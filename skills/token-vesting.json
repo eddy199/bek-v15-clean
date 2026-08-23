@@ -1,0 +1,6 @@
+{
+  "name": "token-vesting",
+  "command": "token-vesting",
+  "description": "Create and manage token vesting streams using the Sablier Lockup protocol (linear, dynamic, tranched).",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage token vesting streams using the Sablier Lockup protocol (linear, dynamic, tranched)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

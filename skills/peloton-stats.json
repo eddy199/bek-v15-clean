@@ -1,0 +1,6 @@
+{
+  "name": "peloton-stats",
+  "command": "peloton-stats",
+  "description": "Fetch and report Peloton cycling workout statistics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch and report Peloton cycling workout statistics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

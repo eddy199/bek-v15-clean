@@ -1,0 +1,6 @@
+{
+  "name": "feishui-file-sender",
+  "command": "feishui-file-sender",
+  "description": "Send files via Feishu channel using message tool with filePath parameter.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send files via Feishu channel using message tool with filePath parameter..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

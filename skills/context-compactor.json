@@ -1,0 +1,6 @@
+{
+  "name": "context-compactor",
+  "command": "context-compactor",
+  "description": "Token-based context compaction for local models (MLX, llama.cpp, Ollama) that don't report context limits.",
+  "prompt": "Tu es un agent expert spécialisé dans : Token-based context compaction for local models (MLX, llama.cpp, Ollama) that don't report context limits..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

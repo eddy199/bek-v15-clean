@@ -1,0 +1,6 @@
+{
+  "name": "nextcloud-files",
+  "command": "nextcloud-files",
+  "description": "Nextcloud file and folder management via WebDAV + OCS API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Nextcloud file and folder management via WebDAV + OCS API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

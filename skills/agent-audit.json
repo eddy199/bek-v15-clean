@@ -1,0 +1,6 @@
+{
+  "name": "agent-audit",
+  "command": "agent-audit",
+  "description": "Audit your AI agent setup for performance, cost, and ROI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit your AI agent setup for performance, cost, and ROI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

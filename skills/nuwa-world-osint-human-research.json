@@ -1,0 +1,6 @@
+{
+  "name": "nuwa-world-osint-human-research",
+  "command": "nuwa-world-osint-human-research",
+  "description": "Face search and deep research via the Nuwa World API — visual identity intelligence and knowledge synthesis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Face search and deep research via the Nuwa World API — visual identity intelligence and knowledge synthesis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

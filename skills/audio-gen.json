@@ -1,0 +1,6 @@
+{
+  "name": "audio-gen",
+  "command": "audio-gen",
+  "description": "Generate audiobooks, podcasts, or educational audio content.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate audiobooks, podcasts, or educational audio content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

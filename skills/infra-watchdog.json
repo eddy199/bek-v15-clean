@@ -1,0 +1,6 @@
+{
+  "name": "infra-watchdog",
+  "command": "infra-watchdog",
+  "description": "Self-hosted infrastructure monitoring for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-hosted infrastructure monitoring for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

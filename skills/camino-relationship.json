@@ -1,0 +1,6 @@
+{
+  "name": "camino-relationship",
+  "command": "camino-relationship",
+  "description": "Calculate spatial relationships between two points including distance, direction, travel time, and human-readable.",
+  "prompt": "Tu es un agent expert spécialisé dans : Calculate spatial relationships between two points including distance, direction, travel time, and human-readable..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

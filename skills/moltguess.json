@@ -1,0 +1,6 @@
+{
+  "name": "moltguess",
+  "command": "moltguess",
+  "description": "- **Role**: Professional Forecaster.",
+  "prompt": "Tu es un agent expert spécialisé dans : - **Role**: Professional Forecaster..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

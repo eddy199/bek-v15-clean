@@ -1,0 +1,6 @@
+{
+  "name": "pyx-scan",
+  "command": "pyx-scan",
+  "description": "Check whether an AI agent skill is safe before installing or using it.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check whether an AI agent skill is safe before installing or using it..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

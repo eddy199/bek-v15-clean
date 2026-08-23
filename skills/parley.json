@@ -1,0 +1,6 @@
+{
+  "name": "parley",
+  "command": "parley",
+  "description": "Durable coordination state and recovery for multi-agent OpenClaw work.",
+  "prompt": "Tu es un agent expert spécialisé dans : Durable coordination state and recovery for multi-agent OpenClaw work..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

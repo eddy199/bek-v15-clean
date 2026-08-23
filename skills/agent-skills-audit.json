@@ -1,0 +1,6 @@
+{
+  "name": "agent-skills-audit",
+  "command": "agent-skills-audit",
+  "description": "Run a two-pass, multidisciplinary code audit led by a tie-breaker lead, combining security, performance, UX, DX.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run a two-pass, multidisciplinary code audit led by a tie-breaker lead, combining security, performance, UX, DX..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

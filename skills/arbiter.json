@@ -1,0 +1,6 @@
+{
+  "name": "arbiter",
+  "command": "arbiter",
+  "description": "Push decisions to Arbiter Zebu for async human review.",
+  "prompt": "Tu es un agent expert spécialisé dans : Push decisions to Arbiter Zebu for async human review..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

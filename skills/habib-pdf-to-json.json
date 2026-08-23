@@ -1,0 +1,6 @@
+{
+  "name": "habib-pdf-to-json",
+  "command": "habib-pdf-to-json",
+  "description": "Extract structured data from construction PDFs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract structured data from construction PDFs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

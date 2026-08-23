@@ -1,0 +1,6 @@
+{
+  "name": "aifs-space",
+  "command": "aifs-space",
+  "description": "Store and retrieve files via AIFS.space cloud storage API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Store and retrieve files via AIFS.space cloud storage API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "semver-helper",
+  "command": "semver-helper",
+  "description": "Semantic Versioning 2.0.0 reference guide.",
+  "prompt": "Tu es un agent expert spécialisé dans : Semantic Versioning 2.0.0 reference guide..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

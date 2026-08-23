@@ -1,0 +1,6 @@
+{
+  "name": "pr-ship",
+  "command": "pr-ship",
+  "description": "Pre-ship risk report for OpenClaw PRs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pre-ship risk report for OpenClaw PRs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "dify-kb-search",
+  "command": "dify-kb-search",
+  "description": "Search Dify Knowledge Base (Dataset) to get accurate context for RAG-enhanced answers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Dify Knowledge Base (Dataset) to get accurate context for RAG-enhanced answers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

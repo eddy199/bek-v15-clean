@@ -1,0 +1,30 @@
+# bek-v15-clean/apps/agent/agent/lib/custom-agent-dispatch.ts
+
+- pendingBuilderSubmissionIds · function · L20-L43 — async function pendingBuilderSubmissionIds(): Promise<string[]>
+- drainBuilder · function · L45-L49 — async function drainBuilder(send: SendFn): Promise<number>
+- dispatchBuilderSubmission · function · L51-L197 — async function dispatchBuilderSubmission( submissionId: string, send: SendFn, )
+- queueDueAgentRuns · function · L199-L266 — async function queueDueAgentRuns(now = new Date()): Promise<number>
+- queueEventAgentRuns · function · L268-L370 — async function queueEventAgentRuns( task: Pick< LeasedTask, "id" | "contactId" | "companyId" | "dealId" | "payload" >, ): Promise<number>
+- pendingAgentRunIds · function · L372-L404 — async function pendingAgentRunIds(): Promise<string[]>
+- drainAgentRuns · function · L406-L433 — async function drainAgentRuns(send: SendFn): Promise<number>
+- dispatchAgentRun · function · L435-L523 — async function dispatchAgentRun(runId: string, send: SendFn)
+- failRun · function · L525-L579 — async function failRun(runId: string, code: string, message: string)
+- cancelRun · function · L581-L641 — async function cancelRun(runId: string, code: string, message: string)
+- builderToken · function · L643-L645 — function builderToken(conversationId: string): string
+- builderIdFromToken · function · L647-L649 — function builderIdFromToken(token: string | undefined): string | null
+- runToken · function · L651-L653 — function runToken(runId: string): string
+- runIdFromToken · function · L655-L657 — function runIdFromToken(token: string | undefined): string | null
+- recoverBuilderSubmissions · function · L659-L698 — async function recoverBuilderSubmissions()
+- LockedBuilderConversation · type · L700-L705 — type LockedBuilderConversation = { id: string; kind: string; sessionId: string | null; continuationToken: string | null; };
+- lockBuilderConversation · function · L707-L718 — async function lockBuilderConversation( tx: Prisma.TransactionClient, conversationId: string, ): Promise<LockedBuilderConversation | null>
+- timeOutOverrunningRuns · function · L722-L743 — async function timeOutOverrunningRuns()
+- recoverAgentRuns · function · L745-L811 — async function recoverAgentRuns()
+- builderDeliveryMessage · function · L813-L858 — function builderDeliveryMessage( submissionId: string, value: unknown, attachments: readonly BuilderDeliveryAttachment[] = [], ): Parameters<SendFn>[0]
+- builderCommandType · function · L860-L869 — function builderCommandType( commandType: string, value: unknown, ): string
+- BuilderDeliveryAttachment · type · L871-L875 — type BuilderDeliveryAttachment = { name: string; mediaType: string; content: Uint8Array; };
+- resourceLabel · function · L877-L880 — function resourceLabel(value: unknown): string | null
+- textOf · function · L882-L884 — function textOf(value: unknown): string
+- intervalOf · function · L886-L893 — function intervalOf(value: unknown): number
+- advance · function · L895-L902 — function advance(from: Date, intervalMinutes: number, now: Date): Date
+- idFromToken · function · L904-L910 — function idFromToken(token: string | undefined, marker: string): string | null
+- recordOf · function · L912-L916 — function recordOf(value: unknown): Record<string, unknown>

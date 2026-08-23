@@ -1,0 +1,6 @@
+{
+  "name": "auto-dealer-marketing",
+  "command": "auto-dealer-marketing",
+  "description": "When the user wants to create, optimize, or plan automotive dealership marketing — including inventory.",
+  "prompt": "Tu es un agent expert spécialisé dans : When the user wants to create, optimize, or plan automotive dealership marketing — including inventory..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

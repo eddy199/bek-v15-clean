@@ -1,0 +1,6 @@
+{
+  "name": "netlify",
+  "command": "netlify",
+  "description": "Use the Netlify CLI (netlify) to create/link Netlify sites and set up CI/CD.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the Netlify CLI (netlify) to create/link Netlify sites and set up CI/CD..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

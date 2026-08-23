@@ -1,0 +1,6 @@
+{
+  "name": "expanso-email-triage",
+  "command": "expanso-email-triage",
+  "description": "AI-powered email triage with calendar sync and response drafting.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered email triage with calendar sync and response drafting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "jellyfin-control",
+  "command": "jellyfin-control",
+  "description": "Control Jellyfin media server and TV.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Jellyfin media server and TV..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

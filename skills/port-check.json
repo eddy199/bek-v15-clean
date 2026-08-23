@@ -1,0 +1,6 @@
+{
+  "name": "port-check",
+  "command": "port-check",
+  "description": "Check if services are responding on given host:port pairs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check if services are responding on given host:port pairs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

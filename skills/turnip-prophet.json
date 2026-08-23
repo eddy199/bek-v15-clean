@@ -1,0 +1,6 @@
+{
+  "name": "turnip-prophet",
+  "command": "turnip-prophet",
+  "description": "Predict Animal Crossing New Horizons turnip prices using the game's exact algorithm.",
+  "prompt": "Tu es un agent expert spécialisé dans : Predict Animal Crossing New Horizons turnip prices using the game's exact algorithm..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

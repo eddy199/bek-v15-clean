@@ -1,0 +1,6 @@
+{
+  "name": "elite-longterm-memory",
+  "command": "elite-longterm-memory",
+  "description": "Ultimate AI agent memory system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ultimate AI agent memory system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

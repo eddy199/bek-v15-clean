@@ -1,0 +1,6 @@
+{
+  "name": "dzen",
+  "command": "dzen",
+  "description": "Publish articles and posts to Dzen.ru (Yandex Zen)",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish articles and posts to Dzen.ru (Yandex Zen).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

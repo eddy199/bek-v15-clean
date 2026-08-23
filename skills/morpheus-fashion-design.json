@@ -1,0 +1,6 @@
+{
+  "name": "morpheus-fashion-design",
+  "command": "morpheus-fashion-design",
+  "description": "Generate professional advertising images with AI models holding/wearing products.  ✅ USE.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional advertising images with AI models holding/wearing products.  ✅ USE..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cloudflare-r2",
+  "command": "cloudflare-r2",
+  "description": "Upload files to Cloudflare R2 storage using wrangler CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Upload files to Cloudflare R2 storage using wrangler CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "show-my-ip",
+  "command": "show-my-ip",
+  "description": "Show the current public IP address of the server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Show the current public IP address of the server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

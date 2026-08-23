@@ -1,0 +1,6 @@
+{
+  "name": "bioskills",
+  "command": "bioskills",
+  "description": "Installs 425 bioinformatics skills covering sequence analysis, RNA-seq, single-cell, variant calling, metagenomics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Installs 425 bioinformatics skills covering sequence analysis, RNA-seq, single-cell, variant calling, metagenomics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

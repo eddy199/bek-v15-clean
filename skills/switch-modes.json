@@ -1,0 +1,6 @@
+{
+  "name": "switch-modes",
+  "command": "switch-modes",
+  "description": "Switch between AI models dynamically to optimize costs and performance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Switch between AI models dynamically to optimize costs and performance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

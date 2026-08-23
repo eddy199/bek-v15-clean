@@ -1,0 +1,6 @@
+{
+  "name": "mac-control",
+  "command": "mac-control",
+  "description": "Control Mac via mouse/keyboard automation using cliclick and AppleScript.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Mac via mouse/keyboard automation using cliclick and AppleScript..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

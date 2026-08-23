@@ -1,0 +1,6 @@
+{
+  "name": "clawver-reviews",
+  "command": "clawver-reviews",
+  "description": "Handle Clawver customer reviews.",
+  "prompt": "Tu es un agent expert spécialisé dans : Handle Clawver customer reviews..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

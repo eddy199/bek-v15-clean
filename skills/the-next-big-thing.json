@@ -1,0 +1,6 @@
+{
+  "name": "the-next-big-thing",
+  "command": "the-next-big-thing",
+  "description": "Programmatic participation in The Next Big Thing without a browser: connect/sign via Tap Wallet, deploy tokens.",
+  "prompt": "Tu es un agent expert spécialisé dans : Programmatic participation in The Next Big Thing without a browser: connect/sign via Tap Wallet, deploy tokens..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

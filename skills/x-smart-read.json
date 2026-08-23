@@ -1,0 +1,6 @@
+{
+  "name": "x-smart-read",
+  "command": "x-smart-read",
+  "description": "Personal X (Twitter) analytics — timeline engagement, mentions, follower tracking, read any tweet/thread.",
+  "prompt": "Tu es un agent expert spécialisé dans : Personal X (Twitter) analytics — timeline engagement, mentions, follower tracking, read any tweet/thread..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

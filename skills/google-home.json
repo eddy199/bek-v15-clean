@@ -1,0 +1,6 @@
+{
+  "name": "google-home",
+  "command": "google-home",
+  "description": "Control Google Nest devices.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Google Nest devices..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

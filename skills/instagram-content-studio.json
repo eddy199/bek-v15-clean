@@ -1,0 +1,6 @@
+{
+  "name": "instagram-content-studio",
+  "command": "instagram-content-studio",
+  "description": "Manage an Instagram account.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage an Instagram account..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

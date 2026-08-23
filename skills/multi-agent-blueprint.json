@@ -1,0 +1,6 @@
+{
+  "name": "multi-agent-blueprint",
+  "command": "multi-agent-blueprint",
+  "description": "Production-tested blueprint for building 5-10 agent teams in OpenClaw with cross-agent routing, Telegram.",
+  "prompt": "Tu es un agent expert spécialisé dans : Production-tested blueprint for building 5-10 agent teams in OpenClaw with cross-agent routing, Telegram..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

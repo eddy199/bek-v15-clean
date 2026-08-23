@@ -1,0 +1,6 @@
+{
+  "name": "ai-notes-ofvideo",
+  "command": "ai-notes-ofvideo",
+  "description": "Generate AI-powered notes from videos (document, outline, or graphic-text formats)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI-powered notes from videos (document, outline, or graphic-text formats).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

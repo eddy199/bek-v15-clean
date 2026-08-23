@@ -1,0 +1,31 @@
+# bek-v15-clean/apps/api/src/agent/agent-trigger.service.ts
+
+- CrmEventInput · type · L10-L20 — type CrmEventInput = { [Type in CrmEventType]: { type: Type; record: { kind: (typeof CRM_EVENT_CATALOG)[Type]["recordKind"]; id: string; }; occurredAt: Date; data: Prisma.InputJsonObject; }; }[CrmEventType];
+- AgentTaskQueue · type · L22-L27 — type AgentTaskQueue = { slackChannelJoinRequested: ( channelId: string, channelName: string, ) => Promise<void>; };
+- AgentTriggerService · class · L30-L519 — class AgentTriggerService
+- constructor · method · L34-L34 — constructor(@InjectDatabase() private readonly db: Db)
+- companyCreated · method · L36-L55 — async companyCreated( companyId: string, reason = "New company", ): Promise<void>
+- companyRequested · method · L57-L73 — async companyRequested(companyId: string, reason: string): Promise<void>
+- workspaceChanged · method · L75-L82 — async workspaceChanged(website: string, reason: string): Promise<void>
+- contactCreated · method · L84-L92 — async contactCreated(contactId: string, reason: string): Promise<void>
+- slackPeopleRequested · method · L94-L104 — async slackPeopleRequested(reason: string, required = false): Promise<void>
+- slackChannelJoinRequested · method · L106-L111 — async slackChannelJoinRequested( channelId: string, channelName: string, ): Promise<void>
+- withTasks · method · L113-L137 — async withTasks<Result>( work: ( tx: Prisma.TransactionClient, queue: AgentTaskQueue, ) => Promise<Result>, ): Promise<Result>
+- queueSlackChannelJoin · method · L139-L160 — private queueSlackChannelJoin( channelId: string, channelName: string, client?: Prisma.TransactionClient, ): Promise<boolean>
+- withCrmEvents · method · L162-L187 — async withCrmEvents<Result>( work: ( tx: Prisma.TransactionClient, emit: (input: CrmEventInput) => Promise<void>, ) => Promise<Result>, ): Promise<Result>
+- fieldBackfill · method · L189-L237 — async fieldBackfill( entity: FieldEntity, key: string, reason: string, ): Promise<void>
+- meetingSoon · method · L239-L247 — async meetingSoon(contactId: string, when: Date): Promise<void>
+- builderConversationQueued · method · L249-L251 — builderConversationQueued(): void
+- deployedAgentRunQueued · method · L253-L255 — deployedAgentRunQueued(): void
+- deployedAgentRunCancelled · method · L257-L259 — deployedAgentRunCancelled(runId: string): void
+- redeliverCancellations · method · L261-L293 — async redeliverCancellations(): Promise<void>
+- deliverCancellation · method · L295-L298 — private async deliverCancellation(runId: string): Promise<void>
+- backfill · method · L300-L361 — async backfill(input: { kind: string; reason: string; contactIds?: string[]; companyIds?: string[]; budget?: number; priority?: number; }): Promise<{ queued: number; alreadyQueued: number }>
+- enqueue · method · L363-L440 — private async enqueue( task: { contactId?: string; companyId?: string; kind: string; reason: string; priority: number; budget: number; payload?: Prisma.InputJsonValue; subject?: { path: string[]; value: string }; }, required = false, client?: Prisma.TransactionClient, ): Promise<boolean>
+- write · function · L378-L415 — write = async (tx: Prisma.TransactionClient)
+- createEventTask · method · L442-L467 — private async createEventTask( tx: Prisma.TransactionClient, input: CrmEventInput, ): Promise<void>
+- canReachAgent · method · L469-L471 — canReachAgent(): boolean
+- drainQueues · method · L473-L478 — drainQueues(): void
+- poke · method · L480-L482 — private poke(): void
+- pokeRoute · method · L484-L486 — private pokeRoute(path: string): void
+- post · method · L488-L518 — private async post( path: string, body?: Record<string, string>, ): Promise<boolean>

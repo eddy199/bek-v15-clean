@@ -1,0 +1,6 @@
+{
+  "name": "sportsbook",
+  "command": "sportsbook",
+  "description": "Query Fuku Sportsbook data, manage your betting agent, receive pick notifications, and access predictions for CBB.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Fuku Sportsbook data, manage your betting agent, receive pick notifications, and access predictions for CBB..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

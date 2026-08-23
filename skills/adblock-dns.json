@@ -1,0 +1,6 @@
+{
+  "name": "adblock-dns",
+  "command": "adblock-dns",
+  "description": "Network-wide ad and tracker blocking at the DNS level.",
+  "prompt": "Tu es un agent expert spécialisé dans : Network-wide ad and tracker blocking at the DNS level..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

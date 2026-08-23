@@ -1,0 +1,6 @@
+{
+  "name": "dj-mp3-sourcer",
+  "command": "dj-mp3-sourcer",
+  "description": "Download music from links (YouTube, Spotify, etc.) by finding the best available source.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download music from links (YouTube, Spotify, etc.) by finding the best available source..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

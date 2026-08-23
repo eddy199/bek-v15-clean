@@ -1,0 +1,6 @@
+{
+  "name": "outbound-call",
+  "command": "outbound-call",
+  "description": "Make outbound phone calls via ElevenLabs voice agent and Twilio.",
+  "prompt": "Tu es un agent expert spécialisé dans : Make outbound phone calls via ElevenLabs voice agent and Twilio..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

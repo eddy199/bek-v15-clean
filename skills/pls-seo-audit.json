@@ -1,0 +1,6 @@
+{
+  "name": "pls-seo-audit",
+  "command": "pls-seo-audit",
+  "description": "Scan content and websites for SEO gaps, identify opportunities to outrank competitors.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan content and websites for SEO gaps, identify opportunities to outrank competitors..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

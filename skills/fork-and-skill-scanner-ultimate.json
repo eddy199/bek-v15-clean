@@ -1,0 +1,6 @@
+{
+  "name": "fork-and-skill-scanner-ultimate",
+  "command": "fork-and-skill-scanner-ultimate",
+  "description": "Scan 1,000 GitHub forks per run.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan 1,000 GitHub forks per run..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

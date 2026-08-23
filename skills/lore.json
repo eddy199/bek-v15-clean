@@ -1,0 +1,6 @@
+{
+  "name": "lore",
+  "command": "lore",
+  "description": "Search and ingest knowledge from Lore, a research repository with citations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and ingest knowledge from Lore, a research repository with citations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

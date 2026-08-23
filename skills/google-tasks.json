@@ -1,0 +1,6 @@
+{
+  "name": "google-tasks",
+  "command": "google-tasks",
+  "description": "Fetch, display, create, and delete Google Tasks using the Google.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch, display, create, and delete Google Tasks using the Google..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

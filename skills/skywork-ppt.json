@@ -1,0 +1,6 @@
+{
+  "name": "skywork-ppt",
+  "command": "skywork-ppt",
+  "description": "Generate, imitate, and edit PowerPoint presentations with skywork.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate, imitate, and edit PowerPoint presentations with skywork..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

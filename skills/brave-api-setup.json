@@ -1,0 +1,6 @@
+{
+  "name": "brave-api-setup",
+  "command": "brave-api-setup",
+  "description": "Set up Brave Search API for OpenClaw web_search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up Brave Search API for OpenClaw web_search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

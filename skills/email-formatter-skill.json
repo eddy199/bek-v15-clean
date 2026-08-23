@@ -1,0 +1,6 @@
+{
+  "name": "email-formatter-skill",
+  "command": "email-formatter-skill",
+  "description": "Transform rough email drafts into polished, professional messages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform rough email drafts into polished, professional messages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "skywork-excel",
+  "command": "skywork-excel",
+  "description": "AI-powered spreadsheet operations for creating, analyzing and generating reports.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered spreadsheet operations for creating, analyzing and generating reports..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

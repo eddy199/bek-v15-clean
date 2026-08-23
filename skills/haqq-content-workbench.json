@@ -1,0 +1,6 @@
+{
+  "name": "haqq-content-workbench",
+  "command": "haqq-content-workbench",
+  "description": "Create, verify, and package Islamic-ethics content for discussion.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, verify, and package Islamic-ethics content for discussion..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

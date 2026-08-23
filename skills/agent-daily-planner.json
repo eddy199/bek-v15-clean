@@ -1,0 +1,6 @@
+{
+  "name": "agent-daily-planner",
+  "command": "agent-daily-planner",
+  "description": "A structured daily planning and execution tracking system for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : A structured daily planning and execution tracking system for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

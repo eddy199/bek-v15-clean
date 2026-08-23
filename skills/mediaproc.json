@@ -1,0 +1,6 @@
+{
+  "name": "mediaproc",
+  "command": "mediaproc",
+  "description": "Process media files (video, audio, images) via a locked-down SSH container.",
+  "prompt": "Tu es un agent expert spécialisé dans : Process media files (video, audio, images) via a locked-down SSH container..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

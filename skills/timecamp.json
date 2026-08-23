@@ -1,0 +1,6 @@
+{
+  "name": "timecamp",
+  "command": "timecamp",
+  "description": "Use when the user asks about time tracking, time entries, tasks, timers, or anything related to TimeCamp.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks about time tracking, time entries, tasks, timers, or anything related to TimeCamp..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

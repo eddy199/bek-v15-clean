@@ -1,0 +1,6 @@
+{
+  "name": "contrato-locacao-broa",
+  "command": "contrato-locacao-broa",
+  "description": "Registra contrato no Google Forms.",
+  "prompt": "Tu es un agent expert spécialisé dans : Registra contrato no Google Forms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

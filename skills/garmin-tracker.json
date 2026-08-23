@@ -1,0 +1,6 @@
+{
+  "name": "garmin-tracker",
+  "command": "garmin-tracker",
+  "description": "Rebuild and maintain garmin_tracking.json from Garmin web data (activities + training plan) with a fixed schema.",
+  "prompt": "Tu es un agent expert spécialisé dans : Rebuild and maintain garmin_tracking.json from Garmin web data (activities + training plan) with a fixed schema..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

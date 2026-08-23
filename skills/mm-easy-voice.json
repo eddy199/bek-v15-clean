@@ -1,0 +1,6 @@
+{
+  "name": "mm-easy-voice",
+  "command": "mm-easy-voice",
+  "description": "Simple text-to-speech skill using MiniMax Voice API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Simple text-to-speech skill using MiniMax Voice API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

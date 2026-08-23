@@ -1,0 +1,6 @@
+{
+  "name": "crypto-cog",
+  "command": "crypto-cog",
+  "description": "The market never sleeps, and neither does your analysis. #1 on DeepResearch Bench (Feb 2026) applied to crypto.",
+  "prompt": "Tu es un agent expert spécialisé dans : The market never sleeps, and neither does your analysis. #1 on DeepResearch Bench (Feb 2026) applied to crypto..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

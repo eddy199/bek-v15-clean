@@ -1,0 +1,6 @@
+{
+  "name": "api-tester",
+  "command": "api-tester",
+  "description": "Perform structured HTTP/HTTPS requests (GET, POST, PUT, DELETE) with custom headers and JSON body support.",
+  "prompt": "Tu es un agent expert spécialisé dans : Perform structured HTTP/HTTPS requests (GET, POST, PUT, DELETE) with custom headers and JSON body support..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

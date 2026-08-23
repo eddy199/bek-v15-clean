@@ -1,0 +1,6 @@
+{
+  "name": "tenk-connect",
+  "command": "tenk-connect",
+  "description": "Connect your TenK account to your AI assistant.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect your TenK account to your AI assistant..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

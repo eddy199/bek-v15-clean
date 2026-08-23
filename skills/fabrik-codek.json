@@ -1,0 +1,6 @@
+{
+  "name": "fabrik-codek",
+  "command": "fabrik-codek",
+  "description": "Cognitive architecture for developers: hyper-personalization engine (personal profiling, competence model, adaptive.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cognitive architecture for developers: hyper-personalization engine (personal profiling, competence model, adaptive..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

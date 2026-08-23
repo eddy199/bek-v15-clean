@@ -1,0 +1,6 @@
+{
+  "name": "waitingformacguffin",
+  "command": "waitingformacguffin",
+  "description": "Oscar prediction market intelligence from waitingformacguffin.com.",
+  "prompt": "Tu es un agent expert spécialisé dans : Oscar prediction market intelligence from waitingformacguffin.com..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

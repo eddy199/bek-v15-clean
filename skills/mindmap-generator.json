@@ -1,0 +1,6 @@
+{
+  "name": "mindmap-generator",
+  "command": "mindmap-generator",
+  "description": "Generates visual mindmap images from conversations, goals, decisions, and daily priorities — delivered as PNG.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates visual mindmap images from conversations, goals, decisions, and daily priorities — delivered as PNG..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

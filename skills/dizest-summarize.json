@@ -1,0 +1,6 @@
+{
+  "name": "dizest-summarize",
+  "command": "dizest-summarize",
+  "description": "Summarize long-form content — articles, podcasts, research papers, PDFs, notes, and more — using the Dizest API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Summarize long-form content — articles, podcasts, research papers, PDFs, notes, and more — using the Dizest API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

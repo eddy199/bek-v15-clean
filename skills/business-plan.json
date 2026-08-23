@@ -1,0 +1,6 @@
+{
+  "name": "business-plan",
+  "command": "business-plan",
+  "description": "Write, structure, and update a business plan for a solopreneur.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write, structure, and update a business plan for a solopreneur..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

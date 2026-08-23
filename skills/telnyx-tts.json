@@ -1,0 +1,6 @@
+{
+  "name": "telnyx-tts",
+  "command": "telnyx-tts",
+  "description": "Generate speech audio from text using Telnyx Text-to-Speech API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate speech audio from text using Telnyx Text-to-Speech API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

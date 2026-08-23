@@ -1,0 +1,6 @@
+{
+  "name": "tg-smart-cta",
+  "command": "tg-smart-cta",
+  "description": "Enhance Telegram replies with context-aware dynamic CTA buttons (Smart Launcher UI)",
+  "prompt": "Tu es un agent expert spécialisé dans : Enhance Telegram replies with context-aware dynamic CTA buttons (Smart Launcher UI).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

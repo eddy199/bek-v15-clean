@@ -1,0 +1,6 @@
+{
+  "name": "customer-retention",
+  "command": "customer-retention",
+  "description": "Build and execute customer retention strategies for a solopreneur business.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build and execute customer retention strategies for a solopreneur business..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agent-docs",
+  "command": "agent-docs",
+  "description": "Create documentation optimized for AI agent consumption.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create documentation optimized for AI agent consumption..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

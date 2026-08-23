@@ -1,0 +1,6 @@
+{
+  "name": "web-monitor",
+  "command": "web-monitor",
+  "description": "Monitor web pages for content changes and get alerts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor web pages for content changes and get alerts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

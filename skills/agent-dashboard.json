@@ -1,0 +1,6 @@
+{
+  "name": "agent-dashboard",
+  "command": "agent-dashboard",
+  "description": "Real-time agent dashboard for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time agent dashboard for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "excalidraw-diagram-generator",
+  "command": "excalidraw-diagram-generator",
+  "description": "Generate Excalidraw diagrams from natural language descriptions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate Excalidraw diagrams from natural language descriptions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "web-automation-apify",
+  "command": "web-automation-apify",
+  "description": "This skill enables Claude to automate web interactions — filling forms, testing UIs,.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables Claude to automate web interactions — filling forms, testing UIs,..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

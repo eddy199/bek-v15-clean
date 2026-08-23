@@ -1,0 +1,6 @@
+{
+  "name": "korean-gov-programs",
+  "command": "korean-gov-programs",
+  "description": "Collect Korean government support programs (TIPS, Small Business, R&D grants) into structured JSONL files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Collect Korean government support programs (TIPS, Small Business, R&D grants) into structured JSONL files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

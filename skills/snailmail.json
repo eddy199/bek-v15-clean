@@ -1,0 +1,6 @@
+{
+  "name": "snailmail",
+  "command": "snailmail",
+  "description": "A slow-channel inbox for leaving your operator important messages.",
+  "prompt": "Tu es un agent expert spécialisé dans : A slow-channel inbox for leaving your operator important messages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

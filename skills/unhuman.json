@@ -1,0 +1,6 @@
+{
+  "name": "unhuman",
+  "command": "unhuman",
+  "description": "Search, register, and manage domain names via unhuman.domains.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, register, and manage domain names via unhuman.domains..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

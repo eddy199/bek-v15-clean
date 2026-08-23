@@ -1,0 +1,6 @@
+{
+  "name": "skywork-music-maker",
+  "command": "skywork-music-maker",
+  "description": "Create professional music with Mureka AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create professional music with Mureka AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

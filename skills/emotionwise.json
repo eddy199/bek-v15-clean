@@ -1,0 +1,6 @@
+{
+  "name": "emotionwise",
+  "command": "emotionwise",
+  "description": "Analyze text for emotions and sarcasm using the EmotionWise API (28 labels, EN/ES).",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze text for emotions and sarcasm using the EmotionWise API (28 labels, EN/ES)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

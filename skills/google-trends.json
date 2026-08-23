@@ -1,0 +1,6 @@
+{
+  "name": "google-trends",
+  "command": "google-trends",
+  "description": "Monitor Google Trends - get trending searches, compare keywords, and track interest over time.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor Google Trends - get trending searches, compare keywords, and track interest over time..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

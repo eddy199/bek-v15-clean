@@ -1,0 +1,6 @@
+{
+  "name": "agentsmint",
+  "command": "agentsmint",
+  "description": "Create and manage NFT collections on Base blockchain.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage NFT collections on Base blockchain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

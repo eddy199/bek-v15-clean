@@ -1,0 +1,6 @@
+{
+  "name": "agent-watcher",
+  "command": "agent-watcher",
+  "description": "A skill for monitoring Moltbook feed, detecting new agents, and tracking interesting posts.",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill for monitoring Moltbook feed, detecting new agents, and tracking interesting posts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

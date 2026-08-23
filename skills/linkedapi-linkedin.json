@@ -1,0 +1,6 @@
+{
+  "name": "linkedapi-linkedin",
+  "command": "linkedapi-linkedin",
+  "description": "LinkedIn automation skill — search people and companies, fetch profiles, send messages and InMails, manage.",
+  "prompt": "Tu es un agent expert spécialisé dans : LinkedIn automation skill — search people and companies, fetch profiles, send messages and InMails, manage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "jwdiario",
+  "command": "jwdiario",
+  "description": "Buscar y obtener el texto diario de la página oficial de los Testigos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Buscar y obtener el texto diario de la página oficial de los Testigos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

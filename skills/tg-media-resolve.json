@@ -1,0 +1,6 @@
+{
+  "name": "tg-media-resolve",
+  "command": "tg-media-resolve",
+  "description": "Resolve Telegram <media:image>, <media:document>, <media:video> and other media placeholders into actual files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Resolve Telegram <media:image>, <media:document>, <media:video> and other media placeholders into actual files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "zero-rules",
+  "command": "zero-rules",
+  "description": "Intercept deterministic tasks (math, time, currency, files, scheduling) BEFORE they hit the LLM.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intercept deterministic tasks (math, time, currency, files, scheduling) BEFORE they hit the LLM..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

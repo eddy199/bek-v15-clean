@@ -1,0 +1,6 @@
+{
+  "name": "native-monday",
+  "command": "native-monday",
+  "description": "Read and query Monday.com boards, items, workspaces, and users directly via the Monday.com GraphQL API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read and query Monday.com boards, items, workspaces, and users directly via the Monday.com GraphQL API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "adversarial-prompting",
+  "command": "adversarial-prompting",
+  "description": "Adversarial analysis to critique, fix.",
+  "prompt": "Tu es un agent expert spécialisé dans : Adversarial analysis to critique, fix..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

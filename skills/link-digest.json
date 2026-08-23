@@ -1,0 +1,6 @@
+{
+  "name": "link-digest",
+  "command": "link-digest",
+  "description": "Process links and content shared in a designated 'interesting findings' Discord channel.",
+  "prompt": "Tu es un agent expert spécialisé dans : Process links and content shared in a designated 'interesting findings' Discord channel..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

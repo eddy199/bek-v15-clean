@@ -1,0 +1,6 @@
+{
+  "name": "lygo-champion-sraith-shadow-sentinel",
+  "command": "lygo-champion-sraith-shadow-sentinel",
+  "description": "LYGO Δ9 Council Champion persona helper (ΣRΛΘ / SRAITH, The Shadow Sentinel)",
+  "prompt": "Tu es un agent expert spécialisé dans : LYGO Δ9 Council Champion persona helper (ΣRΛΘ / SRAITH, The Shadow Sentinel).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

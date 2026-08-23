@@ -1,0 +1,6 @@
+{
+  "name": "findmy-location",
+  "command": "findmy-location",
+  "description": "Track a shared contact's location via Apple Find.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track a shared contact's location via Apple Find..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "clawdbot-skill-voice-wake-say",
+  "command": "clawdbot-skill-voice-wake-say",
+  "description": "Speak responses aloud on macOS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Speak responses aloud on macOS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

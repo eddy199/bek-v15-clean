@@ -1,0 +1,6 @@
+{
+  "name": "nanobanana-pro-fallback",
+  "command": "nanobanana-pro-fallback",
+  "description": "Nano Banana Pro with auto model fallback — generate/edit images via Gemini Image API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Nano Banana Pro with auto model fallback — generate/edit images via Gemini Image API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

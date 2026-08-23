@@ -1,0 +1,6 @@
+{
+  "name": "stack-scaffold",
+  "command": "stack-scaffold",
+  "description": "Scaffolds a full-stack project with Next.js App Router, Supabase, Firebase Auth, Vercel, and Cloudflare.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scaffolds a full-stack project with Next.js App Router, Supabase, Firebase Auth, Vercel, and Cloudflare..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

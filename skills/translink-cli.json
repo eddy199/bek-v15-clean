@@ -1,0 +1,6 @@
+{
+  "name": "translink-cli",
+  "command": "translink-cli",
+  "description": "Query, troubleshoot, and explain Translink SEQ GTFS static + realtime data using local translink_* commands.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query, troubleshoot, and explain Translink SEQ GTFS static + realtime data using local translink_* commands..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

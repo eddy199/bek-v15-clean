@@ -1,0 +1,6 @@
+{
+  "name": "astra-docker",
+  "command": "astra-docker",
+  "description": "cat <<'EOF' > ~/.openclaw/workspace/skills/astra-docker/SKILL.md.",
+  "prompt": "Tu es un agent expert spécialisé dans : cat <<'EOF' > ~/.openclaw/workspace/skills/astra-docker/SKILL.md..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

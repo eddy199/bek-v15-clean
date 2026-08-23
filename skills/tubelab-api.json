@@ -1,0 +1,6 @@
+{
+  "name": "tubelab-api",
+  "command": "tubelab-api",
+  "description": "YouTube analytics and research API.",
+  "prompt": "Tu es un agent expert spécialisé dans : YouTube analytics and research API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

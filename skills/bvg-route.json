@@ -1,0 +1,6 @@
+{
+  "name": "bvg-route",
+  "command": "bvg-route",
+  "description": "Route planning for Berlin public transport (BVG)",
+  "prompt": "Tu es un agent expert spécialisé dans : Route planning for Berlin public transport (BVG).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

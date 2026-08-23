@@ -1,0 +1,6 @@
+{
+  "name": "exa-researcher",
+  "command": "exa-researcher",
+  "description": "Comprehensive research capabilities using Exa AI MCP tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive research capabilities using Exa AI MCP tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

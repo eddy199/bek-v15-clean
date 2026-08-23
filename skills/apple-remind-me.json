@@ -1,0 +1,6 @@
+{
+  "name": "apple-remind-me",
+  "command": "apple-remind-me",
+  "description": "Natural language reminders that create actual Apple.",
+  "prompt": "Tu es un agent expert spécialisé dans : Natural language reminders that create actual Apple..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

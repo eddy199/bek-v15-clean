@@ -1,0 +1,6 @@
+{
+  "name": "stealth-proxy",
+  "command": "stealth-proxy",
+  "description": "Meta-skill for secure network tunnel setup, geo-access diagnostics, and leak-aware task resumption by orchestrating.",
+  "prompt": "Tu es un agent expert spécialisé dans : Meta-skill for secure network tunnel setup, geo-access diagnostics, and leak-aware task resumption by orchestrating..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "comfy-cli",
+  "command": "comfy-cli",
+  "description": "Install, manage, and run ComfyUI instances.",
+  "prompt": "Tu es un agent expert spécialisé dans : Install, manage, and run ComfyUI instances..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

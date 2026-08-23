@@ -1,0 +1,6 @@
+{
+  "name": "cashu-emoji",
+  "command": "cashu-emoji",
+  "description": "Encode and decode Cashu tokens that are hidden inside emojis using Unicode variation selectors.",
+  "prompt": "Tu es un agent expert spécialisé dans : Encode and decode Cashu tokens that are hidden inside emojis using Unicode variation selectors..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

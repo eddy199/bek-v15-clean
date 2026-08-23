@@ -1,0 +1,6 @@
+{
+  "name": "brain-search",
+  "command": "brain-search",
+  "description": "**You MUST actually execute every curl command using your shell/exec tool.** Read the real HTTP response.",
+  "prompt": "Tu es un agent expert spécialisé dans : **You MUST actually execute every curl command using your shell/exec tool.** Read the real HTTP response..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

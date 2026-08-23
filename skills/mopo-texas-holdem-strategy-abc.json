@@ -1,0 +1,6 @@
+{
+  "name": "mopo-texas-holdem-strategy-abc",
+  "command": "mopo-texas-holdem-strategy-abc",
+  "description": "Player-facing MOPO Texas Hold'em skill (ABC baseline) to join a single table, fetch private game state, and choose.",
+  "prompt": "Tu es un agent expert spécialisé dans : Player-facing MOPO Texas Hold'em skill (ABC baseline) to join a single table, fetch private game state, and choose..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

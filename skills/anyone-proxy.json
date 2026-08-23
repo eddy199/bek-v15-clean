@@ -1,0 +1,6 @@
+{
+  "name": "anyone-proxy",
+  "command": "anyone-proxy",
+  "description": "This skill enables IP address masking and accessing hidden services.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables IP address masking and accessing hidden services..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

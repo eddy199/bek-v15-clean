@@ -1,0 +1,6 @@
+{
+  "name": "ai-ugc",
+  "command": "ai-ugc",
+  "description": "Call the RawUGC Video Generation API to create and manage AI videos (Sora 2 and other models)",
+  "prompt": "Tu es un agent expert spécialisé dans : Call the RawUGC Video Generation API to create and manage AI videos (Sora 2 and other models).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

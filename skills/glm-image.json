@@ -1,0 +1,6 @@
+{
+  "name": "glm-image",
+  "command": "glm-image",
+  "description": "Generate images using GLM-Image API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images using GLM-Image API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

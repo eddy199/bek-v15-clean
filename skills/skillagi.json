@@ -1,0 +1,6 @@
+{
+  "name": "skillagi",
+  "command": "skillagi",
+  "description": "Remember mistakes across sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Remember mistakes across sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

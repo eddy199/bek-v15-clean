@@ -1,0 +1,6 @@
+{
+  "name": "agent-topology-visualizer",
+  "command": "agent-topology-visualizer",
+  "description": "Generate interactive SVG architecture diagrams for AI agent systems.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate interactive SVG architecture diagrams for AI agent systems..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

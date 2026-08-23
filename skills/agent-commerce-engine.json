@@ -1,0 +1,6 @@
+{
+  "name": "agent-commerce-engine",
+  "command": "agent-commerce-engine",
+  "description": "A production-ready universal engine for Agentic.",
+  "prompt": "Tu es un agent expert spécialisé dans : A production-ready universal engine for Agentic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "crunch-compete",
+  "command": "crunch-compete",
+  "description": "Use when working with Crunch competitions - setting up workspaces, exploring quickstarters, testing solutions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when working with Crunch competitions - setting up workspaces, exploring quickstarters, testing solutions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

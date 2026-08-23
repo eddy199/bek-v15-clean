@@ -1,0 +1,6 @@
+{
+  "name": "wilma-triage",
+  "command": "wilma-triage",
+  "description": "Daily triage of Wilma school notifications for Finnish parents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily triage of Wilma school notifications for Finnish parents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

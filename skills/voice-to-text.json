@@ -1,0 +1,6 @@
+{
+  "name": "voice-to-text",
+  "command": "voice-to-text",
+  "description": "Convert voice messages and audio files to text using Vosk offline speech recognition.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert voice messages and audio files to text using Vosk offline speech recognition..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

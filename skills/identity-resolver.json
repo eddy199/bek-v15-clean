@@ -1,0 +1,6 @@
+{
+  "name": "identity-resolver",
+  "command": "identity-resolver",
+  "description": "**Canonical user identity resolution across messaging channels**.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Canonical user identity resolution across messaging channels**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

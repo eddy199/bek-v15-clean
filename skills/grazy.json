@@ -1,0 +1,6 @@
+{
+  "name": "grazy",
+  "command": "grazy",
+  "description": "grazy - Your Grazer Command Line Companion.",
+  "prompt": "Tu es un agent expert spécialisé dans : grazy - Your Grazer Command Line Companion..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

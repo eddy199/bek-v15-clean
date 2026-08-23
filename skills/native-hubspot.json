@@ -1,0 +1,6 @@
+{
+  "name": "native-hubspot",
+  "command": "native-hubspot",
+  "description": "Query and manage HubSpot CRM data via the HubSpot API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and manage HubSpot CRM data via the HubSpot API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

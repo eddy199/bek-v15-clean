@@ -1,0 +1,6 @@
+{
+  "name": "arc-skill-health-monitor",
+  "command": "arc-skill-health-monitor",
+  "description": "Monitor deployed skills for performance drift, errors, and unexpected behavior changes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor deployed skills for performance drift, errors, and unexpected behavior changes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

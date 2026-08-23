@@ -1,0 +1,6 @@
+{
+  "name": "trash-cli",
+  "command": "trash-cli",
+  "description": "Use trash-cli to safely delete files by moving them to the system trash instead of permanently removing them.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use trash-cli to safely delete files by moving them to the system trash instead of permanently removing them..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

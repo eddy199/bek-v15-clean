@@ -1,0 +1,6 @@
+{
+  "name": "blucli",
+  "command": "blucli",
+  "description": "BluOS CLI (blu) for discovery, playback, grouping.",
+  "prompt": "Tu es un agent expert spécialisé dans : BluOS CLI (blu) for discovery, playback, grouping..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

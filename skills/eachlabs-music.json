@@ -1,0 +1,6 @@
+{
+  "name": "eachlabs-music",
+  "command": "eachlabs-music",
+  "description": "Generate songs, instrumentals, lyrics, podcasts using Mureka AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate songs, instrumentals, lyrics, podcasts using Mureka AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

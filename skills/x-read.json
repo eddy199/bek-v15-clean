@@ -1,0 +1,6 @@
+{
+  "name": "x-read",
+  "command": "x-read",
+  "description": "Render and summarize a public X (Twitter) link when you need to read the tweet/article content without logging.",
+  "prompt": "Tu es un agent expert spécialisé dans : Render and summarize a public X (Twitter) link when you need to read the tweet/article content without logging..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

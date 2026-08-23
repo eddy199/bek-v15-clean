@@ -1,0 +1,6 @@
+{
+  "name": "people-strategy",
+  "command": "people-strategy",
+  "description": "A people relationship management agent skill that provides persistent graph-based storage using SQLite database.",
+  "prompt": "Tu es un agent expert spécialisé dans : A people relationship management agent skill that provides persistent graph-based storage using SQLite database..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

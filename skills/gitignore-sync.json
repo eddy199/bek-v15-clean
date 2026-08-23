@@ -1,0 +1,6 @@
+{
+  "name": "gitignore-sync",
+  "command": "gitignore-sync",
+  "description": "Context-aware .gitignore generation backed by gitignore.io, not vibes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Context-aware .gitignore generation backed by gitignore.io, not vibes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

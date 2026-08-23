@@ -1,0 +1,6 @@
+{
+  "name": "us-macro-news-monitor",
+  "command": "us-macro-news-monitor",
+  "description": "Tracks US macro signals from Bloomberg, WSJ, and Reuters and maps potential spillover to Vietnam sectors; used.",
+  "prompt": "Tu es un agent expert spécialisé dans : Tracks US macro signals from Bloomberg, WSJ, and Reuters and maps potential spillover to Vietnam sectors; used..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

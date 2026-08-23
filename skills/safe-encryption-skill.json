@@ -1,0 +1,6 @@
+{
+  "name": "safe-encryption-skill",
+  "command": "safe-encryption-skill",
+  "description": "Encrypt, decrypt, and manage keys with the SAFE CLI — a modern GPG alternative with post-quantum support.",
+  "prompt": "Tu es un agent expert spécialisé dans : Encrypt, decrypt, and manage keys with the SAFE CLI — a modern GPG alternative with post-quantum support..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

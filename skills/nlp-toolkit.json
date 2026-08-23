@@ -1,0 +1,6 @@
+{
+  "name": "nlp-toolkit",
+  "command": "nlp-toolkit",
+  "description": "Advanced NLP with perplexity scoring, burstiness analysis, and entropy calculation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced NLP with perplexity scoring, burstiness analysis, and entropy calculation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

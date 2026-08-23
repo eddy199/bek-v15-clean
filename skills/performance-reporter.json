@@ -1,0 +1,6 @@
+{
+  "name": "performance-reporter",
+  "command": "performance-reporter",
+  "description": "Use when the user asks to \"generate SEO report\", \"performance report\", \"traffic report\", \"SEO dashboard\", \"report.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"generate SEO report\", \"performance report\", \"traffic report\", \"SEO dashboard\", \"report..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

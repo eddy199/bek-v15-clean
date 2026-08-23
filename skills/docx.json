@@ -1,0 +1,6 @@
+{
+  "name": "docx",
+  "command": "docx",
+  "description": "Comprehensive document creation, editing, and analysis with support for tracked.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive document creation, editing, and analysis with support for tracked..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "camera",
+  "command": "camera",
+  "description": "Capture photos from MacBook webcams.",
+  "prompt": "Tu es un agent expert spécialisé dans : Capture photos from MacBook webcams..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

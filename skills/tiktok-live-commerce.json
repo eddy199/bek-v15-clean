@@ -1,0 +1,6 @@
+{
+  "name": "tiktok-live-commerce",
+  "command": "tiktok-live-commerce",
+  "description": "Hire TikTok livestreamers for live shopping sessions, product demonstrations, flash sales, and real-time.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hire TikTok livestreamers for live shopping sessions, product demonstrations, flash sales, and real-time..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ceo-advisor",
+  "command": "ceo-advisor",
+  "description": "Executive leadership guidance for strategic decision-making.",
+  "prompt": "Tu es un agent expert spécialisé dans : Executive leadership guidance for strategic decision-making..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "irail",
+  "command": "irail",
+  "description": "Query Belgian railway (NMBS/SNCB) schedules via the irail CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Belgian railway (NMBS/SNCB) schedules via the irail CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

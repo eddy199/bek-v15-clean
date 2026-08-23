@@ -1,0 +1,6 @@
+{
+  "name": "buffer-session",
+  "command": "buffer-session",
+  "description": "Session management for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Session management for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

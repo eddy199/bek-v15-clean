@@ -1,0 +1,6 @@
+{
+  "name": "sveltekit-webapp",
+  "command": "sveltekit-webapp",
+  "description": "Scaffold and configure a production-ready SvelteKit PWA with opinionated defaults.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scaffold and configure a production-ready SvelteKit PWA with opinionated defaults..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "boj-mcp",
+  "command": "boj-mcp",
+  "description": "Access Bank of Japan (BOJ/日本銀行) statistical data — price indices (CGPI, SPPI), flow of funds, balance of payments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Bank of Japan (BOJ/日本銀行) statistical data — price indices (CGPI, SPPI), flow of funds, balance of payments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

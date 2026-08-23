@@ -1,0 +1,6 @@
+{
+  "name": "beetrade",
+  "command": "beetrade",
+  "description": "Use Beecli to interact with the Beetrade platform for authentication, market data, bot/strategy operations, alerts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Beecli to interact with the Beetrade platform for authentication, market data, bot/strategy operations, alerts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

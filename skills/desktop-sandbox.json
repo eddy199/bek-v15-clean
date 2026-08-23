@@ -1,0 +1,6 @@
+{
+  "name": "desktop-sandbox",
+  "command": "desktop-sandbox",
+  "description": "A desktop sandbox lets OpenClaw run as natively as on a real OS, ensuring full functionality with safe.",
+  "prompt": "Tu es un agent expert spécialisé dans : A desktop sandbox lets OpenClaw run as natively as on a real OS, ensuring full functionality with safe..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

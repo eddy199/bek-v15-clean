@@ -1,0 +1,6 @@
+{
+  "name": "bits",
+  "command": "bits",
+  "description": "Control browser automation agents via the Bits MCP server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control browser automation agents via the Bits MCP server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

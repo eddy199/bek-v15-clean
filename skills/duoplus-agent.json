@@ -1,0 +1,6 @@
+{
+  "name": "duoplus-agent",
+  "command": "duoplus-agent",
+  "description": "Control DuoPlus cloud phones via ADB.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control DuoPlus cloud phones via ADB..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

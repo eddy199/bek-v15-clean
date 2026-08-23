@@ -1,0 +1,6 @@
+{
+  "name": "learning-loop",
+  "command": "learning-loop",
+  "description": "Structured self-improvement system for AI agents with confidence decay, cross-agent sharing, and anomaly detection.",
+  "prompt": "Tu es un agent expert spécialisé dans : Structured self-improvement system for AI agents with confidence decay, cross-agent sharing, and anomaly detection..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

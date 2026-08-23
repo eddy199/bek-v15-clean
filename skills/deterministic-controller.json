@@ -1,0 +1,6 @@
+{
+  "name": "deterministic-controller",
+  "command": "deterministic-controller",
+  "description": "Deterministic, evidence-gated controller templates for OpenClaw (HEARTBEAT/ACTIVITIES + sprint template + poll cron.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deterministic, evidence-gated controller templates for OpenClaw (HEARTBEAT/ACTIVITIES + sprint template + poll cron..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

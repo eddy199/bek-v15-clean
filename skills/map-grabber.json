@@ -1,0 +1,6 @@
+{
+  "name": "map-grabber",
+  "command": "map-grabber",
+  "description": "Fetch OpenStreetMap vector data (streets, buildings) for an address and export to SVG, GeoPackage, or DXF for CAD/Rhino.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch OpenStreetMap vector data (streets, buildings) for an address and export to SVG, GeoPackage, or DXF for CAD/Rhino..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

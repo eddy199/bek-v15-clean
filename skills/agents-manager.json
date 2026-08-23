@@ -1,0 +1,6 @@
+{
+  "name": "agents-manager",
+  "command": "agents-manager",
+  "description": "Manage Clawdbot agents: discover, profile, track.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Clawdbot agents: discover, profile, track..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

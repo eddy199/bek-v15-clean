@@ -1,0 +1,6 @@
+{
+  "name": "trading-upbit-skill",
+  "command": "trading-upbit-skill",
+  "description": "Upbit automated trading (aggressive breakout) with cron-friendly run-once commands, TopVolume monitoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Upbit automated trading (aggressive breakout) with cron-friendly run-once commands, TopVolume monitoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

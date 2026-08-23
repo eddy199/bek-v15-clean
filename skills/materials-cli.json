@@ -1,0 +1,6 @@
+{
+  "name": "materials-cli",
+  "command": "materials-cli",
+  "description": "Render JSON schemas to images and generate schemas from prompts using declare-render and AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Render JSON schemas to images and generate schemas from prompts using declare-render and AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

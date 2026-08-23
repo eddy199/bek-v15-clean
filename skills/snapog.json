@@ -1,0 +1,6 @@
+{
+  "name": "snapog",
+  "command": "snapog",
+  "description": "Generate social images and OG cards from professional templates via the SnapOG API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate social images and OG cards from professional templates via the SnapOG API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

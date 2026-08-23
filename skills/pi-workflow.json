@@ -1,0 +1,6 @@
+{
+  "name": "pi-workflow",
+  "command": "pi-workflow",
+  "description": "Workflow orchestration for Pi's task management, self-improvement, and code quality standards.",
+  "prompt": "Tu es un agent expert spécialisé dans : Workflow orchestration for Pi's task management, self-improvement, and code quality standards..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

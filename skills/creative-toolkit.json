@@ -1,0 +1,6 @@
+{
+  "name": "creative-toolkit",
+  "command": "creative-toolkit",
+  "description": "Generate images from text with multi-provider routing — supports Nanobanana Pro, GPT Image, Seedream, and local.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images from text with multi-provider routing — supports Nanobanana Pro, GPT Image, Seedream, and local..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

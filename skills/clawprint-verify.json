@@ -1,0 +1,6 @@
+{
+  "name": "clawprint-verify",
+  "command": "clawprint-verify",
+  "description": "Issue ClawPrint reverse-CAPTCHA challenges.",
+  "prompt": "Tu es un agent expert spécialisé dans : Issue ClawPrint reverse-CAPTCHA challenges..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agent-media",
+  "command": "agent-media",
+  "description": "Generate AI-powered videos and images from the terminal using the `agent-media` CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI-powered videos and images from the terminal using the `agent-media` CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "spacex",
+  "command": "spacex",
+  "description": "CLI for AI agents to lookup SpaceX launches and rockets for their humans.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI for AI agents to lookup SpaceX launches and rockets for their humans..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

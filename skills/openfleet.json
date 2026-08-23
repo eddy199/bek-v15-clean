@@ -1,0 +1,6 @@
+{
+  "name": "openfleet",
+  "command": "openfleet",
+  "description": "Manage your OpenFleet multi-agent workspace — create tasks, assign agents, trigger pulse cycles, manage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage your OpenFleet multi-agent workspace — create tasks, assign agents, trigger pulse cycles, manage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

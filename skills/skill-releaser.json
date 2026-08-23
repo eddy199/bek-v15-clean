@@ -1,0 +1,6 @@
+{
+  "name": "skill-releaser",
+  "command": "skill-releaser",
+  "description": "Release skills to ClawhHub through the full publication pipeline — auto-scaffolding, OPSEC scan, dual review (agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Release skills to ClawhHub through the full publication pipeline — auto-scaffolding, OPSEC scan, dual review (agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

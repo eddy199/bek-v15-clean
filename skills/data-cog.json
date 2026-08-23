@@ -1,0 +1,6 @@
+{
+  "name": "data-cog",
+  "command": "data-cog",
+  "description": "Your data has answers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Your data has answers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

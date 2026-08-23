@@ -1,0 +1,6 @@
+{
+  "name": "qrcode",
+  "command": "qrcode",
+  "description": "Generate styled QR codes (SVG/PNG/JPG) with custom colors, shapes, and error correction.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate styled QR codes (SVG/PNG/JPG) with custom colors, shapes, and error correction..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

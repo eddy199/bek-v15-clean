@@ -1,0 +1,6 @@
+{
+  "name": "brave-api-search",
+  "command": "brave-api-search",
+  "description": "Real-time web search and AI-powered answers using the official Brave Search API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time web search and AI-powered answers using the official Brave Search API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

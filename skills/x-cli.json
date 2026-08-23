@@ -1,0 +1,6 @@
+{
+  "name": "x-cli",
+  "command": "x-cli",
+  "description": "Full-featured X/Twitter toolkit — read, search, post, interact, DMs, lists, polls, trends.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full-featured X/Twitter toolkit — read, search, post, interact, DMs, lists, polls, trends..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

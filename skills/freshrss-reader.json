@@ -1,0 +1,6 @@
+{
+  "name": "freshrss-reader",
+  "command": "freshrss-reader",
+  "description": "Query headlines and articles from a self-hosted FreshRSS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query headlines and articles from a self-hosted FreshRSS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

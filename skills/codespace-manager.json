@@ -1,0 +1,6 @@
+{
+  "name": "codespace-manager",
+  "command": "codespace-manager",
+  "description": "Create, manage, and access isolated cloud development environments (codespaces) powered by code-server, Docker.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, manage, and access isolated cloud development environments (codespaces) powered by code-server, Docker..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

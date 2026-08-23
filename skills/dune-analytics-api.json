@@ -1,0 +1,6 @@
+{
+  "name": "dune-analytics-api",
+  "command": "dune-analytics-api",
+  "description": "Dune Analytics API for blockchain data queries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Dune Analytics API for blockchain data queries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

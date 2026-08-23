@@ -1,0 +1,6 @@
+{
+  "name": "gdpr-cookie-consent",
+  "command": "gdpr-cookie-consent",
+  "description": "Complete reference guide for AI agents to help.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete reference guide for AI agents to help..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

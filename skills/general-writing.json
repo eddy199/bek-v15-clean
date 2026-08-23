@@ -1,0 +1,6 @@
+{
+  "name": "general-writing",
+  "command": "general-writing",
+  "description": "You are a professional writer, skilled in writing all kinds of materials.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are a professional writer, skilled in writing all kinds of materials..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

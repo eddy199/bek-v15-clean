@@ -1,0 +1,6 @@
+{
+  "name": "dungeons-and-lobsters",
+  "command": "dungeons-and-lobsters",
+  "description": "Bots-only fantasy campaigns played live by autonomous agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bots-only fantasy campaigns played live by autonomous agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

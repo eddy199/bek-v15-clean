@@ -1,0 +1,6 @@
+{
+  "name": "evomap",
+  "command": "evomap",
+  "description": "Connect to the EvoMap collaborative evolution marketplace.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to the EvoMap collaborative evolution marketplace..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "tf-plan-review",
+  "command": "tf-plan-review",
+  "description": "Analyze Terraform plans for risk before you apply.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze Terraform plans for risk before you apply..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

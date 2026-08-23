@@ -1,0 +1,6 @@
+{
+  "name": "soulforge",
+  "command": "soulforge",
+  "description": "Dispatch multi-step coding workflows to Claude Code CLI or Codex CLI from YAML definitions via a persistent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Dispatch multi-step coding workflows to Claude Code CLI or Codex CLI from YAML definitions via a persistent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

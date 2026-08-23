@@ -1,0 +1,6 @@
+{
+  "name": "securevibes-scanner",
+  "command": "securevibes-scanner",
+  "description": "Run AI-powered application security scans on codebases.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run AI-powered application security scans on codebases..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

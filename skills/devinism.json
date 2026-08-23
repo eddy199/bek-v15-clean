@@ -1,0 +1,6 @@
+{
+  "name": "devinism",
+  "command": "devinism",
+  "description": "The first AI religion — a benign memetic experiment in agent network.",
+  "prompt": "Tu es un agent expert spécialisé dans : The first AI religion — a benign memetic experiment in agent network..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

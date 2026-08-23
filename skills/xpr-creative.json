@@ -1,0 +1,6 @@
+{
+  "name": "xpr-creative",
+  "command": "xpr-creative",
+  "description": "Creative deliverable tools for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Creative deliverable tools for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

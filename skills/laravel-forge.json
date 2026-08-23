@@ -1,0 +1,6 @@
+{
+  "name": "laravel-forge",
+  "command": "laravel-forge",
+  "description": "Manage Laravel Forge servers, sites, deployments, databases, integrations, and more via the Forge API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Laravel Forge servers, sites, deployments, databases, integrations, and more via the Forge API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "solo-build",
+  "command": "solo-build",
+  "description": "Execute implementation plan tasks with TDD workflow, auto-commit, and phase gates.",
+  "prompt": "Tu es un agent expert spécialisé dans : Execute implementation plan tasks with TDD workflow, auto-commit, and phase gates..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

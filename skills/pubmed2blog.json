@@ -1,0 +1,6 @@
+{
+  "name": "pubmed2blog",
+  "command": "pubmed2blog",
+  "description": "Transform PubMed papers into SEO-optimized healthcare blog articles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform PubMed papers into SEO-optimized healthcare blog articles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

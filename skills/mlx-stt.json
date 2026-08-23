@@ -1,0 +1,6 @@
+{
+  "name": "mlx-stt",
+  "command": "mlx-stt",
+  "description": "Speech-To-Text with MLX (Apple Silicon) and GLM-ASR-Nano-2512 locally.",
+  "prompt": "Tu es un agent expert spécialisé dans : Speech-To-Text with MLX (Apple Silicon) and GLM-ASR-Nano-2512 locally..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

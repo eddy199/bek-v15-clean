@@ -1,0 +1,6 @@
+{
+  "name": "codex-multi-subscription-auth-fallbacks",
+  "command": "codex-multi-subscription-auth-fallbacks",
+  "description": "Set up OpenClaw multi-provider auth with OpenAI Codex OAuth fallback profiles and automatic model switching.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up OpenClaw multi-provider auth with OpenAI Codex OAuth fallback profiles and automatic model switching..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

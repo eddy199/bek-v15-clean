@@ -1,0 +1,6 @@
+{
+  "name": "intel-synthesis",
+  "command": "intel-synthesis",
+  "description": "Advanced intelligence processing pipeline optimized for high-context models (Gemini 1.5 Pro/Ultra)",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced intelligence processing pipeline optimized for high-context models (Gemini 1.5 Pro/Ultra).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

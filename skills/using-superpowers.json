@@ -1,0 +1,6 @@
+{
+  "name": "using-superpowers",
+  "command": "using-superpowers",
+  "description": "Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

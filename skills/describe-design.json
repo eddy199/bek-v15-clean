@@ -1,0 +1,6 @@
+{
+  "name": "describe-design",
+  "command": "describe-design",
+  "description": "Research a codebase and create architectural documentation describing how features or systems work.",
+  "prompt": "Tu es un agent expert spécialisé dans : Research a codebase and create architectural documentation describing how features or systems work..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

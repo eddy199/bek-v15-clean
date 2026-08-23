@@ -1,0 +1,6 @@
+{
+  "name": "fund-news-summary",
+  "command": "fund-news-summary",
+  "description": "Automatically collects and summarizes the latest core news for US, Europe, Japan stock markets, gold.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically collects and summarizes the latest core news for US, Europe, Japan stock markets, gold..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

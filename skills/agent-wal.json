@@ -1,0 +1,6 @@
+{
+  "name": "agent-wal",
+  "command": "agent-wal",
+  "description": "Write-Ahead Log protocol for agent state persistence.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write-Ahead Log protocol for agent state persistence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

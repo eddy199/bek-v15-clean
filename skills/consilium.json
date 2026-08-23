@@ -1,0 +1,6 @@
+{
+  "name": "consilium",
+  "command": "consilium",
+  "description": "Your personal board of AI advisors — the only skill that uses truly different AI models (not one model role-playing).",
+  "prompt": "Tu es un agent expert spécialisé dans : Your personal board of AI advisors — the only skill that uses truly different AI models (not one model role-playing)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

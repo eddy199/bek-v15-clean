@@ -1,0 +1,6 @@
+{
+  "name": "chemistry-query",
+  "command": "chemistry-query",
+  "description": "Chemistry agent skill for PubChem API queries (compound info/properties, structures/SMILES/images, synthesis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Chemistry agent skill for PubChem API queries (compound info/properties, structures/SMILES/images, synthesis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

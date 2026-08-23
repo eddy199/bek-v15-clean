@@ -1,0 +1,6 @@
+{
+  "name": "fastfold-ai-fold",
+  "command": "fastfold-ai-fold",
+  "description": "Submits and manages FastFold protein folding jobs via the Jobs API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Submits and manages FastFold protein folding jobs via the Jobs API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

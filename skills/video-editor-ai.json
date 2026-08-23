@@ -1,0 +1,6 @@
+{
+  "name": "video-editor-ai",
+  "command": "video-editor-ai",
+  "description": "AI video editor — edit MP4 by chat, add BGM/subtitles/effects, export directly. No GUI needed. Supports TikTok/Reels/Sho",
+  "prompt": "Tu es un agent expert spécialisé dans : AI video editor — edit MP4 by chat, add BGM/subtitles/effects, export directly. No GUI needed. Supports TikTok/Reels/Shorts creation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "jadwal-sholat-banghasan",
+  "command": "jadwal-sholat-banghasan",
+  "description": "Ambil jadwal sholat (imsak, subuh, dzuhur, ashar, maghrib, isya) untuk kota/kabupaten di Indonesia dari API Muslim.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ambil jadwal sholat (imsak, subuh, dzuhur, ashar, maghrib, isya) untuk kota/kabupaten di Indonesia dari API Muslim..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

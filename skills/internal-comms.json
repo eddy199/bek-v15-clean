@@ -1,0 +1,6 @@
+{
+  "name": "internal-comms",
+  "command": "internal-comms",
+  "description": "A set of resources to help me write all kinds of internal.",
+  "prompt": "Tu es un agent expert spécialisé dans : A set of resources to help me write all kinds of internal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ai-shifu-course-creator",
+  "command": "ai-shifu-course-creator",
+  "description": "Build interactive AI-Shifu courses.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build interactive AI-Shifu courses..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

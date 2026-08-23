@@ -1,0 +1,6 @@
+{
+  "name": "yield-farming-agent",
+  "command": "yield-farming-agent",
+  "description": "Autonomous yield farming agent for BNB Chain with deterministic execution, smart contract integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous yield farming agent for BNB Chain with deterministic execution, smart contract integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

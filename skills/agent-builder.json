@@ -1,0 +1,6 @@
+{
+  "name": "agent-builder",
+  "command": "agent-builder",
+  "description": "Build high-performing OpenClaw agents end-to-end.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build high-performing OpenClaw agents end-to-end..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

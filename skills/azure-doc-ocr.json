@@ -1,0 +1,6 @@
+{
+  "name": "azure-doc-ocr",
+  "command": "azure-doc-ocr",
+  "description": "Extract text and structured data from documents using Azure Document Intelligence (formerly Form Recognizer).",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract text and structured data from documents using Azure Document Intelligence (formerly Form Recognizer)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

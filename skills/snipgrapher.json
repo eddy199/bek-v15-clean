@@ -1,0 +1,6 @@
+{
+  "name": "snipgrapher",
+  "command": "snipgrapher",
+  "description": "Configure and use snipgrapher to generate polished code snippet images.",
+  "prompt": "Tu es un agent expert spécialisé dans : Configure and use snipgrapher to generate polished code snippet images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

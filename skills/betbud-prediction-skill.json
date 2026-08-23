@@ -1,0 +1,6 @@
+{
+  "name": "betbud-prediction-skill",
+  "command": "betbud-prediction-skill",
+  "description": "Scans recent X posts for the most debated/hot topic right now in a given category (e.g., crypto, tech, sports.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scans recent X posts for the most debated/hot topic right now in a given category (e.g., crypto, tech, sports..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

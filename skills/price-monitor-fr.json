@@ -1,0 +1,6 @@
+{
+  "name": "price-monitor-fr",
+  "command": "price-monitor-fr",
+  "description": "Surveille les prix de produits sur des sites e-commerce et alerte quand ils baissent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Surveille les prix de produits sur des sites e-commerce et alerte quand ils baissent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

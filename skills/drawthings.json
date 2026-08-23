@@ -1,0 +1,6 @@
+{
+  "name": "drawthings",
+  "command": "drawthings",
+  "description": "Generate images with DrawThings (Stable Diffusion) via API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images with DrawThings (Stable Diffusion) via API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

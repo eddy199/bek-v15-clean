@@ -1,0 +1,6 @@
+{
+  "name": "mcp-server-discovery",
+  "command": "mcp-server-discovery",
+  "description": "Discover, search, and manage MCP (Model Context Protocol) servers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Discover, search, and manage MCP (Model Context Protocol) servers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "game-engine",
+  "command": "game-engine",
+  "description": "Expert skill for building web-based game engines and games using HTML5, Canvas, WebGL, and JavaScript.",
+  "prompt": "Tu es un agent expert spécialisé dans : Expert skill for building web-based game engines and games using HTML5, Canvas, WebGL, and JavaScript..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

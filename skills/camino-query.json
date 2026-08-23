@@ -1,0 +1,6 @@
+{
+  "name": "camino-query",
+  "command": "camino-query",
+  "description": "Search for places using natural language with Camino AI's location intelligence API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search for places using natural language with Camino AI's location intelligence API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

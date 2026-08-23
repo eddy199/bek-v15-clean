@@ -1,0 +1,6 @@
+{
+  "name": "research-library",
+  "command": "research-library",
+  "description": "Local-first multimedia research library for hardware projects.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local-first multimedia research library for hardware projects..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

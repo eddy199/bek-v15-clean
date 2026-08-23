@@ -1,0 +1,6 @@
+{
+  "name": "percept-voice-cmd",
+  "command": "percept-voice-cmd",
+  "description": "Voice command detection and action execution for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Voice command detection and action execution for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

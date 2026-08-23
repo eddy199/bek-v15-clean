@@ -1,0 +1,6 @@
+{
+  "name": "fis-architecture",
+  "command": "fis-architecture",
+  "description": "Multi-agent workflow framework using JSON tickets and file-based coordination.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-agent workflow framework using JSON tickets and file-based coordination..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

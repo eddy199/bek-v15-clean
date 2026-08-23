@@ -1,0 +1,6 @@
+{
+  "name": "rollhub-bot-builder",
+  "command": "rollhub-bot-builder",
+  "description": "Build and deploy autonomous gambling bots for Telegram, Discord, and Twitter using Agent Casino API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build and deploy autonomous gambling bots for Telegram, Discord, and Twitter using Agent Casino API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

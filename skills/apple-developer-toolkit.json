@@ -1,0 +1,6 @@
+{
+  "name": "apple-developer-toolkit",
+  "command": "apple-developer-toolkit",
+  "description": "All-in-one Apple developer skill with three integrated tools shipped as a single unified binary. (1) Documentation.",
+  "prompt": "Tu es un agent expert spécialisé dans : All-in-one Apple developer skill with three integrated tools shipped as a single unified binary. (1) Documentation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

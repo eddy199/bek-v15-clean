@@ -1,0 +1,6 @@
+{
+  "name": "agent-step-sequencer",
+  "command": "agent-step-sequencer",
+  "description": "Multi-step scheduler for in-depth agent requests.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-step scheduler for in-depth agent requests..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

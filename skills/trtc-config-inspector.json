@@ -1,0 +1,6 @@
+{
+  "name": "trtc-config-inspector",
+  "command": "trtc-config-inspector",
+  "description": "TRTC SDK configuration inspection and analysis tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : TRTC SDK configuration inspection and analysis tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

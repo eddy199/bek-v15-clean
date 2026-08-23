@@ -1,0 +1,6 @@
+{
+  "name": "embodied-ai-news",
+  "command": "embodied-ai-news",
+  "description": "Aggregates publicly available Embodied AI and Robotics news from curated sources (robotics media, arXiv, company.",
+  "prompt": "Tu es un agent expert spécialisé dans : Aggregates publicly available Embodied AI and Robotics news from curated sources (robotics media, arXiv, company..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

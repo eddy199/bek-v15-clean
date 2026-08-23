@@ -1,0 +1,6 @@
+{
+  "name": "humanize-chinese",
+  "command": "humanize-chinese",
+  "description": "Detect and humanize AI-generated Chinese text with 6 style transforms.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detect and humanize AI-generated Chinese text with 6 style transforms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

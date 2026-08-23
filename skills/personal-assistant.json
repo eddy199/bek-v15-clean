@@ -1,0 +1,6 @@
+{
+  "name": "personal-assistant",
+  "command": "personal-assistant",
+  "description": "Personal daily briefing and productivity assistant.",
+  "prompt": "Tu es un agent expert spécialisé dans : Personal daily briefing and productivity assistant..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

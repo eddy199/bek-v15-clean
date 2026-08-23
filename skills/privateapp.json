@@ -1,0 +1,6 @@
+{
+  "name": "privateapp",
+  "command": "privateapp",
+  "description": "Personal PWA dashboard server with plugin apps.",
+  "prompt": "Tu es un agent expert spécialisé dans : Personal PWA dashboard server with plugin apps..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

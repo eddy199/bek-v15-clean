@@ -1,0 +1,6 @@
+{
+  "name": "acestep-lyrics-transcription",
+  "command": "acestep-lyrics-transcription",
+  "description": "Transcribe audio to timestamped lyrics using OpenAI Whisper or ElevenLabs Scribe API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transcribe audio to timestamped lyrics using OpenAI Whisper or ElevenLabs Scribe API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

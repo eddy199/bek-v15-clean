@@ -1,0 +1,6 @@
+{
+  "name": "oktk",
+  "command": "oktk",
+  "description": "LLM Token Optimizer - Reduce AI API costs by 60-90%.",
+  "prompt": "Tu es un agent expert spécialisé dans : LLM Token Optimizer - Reduce AI API costs by 60-90%..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

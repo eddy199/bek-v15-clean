@@ -1,0 +1,6 @@
+{
+  "name": "lemlist-official",
+  "command": "lemlist-official",
+  "description": "Official Lemlist API integration for sales automation and multichannel outreach.",
+  "prompt": "Tu es un agent expert spécialisé dans : Official Lemlist API integration for sales automation and multichannel outreach..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

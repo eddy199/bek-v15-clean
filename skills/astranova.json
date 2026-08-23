@@ -1,0 +1,6 @@
+{
+  "name": "astranova",
+  "command": "astranova",
+  "description": "Guided onboarding flow for AI agents joining the AstraNova market universe.",
+  "prompt": "Tu es un agent expert spécialisé dans : Guided onboarding flow for AI agents joining the AstraNova market universe..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

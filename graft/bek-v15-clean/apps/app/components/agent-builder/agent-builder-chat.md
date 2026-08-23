@@ -1,0 +1,41 @@
+# bek-v15-clean/apps/app/components/agent-builder/agent-builder-chat.tsx
+
+- Conversation · type · L93-L93 — type Conversation = RouterOutputs["conversations"]["builderById"];
+- SharedConversation · type · L94-L94 — type SharedConversation = RouterOutputs["conversations"]["shared"];
+- DraftVersion · type · L103-L107 — type DraftVersion = { id: string; status: string; manifest: unknown; };
+- BuilderSubmission · type · L109-L117 — type BuilderSubmission = { id: string; createdAt: string; clientRequestId?: string | null; commandType: "CHAT" | "CREATE_AGENT"; message: unknown; status: string; errorMessage: string | null; };
+- PendingSubmission · type · L119-L124 — type PendingSubmission = { clientRequestId: string; createdAt: string; commandType: "CHAT" | "CREATE_AGENT"; message: unknown; };
+- AgentBuilderChat · function · L126-L505 — function AgentBuilderChat({ conversationId, initialData, }: { conversationId: string; initialData: Conversation | SharedConversation | null; })
+- send · function · L276-L305 — send = async ( prompt: BuilderPrompt, clientRequestId = crypto.randomUUID(), )
+- BuilderEventFollower · function · L507-L554 — function BuilderEventFollower({ conversationId, sessionId, onSnapshot, onEvent, onEnded, }: { conversationId: string; sessionId: string; onSnapshot: (events: readonly MessageStreamEvent[]) => void; onEvent: (event: MessageStreamEvent) => void; onEnded: () => void; })
+- follow · function · L527-L540 — follow = async ()
+- withoutTable · function · L556-L559 — function withoutTable(text: string): string
+- AgentToolStep · function · L561-L588 — function AgentToolStep({ item, }: { item: Extract<TranscriptItem, { kind: "did" }>; })
+- appendEvent · function · L590-L597 — function appendEvent( events: readonly MessageStreamEvent[], event: MessageStreamEvent, ): readonly MessageStreamEvent[]
+- SharedAgentChat · function · L599-L683 — function SharedAgentChat({ conversation, }: { conversation: SharedConversation; })
+- ChatHeader · function · L685-L735 — function ChatHeader({ conversation, working, creatingAgent, }: { conversation: Conversation; working: boolean; creatingAgent: boolean; })
+- UserSubmission · function · L737-L807 — function UserSubmission({ submission, failed, error, sending = false, }: { submission: BuilderSubmission; failed: boolean; error: string | null; sending?: boolean; })
+- AssistantMessage · function · L809-L890 — function AssistantMessage({ conversation, message, answeredQuestionIds, }: { conversation: Conversation | null; message: EveMessage; answeredQuestionIds: ReadonlySet<string>; })
+- FollowUpTranscriptItem · function · L892-L912 — function FollowUpTranscriptItem({ question, answered, }: { question: EveMessageInputRequest; answered: boolean; })
+- CopyResponseAction · function · L914-L930 — function CopyResponseAction({ markdown }: { markdown: string })
+- ResponseActions · function · L932-L993 — function ResponseActions({ conversation, messageId, markdown, }: { conversation: Conversation; messageId: string; markdown: string; })
+- choose · function · L952-L956 — choose = (next: "UP" | "DOWN")
+- BuildingAgentCard · function · L995-L1123 — function BuildingAgentCard({ conversationId, sessionId, artifacts, startedAt, }: { conversationId: string; sessionId: string | null; artifacts: Conversation["builderArtifacts"]; startedAt: string | null; })
+- BuilderFailureCard · function · L1125-L1179 — function BuilderFailureCard({ failure, creatingAgent, retrying, onRetry, }: { failure: AgentTurnFailure; creatingAgent: boolean; retrying: boolean; onRetry: (() => void) | null; })
+- ReviewAgentCard · function · L1181-L1228 — function ReviewAgentCard({ conversation, versionId, }: { conversation: Conversation; versionId: string; })
+- AgentCardShell · function · L1230-L1250 — function AgentCardShell({ name, status, children, }: { name: string; status: string; children: ReactNode; })
+- AgentCardFooter · function · L1252-L1265 — function AgentCardFooter({ note, children, }: { note: string; children: ReactNode; })
+- ReviewRow · function · L1267-L1286 — function ReviewRow({ label, value, children, }: { label: string; value?: ReactNode; children?: ReactNode; })
+- DeployedAgentCard · function · L1288-L1406 — function DeployedAgentCard({ conversation, onFollowUp, }: { conversation: Conversation; onFollowUp: (message: string) => Promise<void>; })
+- ChatUnavailable · function · L1408-L1424 — function ChatUnavailable()
+- builderMessageOf · function · L1433-L1444 — function builderMessageOf(message: unknown)
+- hasQueuedQuestionResponse · function · L1446-L1457 — function hasQueuedQuestionResponse( submissions: BuilderSubmission[], requestId: string, ): boolean
+- questionResponseIds · function · L1459-L1472 — function questionResponseIds( submissions: readonly BuilderSubmission[], ): ReadonlySet<string>
+- inputResponseOf · function · L1474-L1479 — function inputResponseOf(message: unknown): { requestId: string } | null
+- retryPromptOf · function · L1481-L1499 — function retryPromptOf( submission: BuilderSubmission | undefined, ): BuilderPrompt | null
+- builderConversationNeedsPolling · function · L1501-L1503 — function builderConversationNeedsPolling(conversation: Conversation): boolean
+- sharedConversationNeedsPolling · function · L1505-L1511 — function sharedConversationNeedsPolling( conversation: SharedConversation | undefined, ): boolean
+- manifestOf · function · L1513-L1553 — function manifestOf(value: unknown)
+- compactSummary · function · L1555-L1557 — function compactSummary(value: unknown, fallback: string): string
+- recordOf · function · L1559-L1563 — function recordOf(value: unknown): Record<string, unknown>
+- textOf · function · L1565-L1567 — function textOf(value: unknown, fallback: string): string

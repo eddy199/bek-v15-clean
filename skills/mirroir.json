@@ -1,0 +1,6 @@
+{
+  "name": "mirroir",
+  "command": "mirroir",
+  "description": "Control a real iPhone through macOS iPhone Mirroring — screenshot, tap, swipe, type, launch apps, record video.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control a real iPhone through macOS iPhone Mirroring — screenshot, tap, swipe, type, launch apps, record video..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

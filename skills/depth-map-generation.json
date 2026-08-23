@@ -1,0 +1,6 @@
+{
+  "name": "depth-map-generation",
+  "command": "depth-map-generation",
+  "description": "Generate depth maps from images using each::sense AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate depth maps from images using each::sense AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

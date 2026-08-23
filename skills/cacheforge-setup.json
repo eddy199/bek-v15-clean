@@ -1,0 +1,6 @@
+{
+  "name": "cacheforge-setup",
+  "command": "cacheforge-setup",
+  "description": "Set up CacheForge — register, configure upstream, get your API key in 30 seconds.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up CacheForge — register, configure upstream, get your API key in 30 seconds..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

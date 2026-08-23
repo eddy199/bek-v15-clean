@@ -1,0 +1,6 @@
+{
+  "name": "cloudflare-toolkit",
+  "command": "cloudflare-toolkit",
+  "description": "Manage Cloudflare domains, DNS records, SSL settings, zone configuration, firewall rules, tunnels, and analytics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Cloudflare domains, DNS records, SSL settings, zone configuration, firewall rules, tunnels, and analytics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

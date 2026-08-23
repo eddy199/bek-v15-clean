@@ -1,0 +1,6 @@
+{
+  "name": "content-research",
+  "command": "content-research",
+  "description": "Research trending topics and generate platform-specific content.",
+  "prompt": "Tu es un agent expert spécialisé dans : Research trending topics and generate platform-specific content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

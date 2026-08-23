@@ -1,0 +1,6 @@
+{
+  "name": "chart-image",
+  "command": "chart-image",
+  "description": "Generate publication-quality chart images from data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate publication-quality chart images from data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

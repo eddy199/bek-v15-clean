@@ -1,0 +1,6 @@
+{
+  "name": "imessage-signal-analyzer",
+  "command": "imessage-signal-analyzer",
+  "description": "Analyze iMessage (macOS) and Signal conversation history to reveal relationship dynamics — message volume.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze iMessage (macOS) and Signal conversation history to reveal relationship dynamics — message volume..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

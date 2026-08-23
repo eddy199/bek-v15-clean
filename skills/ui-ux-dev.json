@@ -1,0 +1,6 @@
+{
+  "name": "ui-ux-dev",
+  "command": "ui-ux-dev",
+  "description": "Generate and serve live HTML/CSS/JS UI designs from natural language prompts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate and serve live HTML/CSS/JS UI designs from natural language prompts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "surf-check",
+  "command": "surf-check",
+  "description": "Surf forecast decision engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : Surf forecast decision engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

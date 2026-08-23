@@ -1,0 +1,6 @@
+{
+  "name": "supabase",
+  "command": "supabase",
+  "description": "Connect to Supabase for database operations, vector search, and storage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to Supabase for database operations, vector search, and storage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

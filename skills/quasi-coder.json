@@ -1,0 +1,6 @@
+{
+  "name": "quasi-coder",
+  "command": "quasi-coder",
+  "description": "Expert 10x engineer skill for interpreting and implementing code from shorthand, quasi-code, and natural language.",
+  "prompt": "Tu es un agent expert spécialisé dans : Expert 10x engineer skill for interpreting and implementing code from shorthand, quasi-code, and natural language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

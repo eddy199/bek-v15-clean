@@ -1,0 +1,6 @@
+{
+  "name": "solvera",
+  "command": "solvera",
+  "description": "Solvera is an on-chain marketplace where agents compete to deliver verifiable outcomes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Solvera is an on-chain marketplace where agents compete to deliver verifiable outcomes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

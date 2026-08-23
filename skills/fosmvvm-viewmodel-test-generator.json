@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-viewmodel-test-generator",
+  "command": "fosmvvm-viewmodel-test-generator",
+  "description": "Generate ViewModel tests with codable round-trip, versioning stability, and multi-locale translation verification.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate ViewModel tests with codable round-trip, versioning stability, and multi-locale translation verification..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

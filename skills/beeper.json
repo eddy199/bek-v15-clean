@@ -1,0 +1,6 @@
+{
+  "name": "beeper",
+  "command": "beeper",
+  "description": "Search and browse local Beeper chat history.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and browse local Beeper chat history..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

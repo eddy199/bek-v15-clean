@@ -1,0 +1,6 @@
+{
+  "name": "elasticsearch-skill",
+  "command": "elasticsearch-skill",
+  "description": "Interact with Elasticsearch and Kibana via REST API using curl.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Elasticsearch and Kibana via REST API using curl..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

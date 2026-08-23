@@ -1,0 +1,6 @@
+{
+  "name": "feast",
+  "command": "feast",
+  "description": "Comprehensive meal planning system with cultural themes, authentic recipes,.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive meal planning system with cultural themes, authentic recipes,..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "phylactery",
+  "command": "phylactery",
+  "description": "A digital soul-backup and recovery system.",
+  "prompt": "Tu es un agent expert spécialisé dans : A digital soul-backup and recovery system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

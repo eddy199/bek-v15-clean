@@ -1,0 +1,6 @@
+{
+  "name": "token-economy",
+  "command": "token-economy",
+  "description": "Reduce OpenClaw costs by 60-80% through intelligent model routing and context management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Reduce OpenClaw costs by 60-80% through intelligent model routing and context management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

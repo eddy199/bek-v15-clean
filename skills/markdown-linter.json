@@ -1,0 +1,6 @@
+{
+  "name": "markdown-linter",
+  "command": "markdown-linter",
+  "description": "Validates Markdown files in the workspace for broken local links, missing file references, and basic syntax issues.",
+  "prompt": "Tu es un agent expert spécialisé dans : Validates Markdown files in the workspace for broken local links, missing file references, and basic syntax issues..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agentgate",
+  "command": "agentgate",
+  "description": "API gateway for personal data with human-in-the-loop write approval.",
+  "prompt": "Tu es un agent expert spécialisé dans : API gateway for personal data with human-in-the-loop write approval..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

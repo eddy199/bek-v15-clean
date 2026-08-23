@@ -1,0 +1,6 @@
+{
+  "name": "artifacts-builder",
+  "command": "artifacts-builder",
+  "description": "Suite of tools for creating elaborate, multi-component.",
+  "prompt": "Tu es un agent expert spécialisé dans : Suite of tools for creating elaborate, multi-component..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

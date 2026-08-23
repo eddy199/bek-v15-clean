@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-react-view-generator",
+  "command": "fosmvvm-react-view-generator",
+  "description": "Generate React components that render FOSMVVM ViewModels.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate React components that render FOSMVVM ViewModels..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

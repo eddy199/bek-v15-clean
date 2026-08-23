@@ -1,0 +1,6 @@
+{
+  "name": "game-theory",
+  "command": "game-theory",
+  "description": "Advanced game theory analysis for crypto protocols, DeFi mechanisms, governance systems, and strategic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced game theory analysis for crypto protocols, DeFi mechanisms, governance systems, and strategic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

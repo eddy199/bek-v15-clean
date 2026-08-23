@@ -1,0 +1,6 @@
+{
+  "name": "ace-music",
+  "command": "ace-music",
+  "description": "Generate AI music using ACE-Step 1.5 via ACE Music's free API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI music using ACE-Step 1.5 via ACE Music's free API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

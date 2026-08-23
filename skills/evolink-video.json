@@ -1,0 +1,6 @@
+{
+  "name": "evolink-video",
+  "command": "evolink-video",
+  "description": "AI video generation — Sora, Kling, Veo 3, Seedance, Hailuo, WAN, Grok.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI video generation — Sora, Kling, Veo 3, Seedance, Hailuo, WAN, Grok..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

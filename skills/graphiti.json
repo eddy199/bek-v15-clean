@@ -1,0 +1,6 @@
+{
+  "name": "graphiti",
+  "command": "graphiti",
+  "description": "Knowledge graph operations via Graphiti API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Knowledge graph operations via Graphiti API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

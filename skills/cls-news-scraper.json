@@ -1,0 +1,6 @@
+{
+  "name": "cls-news-scraper",
+  "command": "cls-news-scraper",
+  "description": "Use this skill to pull real-time market news from Cailian Press (CLS) and extract stock-positive catalysts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill to pull real-time market news from Cailian Press (CLS) and extract stock-positive catalysts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

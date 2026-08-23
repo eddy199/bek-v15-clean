@@ -1,0 +1,6 @@
+{
+  "name": "telegram-colored-choices-buttons",
+  "command": "telegram-colored-choices-buttons",
+  "description": "Every time the bot presents choices to the user, it MUST automatically color each button based on how critical.",
+  "prompt": "Tu es un agent expert spécialisé dans : Every time the bot presents choices to the user, it MUST automatically color each button based on how critical..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

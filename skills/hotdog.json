@@ -1,0 +1,6 @@
+{
+  "name": "hotdog",
+  "command": "hotdog",
+  "description": "Hot dog or not? Classify food photos and battle Nemotron.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hot dog or not? Classify food photos and battle Nemotron..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

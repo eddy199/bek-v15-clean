@@ -1,0 +1,6 @@
+{
+  "name": "mh-openai-whisper-api",
+  "command": "mh-openai-whisper-api",
+  "description": "Transcribe audio via OpenAI Audio Transcriptions API (Whisper).",
+  "prompt": "Tu es un agent expert spécialisé dans : Transcribe audio via OpenAI Audio Transcriptions API (Whisper)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

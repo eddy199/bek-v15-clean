@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-search-collector",
+  "command": "arxiv-search-collector",
+  "description": "Model-driven arXiv retrieval workflow for building a paper set with a manual language parameter: initialize a run.",
+  "prompt": "Tu es un agent expert spécialisé dans : Model-driven arXiv retrieval workflow for building a paper set with a manual language parameter: initialize a run..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "arr-all",
+  "command": "arr-all",
+  "description": "Unified command-line interface for Radarr, Sonarr, and Lidarr.",
+  "prompt": "Tu es un agent expert spécialisé dans : Unified command-line interface for Radarr, Sonarr, and Lidarr..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "feature-forge",
+  "command": "feature-forge",
+  "description": "Generates complete features from natural language — components, API routes, migrations, types, and tests.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates complete features from natural language — components, API routes, migrations, types, and tests..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

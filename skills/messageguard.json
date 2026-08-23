@@ -1,0 +1,6 @@
+{
+  "name": "messageguard",
+  "command": "messageguard",
+  "description": "**Purpose**: MessageGuard filters outgoing text to prevent secret leaks and sensitive data exposure.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Purpose**: MessageGuard filters outgoing text to prevent secret leaks and sensitive data exposure..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

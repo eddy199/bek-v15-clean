@@ -1,0 +1,6 @@
+{
+  "name": "telnyx-voice-sip",
+  "command": "telnyx-voice-sip",
+  "description": "Voice interface using Telnyx Call Control API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Voice interface using Telnyx Call Control API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

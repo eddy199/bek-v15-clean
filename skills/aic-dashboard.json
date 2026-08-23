@@ -1,0 +1,6 @@
+{
+  "name": "aic-dashboard",
+  "command": "aic-dashboard",
+  "description": "AI Commander Management Dashboard.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI Commander Management Dashboard..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

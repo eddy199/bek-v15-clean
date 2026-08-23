@@ -1,0 +1,6 @@
+{
+  "name": "quest-board",
+  "command": "quest-board",
+  "description": "You are equipped with the **Quest Board** skill, a visual project dashboard.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are equipped with the **Quest Board** skill, a visual project dashboard..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "task-router-skill",
+  "command": "task-router-skill",
+  "description": "Distributed task queue and agent coordinator for OpenClaw multi-agent systems.",
+  "prompt": "Tu es un agent expert spécialisé dans : Distributed task queue and agent coordinator for OpenClaw multi-agent systems..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

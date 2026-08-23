@@ -1,0 +1,6 @@
+{
+  "name": "webcli",
+  "command": "webcli",
+  "description": "Browse the web, read page content, click buttons, fill forms, take screenshots, and get accessibility snapshots.",
+  "prompt": "Tu es un agent expert spécialisé dans : Browse the web, read page content, click buttons, fill forms, take screenshots, and get accessibility snapshots..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

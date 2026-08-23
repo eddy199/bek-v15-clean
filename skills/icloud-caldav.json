@@ -1,0 +1,6 @@
+{
+  "name": "icloud-caldav",
+  "command": "icloud-caldav",
+  "description": "Direct iCloud Calendar integration via CalDAV protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Direct iCloud Calendar integration via CalDAV protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

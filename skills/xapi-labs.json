@@ -1,0 +1,6 @@
+{
+  "name": "xapi-labs",
+  "command": "xapi-labs",
+  "description": "Aggregated API platform for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Aggregated API platform for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

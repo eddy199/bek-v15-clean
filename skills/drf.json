@@ -1,0 +1,6 @@
+{
+  "name": "drf",
+  "command": "drf",
+  "description": "Django REST Framework scaffolding best practices, and gotchas.",
+  "prompt": "Tu es un agent expert spécialisé dans : Django REST Framework scaffolding best practices, and gotchas..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "omarchy",
+  "command": "omarchy",
+  "description": "Omarchy operating guardrails for day-to-day system work: assume the host is Omarchy by default, choose.",
+  "prompt": "Tu es un agent expert spécialisé dans : Omarchy operating guardrails for day-to-day system work: assume the host is Omarchy by default, choose..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

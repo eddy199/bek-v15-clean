@@ -1,0 +1,6 @@
+{
+  "name": "reefwatch",
+  "command": "reefwatch",
+  "description": "Continuous local security monitoring daemon for Linux and macOS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Continuous local security monitoring daemon for Linux and macOS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

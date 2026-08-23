@@ -1,0 +1,6 @@
+{
+  "name": "near-name-service",
+  "command": "near-name-service",
+  "description": "Manage NEAR Name Service (.near domains) - check availability, register, resolve, and manage names.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage NEAR Name Service (.near domains) - check availability, register, resolve, and manage names..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

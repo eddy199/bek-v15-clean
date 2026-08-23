@@ -1,0 +1,6 @@
+{
+  "name": "windows-ui-automation",
+  "command": "windows-ui-automation",
+  "description": "Automate Windows GUI interactions (mouse, keyboard, windows) using PowerShell.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate Windows GUI interactions (mouse, keyboard, windows) using PowerShell..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "yandex-tracker-cli",
+  "command": "yandex-tracker-cli",
+  "description": "CLI for Yandex Tracker (bash + curl)",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI for Yandex Tracker (bash + curl).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

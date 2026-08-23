@@ -1,0 +1,6 @@
+{
+  "name": "beestat",
+  "command": "beestat",
+  "description": "Query ecobee thermostat data via Beestat API including temperature.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query ecobee thermostat data via Beestat API including temperature..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "iterative-code-evolution",
+  "command": "iterative-code-evolution",
+  "description": "Systematically improve code through structured analysis-mutation-evaluation loops.",
+  "prompt": "Tu es un agent expert spécialisé dans : Systematically improve code through structured analysis-mutation-evaluation loops..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

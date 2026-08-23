@@ -1,0 +1,6 @@
+{
+  "name": "assemblyai-transcribe",
+  "command": "assemblyai-transcribe",
+  "description": "Transcribe audio/video with AssemblyAI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transcribe audio/video with AssemblyAI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

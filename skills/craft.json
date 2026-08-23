@@ -1,0 +1,6 @@
+{
+  "name": "craft",
+  "command": "craft",
+  "description": "Manage Craft notes, documents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Craft notes, documents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

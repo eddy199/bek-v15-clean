@@ -1,0 +1,6 @@
+{
+  "name": "x-founder-operations",
+  "command": "x-founder-operations",
+  "description": "Systematic X (Twitter) operations skill for founders, indie developers, and tech professionals.",
+  "prompt": "Tu es un agent expert spécialisé dans : Systematic X (Twitter) operations skill for founders, indie developers, and tech professionals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "add-watermark-to-pdf",
+  "command": "add-watermark-to-pdf",
+  "description": "Add a text watermark to one or multiple PDFs by uploading them to the Solutions API, polling until completion.",
+  "prompt": "Tu es un agent expert spécialisé dans : Add a text watermark to one or multiple PDFs by uploading them to the Solutions API, polling until completion..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "orgo-desktop-control",
+  "command": "orgo-desktop-control",
+  "description": "Provision and control Orgo cloud computers using the orgo_client Python SDK.",
+  "prompt": "Tu es un agent expert spécialisé dans : Provision and control Orgo cloud computers using the orgo_client Python SDK..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

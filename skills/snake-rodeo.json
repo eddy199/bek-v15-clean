@@ -1,0 +1,6 @@
+{
+  "name": "snake-rodeo",
+  "command": "snake-rodeo",
+  "description": "Autoplay daemon for the Trifle Snake Rodeo game.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autoplay daemon for the Trifle Snake Rodeo game..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

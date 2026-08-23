@@ -1,0 +1,6 @@
+{
+  "name": "plausible-analytics",
+  "command": "plausible-analytics",
+  "description": "Query and analyze website analytics from Plausible Analytics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and analyze website analytics from Plausible Analytics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

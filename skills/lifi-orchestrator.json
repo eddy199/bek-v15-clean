@@ -1,0 +1,6 @@
+{
+  "name": "lifi-orchestrator",
+  "command": "lifi-orchestrator",
+  "description": "Cross-chain bridging and swapping via LI.FI — the leading bridge aggregator that routes across 30+ bridges and DEXs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cross-chain bridging and swapping via LI.FI — the leading bridge aggregator that routes across 30+ bridges and DEXs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

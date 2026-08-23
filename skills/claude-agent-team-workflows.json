@@ -1,0 +1,6 @@
+{
+  "name": "claude-agent-team-workflows",
+  "command": "claude-agent-team-workflows",
+  "description": "Universal multi-agent workflow orchestration using Claude Code Agent Teams.",
+  "prompt": "Tu es un agent expert spécialisé dans : Universal multi-agent workflow orchestration using Claude Code Agent Teams..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

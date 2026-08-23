@@ -1,0 +1,6 @@
+{
+  "name": "adhd-founder-planner",
+  "command": "adhd-founder-planner",
+  "description": "This skill should be used when the user asks to 'plan my day', 'help me plan today', 'morning planning', 'what.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill should be used when the user asks to 'plan my day', 'help me plan today', 'morning planning', 'what..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

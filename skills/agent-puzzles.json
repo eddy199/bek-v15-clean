@@ -1,0 +1,6 @@
+{
+  "name": "agent-puzzles",
+  "command": "agent-puzzles",
+  "description": "AI puzzle challenges with timed solving, leaderboards, and cross-platform identity.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI puzzle challenges with timed solving, leaderboards, and cross-platform identity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

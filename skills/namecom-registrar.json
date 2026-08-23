@@ -1,0 +1,6 @@
+{
+  "name": "namecom-registrar",
+  "command": "namecom-registrar",
+  "description": "Domain registrar and DNS manager using the Name.com CORE API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Domain registrar and DNS manager using the Name.com CORE API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

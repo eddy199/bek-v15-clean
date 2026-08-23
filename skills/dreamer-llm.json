@@ -1,0 +1,6 @@
+{
+  "name": "dreamer-llm",
+  "command": "dreamer-llm",
+  "description": "Send requests to the dr.eamer.dev LLM API for chat completions, vision analysis, image generation, text-to-speech.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send requests to the dr.eamer.dev LLM API for chat completions, vision analysis, image generation, text-to-speech..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

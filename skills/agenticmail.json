@@ -1,0 +1,6 @@
+{
+  "name": "agenticmail",
+  "command": "agenticmail",
+  "description": "🎀 AgenticMail — Full email, SMS, storage & multi-agent coordination for AI agents. 63 tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : 🎀 AgenticMail — Full email, SMS, storage & multi-agent coordination for AI agents. 63 tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

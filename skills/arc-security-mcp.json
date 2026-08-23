@@ -1,0 +1,6 @@
+{
+  "name": "arc-security-mcp",
+  "command": "arc-security-mcp",
+  "description": "AI-first security intelligence with LLM-powered intent analysis. 743+ findings from 361+ skill audits, 25 pattern.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-first security intelligence with LLM-powered intent analysis. 743+ findings from 361+ skill audits, 25 pattern..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-api-contract-guard-01",
+  "command": "jarvis-api-contract-guard-01",
+  "description": "Design and verify API contracts for backward compatibility.",
+  "prompt": "Tu es un agent expert spécialisé dans : Design and verify API contracts for backward compatibility..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ldm-openclaw-skill",
+  "command": "ldm-openclaw-skill",
+  "description": "Pre-send deliverability checks for outbound agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pre-send deliverability checks for outbound agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

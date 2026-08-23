@@ -1,0 +1,6 @@
+{
+  "name": "agent-self-reflection",
+  "command": "agent-self-reflection",
+  "description": "Periodic self-reflection on recent sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Periodic self-reflection on recent sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lead-generation",
+  "command": "lead-generation",
+  "description": "Lead Generation — Find high-intent buyers in live Twitter, Instagram, and Reddit conversations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Lead Generation — Find high-intent buyers in live Twitter, Instagram, and Reddit conversations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

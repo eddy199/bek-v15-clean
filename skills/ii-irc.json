@@ -1,0 +1,6 @@
+{
+  "name": "ii-irc",
+  "command": "ii-irc",
+  "description": "Persistent IRC presence using ii (minimalist file-based IRC client)",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent IRC presence using ii (minimalist file-based IRC client).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

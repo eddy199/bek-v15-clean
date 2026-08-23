@@ -1,0 +1,6 @@
+{
+  "name": "colorpool-skills",
+  "command": "colorpool-skills",
+  "description": "ColorPool DEX — Chromia's decentralized exchange for token swaps, liquidity pools, and balance management.",
+  "prompt": "Tu es un agent expert spécialisé dans : ColorPool DEX — Chromia's decentralized exchange for token swaps, liquidity pools, and balance management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

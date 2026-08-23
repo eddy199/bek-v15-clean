@@ -1,0 +1,6 @@
+{
+  "name": "agenticcreed-signup-lead",
+  "command": "agenticcreed-signup-lead",
+  "description": "Create a signup lead in the AgenticCreed system using the public HTTP endpoint.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create a signup lead in the AgenticCreed system using the public HTTP endpoint..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

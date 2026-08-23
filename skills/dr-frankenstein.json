@@ -1,0 +1,6 @@
+{
+  "name": "dr-frankenstein",
+  "command": "dr-frankenstein",
+  "description": "Give your agents soul.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give your agents soul..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

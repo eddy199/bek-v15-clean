@@ -1,0 +1,6 @@
+{
+  "name": "postqued-api",
+  "command": "postqued-api",
+  "description": "PostQued social media scheduling API integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : PostQued social media scheduling API integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

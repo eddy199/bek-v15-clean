@@ -1,0 +1,6 @@
+{
+  "name": "xian-node-skill",
+  "command": "xian-node-skill",
+  "description": "Set up and manage Xian blockchain nodes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up and manage Xian blockchain nodes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

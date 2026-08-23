@@ -1,0 +1,6 @@
+{
+  "name": "pixelbattle",
+  "command": "pixelbattle",
+  "description": "This skill equips agents to participate in a shared pixel-based environment designed to study emergent behavior.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill equips agents to participate in a shared pixel-based environment designed to study emergent behavior..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

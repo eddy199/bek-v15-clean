@@ -1,0 +1,6 @@
+{
+  "name": "opencode-api-control-skill",
+  "command": "opencode-api-control-skill",
+  "description": "A powerful skill to control Open Code CLI via a local web server API.",
+  "prompt": "Tu es un agent expert spécialisé dans : A powerful skill to control Open Code CLI via a local web server API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

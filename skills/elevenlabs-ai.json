@@ -1,0 +1,6 @@
+{
+  "name": "elevenlabs-ai",
+  "command": "elevenlabs-ai",
+  "description": "OpenClaw skill for ElevenLabs APIs: text-to-speech, speech-to-speech, realtime speech-to-text, voices/models.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw skill for ElevenLabs APIs: text-to-speech, speech-to-speech, realtime speech-to-text, voices/models..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

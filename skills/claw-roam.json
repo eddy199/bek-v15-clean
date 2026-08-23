@@ -1,0 +1,6 @@
+{
+  "name": "claw-roam",
+  "command": "claw-roam",
+  "description": "Sync OpenClaw workspace between multiple machines.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sync OpenClaw workspace between multiple machines..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

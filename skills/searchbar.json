@@ -1,0 +1,6 @@
+{
+  "name": "searchbar",
+  "command": "searchbar",
+  "description": "Expert guidance on SearchBar, a customizable SwiftUI search component.",
+  "prompt": "Tu es un agent expert spécialisé dans : Expert guidance on SearchBar, a customizable SwiftUI search component..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

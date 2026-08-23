@@ -1,0 +1,6 @@
+{
+  "name": "wps-skill",
+  "command": "wps-skill",
+  "description": "WPS Office automation skill supporting document creation, Markdown conversion, and image-text layout.",
+  "prompt": "Tu es un agent expert spécialisé dans : WPS Office automation skill supporting document creation, Markdown conversion, and image-text layout..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

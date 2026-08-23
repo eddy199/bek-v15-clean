@@ -1,0 +1,6 @@
+{
+  "name": "pine-assistant",
+  "command": "pine-assistant",
+  "description": "Handle customer service, bills, reservations, and more via Pine AI — negotiate, cancel, dispute, book, and resolve.",
+  "prompt": "Tu es un agent expert spécialisé dans : Handle customer service, bills, reservations, and more via Pine AI — negotiate, cancel, dispute, book, and resolve..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

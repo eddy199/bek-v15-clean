@@ -1,0 +1,6 @@
+{
+  "name": "jetson-cuda-voice",
+  "command": "jetson-cuda-voice",
+  "description": "Fully offline, CUDA-accelerated local voice assistant pipeline for NVIDIA Jetson.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fully offline, CUDA-accelerated local voice assistant pipeline for NVIDIA Jetson..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "excalidraw-flowchart",
+  "command": "excalidraw-flowchart",
+  "description": "Create Excalidraw flowcharts from descriptions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create Excalidraw flowcharts from descriptions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

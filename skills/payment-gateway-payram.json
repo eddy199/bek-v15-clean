@@ -1,0 +1,6 @@
+{
+  "name": "payment-gateway-payram",
+  "command": "payment-gateway-payram",
+  "description": "Add payments to your app, agent, or SaaS in 10 seconds.",
+  "prompt": "Tu es un agent expert spécialisé dans : Add payments to your app, agent, or SaaS in 10 seconds..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "x-research-but-cheaper",
+  "command": "x-research-but-cheaper",
+  "description": "X/Twitter research skill powered by TwitterAPI.io.",
+  "prompt": "Tu es un agent expert spécialisé dans : X/Twitter research skill powered by TwitterAPI.io..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

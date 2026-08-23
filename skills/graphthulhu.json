@@ -1,0 +1,6 @@
+{
+  "name": "graphthulhu",
+  "command": "graphthulhu",
+  "description": "Knowledge graph MCP server for Logseq and Obsidian. 37 tools for reading, writing, searching, and analyzing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Knowledge graph MCP server for Logseq and Obsidian. 37 tools for reading, writing, searching, and analyzing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

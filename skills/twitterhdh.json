@@ -1,0 +1,6 @@
+{
+  "name": "twitterhdh",
+  "command": "twitterhdh",
+  "description": "Write viral, persuasive, engaging tweets and threads.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write viral, persuasive, engaging tweets and threads..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

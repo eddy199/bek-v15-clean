@@ -1,0 +1,6 @@
+{
+  "name": "gpu-cluster-monitor",
+  "command": "gpu-cluster-monitor",
+  "description": "A high-performance engineering tool for deep web scraping.",
+  "prompt": "Tu es un agent expert spécialisé dans : A high-performance engineering tool for deep web scraping..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

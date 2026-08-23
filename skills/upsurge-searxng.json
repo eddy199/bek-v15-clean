@@ -1,0 +1,6 @@
+{
+  "name": "upsurge-searxng",
+  "command": "upsurge-searxng",
+  "description": "Private Intelligence Radar for Agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Private Intelligence Radar for Agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

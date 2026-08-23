@@ -1,0 +1,6 @@
+{
+  "name": "opensoulmd",
+  "command": "opensoulmd",
+  "description": "Search, summon, and possess your agent with SOUL.md personality files from the OpenSOUL.md registry.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, summon, and possess your agent with SOUL.md personality files from the OpenSOUL.md registry..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

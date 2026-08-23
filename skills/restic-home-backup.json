@@ -1,0 +1,6 @@
+{
+  "name": "restic-home-backup",
+  "command": "restic-home-backup",
+  "description": "Design, implement, and operate encrypted restic backups for Linux home directories with systemd automation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Design, implement, and operate encrypted restic backups for Linux home directories with systemd automation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

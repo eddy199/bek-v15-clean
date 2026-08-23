@@ -1,0 +1,6 @@
+{
+  "name": "brw-positioning-basics",
+  "command": "brw-positioning-basics",
+  "description": "Help founders and marketers nail their positioning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Help founders and marketers nail their positioning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

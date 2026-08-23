@@ -1,0 +1,6 @@
+{
+  "name": "warden-messari-agent",
+  "command": "warden-messari-agent",
+  "description": "Communicate with the Messari Deep Research agent by Warden Protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Communicate with the Messari Deep Research agent by Warden Protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

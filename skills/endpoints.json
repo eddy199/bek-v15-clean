@@ -1,0 +1,6 @@
+{
+  "name": "endpoints",
+  "command": "endpoints",
+  "description": "Endpoints document management API toolkit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Endpoints document management API toolkit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

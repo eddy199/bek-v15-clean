@@ -1,0 +1,6 @@
+{
+  "name": "ddgs",
+  "command": "ddgs",
+  "description": "This skill implements web search functionality via the DDGS (Dux Distributed Global Search) engine, aggregating.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill implements web search functionality via the DDGS (Dux Distributed Global Search) engine, aggregating..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

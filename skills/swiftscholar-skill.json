@@ -1,0 +1,6 @@
+{
+  "name": "swiftscholar-skill",
+  "command": "swiftscholar-skill",
+  "description": "Integrates the SwiftScholar HTTP API for searching, submitting, and analyzing academic papers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrates the SwiftScholar HTTP API for searching, submitting, and analyzing academic papers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

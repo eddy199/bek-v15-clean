@@ -1,0 +1,6 @@
+{
+  "name": "glin-profanity",
+  "command": "glin-profanity",
+  "description": "Profanity detection and content moderation library.",
+  "prompt": "Tu es un agent expert spécialisé dans : Profanity detection and content moderation library..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

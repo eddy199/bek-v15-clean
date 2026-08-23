@@ -1,0 +1,6 @@
+{
+  "name": "revenue-operations",
+  "command": "revenue-operations",
+  "description": "Analyzes pipeline coverage, tracks forecast accuracy with MAPE, and calculates GTM efficiency metrics for SaaS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyzes pipeline coverage, tracks forecast accuracy with MAPE, and calculates GTM efficiency metrics for SaaS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

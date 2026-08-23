@@ -1,0 +1,6 @@
+{
+  "name": "holded-skill",
+  "command": "holded-skill",
+  "description": "Operate Holded ERP through holdedcli to read and update data safely.",
+  "prompt": "Tu es un agent expert spécialisé dans : Operate Holded ERP through holdedcli to read and update data safely..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "martok9803-ci-whisperer",
+  "command": "martok9803-ci-whisperer",
+  "description": "Analyze GitHub Actions failures and propose fixes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze GitHub Actions failures and propose fixes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

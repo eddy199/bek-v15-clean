@@ -1,0 +1,6 @@
+{
+  "name": "tarkov-api",
+  "command": "tarkov-api",
+  "description": "Security-focused Tarkov.dev + optional EFT Wiki operations for hardcore Escape from Tarkov players.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security-focused Tarkov.dev + optional EFT Wiki operations for hardcore Escape from Tarkov players..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

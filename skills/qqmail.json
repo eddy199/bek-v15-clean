@@ -1,0 +1,6 @@
+{
+  "name": "qqmail",
+  "command": "qqmail",
+  "description": "Manage QQ Mail (QQ邮箱) via IMAP/SMTP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage QQ Mail (QQ邮箱) via IMAP/SMTP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

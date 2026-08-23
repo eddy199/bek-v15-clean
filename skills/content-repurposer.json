@@ -1,0 +1,6 @@
+{
+  "name": "content-repurposer",
+  "command": "content-repurposer",
+  "description": "Transform long-form content into platform-optimized snippets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform long-form content into platform-optimized snippets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "landing-page-converter",
+  "command": "landing-page-converter",
+  "description": "Build high-converting landing pages and product sales pages using proven 10-section conversion frameworks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build high-converting landing pages and product sales pages using proven 10-section conversion frameworks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

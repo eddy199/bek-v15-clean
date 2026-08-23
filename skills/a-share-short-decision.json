@@ -1,0 +1,6 @@
+{
+  "name": "a-share-short-decision",
+  "command": "a-share-short-decision",
+  "description": "A-share short-term trading decision skill for 1-5 day horizon.",
+  "prompt": "Tu es un agent expert spécialisé dans : A-share short-term trading decision skill for 1-5 day horizon..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

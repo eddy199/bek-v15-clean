@@ -1,0 +1,6 @@
+{
+  "name": "geepers-orchestrate",
+  "command": "geepers-orchestrate",
+  "description": "Run multi-agent Dream Cascade (hierarchical 3-tier synthesis) or Dream Swarm (parallel multi-domain search)",
+  "prompt": "Tu es un agent expert spécialisé dans : Run multi-agent Dream Cascade (hierarchical 3-tier synthesis) or Dream Swarm (parallel multi-domain search).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "firecrawler",
+  "command": "firecrawler",
+  "description": "Web scraping and crawling with Firecrawl API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Web scraping and crawling with Firecrawl API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

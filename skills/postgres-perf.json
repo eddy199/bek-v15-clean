@@ -1,0 +1,6 @@
+{
+  "name": "postgres-perf",
+  "command": "postgres-perf",
+  "description": "PostgreSQL performance optimization and best practices.",
+  "prompt": "Tu es un agent expert spécialisé dans : PostgreSQL performance optimization and best practices..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

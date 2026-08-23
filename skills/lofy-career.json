@@ -1,0 +1,6 @@
+{
+  "name": "lofy-career",
+  "command": "lofy-career",
+  "description": "Job search automation for the Lofy AI assistant — application tracking, resume tailoring to job descriptions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Job search automation for the Lofy AI assistant — application tracking, resume tailoring to job descriptions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

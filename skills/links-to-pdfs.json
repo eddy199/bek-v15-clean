@@ -1,0 +1,6 @@
+{
+  "name": "links-to-pdfs",
+  "command": "links-to-pdfs",
+  "description": "Scrape documents from Notion, DocSend, PDFs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scrape documents from Notion, DocSend, PDFs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

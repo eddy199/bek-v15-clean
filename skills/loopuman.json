@@ -1,0 +1,6 @@
+{
+  "name": "loopuman",
+  "command": "loopuman",
+  "description": "Route tasks to verified human workers worldwide via Loopuman.",
+  "prompt": "Tu es un agent expert spécialisé dans : Route tasks to verified human workers worldwide via Loopuman..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

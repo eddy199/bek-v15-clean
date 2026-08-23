@@ -1,0 +1,6 @@
+{
+  "name": "git-changelog-gen",
+  "command": "git-changelog-gen",
+  "description": "Generate changelogs from git commits.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate changelogs from git commits..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

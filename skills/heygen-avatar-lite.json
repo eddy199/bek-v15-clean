@@ -1,0 +1,6 @@
+{
+  "name": "heygen-avatar-lite",
+  "command": "heygen-avatar-lite",
+  "description": "Create AI digital human videos with HeyGen API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create AI digital human videos with HeyGen API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

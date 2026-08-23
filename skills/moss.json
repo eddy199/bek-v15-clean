@@ -1,0 +1,6 @@
+{
+  "name": "moss",
+  "command": "moss",
+  "description": "Documentation and capabilities reference for Moss semantic search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Documentation and capabilities reference for Moss semantic search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

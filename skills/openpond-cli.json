@@ -1,0 +1,6 @@
+{
+  "name": "openpond-cli",
+  "command": "openpond-cli",
+  "description": "Use the OpenPond CLI to create repos, watch deployments, and run tools without the web UI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the OpenPond CLI to create repos, watch deployments, and run tools without the web UI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

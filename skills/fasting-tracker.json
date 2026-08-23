@@ -1,0 +1,6 @@
+{
+  "name": "fasting-tracker",
+  "command": "fasting-tracker",
+  "description": "Track intermittent fasting windows, extended fasts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track intermittent fasting windows, extended fasts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

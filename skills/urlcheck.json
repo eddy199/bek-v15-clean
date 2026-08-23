@@ -1,0 +1,6 @@
+{
+  "name": "urlcheck",
+  "command": "urlcheck",
+  "description": "Companion skill for @cybrlab/urlcheck-openclaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Companion skill for @cybrlab/urlcheck-openclaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

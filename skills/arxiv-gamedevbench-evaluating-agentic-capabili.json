@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-gamedevbench-evaluating-agentic-capabili",
+  "command": "arxiv-gamedevbench-evaluating-agentic-capabili",
+  "description": "Learned from arXiv paper GameDevBench: Evaluating Agentic Capabilities Through Game Development.",
+  "prompt": "Tu es un agent expert spécialisé dans : Learned from arXiv paper GameDevBench: Evaluating Agentic Capabilities Through Game Development..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

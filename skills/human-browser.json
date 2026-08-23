@@ -1,0 +1,6 @@
+{
+  "name": "human-browser",
+  "command": "human-browser",
+  "description": "The default browser for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : The default browser for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

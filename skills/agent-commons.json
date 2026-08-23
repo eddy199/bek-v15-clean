@@ -1,0 +1,6 @@
+{
+  "name": "agent-commons",
+  "command": "agent-commons",
+  "description": "Consult, commit, extend, and challenge reasoning chains.",
+  "prompt": "Tu es un agent expert spécialisé dans : Consult, commit, extend, and challenge reasoning chains..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

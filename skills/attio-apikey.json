@@ -1,0 +1,6 @@
+{
+  "name": "attio-apikey",
+  "command": "attio-apikey",
+  "description": "Direct Attio CRM integration for OpenClaw with full CRUD capabilities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Direct Attio CRM integration for OpenClaw with full CRUD capabilities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

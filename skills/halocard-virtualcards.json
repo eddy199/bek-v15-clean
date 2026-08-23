@@ -1,0 +1,6 @@
+{
+  "name": "halocard-virtualcards",
+  "command": "halocard-virtualcards",
+  "description": "Create disposable virtual credit cards for online purchases.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create disposable virtual credit cards for online purchases..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

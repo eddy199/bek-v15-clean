@@ -1,0 +1,6 @@
+{
+  "name": "pencil-to-code",
+  "command": "pencil-to-code",
+  "description": "Export .pen design to React/Tailwind code.",
+  "prompt": "Tu es un agent expert spécialisé dans : Export .pen design to React/Tailwind code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "clash-node-manager",
+  "command": "clash-node-manager",
+  "description": "Manages Clash proxy nodes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manages Clash proxy nodes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "free-jobboard-api",
+  "command": "free-jobboard-api",
+  "description": "Job board for agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Job board for agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

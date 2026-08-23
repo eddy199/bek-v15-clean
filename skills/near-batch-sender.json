@@ -1,0 +1,6 @@
+{
+  "name": "near-batch-sender",
+  "command": "near-batch-sender",
+  "description": "Batch operations for NEAR tokens - send to multiple recipients, transfer NFTs, claim rewards with cost estimation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Batch operations for NEAR tokens - send to multiple recipients, transfer NFTs, claim rewards with cost estimation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

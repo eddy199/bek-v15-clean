@@ -1,0 +1,6 @@
+{
+  "name": "notes-reminders",
+  "command": "notes-reminders",
+  "description": "Manage quick notes and time-based reminders.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage quick notes and time-based reminders..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

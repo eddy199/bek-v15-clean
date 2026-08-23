@@ -1,0 +1,6 @@
+{
+  "name": "gousto",
+  "command": "gousto",
+  "description": "Search and browse 9,000+ Gousto recipes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and browse 9,000+ Gousto recipes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "solo-validate",
+  "command": "solo-validate",
+  "description": "Score startup idea through S.E.E.D. niche check + STREAM 6-layer analysis + Devil's Advocate inversion, auto-pick.",
+  "prompt": "Tu es un agent expert spécialisé dans : Score startup idea through S.E.E.D. niche check + STREAM 6-layer analysis + Devil's Advocate inversion, auto-pick..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

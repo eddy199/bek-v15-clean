@@ -1,0 +1,6 @@
+{
+  "name": "passo",
+  "command": "passo",
+  "description": "Give your user remote access to a browser on your server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give your user remote access to a browser on your server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

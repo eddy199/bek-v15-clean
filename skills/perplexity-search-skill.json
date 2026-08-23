@@ -1,0 +1,6 @@
+{
+  "name": "perplexity-search-skill",
+  "command": "perplexity-search-skill",
+  "description": "Search the web using Perplexity's Search API for ranked, real-time web results with advanced filtering.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search the web using Perplexity's Search API for ranked, real-time web results with advanced filtering..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

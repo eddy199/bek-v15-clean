@@ -1,0 +1,6 @@
+{
+  "name": "task-resume",
+  "command": "task-resume",
+  "description": "Automatic interrupted-task resume workflow with queueing and recovery.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatic interrupted-task resume workflow with queueing and recovery..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "simplified-social-media",
+  "command": "simplified-social-media",
+  "description": "Manage your entire social media presence — post, schedule, and analyze — directly from your AI coding tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage your entire social media presence — post, schedule, and analyze — directly from your AI coding tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

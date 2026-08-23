@@ -1,0 +1,6 @@
+{
+  "name": "security-guardian",
+  "command": "security-guardian",
+  "description": "Automated security auditing for OpenClaw projects.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated security auditing for OpenClaw projects..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

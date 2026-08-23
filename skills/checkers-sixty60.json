@@ -1,0 +1,6 @@
+{
+  "name": "checkers-sixty60",
+  "command": "checkers-sixty60",
+  "description": "Shop on Checkers.co.za Sixty60 delivery service via browser.",
+  "prompt": "Tu es un agent expert spécialisé dans : Shop on Checkers.co.za Sixty60 delivery service via browser..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

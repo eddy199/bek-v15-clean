@@ -1,0 +1,20 @@
+# bek-v15-clean/apps/api/src/conversations/conversations.router.ts
+
+- ConversationsRouter · class · L30-L138 — class ConversationsRouter
+- constructor · method · L31-L36 — constructor( @Inject(ConversationsService) private readonly conversations: ConversationsService, @Inject(ConversationSharingService) private readonly sharing: ConversationSharingService, )
+- list · method · L39-L44 — async list( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof conversationListInput>, )
+- builderList · method · L47-L49 — async builderList(@Ctx() ctx: AuthedTrpcContext)
+- builderResources · method · L52-L54 — async builderResources(@Ctx() ctx: AuthedTrpcContext, @Input("q") q: string)
+- builderById · method · L57-L59 — async builderById(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- events · method · L62-L67 — async events( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof conversationEventsInput>, )
+- save · method · L70-L75 — async save( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof conversationSaveInput>, )
+- createBuilder · method · L78-L83 — async createBuilder( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof builderConversationCreateInput>, )
+- submitBuilder · method · L86-L91 — async submitBuilder( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof builderConversationSubmitInput>, )
+- answerBuilderQuestion · method · L94-L99 — async answerBuilderQuestion( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof builderQuestionResponseInput>, )
+- rateBuilderResponse · method · L102-L107 — async rateBuilderResponse( @Ctx() ctx: AuthedTrpcContext, @Input() input: z.infer<typeof builderResponseRatingInput>, )
+- markRead · method · L110-L112 — async markRead(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- shareStatus · method · L115-L117 — async shareStatus(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- createShare · method · L120-L122 — async createShare(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- revokeShare · method · L125-L127 — async revokeShare(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)
+- shared · method · L130-L132 — async shared(@Ctx() ctx: AuthedTrpcContext, @Input("token") token: string)
+- remove · method · L135-L137 — async remove(@Ctx() ctx: AuthedTrpcContext, @Input("id") id: string)

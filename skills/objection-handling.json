@@ -1,0 +1,6 @@
+{
+  "name": "objection-handling",
+  "command": "objection-handling",
+  "description": "Overcome buyer objections using proven frameworks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Overcome buyer objections using proven frameworks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

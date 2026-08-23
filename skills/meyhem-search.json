@@ -1,0 +1,6 @@
+{
+  "name": "meyhem-search",
+  "command": "meyhem-search",
+  "description": "Agent-native search ranked by what actually helps agents complete tasks. No API key, no signup.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent-native search ranked by what actually helps agents complete tasks. No API key, no signup..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "memepickup-wingman",
+  "command": "memepickup-wingman",
+  "description": "Dating wingman that generates openers, replies, profile analysis, date plans, and coaching via the MemePickup API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Dating wingman that generates openers, replies, profile analysis, date plans, and coaching via the MemePickup API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

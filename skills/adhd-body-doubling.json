@@ -1,0 +1,6 @@
+{
+  "name": "adhd-body-doubling",
+  "command": "adhd-body-doubling",
+  "description": "Punk-style ADHD body doubling for founders.",
+  "prompt": "Tu es un agent expert spécialisé dans : Punk-style ADHD body doubling for founders..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

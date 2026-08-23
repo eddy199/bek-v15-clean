@@ -1,0 +1,6 @@
+{
+  "name": "hello-demo",
+  "command": "hello-demo",
+  "description": "A simple skill to greet users and demonstrate basic OpenCLAW skill structure.",
+  "prompt": "Tu es un agent expert spécialisé dans : A simple skill to greet users and demonstrate basic OpenCLAW skill structure..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

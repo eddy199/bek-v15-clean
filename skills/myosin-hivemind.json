@@ -1,0 +1,6 @@
+{
+  "name": "myosin-hivemind",
+  "command": "myosin-hivemind",
+  "description": "Search Hivemind's curated Web3 marketing knowledge base (RAG) for practitioner insights, frameworks, playbooks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Hivemind's curated Web3 marketing knowledge base (RAG) for practitioner insights, frameworks, playbooks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

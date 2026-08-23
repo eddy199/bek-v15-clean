@@ -1,0 +1,6 @@
+{
+  "name": "samsung-health",
+  "command": "samsung-health",
+  "description": "Analyze Samsung Health Connect data synced to Google Drive.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze Samsung Health Connect data synced to Google Drive..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

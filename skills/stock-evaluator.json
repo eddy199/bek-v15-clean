@@ -1,0 +1,6 @@
+{
+  "name": "stock-evaluator",
+  "command": "stock-evaluator",
+  "description": "Comprehensive evaluation of potential stock investments combining valuation analysis, fundamental research.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive evaluation of potential stock investments combining valuation analysis, fundamental research..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

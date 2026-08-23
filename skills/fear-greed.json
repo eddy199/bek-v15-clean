@@ -1,0 +1,6 @@
+{
+  "name": "fear-greed",
+  "command": "fear-greed",
+  "description": "Embeddable Fear & Greed Index for crypto dashboards.",
+  "prompt": "Tu es un agent expert spécialisé dans : Embeddable Fear & Greed Index for crypto dashboards..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "domain-email-forwarding",
+  "command": "domain-email-forwarding",
+  "description": "Set up email forwarding for custom domains to receive verification codes, password resets, and other emails.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up email forwarding for custom domains to receive verification codes, password resets, and other emails..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

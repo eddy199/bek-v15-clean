@@ -1,0 +1,6 @@
+{
+  "name": "skills-3",
+  "command": "skills-3",
+  "description": "Build AI agents with console.agent() - the jQuery of AI Agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build AI agents with console.agent() - the jQuery of AI Agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

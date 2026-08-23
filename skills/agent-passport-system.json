@@ -1,0 +1,6 @@
+{
+  "name": "agent-passport-system",
+  "command": "agent-passport-system",
+  "description": "Give AI agents cryptographic identity, scoped delegation, values governance, and deliberative consensus.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give AI agents cryptographic identity, scoped delegation, values governance, and deliberative consensus..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "byr-cli",
+  "command": "byr-cli",
+  "description": "Use BYR CLI for auth, search, detail inspection, and safe torrent download planning with JSON envelopes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use BYR CLI for auth, search, detail inspection, and safe torrent download planning with JSON envelopes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

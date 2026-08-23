@@ -1,0 +1,6 @@
+{
+  "name": "upnote",
+  "command": "upnote",
+  "description": "Manage UpNote notes and notebooks via x-callback-url automation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage UpNote notes and notebooks via x-callback-url automation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

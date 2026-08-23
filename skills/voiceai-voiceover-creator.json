@@ -1,0 +1,6 @@
+{
+  "name": "voiceai-voiceover-creator",
+  "command": "voiceai-voiceover-creator",
+  "description": "Turn scripts into publishable voiceovers with Voice.ai TTS, including segments, chapters, captions, and video muxing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn scripts into publishable voiceovers with Voice.ai TTS, including segments, chapters, captions, and video muxing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

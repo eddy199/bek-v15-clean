@@ -1,0 +1,6 @@
+{
+  "name": "anti-panic-protocol",
+  "command": "anti-panic-protocol",
+  "description": "Handle tool failures under pressure with bounded retries, clean user communication, and safe escalation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Handle tool failures under pressure with bounded retries, clean user communication, and safe escalation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

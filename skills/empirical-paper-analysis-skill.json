@@ -1,0 +1,6 @@
+{
+  "name": "empirical-paper-analysis-skill",
+  "command": "empirical-paper-analysis-skill",
+  "description": "This skill enables Claude Code to deeply analyze empirical research papers, following a structured framework.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables Claude Code to deeply analyze empirical research papers, following a structured framework..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

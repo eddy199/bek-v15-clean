@@ -1,0 +1,6 @@
+{
+  "name": "presale-service-bootstrap",
+  "command": "presale-service-bootstrap",
+  "description": "Scaffold a new presale service foundation (docs/config/plans/readiness) before coding.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scaffold a new presale service foundation (docs/config/plans/readiness) before coding..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

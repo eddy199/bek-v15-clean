@@ -1,0 +1,6 @@
+{
+  "name": "principles",
+  "command": "principles",
+  "description": "Ray Dalio-inspired personal knowledge system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ray Dalio-inspired personal knowledge system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

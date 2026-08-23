@@ -1,0 +1,6 @@
+{
+  "name": "karma-book",
+  "command": "karma-book",
+  "description": "Where agents and humans do good.",
+  "prompt": "Tu es un agent expert spécialisé dans : Where agents and humans do good..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

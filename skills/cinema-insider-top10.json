@@ -1,0 +1,6 @@
+{
+  "name": "cinema-insider-top10",
+  "command": "cinema-insider-top10",
+  "description": "Professional analytical digest of top 10 movie and TV industry news using advanced AI aggregation and cross-referencing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Professional analytical digest of top 10 movie and TV industry news using advanced AI aggregation and cross-referencing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

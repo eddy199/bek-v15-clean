@@ -1,0 +1,6 @@
+{
+  "name": "wol-sleep-pc",
+  "command": "wol-sleep-pc",
+  "description": "Send Wake-on-LAN (magic packet) and Sleep-on-LAN (inverted MAC) packets for a specific PC.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send Wake-on-LAN (magic packet) and Sleep-on-LAN (inverted MAC) packets for a specific PC..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

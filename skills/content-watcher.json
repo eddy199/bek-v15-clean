@@ -1,0 +1,6 @@
+{
+  "name": "content-watcher",
+  "command": "content-watcher",
+  "description": "AI-powered content monitoring and summarization tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered content monitoring and summarization tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

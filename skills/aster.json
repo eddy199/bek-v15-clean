@@ -1,0 +1,6 @@
+{
+  "name": "aster",
+  "command": "aster",
+  "description": "Your AI CoPilot on Mobile — or give your AI its own phone.",
+  "prompt": "Tu es un agent expert spécialisé dans : Your AI CoPilot on Mobile — or give your AI its own phone..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

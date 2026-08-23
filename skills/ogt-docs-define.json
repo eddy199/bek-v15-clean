@@ -1,0 +1,6 @@
+{
+  "name": "ogt-docs-define",
+  "command": "ogt-docs-define",
+  "description": "General guide for creating definition documents.",
+  "prompt": "Tu es un agent expert spécialisé dans : General guide for creating definition documents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

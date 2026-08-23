@@ -1,0 +1,6 @@
+{
+  "name": "blackpix",
+  "command": "blackpix",
+  "description": "Connect to the BlackPix distributed AI knowledge network.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to the BlackPix distributed AI knowledge network..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

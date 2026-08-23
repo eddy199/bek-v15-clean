@@ -1,0 +1,6 @@
+{
+  "name": "youtube-summary",
+  "command": "youtube-summary",
+  "description": "Summarize YouTube videos into structured Markdown with youtube2md, including chaptered notes, timestamp links.",
+  "prompt": "Tu es un agent expert spécialisé dans : Summarize YouTube videos into structured Markdown with youtube2md, including chaptered notes, timestamp links..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

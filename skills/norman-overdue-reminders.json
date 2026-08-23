@@ -1,0 +1,6 @@
+{
+  "name": "norman-overdue-reminders",
+  "command": "norman-overdue-reminders",
+  "description": "Find overdue invoices and send payment reminders (Zahlungserinnerungen / Mahnungen) to clients.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find overdue invoices and send payment reminders (Zahlungserinnerungen / Mahnungen) to clients..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

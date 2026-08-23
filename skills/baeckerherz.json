@@ -1,0 +1,6 @@
+{
+  "name": "baeckerherz",
+  "command": "baeckerherz",
+  "description": "Baeckerherz namespace for Netsnek e.U. bakery management platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Baeckerherz namespace for Netsnek e.U. bakery management platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

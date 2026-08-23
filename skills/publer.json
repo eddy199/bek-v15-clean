@@ -1,0 +1,6 @@
+{
+  "name": "publer",
+  "command": "publer",
+  "description": "Post content to social media via the Publer API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post content to social media via the Publer API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

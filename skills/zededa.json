@@ -1,0 +1,6 @@
+{
+  "name": "zededa",
+  "command": "zededa",
+  "description": "Complete ZEDEDA edge management API client — 473 endpoints across 11 service domains for edge node, application.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete ZEDEDA edge management API client — 473 endpoints across 11 service domains for edge node, application..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

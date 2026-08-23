@@ -1,0 +1,6 @@
+{
+  "name": "relational-permission",
+  "command": "relational-permission",
+  "description": "Relational Permission exists to prevent coercion, extraction, and collapse of plurality.",
+  "prompt": "Tu es un agent expert spécialisé dans : Relational Permission exists to prevent coercion, extraction, and collapse of plurality..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

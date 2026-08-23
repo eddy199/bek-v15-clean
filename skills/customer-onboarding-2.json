@@ -1,0 +1,6 @@
+{
+  "name": "customer-onboarding-2",
+  "command": "customer-onboarding-2",
+  "description": "Design and execute customer onboarding that drives activation and retention.",
+  "prompt": "Tu es un agent expert spécialisé dans : Design and execute customer onboarding that drives activation and retention..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

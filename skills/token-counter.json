@@ -1,0 +1,6 @@
+{
+  "name": "token-counter",
+  "command": "token-counter",
+  "description": "Track and analyze OpenClaw token usage across main, cron, and sub-agent sessions with category, client, model.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track and analyze OpenClaw token usage across main, cron, and sub-agent sessions with category, client, model..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

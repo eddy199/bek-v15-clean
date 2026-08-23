@@ -1,0 +1,6 @@
+{
+  "name": "quantumos",
+  "command": "quantumos",
+  "description": "Install and manage QuantumOS, an AI command center dashboard for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Install and manage QuantumOS, an AI command center dashboard for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "stock-price-checker",
+  "command": "stock-price-checker",
+  "description": "Check stock prices using yfinance library.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check stock prices using yfinance library..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

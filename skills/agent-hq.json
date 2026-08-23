@@ -1,0 +1,6 @@
+{
+  "name": "agent-hq",
+  "command": "agent-hq",
+  "description": "Deploy the Agent HQ mission-control stack (Express + React + Telegram notifier / Jarvis summary) so other Clawdbot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy the Agent HQ mission-control stack (Express + React + Telegram notifier / Jarvis summary) so other Clawdbot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

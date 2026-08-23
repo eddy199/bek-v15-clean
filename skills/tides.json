@@ -1,0 +1,6 @@
+{
+  "name": "tides",
+  "command": "tides",
+  "description": "Access global ocean tides model.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access global ocean tides model..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

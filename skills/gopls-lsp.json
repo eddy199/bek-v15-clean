@@ -1,0 +1,6 @@
+{
+  "name": "gopls-lsp",
+  "command": "gopls-lsp",
+  "description": "Go language server (gopls) providing code intelligence, refactoring, and analysis for .go files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Go language server (gopls) providing code intelligence, refactoring, and analysis for .go files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

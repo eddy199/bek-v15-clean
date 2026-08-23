@@ -1,0 +1,6 @@
+{
+  "name": "ouyang",
+  "command": "ouyang",
+  "description": "Local RAG system for agent memory using ChromaDB and sentence-transformers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local RAG system for agent memory using ChromaDB and sentence-transformers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

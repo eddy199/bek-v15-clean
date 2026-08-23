@@ -1,0 +1,6 @@
+{
+  "name": "competitor-watch",
+  "command": "competitor-watch",
+  "description": "Know what your competitors ship before their customers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Know what your competitors ship before their customers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

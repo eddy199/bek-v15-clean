@@ -1,0 +1,6 @@
+{
+  "name": "x-recap",
+  "command": "x-recap",
+  "description": "Monitor and recap official X (Twitter) updates using actionbook-rs screenshots.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor and recap official X (Twitter) updates using actionbook-rs screenshots..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

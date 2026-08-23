@@ -1,0 +1,6 @@
+{
+  "name": "feishu-meeting-assistant",
+  "command": "feishu-meeting-assistant",
+  "description": "Scans your Feishu Calendar for upcoming events with attached documents (Doc, Sheet, Bitable), reads their content.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scans your Feishu Calendar for upcoming events with attached documents (Doc, Sheet, Bitable), reads their content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

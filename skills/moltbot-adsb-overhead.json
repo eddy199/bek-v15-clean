@@ -1,0 +1,6 @@
+{
+  "name": "moltbot-adsb-overhead",
+  "command": "moltbot-adsb-overhead",
+  "description": "Notify when aircraft are overhead.",
+  "prompt": "Tu es un agent expert spécialisé dans : Notify when aircraft are overhead..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

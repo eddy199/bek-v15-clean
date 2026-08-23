@@ -1,0 +1,6 @@
+{
+  "name": "ethereum-history",
+  "command": "ethereum-history",
+  "description": "Read-only factual data about historical Ethereum mainnet contracts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read-only factual data about historical Ethereum mainnet contracts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

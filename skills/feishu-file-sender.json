@@ -1,0 +1,6 @@
+{
+  "name": "feishu-file-sender",
+  "command": "feishu-file-sender",
+  "description": "OpenClaw agents can generate files (Excel, Word, PPT, PDF, images, code, etc.) but cannot send them directly.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw agents can generate files (Excel, Word, PPT, PDF, images, code, etc.) but cannot send them directly..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

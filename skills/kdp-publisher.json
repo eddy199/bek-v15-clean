@@ -1,0 +1,6 @@
+{
+  "name": "kdp-publisher",
+  "command": "kdp-publisher",
+  "description": "Helps agents create, format, and publish children's books and activity books to Amazon KDP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps agents create, format, and publish children's books and activity books to Amazon KDP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

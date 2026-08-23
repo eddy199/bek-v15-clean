@@ -1,0 +1,6 @@
+{
+  "name": "solo-video-promo",
+  "command": "solo-video-promo",
+  "description": "Generate promo video plan with 30-45s script, shot-by-shot storyboard, and optional Remotion/Montage-tool config.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate promo video plan with 30-45s script, shot-by-shot storyboard, and optional Remotion/Montage-tool config..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

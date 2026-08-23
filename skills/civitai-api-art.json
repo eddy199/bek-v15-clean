@@ -1,0 +1,6 @@
+{
+  "name": "civitai-api-art",
+  "command": "civitai-api-art",
+  "description": "Generate AI artwork using CivitAI's JavaScript SDK.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI artwork using CivitAI's JavaScript SDK..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

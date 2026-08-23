@@ -1,0 +1,6 @@
+{
+  "name": "cs-scripts",
+  "command": "cs-scripts",
+  "description": "Generate context-aware CS responses.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate context-aware CS responses..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

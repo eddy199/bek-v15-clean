@@ -1,0 +1,6 @@
+{
+  "name": "ontopo",
+  "command": "ontopo",
+  "description": "Search Israeli restaurants and check table availability on Ontopo.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Israeli restaurants and check table availability on Ontopo..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

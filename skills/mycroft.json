@@ -1,0 +1,6 @@
+{
+  "name": "mycroft",
+  "command": "mycroft",
+  "description": "EPUB and ebook ingestion, local vector index, and Q&A CLI for books.",
+  "prompt": "Tu es un agent expert spécialisé dans : EPUB and ebook ingestion, local vector index, and Q&A CLI for books..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

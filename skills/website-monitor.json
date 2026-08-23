@@ -1,0 +1,6 @@
+{
+  "name": "website-monitor",
+  "command": "website-monitor",
+  "description": "Lightweight website uptime monitor.",
+  "prompt": "Tu es un agent expert spécialisé dans : Lightweight website uptime monitor..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

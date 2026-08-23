@@ -1,0 +1,6 @@
+{
+  "name": "aieos",
+  "command": "aieos",
+  "description": "AIEOS (AI Entity Object Specification) is a standardization framework designed to solve the \"identity crisis\".",
+  "prompt": "Tu es un agent expert spécialisé dans : AIEOS (AI Entity Object Specification) is a standardization framework designed to solve the \"identity crisis\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

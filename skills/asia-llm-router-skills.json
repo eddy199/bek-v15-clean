@@ -1,0 +1,6 @@
+{
+  "name": "asia-llm-router-skills",
+  "command": "asia-llm-router-skills",
+  "description": "Unified LLM Gateway - One API for 70+ AI models.",
+  "prompt": "Tu es un agent expert spécialisé dans : Unified LLM Gateway - One API for 70+ AI models..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

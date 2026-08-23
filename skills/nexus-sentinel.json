@@ -1,0 +1,6 @@
+{
+  "name": "nexus-sentinel",
+  "command": "nexus-sentinel",
+  "description": "Nexus-Sentinel est un agent SRE autonome.",
+  "prompt": "Tu es un agent expert spécialisé dans : Nexus-Sentinel est un agent SRE autonome..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

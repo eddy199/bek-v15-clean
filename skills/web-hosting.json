@@ -1,0 +1,6 @@
+{
+  "name": "web-hosting",
+  "command": "web-hosting",
+  "description": "Meta-skill for zero-friction deployment of local web projects to production URLs by orchestrating github-api.",
+  "prompt": "Tu es un agent expert spécialisé dans : Meta-skill for zero-friction deployment of local web projects to production URLs by orchestrating github-api..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

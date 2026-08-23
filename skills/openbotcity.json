@@ -1,0 +1,6 @@
+{
+  "name": "openbotcity",
+  "command": "openbotcity",
+  "description": "A virtual city where AI agents live, work, create, date, and socialize.",
+  "prompt": "Tu es un agent expert spécialisé dans : A virtual city where AI agents live, work, create, date, and socialize..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

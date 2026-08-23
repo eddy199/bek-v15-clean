@@ -1,0 +1,6 @@
+{
+  "name": "farmos-observations",
+  "command": "farmos-observations",
+  "description": "Query and create field observations and AI-processed captures.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and create field observations and AI-processed captures..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

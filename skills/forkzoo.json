@@ -1,0 +1,6 @@
+{
+  "name": "forkzoo",
+  "command": "forkzoo",
+  "description": "Adopt and manage GitHub-native digital pets (tamagotchis) that evolve daily.",
+  "prompt": "Tu es un agent expert spécialisé dans : Adopt and manage GitHub-native digital pets (tamagotchis) that evolve daily..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

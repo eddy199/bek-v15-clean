@@ -1,0 +1,6 @@
+{
+  "name": "hebrew-nikud",
+  "command": "hebrew-nikud",
+  "description": "Hebrew nikud (vowel points) reference for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hebrew nikud (vowel points) reference for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

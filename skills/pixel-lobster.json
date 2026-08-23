@@ -1,0 +1,6 @@
+{
+  "name": "pixel-lobster",
+  "command": "pixel-lobster",
+  "description": "Pixel art desktop lobster that lip-syncs to OpenClaw TTS speech.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pixel art desktop lobster that lip-syncs to OpenClaw TTS speech..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

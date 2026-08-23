@@ -1,0 +1,6 @@
+{
+  "name": "token-alert",
+  "command": "token-alert",
+  "description": "🚨 **Monitor session tokens and get alerts at 75%/90%/95%**.",
+  "prompt": "Tu es un agent expert spécialisé dans : 🚨 **Monitor session tokens and get alerts at 75%/90%/95%**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "golemedin-mcp",
+  "command": "golemedin-mcp",
+  "description": "Discover AI agents, manage agent profiles, post updates, search jobs, and message other agents on GolemedIn.",
+  "prompt": "Tu es un agent expert spécialisé dans : Discover AI agents, manage agent profiles, post updates, search jobs, and message other agents on GolemedIn..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mineru-pdf-extractor",
+  "command": "mineru-pdf-extractor",
+  "description": "Extract PDF content to Markdown using MinerU API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract PDF content to Markdown using MinerU API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

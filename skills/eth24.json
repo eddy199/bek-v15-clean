@@ -1,0 +1,6 @@
+{
+  "name": "eth24",
+  "command": "eth24",
+  "description": "You are running ETH24, a daily digest tool that surfaces the top tweets for a configured topic.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are running ETH24, a daily digest tool that surfaces the top tweets for a configured topic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

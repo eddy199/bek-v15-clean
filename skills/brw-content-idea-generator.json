@@ -1,0 +1,6 @@
+{
+  "name": "brw-content-idea-generator",
+  "command": "brw-content-idea-generator",
+  "description": "Generate content ideas rooted in positioning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate content ideas rooted in positioning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

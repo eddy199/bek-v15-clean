@@ -1,0 +1,6 @@
+{
+  "name": "yacy",
+  "command": "yacy",
+  "description": "Control and manage a local YaCy search engine instance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control and manage a local YaCy search engine instance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

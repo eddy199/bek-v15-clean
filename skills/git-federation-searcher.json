@@ -1,0 +1,6 @@
+{
+  "name": "git-federation-searcher",
+  "command": "git-federation-searcher",
+  "description": "Search across multiple self-hosted Git instances including Gitea, Forgejo, GitLab, and Codeberg.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search across multiple self-hosted Git instances including Gitea, Forgejo, GitLab, and Codeberg..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

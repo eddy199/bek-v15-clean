@@ -1,0 +1,6 @@
+{
+  "name": "nyne-deep-research",
+  "command": "nyne-deep-research",
+  "description": "Research any person using the Nyne Deep Research API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Research any person using the Nyne Deep Research API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

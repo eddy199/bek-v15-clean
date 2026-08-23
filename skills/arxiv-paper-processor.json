@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-paper-processor",
+  "command": "arxiv-paper-processor",
+  "description": "Tool-only paper processing skill with a manual language parameter: supports batch artifact download for many papers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Tool-only paper processing skill with a manual language parameter: supports batch artifact download for many papers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

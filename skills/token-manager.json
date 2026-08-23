@@ -1,0 +1,6 @@
+{
+  "name": "token-manager",
+  "command": "token-manager",
+  "description": "Universal LLM Token Manager - Monitor usage and provide cost-saving recommendations for Kimi, OpenAI, Anthropic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Universal LLM Token Manager - Monitor usage and provide cost-saving recommendations for Kimi, OpenAI, Anthropic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

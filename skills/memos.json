@@ -1,0 +1,6 @@
+{
+  "name": "memos",
+  "command": "memos",
+  "description": "This skill provides a simple interface to the Memos API (https://usememos.com/docs/api)",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill provides a simple interface to the Memos API (https://usememos.com/docs/api).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

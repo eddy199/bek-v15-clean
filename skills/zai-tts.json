@@ -1,0 +1,6 @@
+{
+  "name": "zai-tts",
+  "command": "zai-tts",
+  "description": "Text-to-speech conversion using GLM-TTS service via the `uvx zai-tts` command for generating audio from text.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-speech conversion using GLM-TTS service via the `uvx zai-tts` command for generating audio from text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

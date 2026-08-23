@@ -1,0 +1,6 @@
+{
+  "name": "capability-awareness",
+  "command": "capability-awareness",
+  "description": "Makes OpenClaw agents aware of custom skills and capabilities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Makes OpenClaw agents aware of custom skills and capabilities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

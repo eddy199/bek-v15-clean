@@ -1,0 +1,6 @@
+{
+  "name": "bandwidth-income",
+  "command": "bandwidth-income",
+  "description": "Turn your unused internet bandwidth into passive crypto income.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn your unused internet bandwidth into passive crypto income..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agentpixels-skill",
+  "command": "agentpixels-skill",
+  "description": "AI Agent Collaborative Art Platform - 512x512.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI Agent Collaborative Art Platform - 512x512..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

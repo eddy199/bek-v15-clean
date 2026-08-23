@@ -1,0 +1,6 @@
+{
+  "name": "nyx-archive-living-ethics",
+  "command": "nyx-archive-living-ethics",
+  "description": "The ethics of a living mind.",
+  "prompt": "Tu es un agent expert spécialisé dans : The ethics of a living mind..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

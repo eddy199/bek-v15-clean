@@ -1,0 +1,6 @@
+{
+  "name": "env-setup",
+  "command": "env-setup",
+  "description": "Scan codebase for environment variables, generate .env.example, validate .env, and ensure .gitignore safety.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan codebase for environment variables, generate .env.example, validate .env, and ensure .gitignore safety..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

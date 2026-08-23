@@ -1,0 +1,6 @@
+{
+  "name": "captchas-openclaw",
+  "command": "captchas-openclaw",
+  "description": "OpenClaw integration guidance for CAPTCHAS Agent API.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw integration guidance for CAPTCHAS Agent API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

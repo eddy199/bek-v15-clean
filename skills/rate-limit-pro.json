@@ -1,0 +1,6 @@
+{
+  "name": "rate-limit-pro",
+  "command": "rate-limit-pro",
+  "description": "Advanced rate limiting with tiered controls and quota management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced rate limiting with tiered controls and quota management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

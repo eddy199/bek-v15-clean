@@ -1,0 +1,6 @@
+{
+  "name": "gutcheck",
+  "command": "gutcheck",
+  "description": "GutCheck - A digestive health tracking application with personalized.",
+  "prompt": "Tu es un agent expert spécialisé dans : GutCheck - A digestive health tracking application with personalized..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

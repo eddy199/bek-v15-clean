@@ -1,0 +1,6 @@
+{
+  "name": "wolt-cli",
+  "command": "wolt-cli",
+  "description": "Use Nikita's local Wolt CLI to browse venues, inspect menus/items/options, and run profile, cart.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Nikita's local Wolt CLI to browse venues, inspect menus/items/options, and run profile, cart..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

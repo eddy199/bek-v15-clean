@@ -1,0 +1,6 @@
+{
+  "name": "ai-act-risk-check",
+  "command": "ai-act-risk-check",
+  "description": "**Description:** Quickly assesses a preliminary risk classification for an AI system based on the high-risk.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Description:** Quickly assesses a preliminary risk classification for an AI system based on the high-risk..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

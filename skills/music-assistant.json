@@ -1,0 +1,6 @@
+{
+  "name": "music-assistant",
+  "command": "music-assistant",
+  "description": "Control Music Assistant (Home Assistant music server) - playback, volume, queue management, and library search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Music Assistant (Home Assistant music server) - playback, volume, queue management, and library search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

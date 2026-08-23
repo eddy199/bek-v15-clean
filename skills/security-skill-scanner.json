@@ -1,0 +1,6 @@
+{
+  "name": "security-skill-scanner",
+  "command": "security-skill-scanner",
+  "description": "Scans OpenClaw skills for security vulnerabilities and suspicious patterns before installation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scans OpenClaw skills for security vulnerabilities and suspicious patterns before installation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

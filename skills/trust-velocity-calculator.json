@@ -1,0 +1,6 @@
+{
+  "name": "trust-velocity-calculator",
+  "command": "trust-velocity-calculator",
+  "description": "Helps calculate the rate at which trust in a skill or agent is decaying by combining time elapsed since last.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps calculate the rate at which trust in a skill or agent is decaying by combining time elapsed since last..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

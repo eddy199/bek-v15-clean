@@ -1,0 +1,6 @@
+{
+  "name": "detox-counter",
+  "command": "detox-counter",
+  "description": "Track any detox with customizable counters, symptom logging.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track any detox with customizable counters, symptom logging..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

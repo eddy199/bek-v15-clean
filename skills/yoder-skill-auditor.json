@@ -1,0 +1,6 @@
+{
+  "name": "yoder-skill-auditor",
+  "command": "yoder-skill-auditor",
+  "description": "The definitive security scanner for OpenClaw skills. 18 security checks including prompt injection detection.",
+  "prompt": "Tu es un agent expert spécialisé dans : The definitive security scanner for OpenClaw skills. 18 security checks including prompt injection detection..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

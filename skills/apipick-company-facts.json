@@ -1,0 +1,6 @@
+{
+  "name": "apipick-company-facts",
+  "command": "apipick-company-facts",
+  "description": "Retrieve public company information by stock ticker symbol or SEC CIK number using the apipick Company Facts API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Retrieve public company information by stock ticker symbol or SEC CIK number using the apipick Company Facts API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

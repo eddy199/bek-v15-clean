@@ -1,0 +1,6 @@
+{
+  "name": "langchain-email-agent",
+  "command": "langchain-email-agent",
+  "description": "The `EmailAgent` class provides an AI-powered email composition and sending capability using LangChain.",
+  "prompt": "Tu es un agent expert spécialisé dans : The `EmailAgent` class provides an AI-powered email composition and sending capability using LangChain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

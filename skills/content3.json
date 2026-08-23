@@ -1,0 +1,6 @@
+{
+  "name": "content3",
+  "command": "content3",
+  "description": "Content3 API for creating videos, managing content, submitting reviews, and posting to social media.",
+  "prompt": "Tu es un agent expert spécialisé dans : Content3 API for creating videos, managing content, submitting reviews, and posting to social media..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

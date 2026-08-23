@@ -1,0 +1,6 @@
+{
+  "name": "avatar-video-messages",
+  "command": "avatar-video-messages",
+  "description": "Generate and send video messages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate and send video messages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

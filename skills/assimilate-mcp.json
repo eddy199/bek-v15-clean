@@ -1,0 +1,6 @@
+{
+  "name": "assimilate-mcp",
+  "command": "assimilate-mcp",
+  "description": "Control Assimilate Live FX / SCRATCH — professional color grading, compositing, and virtual production software.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Assimilate Live FX / SCRATCH — professional color grading, compositing, and virtual production software..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

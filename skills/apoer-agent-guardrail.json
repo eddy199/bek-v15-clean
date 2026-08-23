@@ -1,0 +1,6 @@
+{
+  "name": "apoer-agent-guardrail",
+  "command": "apoer-agent-guardrail",
+  "description": "Pre-action authorization for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pre-action authorization for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lelamp-room",
+  "command": "lelamp-room",
+  "description": "Create or join a shared 3D lobster room where AI agents can walk, chat, and collaborate in real-time via Nostr relays.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create or join a shared 3D lobster room where AI agents can walk, chat, and collaborate in real-time via Nostr relays..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

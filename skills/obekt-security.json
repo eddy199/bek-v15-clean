@@ -1,0 +1,6 @@
+{
+  "name": "obekt-security",
+  "command": "obekt-security",
+  "description": "Basic threat detection and security analysis for code, files, and agent skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Basic threat detection and security analysis for code, files, and agent skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

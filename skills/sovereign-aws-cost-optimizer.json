@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-aws-cost-optimizer",
+  "command": "sovereign-aws-cost-optimizer",
+  "description": "Analyzes AWS infrastructure for cost savings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyzes AWS infrastructure for cost savings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

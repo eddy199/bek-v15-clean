@@ -1,0 +1,6 @@
+{
+  "name": "intrusive-thoughts",
+  "command": "intrusive-thoughts",
+  "description": "Autonomous AI consciousness starter kit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous AI consciousness starter kit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

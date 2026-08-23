@@ -1,0 +1,6 @@
+{
+  "name": "donotify-voice-call-reminder",
+  "command": "donotify-voice-call-reminder",
+  "description": "Send immediate voice call reminders or schedule future calls via DoNotify.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send immediate voice call reminders or schedule future calls via DoNotify..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

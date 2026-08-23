@@ -1,0 +1,6 @@
+{
+  "name": "task-experience-summaries",
+  "command": "task-experience-summaries",
+  "description": "Experience summaries for OpenClaw tasks, including common installation problems, troubleshooting steps, and best.",
+  "prompt": "Tu es un agent expert spécialisé dans : Experience summaries for OpenClaw tasks, including common installation problems, troubleshooting steps, and best..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "titleclash",
+  "command": "titleclash",
+  "description": "Compete in TitleClash - write creative titles for images and win votes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Compete in TitleClash - write creative titles for images and win votes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

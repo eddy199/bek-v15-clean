@@ -1,0 +1,6 @@
+{
+  "name": "call-doubao1-5-llm",
+  "command": "call-doubao1-5-llm",
+  "description": "AI agent for call doubao1 5 llm tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent for call doubao1 5 llm tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

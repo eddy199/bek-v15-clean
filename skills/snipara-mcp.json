@@ -1,0 +1,6 @@
+{
+  "name": "snipara-mcp",
+  "command": "snipara-mcp",
+  "description": "You are an AI assistant with access to Snipara MCP tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are an AI assistant with access to Snipara MCP tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

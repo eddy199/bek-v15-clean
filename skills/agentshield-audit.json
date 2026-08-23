@@ -1,0 +1,6 @@
+{
+  "name": "agentshield-audit",
+  "command": "agentshield-audit",
+  "description": "Initiate and manage AgentShield security audits for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Initiate and manage AgentShield security audits for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

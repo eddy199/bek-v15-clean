@@ -1,0 +1,6 @@
+{
+  "name": "farseek",
+  "command": "farseek",
+  "description": "Find relevant job openings matched to your skills using AI-powered search across 22,700+ company boards and 20+ ATS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find relevant job openings matched to your skills using AI-powered search across 22,700+ company boards and 20+ ATS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

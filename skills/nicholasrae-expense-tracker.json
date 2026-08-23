@@ -1,0 +1,6 @@
+{
+  "name": "nicholasrae-expense-tracker",
+  "command": "nicholasrae-expense-tracker",
+  "description": "Just say what you spent — your AI logs it, categorizes it, and tracks it against your budget.",
+  "prompt": "Tu es un agent expert spécialisé dans : Just say what you spent — your AI logs it, categorizes it, and tracks it against your budget..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "xian-sdk-skill",
+  "command": "xian-sdk-skill",
+  "description": "Build applications on the Xian blockchain using the xian-py Python SDK.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build applications on the Xian blockchain using the xian-py Python SDK..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "george",
+  "command": "george",
+  "description": "Automate George online banking (Erste Bank / Sparkasse Austria)",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate George online banking (Erste Bank / Sparkasse Austria).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

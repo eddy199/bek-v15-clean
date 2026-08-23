@@ -1,0 +1,6 @@
+{
+  "name": "domain-authority-auditor",
+  "command": "domain-authority-auditor",
+  "description": "Use when the user asks to \"audit domain authority\", \"domain trust score\", \"CITE audit\", \"how authoritative is my.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"audit domain authority\", \"domain trust score\", \"CITE audit\", \"how authoritative is my..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

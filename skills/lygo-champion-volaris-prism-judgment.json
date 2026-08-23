@@ -1,0 +1,6 @@
+{
+  "name": "lygo-champion-volaris-prism-judgment",
+  "command": "lygo-champion-volaris-prism-judgment",
+  "description": "LYGO root champion persona helper (VΩLARIS, Prism of Judgment)",
+  "prompt": "Tu es un agent expert spécialisé dans : LYGO root champion persona helper (VΩLARIS, Prism of Judgment).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

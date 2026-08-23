@@ -1,0 +1,6 @@
+{
+  "name": "api-dev",
+  "command": "api-dev",
+  "description": "Scaffold, test, document, and debug REST and GraphQL APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scaffold, test, document, and debug REST and GraphQL APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

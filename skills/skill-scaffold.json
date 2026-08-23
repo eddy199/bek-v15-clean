@@ -1,0 +1,6 @@
+{
+  "name": "skill-scaffold",
+  "command": "skill-scaffold",
+  "description": "AI agent skill scaffolding CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent skill scaffolding CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

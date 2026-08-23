@@ -1,0 +1,6 @@
+{
+  "name": "skylar-serper",
+  "command": "skylar-serper",
+  "description": "Search Google programmatically using Serper.dev API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Google programmatically using Serper.dev API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

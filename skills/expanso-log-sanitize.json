@@ -1,0 +1,6 @@
+{
+  "name": "expanso-log-sanitize",
+  "command": "expanso-log-sanitize",
+  "description": "\"Sanitize log entries by removing passwords, tokens, and sensitive patterns\".",
+  "prompt": "Tu es un agent expert spécialisé dans : \"Sanitize log entries by removing passwords, tokens, and sensitive patterns\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

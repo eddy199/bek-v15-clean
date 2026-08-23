@@ -1,0 +1,6 @@
+{
+  "name": "daolv-hotel-booking-assistant",
+  "command": "daolv-hotel-booking-assistant",
+  "description": "Hotel booking-decision assistant using ai-go-hotel MCP (searchHotels + getHotelDetail)",
+  "prompt": "Tu es un agent expert spécialisé dans : Hotel booking-decision assistant using ai-go-hotel MCP (searchHotels + getHotelDetail).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "neo-graphql-ts-generator",
+  "command": "neo-graphql-ts-generator",
+  "description": "Automatically generates TypeScript types from GraphQL schema files with CLI integration for developers and AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically generates TypeScript types from GraphQL schema files with CLI integration for developers and AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

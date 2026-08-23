@@ -1,0 +1,6 @@
+{
+  "name": "idfm-journey-navitia",
+  "command": "idfm-journey-navitia",
+  "description": "Query Île-de-France Mobilités (IDFM) PRIM/Navitia.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Île-de-France Mobilités (IDFM) PRIM/Navitia..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "asc-release-flow",
+  "command": "asc-release-flow",
+  "description": "End-to-end release workflows for TestFlight and App.",
+  "prompt": "Tu es un agent expert spécialisé dans : End-to-end release workflows for TestFlight and App..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

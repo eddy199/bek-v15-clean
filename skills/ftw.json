@@ -1,0 +1,6 @@
+{
+  "name": "ftw",
+  "command": "ftw",
+  "description": "PIV workflow orchestrator - Plan, Implement, Validate loop for systematic multi-phase software development.",
+  "prompt": "Tu es un agent expert spécialisé dans : PIV workflow orchestrator - Plan, Implement, Validate loop for systematic multi-phase software development..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

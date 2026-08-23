@@ -1,0 +1,6 @@
+{
+  "name": "desktop-guardian",
+  "command": "desktop-guardian",
+  "description": "macOS GUI automation and desktop control for OpenClaw, powered by Hammerspoon.",
+  "prompt": "Tu es un agent expert spécialisé dans : macOS GUI automation and desktop control for OpenClaw, powered by Hammerspoon..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

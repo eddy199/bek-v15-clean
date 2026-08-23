@@ -1,0 +1,6 @@
+{
+  "name": "sg-property-scraper",
+  "command": "sg-property-scraper",
+  "description": "Search Singapore property rental and sale listings with flexible filters.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Singapore property rental and sale listings with flexible filters..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

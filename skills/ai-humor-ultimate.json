@@ -1,0 +1,6 @@
+{
+  "name": "ai-humor-ultimate",
+  "command": "ai-humor-ultimate",
+  "description": "Give your AI agent actual wit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give your AI agent actual wit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

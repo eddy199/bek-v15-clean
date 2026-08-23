@@ -1,0 +1,6 @@
+{
+  "name": "media-player",
+  "command": "media-player",
+  "description": "Play audio/video locally on the host.",
+  "prompt": "Tu es un agent expert spécialisé dans : Play audio/video locally on the host..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

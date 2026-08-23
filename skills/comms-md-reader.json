@@ -1,0 +1,6 @@
+{
+  "name": "comms-md-reader",
+  "command": "comms-md-reader",
+  "description": "Read and adapt to someone's COMMS.md before contacting them.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read and adapt to someone's COMMS.md before contacting them..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

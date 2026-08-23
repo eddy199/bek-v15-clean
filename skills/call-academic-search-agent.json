@@ -1,0 +1,6 @@
+{
+  "name": "call-academic-search-agent",
+  "command": "call-academic-search-agent",
+  "description": "AI agent for call academic search agent tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent for call academic search agent tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

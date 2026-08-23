@@ -1,0 +1,6 @@
+{
+  "name": "approvals-ui",
+  "command": "approvals-ui",
+  "description": "A web dashboard for managing OpenClaw device pairings, channel approvals, and a live terminal — all from your browser.",
+  "prompt": "Tu es un agent expert spécialisé dans : A web dashboard for managing OpenClaw device pairings, channel approvals, and a live terminal — all from your browser..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

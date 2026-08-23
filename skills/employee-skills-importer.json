@@ -1,0 +1,6 @@
+{
+  "name": "employee-skills-importer",
+  "command": "employee-skills-importer",
+  "description": "Parse employee skills CSV files, identify skill categories and individual skills, look up employee IDs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Parse employee skills CSV files, identify skill categories and individual skills, look up employee IDs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

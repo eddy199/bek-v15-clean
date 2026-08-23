@@ -1,0 +1,6 @@
+{
+  "name": "listonic",
+  "command": "listonic",
+  "description": "Access Listonic shopping lists: list lists/items, add/check/delete items, and manage lists.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Listonic shopping lists: list lists/items, add/check/delete items, and manage lists..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

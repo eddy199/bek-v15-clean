@@ -1,0 +1,6 @@
+{
+  "name": "media-news-digest",
+  "command": "media-news-digest",
+  "description": "Generate media & entertainment industry news digests.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate media & entertainment industry news digests..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

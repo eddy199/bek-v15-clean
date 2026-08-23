@@ -1,0 +1,6 @@
+{
+  "name": "openviking",
+  "command": "openviking",
+  "description": "RAG and semantic search via OpenViking Context Database MCP server.",
+  "prompt": "Tu es un agent expert spécialisé dans : RAG and semantic search via OpenViking Context Database MCP server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

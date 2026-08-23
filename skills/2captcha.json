@@ -1,0 +1,6 @@
+{
+  "name": "2captcha",
+  "command": "2captcha",
+  "description": "Solve CAPTCHAs using 2Captcha service.",
+  "prompt": "Tu es un agent expert spécialisé dans : Solve CAPTCHAs using 2Captcha service..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

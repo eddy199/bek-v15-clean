@@ -1,0 +1,6 @@
+{
+  "name": "blogwatcher",
+  "command": "blogwatcher",
+  "description": "Monitor blogs and RSS/Atom feeds for updates using the blogwatcher.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor blogs and RSS/Atom feeds for updates using the blogwatcher..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

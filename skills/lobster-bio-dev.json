@@ -1,0 +1,6 @@
+{
+  "name": "lobster-bio-dev",
+  "command": "lobster-bio-dev",
+  "description": "Develop, extend, and contribute to Lobster AI — the multi-agent bioinformatics engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : Develop, extend, and contribute to Lobster AI — the multi-agent bioinformatics engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

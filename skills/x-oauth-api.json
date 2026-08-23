@@ -1,0 +1,6 @@
+{
+  "name": "x-oauth-api",
+  "command": "x-oauth-api",
+  "description": "Post to X (Twitter) using the official OAuth 1.0a API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post to X (Twitter) using the official OAuth 1.0a API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "multi-agent-sync",
+  "command": "multi-agent-sync",
+  "description": "Coordinate multi-agent tasks with visible group updates.",
+  "prompt": "Tu es un agent expert spécialisé dans : Coordinate multi-agent tasks with visible group updates..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

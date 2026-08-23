@@ -1,0 +1,6 @@
+{
+  "name": "neon-soul",
+  "command": "neon-soul",
+  "description": "Automated soul synthesis for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated soul synthesis for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

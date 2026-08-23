@@ -1,0 +1,6 @@
+{
+  "name": "telnyx-rag",
+  "command": "telnyx-rag",
+  "description": "Semantic search and Q&A over workspace files using Telnyx Storage + AI embeddings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Semantic search and Q&A over workspace files using Telnyx Storage + AI embeddings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

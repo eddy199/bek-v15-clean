@@ -1,0 +1,6 @@
+{
+  "name": "meeting-notes-pro",
+  "command": "meeting-notes-pro",
+  "description": "You are a meeting productivity expert.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are a meeting productivity expert..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

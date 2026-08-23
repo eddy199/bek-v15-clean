@@ -1,0 +1,6 @@
+{
+  "name": "gmail-inbox-zero-triage",
+  "command": "gmail-inbox-zero-triage",
+  "description": "Gmail Inbox Zero Triage - Interactive inbox management using gog CLI with Telegram buttons.",
+  "prompt": "Tu es un agent expert spécialisé dans : Gmail Inbox Zero Triage - Interactive inbox management using gog CLI with Telegram buttons..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

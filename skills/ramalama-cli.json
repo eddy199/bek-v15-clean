@@ -1,0 +1,6 @@
+{
+  "name": "ramalama-cli",
+  "command": "ramalama-cli",
+  "description": "Run and interact with AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run and interact with AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

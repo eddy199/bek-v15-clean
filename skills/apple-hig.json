@@ -1,0 +1,6 @@
+{
+  "name": "apple-hig",
+  "command": "apple-hig",
+  "description": "Expert guide for designing iOS, macOS, watchOS, tvOS, and visionOS apps.",
+  "prompt": "Tu es un agent expert spécialisé dans : Expert guide for designing iOS, macOS, watchOS, tvOS, and visionOS apps..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

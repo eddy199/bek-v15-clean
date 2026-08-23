@@ -1,0 +1,6 @@
+{
+  "name": "meta-business-suite",
+  "command": "meta-business-suite",
+  "description": "Meta Business Suite automation via Graph API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Meta Business Suite automation via Graph API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

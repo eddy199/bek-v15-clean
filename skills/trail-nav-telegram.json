@@ -1,0 +1,6 @@
+{
+  "name": "trail-nav-telegram",
+  "command": "trail-nav-telegram",
+  "description": "Offline-capable hiking route guidance via Telegram location messages (OpenClaw)",
+  "prompt": "Tu es un agent expert spécialisé dans : Offline-capable hiking route guidance via Telegram location messages (OpenClaw).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

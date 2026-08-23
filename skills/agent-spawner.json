@@ -1,0 +1,6 @@
+{
+  "name": "agent-spawner",
+  "command": "agent-spawner",
+  "description": "Spawn a new OpenClaw agent through conversation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Spawn a new OpenClaw agent through conversation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

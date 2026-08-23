@@ -1,0 +1,6 @@
+{
+  "name": "garmin-pulse",
+  "command": "garmin-pulse",
+  "description": "Syncs daily health and fitness data from Garmin Connect into markdown files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Syncs daily health and fitness data from Garmin Connect into markdown files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

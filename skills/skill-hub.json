@@ -1,0 +1,6 @@
+{
+  "name": "skill-hub",
+  "command": "skill-hub",
+  "description": "OpenClaw skill discovery, security vetting & install.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw skill discovery, security vetting & install..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

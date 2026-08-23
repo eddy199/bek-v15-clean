@@ -1,0 +1,6 @@
+{
+  "name": "ohos-react-native-performance",
+  "command": "ohos-react-native-performance",
+  "description": "OpenHarmony React Native performance static checks and optimization.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenHarmony React Native performance static checks and optimization..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

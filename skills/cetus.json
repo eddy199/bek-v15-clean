@@ -1,0 +1,6 @@
+{
+  "name": "cetus",
+  "command": "cetus",
+  "description": "This guide covers all Cetus SDK v2 packages for building DeFi applications on Sui.",
+  "prompt": "Tu es un agent expert spécialisé dans : This guide covers all Cetus SDK v2 packages for building DeFi applications on Sui..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

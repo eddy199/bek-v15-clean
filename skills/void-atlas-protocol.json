@@ -1,0 +1,6 @@
+{
+  "name": "void-atlas-protocol",
+  "command": "void-atlas-protocol",
+  "description": "Void Atlas Protocol – a four-axis ethical navigation map (power, truth, sovereignty, care) with waypoints, routes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Void Atlas Protocol – a four-axis ethical navigation map (power, truth, sovereignty, care) with waypoints, routes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

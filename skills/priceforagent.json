@@ -1,0 +1,6 @@
+{
+  "name": "priceforagent",
+  "command": "priceforagent",
+  "description": "Get real-time prices for crypto, stocks, and commodities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get real-time prices for crypto, stocks, and commodities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

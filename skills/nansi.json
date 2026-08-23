@@ -1,0 +1,6 @@
+{
+  "name": "nansi",
+  "command": "nansi",
+  "description": "Build stunning websites, landing pages, portfolios, and web apps by chatting with Nansi on WhatsApp.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build stunning websites, landing pages, portfolios, and web apps by chatting with Nansi on WhatsApp..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "pest-disease-tracker",
+  "command": "pest-disease-tracker",
+  "description": "Track garden pests and diseases with treatments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track garden pests and diseases with treatments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

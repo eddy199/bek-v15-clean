@@ -1,0 +1,6 @@
+{
+  "name": "ethereum-wingman",
+  "command": "ethereum-wingman",
+  "description": "Ethereum development tutor and builder for Scaffold-ETH 2 projects.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ethereum development tutor and builder for Scaffold-ETH 2 projects..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

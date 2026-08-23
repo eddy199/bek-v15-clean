@@ -1,0 +1,6 @@
+{
+  "name": "memo-persistent-memory",
+  "command": "memo-persistent-memory",
+  "description": "Persistent memory system - automatic context capture and semantic search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent memory system - automatic context capture and semantic search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

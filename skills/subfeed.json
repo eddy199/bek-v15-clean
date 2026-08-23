@@ -1,0 +1,6 @@
+{
+  "name": "subfeed",
+  "command": "subfeed",
+  "description": "AI entities with full agentic backend for your OpenClaw project in one prompt.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI entities with full agentic backend for your OpenClaw project in one prompt..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "indexy",
+  "command": "indexy",
+  "description": "Indexy is a cryptocurrency index management platform that enables AI agents to create, manage, and analyze crypto.",
+  "prompt": "Tu es un agent expert spécialisé dans : Indexy is a cryptocurrency index management platform that enables AI agents to create, manage, and analyze crypto..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

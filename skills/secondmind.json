@@ -1,0 +1,6 @@
+{
+  "name": "secondmind",
+  "command": "secondmind",
+  "description": "Autonomous three-tier memory with proactive initiative, project tracking, and social intelligence.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous three-tier memory with proactive initiative, project tracking, and social intelligence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

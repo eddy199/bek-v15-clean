@@ -1,0 +1,6 @@
+{
+  "name": "skywork-design",
+  "command": "skywork-design",
+  "description": "Generate and edit images via Skywork Image for posters, logos and more.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate and edit images via Skywork Image for posters, logos and more..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

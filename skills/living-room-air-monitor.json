@@ -1,0 +1,6 @@
+{
+  "name": "living-room-air-monitor",
+  "command": "living-room-air-monitor",
+  "description": "Monitor and report on living room air quality data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor and report on living room air quality data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

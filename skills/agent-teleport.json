@@ -1,0 +1,6 @@
+{
+  "name": "agent-teleport",
+  "command": "agent-teleport",
+  "description": "Seamlessly migrate your agent's configuration and memory to a new machine using TiDB Zero.",
+  "prompt": "Tu es un agent expert spécialisé dans : Seamlessly migrate your agent's configuration and memory to a new machine using TiDB Zero..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

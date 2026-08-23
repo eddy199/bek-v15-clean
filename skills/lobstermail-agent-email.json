@@ -1,0 +1,6 @@
+{
+  "name": "lobstermail-agent-email",
+  "command": "lobstermail-agent-email",
+  "description": "Email for AI agents. No API keys, no signup.",
+  "prompt": "Tu es un agent expert spécialisé dans : Email for AI agents. No API keys, no signup..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ai-conversation-summary",
+  "command": "ai-conversation-summary",
+  "description": "Generate summaries for conversation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate summaries for conversation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

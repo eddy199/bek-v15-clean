@@ -1,0 +1,6 @@
+{
+  "name": "stocks",
+  "command": "stocks",
+  "description": "56+ financial data tools via Yahoo Finance.",
+  "prompt": "Tu es un agent expert spécialisé dans : 56+ financial data tools via Yahoo Finance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

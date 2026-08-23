@@ -1,0 +1,6 @@
+{
+  "name": "pyzotero",
+  "command": "pyzotero",
+  "description": "Python scripts for Zotero - supports both local API and online Web API, with ZOTERO_LOCAL environment variable.",
+  "prompt": "Tu es un agent expert spécialisé dans : Python scripts for Zotero - supports both local API and online Web API, with ZOTERO_LOCAL environment variable..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

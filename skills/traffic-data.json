@@ -1,0 +1,6 @@
+{
+  "name": "traffic-data",
+  "command": "traffic-data",
+  "description": "Query traffic data - real-time road conditions, traffic incidents, SCATS intersection data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query traffic data - real-time road conditions, traffic incidents, SCATS intersection data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

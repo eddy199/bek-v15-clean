@@ -1,0 +1,6 @@
+{
+  "name": "fish-tts",
+  "command": "fish-tts",
+  "description": "This skill uses **Fish Audio S1** to generate high-quality text-to-speech audio and upload it to NextCloud.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill uses **Fish Audio S1** to generate high-quality text-to-speech audio and upload it to NextCloud..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

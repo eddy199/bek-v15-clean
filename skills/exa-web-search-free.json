@@ -1,0 +1,6 @@
+{
+  "name": "exa-web-search-free",
+  "command": "exa-web-search-free",
+  "description": "Free AI search via Exa.",
+  "prompt": "Tu es un agent expert spécialisé dans : Free AI search via Exa..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

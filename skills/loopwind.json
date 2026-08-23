@@ -1,0 +1,6 @@
+{
+  "name": "loopwind",
+  "command": "loopwind",
+  "description": "Generate images and videos from React + Tailwind CSS templates using the loopwind CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images and videos from React + Tailwind CSS templates using the loopwind CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

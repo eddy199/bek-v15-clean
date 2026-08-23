@@ -1,0 +1,6 @@
+{
+  "name": "vault",
+  "command": "vault",
+  "description": "Secure local password storage tool with AES-256-GCM encryption.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure local password storage tool with AES-256-GCM encryption..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "hierarchical-memory",
+  "command": "hierarchical-memory",
+  "description": "Manage and navigate a multi-layered, branch-based memory system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage and navigate a multi-layered, branch-based memory system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

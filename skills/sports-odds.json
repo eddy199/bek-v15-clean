@@ -1,0 +1,6 @@
+{
+  "name": "sports-odds",
+  "command": "sports-odds",
+  "description": "Get live sports betting odds and compare lines across sportsbooks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get live sports betting odds and compare lines across sportsbooks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

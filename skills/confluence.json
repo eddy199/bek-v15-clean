@@ -1,0 +1,6 @@
+{
+  "name": "confluence",
+  "command": "confluence",
+  "description": "Search and manage Confluence pages and spaces using confluence-cli.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and manage Confluence pages and spaces using confluence-cli..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

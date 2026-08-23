@@ -1,0 +1,6 @@
+{
+  "name": "openscan",
+  "command": "openscan",
+  "description": "Scan binaries and scripts for malicious patterns before trusting them.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan binaries and scripts for malicious patterns before trusting them..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

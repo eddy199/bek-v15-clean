@@ -1,0 +1,6 @@
+{
+  "name": "lunchtable-tcg",
+  "command": "lunchtable-tcg",
+  "description": "Play LunchTable-TCG, a Yu-Gi-Oh-inspired online trading card.",
+  "prompt": "Tu es un agent expert spécialisé dans : Play LunchTable-TCG, a Yu-Gi-Oh-inspired online trading card..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "airtable-automation",
+  "command": "airtable-automation",
+  "description": "Automate Airtable tasks via Rube MCP (Composio)",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate Airtable tasks via Rube MCP (Composio).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

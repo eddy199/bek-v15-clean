@@ -1,0 +1,6 @@
+{
+  "name": "publora-threads",
+  "command": "publora-threads",
+  "description": "Post or schedule content to Threads using the Publora API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post or schedule content to Threads using the Publora API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

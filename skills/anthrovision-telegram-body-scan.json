@@ -1,0 +1,6 @@
+{
+  "name": "anthrovision-telegram-body-scan",
+  "command": "anthrovision-telegram-body-scan",
+  "description": "Run end-to-end body-scan measurement flow in Telegram using AnthroVision bridge tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run end-to-end body-scan measurement flow in Telegram using AnthroVision bridge tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

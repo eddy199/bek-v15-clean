@@ -1,0 +1,6 @@
+{
+  "name": "calorie-visualizer",
+  "command": "calorie-visualizer",
+  "description": "Local calorie logging and visual reporting (auto-refreshes and returns report image after each log)",
+  "prompt": "Tu es un agent expert spécialisé dans : Local calorie logging and visual reporting (auto-refreshes and returns report image after each log).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

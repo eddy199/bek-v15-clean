@@ -1,0 +1,6 @@
+{
+  "name": "rune",
+  "command": "rune",
+  "description": "Self-improving AI memory system with intelligent context injection and adaptive learning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-improving AI memory system with intelligent context injection and adaptive learning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

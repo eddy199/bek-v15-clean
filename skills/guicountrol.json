@@ -1,0 +1,6 @@
+{
+  "name": "guicountrol",
+  "command": "guicountrol",
+  "description": "Control the Linux desktop GUI using xdotool, wmctrl, and dogtail.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control the Linux desktop GUI using xdotool, wmctrl, and dogtail..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

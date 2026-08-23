@@ -1,0 +1,6 @@
+{
+  "name": "native-sentry",
+  "command": "native-sentry",
+  "description": "Read Sentry issues, events, and production errors via the Sentry REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read Sentry issues, events, and production errors via the Sentry REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

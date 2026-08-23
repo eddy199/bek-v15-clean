@@ -1,0 +1,6 @@
+{
+  "name": "colorkit",
+  "command": "colorkit",
+  "description": "Expert guidance on ColorKit, a Swift library for advanced color manipulation, conversion, and accessibility.",
+  "prompt": "Tu es un agent expert spécialisé dans : Expert guidance on ColorKit, a Swift library for advanced color manipulation, conversion, and accessibility..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

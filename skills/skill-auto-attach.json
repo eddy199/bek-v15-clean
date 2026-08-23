@@ -1,0 +1,6 @@
+{
+  "name": "skill-auto-attach",
+  "command": "skill-auto-attach",
+  "description": "This skill monitors the OpenClaw workspace for file changes and automatically attaches new or updated documentation.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill monitors the OpenClaw workspace for file changes and automatically attaches new or updated documentation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

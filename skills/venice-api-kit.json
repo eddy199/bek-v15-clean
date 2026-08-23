@@ -1,0 +1,6 @@
+{
+  "name": "venice-api-kit",
+  "command": "venice-api-kit",
+  "description": "Complete Venice AI API toolkit - image generation, video, audio, embeddings, transcription, characters, models.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Venice AI API toolkit - image generation, video, audio, embeddings, transcription, characters, models..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

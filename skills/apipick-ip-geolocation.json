@@ -1,0 +1,6 @@
+{
+  "name": "apipick-ip-geolocation",
+  "command": "apipick-ip-geolocation",
+  "description": "Look up geographic location and network information for any IPv4 or IPv6 address using the apipick IP Geolocation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Look up geographic location and network information for any IPv4 or IPv6 address using the apipick IP Geolocation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

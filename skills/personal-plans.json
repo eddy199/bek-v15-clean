@@ -1,0 +1,6 @@
+{
+  "name": "personal-plans",
+  "command": "personal-plans",
+  "description": "Acts as the user's personal planning assistant in the Plans topic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Acts as the user's personal planning assistant in the Plans topic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

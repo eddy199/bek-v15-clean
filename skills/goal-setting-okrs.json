@@ -1,0 +1,6 @@
+{
+  "name": "goal-setting-okrs",
+  "command": "goal-setting-okrs",
+  "description": "Set and track goals for a solopreneur business using OKRs (Objectives and Key Results) and related frameworks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set and track goals for a solopreneur business using OKRs (Objectives and Key Results) and related frameworks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "invoice-chaser",
+  "command": "invoice-chaser",
+  "description": "Automated invoice follow-up sequences that escalate from friendly to firm.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated invoice follow-up sequences that escalate from friendly to firm..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

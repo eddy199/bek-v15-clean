@@ -1,0 +1,6 @@
+{
+  "name": "bitwarden-vault",
+  "command": "bitwarden-vault",
+  "description": "Bitwarden CLI setup, authentication.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bitwarden CLI setup, authentication..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

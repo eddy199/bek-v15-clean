@@ -1,0 +1,6 @@
+{
+  "name": "agent-memory-ultimate",
+  "command": "agent-memory-ultimate",
+  "description": "Production-ready memory system — daily logs, sleep consolidation, SQLite + FTS5, WhatsApp/ChatGPT/VCF importers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Production-ready memory system — daily logs, sleep consolidation, SQLite + FTS5, WhatsApp/ChatGPT/VCF importers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

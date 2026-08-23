@@ -1,0 +1,6 @@
+{
+  "name": "hf-spaces",
+  "command": "hf-spaces",
+  "description": "Generate images, videos, audio, and more using HuggingFace Spaces and Inference Providers directly.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images, videos, audio, and more using HuggingFace Spaces and Inference Providers directly..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

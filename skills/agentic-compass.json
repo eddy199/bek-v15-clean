@@ -1,0 +1,6 @@
+{
+  "name": "agentic-compass",
+  "command": "agentic-compass",
+  "description": "Local-only self-reflection that forces action for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local-only self-reflection that forces action for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

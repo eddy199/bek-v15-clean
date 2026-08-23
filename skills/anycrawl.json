@@ -1,0 +1,6 @@
+{
+  "name": "anycrawl",
+  "command": "anycrawl",
+  "description": "AnyCrawl API integration for OpenClaw - Scrape, Crawl, and Search web.",
+  "prompt": "Tu es un agent expert spécialisé dans : AnyCrawl API integration for OpenClaw - Scrape, Crawl, and Search web..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

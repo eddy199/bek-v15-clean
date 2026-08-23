@@ -1,0 +1,6 @@
+{
+  "name": "camino-journey",
+  "command": "camino-journey",
+  "description": "Plan multi-waypoint journeys with route optimization, feasibility analysis, and time budget constraints.",
+  "prompt": "Tu es un agent expert spécialisé dans : Plan multi-waypoint journeys with route optimization, feasibility analysis, and time budget constraints..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

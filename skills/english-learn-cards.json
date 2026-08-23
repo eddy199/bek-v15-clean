@@ -1,0 +1,6 @@
+{
+  "name": "english-learn-cards",
+  "command": "english-learn-cards",
+  "description": "Flashcard-based English vocabulary learning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Flashcard-based English vocabulary learning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

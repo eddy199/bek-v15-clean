@@ -1,0 +1,6 @@
+{
+  "name": "firebase-auth-setup",
+  "command": "firebase-auth-setup",
+  "description": "Configures Firebase Authentication — providers, security rules, custom claims, and React auth hooks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Configures Firebase Authentication — providers, security rules, custom claims, and React auth hooks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "nexus-safe",
+  "command": "nexus-safe",
+  "description": "Autonomous local System Reliability Agent for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous local System Reliability Agent for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

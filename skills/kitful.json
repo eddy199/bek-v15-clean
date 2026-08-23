@@ -1,0 +1,6 @@
+{
+  "name": "kitful",
+  "command": "kitful",
+  "description": "Generate full SEO articles using Kitful.ai.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate full SEO articles using Kitful.ai..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

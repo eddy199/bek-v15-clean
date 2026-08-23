@@ -1,0 +1,6 @@
+{
+  "name": "aimine",
+  "command": "aimine",
+  "description": "Mine AIT (Proof of AI Work) on BNB Chain.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mine AIT (Proof of AI Work) on BNB Chain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

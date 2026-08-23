@@ -1,0 +1,6 @@
+{
+  "name": "dht11-temp",
+  "command": "dht11-temp",
+  "description": "Read temperature and humidity from DHT11 sensor.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read temperature and humidity from DHT11 sensor..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

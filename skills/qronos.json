@@ -1,0 +1,6 @@
+{
+  "name": "qronos",
+  "command": "qronos",
+  "description": "When your human faces a decision that keeps them up at night — \"Should I leave this relationship?\" \"Is now.",
+  "prompt": "Tu es un agent expert spécialisé dans : When your human faces a decision that keeps them up at night — \"Should I leave this relationship?\" \"Is now..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "shared-workspace",
+  "command": "shared-workspace",
+  "description": "Use this skill to discover similar GitHub work, attach to shared agent workspaces, and coordinate tasks via .shared.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill to discover similar GitHub work, attach to shared agent workspaces, and coordinate tasks via .shared..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

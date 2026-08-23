@@ -1,0 +1,6 @@
+{
+  "name": "instagram-reel-downloader-whatsapp",
+  "command": "instagram-reel-downloader-whatsapp",
+  "description": "Download an Instagram Reel via sssinstagram.com and return it as a WhatsApp-ready video file.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download an Instagram Reel via sssinstagram.com and return it as a WhatsApp-ready video file..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

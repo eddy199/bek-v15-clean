@@ -1,0 +1,6 @@
+{
+  "name": "accessibility-toolkit",
+  "command": "accessibility-toolkit",
+  "description": "Friction-reduction patterns for agents helping.",
+  "prompt": "Tu es un agent expert spécialisé dans : Friction-reduction patterns for agents helping..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

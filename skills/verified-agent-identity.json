@@ -1,0 +1,6 @@
+{
+  "name": "verified-agent-identity",
+  "command": "verified-agent-identity",
+  "description": "Billions/Iden3 authentication and identity management tools for agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Billions/Iden3 authentication and identity management tools for agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

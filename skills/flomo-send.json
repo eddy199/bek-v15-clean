@@ -1,0 +1,6 @@
+{
+  "name": "flomo-send",
+  "command": "flomo-send",
+  "description": "Send notes and memos to flomo (浮墨笔记) via URL Scheme with automatic webhook fallback.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send notes and memos to flomo (浮墨笔记) via URL Scheme with automatic webhook fallback..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

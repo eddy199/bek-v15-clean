@@ -1,0 +1,6 @@
+{
+  "name": "castreader",
+  "command": "castreader",
+  "description": "Read any web page aloud with natural AI voices. The only skill that extracts content from URLs (including Kindle, WeRead",
+  "prompt": "Tu es un agent expert spécialisé dans : Read any web page aloud with natural AI voices. The only skill that extracts content from URLs (including Kindle, WeRead, Notion, Google Docs) and converts to MP3 audio with paragraph-level highlighting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

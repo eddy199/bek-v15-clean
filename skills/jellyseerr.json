@@ -1,0 +1,6 @@
+{
+  "name": "jellyseerr",
+  "command": "jellyseerr",
+  "description": "Request movies and TV shows through Jellyseerr.",
+  "prompt": "Tu es un agent expert spécialisé dans : Request movies and TV shows through Jellyseerr..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

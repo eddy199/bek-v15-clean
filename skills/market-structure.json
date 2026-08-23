@@ -1,0 +1,6 @@
+{
+  "name": "market-structure",
+  "command": "market-structure",
+  "description": "Read and analyze market structure for any trading instrument like a professional trader.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read and analyze market structure for any trading instrument like a professional trader..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

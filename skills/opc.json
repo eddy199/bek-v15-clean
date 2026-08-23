@@ -1,0 +1,6 @@
+{
+  "name": "opc",
+  "command": "opc",
+  "description": "OPC (One-Person Company) Framework - Complete AI agent system for solo entrepreneurs with 14 integrated skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : OPC (One-Person Company) Framework - Complete AI agent system for solo entrepreneurs with 14 integrated skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

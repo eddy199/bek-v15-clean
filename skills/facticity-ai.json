@@ -1,0 +1,6 @@
+{
+  "name": "facticity-ai",
+  "command": "facticity-ai",
+  "description": "Complete Facticity.AI integration - fact-check claims, extract claims from content, transcribe links, check link.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Facticity.AI integration - fact-check claims, extract claims from content, transcribe links, check link..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

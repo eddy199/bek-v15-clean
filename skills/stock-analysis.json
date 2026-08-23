@@ -1,0 +1,6 @@
+{
+  "name": "stock-analysis",
+  "command": "stock-analysis",
+  "description": "Analyze stocks and cryptocurrencies using Yahoo Finance data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze stocks and cryptocurrencies using Yahoo Finance data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

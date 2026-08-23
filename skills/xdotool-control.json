@@ -1,0 +1,6 @@
+{
+  "name": "xdotool-control",
+  "command": "xdotool-control",
+  "description": "Mouse and keyboard automation using xdotool.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mouse and keyboard automation using xdotool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "n8n-workflow-automation",
+  "command": "n8n-workflow-automation",
+  "description": "Designs and outputs n8n workflow JSON.",
+  "prompt": "Tu es un agent expert spécialisé dans : Designs and outputs n8n workflow JSON..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

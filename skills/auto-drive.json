@@ -1,0 +1,6 @@
+{
+  "name": "auto-drive",
+  "command": "auto-drive",
+  "description": "Upload and download files to Autonomys Network permanent decentralized storage via Auto-Drive.",
+  "prompt": "Tu es un agent expert spécialisé dans : Upload and download files to Autonomys Network permanent decentralized storage via Auto-Drive..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

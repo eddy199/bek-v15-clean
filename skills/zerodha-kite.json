@@ -1,0 +1,6 @@
+{
+  "name": "zerodha-kite",
+  "command": "zerodha-kite",
+  "description": "Route natural-language trading/account queries to the correct `zerodha` CLI command with exact flags, validation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Route natural-language trading/account queries to the correct `zerodha` CLI command with exact flags, validation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

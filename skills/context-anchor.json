@@ -1,0 +1,6 @@
+{
+  "name": "context-anchor",
+  "command": "context-anchor",
+  "description": "Recover from context compaction by scanning memory files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Recover from context compaction by scanning memory files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

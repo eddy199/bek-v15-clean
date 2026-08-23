@@ -1,0 +1,6 @@
+{
+  "name": "skill-factory-pipeline",
+  "command": "skill-factory-pipeline",
+  "description": "Multi-Agent Pipeline Orchestrator that builds new skills from scratch.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-Agent Pipeline Orchestrator that builds new skills from scratch..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

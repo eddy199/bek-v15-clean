@@ -1,0 +1,6 @@
+{
+  "name": "mrscraper",
+  "command": "mrscraper",
+  "description": "Run AI-powered, unblockable web scraping, data extraction with natural language via the MrScraper API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run AI-powered, unblockable web scraping, data extraction with natural language via the MrScraper API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

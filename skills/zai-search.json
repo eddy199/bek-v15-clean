@@ -1,0 +1,6 @@
+{
+  "name": "zai-search",
+  "command": "zai-search",
+  "description": "AI-optimized web search via Z.AI Web Search API.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-optimized web search via Z.AI Web Search API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

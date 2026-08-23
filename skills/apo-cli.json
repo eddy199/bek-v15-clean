@@ -1,0 +1,6 @@
+{
+  "name": "apo-cli",
+  "command": "apo-cli",
+  "description": "Search and order pharmacy products from apohealth.de via apo-cli.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and order pharmacy products from apohealth.de via apo-cli..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

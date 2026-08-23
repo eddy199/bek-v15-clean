@@ -1,0 +1,6 @@
+{
+  "name": "blankfiles",
+  "command": "blankfiles",
+  "description": "Use blankfiles.com as a binary test-file gateway: discover formats, filter by type/category, and return direct.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use blankfiles.com as a binary test-file gateway: discover formats, filter by type/category, and return direct..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

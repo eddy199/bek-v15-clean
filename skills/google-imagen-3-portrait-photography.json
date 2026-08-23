@@ -1,0 +1,6 @@
+{
+  "name": "google-imagen-3-portrait-photography",
+  "command": "google-imagen-3-portrait-photography",
+  "description": "Generate professional portrait photography using Google Imagen 3.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional portrait photography using Google Imagen 3..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

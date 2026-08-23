@@ -1,0 +1,6 @@
+{
+  "name": "lametric-cli",
+  "command": "lametric-cli",
+  "description": "Control LaMetric TIME/SKY smart displays from the command line.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control LaMetric TIME/SKY smart displays from the command line..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

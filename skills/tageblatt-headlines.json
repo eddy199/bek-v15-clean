@@ -1,0 +1,6 @@
+{
+  "name": "tageblatt-headlines",
+  "command": "tageblatt-headlines",
+  "description": "Download and archive daily Schlagzeilen from https://www.tageblatt.de/.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download and archive daily Schlagzeilen from https://www.tageblatt.de/..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

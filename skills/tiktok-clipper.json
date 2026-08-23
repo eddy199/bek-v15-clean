@@ -1,0 +1,6 @@
+{
+  "name": "tiktok-clipper",
+  "command": "tiktok-clipper",
+  "description": "Takes a long-form video, transcribes it, identifies the most engaging segments for TikTok/Reels, clips them.",
+  "prompt": "Tu es un agent expert spécialisé dans : Takes a long-form video, transcribes it, identifies the most engaging segments for TikTok/Reels, clips them..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "azure-ai-evaluation-py",
+  "command": "azure-ai-evaluation-py",
+  "description": "Azure AI Evaluation SDK for Python.",
+  "prompt": "Tu es un agent expert spécialisé dans : Azure AI Evaluation SDK for Python..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

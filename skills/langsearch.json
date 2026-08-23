@@ -1,0 +1,6 @@
+{
+  "name": "langsearch",
+  "command": "langsearch",
+  "description": "Free web search and semantic reranking API for AGI applications.",
+  "prompt": "Tu es un agent expert spécialisé dans : Free web search and semantic reranking API for AGI applications..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

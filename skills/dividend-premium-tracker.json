@@ -1,0 +1,6 @@
+{
+  "name": "dividend-premium-tracker",
+  "command": "dividend-premium-tracker",
+  "description": "Track the dividend premium (dividend yield minus 10-year bond yield) for CSI Dividend Low Volatility Index.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track the dividend premium (dividend yield minus 10-year bond yield) for CSI Dividend Low Volatility Index..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

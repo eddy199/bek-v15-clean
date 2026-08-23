@@ -1,0 +1,6 @@
+{
+  "name": "scan-skill",
+  "command": "scan-skill",
+  "description": "Deep security analysis of an individual skill before installation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deep security analysis of an individual skill before installation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

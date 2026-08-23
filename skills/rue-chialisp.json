@@ -1,0 +1,6 @@
+{
+  "name": "rue-chialisp",
+  "command": "rue-chialisp",
+  "description": "Create Chia blockchain puzzles using Rue, a type-safe language that compiles to CLVM.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create Chia blockchain puzzles using Rue, a type-safe language that compiles to CLVM..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

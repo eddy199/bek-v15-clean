@@ -1,0 +1,6 @@
+{
+  "name": "bridle",
+  "command": "bridle",
+  "description": "Unified configuration manager for AI coding assistants.",
+  "prompt": "Tu es un agent expert spécialisé dans : Unified configuration manager for AI coding assistants..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

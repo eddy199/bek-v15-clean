@@ -1,0 +1,6 @@
+{
+  "name": "next-supabase-vercel-bundle",
+  "command": "next-supabase-vercel-bundle",
+  "description": "ORQUESTADOR REAL para el ciclo completo de desarrollo Full-Stack.",
+  "prompt": "Tu es un agent expert spécialisé dans : ORQUESTADOR REAL para el ciclo completo de desarrollo Full-Stack..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "solo-metrics-track",
+  "command": "solo-metrics-track",
+  "description": "Set up PostHog metrics plan with event funnel, KPI benchmarks, and kill/iterate/scale decision thresholds.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up PostHog metrics plan with event funnel, KPI benchmarks, and kill/iterate/scale decision thresholds..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

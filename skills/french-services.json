@@ -1,0 +1,6 @@
+{
+  "name": "french-services",
+  "command": "french-services",
+  "description": "Skill pour accéder aux services français : trains SNCF, suivi.",
+  "prompt": "Tu es un agent expert spécialisé dans : Skill pour accéder aux services français : trains SNCF, suivi..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

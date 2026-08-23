@@ -1,0 +1,6 @@
+{
+  "name": "lead-researcher",
+  "command": "lead-researcher",
+  "description": "Automated lead research and enrichment for B2B sales.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated lead research and enrichment for B2B sales..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

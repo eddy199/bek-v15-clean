@@ -1,0 +1,6 @@
+{
+  "name": "gitbackup",
+  "command": "gitbackup",
+  "description": "Create a local Git bundle backup of the OpenClaw workspace repository.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create a local Git bundle backup of the OpenClaw workspace repository..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

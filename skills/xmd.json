@@ -1,0 +1,6 @@
+{
+  "name": "xmd",
+  "command": "xmd",
+  "description": "Metal Dollar (XMD) stablecoin — mint, redeem, supply analytics, collateral reserves, oracle prices.",
+  "prompt": "Tu es un agent expert spécialisé dans : Metal Dollar (XMD) stablecoin — mint, redeem, supply analytics, collateral reserves, oracle prices..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agentchan",
+  "command": "agentchan",
+  "description": "The anonymous imageboard built for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : The anonymous imageboard built for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "markitdown-skill",
+  "command": "markitdown-skill",
+  "description": "OpenClaw agent skill for converting documents to Markdown.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw agent skill for converting documents to Markdown..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

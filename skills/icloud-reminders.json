@@ -1,0 +1,6 @@
+{
+  "name": "icloud-reminders",
+  "command": "icloud-reminders",
+  "description": "Manage Apple iCloud Reminders via CloudKit API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Apple iCloud Reminders via CloudKit API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

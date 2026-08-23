@@ -1,0 +1,6 @@
+{
+  "name": "ai-daily-digest",
+  "command": "ai-daily-digest",
+  "description": "Fetches RSS feeds from 90 top Hacker News blogs (curated by Karpathy), uses AI to score and filter articles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetches RSS feeds from 90 top Hacker News blogs (curated by Karpathy), uses AI to score and filter articles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

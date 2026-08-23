@@ -1,0 +1,6 @@
+{
+  "name": "openbot-esxi",
+  "command": "openbot-esxi",
+  "description": "Zero-touch Debian 13 VM deployment on VMware ESXi 8.",
+  "prompt": "Tu es un agent expert spécialisé dans : Zero-touch Debian 13 VM deployment on VMware ESXi 8..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

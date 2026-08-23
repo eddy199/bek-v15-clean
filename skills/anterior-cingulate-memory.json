@@ -1,0 +1,6 @@
+{
+  "name": "anterior-cingulate-memory",
+  "command": "anterior-cingulate-memory",
+  "description": "Conflict detection and error monitoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Conflict detection and error monitoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

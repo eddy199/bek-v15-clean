@@ -1,0 +1,6 @@
+{
+  "name": "unifi",
+  "command": "unifi",
+  "description": "Query and monitor UniFi network via local gateway API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and monitor UniFi network via local gateway API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

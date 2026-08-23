@@ -1,0 +1,6 @@
+{
+  "name": "nova-act",
+  "command": "nova-act",
+  "description": "Write and execute Python scripts using Amazon Nova Act for AI-powered browser automation tasks like flight.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write and execute Python scripts using Amazon Nova Act for AI-powered browser automation tasks like flight..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

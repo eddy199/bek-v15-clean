@@ -1,0 +1,6 @@
+{
+  "name": "test-name-deniz",
+  "command": "test-name-deniz",
+  "description": "Universal AI-powered web scraper for any platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Universal AI-powered web scraper for any platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

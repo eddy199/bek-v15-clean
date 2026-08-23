@@ -1,0 +1,6 @@
+{
+  "name": "finance-watcher",
+  "command": "finance-watcher",
+  "description": "Stock and cryptocurrency price monitoring with alerts and daily reports.",
+  "prompt": "Tu es un agent expert spécialisé dans : Stock and cryptocurrency price monitoring with alerts and daily reports..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

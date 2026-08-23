@@ -1,0 +1,6 @@
+{
+  "name": "shortcuts-generator",
+  "command": "shortcuts-generator",
+  "description": "Generate macOS/iOS Shortcuts by creating plist files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate macOS/iOS Shortcuts by creating plist files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

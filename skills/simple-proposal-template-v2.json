@@ -1,0 +1,6 @@
+{
+  "name": "simple-proposal-template-v2",
+  "command": "simple-proposal-template-v2",
+  "description": "Free basic proposal template for freelancers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Free basic proposal template for freelancers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

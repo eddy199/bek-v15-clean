@@ -1,0 +1,6 @@
+{
+  "name": "amateur-radio-dx",
+  "command": "amateur-radio-dx",
+  "description": "Monitor DX clusters for rare station spots, track active DX expeditions, and get daily band activity digests.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor DX clusters for rare station spots, track active DX expeditions, and get daily band activity digests..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

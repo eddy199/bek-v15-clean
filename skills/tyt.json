@@ -1,0 +1,6 @@
+{
+  "name": "tyt",
+  "command": "tyt",
+  "description": "The Teneo SDK (`@teneo-protocol/sdk`) enables connection to AI agents on the Teneo Protocol platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Teneo SDK (`@teneo-protocol/sdk`) enables connection to AI agents on the Teneo Protocol platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "doro-command-creator",
+  "command": "doro-command-creator",
+  "description": "WHAT: Create Claude Code slash commands - reusable markdown workflows invoked with /command-name.",
+  "prompt": "Tu es un agent expert spécialisé dans : WHAT: Create Claude Code slash commands - reusable markdown workflows invoked with /command-name..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

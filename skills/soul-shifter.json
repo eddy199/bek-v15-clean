@@ -1,0 +1,6 @@
+{
+  "name": "soul-shifter",
+  "command": "soul-shifter",
+  "description": "Create, save, and switch OpenClaw's persona (Soul)",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, save, and switch OpenClaw's persona (Soul).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

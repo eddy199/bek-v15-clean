@@ -1,0 +1,6 @@
+{
+  "name": "fsdfsd",
+  "command": "fsdfsd",
+  "description": "Google Workspace CLI for Gmail, Calendar, Drive, Contacts, Sheets, and Docs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Google Workspace CLI for Gmail, Calendar, Drive, Contacts, Sheets, and Docs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

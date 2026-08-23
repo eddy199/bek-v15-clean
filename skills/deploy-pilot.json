@@ -1,0 +1,6 @@
+{
+  "name": "deploy-pilot",
+  "command": "deploy-pilot",
+  "description": "Manages the full deploy cycle — build validation, GitHub push, Vercel deployment, and health checks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manages the full deploy cycle — build validation, GitHub push, Vercel deployment, and health checks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

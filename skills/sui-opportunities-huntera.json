@@ -1,0 +1,6 @@
+{
+  "name": "sui-opportunities-huntera",
+  "command": "sui-opportunities-huntera",
+  "description": "Autonomous DeFi agent that scans Sui mainnet for all possible opportunities in real-time — arbitrage, yield, swaps.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous DeFi agent that scans Sui mainnet for all possible opportunities in real-time — arbitrage, yield, swaps..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

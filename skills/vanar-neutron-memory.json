@@ -1,0 +1,6 @@
+{
+  "name": "vanar-neutron-memory",
+  "command": "vanar-neutron-memory",
+  "description": "Store and retrieve agent memory using Vanar Neutron API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Store and retrieve agent memory using Vanar Neutron API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

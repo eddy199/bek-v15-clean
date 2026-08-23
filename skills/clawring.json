@@ -1,0 +1,6 @@
+{
+  "name": "clawring",
+  "command": "clawring",
+  "description": "Real phone calls from your bot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real phone calls from your bot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

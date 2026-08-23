@@ -1,0 +1,6 @@
+{
+  "name": "clonev",
+  "command": "clonev",
+  "description": "Clone any voice and generate speech using Coqui XTTS v2.",
+  "prompt": "Tu es un agent expert spécialisé dans : Clone any voice and generate speech using Coqui XTTS v2..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

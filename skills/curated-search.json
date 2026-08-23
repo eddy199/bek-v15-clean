@@ -1,0 +1,6 @@
+{
+  "name": "curated-search",
+  "command": "curated-search",
+  "description": "Domain-restricted full-text search over curated technical documentation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Domain-restricted full-text search over curated technical documentation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

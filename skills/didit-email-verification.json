@@ -1,0 +1,6 @@
+{
+  "name": "didit-email-verification",
+  "command": "didit-email-verification",
+  "description": "Integrate Didit Email Verification standalone API to verify email addresses via OTP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate Didit Email Verification standalone API to verify email addresses via OTP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

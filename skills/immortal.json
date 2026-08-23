@@ -1,0 +1,6 @@
+{
+  "name": "immortal",
+  "command": "immortal",
+  "description": "Empowers AI agents with crypto resource vitality assessment.",
+  "prompt": "Tu es un agent expert spécialisé dans : Empowers AI agents with crypto resource vitality assessment..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

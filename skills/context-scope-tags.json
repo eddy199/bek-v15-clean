@@ -1,0 +1,6 @@
+{
+  "name": "context-scope-tags",
+  "command": "context-scope-tags",
+  "description": "Use when: you need strict context boundaries in chat (Telegram/Discord/Slack/etc.) and want to prevent topic bleed.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when: you need strict context boundaries in chat (Telegram/Discord/Slack/etc.) and want to prevent topic bleed..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

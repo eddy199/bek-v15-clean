@@ -1,0 +1,6 @@
+{
+  "name": "legal-docs-fr",
+  "command": "legal-docs-fr",
+  "description": "Générateur de documents juridiques français pour.",
+  "prompt": "Tu es un agent expert spécialisé dans : Générateur de documents juridiques français pour..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

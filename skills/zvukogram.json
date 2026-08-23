@@ -1,0 +1,6 @@
+{
+  "name": "zvukogram",
+  "command": "zvukogram",
+  "description": "Text-to-Speech via Zvukogram API with SSML support.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-Speech via Zvukogram API with SSML support..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

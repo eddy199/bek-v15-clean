@@ -1,0 +1,6 @@
+{
+  "name": "law-search",
+  "command": "law-search",
+  "description": "Korean law/case search via law.go.kr + data.go.kr APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Korean law/case search via law.go.kr + data.go.kr APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

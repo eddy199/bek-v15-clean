@@ -1,0 +1,6 @@
+{
+  "name": "mermaid-architect",
+  "command": "mermaid-architect",
+  "description": "Generate beautiful, hand-drawn Mermaid diagrams with robust syntax (quoted labels, ELK layout)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate beautiful, hand-drawn Mermaid diagrams with robust syntax (quoted labels, ELK layout).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "yt-transcript",
+  "command": "yt-transcript",
+  "description": "Extract high-quality transcripts from YouTube videos using multiple methods.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract high-quality transcripts from YouTube videos using multiple methods..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

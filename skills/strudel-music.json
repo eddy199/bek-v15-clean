@@ -1,0 +1,6 @@
+{
+  "name": "strudel-music",
+  "command": "strudel-music",
+  "description": "Compose, render, and play music using Strudel live-coding patterns.",
+  "prompt": "Tu es un agent expert spécialisé dans : Compose, render, and play music using Strudel live-coding patterns..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "voice-recognition",
+  "command": "voice-recognition",
+  "description": "Local speech-to-text with OpenAI Whisper CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local speech-to-text with OpenAI Whisper CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "using-git-worktrees",
+  "command": "using-git-worktrees",
+  "description": "Use when starting feature work that needs isolation from current workspace or before executing implementation plans.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when starting feature work that needs isolation from current workspace or before executing implementation plans..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

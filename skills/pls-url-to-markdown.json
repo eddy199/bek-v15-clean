@@ -1,0 +1,6 @@
+{
+  "name": "pls-url-to-markdown",
+  "command": "pls-url-to-markdown",
+  "description": "Fetch URLs and convert web pages to clean Markdown for AI processing or knowledge bases.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch URLs and convert web pages to clean Markdown for AI processing or knowledge bases..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "provider-sync",
+  "command": "provider-sync",
+  "description": "Sync provider models into OpenClaw config.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sync provider models into OpenClaw config..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

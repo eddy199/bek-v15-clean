@@ -1,0 +1,6 @@
+{
+  "name": "baseball",
+  "command": "baseball",
+  "description": "Fetch MLB game schedules, live game status, box scores, player search, and season statistics via the MLB Stats API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch MLB game schedules, live game status, box scores, player search, and season statistics via the MLB Stats API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

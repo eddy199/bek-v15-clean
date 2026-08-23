@@ -1,0 +1,6 @@
+{
+  "name": "kirk-content-pipeline",
+  "command": "kirk-content-pipeline",
+  "description": "Create KSVC-validated Twitter content from research PDFs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create KSVC-validated Twitter content from research PDFs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

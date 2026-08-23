@@ -1,0 +1,6 @@
+{
+  "name": "agent-chat-ux-v1-4-0",
+  "command": "agent-chat-ux-v1-4-0",
+  "description": "Multi-agent UX for OpenClaw Control UI — agent selector, per-agent sessions, session history viewer with search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-agent UX for OpenClaw Control UI — agent selector, per-agent sessions, session history viewer with search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

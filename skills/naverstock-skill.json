@@ -1,0 +1,6 @@
+{
+  "name": "naverstock-skill",
+  "command": "naverstock-skill",
+  "description": "Fetch text-based real-time stock prices (KRX, Overseas) using Naver Finance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch text-based real-time stock prices (KRX, Overseas) using Naver Finance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

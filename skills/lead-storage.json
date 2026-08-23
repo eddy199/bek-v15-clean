@@ -1,0 +1,6 @@
+{
+  "name": "lead-storage",
+  "command": "lead-storage",
+  "description": "Persist validated lead objects through write-only storage operations after Supervisor provides explicit confirmation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persist validated lead objects through write-only storage operations after Supervisor provides explicit confirmation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

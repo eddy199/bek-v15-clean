@@ -1,0 +1,6 @@
+{
+  "name": "vibe-ship",
+  "command": "vibe-ship",
+  "description": "Ship a complete web app from idea to public deployment in one session.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ship a complete web app from idea to public deployment in one session..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

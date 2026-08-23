@@ -1,0 +1,6 @@
+{
+  "name": "context-aware-delegation",
+  "command": "context-aware-delegation",
+  "description": "Give isolated sessions (cron jobs, sub-agents, event handlers) full conversation context from your main session.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give isolated sessions (cron jobs, sub-agents, event handlers) full conversation context from your main session..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

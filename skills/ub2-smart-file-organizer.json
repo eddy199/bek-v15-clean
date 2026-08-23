@@ -1,0 +1,6 @@
+{
+  "name": "ub2-smart-file-organizer",
+  "command": "ub2-smart-file-organizer",
+  "description": "A skill that enables Claw to scan a directory, categorize files by type and content, and reorganize them.",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill that enables Claw to scan a directory, categorize files by type and content, and reorganize them..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

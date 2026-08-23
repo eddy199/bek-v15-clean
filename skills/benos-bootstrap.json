@@ -1,0 +1,6 @@
+{
+  "name": "benos-bootstrap",
+  "command": "benos-bootstrap",
+  "description": "BenOS Bootstrap is a system-initialization skill for OpenClaw-based agent stacks.",
+  "prompt": "Tu es un agent expert spécialisé dans : BenOS Bootstrap is a system-initialization skill for OpenClaw-based agent stacks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

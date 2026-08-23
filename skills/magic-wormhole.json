@@ -1,0 +1,6 @@
+{
+  "name": "magic-wormhole",
+  "command": "magic-wormhole",
+  "description": "Secure secret sharing for OpenClaw using magic-wormhole protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure secret sharing for OpenClaw using magic-wormhole protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

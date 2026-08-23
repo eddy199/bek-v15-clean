@@ -1,0 +1,6 @@
+{
+  "name": "casual-cron",
+  "command": "casual-cron",
+  "description": "Create Clawdbot cron jobs from natural language with strict.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create Clawdbot cron jobs from natural language with strict..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

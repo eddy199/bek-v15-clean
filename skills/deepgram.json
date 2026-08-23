@@ -1,0 +1,6 @@
+{
+  "name": "deepgram",
+  "command": "deepgram",
+  "description": "— command-line interface for Deepgram speech-to-text.",
+  "prompt": "Tu es un agent expert spécialisé dans : — command-line interface for Deepgram speech-to-text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

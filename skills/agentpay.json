@@ -1,0 +1,6 @@
+{
+  "name": "agentpay",
+  "command": "agentpay",
+  "description": "Buy things from real websites on behalf of your human.",
+  "prompt": "Tu es un agent expert spécialisé dans : Buy things from real websites on behalf of your human..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

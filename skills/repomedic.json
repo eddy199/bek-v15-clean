@@ -1,0 +1,6 @@
+{
+  "name": "repomedic",
+  "command": "repomedic",
+  "description": "Safely triage and remediate GitHub dependency hygiene issues with explicit guardrails.",
+  "prompt": "Tu es un agent expert spécialisé dans : Safely triage and remediate GitHub dependency hygiene issues with explicit guardrails..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

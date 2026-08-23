@@ -1,0 +1,6 @@
+{
+  "name": "skill-mermaid-diagrams",
+  "command": "skill-mermaid-diagrams",
+  "description": "Generate consistent, template-based Mermaid diagrams for technical content.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate consistent, template-based Mermaid diagrams for technical content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

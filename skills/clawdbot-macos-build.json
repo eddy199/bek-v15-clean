@@ -1,0 +1,6 @@
+{
+  "name": "clawdbot-macos-build",
+  "command": "clawdbot-macos-build",
+  "description": "Build the Clawdbot macOS menu bar app.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build the Clawdbot macOS menu bar app..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

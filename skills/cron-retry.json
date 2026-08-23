@@ -1,0 +1,6 @@
+{
+  "name": "cron-retry",
+  "command": "cron-retry",
+  "description": "Auto-retry failed cron jobs on connection recovery.",
+  "prompt": "Tu es un agent expert spécialisé dans : Auto-retry failed cron jobs on connection recovery..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "canva",
+  "command": "canva",
+  "description": "Create, export, and manage Canva designs via the Connect API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, export, and manage Canva designs via the Connect API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

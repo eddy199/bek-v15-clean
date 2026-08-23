@@ -1,0 +1,6 @@
+{
+  "name": "email-tool",
+  "command": "email-tool",
+  "description": "**Description:** Use this skill to send and read emails (IMAP/SMTP)",
+  "prompt": "Tu es un agent expert spécialisé dans : **Description:** Use this skill to send and read emails (IMAP/SMTP).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

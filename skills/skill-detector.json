@@ -1,0 +1,6 @@
+{
+  "name": "skill-detector",
+  "command": "skill-detector",
+  "description": "Intelligent skill creation assistant that detects workflow patterns, auto-drafts skills, improves existing ones.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intelligent skill creation assistant that detects workflow patterns, auto-drafts skills, improves existing ones..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

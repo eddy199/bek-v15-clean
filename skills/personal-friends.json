@@ -1,0 +1,6 @@
+{
+  "name": "personal-friends",
+  "command": "personal-friends",
+  "description": "Acts as the user's social life assistant in the Friends topic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Acts as the user's social life assistant in the Friends topic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

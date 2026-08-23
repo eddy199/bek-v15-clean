@@ -1,0 +1,6 @@
+{
+  "name": "authensor-gateway",
+  "command": "authensor-gateway",
+  "description": "Fail-safe policy gate for OpenClaw marketplace skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fail-safe policy gate for OpenClaw marketplace skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

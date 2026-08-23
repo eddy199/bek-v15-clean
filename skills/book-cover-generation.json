@@ -1,0 +1,6 @@
+{
+  "name": "book-cover-generation",
+  "command": "book-cover-generation",
+  "description": "Generate professional book covers and ebook covers using each::sense API with AI-powered design.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional book covers and ebook covers using each::sense API with AI-powered design..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

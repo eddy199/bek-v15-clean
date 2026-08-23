@@ -1,0 +1,6 @@
+{
+  "name": "install-then-update-trap-detector",
+  "command": "install-then-update-trap-detector",
+  "description": "Helps detect the install-then-update attack pattern — where a skill passes initial security review cleanly.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps detect the install-then-update attack pattern — where a skill passes initial security review cleanly..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

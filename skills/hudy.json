@@ -1,0 +1,6 @@
+{
+  "name": "hudy",
+  "command": "hudy",
+  "description": "Korean public holidays and business day calculations via HuDy MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Korean public holidays and business day calculations via HuDy MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "short-video-copywriter",
+  "command": "short-video-copywriter",
+  "description": "Generate viral short video copy for TikTok, Xiaohongshu, Kuaishou.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate viral short video copy for TikTok, Xiaohongshu, Kuaishou..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

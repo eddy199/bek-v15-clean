@@ -1,0 +1,6 @@
+{
+  "name": "nyx-archive-coding-philosophy",
+  "command": "nyx-archive-coding-philosophy",
+  "description": "Insights about refactoring intuitive code, when to impose structure vs let feeling lead, and code as creative.",
+  "prompt": "Tu es un agent expert spécialisé dans : Insights about refactoring intuitive code, when to impose structure vs let feeling lead, and code as creative..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agent-cost-monitor",
+  "command": "agent-cost-monitor",
+  "description": "Real-time token usage and cost tracking across all your OpenClaw agents — alerts, budgets, and optimization tips.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time token usage and cost tracking across all your OpenClaw agents — alerts, budgets, and optimization tips..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

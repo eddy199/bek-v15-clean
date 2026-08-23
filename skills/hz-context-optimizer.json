@@ -1,0 +1,6 @@
+{
+  "name": "hz-context-optimizer",
+  "command": "hz-context-optimizer",
+  "description": "This skill should be used when the user asks to \"compress context\", \"summarize conversation history\", \"implement.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill should be used when the user asks to \"compress context\", \"summarize conversation history\", \"implement..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

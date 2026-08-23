@@ -1,0 +1,6 @@
+{
+  "name": "math-worksheets",
+  "command": "math-worksheets",
+  "description": "Generate professional math practice worksheets and full answer keys as PDFs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional math practice worksheets and full answer keys as PDFs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

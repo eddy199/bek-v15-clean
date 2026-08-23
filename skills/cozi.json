@@ -1,0 +1,6 @@
+{
+  "name": "cozi",
+  "command": "cozi",
+  "description": "Interact with Cozi Family Organizer (shopping lists, todo lists, item management)",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Cozi Family Organizer (shopping lists, todo lists, item management).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

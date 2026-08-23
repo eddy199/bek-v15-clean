@@ -1,0 +1,6 @@
+{
+  "name": "paper-notion-summarizer",
+  "command": "paper-notion-summarizer",
+  "description": "Fetch paper metadata by title or arXiv/DOI link, create a deep structured summary, and post it as a Notion page.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch paper metadata by title or arXiv/DOI link, create a deep structured summary, and post it as a Notion page..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

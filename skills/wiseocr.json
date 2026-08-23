@@ -1,0 +1,6 @@
+{
+  "name": "wiseocr",
+  "command": "wiseocr",
+  "description": "Convert PDF files to Markdown using WiseOCR API (powered by WiseDiag)",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert PDF files to Markdown using WiseOCR API (powered by WiseDiag).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

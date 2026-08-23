@@ -1,0 +1,6 @@
+{
+  "name": "passive-income-tracker",
+  "command": "passive-income-tracker",
+  "description": "Track all your passive income crypto apps from one place.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track all your passive income crypto apps from one place..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

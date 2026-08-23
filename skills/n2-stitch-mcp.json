@@ -1,0 +1,6 @@
+{
+  "name": "n2-stitch-mcp",
+  "command": "n2-stitch-mcp",
+  "description": "Resilient MCP proxy for Google Stitch — 3-layer safety (auto-retry, token refresh, TCP drop recovery).",
+  "prompt": "Tu es un agent expert spécialisé dans : Resilient MCP proxy for Google Stitch — 3-layer safety (auto-retry, token refresh, TCP drop recovery)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

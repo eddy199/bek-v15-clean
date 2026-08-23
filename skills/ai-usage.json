@@ -1,0 +1,6 @@
+{
+  "name": "ai-usage",
+  "command": "ai-usage",
+  "description": "Check AI usage across Anthropic and other providers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check AI usage across Anthropic and other providers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

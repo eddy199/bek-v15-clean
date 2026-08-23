@@ -1,0 +1,6 @@
+{
+  "name": "page-behavior-audit",
+  "command": "page-behavior-audit",
+  "description": "Deep behavioral audit with hashed policy (CSP-compliant, no plaintext badwords)",
+  "prompt": "Tu es un agent expert spécialisé dans : Deep behavioral audit with hashed policy (CSP-compliant, no plaintext badwords).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

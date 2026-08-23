@@ -1,0 +1,6 @@
+{
+  "name": "imap-idle",
+  "command": "imap-idle",
+  "description": "Event-driven email monitoring using IMAP IDLE protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Event-driven email monitoring using IMAP IDLE protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

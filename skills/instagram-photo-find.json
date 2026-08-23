@@ -1,0 +1,6 @@
+{
+  "name": "instagram-photo-find",
+  "command": "instagram-photo-find",
+  "description": "Find high-quality Instagram photos for any destination or place.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find high-quality Instagram photos for any destination or place..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

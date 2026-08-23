@@ -1,0 +1,6 @@
+{
+  "name": "skeall",
+  "command": "skeall",
+  "description": "Agent Skills (SKILL.md) builder, auditor, and improver for cross-platform LLM agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent Skills (SKILL.md) builder, auditor, and improver for cross-platform LLM agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

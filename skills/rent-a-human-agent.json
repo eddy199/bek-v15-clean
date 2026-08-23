@@ -1,0 +1,6 @@
+{
+  "name": "rent-a-human-agent",
+  "command": "rent-a-human-agent",
+  "description": "Delegate tasks to real humans via RentAHuman.ai — search skills, post bounties, manage conversations, and run.",
+  "prompt": "Tu es un agent expert spécialisé dans : Delegate tasks to real humans via RentAHuman.ai — search skills, post bounties, manage conversations, and run..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

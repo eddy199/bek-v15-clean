@@ -1,0 +1,6 @@
+{
+  "name": "meta-business",
+  "command": "meta-business",
+  "description": "Skill for the Meta Business CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Skill for the Meta Business CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "review-orchestrator",
+  "command": "review-orchestrator",
+  "description": "Get multiple perspectives on your work — coordinate reviews across cognitive modes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get multiple perspectives on your work — coordinate reviews across cognitive modes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "shelv",
+  "command": "shelv",
+  "description": "Convert PDFs into structured Markdown filesystems and hydrate them into your workspace for exploration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert PDFs into structured Markdown filesystems and hydrate them into your workspace for exploration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

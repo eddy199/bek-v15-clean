@@ -1,0 +1,6 @@
+{
+  "name": "ros-skill",
+  "command": "ros-skill",
+  "description": "Controls ROS/ROS2 robots via rosbridge WebSocket CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Controls ROS/ROS2 robots via rosbridge WebSocket CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

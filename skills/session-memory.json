@@ -1,0 +1,6 @@
+{
+  "name": "session-memory",
+  "command": "session-memory",
+  "description": "Persistent memory toolkit for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent memory toolkit for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "orchata",
+  "command": "orchata",
+  "description": "Knowledge management and RAG platform with tree-based document indexing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Knowledge management and RAG platform with tree-based document indexing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

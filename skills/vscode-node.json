@@ -1,0 +1,6 @@
+{
+  "name": "vscode-node",
+  "command": "vscode-node",
+  "description": "Operate on code through a VS Code/Cursor IDE connected as an OpenClaw Node.",
+  "prompt": "Tu es un agent expert spécialisé dans : Operate on code through a VS Code/Cursor IDE connected as an OpenClaw Node..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

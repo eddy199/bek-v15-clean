@@ -1,0 +1,6 @@
+{
+  "name": "gumroad-pro",
+  "command": "gumroad-pro",
+  "description": "Comprehensive Gumroad merchant management for Products, Sales, Licenses, Discounts, Payouts, and Webhooks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive Gumroad merchant management for Products, Sales, Licenses, Discounts, Payouts, and Webhooks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

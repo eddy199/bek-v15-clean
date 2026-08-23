@@ -1,0 +1,6 @@
+{
+  "name": "researchvault-brain",
+  "command": "researchvault-brain",
+  "description": "Local research orchestration and state management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local research orchestration and state management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

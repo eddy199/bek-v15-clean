@@ -1,0 +1,6 @@
+{
+  "name": "google-maps-leadgen-skill",
+  "command": "google-maps-leadgen-skill",
+  "description": "Generate B2B leads from Google Maps using a self-hosted MCP server (`google-maps`) and export to CSV or XLSX.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate B2B leads from Google Maps using a self-hosted MCP server (`google-maps`) and export to CSV or XLSX..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

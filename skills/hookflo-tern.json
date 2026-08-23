@@ -1,0 +1,6 @@
+{
+  "name": "hookflo-tern",
+  "command": "hookflo-tern",
+  "description": "Use this skill for requests touching webhooks, event-driven infrastructure, or real-time HTTP callbacks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill for requests touching webhooks, event-driven infrastructure, or real-time HTTP callbacks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

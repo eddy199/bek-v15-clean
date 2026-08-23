@@ -1,0 +1,6 @@
+{
+  "name": "budget",
+  "command": "budget",
+  "description": "Track agent spending, set budgets and alerts, and prevent surprise bills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track agent spending, set budgets and alerts, and prevent surprise bills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

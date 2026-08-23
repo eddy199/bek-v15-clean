@@ -1,0 +1,6 @@
+{
+  "name": "auteng-docs-curl-publish",
+  "command": "auteng-docs-curl-publish",
+  "description": "Publish markdown and return share links using curl.",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish markdown and return share links using curl..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

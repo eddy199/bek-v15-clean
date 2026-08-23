@@ -1,0 +1,6 @@
+{
+  "name": "mixtiles-it",
+  "command": "mixtiles-it",
+  "description": "Send a photo to Mixtiles for ordering wall tiles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send a photo to Mixtiles for ordering wall tiles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

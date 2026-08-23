@@ -1,0 +1,6 @@
+{
+  "name": "sanctifai",
+  "command": "sanctifai",
+  "description": "Interface with the SanctifAI Human-in-the-Loop API to create tasks and wait for human responses.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interface with the SanctifAI Human-in-the-Loop API to create tasks and wait for human responses..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

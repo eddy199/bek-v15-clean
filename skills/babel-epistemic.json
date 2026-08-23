@@ -1,0 +1,6 @@
+{
+  "name": "babel-epistemic",
+  "command": "babel-epistemic",
+  "description": "Prevents metacognitive poisoning in multi-agent handoffs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Prevents metacognitive poisoning in multi-agent handoffs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

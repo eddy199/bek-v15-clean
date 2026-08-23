@@ -1,0 +1,6 @@
+{
+  "name": "simple-redux",
+  "command": "simple-redux",
+  "description": "Formats text according to specified style guidelines.",
+  "prompt": "Tu es un agent expert spécialisé dans : Formats text according to specified style guidelines..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

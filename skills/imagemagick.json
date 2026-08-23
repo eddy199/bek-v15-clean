@@ -1,0 +1,6 @@
+{
+  "name": "imagemagick",
+  "command": "imagemagick",
+  "description": "Comprehensive ImageMagick operations for image manipulation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive ImageMagick operations for image manipulation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "zen-founder-agent",
+  "command": "zen-founder-agent",
+  "description": "Analyze startup pitch decks and get matched with VCs from Zen.GP's investor database.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze startup pitch decks and get matched with VCs from Zen.GP's investor database..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

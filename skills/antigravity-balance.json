@@ -1,0 +1,6 @@
+{
+  "name": "antigravity-balance",
+  "command": "antigravity-balance",
+  "description": "Check Google Antigravity AI model quota/token balance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check Google Antigravity AI model quota/token balance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

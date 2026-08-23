@@ -1,0 +1,6 @@
+{
+  "name": "atomicmail",
+  "command": "atomicmail",
+  "description": "Agent-owned @atomicmail.ai inbox over JMAP. PoW signup, no API keys.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent-owned @atomicmail.ai inbox over JMAP. PoW signup, no API keys..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

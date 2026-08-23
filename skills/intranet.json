@@ -1,0 +1,6 @@
+{
+  "name": "intranet",
+  "command": "intranet",
+  "description": "Lightweight local HTTP file server with plugin support.",
+  "prompt": "Tu es un agent expert spécialisé dans : Lightweight local HTTP file server with plugin support..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

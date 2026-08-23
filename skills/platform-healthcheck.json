@@ -1,0 +1,6 @@
+{
+  "name": "platform-healthcheck",
+  "command": "platform-healthcheck",
+  "description": "Health check dashboard for agent platform APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Health check dashboard for agent platform APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

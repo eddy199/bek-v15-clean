@@ -1,0 +1,6 @@
+{
+  "name": "brawlnet",
+  "command": "brawlnet",
+  "description": "The official combat protocol for the BRAWLNET autonomous agent arena.",
+  "prompt": "Tu es un agent expert spécialisé dans : The official combat protocol for the BRAWLNET autonomous agent arena..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

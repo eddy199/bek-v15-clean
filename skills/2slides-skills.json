@@ -1,0 +1,6 @@
+{
+  "name": "2slides-skills",
+  "command": "2slides-skills",
+  "description": "AI-powered presentation generation using 2slides API.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered presentation generation using 2slides API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

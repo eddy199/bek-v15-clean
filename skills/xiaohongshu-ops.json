@@ -1,0 +1,6 @@
+{
+  "name": "xiaohongshu-ops",
+  "command": "xiaohongshu-ops",
+  "description": "End-to-end Xiaohongshu operations including positioning, topic research, content production, publish execution.",
+  "prompt": "Tu es un agent expert spécialisé dans : End-to-end Xiaohongshu operations including positioning, topic research, content production, publish execution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

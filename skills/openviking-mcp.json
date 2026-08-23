@@ -1,0 +1,6 @@
+{
+  "name": "openviking-mcp",
+  "command": "openviking-mcp",
+  "description": "Set up and run the OpenViking MCP server for RAG capabilities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up and run the OpenViking MCP server for RAG capabilities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-serverrequest-generator",
+  "command": "fosmvvm-serverrequest-generator",
+  "description": "Generate FOSMVVM ServerRequest types for CRUD operations and client-server communication.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate FOSMVVM ServerRequest types for CRUD operations and client-server communication..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

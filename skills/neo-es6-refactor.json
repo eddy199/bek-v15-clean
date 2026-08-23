@@ -1,0 +1,6 @@
+{
+  "name": "neo-es6-refactor",
+  "command": "neo-es6-refactor",
+  "description": "Automatically refactor JavaScript/TypeScript code to use modern ES6+ patterns and features.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically refactor JavaScript/TypeScript code to use modern ES6+ patterns and features..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

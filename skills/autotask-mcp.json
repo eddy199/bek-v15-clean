@@ -1,0 +1,6 @@
+{
+  "name": "autotask-mcp",
+  "command": "autotask-mcp",
+  "description": "Use when you need to interact with Datto/Kaseya Autotask PSA via an MCP server (tickets, companies, contacts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when you need to interact with Datto/Kaseya Autotask PSA via an MCP server (tickets, companies, contacts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

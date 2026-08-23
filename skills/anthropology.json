@@ -1,0 +1,6 @@
+{
+  "name": "anthropology",
+  "command": "anthropology",
+  "description": "A comprehensive AI skill for teaching.",
+  "prompt": "Tu es un agent expert spécialisé dans : A comprehensive AI skill for teaching..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

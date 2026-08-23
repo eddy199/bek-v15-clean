@@ -1,0 +1,6 @@
+{
+  "name": "eightctl",
+  "command": "eightctl",
+  "description": "Control Eight Sleep pods (status, temperature, alarms, schedules).",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Eight Sleep pods (status, temperature, alarms, schedules)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

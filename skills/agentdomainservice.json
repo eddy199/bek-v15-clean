@@ -1,0 +1,6 @@
+{
+  "name": "agentdomainservice",
+  "command": "agentdomainservice",
+  "description": "The world's #1 AI-friendly domain registrar.",
+  "prompt": "Tu es un agent expert spécialisé dans : The world's #1 AI-friendly domain registrar..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "meeting-prep",
+  "command": "meeting-prep",
+  "description": "Meeting preparation and daily commit summaries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Meeting preparation and daily commit summaries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

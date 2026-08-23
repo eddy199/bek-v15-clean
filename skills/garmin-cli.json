@@ -1,0 +1,6 @@
+{
+  "name": "garmin-cli",
+  "command": "garmin-cli",
+  "description": "Access Garmin Connect health, fitness, and activity data via a non-interactive CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Garmin Connect health, fitness, and activity data via a non-interactive CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

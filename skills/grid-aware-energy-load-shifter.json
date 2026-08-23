@@ -1,0 +1,6 @@
+{
+  "name": "grid-aware-energy-load-shifter",
+  "command": "grid-aware-energy-load-shifter",
+  "description": "Grid-aware energy load shifter for Home Assistant.",
+  "prompt": "Tu es un agent expert spécialisé dans : Grid-aware energy load shifter for Home Assistant..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

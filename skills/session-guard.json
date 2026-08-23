@@ -1,0 +1,6 @@
+{
+  "name": "session-guard",
+  "command": "session-guard",
+  "description": "Prevents and recovers from OpenClaw session bloat and context loss.",
+  "prompt": "Tu es un agent expert spécialisé dans : Prevents and recovers from OpenClaw session bloat and context loss..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

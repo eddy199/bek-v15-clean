@@ -1,0 +1,6 @@
+{
+  "name": "coda-io",
+  "command": "coda-io",
+  "description": "Interact with Coda.io docs, tables, rows, pages, and automations via the Coda REST API v1.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Coda.io docs, tables, rows, pages, and automations via the Coda REST API v1..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

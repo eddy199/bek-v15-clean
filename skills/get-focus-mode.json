@@ -1,0 +1,6 @@
+{
+  "name": "get-focus-mode",
+  "command": "get-focus-mode",
+  "description": "Get the current macOS Focus.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get the current macOS Focus..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

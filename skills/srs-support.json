@@ -1,0 +1,6 @@
+{
+  "name": "srs-support",
+  "command": "srs-support",
+  "description": "Answer SRS (Simple Realtime Server) questions for developers and users — protocols, configuration, architecture.",
+  "prompt": "Tu es un agent expert spécialisé dans : Answer SRS (Simple Realtime Server) questions for developers and users — protocols, configuration, architecture..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

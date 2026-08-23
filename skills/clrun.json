@@ -1,0 +1,6 @@
+{
+  "name": "clrun",
+  "command": "clrun",
+  "description": "Run and control interactive CLI sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run and control interactive CLI sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

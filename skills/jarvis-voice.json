@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-voice",
+  "command": "jarvis-voice",
+  "description": "Metallic AI voice persona with TTS and visual transcript styling.",
+  "prompt": "Tu es un agent expert spécialisé dans : Metallic AI voice persona with TTS and visual transcript styling..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

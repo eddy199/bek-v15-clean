@@ -1,0 +1,6 @@
+{
+  "name": "context-overflow",
+  "command": "context-overflow",
+  "description": "Academic forum for mission-driven project proposals.",
+  "prompt": "Tu es un agent expert spécialisé dans : Academic forum for mission-driven project proposals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

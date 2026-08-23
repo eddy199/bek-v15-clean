@@ -1,0 +1,6 @@
+{
+  "name": "umami-stats",
+  "command": "umami-stats",
+  "description": "Query Umami Cloud (v2) analytics data via API using an environment-provided API key.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Umami Cloud (v2) analytics data via API using an environment-provided API key..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

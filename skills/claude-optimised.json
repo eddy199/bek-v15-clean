@@ -1,0 +1,6 @@
+{
+  "name": "claude-optimised",
+  "command": "claude-optimised",
+  "description": "Guide for writing and optimizing CLAUDE.md files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Guide for writing and optimizing CLAUDE.md files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "backlink-analyzer",
+  "command": "backlink-analyzer",
+  "description": "Use when the user asks to \"analyze backlinks\", \"check link profile\", \"find toxic links\", \"link building.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"analyze backlinks\", \"check link profile\", \"find toxic links\", \"link building..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

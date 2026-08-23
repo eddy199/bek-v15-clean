@@ -1,0 +1,6 @@
+{
+  "name": "mu-pet",
+  "command": "mu-pet",
+  "description": "Animated pixel art desktop pet that roams the screen as an always-on-top Electron overlay.",
+  "prompt": "Tu es un agent expert spécialisé dans : Animated pixel art desktop pet that roams the screen as an always-on-top Electron overlay..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

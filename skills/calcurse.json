@@ -1,0 +1,6 @@
+{
+  "name": "calcurse",
+  "command": "calcurse",
+  "description": "A text-based calendar and scheduling application.",
+  "prompt": "Tu es un agent expert spécialisé dans : A text-based calendar and scheduling application..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

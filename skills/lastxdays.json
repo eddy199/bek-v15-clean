@@ -1,0 +1,6 @@
+{
+  "name": "lastxdays",
+  "command": "lastxdays",
+  "description": "Research and summarize what happened in the last N days (or a date range) about a topic, optionally using Reddit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Research and summarize what happened in the last N days (or a date range) about a topic, optionally using Reddit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

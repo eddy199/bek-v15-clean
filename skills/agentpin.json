@@ -1,0 +1,6 @@
+{
+  "name": "agentpin",
+  "command": "agentpin",
+  "description": "**Purpose**: This guide helps AI assistants work with AgentPin for domain-anchored cryptographic agent identity.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Purpose**: This guide helps AI assistants work with AgentPin for domain-anchored cryptographic agent identity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

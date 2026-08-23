@@ -1,0 +1,6 @@
+{
+  "name": "clawdbot-skill-update",
+  "command": "clawdbot-skill-update",
+  "description": "Comprehensive backup, update, and restore.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive backup, update, and restore..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

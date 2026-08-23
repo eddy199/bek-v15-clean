@@ -1,0 +1,6 @@
+{
+  "name": "bitbucket-automation",
+  "command": "bitbucket-automation",
+  "description": "Automate Bitbucket repositories, pull.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate Bitbucket repositories, pull..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

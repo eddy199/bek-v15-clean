@@ -1,0 +1,6 @@
+{
+  "name": "browser-use",
+  "command": "browser-use",
+  "description": "Use Browser Use cloud API to spin up cloud browsers for Clawdbot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Browser Use cloud API to spin up cloud browsers for Clawdbot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

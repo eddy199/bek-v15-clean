@@ -1,0 +1,6 @@
+{
+  "name": "capacities",
+  "command": "capacities",
+  "description": "Manage Capacities notes, daily entries, and weblinks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Capacities notes, daily entries, and weblinks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

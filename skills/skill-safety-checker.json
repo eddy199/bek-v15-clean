@@ -1,0 +1,6 @@
+{
+  "name": "skill-safety-checker",
+  "command": "skill-safety-checker",
+  "description": "Runs VirusTotal-style security checks on OpenClaw/Cursor skills before install, including remote code execution (RCE)",
+  "prompt": "Tu es un agent expert spécialisé dans : Runs VirusTotal-style security checks on OpenClaw/Cursor skills before install, including remote code execution (RCE).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

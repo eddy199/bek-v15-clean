@@ -1,0 +1,6 @@
+{
+  "name": "brand-voice-profile",
+  "command": "brand-voice-profile",
+  "description": "Define and store your brand voice profile for consistent content generation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Define and store your brand voice profile for consistent content generation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

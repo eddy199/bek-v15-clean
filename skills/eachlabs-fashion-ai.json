@@ -1,0 +1,6 @@
+{
+  "name": "eachlabs-fashion-ai",
+  "command": "eachlabs-fashion-ai",
+  "description": "Generate fashion imagery, virtual try-on, runway videos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate fashion imagery, virtual try-on, runway videos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "event-watcher",
+  "command": "event-watcher",
+  "description": "Event watcher skill for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Event watcher skill for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

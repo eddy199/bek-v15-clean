@@ -1,0 +1,6 @@
+{
+  "name": "verification-before-completion",
+  "command": "verification-before-completion",
+  "description": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

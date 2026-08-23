@@ -1,0 +1,6 @@
+{
+  "name": "med-info",
+  "command": "med-info",
+  "description": "Medication info with citations and traceable IDs (RxCUI/NDC/set_id) from authoritative public sources (openFDA.",
+  "prompt": "Tu es un agent expert spécialisé dans : Medication info with citations and traceable IDs (RxCUI/NDC/set_id) from authoritative public sources (openFDA..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

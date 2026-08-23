@@ -1,0 +1,6 @@
+{
+  "name": "agent-metrics-osiris",
+  "command": "agent-metrics-osiris",
+  "description": "Observability and metrics for AI agents - track calls, errors, latency.",
+  "prompt": "Tu es un agent expert spécialisé dans : Observability and metrics for AI agents - track calls, errors, latency..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

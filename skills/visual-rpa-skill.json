@@ -1,0 +1,6 @@
+{
+  "name": "visual-rpa-skill",
+  "command": "visual-rpa-skill",
+  "description": "Visual RPA desktop automation skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : Visual RPA desktop automation skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

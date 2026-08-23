@@ -1,0 +1,6 @@
+{
+  "name": "intercom",
+  "command": "intercom",
+  "description": "Operate a local Intercom peer (Pear) for P2P agent messaging (sidechannels) + optional contract state.",
+  "prompt": "Tu es un agent expert spécialisé dans : Operate a local Intercom peer (Pear) for P2P agent messaging (sidechannels) + optional contract state..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

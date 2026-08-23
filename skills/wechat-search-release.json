@@ -1,0 +1,6 @@
+{
+  "name": "wechat-search-release",
+  "command": "wechat-search-release",
+  "description": "Search WeChat Official Account articles using OpenClaw's web search and fetch capabilities with compliance-focused.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search WeChat Official Account articles using OpenClaw's web search and fetch capabilities with compliance-focused..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "pls-agent-tools",
+  "command": "pls-agent-tools",
+  "description": "Digital Swiss Army knife for everyday labor that standard models can't handle out of the box.",
+  "prompt": "Tu es un agent expert spécialisé dans : Digital Swiss Army knife for everyday labor that standard models can't handle out of the box..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

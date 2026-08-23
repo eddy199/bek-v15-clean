@@ -1,0 +1,6 @@
+{
+  "name": "anti-slop-design",
+  "command": "anti-slop-design",
+  "description": "Create distinctive, production-grade frontend interfaces that avoid generic AI aesthetics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create distinctive, production-grade frontend interfaces that avoid generic AI aesthetics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

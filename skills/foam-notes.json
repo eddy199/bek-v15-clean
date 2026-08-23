@@ -1,0 +1,6 @@
+{
+  "name": "foam-notes",
+  "command": "foam-notes",
+  "description": "Work with Foam note repositories.",
+  "prompt": "Tu es un agent expert spécialisé dans : Work with Foam note repositories..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

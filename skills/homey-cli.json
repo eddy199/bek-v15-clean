@@ -1,0 +1,6 @@
+{
+  "name": "homey-cli",
+  "command": "homey-cli",
+  "description": "Control Homey home automation hub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Homey home automation hub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

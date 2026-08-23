@@ -1,0 +1,6 @@
+{
+  "name": "website-usability-test-nova-act",
+  "command": "website-usability-test-nova-act",
+  "description": "AI-orchestrated usability testing using Amazon Nova Act.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-orchestrated usability testing using Amazon Nova Act..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

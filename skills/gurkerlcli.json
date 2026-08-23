@@ -1,0 +1,6 @@
+{
+  "name": "gurkerlcli",
+  "command": "gurkerlcli",
+  "description": "Austrian online grocery shopping via gurkerl.at.",
+  "prompt": "Tu es un agent expert spécialisé dans : Austrian online grocery shopping via gurkerl.at..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

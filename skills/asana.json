@@ -1,0 +1,6 @@
+{
+  "name": "asana",
+  "command": "asana",
+  "description": "Integrate Asana with Clawdbot via the Asana REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate Asana with Clawdbot via the Asana REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

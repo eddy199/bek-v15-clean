@@ -1,0 +1,6 @@
+{
+  "name": "questions-form",
+  "command": "questions-form",
+  "description": "Present multiple clarifying questions as an interactive Telegram form using inline buttons.",
+  "prompt": "Tu es un agent expert spécialisé dans : Present multiple clarifying questions as an interactive Telegram form using inline buttons..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

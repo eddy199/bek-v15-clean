@@ -1,0 +1,6 @@
+{
+  "name": "ai-humanizer",
+  "command": "ai-humanizer",
+  "description": "Humanize AI-generated text by detecting and removing patterns typical of LLM output.",
+  "prompt": "Tu es un agent expert spécialisé dans : Humanize AI-generated text by detecting and removing patterns typical of LLM output..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

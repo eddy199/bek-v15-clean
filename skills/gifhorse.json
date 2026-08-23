@@ -1,0 +1,6 @@
+{
+  "name": "gifhorse",
+  "command": "gifhorse",
+  "description": "Search video dialogue and create reaction GIFs with timed subtitles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search video dialogue and create reaction GIFs with timed subtitles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

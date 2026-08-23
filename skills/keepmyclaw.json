@@ -1,0 +1,6 @@
+{
+  "name": "keepmyclaw",
+  "command": "keepmyclaw",
+  "description": "Encrypted cloud backup and restore for OpenClaw workspaces.",
+  "prompt": "Tu es un agent expert spécialisé dans : Encrypted cloud backup and restore for OpenClaw workspaces..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

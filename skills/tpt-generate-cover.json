@@ -1,0 +1,6 @@
+{
+  "name": "tpt-generate-cover",
+  "command": "tpt-generate-cover",
+  "description": "Generate a TPT cover using the AI Studio DinoCover tool and save it locally with the book title as filename.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate a TPT cover using the AI Studio DinoCover tool and save it locally with the book title as filename..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

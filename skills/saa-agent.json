@@ -1,0 +1,6 @@
+{
+  "name": "saa-agent",
+  "command": "saa-agent",
+  "description": "Enables AI agents to generate images using the Character Select Stand Alone App (SAA) image generation backend.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enables AI agents to generate images using the Character Select Stand Alone App (SAA) image generation backend..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

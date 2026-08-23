@@ -1,0 +1,6 @@
+{
+  "name": "sql-query-generator",
+  "command": "sql-query-generator",
+  "description": "Generate secure SQL queries with validation, pagination helpers, risk analysis, and audit-focused safeguards.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate secure SQL queries with validation, pagination helpers, risk analysis, and audit-focused safeguards..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

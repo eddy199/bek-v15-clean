@@ -1,0 +1,6 @@
+{
+  "name": "automation-workflows",
+  "command": "automation-workflows",
+  "description": "Design and implement automation workflows to save.",
+  "prompt": "Tu es un agent expert spécialisé dans : Design and implement automation workflows to save..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "apple-find-my-local",
+  "command": "apple-find-my-local",
+  "description": "Control Apple Find My app via Peekaboo to locate people, devices, and items (AirTags)",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Apple Find My app via Peekaboo to locate people, devices, and items (AirTags).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

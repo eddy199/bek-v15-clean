@@ -1,0 +1,6 @@
+{
+  "name": "dash-cog",
+  "command": "dash-cog",
+  "description": "Interactive dashboards and apps powered by CellCog.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interactive dashboards and apps powered by CellCog..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

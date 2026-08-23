@@ -1,0 +1,6 @@
+{
+  "name": "openserv-launch",
+  "command": "openserv-launch",
+  "description": "Launch tokens on Base blockchain via the OpenServ Launch API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Launch tokens on Base blockchain via the OpenServ Launch API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

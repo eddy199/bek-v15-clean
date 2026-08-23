@@ -1,0 +1,6 @@
+{
+  "name": "kaspi-autopay",
+  "command": "kaspi-autopay",
+  "description": "Telegram bot auto-payment integration for Kazakhstan market (Kaspi Pay)",
+  "prompt": "Tu es un agent expert spécialisé dans : Telegram bot auto-payment integration for Kazakhstan market (Kaspi Pay).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

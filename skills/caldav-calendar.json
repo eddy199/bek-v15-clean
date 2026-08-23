@@ -1,0 +1,6 @@
+{
+  "name": "caldav-calendar",
+  "command": "caldav-calendar",
+  "description": "Sync and query CalDAV calendars.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sync and query CalDAV calendars..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

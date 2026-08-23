@@ -1,0 +1,6 @@
+{
+  "name": "buddhist-counsel",
+  "command": "buddhist-counsel",
+  "description": "Calls the Anicca buddhist-counsel x402 paid API to reduce suffering using Buddhist wisdom + evidence-based therapy.",
+  "prompt": "Tu es un agent expert spécialisé dans : Calls the Anicca buddhist-counsel x402 paid API to reduce suffering using Buddhist wisdom + evidence-based therapy..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

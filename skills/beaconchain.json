@@ -1,0 +1,6 @@
+{
+  "name": "beaconchain",
+  "command": "beaconchain",
+  "description": "Monitor Ethereum validator dashboard health on beaconcha.in via V2 API, focused on one-check-per-day status.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor Ethereum validator dashboard health on beaconcha.in via V2 API, focused on one-check-per-day status..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

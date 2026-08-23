@@ -1,0 +1,6 @@
+{
+  "name": "usdckrump",
+  "command": "usdckrump",
+  "description": "Pay with USDC Krump (USDC.k) via x402 on Story Aeneid EVVM.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pay with USDC Krump (USDC.k) via x402 on Story Aeneid EVVM..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

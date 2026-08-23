@@ -1,0 +1,6 @@
+{
+  "name": "officex",
+  "command": "officex",
+  "description": "Complete OfficeX platform skill for end-user consumers and app developers interacting with the OfficeX REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete OfficeX platform skill for end-user consumers and app developers interacting with the OfficeX REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

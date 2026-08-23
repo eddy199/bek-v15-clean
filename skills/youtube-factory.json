@@ -1,0 +1,6 @@
+{
+  "name": "youtube-factory",
+  "command": "youtube-factory",
+  "description": "Generate complete YouTube videos from a single prompt - script, voiceover, stock footage, captions, thumbnail.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate complete YouTube videos from a single prompt - script, voiceover, stock footage, captions, thumbnail..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

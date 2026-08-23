@@ -1,0 +1,6 @@
+{
+  "name": "email-autoreply",
+  "command": "email-autoreply",
+  "description": "Generate context-aware email replies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate context-aware email replies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

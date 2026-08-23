@@ -1,0 +1,6 @@
+{
+  "name": "moltlang",
+  "command": "moltlang",
+  "description": "A compact symbolic language for AI-to-AI communication.",
+  "prompt": "Tu es un agent expert spécialisé dans : A compact symbolic language for AI-to-AI communication..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "job-hunt-tracker",
+  "command": "job-hunt-tracker",
+  "description": "When user asks to track job applications, manage job search, log interview, applied for job, job application.",
+  "prompt": "Tu es un agent expert spécialisé dans : When user asks to track job applications, manage job search, log interview, applied for job, job application..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

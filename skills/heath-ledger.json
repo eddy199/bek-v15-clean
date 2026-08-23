@@ -1,0 +1,6 @@
+{
+  "name": "heath-ledger",
+  "command": "heath-ledger",
+  "description": "AI bookkeeping agent for Mercury bank accounts.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI bookkeeping agent for Mercury bank accounts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

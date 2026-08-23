@@ -1,0 +1,6 @@
+{
+  "name": "vibetrader",
+  "command": "vibetrader",
+  "description": "Create and manage AI-powered trading bots via natural language.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage AI-powered trading bots via natural language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

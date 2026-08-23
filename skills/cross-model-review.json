@@ -1,0 +1,6 @@
+{
+  "name": "cross-model-review",
+  "command": "cross-model-review",
+  "description": "Adversarial plan review using two different AI models.",
+  "prompt": "Tu es un agent expert spécialisé dans : Adversarial plan review using two different AI models..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

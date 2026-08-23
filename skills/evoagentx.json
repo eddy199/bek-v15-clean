@@ -1,0 +1,6 @@
+{
+  "name": "evoagentx",
+  "command": "evoagentx",
+  "description": "EvoAgentX - Self-evolving AI agents framework integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : EvoAgentX - Self-evolving AI agents framework integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

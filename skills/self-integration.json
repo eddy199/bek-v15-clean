@@ -1,0 +1,6 @@
+{
+  "name": "self-integration",
+  "command": "self-integration",
+  "description": "Connect to any external app and perform actions on it.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to any external app and perform actions on it..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

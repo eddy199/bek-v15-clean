@@ -1,0 +1,6 @@
+{
+  "name": "scrapling-fetcher",
+  "command": "scrapling-fetcher",
+  "description": "Web scraping using Scrapling — a Python framework with anti-bot bypass (Cloudflare Turnstile, fingerprint.",
+  "prompt": "Tu es un agent expert spécialisé dans : Web scraping using Scrapling — a Python framework with anti-bot bypass (Cloudflare Turnstile, fingerprint..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

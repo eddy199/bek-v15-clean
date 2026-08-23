@@ -1,0 +1,6 @@
+{
+  "name": "twitter-x-api",
+  "command": "twitter-x-api",
+  "description": "X/Twitter messaging management via API.",
+  "prompt": "Tu es un agent expert spécialisé dans : X/Twitter messaging management via API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

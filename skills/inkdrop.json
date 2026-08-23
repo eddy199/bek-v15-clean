@@ -1,0 +1,6 @@
+{
+  "name": "inkdrop",
+  "command": "inkdrop",
+  "description": "Read, create, update, search, and delete notes in Inkdrop via its local HTTP server API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read, create, update, search, and delete notes in Inkdrop via its local HTTP server API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

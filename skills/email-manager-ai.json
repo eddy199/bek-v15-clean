@@ -1,0 +1,6 @@
+{
+  "name": "email-manager-ai",
+  "command": "email-manager-ai",
+  "description": "When user asks to write email, draft reply, manage inbox, email template, follow up email, cold email, professional.",
+  "prompt": "Tu es un agent expert spécialisé dans : When user asks to write email, draft reply, manage inbox, email template, follow up email, cold email, professional..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

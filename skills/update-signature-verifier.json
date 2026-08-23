@@ -1,0 +1,6 @@
+{
+  "name": "update-signature-verifier",
+  "command": "update-signature-verifier",
+  "description": "Helps verify the cryptographic integrity of skill updates by checking whether each version is signed.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps verify the cryptographic integrity of skill updates by checking whether each version is signed..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

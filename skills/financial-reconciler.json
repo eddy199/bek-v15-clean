@@ -1,0 +1,6 @@
+{
+  "name": "financial-reconciler",
+  "command": "financial-reconciler",
+  "description": "Privacy-first personal finance tracker with local SQLite storage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Privacy-first personal finance tracker with local SQLite storage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

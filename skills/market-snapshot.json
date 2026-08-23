@@ -1,0 +1,6 @@
+{
+  "name": "market-snapshot",
+  "command": "market-snapshot",
+  "description": "Fetch a token market snapshot (price/liquidity/volume) and return stable JSON (backed by Jupiter).",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch a token market snapshot (price/liquidity/volume) and return stable JSON (backed by Jupiter)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

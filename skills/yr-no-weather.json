@@ -1,0 +1,6 @@
+{
+  "name": "yr-no-weather",
+  "command": "yr-no-weather",
+  "description": "Fetch weather forecasts from the Norwegian Meteorological Institute (MET) using the yr.no API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch weather forecasts from the Norwegian Meteorological Institute (MET) using the yr.no API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

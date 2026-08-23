@@ -1,0 +1,6 @@
+{
+  "name": "hinge-liker",
+  "command": "hinge-liker",
+  "description": "Automated Hinge dating profile liker using Android emulator + Gemini vision AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated Hinge dating profile liker using Android emulator + Gemini vision AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

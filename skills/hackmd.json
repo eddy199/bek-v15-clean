@@ -1,0 +1,6 @@
+{
+  "name": "hackmd",
+  "command": "hackmd",
+  "description": "Work with HackMD documents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Work with HackMD documents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

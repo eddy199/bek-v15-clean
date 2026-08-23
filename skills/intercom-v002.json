@@ -1,0 +1,6 @@
+{
+  "name": "intercom-v002",
+  "command": "intercom-v002",
+  "description": "Skill for autonomous agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Skill for autonomous agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "create-hat-collection",
+  "command": "create-hat-collection",
+  "description": "Generates new Ralph hat collection presets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates new Ralph hat collection presets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

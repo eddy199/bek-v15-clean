@@ -1,0 +1,6 @@
+{
+  "name": "near-qr-skill",
+  "command": "near-qr-skill",
+  "description": "Generate QR codes for NEAR addresses and payment requests, and read NEAR QR codes from images.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate QR codes for NEAR addresses and payment requests, and read NEAR QR codes from images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

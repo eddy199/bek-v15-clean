@@ -1,0 +1,6 @@
+{
+  "name": "clangd-lsp",
+  "command": "clangd-lsp",
+  "description": "C/C++ language server (clangd) providing code intelligence, diagnostics, and formatting for .c, .h, .cpp, .cc.",
+  "prompt": "Tu es un agent expert spécialisé dans : C/C++ language server (clangd) providing code intelligence, diagnostics, and formatting for .c, .h, .cpp, .cc..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

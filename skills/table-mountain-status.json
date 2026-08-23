@@ -1,0 +1,6 @@
+{
+  "name": "table-mountain-status",
+  "command": "table-mountain-status",
+  "description": "Fetch and report the Table Mountain Aerial Cableway status via the official weather API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch and report the Table Mountain Aerial Cableway status via the official weather API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

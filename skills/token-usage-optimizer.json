@@ -1,0 +1,6 @@
+{
+  "name": "token-usage-optimizer",
+  "command": "token-usage-optimizer",
+  "description": "Maximize your Claude Code subscription value with smart usage monitoring and burn rate optimization.",
+  "prompt": "Tu es un agent expert spécialisé dans : Maximize your Claude Code subscription value with smart usage monitoring and burn rate optimization..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

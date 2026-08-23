@@ -1,0 +1,6 @@
+{
+  "name": "nblm",
+  "command": "nblm",
+  "description": "Use this skill to query your Google NotebookLM notebooks directly from Claude Code for source-grounded.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill to query your Google NotebookLM notebooks directly from Claude Code for source-grounded..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

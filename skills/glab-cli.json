@@ -1,0 +1,6 @@
+{
+  "name": "glab-cli",
+  "command": "glab-cli",
+  "description": "Interact with GitLab using the `glab` CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with GitLab using the `glab` CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

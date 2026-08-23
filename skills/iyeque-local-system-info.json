@@ -1,0 +1,6 @@
+{
+  "name": "iyeque-local-system-info",
+  "command": "iyeque-local-system-info",
+  "description": "Return system metrics (CPU, RAM, disk, processes) using psutil.",
+  "prompt": "Tu es un agent expert spécialisé dans : Return system metrics (CPU, RAM, disk, processes) using psutil..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

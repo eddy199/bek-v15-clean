@@ -1,0 +1,6 @@
+{
+  "name": "facepalm",
+  "command": "facepalm",
+  "description": "Crosscheck OpenClaw console logs with chat history (last 5 mins) and use Codex 5.3 to troubleshoot issues.",
+  "prompt": "Tu es un agent expert spécialisé dans : Crosscheck OpenClaw console logs with chat history (last 5 mins) and use Codex 5.3 to troubleshoot issues..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

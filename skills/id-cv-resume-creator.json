@@ -1,0 +1,6 @@
+{
+  "name": "id-cv-resume-creator",
+  "command": "id-cv-resume-creator",
+  "description": "Create free interactive digital identities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create free interactive digital identities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

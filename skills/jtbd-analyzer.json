@@ -1,0 +1,6 @@
+{
+  "name": "jtbd-analyzer",
+  "command": "jtbd-analyzer",
+  "description": "Uncover the real \"job\" customers hire your product.",
+  "prompt": "Tu es un agent expert spécialisé dans : Uncover the real \"job\" customers hire your product..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "docsync",
+  "command": "docsync",
+  "description": "Auto-generate docs from code and detect documentation drift via git hooks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Auto-generate docs from code and detect documentation drift via git hooks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

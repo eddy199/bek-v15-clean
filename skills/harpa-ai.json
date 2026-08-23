@@ -1,0 +1,6 @@
+{
+  "name": "harpa-ai",
+  "command": "harpa-ai",
+  "description": "Automate web browsers, scrape pages, search the web, and run AI prompts on live websites via HARPA AI Grid REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate web browsers, scrape pages, search the web, and run AI prompts on live websites via HARPA AI Grid REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

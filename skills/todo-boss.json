@@ -1,0 +1,6 @@
+{
+  "name": "todo-boss",
+  "command": "todo-boss",
+  "description": "Task capture + delegation tracking + daily remaining-work report for Telegram.",
+  "prompt": "Tu es un agent expert spécialisé dans : Task capture + delegation tracking + daily remaining-work report for Telegram..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

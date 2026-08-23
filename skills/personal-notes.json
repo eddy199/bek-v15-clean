@@ -1,0 +1,6 @@
+{
+  "name": "personal-notes",
+  "command": "personal-notes",
+  "description": "Acts as the user's note-taking and journaling assistant in the Notes topic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Acts as the user's note-taking and journaling assistant in the Notes topic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

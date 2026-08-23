@@ -1,0 +1,6 @@
+{
+  "name": "agent-chronicle",
+  "command": "agent-chronicle",
+  "description": "AI-powered diary generation for agents - creates rich.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered diary generation for agents - creates rich..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

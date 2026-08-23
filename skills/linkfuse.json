@@ -1,0 +1,6 @@
+{
+  "name": "linkfuse",
+  "command": "linkfuse",
+  "description": "Create a Linkfuse affiliate short link from any URL.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create a Linkfuse affiliate short link from any URL..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "private-web-search-searchxng",
+  "command": "private-web-search-searchxng",
+  "description": "Self-hosted private web search using SearXNG.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-hosted private web search using SearXNG..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

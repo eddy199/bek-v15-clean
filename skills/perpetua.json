@@ -1,0 +1,6 @@
+{
+  "name": "perpetua",
+  "command": "perpetua",
+  "description": "OAuth proxy for calling external APIs (Oura, Google Calendar, etc.) via Perpetua.sh hosted API using a single API.",
+  "prompt": "Tu es un agent expert spécialisé dans : OAuth proxy for calling external APIs (Oura, Google Calendar, etc.) via Perpetua.sh hosted API using a single API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

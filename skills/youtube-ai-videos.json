@@ -1,0 +1,6 @@
+{
+  "name": "youtube-ai-videos",
+  "command": "youtube-ai-videos",
+  "description": "Fetch latest AI-related YouTube videos from curated channels using YouTube Data API v3 and filter by keywords.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch latest AI-related YouTube videos from curated channels using YouTube Data API v3 and filter by keywords..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

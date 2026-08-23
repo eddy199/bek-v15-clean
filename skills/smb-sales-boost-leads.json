@@ -1,0 +1,6 @@
+{
+  "name": "smb-sales-boost-leads",
+  "command": "smb-sales-boost-leads",
+  "description": "Query and manage leads from the SMB Sales Boost B2B lead database.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and manage leads from the SMB Sales Boost B2B lead database..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "snipit",
+  "command": "snipit",
+  "description": "Share code snippets and files securely via snipit.sh with AES-256 encryption.",
+  "prompt": "Tu es un agent expert spécialisé dans : Share code snippets and files securely via snipit.sh with AES-256 encryption..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

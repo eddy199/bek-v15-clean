@@ -1,0 +1,6 @@
+{
+  "name": "apple-photos",
+  "command": "apple-photos",
+  "description": "Apple Photos.app integration for macOS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Apple Photos.app integration for macOS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "aliyun-tts",
+  "command": "aliyun-tts",
+  "description": "Alibaba Cloud Text-to-Speech synthesis service.",
+  "prompt": "Tu es un agent expert spécialisé dans : Alibaba Cloud Text-to-Speech synthesis service..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

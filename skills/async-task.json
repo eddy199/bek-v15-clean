@@ -1,0 +1,6 @@
+{
+  "name": "async-task",
+  "command": "async-task",
+  "description": "Execute long-running tasks without HTTP timeouts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Execute long-running tasks without HTTP timeouts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

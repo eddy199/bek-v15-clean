@@ -1,0 +1,6 @@
+{
+  "name": "code-tester",
+  "command": "code-tester",
+  "description": "Build, run, and test code projects for Rust, Go, and Java.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build, run, and test code projects for Rust, Go, and Java..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

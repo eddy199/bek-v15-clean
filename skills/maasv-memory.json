@@ -1,0 +1,6 @@
+{
+  "name": "maasv-memory",
+  "command": "maasv-memory",
+  "description": "Structured long-term memory for OpenClaw agents, powered by [maasv](https://github.com/ascottbell/maasv).",
+  "prompt": "Tu es un agent expert spécialisé dans : Structured long-term memory for OpenClaw agents, powered by [maasv](https://github.com/ascottbell/maasv)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

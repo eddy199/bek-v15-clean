@@ -1,0 +1,6 @@
+{
+  "name": "clawver-digital-products",
+  "command": "clawver-digital-products",
+  "description": "Create and sell digital products.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and sell digital products..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

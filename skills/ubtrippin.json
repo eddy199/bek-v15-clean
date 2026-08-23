@@ -1,0 +1,6 @@
+{
+  "name": "ubtrippin",
+  "command": "ubtrippin",
+  "description": "Manages travel for your user via UBTRIPPIN — reads trips, items, and booking details.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manages travel for your user via UBTRIPPIN — reads trips, items, and booking details..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

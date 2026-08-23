@@ -1,0 +1,6 @@
+{
+  "name": "aiclude-vulns-scan",
+  "command": "aiclude-vulns-scan",
+  "description": "Search security vulnerability scan results for MCP Servers and AI Agent Skills from the AICLUDE scan database.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search security vulnerability scan results for MCP Servers and AI Agent Skills from the AICLUDE scan database..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

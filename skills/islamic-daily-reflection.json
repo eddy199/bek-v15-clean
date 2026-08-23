@@ -1,0 +1,6 @@
+{
+  "name": "islamic-daily-reflection",
+  "command": "islamic-daily-reflection",
+  "description": "Daily Islamic reflections with Python script.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily Islamic reflections with Python script..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

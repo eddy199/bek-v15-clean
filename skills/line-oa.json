@@ -1,0 +1,6 @@
+{
+  "name": "line-oa",
+  "command": "line-oa",
+  "description": "Operate LINE Official Account Manager (chat.line.biz) via browser automation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Operate LINE Official Account Manager (chat.line.biz) via browser automation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "solo-research",
+  "command": "solo-research",
+  "description": "Deep market research — competitor analysis, user pain points, SEO/ASO keywords, naming/domain availability.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deep market research — competitor analysis, user pain points, SEO/ASO keywords, naming/domain availability..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

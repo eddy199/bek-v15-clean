@@ -1,0 +1,6 @@
+{
+  "name": "agent-browser",
+  "command": "agent-browser",
+  "description": "A fast Rust-based headless browser automation CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : A fast Rust-based headless browser automation CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

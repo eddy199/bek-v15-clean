@@ -1,0 +1,6 @@
+{
+  "name": "atoship",
+  "command": "atoship",
+  "description": "Ship packages with AI — compare rates across USPS, FedEx, and UPS, buy discounted labels, track shipments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ship packages with AI — compare rates across USPS, FedEx, and UPS, buy discounted labels, track shipments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

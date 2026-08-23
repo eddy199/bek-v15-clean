@@ -1,0 +1,6 @@
+{
+  "name": "hotel-pricer",
+  "command": "hotel-pricer",
+  "description": "A Go-based CLI for searching hotel availability and pricing using the Amadeus API.",
+  "prompt": "Tu es un agent expert spécialisé dans : A Go-based CLI for searching hotel availability and pricing using the Amadeus API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

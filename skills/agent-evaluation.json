@@ -1,0 +1,6 @@
+{
+  "name": "agent-evaluation",
+  "command": "agent-evaluation",
+  "description": "Testing and benchmarking LLM agents including behavioral testing, capability assessment, reliability metrics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Testing and benchmarking LLM agents including behavioral testing, capability assessment, reliability metrics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

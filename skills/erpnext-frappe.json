@@ -1,0 +1,6 @@
+{
+  "name": "erpnext-frappe",
+  "command": "erpnext-frappe",
+  "description": "High-level business workflows that combine multiple MCP tools into reusable, executable skills for ERPNext.",
+  "prompt": "Tu es un agent expert spécialisé dans : High-level business workflows that combine multiple MCP tools into reusable, executable skills for ERPNext..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

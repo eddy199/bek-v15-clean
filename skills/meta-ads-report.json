@@ -1,0 +1,6 @@
+{
+  "name": "meta-ads-report",
+  "command": "meta-ads-report",
+  "description": "A powerful toolkit to monitor your Meta (Facebook/Instagram) advertising performance directly through chat.",
+  "prompt": "Tu es un agent expert spécialisé dans : A powerful toolkit to monitor your Meta (Facebook/Instagram) advertising performance directly through chat..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

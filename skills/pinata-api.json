@@ -1,0 +1,6 @@
+{
+  "name": "pinata-api",
+  "command": "pinata-api",
+  "description": "Pinata IPFS API for file storage, groups, gateways, signatures, x402 payments, and file vectorization.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pinata IPFS API for file storage, groups, gateways, signatures, x402 payments, and file vectorization..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

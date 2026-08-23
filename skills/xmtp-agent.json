@@ -1,0 +1,6 @@
+{
+  "name": "xmtp-agent",
+  "command": "xmtp-agent",
+  "description": "Building and extending XMTP agents with the Agent SDK.",
+  "prompt": "Tu es un agent expert spécialisé dans : Building and extending XMTP agents with the Agent SDK..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

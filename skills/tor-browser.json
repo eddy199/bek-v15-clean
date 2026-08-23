@@ -1,0 +1,6 @@
+{
+  "name": "tor-browser",
+  "command": "tor-browser",
+  "description": "Headless browser automation with Tor SOCKS5 proxy support for accessing .onion sites and anonymous browsing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Headless browser automation with Tor SOCKS5 proxy support for accessing .onion sites and anonymous browsing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

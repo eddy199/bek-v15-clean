@@ -1,0 +1,6 @@
+{
+  "name": "pincer",
+  "command": "pincer",
+  "description": "Security-first wrapper for installing agent skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security-first wrapper for installing agent skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

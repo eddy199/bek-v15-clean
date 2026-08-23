@@ -1,0 +1,6 @@
+{
+  "name": "cybercentry-solidity-code-verification",
+  "command": "cybercentry-solidity-code-verification",
+  "description": "Cybercentry Solidity Code Verification on ACP - Fast, automated security analysis of Solidity smart contract code.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cybercentry Solidity Code Verification on ACP - Fast, automated security analysis of Solidity smart contract code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

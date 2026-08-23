@@ -1,0 +1,6 @@
+{
+  "name": "frankenstein",
+  "command": "frankenstein",
+  "description": "Combine the best parts of multiple skills into one.",
+  "prompt": "Tu es un agent expert spécialisé dans : Combine the best parts of multiple skills into one..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "twitterapi-io",
+  "command": "twitterapi-io",
+  "description": "Interact with Twitter/X via TwitterAPI.io — search tweets, get user info, post tweets, like, retweet, follow, send.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Twitter/X via TwitterAPI.io — search tweets, get user info, post tweets, like, retweet, follow, send..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

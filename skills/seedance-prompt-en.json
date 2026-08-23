@@ -1,0 +1,6 @@
+{
+  "name": "seedance-prompt-en",
+  "command": "seedance-prompt-en",
+  "description": "Write effective prompts for Jimeng Seedance 2.0 multimodal AI video generation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write effective prompts for Jimeng Seedance 2.0 multimodal AI video generation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

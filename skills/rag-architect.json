@@ -1,0 +1,6 @@
+{
+  "name": "rag-architect",
+  "command": "rag-architect",
+  "description": "The RAG (Retrieval-Augmented Generation) Architect skill provides comprehensive tools and knowledge for designing.",
+  "prompt": "Tu es un agent expert spécialisé dans : The RAG (Retrieval-Augmented Generation) Architect skill provides comprehensive tools and knowledge for designing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

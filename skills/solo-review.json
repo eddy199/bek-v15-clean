@@ -1,0 +1,6 @@
+{
+  "name": "solo-review",
+  "command": "solo-review",
+  "description": "Final code review and quality gate — run tests, check coverage, audit security, verify acceptance criteria.",
+  "prompt": "Tu es un agent expert spécialisé dans : Final code review and quality gate — run tests, check coverage, audit security, verify acceptance criteria..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "nova-net-worth",
+  "command": "nova-net-worth",
+  "description": "Query your Nova Net Worth financial data — net worth, accounts, goals, spending, transactions, AI insights.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query your Nova Net Worth financial data — net worth, accounts, goals, spending, transactions, AI insights..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

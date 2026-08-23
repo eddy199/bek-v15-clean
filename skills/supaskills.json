@@ -1,0 +1,6 @@
+{
+  "name": "supaskills",
+  "command": "supaskills",
+  "description": "Search and load 1,000+ quality-scored expert skills from SupaSkills.ai.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and load 1,000+ quality-scored expert skills from SupaSkills.ai..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "content-refresher",
+  "command": "content-refresher",
+  "description": "Use when the user asks to \"update old content\", \"refresh content\", \"content is outdated\", \"improve declining.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"update old content\", \"refresh content\", \"content is outdated\", \"improve declining..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

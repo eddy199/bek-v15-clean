@@ -1,0 +1,6 @@
+{
+  "name": "sales-rhythm-tracker",
+  "command": "sales-rhythm-tracker",
+  "description": "B2B sales pipeline manager powered by the Alibaba Iron Army (阿里铁军) methodology.",
+  "prompt": "Tu es un agent expert spécialisé dans : B2B sales pipeline manager powered by the Alibaba Iron Army (阿里铁军) methodology..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

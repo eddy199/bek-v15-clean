@@ -1,0 +1,6 @@
+{
+  "name": "foxreach-io",
+  "command": "foxreach-io",
+  "description": "Manage FoxReach cold email outreach — leads, campaigns, sequences, templates, email accounts, inbox, and analytics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage FoxReach cold email outreach — leads, campaigns, sequences, templates, email accounts, inbox, and analytics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

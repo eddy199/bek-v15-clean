@@ -1,0 +1,6 @@
+{
+  "name": "podcast-to-substack",
+  "command": "podcast-to-substack",
+  "description": "Publish podcast episodes from RSS + Notion to Substack with reliable Apple Podcasts embedding and image extraction.",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish podcast episodes from RSS + Notion to Substack with reliable Apple Podcasts embedding and image extraction..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

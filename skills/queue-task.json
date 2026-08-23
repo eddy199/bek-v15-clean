@@ -1,0 +1,6 @@
+{
+  "name": "queue-task",
+  "command": "queue-task",
+  "description": "Durable queue-task helper for resumable, idempotent batch jobs in task-father task folders.",
+  "prompt": "Tu es un agent expert spécialisé dans : Durable queue-task helper for resumable, idempotent batch jobs in task-father task folders..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "apple-media",
+  "command": "apple-media",
+  "description": "Control Apple TV, HomePod, and AirPlay devices via pyatv.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Apple TV, HomePod, and AirPlay devices via pyatv..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

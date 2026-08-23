@@ -1,0 +1,6 @@
+{
+  "name": "daily-review-ritual",
+  "command": "daily-review-ritual",
+  "description": "End-of-day review to capture progress, insights.",
+  "prompt": "Tu es un agent expert spécialisé dans : End-of-day review to capture progress, insights..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

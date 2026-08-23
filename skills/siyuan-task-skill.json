@@ -1,0 +1,6 @@
+{
+  "name": "siyuan-task-skill",
+  "command": "siyuan-task-skill",
+  "description": "Manage tasks in SiYuan Note via its HTTP API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage tasks in SiYuan Note via its HTTP API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

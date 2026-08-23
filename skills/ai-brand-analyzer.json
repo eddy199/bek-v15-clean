@@ -1,0 +1,6 @@
+{
+  "name": "ai-brand-analyzer",
+  "command": "ai-brand-analyzer",
+  "description": "Analyze brands to generate comprehensive brand.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze brands to generate comprehensive brand..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

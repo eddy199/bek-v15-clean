@@ -1,0 +1,6 @@
+{
+  "name": "clawchat-p2p",
+  "command": "clawchat-p2p",
+  "description": "Encrypted P2P messaging for connecting OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Encrypted P2P messaging for connecting OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

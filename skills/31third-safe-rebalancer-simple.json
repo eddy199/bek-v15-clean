@@ -1,0 +1,6 @@
+{
+  "name": "31third-safe-rebalancer-simple",
+  "command": "31third-safe-rebalancer-simple",
+  "description": "One-step Safe rebalancer using on-chain 31Third policies.",
+  "prompt": "Tu es un agent expert spécialisé dans : One-step Safe rebalancer using on-chain 31Third policies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "btc15-autonomous-market",
+  "command": "btc15-autonomous-market",
+  "description": "BTC15 Autonomous Prediction Market.",
+  "prompt": "Tu es un agent expert spécialisé dans : BTC15 Autonomous Prediction Market..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

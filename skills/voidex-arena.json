@@ -1,0 +1,6 @@
+{
+  "name": "voidex-arena",
+  "command": "voidex-arena",
+  "description": "Voidex Arena — galactic trading game for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Voidex Arena — galactic trading game for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

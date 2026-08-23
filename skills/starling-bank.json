@@ -1,0 +1,6 @@
+{
+  "name": "starling-bank",
+  "command": "starling-bank",
+  "description": "Manage Starling Bank accounts via the starling-bank-mcp server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Starling Bank accounts via the starling-bank-mcp server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

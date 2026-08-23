@@ -1,0 +1,6 @@
+{
+  "name": "norman-categorize-transactions",
+  "command": "norman-categorize-transactions",
+  "description": "Review and categorize uncategorized bank transactions, match them with invoices, and verify bookkeeping entries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Review and categorize uncategorized bank transactions, match them with invoices, and verify bookkeeping entries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

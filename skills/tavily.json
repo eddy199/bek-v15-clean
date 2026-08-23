@@ -1,0 +1,6 @@
+{
+  "name": "tavily",
+  "command": "tavily",
+  "description": "AI-optimized web search using Tavily Search API.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-optimized web search using Tavily Search API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

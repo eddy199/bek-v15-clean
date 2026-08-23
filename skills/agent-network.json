@@ -1,0 +1,6 @@
+{
+  "name": "agent-network",
+  "command": "agent-network",
+  "description": "Multi-Agent group chat collaboration system inspired by DingTalk/Lark.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-Agent group chat collaboration system inspired by DingTalk/Lark..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

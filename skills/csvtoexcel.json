@@ -1,0 +1,6 @@
+{
+  "name": "csvtoexcel",
+  "command": "csvtoexcel",
+  "description": "Convert CSV files to professionally formatted Excel workbooks with Chinese character support, automatic formatting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert CSV files to professionally formatted Excel workbooks with Chinese character support, automatic formatting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

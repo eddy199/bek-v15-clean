@@ -1,0 +1,6 @@
+{
+  "name": "acestep-simplemv",
+  "command": "acestep-simplemv",
+  "description": "Render music videos from audio files and lyrics using Remotion.",
+  "prompt": "Tu es un agent expert spécialisé dans : Render music videos from audio files and lyrics using Remotion..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

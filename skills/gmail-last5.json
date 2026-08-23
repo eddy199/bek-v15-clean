@@ -1,0 +1,6 @@
+{
+  "name": "gmail-last5",
+  "command": "gmail-last5",
+  "description": "summary: \"Show the last 5 unique emails in the inbox using gog\".",
+  "prompt": "Tu es un agent expert spécialisé dans : summary: \"Show the last 5 unique emails in the inbox using gog\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

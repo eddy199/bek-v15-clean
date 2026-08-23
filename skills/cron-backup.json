@@ -1,0 +1,6 @@
+{
+  "name": "cron-backup",
+  "command": "cron-backup",
+  "description": "Set up scheduled automated backups with version tracking and cleanup.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up scheduled automated backups with version tracking and cleanup..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

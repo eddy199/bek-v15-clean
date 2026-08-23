@@ -1,0 +1,6 @@
+{
+  "name": "tracking",
+  "command": "tracking",
+  "description": "Track tokens on Base chain via GMGN.AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track tokens on Base chain via GMGN.AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

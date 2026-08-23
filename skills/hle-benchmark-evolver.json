@@ -1,0 +1,6 @@
+{
+  "name": "hle-benchmark-evolver",
+  "command": "hle-benchmark-evolver",
+  "description": "Runs HLE-oriented benchmark reward ingestion and curriculum generation for capability-evolver.",
+  "prompt": "Tu es un agent expert spécialisé dans : Runs HLE-oriented benchmark reward ingestion and curriculum generation for capability-evolver..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

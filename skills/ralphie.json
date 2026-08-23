@@ -1,0 +1,6 @@
+{
+  "name": "ralphie",
+  "command": "ralphie",
+  "description": "Install and operate Clawboard with OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Install and operate Clawboard with OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "blogburst",
+  "command": "blogburst",
+  "description": "Turn any article into 10+ social media posts in seconds.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn any article into 10+ social media posts in seconds..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

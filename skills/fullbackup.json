@@ -1,0 +1,6 @@
+{
+  "name": "fullbackup",
+  "command": "fullbackup",
+  "description": "Create a full local backup of the OpenClaw workspace and configuration using the existing backup-local.sh script.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create a full local backup of the OpenClaw workspace and configuration using the existing backup-local.sh script..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

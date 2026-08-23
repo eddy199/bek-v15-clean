@@ -1,0 +1,6 @@
+{
+  "name": "migma",
+  "command": "migma",
+  "description": "Generate, send, validate, and export AI-powered emails from the terminal; manage contacts, segments, tags, domains.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate, send, validate, and export AI-powered emails from the terminal; manage contacts, segments, tags, domains..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

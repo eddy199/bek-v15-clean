@@ -1,0 +1,6 @@
+{
+  "name": "mansion",
+  "command": "mansion",
+  "description": "The Zoro agent system is architected as a hierarchical mansion structure, where **Zorro** serves as the master.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Zoro agent system is architected as a hierarchical mansion structure, where **Zorro** serves as the master..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

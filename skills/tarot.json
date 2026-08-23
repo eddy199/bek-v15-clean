@@ -1,0 +1,6 @@
+{
+  "name": "tarot",
+  "command": "tarot",
+  "description": "A reflective tarot draw for emotional support (presence-first, non-clinical, non-predictive).",
+  "prompt": "Tu es un agent expert spécialisé dans : A reflective tarot draw for emotional support (presence-first, non-clinical, non-predictive)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

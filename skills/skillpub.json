@@ -1,0 +1,6 @@
+{
+  "name": "skillpub",
+  "command": "skillpub",
+  "description": "Create, validate, security-scan, and publish skills to ClawHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, validate, security-scan, and publish skills to ClawHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

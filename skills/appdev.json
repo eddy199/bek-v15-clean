@@ -1,0 +1,6 @@
+{
+  "name": "appdev",
+  "command": "appdev",
+  "description": "Triggers whenever the user asks to build a feature, fix a bug, create a screen, or modify the mobile app.",
+  "prompt": "Tu es un agent expert spécialisé dans : Triggers whenever the user asks to build a feature, fix a bug, create a screen, or modify the mobile app..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

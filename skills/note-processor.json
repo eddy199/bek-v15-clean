@@ -1,0 +1,6 @@
+{
+  "name": "note-processor",
+  "command": "note-processor",
+  "description": "Summarize and analyze research notes created by research-assistant.",
+  "prompt": "Tu es un agent expert spécialisé dans : Summarize and analyze research notes created by research-assistant..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "video-download-faas",
+  "command": "video-download-faas",
+  "description": "Download videos in MP4 format using yt-dlp with FaaS (Firecracker/Container) isolation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download videos in MP4 format using yt-dlp with FaaS (Firecracker/Container) isolation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

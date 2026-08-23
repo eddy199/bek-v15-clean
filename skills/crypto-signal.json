@@ -1,0 +1,6 @@
+{
+  "name": "crypto-signal",
+  "command": "crypto-signal",
+  "description": "AI-powered crypto intelligence from 50+ Telegram groups.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered crypto intelligence from 50+ Telegram groups..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

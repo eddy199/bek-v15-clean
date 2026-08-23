@@ -1,0 +1,6 @@
+{
+  "name": "aeo-analytics-free",
+  "command": "aeo-analytics-free",
+  "description": "Track AI visibility — measure whether a brand is mentioned and cited by AI assistants (Gemini, ChatGPT, Perplexity)",
+  "prompt": "Tu es un agent expert spécialisé dans : Track AI visibility — measure whether a brand is mentioned and cited by AI assistants (Gemini, ChatGPT, Perplexity).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

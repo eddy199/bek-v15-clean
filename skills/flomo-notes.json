@@ -1,0 +1,6 @@
+{
+  "name": "flomo-notes",
+  "command": "flomo-notes",
+  "description": "Save notes to Flomo via the Flomo inbox webhook.",
+  "prompt": "Tu es un agent expert spécialisé dans : Save notes to Flomo via the Flomo inbox webhook..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

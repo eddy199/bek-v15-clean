@@ -1,0 +1,6 @@
+{
+  "name": "qwenspeak",
+  "command": "qwenspeak",
+  "description": "Text-to-speech generation via Qwen3-TTS over SSH.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-speech generation via Qwen3-TTS over SSH..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

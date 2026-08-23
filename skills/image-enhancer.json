@@ -1,0 +1,6 @@
+{
+  "name": "image-enhancer",
+  "command": "image-enhancer",
+  "description": "Improves the quality of images, especially screenshots, by enhancing resolution, sharpness, and clarity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Improves the quality of images, especially screenshots, by enhancing resolution, sharpness, and clarity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

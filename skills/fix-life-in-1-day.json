@@ -1,0 +1,6 @@
+{
+  "name": "fix-life-in-1-day",
+  "command": "fix-life-in-1-day",
+  "description": "Fix your entire life in 1 day.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fix your entire life in 1 day..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

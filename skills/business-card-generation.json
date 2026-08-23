@@ -1,0 +1,6 @@
+{
+  "name": "business-card-generation",
+  "command": "business-card-generation",
+  "description": "Generate professional business cards using each::sense AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional business cards using each::sense AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

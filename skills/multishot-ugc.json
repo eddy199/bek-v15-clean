@@ -1,0 +1,6 @@
+{
+  "name": "multishot-ugc",
+  "command": "multishot-ugc",
+  "description": "Generate 10 perspective/angle variations from a single image for multi-shot UGC videos.  ✅ USE WHEN: - Have a hero.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate 10 perspective/angle variations from a single image for multi-shot UGC videos.  ✅ USE WHEN: - Have a hero..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

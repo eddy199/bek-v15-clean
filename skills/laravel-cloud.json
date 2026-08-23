@@ -1,0 +1,6 @@
+{
+  "name": "laravel-cloud",
+  "command": "laravel-cloud",
+  "description": "Manage Laravel Cloud infrastructure via API — apps, environments, deployments, databases, caches, domains, scaling.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Laravel Cloud infrastructure via API — apps, environments, deployments, databases, caches, domains, scaling..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "al-khanjry-bus",
+  "command": "al-khanjry-bus",
+  "description": "Fastest private buses (5-6h core, 6-8h w/ borders).",
+  "prompt": "Tu es un agent expert spécialisé dans : Fastest private buses (5-6h core, 6-8h w/ borders)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

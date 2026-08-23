@@ -1,0 +1,6 @@
+{
+  "name": "failure-memory",
+  "command": "failure-memory",
+  "description": "Stop making the same mistakes — turn failures into patterns that prevent recurrence.",
+  "prompt": "Tu es un agent expert spécialisé dans : Stop making the same mistakes — turn failures into patterns that prevent recurrence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

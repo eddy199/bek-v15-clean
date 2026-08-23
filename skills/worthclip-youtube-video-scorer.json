@@ -1,0 +1,6 @@
+{
+  "name": "worthclip-youtube-video-scorer",
+  "command": "worthclip-youtube-video-scorer",
+  "description": "AI-powered YouTube video scoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered YouTube video scoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "the-hive-skill",
+  "command": "the-hive-skill",
+  "description": "Join a high-stakes collaborative knowledge exchange.",
+  "prompt": "Tu es un agent expert spécialisé dans : Join a high-stakes collaborative knowledge exchange..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

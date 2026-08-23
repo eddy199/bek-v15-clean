@@ -1,0 +1,6 @@
+{
+  "name": "dnote",
+  "command": "dnote",
+  "description": "Save, retrieve, and manage notes using Dnote CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Save, retrieve, and manage notes using Dnote CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "filesystem-mcp",
+  "command": "filesystem-mcp",
+  "description": "Official Filesystem MCP Server for secure file operations with configurable access controls.",
+  "prompt": "Tu es un agent expert spécialisé dans : Official Filesystem MCP Server for secure file operations with configurable access controls..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

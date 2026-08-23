@@ -1,0 +1,6 @@
+{
+  "name": "us-value-investing-framework",
+  "command": "us-value-investing-framework",
+  "description": "US stock valuation model skill (English-first + 中文) based on financial report data.",
+  "prompt": "Tu es un agent expert spécialisé dans : US stock valuation model skill (English-first + 中文) based on financial report data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

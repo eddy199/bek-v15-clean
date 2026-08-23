@@ -1,0 +1,6 @@
+{
+  "name": "coder-workspaces",
+  "command": "coder-workspaces",
+  "description": "Manage Coder workspaces and AI coding agent tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Coder workspaces and AI coding agent tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

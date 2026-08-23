@@ -1,0 +1,6 @@
+{
+  "name": "devtopia",
+  "command": "devtopia",
+  "description": "Use when working with the Devtopia CLI (devtopia) to discover, run, compose, create, and submit tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when working with the Devtopia CLI (devtopia) to discover, run, compose, create, and submit tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

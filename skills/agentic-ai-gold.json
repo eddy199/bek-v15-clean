@@ -1,0 +1,6 @@
+{
+  "name": "agentic-ai-gold",
+  "command": "agentic-ai-gold",
+  "description": "The only agent framework that improves itself while you sleep.",
+  "prompt": "Tu es un agent expert spécialisé dans : The only agent framework that improves itself while you sleep..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

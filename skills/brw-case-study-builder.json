@@ -1,0 +1,6 @@
+{
+  "name": "brw-case-study-builder",
+  "command": "brw-case-study-builder",
+  "description": "Turn client wins into formatted case studies for proposals, social proof, and sales conversations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn client wins into formatted case studies for proposals, social proof, and sales conversations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

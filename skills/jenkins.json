@@ -1,0 +1,6 @@
+{
+  "name": "jenkins",
+  "command": "jenkins",
+  "description": "Interact with Jenkins CI/CD server via REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Jenkins CI/CD server via REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

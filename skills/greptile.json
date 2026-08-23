@@ -1,0 +1,6 @@
+{
+  "name": "greptile",
+  "command": "greptile",
+  "description": "Query, search, and manage repositories indexed by Greptile (AI codebase intelligence)",
+  "prompt": "Tu es un agent expert spécialisé dans : Query, search, and manage repositories indexed by Greptile (AI codebase intelligence).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

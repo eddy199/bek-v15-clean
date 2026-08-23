@@ -1,0 +1,6 @@
+{
+  "name": "mqttasgi",
+  "command": "mqttasgi",
+  "description": "MQTT ASGI protocol server for Django — bridge MQTT messages to Django Channels consumers with full ORM, Channel.",
+  "prompt": "Tu es un agent expert spécialisé dans : MQTT ASGI protocol server for Django — bridge MQTT messages to Django Channels consumers with full ORM, Channel..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

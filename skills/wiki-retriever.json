@@ -1,0 +1,6 @@
+{
+  "name": "wiki-retriever",
+  "command": "wiki-retriever",
+  "description": "AI agent for wiki retriever tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent for wiki retriever tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

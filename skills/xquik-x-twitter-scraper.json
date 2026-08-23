@@ -1,0 +1,6 @@
+{
+  "name": "xquik-x-twitter-scraper",
+  "command": "xquik-x-twitter-scraper",
+  "description": "X API scraper with 40+ tools for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : X API scraper with 40+ tools for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

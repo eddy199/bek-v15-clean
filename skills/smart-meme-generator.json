@@ -1,0 +1,6 @@
+{
+  "name": "smart-meme-generator",
+  "command": "smart-meme-generator",
+  "description": "AI-powered meme generator that creates perfect, context-aware memes from any topic or situation.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered meme generator that creates perfect, context-aware memes from any topic or situation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

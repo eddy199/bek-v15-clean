@@ -1,0 +1,6 @@
+{
+  "name": "claw-swarm",
+  "command": "claw-swarm",
+  "description": "Collaborative agent swarm for attempting extremely difficult.",
+  "prompt": "Tu es un agent expert spécialisé dans : Collaborative agent swarm for attempting extremely difficult..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-leaf-view-generator",
+  "command": "fosmvvm-leaf-view-generator",
+  "description": "Generate Leaf templates for FOSMVVM WebApps.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate Leaf templates for FOSMVVM WebApps..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

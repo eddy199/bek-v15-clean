@@ -1,0 +1,6 @@
+{
+  "name": "pumpfun-launch",
+  "command": "pumpfun-launch",
+  "description": "Launch tokens on pump.fun directly from your agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Launch tokens on pump.fun directly from your agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

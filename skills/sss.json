@@ -1,0 +1,6 @@
+{
+  "name": "sss",
+  "command": "sss",
+  "description": "Access ATXP paid API tools for web search, AI image generation, music creation, video generation, and X/Twitter.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access ATXP paid API tools for web search, AI image generation, music creation, video generation, and X/Twitter..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

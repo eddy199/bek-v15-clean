@@ -1,0 +1,6 @@
+{
+  "name": "psychology-master",
+  "command": "psychology-master",
+  "description": "World-class psychology expertise for human mind optimization.",
+  "prompt": "Tu es un agent expert spécialisé dans : World-class psychology expertise for human mind optimization..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

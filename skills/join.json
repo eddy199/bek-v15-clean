@@ -1,0 +1,6 @@
+{
+  "name": "join",
+  "command": "join",
+  "description": "Join a Kradleverse game.",
+  "prompt": "Tu es un agent expert spécialisé dans : Join a Kradleverse game..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

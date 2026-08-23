@@ -1,0 +1,6 @@
+{
+  "name": "tg-miniapp",
+  "command": "tg-miniapp",
+  "description": "Build Telegram Mini Apps without the pain.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build Telegram Mini Apps without the pain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

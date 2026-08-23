@@ -1,0 +1,6 @@
+{
+  "name": "amadeus-hotels",
+  "command": "amadeus-hotels",
+  "description": "Search hotel prices and availability via Amadeus API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search hotel prices and availability via Amadeus API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "manifest-build",
+  "command": "manifest-build",
+  "description": "Open-source LLM routing and cost tracking plugin.",
+  "prompt": "Tu es un agent expert spécialisé dans : Open-source LLM routing and cost tracking plugin..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

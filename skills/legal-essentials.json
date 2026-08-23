@@ -1,0 +1,6 @@
+{
+  "name": "legal-essentials",
+  "command": "legal-essentials",
+  "description": "Understand and handle essential legal matters for a solopreneur business.",
+  "prompt": "Tu es un agent expert spécialisé dans : Understand and handle essential legal matters for a solopreneur business..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

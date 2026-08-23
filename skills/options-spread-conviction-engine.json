@@ -1,0 +1,6 @@
+{
+  "name": "options-spread-conviction-engine",
+  "command": "options-spread-conviction-engine",
+  "description": "Multi-regime options spread analysis engine with quantitative rigor.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-regime options spread analysis engine with quantitative rigor..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

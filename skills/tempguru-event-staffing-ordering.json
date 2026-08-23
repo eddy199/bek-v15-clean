@@ -1,0 +1,6 @@
+{
+  "name": "tempguru-event-staffing-ordering",
+  "command": "tempguru-event-staffing-ordering",
+  "description": "Order W-2 temporary event staff across 345 US/Canada markets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Order W-2 temporary event staff across 345 US/Canada markets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

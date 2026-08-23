@@ -1,0 +1,24 @@
+# bek-v15-clean/apps/api/src/tracking/tracking-ingest.service.ts
+
+- IncomingEvent · interface · L38-L48 — interface IncomingEvent
+- IncomingBatch · interface · L50-L54 — interface IncomingBatch
+- AcceptedEvent · interface · L56-L59 — interface AcceptedEvent
+- TrackingIngestService · class · L62-L236 — class TrackingIngestService
+- constructor · method · L65-L70 — constructor( @InjectDatabase() private readonly db: Db, private readonly config: TrackingConfigService, private readonly counters: TrackingCounterService, private readonly filing: TrackingFilingService, )
+- accept · method · L72-L114 — async accept( batch: IncomingBatch, request: { origin: string | null; userAgent: string | null }, ): Promise<void>
+- events · method · L116-L146 — private async events( visitorId: string, accepted: AcceptedEvent[], config: TrackingConfig, ): Promise<void>
+- countViews · method · L148-L172 — private async countViews( rows: { host: string; type: string }[], config: TrackingConfig, ): Promise<void>
+- submission · method · L174-L231 — private async submission( visitorId: string, { event, host }: AcceptedEvent, ): Promise<void>
+- withinRate · method · L233-L235 — private async withinRate(events: number): Promise<boolean>
+- unfiled · function · L238-L243 — function unfiled(submission: { filedAt: Date | null; skipReason: string | null; }): boolean
+- arriving · function · L245-L251 — function arriving(touch: RawTouch): RawTouch
+- stored · function · L253-L264 — function stored(touch: Touch): Record<string, string | null>
+- scripted · function · L266-L276 — function scripted(events: IncomingEvent[]): boolean
+- occurredAt · function · L278-L285 — function occurredAt(at: number | undefined): Date
+- trim · function · L287-L289 — function trim(value: string, max: number): string
+- sanitizeId · function · L291-L297 — function sanitizeId(value: string | undefined): string | null
+- clean · function · L299-L311 — function clean(fields: Record<string, string>): Record<string, string>
+- emailFrom · function · L313-L326 — function emailFrom(fields: Record<string, string>): string | null
+- address · function · L328-L332 — function address(value: string): string | null
+- nameFrom · function · L334-L341 — function nameFrom(fields: Record<string, string>): string | null
+- pick · function · L343-L349 — function pick(fields: Record<string, string>, pattern: RegExp): string | null

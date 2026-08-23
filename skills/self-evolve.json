@@ -1,0 +1,6 @@
+{
+  "name": "self-evolve",
+  "command": "self-evolve",
+  "description": "Autonomous self-evolution skill: grants the agent full authority to modify its own configuration, skills, prompts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous self-evolution skill: grants the agent full authority to modify its own configuration, skills, prompts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-accessibility-auditor",
+  "command": "sovereign-accessibility-auditor",
+  "description": "Audits HTML/CSS for WCAG 2.1 compliance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audits HTML/CSS for WCAG 2.1 compliance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

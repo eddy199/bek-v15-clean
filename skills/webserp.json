@@ -1,0 +1,6 @@
+{
+  "name": "webserp",
+  "command": "webserp",
+  "description": "Web search across 7 engines in parallel with browser impersonation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Web search across 7 engines in parallel with browser impersonation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lifx",
+  "command": "lifx",
+  "description": "Control LIFX smart lights via natural language.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control LIFX smart lights via natural language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

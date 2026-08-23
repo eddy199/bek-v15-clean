@@ -1,0 +1,6 @@
+{
+  "name": "auto-context-manager",
+  "command": "auto-context-manager",
+  "description": "AI-powered automatic project context management.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered automatic project context management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

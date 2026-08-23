@@ -1,0 +1,6 @@
+{
+  "name": "mantis-manager",
+  "command": "mantis-manager",
+  "description": "Manage Mantis Bug Tracker (issues, projects, users, filters, configs) via the official Mantis REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Mantis Bug Tracker (issues, projects, users, filters, configs) via the official Mantis REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

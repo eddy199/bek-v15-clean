@@ -1,0 +1,6 @@
+{
+  "name": "outlit-mcp",
+  "command": "outlit-mcp",
+  "description": "Use when querying Outlit customer data via MCP tools (outlit_*)",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when querying Outlit customer data via MCP tools (outlit_*).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

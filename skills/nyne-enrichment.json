@@ -1,0 +1,6 @@
+{
+  "name": "nyne-enrichment",
+  "command": "nyne-enrichment",
+  "description": "Enrich any person by email, phone, LinkedIn URL, or name using the Nyne Enrichment API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enrich any person by email, phone, LinkedIn URL, or name using the Nyne Enrichment API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "sharepoint-by-altf1be",
+  "command": "sharepoint-by-altf1be",
+  "description": "Secure SharePoint file operations and Office document intelligence via Microsoft Graph API — certificate auth, Sites.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure SharePoint file operations and Office document intelligence via Microsoft Graph API — certificate auth, Sites..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

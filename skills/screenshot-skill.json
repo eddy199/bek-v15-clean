@@ -1,0 +1,6 @@
+{
+  "name": "screenshot-skill",
+  "command": "screenshot-skill",
+  "description": "Capture screenshots on Windows using mss and Pillow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Capture screenshots on Windows using mss and Pillow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

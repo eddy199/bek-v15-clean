@@ -1,0 +1,6 @@
+{
+  "name": "anime",
+  "command": "anime",
+  "description": "CLI for AI agents to search and lookup anime info for their humans.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI for AI agents to search and lookup anime info for their humans..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

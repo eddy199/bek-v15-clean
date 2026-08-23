@@ -1,0 +1,6 @@
+{
+  "name": "grok-imagine-video",
+  "command": "grok-imagine-video",
+  "description": "xAI Grok Imagine API integration for image generation, text-to-video, image-to-video, and editing via natural.",
+  "prompt": "Tu es un agent expert spécialisé dans : xAI Grok Imagine API integration for image generation, text-to-video, image-to-video, and editing via natural..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

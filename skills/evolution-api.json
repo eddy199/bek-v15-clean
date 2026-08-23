@@ -1,0 +1,6 @@
+{
+  "name": "evolution-api",
+  "command": "evolution-api",
+  "description": "Complete WhatsApp automation via Evolution API v2.3 - instances, messages (text/media/polls/lists/buttons/status)",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete WhatsApp automation via Evolution API v2.3 - instances, messages (text/media/polls/lists/buttons/status).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "bookmark-intelligence",
+  "command": "bookmark-intelligence",
+  "description": "Turns X bookmarks into actionable insights.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turns X bookmarks into actionable insights..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

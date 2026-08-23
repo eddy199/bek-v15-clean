@@ -1,0 +1,6 @@
+{
+  "name": "memento",
+  "command": "memento",
+  "description": "Local persistent memory for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local persistent memory for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

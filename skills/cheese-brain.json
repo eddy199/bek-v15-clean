@@ -1,0 +1,6 @@
+{
+  "name": "cheese-brain",
+  "command": "cheese-brain",
+  "description": "DuckDB-powered knowledge management system for fast retrieval across 22+ entity types (projects, contacts, tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : DuckDB-powered knowledge management system for fast retrieval across 22+ entity types (projects, contacts, tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

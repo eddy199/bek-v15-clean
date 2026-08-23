@@ -1,0 +1,6 @@
+{
+  "name": "doginals",
+  "command": "doginals",
+  "description": "The Doginals skill enables users to interact with the Doginals and Dunes protocols, facilitating inscription.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Doginals skill enables users to interact with the Doginals and Dunes protocols, facilitating inscription..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

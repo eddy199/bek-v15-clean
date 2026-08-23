@@ -1,0 +1,6 @@
+{
+  "name": "moonbanking",
+  "command": "moonbanking",
+  "description": "Full access to Moon Banking API endpoints for data about every bank on Earth, including stories, votes, scores.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full access to Moon Banking API endpoints for data about every bank on Earth, including stories, votes, scores..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "publora-instagram",
+  "command": "publora-instagram",
+  "description": "Post or schedule content to Instagram using the Publora API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post or schedule content to Instagram using the Publora API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cherry-mcp",
+  "command": "cherry-mcp",
+  "description": "HTTP bridge that keeps MCP servers alive and exposes them via REST.",
+  "prompt": "Tu es un agent expert spécialisé dans : HTTP bridge that keeps MCP servers alive and exposes them via REST..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

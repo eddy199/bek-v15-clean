@@ -1,0 +1,6 @@
+{
+  "name": "elevenlabs-cli",
+  "command": "elevenlabs-cli",
+  "description": "CLI for ElevenLabs AI audio platform - text-to-speech, speech-to-text, voice cloning.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI for ElevenLabs AI audio platform - text-to-speech, speech-to-text, voice cloning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

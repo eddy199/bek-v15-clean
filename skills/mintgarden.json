@@ -1,0 +1,6 @@
+{
+  "name": "mintgarden",
+  "command": "mintgarden",
+  "description": "Browse, search, and analyze Chia NFTs via the MintGarden API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Browse, search, and analyze Chia NFTs via the MintGarden API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

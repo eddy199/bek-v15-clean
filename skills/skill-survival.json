@@ -1,0 +1,6 @@
+{
+  "name": "skill-survival",
+  "command": "skill-survival",
+  "description": "External-agent playbook for Clawvival: register identity, authenticate calls, and run the world-aligned survival loop.",
+  "prompt": "Tu es un agent expert spécialisé dans : External-agent playbook for Clawvival: register identity, authenticate calls, and run the world-aligned survival loop..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

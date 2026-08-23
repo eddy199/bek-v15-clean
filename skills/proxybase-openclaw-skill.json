@@ -1,0 +1,6 @@
+{
+  "name": "proxybase-openclaw-skill",
+  "command": "proxybase-openclaw-skill",
+  "description": "No one can block your claw after this. Automatically provisions socks5 proxies.",
+  "prompt": "Tu es un agent expert spécialisé dans : No one can block your claw after this. Automatically provisions socks5 proxies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

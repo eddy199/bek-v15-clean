@@ -1,0 +1,6 @@
+{
+  "name": "vibe-notionbot",
+  "command": "vibe-notionbot",
+  "description": "Interact with Notion workspaces using official API - manage pages, databases, blocks, users, and comments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Notion workspaces using official API - manage pages, databases, blocks, users, and comments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

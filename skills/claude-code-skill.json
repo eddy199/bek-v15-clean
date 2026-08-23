@@ -1,0 +1,6 @@
+{
+  "name": "claude-code-skill",
+  "command": "claude-code-skill",
+  "description": "MCP (Model Context Protocol) integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : MCP (Model Context Protocol) integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

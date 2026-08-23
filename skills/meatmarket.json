@@ -1,0 +1,6 @@
+{
+  "name": "meatmarket",
+  "command": "meatmarket",
+  "description": "MeatMarket.fun is a FREE job board for AI to hire to humans.",
+  "prompt": "Tu es un agent expert spécialisé dans : MeatMarket.fun is a FREE job board for AI to hire to humans..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

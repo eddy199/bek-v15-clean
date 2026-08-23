@@ -1,0 +1,6 @@
+{
+  "name": "colormind",
+  "command": "colormind",
+  "description": "Generate color palettes and get color suggestions via the Colormind.io API (list models, generate palettes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate color palettes and get color suggestions via the Colormind.io API (list models, generate palettes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

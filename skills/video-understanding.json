@@ -1,0 +1,6 @@
+{
+  "name": "video-understanding",
+  "command": "video-understanding",
+  "description": "Analyze videos with Google Gemini multimodal AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze videos with Google Gemini multimodal AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

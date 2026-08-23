@@ -1,0 +1,6 @@
+{
+  "name": "miranda-sag",
+  "command": "miranda-sag",
+  "description": "ElevenLabs text-to-speech with mac-style say UX.",
+  "prompt": "Tu es un agent expert spécialisé dans : ElevenLabs text-to-speech with mac-style say UX..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "scamshield-verifier",
+  "command": "scamshield-verifier",
+  "description": "The ultimate Web3 & OpenClaw security layer.",
+  "prompt": "Tu es un agent expert spécialisé dans : The ultimate Web3 & OpenClaw security layer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

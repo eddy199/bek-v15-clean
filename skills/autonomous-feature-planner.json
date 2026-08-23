@@ -1,0 +1,6 @@
+{
+  "name": "autonomous-feature-planner",
+  "command": "autonomous-feature-planner",
+  "description": "Autonomously plans and specifies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomously plans and specifies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

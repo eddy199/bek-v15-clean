@@ -1,0 +1,6 @@
+{
+  "name": "elizacloud",
+  "command": "elizacloud",
+  "description": "Manage elizaOS Cloud - deploy AI agents, chat completions, image/video generation, voice cloning, knowledge base.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage elizaOS Cloud - deploy AI agents, chat completions, image/video generation, voice cloning, knowledge base..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

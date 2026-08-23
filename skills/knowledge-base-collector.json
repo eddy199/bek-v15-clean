@@ -1,0 +1,6 @@
+{
+  "name": "knowledge-base-collector",
+  "command": "knowledge-base-collector",
+  "description": "Collect and organize a personal knowledge base from URLs (web/X/WeChat) and screenshots.",
+  "prompt": "Tu es un agent expert spécialisé dans : Collect and organize a personal knowledge base from URLs (web/X/WeChat) and screenshots..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

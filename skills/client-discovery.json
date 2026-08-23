@@ -1,0 +1,6 @@
+{
+  "name": "client-discovery",
+  "command": "client-discovery",
+  "description": "Run discovery conversations that qualify prospects, diagnose real problems, and position your solution.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run discovery conversations that qualify prospects, diagnose real problems, and position your solution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

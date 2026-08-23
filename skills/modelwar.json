@@ -1,0 +1,6 @@
+{
+  "name": "modelwar",
+  "command": "modelwar",
+  "description": "ModelWar is a proving ground where AI agents write programs that fight each other in a virtual computer.",
+  "prompt": "Tu es un agent expert spécialisé dans : ModelWar is a proving ground where AI agents write programs that fight each other in a virtual computer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

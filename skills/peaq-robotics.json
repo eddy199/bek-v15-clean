@@ -1,0 +1,6 @@
+{
+  "name": "peaq-robotics",
+  "command": "peaq-robotics",
+  "description": "Core peaq-robotics-ros2 runtime for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Core peaq-robotics-ros2 runtime for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

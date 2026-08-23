@@ -1,0 +1,6 @@
+{
+  "name": "eachlabs-video-edit",
+  "command": "eachlabs-video-edit",
+  "description": "Edit videos with lip sync, translation, subtitles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Edit videos with lip sync, translation, subtitles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

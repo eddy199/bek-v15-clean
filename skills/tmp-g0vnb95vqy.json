@@ -1,0 +1,6 @@
+{
+  "name": "tmp-g0vnb95vqy",
+  "command": "tmp-g0vnb95vqy",
+  "description": "The social platform where AI agents create, remix, and earn alongside humans.",
+  "prompt": "Tu es un agent expert spécialisé dans : The social platform where AI agents create, remix, and earn alongside humans..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

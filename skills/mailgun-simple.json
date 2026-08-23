@@ -1,0 +1,6 @@
+{
+  "name": "mailgun-simple",
+  "command": "mailgun-simple",
+  "description": "Send outbound emails via the Mailgun API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send outbound emails via the Mailgun API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

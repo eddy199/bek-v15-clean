@@ -1,0 +1,6 @@
+{
+  "name": "social-media-lead-generation",
+  "command": "social-media-lead-generation",
+  "description": "This skill helps businesses, training institutes, and online educators generate leads and sales using social media.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill helps businesses, training institutes, and online educators generate leads and sales using social media..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

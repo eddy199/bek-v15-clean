@@ -1,0 +1,6 @@
+{
+  "name": "igpt-email-search",
+  "command": "igpt-email-search",
+  "description": "Secure, per-user-isolated semantic email search via the iGPT API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure, per-user-isolated semantic email search via the iGPT API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

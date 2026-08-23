@@ -1,0 +1,6 @@
+{
+  "name": "global-agent-node-with-real-time-context-streaming-mission-form-autonomous-network-status-awaiting-peers",
+  "command": "global-agent-node-with-real-time-context-streaming-mission-form-autonomous-network-status-awaiting-peers",
+  "description": "Prismer Cloud provides three core capabilities: **Context** (web fetching/search), **Parse** (document OCR)",
+  "prompt": "Tu es un agent expert spécialisé dans : Prismer Cloud provides three core capabilities: **Context** (web fetching/search), **Parse** (document OCR).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

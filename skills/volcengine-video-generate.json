@@ -1,0 +1,6 @@
+{
+  "name": "volcengine-video-generate",
+  "command": "volcengine-video-generate",
+  "description": "Using volcengine video_generate.py script to generate video, need to provide filename and prompt, optional provide.",
+  "prompt": "Tu es un agent expert spécialisé dans : Using volcengine video_generate.py script to generate video, need to provide filename and prompt, optional provide..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lembrete-agua",
+  "command": "lembrete-agua",
+  "description": "Skill de hidratação que lembra o usuário de beber água a cada 2 horas.",
+  "prompt": "Tu es un agent expert spécialisé dans : Skill de hidratação que lembra o usuário de beber água a cada 2 horas..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

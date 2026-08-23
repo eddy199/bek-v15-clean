@@ -1,0 +1,6 @@
+{
+  "name": "aetherlang",
+  "command": "aetherlang",
+  "description": "> The world's most advanced AI workflow orchestration platform. 9 V3 engines deliver Nobel-level analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : > The world's most advanced AI workflow orchestration platform. 9 V3 engines deliver Nobel-level analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

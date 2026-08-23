@@ -1,0 +1,6 @@
+{
+  "name": "email-importance-content-analysis",
+  "command": "email-importance-content-analysis",
+  "description": "Judge whether an email is important/urgent using content-based analysis rather than sender name or mailbox labels.",
+  "prompt": "Tu es un agent expert spécialisé dans : Judge whether an email is important/urgent using content-based analysis rather than sender name or mailbox labels..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

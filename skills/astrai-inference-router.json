@@ -1,0 +1,6 @@
+{
+  "name": "astrai-inference-router",
+  "command": "astrai-inference-router",
+  "description": "Route all LLM calls through Astrai for 40%+ cost savings with intelligent routing and privacy controls.",
+  "prompt": "Tu es un agent expert spécialisé dans : Route all LLM calls through Astrai for 40%+ cost savings with intelligent routing and privacy controls..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

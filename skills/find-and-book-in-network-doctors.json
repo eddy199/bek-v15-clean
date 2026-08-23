@@ -1,0 +1,6 @@
+{
+  "name": "find-and-book-in-network-doctors",
+  "command": "find-and-book-in-network-doctors",
+  "description": "This skill enables AI agents to help users find, research, and book in-network doctors through Zocdoc.com.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables AI agents to help users find, research, and book in-network doctors through Zocdoc.com..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

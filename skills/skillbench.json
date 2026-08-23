@@ -1,0 +1,6 @@
+{
+  "name": "skillbench",
+  "command": "skillbench",
+  "description": "Track skill versions, benchmark performance, compare improvements, and get self-improvement signals.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track skill versions, benchmark performance, compare improvements, and get self-improvement signals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

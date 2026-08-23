@@ -1,0 +1,6 @@
+{
+  "name": "cdp-browser",
+  "command": "cdp-browser",
+  "description": "CDP browser control at localhost:9222.",
+  "prompt": "Tu es un agent expert spécialisé dans : CDP browser control at localhost:9222..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "falcon",
+  "command": "falcon",
+  "description": "Search, read, and interact with Twitter/X via TwexAPI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, read, and interact with Twitter/X via TwexAPI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

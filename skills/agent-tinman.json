@@ -1,0 +1,6 @@
+{
+  "name": "agent-tinman",
+  "command": "agent-tinman",
+  "description": "AI security scanner with active prevention - 168 detection.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI security scanner with active prevention - 168 detection..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

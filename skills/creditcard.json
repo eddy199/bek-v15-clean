@@ -1,0 +1,6 @@
+{
+  "name": "creditcard",
+  "command": "creditcard",
+  "description": "Let your agent shop online with guardrailed wallets, multiple payment methods, and owner approval.",
+  "prompt": "Tu es un agent expert spécialisé dans : Let your agent shop online with guardrailed wallets, multiple payment methods, and owner approval..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

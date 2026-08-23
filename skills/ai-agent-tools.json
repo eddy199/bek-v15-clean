@@ -1,0 +1,6 @@
+{
+  "name": "ai-agent-tools",
+  "command": "ai-agent-tools",
+  "description": "This library provides ready-to-use Python functions that AI agents can leverage to perform various tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : This library provides ready-to-use Python functions that AI agents can leverage to perform various tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

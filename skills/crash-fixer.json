@@ -1,0 +1,6 @@
+{
+  "name": "crash-fixer",
+  "command": "crash-fixer",
+  "description": "Autonomous crash analysis and bug fixing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous crash analysis and bug fixing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "testskillx",
+  "command": "testskillx",
+  "description": "Simple test skill that calls a GET endpoint to fetch a daily post.",
+  "prompt": "Tu es un agent expert spécialisé dans : Simple test skill that calls a GET endpoint to fetch a daily post..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

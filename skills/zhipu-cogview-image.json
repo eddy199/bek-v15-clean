@@ -1,0 +1,6 @@
+{
+  "name": "zhipu-cogview-image",
+  "command": "zhipu-cogview-image",
+  "description": "Generate images using Zhipu AI's CogView model.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images using Zhipu AI's CogView model..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

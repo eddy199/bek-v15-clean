@@ -1,0 +1,6 @@
+{
+  "name": "openexec-skill",
+  "command": "openexec-skill",
+  "description": "Source-distributed deterministic execution service with pinned dependencies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Source-distributed deterministic execution service with pinned dependencies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

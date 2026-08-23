@@ -1,0 +1,6 @@
+{
+  "name": "exchange2010",
+  "command": "exchange2010",
+  "description": "Exchange 2010 EWS integration for emails, calendar, contacts, and tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Exchange 2010 EWS integration for emails, calendar, contacts, and tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

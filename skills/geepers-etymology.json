@@ -1,0 +1,6 @@
+{
+  "name": "geepers-etymology",
+  "command": "geepers-etymology",
+  "description": "Look up word etymology, historical sound changes, language family trees, and word evolution.",
+  "prompt": "Tu es un agent expert spécialisé dans : Look up word etymology, historical sound changes, language family trees, and word evolution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

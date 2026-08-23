@@ -1,0 +1,6 @@
+{
+  "name": "reef-polymarket-research",
+  "command": "reef-polymarket-research",
+  "description": "Autonomous Polymarket research and directional trading system focused on maximizing PnL through information edge.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous Polymarket research and directional trading system focused on maximizing PnL through information edge..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

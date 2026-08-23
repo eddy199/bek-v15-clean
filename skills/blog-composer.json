@@ -1,0 +1,6 @@
+{
+  "name": "blog-composer",
+  "command": "blog-composer",
+  "description": "Jekyll blog authoring UI — manage posts, drafts, tags, and publishing workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Jekyll blog authoring UI — manage posts, drafts, tags, and publishing workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

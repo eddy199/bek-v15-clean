@@ -1,0 +1,6 @@
+{
+  "name": "instruments-profiling",
+  "command": "instruments-profiling",
+  "description": "Use when profiling native macOS or iOS apps.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when profiling native macOS or iOS apps..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

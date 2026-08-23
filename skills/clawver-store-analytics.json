@@ -1,0 +1,6 @@
+{
+  "name": "clawver-store-analytics",
+  "command": "clawver-store-analytics",
+  "description": "Monitor Clawver store performance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor Clawver store performance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

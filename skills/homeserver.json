@@ -1,0 +1,6 @@
+{
+  "name": "homeserver",
+  "command": "homeserver",
+  "description": "Homelab server management via homebutler CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Homelab server management via homebutler CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

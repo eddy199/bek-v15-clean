@@ -1,0 +1,6 @@
+{
+  "name": "onebot-adapter",
+  "command": "onebot-adapter",
+  "description": "Connect OpenClaw to OneBot protocol for QQ bot integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect OpenClaw to OneBot protocol for QQ bot integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

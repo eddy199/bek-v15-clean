@@ -1,0 +1,6 @@
+{
+  "name": "bcra-central-deudores",
+  "command": "bcra-central-deudores",
+  "description": "Query the BCRA (Banco Central de la República Argentina) Central de Deudores API to check the credit status.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query the BCRA (Banco Central de la República Argentina) Central de Deudores API to check the credit status..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

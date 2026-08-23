@@ -1,0 +1,6 @@
+{
+  "name": "clawemail-admin",
+  "command": "clawemail-admin",
+  "description": "Provision and manage @clawemail.com Google Workspace email.",
+  "prompt": "Tu es un agent expert spécialisé dans : Provision and manage @clawemail.com Google Workspace email..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

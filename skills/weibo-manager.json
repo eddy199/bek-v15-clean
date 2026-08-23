@@ -1,0 +1,6 @@
+{
+  "name": "weibo-manager",
+  "command": "weibo-manager",
+  "description": "Control Weibo via Puppeteer (Unofficial API).",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Weibo via Puppeteer (Unofficial API)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

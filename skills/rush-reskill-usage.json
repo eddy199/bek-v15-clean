@@ -1,0 +1,6 @@
+{
+  "name": "rush-reskill-usage",
+  "command": "rush-reskill-usage",
+  "description": "Teaches AI agents how to use reskill — a Git-based package manager for AI agent skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Teaches AI agents how to use reskill — a Git-based package manager for AI agent skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "grok-imagine-image-pro",
+  "command": "grok-imagine-image-pro",
+  "description": "Generiert hochwertige Bilder mit xAI Grok/Flux API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generiert hochwertige Bilder mit xAI Grok/Flux API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

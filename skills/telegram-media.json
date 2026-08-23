@@ -1,0 +1,6 @@
+{
+  "name": "telegram-media",
+  "command": "telegram-media",
+  "description": "**You MUST actually execute every command using your shell/exec tool.** Never pretend you sent a photo, voice note.",
+  "prompt": "Tu es un agent expert spécialisé dans : **You MUST actually execute every command using your shell/exec tool.** Never pretend you sent a photo, voice note..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

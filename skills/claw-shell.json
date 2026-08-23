@@ -1,0 +1,6 @@
+{
+  "name": "claw-shell",
+  "command": "claw-shell",
+  "description": "ALWAYS USES TMUX SESSION `claw`.",
+  "prompt": "Tu es un agent expert spécialisé dans : ALWAYS USES TMUX SESSION `claw`..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

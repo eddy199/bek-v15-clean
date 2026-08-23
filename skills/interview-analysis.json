@@ -1,0 +1,6 @@
+{
+  "name": "interview-analysis",
+  "command": "interview-analysis",
+  "description": "Deep interview analysis using dynamic expert routing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deep interview analysis using dynamic expert routing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "autonomous-task-runner",
+  "command": "autonomous-task-runner",
+  "description": "Persistent task queue system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent task queue system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

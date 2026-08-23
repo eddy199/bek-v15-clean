@@ -1,0 +1,6 @@
+{
+  "name": "native-linear",
+  "command": "native-linear",
+  "description": "Query and manage Linear issues, projects, cycles, and teams via the Linear GraphQL API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and manage Linear issues, projects, cycles, and teams via the Linear GraphQL API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "islamic-skills",
+  "command": "islamic-skills",
+  "description": "Unified Islamic utilities for prayer times, fasting schedules, and Zakat calculations using a shared configuration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Unified Islamic utilities for prayer times, fasting schedules, and Zakat calculations using a shared configuration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

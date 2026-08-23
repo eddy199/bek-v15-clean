@@ -1,0 +1,6 @@
+{
+  "name": "ops-hygiene",
+  "command": "ops-hygiene",
+  "description": "Standard operating procedures for agent maintenance, security hygiene, and system health.",
+  "prompt": "Tu es un agent expert spécialisé dans : Standard operating procedures for agent maintenance, security hygiene, and system health..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

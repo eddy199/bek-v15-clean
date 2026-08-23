@@ -1,0 +1,6 @@
+{
+  "name": "ai-avatar-generation",
+  "command": "ai-avatar-generation",
+  "description": "Generate AI avatars from photos or text descriptions using each::sense.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI avatars from photos or text descriptions using each::sense..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

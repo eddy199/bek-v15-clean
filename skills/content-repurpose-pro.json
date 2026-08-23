@@ -1,0 +1,6 @@
+{
+  "name": "content-repurpose-pro",
+  "command": "content-repurpose-pro",
+  "description": "When user asks to repurpose content, convert blog to tweets, turn article into LinkedIn post, create Twitter thread.",
+  "prompt": "Tu es un agent expert spécialisé dans : When user asks to repurpose content, convert blog to tweets, turn article into LinkedIn post, create Twitter thread..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

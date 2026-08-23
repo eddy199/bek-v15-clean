@@ -1,0 +1,6 @@
+{
+  "name": "agent-autopilot",
+  "command": "agent-autopilot",
+  "description": "Self-driving agent workflow with heartbeat-driven task execution, day/night progress reports, and long-term memory.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-driving agent workflow with heartbeat-driven task execution, day/night progress reports, and long-term memory..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "location-context",
+  "command": "location-context",
+  "description": "Get comprehensive context about a location including nearby places, area description, and optional weather.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get comprehensive context about a location including nearby places, area description, and optional weather..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

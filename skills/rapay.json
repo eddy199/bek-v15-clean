@@ -1,0 +1,6 @@
+{
+  "name": "rapay",
+  "command": "rapay",
+  "description": "Send compliant fiat USD payments via Ra Pay CLI — the first CLI-native AI payment platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send compliant fiat USD payments via Ra Pay CLI — the first CLI-native AI payment platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

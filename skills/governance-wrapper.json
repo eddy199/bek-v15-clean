@@ -1,0 +1,6 @@
+{
+  "name": "governance-wrapper",
+  "command": "governance-wrapper",
+  "description": "Mandatory strict-mode execution wrapper for autonomous operations with evidence logging and policy enforcement.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mandatory strict-mode execution wrapper for autonomous operations with evidence logging and policy enforcement..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

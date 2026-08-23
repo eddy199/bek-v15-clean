@@ -1,0 +1,6 @@
+{
+  "name": "smart-contract-audit",
+  "command": "smart-contract-audit",
+  "description": "Audit and analyze Solidity smart contracts for security vulnerabilities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit and analyze Solidity smart contracts for security vulnerabilities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

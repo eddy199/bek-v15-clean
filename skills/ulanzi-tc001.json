@@ -1,0 +1,6 @@
+{
+  "name": "ulanzi-tc001",
+  "command": "ulanzi-tc001",
+  "description": "Control the Ulanzi TC001 (Pixel Clock) over local HTTP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control the Ulanzi TC001 (Pixel Clock) over local HTTP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

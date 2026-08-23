@@ -1,0 +1,6 @@
+{
+  "name": "svg-to-image",
+  "command": "svg-to-image",
+  "description": "Convert SVG to PNG or JPG for quick sharing (e.g.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert SVG to PNG or JPG for quick sharing (e.g..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

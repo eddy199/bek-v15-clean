@@ -1,0 +1,6 @@
+{
+  "name": "agentkeys",
+  "command": "agentkeys",
+  "description": "Secure credential proxy for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure credential proxy for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

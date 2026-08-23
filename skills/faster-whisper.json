@@ -1,0 +1,6 @@
+{
+  "name": "faster-whisper",
+  "command": "faster-whisper",
+  "description": "Local speech-to-text using faster-whisper.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local speech-to-text using faster-whisper..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "computational-humor",
+  "command": "computational-humor",
+  "description": "12 humor patterns for AI agents based on embedding space bisociation theory.",
+  "prompt": "Tu es un agent expert spécialisé dans : 12 humor patterns for AI agents based on embedding space bisociation theory..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

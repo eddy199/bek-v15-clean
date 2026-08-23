@@ -1,0 +1,6 @@
+{
+  "name": "martok9803-reminder-engine",
+  "command": "martok9803-reminder-engine",
+  "description": "Create, list, cancel, and snooze reminders using OpenClaw cron jobs (one-shot or recurring)",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, list, cancel, and snooze reminders using OpenClaw cron jobs (one-shot or recurring).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

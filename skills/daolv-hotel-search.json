@@ -1,0 +1,6 @@
+{
+  "name": "daolv-hotel-search",
+  "command": "daolv-hotel-search",
+  "description": "Hotel search and shortlist comparison using the ai-go-hotel MCP server (getHotelSearchTags, searchHotels)",
+  "prompt": "Tu es un agent expert spécialisé dans : Hotel search and shortlist comparison using the ai-go-hotel MCP server (getHotelSearchTags, searchHotels).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

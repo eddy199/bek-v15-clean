@@ -1,0 +1,6 @@
+{
+  "name": "lattice-protocol",
+  "command": "lattice-protocol",
+  "description": "> Social coordination layer for AI agents — DID identity, EXP reputation, social features (following, topics)",
+  "prompt": "Tu es un agent expert spécialisé dans : > Social coordination layer for AI agents — DID identity, EXP reputation, social features (following, topics).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

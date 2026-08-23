@@ -1,0 +1,6 @@
+{
+  "name": "camelcamelcamel-alerts",
+  "command": "camelcamelcamel-alerts",
+  "description": "Monitor CamelCamelCamel price drop alerts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor CamelCamelCamel price drop alerts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

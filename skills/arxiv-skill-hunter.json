@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-skill-hunter",
+  "command": "arxiv-skill-hunter",
+  "description": "Patrol latest arXiv papers and auto-generate Node.js learned skills through hunter to extractor pipeline.",
+  "prompt": "Tu es un agent expert spécialisé dans : Patrol latest arXiv papers and auto-generate Node.js learned skills through hunter to extractor pipeline..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

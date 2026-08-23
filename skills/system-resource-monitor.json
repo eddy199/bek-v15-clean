@@ -1,0 +1,6 @@
+{
+  "name": "system-resource-monitor",
+  "command": "system-resource-monitor",
+  "description": "A clean, reliable system resource monitor for CPU load, RAM, Swap, and Disk usage.",
+  "prompt": "Tu es un agent expert spécialisé dans : A clean, reliable system resource monitor for CPU load, RAM, Swap, and Disk usage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

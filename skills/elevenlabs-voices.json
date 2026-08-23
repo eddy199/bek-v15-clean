@@ -1,0 +1,6 @@
+{
+  "name": "elevenlabs-voices",
+  "command": "elevenlabs-voices",
+  "description": "High-quality voice synthesis with 18 personas, 32.",
+  "prompt": "Tu es un agent expert spécialisé dans : High-quality voice synthesis with 18 personas, 32..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

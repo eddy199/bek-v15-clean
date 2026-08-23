@@ -1,0 +1,6 @@
+{
+  "name": "anxiety-relief",
+  "command": "anxiety-relief",
+  "description": "Manage anxiety with grounding exercises, breathing techniques.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage anxiety with grounding exercises, breathing techniques..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ai-trend-curation",
+  "command": "ai-trend-curation",
+  "description": "Curate and post AI trend tweets from X (Twitter) with quote suggestions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Curate and post AI trend tweets from X (Twitter) with quote suggestions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "infra-as-code",
+  "command": "infra-as-code",
+  "description": "Define and manage cloud infrastructure with code.",
+  "prompt": "Tu es un agent expert spécialisé dans : Define and manage cloud infrastructure with code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

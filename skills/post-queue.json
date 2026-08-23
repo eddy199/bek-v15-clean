@@ -1,0 +1,6 @@
+{
+  "name": "post-queue",
+  "command": "post-queue",
+  "description": "Queue posts for rate-limited platforms.",
+  "prompt": "Tu es un agent expert spécialisé dans : Queue posts for rate-limited platforms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

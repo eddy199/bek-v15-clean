@@ -1,0 +1,6 @@
+{
+  "name": "geeksdobyte-motivation-skill",
+  "command": "geeksdobyte-motivation-skill",
+  "description": "summary: Provide a daily motivational quote.",
+  "prompt": "Tu es un agent expert spécialisé dans : summary: Provide a daily motivational quote..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

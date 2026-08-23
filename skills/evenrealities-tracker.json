@@ -1,0 +1,6 @@
+{
+  "name": "evenrealities-tracker",
+  "command": "evenrealities-tracker",
+  "description": "Automate Evenrealities order monitoring (daily checks, status history, change-only alerts)",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate Evenrealities order monitoring (daily checks, status history, change-only alerts).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

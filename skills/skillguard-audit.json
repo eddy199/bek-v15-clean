@@ -1,0 +1,6 @@
+{
+  "name": "skillguard-audit",
+  "command": "skillguard-audit",
+  "description": "Audit agent skills for security threats before installing them.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit agent skills for security threats before installing them..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

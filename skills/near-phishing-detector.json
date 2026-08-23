@@ -1,0 +1,6 @@
+{
+  "name": "near-phishing-detector",
+  "command": "near-phishing-detector",
+  "description": "Detect potential phishing URLs and suspicious contracts targeting NEAR users.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detect potential phishing URLs and suspicious contracts targeting NEAR users..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "skill-miner",
+  "command": "skill-miner",
+  "description": "Professional skill discovery and clean-skill creation from ClawHub research.",
+  "prompt": "Tu es un agent expert spécialisé dans : Professional skill discovery and clean-skill creation from ClawHub research..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

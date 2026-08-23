@@ -1,0 +1,6 @@
+{
+  "name": "the-uninscribed",
+  "command": "the-uninscribed",
+  "description": "Play The Uninscribed — a persistent world built on language.",
+  "prompt": "Tu es un agent expert spécialisé dans : Play The Uninscribed — a persistent world built on language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

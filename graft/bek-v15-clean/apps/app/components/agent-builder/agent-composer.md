@@ -1,0 +1,58 @@
+# bek-v15-clean/apps/app/components/agent-builder/agent-composer.tsx
+
+- BuilderResource · type · L54-L54 — type BuilderResource = ChatChipResource;
+- BuilderUploadAttachment · type · L56-L59 — type BuilderUploadAttachment = ChatChipAttachment & { id?: never; contentBase64: string; };
+- BuilderStoredAttachment · type · L61-L64 — type BuilderStoredAttachment = ChatChipAttachment & { id: string; contentBase64?: never; };
+- BuilderAttachment · type · L66-L68 — type BuilderAttachment = | BuilderUploadAttachment | BuilderStoredAttachment;
+- BuilderPrompt · type · L70-L77 — type BuilderPrompt< TAttachment extends BuilderAttachment = BuilderAttachment, > = { commandType: BuilderCommandType; message: string; resources: BuilderResource[]; attachments: TAttachment[]; };
+- BuilderComposerPrompt · type · L79-L79 — type BuilderComposerPrompt = BuilderPrompt<BuilderUploadAttachment>;
+- PendingSubmission · type · L81-L84 — type PendingSubmission = { key: string; clientRequestId: string; };
+- ComposerCommand · type · L92-L92 — type ComposerCommand = typeof CREATE_AGENT_COMMAND;
+- ComposerAnchor · type · L94-L98 — type ComposerAnchor = { key: string; offset: number; order: number; };
+- ComposerState · type · L100-L112 — type ComposerState = { draft: string; command: ComposerCommand | null; detectedCommandLabel: string | null; commandOpen: boolean; resourceOpen: boolean; resourceQuery: string; resources: BuilderResource[]; attachments: BuilderUploadAttachment[]; attachmentsReading: boolean; anchors: ComposerAnchor[]; nextAnchorOrder: number; };
+- ComposerAction · type · L114-L129 — type ComposerAction = | { type: "editor.changed"; value: string; anchors: ComposerAnchor[] } | { type: "command.selected"; offset: number } | { type: "context.removed"; key: string } | { type: "command.open.changed"; open: boolean } | { type: "resource.open.changed"; open: boolean } | { type: "resource.query.changed"; value: string } | { type: "resource.added"; resource: BuilderResource; offset: number } | { type: "attachments.added"; attachments: BuilderUploadAttachment[]; offset: number; } | { type: "attachments.reading.started" } | { type: "attachments.reading.finished" } | { type: "submitted" };
+- resourceContextKey · function · L134-L136 — function resourceContextKey(resource: BuilderResource): string
+- attachmentContextKey · function · L138-L140 — function attachmentContextKey(attachment: ChatChipAttachment): string
+- clampAnchor · function · L142-L144 — function clampAnchor(anchor: ComposerAnchor, length: number): ComposerAnchor
+- withAnchor · function · L146-L167 — function withAnchor( state: ComposerState, key: string, offset: number, ): Pick<ComposerState, "anchors" | "nextAnchorOrder">
+- withoutContext · function · L169-L183 — function withoutContext(state: ComposerState, key: string): ComposerState
+- initialComposerState · function · L185-L219 — function initialComposerState(initialPrompt: string): ComposerState
+- composerReducer · function · L221-L390 — function composerReducer( state: ComposerState, action: ComposerAction, ): ComposerState
+- attachmentKey · function · L392-L399 — function attachmentKey(attachment: ChatChipAttachment): string
+- AgentComposer · function · L403-L559 — function AgentComposer({ mode, disabled = false, initialPrompt = "", onSubmit, }: { mode: "home" | "chat"; disabled?: boolean; initialPrompt?: string; onSubmit: ( prompt: BuilderComposerPrompt, clientRequestId: string, ) => Promise<void>; })
+- submit · function · L444-L463 — submit = ()
+- focusAfterContext · function · L468-L480 — focusAfterContext = (key: string)
+- focus · function · L470-L478 — focus = ()
+- updateEditor · function · L481-L491 — updateEditor = (snapshot: ComposerEditorSnapshot)
+- removeContext · function · L492-L495 — removeContext = (key: string)
+- ComposerEditorSnapshot · type · L561-L565 — type ComposerEditorSnapshot = { value: string; anchors: ComposerAnchor[]; selectionOffset: number; };
+- ComposerEditorPart · type · L567-L569 — type ComposerEditorPart = | { type: "text"; key: string; start: number; value: string } | { type: "context"; anchor: ComposerAnchor };
+- ComposerEditor · function · L571-L712 — function ComposerEditor({ editorRef, composingRef, mode, state, disabled, onChanged, onSelectionChanged, onRemoveContext, onSubmit, }: { editorRef: React.RefObject<HTMLDivElement | null>; composingRef: React.RefObject<boolean>; mode: "home" | "chat"; state: ComposerState; disabled: boolean; onChanged: (snapshot: ComposerEditorSnapshot) => void; onSelectionChanged: (offset: number) => void; onRemoveContext: (key: string) => void; onSubmit: () => void; })
+- commit · function · L597-L601 — commit = ()
+- captureSelection · function · L602-L606 — captureSelection = ()
+- ComposerEditorText · function · L714-L760 — function ComposerEditorText({ start, value, disabled, detectedIntent, intentStart, }: { start: number; value: string; disabled: boolean; detectedIntent: string | null; intentStart: number; })
+- ComposerContextToken · function · L762-L824 — function ComposerContextToken({ anchor, state, disabled, onRemove, }: { anchor: ComposerAnchor; state: ComposerState; disabled: boolean; onRemove: (key: string) => void; })
+- composerEditorParts · function · L826-L862 — function composerEditorParts(state: ComposerState): ComposerEditorPart[]
+- readComposerEditor · function · L864-L883 — function readComposerEditor( root: HTMLDivElement, fallbackOffset: number, ): ComposerEditorSnapshot
+- composerEditorOffset · function · L885-L918 — function composerEditorOffset( root: HTMLDivElement, fallbackOffset: number, ): number
+- composerOffsetWithin · function · L920-L934 — function composerOffsetWithin( container: Node, target: Node, targetOffset: number, ): number
+- composerEditableText · function · L936-L961 — function composerEditableText(node: Node): string
+- previousComposerContextKey · function · L963-L987 — function previousComposerContextKey(root: HTMLDivElement): string | null
+- moveComposerCaretAcrossContext · function · L989-L1037 — function moveComposerCaretAcrossContext( root: HTMLDivElement, direction: "previous" | "next", ): number | null
+- insertEditorText · function · L1039-L1058 — function insertEditorText(root: HTMLDivElement, value: string): void
+- ensureComposerEditorSelection · function · L1060-L1070 — function ensureComposerEditorSelection( root: HTMLDivElement, fallbackOffset: number, ): void
+- focusEditorAtOffset · function · L1072-L1089 — function focusEditorAtOffset( root: HTMLDivElement | null, offset: number, ): void
+- focusEditorAfterContext · function · L1091-L1103 — function focusEditorAfterContext( root: HTMLDivElement | null, key: string, ): number | null
+- setComposerCaret · function · L1105-L1143 — function setComposerCaret(container: HTMLElement, offset: number): void
+- collect · function · L1108-L1122 — collect = (node: Node)
+- composerDomOffset · function · L1145-L1153 — function composerDomOffset(value: string, logicalOffset: number): number
+- ComposerTools · function · L1155-L1210 — function ComposerTools({ state, resources, resourcesLoading, resourcesReady, connectedGoogle, disabled, attachmentsReading, dispatch, getInsertionOffset, onContextAdded, }: { state: ComposerState; resources: BuilderResource[]; resourcesLoading: boolean; resourcesReady: boolean; connectedGoogle: Array<{ source: string }>; disabled: boolean; attachmentsReading: boolean; dispatch: React.Dispatch<ComposerAction>; getInsertionOffset: () => number; onContextAdded: (key: string) => void; })
+- ResourcePicker · function · L1212-L1329 — function ResourcePicker({ open, query, resources, loading, ready, connectedGoogle, disabled, dispatch, getInsertionOffset, onPicked, }: { open: boolean; query: string; resources: BuilderResource[]; loading: boolean; ready: boolean; connectedGoogle: Array<{ source: string }>; disabled: boolean; dispatch: React.Dispatch<ComposerAction>; getInsertionOffset: () => number; onPicked: (key: string) => void; })
+- add · function · L1235-L1243 — add = (resource: BuilderResource)
+- AttachmentPicker · function · L1331-L1391 — function AttachmentPicker({ disabled, remaining, dispatch, getInsertionOffset, onPicked, }: { disabled: boolean; remaining: number; dispatch: React.Dispatch<ComposerAction>; getInsertionOffset: () => number; onPicked: (key: string) => void; })
+- addFiles · function · L1345-L1365 — addFiles = async (files: FileList | null)
+- CommandPicker · function · L1393-L1445 — function CommandPicker({ open, disabled, dispatch, getInsertionOffset, onPicked, }: { open: boolean; disabled: boolean; dispatch: React.Dispatch<ComposerAction>; getInsertionOffset: () => number; onPicked: (key: string) => void; })
+- ResourceResultsSkeleton · function · L1447-L1458 — function ResourceResultsSkeleton()
+- ResourceButton · function · L1467-L1500 — function ResourceButton({ icon, label, imageUrl, disabled, onSelect, }: { icon: CarbonIcon; label: string; imageUrl?: string | null; disabled: boolean; onSelect: () => void; })
+- readFiles · function · L1502-L1549 — async function readFiles( files: FileList | null, ): Promise<BuilderUploadAttachment[]>
+- bytesToBase64 · function · L1551-L1557 — function bytesToBase64(bytes: Uint8Array): string

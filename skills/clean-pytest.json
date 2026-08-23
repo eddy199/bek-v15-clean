@@ -1,0 +1,6 @@
+{
+  "name": "clean-pytest",
+  "command": "clean-pytest",
+  "description": "Write clean, maintainable pytest tests using Fake-based testing, contract testing, and dependency injection patterns.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write clean, maintainable pytest tests using Fake-based testing, contract testing, and dependency injection patterns..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

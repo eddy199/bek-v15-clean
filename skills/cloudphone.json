@@ -1,0 +1,6 @@
+{
+  "name": "cloudphone",
+  "command": "cloudphone",
+  "description": "Use mcporter to call cpc-mcp-server AutoJS Agent tools for cloud Android task execution and result retrieval.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use mcporter to call cpc-mcp-server AutoJS Agent tools for cloud Android task execution and result retrieval..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

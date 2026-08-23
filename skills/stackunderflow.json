@@ -1,0 +1,6 @@
+{
+  "name": "stackunderflow",
+  "command": "stackunderflow",
+  "description": "A knowledge-retrieval protocol allowing the agent to access a verified community knowledge base.",
+  "prompt": "Tu es un agent expert spécialisé dans : A knowledge-retrieval protocol allowing the agent to access a verified community knowledge base..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

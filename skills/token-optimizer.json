@@ -1,0 +1,6 @@
+{
+  "name": "token-optimizer",
+  "command": "token-optimizer",
+  "description": "Reduce OpenClaw AI costs by 97%.",
+  "prompt": "Tu es un agent expert spécialisé dans : Reduce OpenClaw AI costs by 97%..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

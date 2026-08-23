@@ -1,0 +1,6 @@
+{
+  "name": "content-repurposer-pro",
+  "command": "content-repurposer-pro",
+  "description": "Transform long-form content into multiple formats for distribution.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform long-form content into multiple formats for distribution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "meegle-api",
+  "command": "meegle-api",
+  "description": "Meegle Open API skills index.",
+  "prompt": "Tu es un agent expert spécialisé dans : Meegle Open API skills index..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "windfall-inference",
+  "command": "windfall-inference",
+  "description": "Spatially-routed LLM inference at $0.004/req.",
+  "prompt": "Tu es un agent expert spécialisé dans : Spatially-routed LLM inference at $0.004/req..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

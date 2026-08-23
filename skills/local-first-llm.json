@@ -1,0 +1,6 @@
+{
+  "name": "local-first-llm",
+  "command": "local-first-llm",
+  "description": "Routes LLM requests to a local model (Ollama, LM Studio, llamafile) before falling back to cloud APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Routes LLM requests to a local model (Ollama, LM Studio, llamafile) before falling back to cloud APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

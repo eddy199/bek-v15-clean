@@ -1,0 +1,6 @@
+{
+  "name": "screenshot-capture",
+  "command": "screenshot-capture",
+  "description": "Process screenshots Enzo shares with comments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Process screenshots Enzo shares with comments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "anvevoice",
+  "command": "anvevoice",
+  "description": "Add AI voice assistants to your website.",
+  "prompt": "Tu es un agent expert spécialisé dans : Add AI voice assistants to your website..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

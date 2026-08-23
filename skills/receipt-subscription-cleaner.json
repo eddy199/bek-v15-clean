@@ -1,0 +1,6 @@
+{
+  "name": "receipt-subscription-cleaner",
+  "command": "receipt-subscription-cleaner",
+  "description": "Identify recurring charges and subscriptions from receipts or email exports, and produce a clean summary.",
+  "prompt": "Tu es un agent expert spécialisé dans : Identify recurring charges and subscriptions from receipts or email exports, and produce a clean summary..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "zown-gemini-governor",
+  "command": "zown-gemini-governor",
+  "description": "A high-fidelity token management and model stabilization skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : A high-fidelity token management and model stabilization skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

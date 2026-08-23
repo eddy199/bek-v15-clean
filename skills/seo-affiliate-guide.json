@@ -1,0 +1,6 @@
+{
+  "name": "seo-affiliate-guide",
+  "command": "seo-affiliate-guide",
+  "description": "Crea guías de compra SEO optimizadas para posts de afiliado en español. Úsala siempre que el usuario quiera.",
+  "prompt": "Tu es un agent expert spécialisé dans : Crea guías de compra SEO optimizadas para posts de afiliado en español. Úsala siempre que el usuario quiera..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

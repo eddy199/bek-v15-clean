@@ -1,0 +1,6 @@
+{
+  "name": "openocr-skill",
+  "command": "openocr-skill",
+  "description": "Extract text from images, documents and scanned PDFs using OpenOCR.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract text from images, documents and scanned PDFs using OpenOCR..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "url-fetcher",
+  "command": "url-fetcher",
+  "description": "Simple web content fetching without API keys or external dependencies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Simple web content fetching without API keys or external dependencies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

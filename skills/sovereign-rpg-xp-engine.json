@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-rpg-xp-engine",
+  "command": "sovereign-rpg-xp-engine",
+  "description": "You are the RPG Life XP engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are the RPG Life XP engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

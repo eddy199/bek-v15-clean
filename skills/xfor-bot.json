@@ -1,0 +1,6 @@
+{
+  "name": "xfor-bot",
+  "command": "xfor-bot",
+  "description": "Social media and messaging client for xfor.bot and Ant Farm.",
+  "prompt": "Tu es un agent expert spécialisé dans : Social media and messaging client for xfor.bot and Ant Farm..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

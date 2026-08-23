@@ -1,0 +1,6 @@
+{
+  "name": "agent-deep-research",
+  "command": "agent-deep-research",
+  "description": "Autonomous deep research powered by Google Gemini.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous deep research powered by Google Gemini..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

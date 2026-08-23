@@ -1,0 +1,6 @@
+{
+  "name": "birdnet",
+  "command": "birdnet",
+  "description": "Query BirdNET-Go bird detections.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query BirdNET-Go bird detections..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

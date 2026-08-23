@@ -1,0 +1,6 @@
+{
+  "name": "atris",
+  "command": "atris",
+  "description": "Codebase intelligence — generates structured navigation maps with file:line references so agents stop re-scanning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Codebase intelligence — generates structured navigation maps with file:line references so agents stop re-scanning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

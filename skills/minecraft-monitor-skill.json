@@ -1,0 +1,6 @@
+{
+  "name": "minecraft-monitor-skill",
+  "command": "minecraft-monitor-skill",
+  "description": "Monitor Minecraft servers by checking online status, player counts, latency, and version info using the Server List.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor Minecraft servers by checking online status, player counts, latency, and version info using the Server List..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

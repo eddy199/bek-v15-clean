@@ -1,0 +1,6 @@
+{
+  "name": "hello-world",
+  "command": "hello-world",
+  "description": "A simple greeting skill that responds with a customized hello message in the user's language.",
+  "prompt": "Tu es un agent expert spécialisé dans : A simple greeting skill that responds with a customized hello message in the user's language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

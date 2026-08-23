@@ -1,0 +1,6 @@
+{
+  "name": "pullthatupjamie",
+  "command": "pullthatupjamie",
+  "description": "PullThatUpJamie — Podcast Intelligence.",
+  "prompt": "Tu es un agent expert spécialisé dans : PullThatUpJamie — Podcast Intelligence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

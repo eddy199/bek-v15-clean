@@ -1,0 +1,6 @@
+{
+  "name": "clawringhouse",
+  "command": "clawringhouse",
+  "description": "AI shopping concierge that anticipates needs.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI shopping concierge that anticipates needs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

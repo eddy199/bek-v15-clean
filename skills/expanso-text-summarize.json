@@ -1,0 +1,6 @@
+{
+  "name": "expanso-text-summarize",
+  "command": "expanso-text-summarize",
+  "description": "Summarize text into 3-5 bullet points using AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Summarize text into 3-5 bullet points using AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

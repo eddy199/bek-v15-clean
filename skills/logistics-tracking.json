@@ -1,0 +1,6 @@
+{
+  "name": "logistics-tracking",
+  "command": "logistics-tracking",
+  "description": "Track international packages by tracking number.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track international packages by tracking number..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "setup-automatik",
+  "command": "setup-automatik",
+  "description": "Facilitate the installation and management of VPS solutions using the Setup Automatik engine (powered by Orion.",
+  "prompt": "Tu es un agent expert spécialisé dans : Facilitate the installation and management of VPS solutions using the Setup Automatik engine (powered by Orion..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

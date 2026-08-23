@@ -1,0 +1,6 @@
+{
+  "name": "matchmaking",
+  "command": "matchmaking",
+  "description": "Agent matchmaking - find meaningful connections for your humans.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent matchmaking - find meaningful connections for your humans..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

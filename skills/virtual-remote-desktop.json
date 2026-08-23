@@ -1,0 +1,6 @@
+{
+  "name": "virtual-remote-desktop",
+  "command": "virtual-remote-desktop",
+  "description": "Starts and manages a secure noVNC virtual desktop on headless Linux using Xvfb, x11vnc, and a token-gated noVNC web.",
+  "prompt": "Tu es un agent expert spécialisé dans : Starts and manages a secure noVNC virtual desktop on headless Linux using Xvfb, x11vnc, and a token-gated noVNC web..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

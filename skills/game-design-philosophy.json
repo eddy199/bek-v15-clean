@@ -1,0 +1,6 @@
+{
+  "name": "game-design-philosophy",
+  "command": "game-design-philosophy",
+  "description": "Auto-learns your design instincts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Auto-learns your design instincts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

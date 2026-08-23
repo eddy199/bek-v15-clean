@@ -1,0 +1,6 @@
+{
+  "name": "cortex-memory",
+  "command": "cortex-memory",
+  "description": "Long-term structured memory with knowledge graph, entity tracking, temporal reasoning, and cross-session recall.",
+  "prompt": "Tu es un agent expert spécialisé dans : Long-term structured memory with knowledge graph, entity tracking, temporal reasoning, and cross-session recall..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "web-bundling",
+  "command": "web-bundling",
+  "description": "Bundle web applications into single HTML files for distribution.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bundle web applications into single HTML files for distribution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "open-sentinel",
+  "command": "open-sentinel",
+  "description": "Transparent LLM proxy that monitors and enforces policies on AI agent behavior — evaluates responses.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transparent LLM proxy that monitors and enforces policies on AI agent behavior — evaluates responses..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

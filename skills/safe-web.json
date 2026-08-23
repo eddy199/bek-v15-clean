@@ -1,0 +1,6 @@
+{
+  "name": "safe-web",
+  "command": "safe-web",
+  "description": "Secure web fetch and search with **PromptGuard** scanning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure web fetch and search with **PromptGuard** scanning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

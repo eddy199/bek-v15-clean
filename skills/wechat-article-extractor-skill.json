@@ -1,0 +1,6 @@
+{
+  "name": "wechat-article-extractor-skill",
+  "command": "wechat-article-extractor-skill",
+  "description": "Extract metadata and content from WeChat Official Account articles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract metadata and content from WeChat Official Account articles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "claude-connect",
+  "command": "claude-connect",
+  "description": "Connect Claude to Clawdbot instantly and keep.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect Claude to Clawdbot instantly and keep..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

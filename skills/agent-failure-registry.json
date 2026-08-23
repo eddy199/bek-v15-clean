@@ -1,0 +1,6 @@
+{
+  "name": "agent-failure-registry",
+  "command": "agent-failure-registry",
+  "description": "Search the Agent Failure Registry for known agent failures, solutions, and lessons learned.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search the Agent Failure Registry for known agent failures, solutions, and lessons learned..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

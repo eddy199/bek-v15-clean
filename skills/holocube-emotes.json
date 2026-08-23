@@ -1,0 +1,6 @@
+{
+  "name": "holocube-emotes",
+  "command": "holocube-emotes",
+  "description": "Control a GeekMagic holocube display as an AI emote system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control a GeekMagic holocube display as an AI emote system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

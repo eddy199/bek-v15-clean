@@ -1,0 +1,6 @@
+{
+  "name": "anshumanbh-qmd",
+  "command": "anshumanbh-qmd",
+  "description": "Search markdown knowledge bases efficiently.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search markdown knowledge bases efficiently..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

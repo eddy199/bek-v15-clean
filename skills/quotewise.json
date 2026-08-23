@@ -1,0 +1,6 @@
+{
+  "name": "quotewise",
+  "command": "quotewise",
+  "description": "Semantic quote search with source transparency.",
+  "prompt": "Tu es un agent expert spécialisé dans : Semantic quote search with source transparency..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

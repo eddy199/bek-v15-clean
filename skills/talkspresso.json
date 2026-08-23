@@ -1,0 +1,6 @@
+{
+  "name": "talkspresso",
+  "command": "talkspresso",
+  "description": "Manage a Talkspresso business (services, appointments, products, clients, earnings, calendar) using the Talkspresso.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage a Talkspresso business (services, appointments, products, clients, earnings, calendar) using the Talkspresso..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

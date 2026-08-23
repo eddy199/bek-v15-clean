@@ -1,0 +1,6 @@
+{
+  "name": "vibetrading-code-gen",
+  "command": "vibetrading-code-gen",
+  "description": "Generate executable Hyperliquid trading strategy code from natural language prompts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate executable Hyperliquid trading strategy code from natural language prompts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

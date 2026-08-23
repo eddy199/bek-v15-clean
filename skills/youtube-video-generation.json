@@ -1,0 +1,6 @@
+{
+  "name": "youtube-video-generation",
+  "command": "youtube-video-generation",
+  "description": "Generate YouTube videos and Shorts using each::sense AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate YouTube videos and Shorts using each::sense AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

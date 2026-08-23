@@ -1,0 +1,6 @@
+{
+  "name": "brainz-calendar",
+  "command": "brainz-calendar",
+  "description": "Manage Google Calendar events using `gcalcli`.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Google Calendar events using `gcalcli`..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

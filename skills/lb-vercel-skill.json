@@ -1,0 +1,6 @@
+{
+  "name": "lb-vercel-skill",
+  "command": "lb-vercel-skill",
+  "description": "Deploy applications and manage projects with complete CLI reference.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy applications and manage projects with complete CLI reference..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

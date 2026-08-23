@@ -1,0 +1,6 @@
+{
+  "name": "gmail-label-manager",
+  "command": "gmail-label-manager",
+  "description": "This skill automates the organization of unread Gmail messages by applying labels, removing unnecessary labels.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill automates the organization of unread Gmail messages by applying labels, removing unnecessary labels..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

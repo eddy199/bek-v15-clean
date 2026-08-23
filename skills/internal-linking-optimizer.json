@@ -1,0 +1,6 @@
+{
+  "name": "internal-linking-optimizer",
+  "command": "internal-linking-optimizer",
+  "description": "Use when the user asks to \"fix internal links\", \"improve site architecture\", \"link structure\", \"distribute page.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"fix internal links\", \"improve site architecture\", \"link structure\", \"distribute page..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

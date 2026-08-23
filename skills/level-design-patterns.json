@@ -1,0 +1,6 @@
+{
+  "name": "level-design-patterns",
+  "command": "level-design-patterns",
+  "description": "Use when creating Unity game scenes and prototypes, building level designs, or automating Unity Editor workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when creating Unity game scenes and prototypes, building level designs, or automating Unity Editor workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

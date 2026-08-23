@@ -1,0 +1,6 @@
+{
+  "name": "x-alpha-scout",
+  "command": "x-alpha-scout",
+  "description": "X/Twitter alpha scanner for crypto and NFTs.",
+  "prompt": "Tu es un agent expert spécialisé dans : X/Twitter alpha scanner for crypto and NFTs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "kj-ui-ux-pro-max",
+  "command": "kj-ui-ux-pro-max",
+  "description": "UI/UX design intelligence and implementation guidance for building polished interfaces.",
+  "prompt": "Tu es un agent expert spécialisé dans : UI/UX design intelligence and implementation guidance for building polished interfaces..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

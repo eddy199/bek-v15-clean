@@ -1,0 +1,6 @@
+{
+  "name": "sev-attestation",
+  "command": "sev-attestation",
+  "description": "Perform AMD SEV-SNP remote attestation to cryptographically verify VM identity and integrity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Perform AMD SEV-SNP remote attestation to cryptographically verify VM identity and integrity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

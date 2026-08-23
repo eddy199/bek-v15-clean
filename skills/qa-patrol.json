@@ -1,0 +1,6 @@
+{
+  "name": "qa-patrol",
+  "command": "qa-patrol",
+  "description": "Automated QA testing for web apps using local browser automation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated QA testing for web apps using local browser automation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

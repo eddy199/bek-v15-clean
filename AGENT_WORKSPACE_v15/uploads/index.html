@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEK-v15 Hybrid — Agent IA</title>
+<link rel="stylesheet" href="agent-ui.css">
+</head>
+<body>
+
+<div id="app">
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="brand-logo">B</div>
+      <div class="brand-text">
+        <strong>BEK</strong>
+        <span>v15 Hybrid</span>
+      </div>
+    </div>
+
+    <button class="new-chat" id="newChatBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      Nouvelle conversation
+    </button>
+
+    <div class="sb-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="7"/><path d="M20 20l-4.35-4.35"/>
+      </svg>
+      <input id="convSearch" type="text" placeholder="Rechercher...">
+    </div>
+
+    <div class="sb-section">Conversations</div>
+    <div class="conv-list" id="convList"></div>
+
+    <nav class="sb-nav">
+      <div class="sb-section">Navigation</div>
+      <button class="nav-item active" data-tab="chat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+        <span>Chat</span>
+      </button>
+      <button class="nav-item" data-tab="skills">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2l2.5 5 5.5.8-4 3.9.9 5.5L12 14.5 7.1 17.2l.9-5.5-4-3.9L9.5 7z"/>
+        </svg>
+        <span>Compétences</span>
+        <span class="nav-badge" id="navSkillsCount">0</span>
+      </button>
+      <button class="nav-item" data-tab="files">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/>
+        </svg>
+        <span>Fichiers</span>
+        <span class="nav-badge" id="navFilesCount">0</span>
+      </button>
+      <button class="nav-item" data-tab="memory">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18h6M10 21h4M12 3a6 6 0 016 6c0 2-.5 3-1.5 4.5C15.3 15 15 15.7 15 17h-6c0-1.3-.3-2-1.5-3.5C6.5 12 6 11 6 9a6 6 0 016-6z"/>
+        </svg>
+        <span>Mémoire</span>
+      </button>
+      <button class="nav-item" data-tab="plugins">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 12a8 8 0 10-16 0 8 8 0 0016 0z"/><path d="M12 4v4M12 16v4M4 12h4M16 12h4"/>
+        </svg>
+        <span>Plugins</span>
+      </button>
+      <button class="nav-item" data-tab="connectors">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+        </svg>
+        <span>Connecteurs</span>
+      </button>
+    </nav>
+
+    <div class="sb-footer">
+      <button class="settings-btn" id="settingsBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+        </svg>
+        <span>Paramètres</span>
+      </button>
+      <div class="status-line">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">Connexion...</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <main class="main" id="main">
+    <div id="viewChat" class="view active">
+      <header class="header">
+        <h2 id="chatTitle">Chat</h2>
+        <div class="header-center">
+          <select id="providerSelect" class="select">
+            <option>Chargement...</option>
+          </select>
+          <select id="modelSelect" class="select model-select">
+            <option>Chargement...</option>
+          </select>
+          <button class="icon-btn" id="memoryToggle" title="Mémoire activée/désactivée">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18h6M10 21h4M12 3a6 6 0 016 6c0 2-.5 3-1.5 4.5C15.3 15 15 15.7 15 17h-6c0-1.3-.3-2-1.5-3.5C6.5 12 6 11 6 9a6 6 0 016-6z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="header-right">
+          <button class="icon-btn" id="helpBtn" title="Aide / commandes">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <div class="messages" id="messages"></div>
+        <div class="input-area">
+          <div class="input-wrap">
+            <textarea id="chatInput" rows="1" placeholder="Écrivez votre message... (utilisez / pour les commandes)"></textarea>
+            <button class="send-btn" id="sendBtn" title="Envoyer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="input-hint">
+            <span id="modelBadge">—</span>
+            <span>Enter pour envoyer · Shift+Enter pour nouvelle ligne</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="viewSkills" class="view"></div>
+    <div id="viewFiles" class="view"></div>
+    <div id="viewMemory" class="view"></div>
+    <div id="viewPlugins" class="view"></div>
+    <div id="viewConnectors" class="view"></div>
+  </main>
+</div>
+
+<!-- ═══════════ MODAL CONTAINER ═══════════ -->
+<div id="modalRoot"></div>
+
+<!-- ═══════════ TOASTS ═══════════ -->
+<div id="toastRoot"></div>
+
+<script src="agent-ui.js"></script>
+</body>
+</html>

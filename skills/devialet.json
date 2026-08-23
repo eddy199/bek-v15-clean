@@ -1,0 +1,6 @@
+{
+  "name": "devialet",
+  "command": "devialet",
+  "description": "Control Devialet Phantom speakers via HTTP API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Devialet Phantom speakers via HTTP API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

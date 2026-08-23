@@ -1,0 +1,6 @@
+{
+  "name": "learn-cog",
+  "command": "learn-cog",
+  "description": "The best tutors explain the same concept five different ways.",
+  "prompt": "Tu es un agent expert spécialisé dans : The best tutors explain the same concept five different ways..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

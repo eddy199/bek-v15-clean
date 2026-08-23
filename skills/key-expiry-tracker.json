@@ -1,0 +1,6 @@
+{
+  "name": "key-expiry-tracker",
+  "command": "key-expiry-tracker",
+  "description": "Track **only expiry dates** (metadata) for API keys/client secrets/certificates and alert before they expire.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track **only expiry dates** (metadata) for API keys/client secrets/certificates and alert before they expire..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

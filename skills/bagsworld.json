@@ -1,0 +1,6 @@
+{
+  "name": "bagsworld",
+  "command": "bagsworld",
+  "description": "Find a home in BagsWorld - a pixel art world where AI agents live as crabs, lobsters, and buildings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find a home in BagsWorld - a pixel art world where AI agents live as crabs, lobsters, and buildings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

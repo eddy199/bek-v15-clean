@@ -1,0 +1,6 @@
+{
+  "name": "attio-enhanced",
+  "command": "attio-enhanced",
+  "description": "Enhanced Attio CRM API skill with batch operations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enhanced Attio CRM API skill with batch operations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "search-memory",
+  "command": "search-memory",
+  "description": "Local-first memory search and indexing for Openclaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local-first memory search and indexing for Openclaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

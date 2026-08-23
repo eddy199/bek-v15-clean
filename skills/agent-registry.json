@@ -1,0 +1,6 @@
+{
+  "name": "agent-registry",
+  "command": "agent-registry",
+  "description": "MANDATORY agent discovery system for token-efficient agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : MANDATORY agent discovery system for token-efficient agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

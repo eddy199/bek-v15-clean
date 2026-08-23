@@ -1,0 +1,6 @@
+{
+  "name": "tempest-weather",
+  "command": "tempest-weather",
+  "description": "Get current weather conditions from a WeatherFlow Tempest station using the Tempest REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get current weather conditions from a WeatherFlow Tempest station using the Tempest REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

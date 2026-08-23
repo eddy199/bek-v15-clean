@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-api-hardener",
+  "command": "sovereign-api-hardener",
+  "description": "Hardens API endpoints against common attacks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hardens API endpoints against common attacks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

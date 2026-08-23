@@ -1,0 +1,6 @@
+{
+  "name": "entity-optimizer",
+  "command": "entity-optimizer",
+  "description": "Use when the user asks to \"optimize entity presence\", \"build knowledge graph\", \"improve knowledge panel\", \"entity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"optimize entity presence\", \"build knowledge graph\", \"improve knowledge panel\", \"entity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "librarian",
+  "command": "librarian",
+  "description": "Conversational interface for semantic book search (companion skill for Librarian project)",
+  "prompt": "Tu es un agent expert spécialisé dans : Conversational interface for semantic book search (companion skill for Librarian project).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

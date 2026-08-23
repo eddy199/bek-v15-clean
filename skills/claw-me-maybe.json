@@ -1,0 +1,6 @@
+{
+  "name": "claw-me-maybe",
+  "command": "claw-me-maybe",
+  "description": "Beeper integration for Clawdbot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Beeper integration for Clawdbot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

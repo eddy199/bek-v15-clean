@@ -1,0 +1,6 @@
+{
+  "name": "zulk-short-url-skill",
+  "command": "zulk-short-url-skill",
+  "description": "Premium AI-first URL shortening and management with real-time analytics and team collaboration via MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Premium AI-first URL shortening and management with real-time analytics and team collaboration via MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

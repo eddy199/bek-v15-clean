@@ -1,0 +1,6 @@
+{
+  "name": "community-mod-pack",
+  "command": "community-mod-pack",
+  "description": "Assist community moderation with summaries, spam detection suggestions, and draft replies for Discord or Telegram.",
+  "prompt": "Tu es un agent expert spécialisé dans : Assist community moderation with summaries, spam detection suggestions, and draft replies for Discord or Telegram..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "immich-api",
+  "command": "immich-api",
+  "description": "Immich Photo Management API Bridge.",
+  "prompt": "Tu es un agent expert spécialisé dans : Immich Photo Management API Bridge..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

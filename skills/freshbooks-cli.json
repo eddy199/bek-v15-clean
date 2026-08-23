@@ -1,0 +1,6 @@
+{
+  "name": "freshbooks-cli",
+  "command": "freshbooks-cli",
+  "description": "FreshBooks CLI for managing invoices, clients, and billing.",
+  "prompt": "Tu es un agent expert spécialisé dans : FreshBooks CLI for managing invoices, clients, and billing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

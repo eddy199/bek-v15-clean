@@ -1,0 +1,6 @@
+{
+  "name": "crypto-self-learning",
+  "command": "crypto-self-learning",
+  "description": "Self-learning system for crypto trading.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-learning system for crypto trading..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

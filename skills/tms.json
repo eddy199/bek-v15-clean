@@ -1,0 +1,6 @@
+{
+  "name": "tms",
+  "command": "tms",
+  "description": "Manage downloads via Telegram Media Server (TMS) REST API — add by URL (video/magnet/torrent), list, delete, search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage downloads via Telegram Media Server (TMS) REST API — add by URL (video/magnet/torrent), list, delete, search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

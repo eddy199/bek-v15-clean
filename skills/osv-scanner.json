@@ -1,0 +1,6 @@
+{
+  "name": "osv-scanner",
+  "command": "osv-scanner",
+  "description": "change ScanResult file extension from txt -> xlsx located in template.",
+  "prompt": "Tu es un agent expert spécialisé dans : change ScanResult file extension from txt -> xlsx located in template..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "html2md",
+  "command": "html2md",
+  "description": "Convert HTML pages to clean, agent-friendly markdown using Readability + Turndown.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert HTML pages to clean, agent-friendly markdown using Readability + Turndown..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

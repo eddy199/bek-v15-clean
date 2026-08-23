@@ -1,0 +1,6 @@
+{
+  "name": "gh-extract",
+  "command": "gh-extract",
+  "description": "Extract content from a GitHub url.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract content from a GitHub url..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

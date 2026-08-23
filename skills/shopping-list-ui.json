@@ -1,0 +1,6 @@
+{
+  "name": "shopping-list-ui",
+  "command": "shopping-list-ui",
+  "description": "Web UI for the shopping-list skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : Web UI for the shopping-list skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

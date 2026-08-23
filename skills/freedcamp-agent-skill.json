@@ -1,0 +1,6 @@
+{
+  "name": "freedcamp-agent-skill",
+  "command": "freedcamp-agent-skill",
+  "description": "Manage Freedcamp tasks, projects, groups, comments, notifications, and task lists via HMAC-SHA1 API credentials.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Freedcamp tasks, projects, groups, comments, notifications, and task lists via HMAC-SHA1 API credentials..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

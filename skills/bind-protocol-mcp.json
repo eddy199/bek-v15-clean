@@ -1,0 +1,6 @@
+{
+  "name": "bind-protocol-mcp",
+  "command": "bind-protocol-mcp",
+  "description": "Bind Protocol MCP server for credential verification, policy authoring, and zero-knowledge proof generation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bind Protocol MCP server for credential verification, policy authoring, and zero-knowledge proof generation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

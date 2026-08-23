@@ -1,0 +1,6 @@
+{
+  "name": "tokportal",
+  "command": "tokportal",
+  "description": "Automate social media at scale — create TikTok/Instagram accounts, distribute videos, upload content, and track.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate social media at scale — create TikTok/Instagram accounts, distribute videos, upload content, and track..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

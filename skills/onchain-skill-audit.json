@@ -1,0 +1,6 @@
+{
+  "name": "onchain-skill-audit",
+  "command": "onchain-skill-audit",
+  "description": "On-chain skill provenance registry.",
+  "prompt": "Tu es un agent expert spécialisé dans : On-chain skill provenance registry..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

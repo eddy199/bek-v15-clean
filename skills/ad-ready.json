@@ -1,0 +1,6 @@
+{
+  "name": "ad-ready",
+  "command": "ad-ready",
+  "description": "Generate professional advertising images from product URLs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional advertising images from product URLs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

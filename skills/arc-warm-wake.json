@@ -1,0 +1,6 @@
+{
+  "name": "arc-warm-wake",
+  "command": "arc-warm-wake",
+  "description": "Wake up as a person first, then a worker.",
+  "prompt": "Tu es un agent expert spécialisé dans : Wake up as a person first, then a worker..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

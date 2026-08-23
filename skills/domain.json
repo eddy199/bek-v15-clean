@@ -1,0 +1,6 @@
+{
+  "name": "domain",
+  "command": "domain",
+  "description": "Turn AI into your domain investment expert.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn AI into your domain investment expert..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

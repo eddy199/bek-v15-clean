@@ -1,0 +1,6 @@
+{
+  "name": "boggle",
+  "command": "boggle",
+  "description": "Solve Boggle boards — find all valid words (German + English) on a 4x4.",
+  "prompt": "Tu es un agent expert spécialisé dans : Solve Boggle boards — find all valid words (German + English) on a 4x4..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

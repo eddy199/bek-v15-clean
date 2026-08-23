@@ -1,0 +1,6 @@
+{
+  "name": "semantic-router",
+  "command": "semantic-router",
+  "description": "Auto-routing skill with configurable model pools and task type matching.",
+  "prompt": "Tu es un agent expert spécialisé dans : Auto-routing skill with configurable model pools and task type matching..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

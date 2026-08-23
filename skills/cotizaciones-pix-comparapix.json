@@ -1,0 +1,6 @@
+{
+  "name": "cotizaciones-pix-comparapix",
+  "command": "cotizaciones-pix-comparapix",
+  "description": "Consulta cotizaciones Pix en ComparaPix para comparar apps por simbolo y precio.",
+  "prompt": "Tu es un agent expert spécialisé dans : Consulta cotizaciones Pix en ComparaPix para comparar apps por simbolo y precio..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

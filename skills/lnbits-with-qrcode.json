@@ -1,0 +1,6 @@
+{
+  "name": "lnbits-with-qrcode",
+  "command": "lnbits-with-qrcode",
+  "description": "Manage LNbits Lightning Wallet (Balance, Pay, Invoice)",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage LNbits Lightning Wallet (Balance, Pay, Invoice).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

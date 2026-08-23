@@ -1,0 +1,6 @@
+{
+  "name": "chain-of-density",
+  "command": "chain-of-density",
+  "description": "Iteratively densify text summaries using Chain-of-Density technique.",
+  "prompt": "Tu es un agent expert spécialisé dans : Iteratively densify text summaries using Chain-of-Density technique..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

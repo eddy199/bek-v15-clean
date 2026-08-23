@@ -1,0 +1,6 @@
+{
+  "name": "autonomous-brain",
+  "command": "autonomous-brain",
+  "description": "Advanced autonomous AI brain with proactive monitoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced autonomous AI brain with proactive monitoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

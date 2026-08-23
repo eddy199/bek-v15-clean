@@ -1,0 +1,6 @@
+{
+  "name": "stakingverse-lukso",
+  "command": "stakingverse-lukso",
+  "description": "Stake LYX tokens on Stakingverse (LUKSO liquid staking)",
+  "prompt": "Tu es un agent expert spécialisé dans : Stake LYX tokens on Stakingverse (LUKSO liquid staking).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

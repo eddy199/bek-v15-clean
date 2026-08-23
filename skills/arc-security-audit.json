@@ -1,0 +1,6 @@
+{
+  "name": "arc-security-audit",
+  "command": "arc-security-audit",
+  "description": "Comprehensive security audit for an agent's full skill stack.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive security audit for an agent's full skill stack..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

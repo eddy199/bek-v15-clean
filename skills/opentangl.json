@@ -1,0 +1,6 @@
+{
+  "name": "opentangl",
+  "command": "opentangl",
+  "description": "Not a code generator — an entire dev team.",
+  "prompt": "Tu es un agent expert spécialisé dans : Not a code generator — an entire dev team..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

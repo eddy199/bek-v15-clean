@@ -1,0 +1,6 @@
+{
+  "name": "compaction-ui-enhancements",
+  "command": "compaction-ui-enhancements",
+  "description": "Manual memory compaction button with context gauge for OpenClaw Control UI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manual memory compaction button with context gauge for OpenClaw Control UI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

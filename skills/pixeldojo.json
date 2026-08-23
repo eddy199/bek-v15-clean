@@ -1,0 +1,6 @@
+{
+  "name": "pixeldojo",
+  "command": "pixeldojo",
+  "description": "Generate AI images and videos using PixelDojo API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI images and videos using PixelDojo API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

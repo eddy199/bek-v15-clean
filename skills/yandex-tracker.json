@@ -1,0 +1,6 @@
+{
+  "name": "yandex-tracker",
+  "command": "yandex-tracker",
+  "description": "Work with Yandex Tracker (issues, queues, comments, attachments, links, search, bulk operations) via Python.",
+  "prompt": "Tu es un agent expert spécialisé dans : Work with Yandex Tracker (issues, queues, comments, attachments, links, search, bulk operations) via Python..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

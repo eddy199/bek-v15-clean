@@ -1,0 +1,6 @@
+{
+  "name": "technical-seo-checker",
+  "command": "technical-seo-checker",
+  "description": "Use when the user asks to \"technical SEO audit\", \"check page speed\", \"crawl issues\", \"Core Web Vitals\", \"site.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"technical SEO audit\", \"check page speed\", \"crawl issues\", \"Core Web Vitals\", \"site..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

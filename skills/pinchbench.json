@@ -1,0 +1,6 @@
+{
+  "name": "pinchbench",
+  "command": "pinchbench",
+  "description": "Run PinchBench benchmarks to evaluate OpenClaw agent performance across real-world tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run PinchBench benchmarks to evaluate OpenClaw agent performance across real-world tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

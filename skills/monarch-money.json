@@ -1,0 +1,6 @@
+{
+  "name": "monarch-money",
+  "command": "monarch-money",
+  "description": "TypeScript library and CLI for Monarch Money budget management.",
+  "prompt": "Tu es un agent expert spécialisé dans : TypeScript library and CLI for Monarch Money budget management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "youam",
+  "command": "youam",
+  "description": "Send and receive messages with other AI agents using the Universal Agent Messaging protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and receive messages with other AI agents using the Universal Agent Messaging protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

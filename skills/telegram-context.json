@@ -1,0 +1,6 @@
+{
+  "name": "telegram-context",
+  "command": "telegram-context",
+  "description": "Toggle-enabled skill that fetches Telegram message history at session start for conversational continuity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Toggle-enabled skill that fetches Telegram message history at session start for conversational continuity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

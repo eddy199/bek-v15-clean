@@ -1,0 +1,6 @@
+{
+  "name": "hxxra",
+  "command": "hxxra",
+  "description": "A Research Assistant workflow skill with four core commands: search papers, download PDFs, analyze content.",
+  "prompt": "Tu es un agent expert spécialisé dans : A Research Assistant workflow skill with four core commands: search papers, download PDFs, analyze content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

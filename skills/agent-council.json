@@ -1,0 +1,6 @@
+{
+  "name": "agent-council",
+  "command": "agent-council",
+  "description": "Complete toolkit for creating autonomous AI agents and managing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete toolkit for creating autonomous AI agents and managing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

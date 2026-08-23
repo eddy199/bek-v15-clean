@@ -1,0 +1,6 @@
+{
+  "name": "evoagentx-workflow",
+  "command": "evoagentx-workflow",
+  "description": "Bridge EvoAgentX (1000+ star open-source framework) with OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bridge EvoAgentX (1000+ star open-source framework) with OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

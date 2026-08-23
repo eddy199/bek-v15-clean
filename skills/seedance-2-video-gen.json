@@ -1,0 +1,6 @@
+{
+  "name": "seedance-2-video-gen",
+  "command": "seedance-2-video-gen",
+  "description": "Seedance 2.0 AI video generation via EvoLink API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Seedance 2.0 AI video generation via EvoLink API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

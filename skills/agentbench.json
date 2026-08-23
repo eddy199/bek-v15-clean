@@ -1,0 +1,6 @@
+{
+  "name": "agentbench",
+  "command": "agentbench",
+  "description": "Benchmark your OpenClaw agent across 40 real-world tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Benchmark your OpenClaw agent across 40 real-world tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

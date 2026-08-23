@@ -1,0 +1,6 @@
+{
+  "name": "ambit-cli",
+  "command": "ambit-cli",
+  "description": "Use this skill for any task involving the ambit CLI: creating or destroying private networks, deploying apps.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill for any task involving the ambit CLI: creating or destroying private networks, deploying apps..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

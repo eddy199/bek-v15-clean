@@ -1,0 +1,6 @@
+{
+  "name": "eywa",
+  "command": "eywa",
+  "description": "Multi-agent coordination, spatial memory, and swarm navigation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-agent coordination, spatial memory, and swarm navigation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "fsd-secure-skill",
+  "command": "fsd-secure-skill",
+  "description": "Full Self-Driving agent with highest safety standards (Camera-Only, Redundant Checks).",
+  "prompt": "Tu es un agent expert spécialisé dans : Full Self-Driving agent with highest safety standards (Camera-Only, Redundant Checks)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

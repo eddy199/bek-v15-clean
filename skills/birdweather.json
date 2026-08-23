@@ -1,0 +1,6 @@
+{
+  "name": "birdweather",
+  "command": "birdweather",
+  "description": "Query BirdWeather station data — species detections, trends, and comparisons from BirdNET-Pi and PUC bird song.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query BirdWeather station data — species detections, trends, and comparisons from BirdNET-Pi and PUC bird song..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

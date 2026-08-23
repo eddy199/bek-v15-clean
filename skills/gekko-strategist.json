@@ -1,0 +1,6 @@
+{
+  "name": "gekko-strategist",
+  "command": "gekko-strategist",
+  "description": "AI-powered DeFi strategy development agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered DeFi strategy development agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

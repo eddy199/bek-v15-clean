@@ -1,0 +1,6 @@
+{
+  "name": "rocketchat",
+  "command": "rocketchat",
+  "description": "Rocket.Chat team messaging - channels, messages, users, integrations via REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Rocket.Chat team messaging - channels, messages, users, integrations via REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

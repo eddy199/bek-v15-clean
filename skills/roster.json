@@ -1,0 +1,6 @@
+{
+  "name": "roster",
+  "command": "roster",
+  "description": "Creates weekly shift rosters (KW-JSON) from CSV availability data and pushes them to GitHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Creates weekly shift rosters (KW-JSON) from CSV availability data and pushes them to GitHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

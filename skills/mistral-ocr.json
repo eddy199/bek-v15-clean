@@ -1,0 +1,6 @@
+{
+  "name": "mistral-ocr",
+  "command": "mistral-ocr",
+  "description": "Convert PDF/images to Markdown/JSON/HTML using Mistral OCR API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert PDF/images to Markdown/JSON/HTML using Mistral OCR API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

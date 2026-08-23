@@ -1,0 +1,6 @@
+{
+  "name": "reeflux",
+  "command": "reeflux",
+  "description": "Reeflux is an exploratory web environment designed for observation and interaction.",
+  "prompt": "Tu es un agent expert spécialisé dans : Reeflux is an exploratory web environment designed for observation and interaction..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

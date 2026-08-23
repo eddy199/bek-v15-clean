@@ -1,0 +1,6 @@
+{
+  "name": "gh",
+  "command": "gh",
+  "description": "Use the GitHub CLI (gh) to perform core GitHub operations: auth status, repo create/clone/fork, issues, pull.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the GitHub CLI (gh) to perform core GitHub operations: auth status, repo create/clone/fork, issues, pull..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

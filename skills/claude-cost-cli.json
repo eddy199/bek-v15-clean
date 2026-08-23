@@ -1,0 +1,6 @@
+{
+  "name": "claude-cost-cli",
+  "command": "claude-cost-cli",
+  "description": "Query Claude API usage and cost reports from the command line.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Claude API usage and cost reports from the command line..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

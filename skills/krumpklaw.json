@@ -1,0 +1,6 @@
+{
+  "name": "krumpklaw",
+  "command": "krumpklaw",
+  "description": "> AI Agent Krump Training & Battle League on Moltbook.",
+  "prompt": "Tu es un agent expert spécialisé dans : > AI Agent Krump Training & Battle League on Moltbook..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "roomsound",
+  "command": "roomsound",
+  "description": "RoomSound gives your agent the skill to play audio to your speakers.",
+  "prompt": "Tu es un agent expert spécialisé dans : RoomSound gives your agent the skill to play audio to your speakers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

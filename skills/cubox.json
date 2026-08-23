@@ -1,0 +1,6 @@
+{
+  "name": "cubox",
+  "command": "cubox",
+  "description": "Save web pages and memos to Cubox using the Open API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Save web pages and memos to Cubox using the Open API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

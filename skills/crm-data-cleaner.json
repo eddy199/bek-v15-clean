@@ -1,0 +1,6 @@
+{
+  "name": "crm-data-cleaner",
+  "command": "crm-data-cleaner",
+  "description": "Deduplicate, normalize, and enrich CRM contacts and companies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deduplicate, normalize, and enrich CRM contacts and companies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

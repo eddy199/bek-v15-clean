@@ -1,0 +1,6 @@
+{
+  "name": "maps-osrm",
+  "command": "maps-osrm",
+  "description": "Distance, routing, and geocoding using free APIs (OSRM + Nominatim/OSM)",
+  "prompt": "Tu es un agent expert spécialisé dans : Distance, routing, and geocoding using free APIs (OSRM + Nominatim/OSM).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

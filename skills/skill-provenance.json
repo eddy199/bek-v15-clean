@@ -1,0 +1,6 @@
+{
+  "name": "skill-provenance",
+  "command": "skill-provenance",
+  "description": "Version tracking and integrity verification for skill bundles",
+  "prompt": "Tu es un agent expert spécialisé dans : Version tracking and integrity verification for skill bundles.\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "hotmention",
+  "command": "hotmention",
+  "description": "Find people actively looking for products like yours on Reddit, X, LinkedIn, Quora, and Threads.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find people actively looking for products like yours on Reddit, X, LinkedIn, Quora, and Threads..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

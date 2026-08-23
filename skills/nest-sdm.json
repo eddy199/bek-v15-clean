@@ -1,0 +1,6 @@
+{
+  "name": "nest-sdm",
+  "command": "nest-sdm",
+  "description": "Control Nest thermostat, doorbell, and cameras via the Google Smart Device Management (SDM) API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Nest thermostat, doorbell, and cameras via the Google Smart Device Management (SDM) API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "genlayer-dev",
+  "command": "genlayer-dev",
+  "description": "Build GenLayer Intelligent Contracts - Python smart contracts with LLM calls and web access.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build GenLayer Intelligent Contracts - Python smart contracts with LLM calls and web access..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

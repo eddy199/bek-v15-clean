@@ -1,0 +1,6 @@
+{
+  "name": "aetherlang-claude-code",
+  "command": "aetherlang-claude-code",
+  "description": "Use this skill to execute AetherLang V3 AI workflows from Claude Code.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill to execute AetherLang V3 AI workflows from Claude Code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

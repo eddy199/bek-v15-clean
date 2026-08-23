@@ -1,0 +1,6 @@
+{
+  "name": "git-essentials",
+  "command": "git-essentials",
+  "description": "Essential Git commands and workflows for version control.",
+  "prompt": "Tu es un agent expert spécialisé dans : Essential Git commands and workflows for version control..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mh-healthcheck",
+  "command": "mh-healthcheck",
+  "description": "Host security hardening and risk-tolerance configuration for OpenClaw deployments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Host security hardening and risk-tolerance configuration for OpenClaw deployments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "windsurf-cascade",
+  "command": "windsurf-cascade",
+  "description": "A comprehensive skill for using the Windsurf IDE and its Cascade AI agent for various software engineering tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : A comprehensive skill for using the Windsurf IDE and its Cascade AI agent for various software engineering tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

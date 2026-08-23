@@ -1,0 +1,6 @@
+{
+  "name": "vexa",
+  "command": "vexa",
+  "description": "Send Vexa bots to meetings and operate transcript workflows end-to-end (during and after meetings): parse meeting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send Vexa bots to meetings and operate transcript workflows end-to-end (during and after meetings): parse meeting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "markdown-viewer",
+  "command": "markdown-viewer",
+  "description": "Live markdown viewer for AI pair-editing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Live markdown viewer for AI pair-editing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

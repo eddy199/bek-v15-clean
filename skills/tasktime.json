@@ -1,0 +1,6 @@
+{
+  "name": "tasktime",
+  "command": "tasktime",
+  "description": "CLI task timer for AI agents — benchmark learning progression with auto-save logs and visualizations.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI task timer for AI agents — benchmark learning progression with auto-save logs and visualizations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

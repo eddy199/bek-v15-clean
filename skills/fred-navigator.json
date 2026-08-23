@@ -1,0 +1,6 @@
+{
+  "name": "fred-navigator",
+  "command": "fred-navigator",
+  "description": "Navigate FRED categories and series using fredapi, supporting natural-language queries with intent recognition.",
+  "prompt": "Tu es un agent expert spécialisé dans : Navigate FRED categories and series using fredapi, supporting natural-language queries with intent recognition..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

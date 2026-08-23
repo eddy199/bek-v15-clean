@@ -1,0 +1,6 @@
+{
+  "name": "efka-api-integration",
+  "command": "efka-api-integration",
+  "description": "Greek social security (EFKA) integration — employee records, contribution calculations, APD declarations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Greek social security (EFKA) integration — employee records, contribution calculations, APD declarations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "scrapbook-illustrator",
+  "command": "scrapbook-illustrator",
+  "description": "Insert scrapbook-style illustrations into articles using image generation (GLM or OpenRouter)",
+  "prompt": "Tu es un agent expert spécialisé dans : Insert scrapbook-style illustrations into articles using image generation (GLM or OpenRouter).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

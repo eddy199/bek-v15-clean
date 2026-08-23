@@ -1,0 +1,6 @@
+{
+  "name": "moviepilot",
+  "command": "moviepilot",
+  "description": "MoviePilot media subscription and management tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : MoviePilot media subscription and management tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

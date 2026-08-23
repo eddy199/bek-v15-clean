@@ -1,0 +1,6 @@
+{
+  "name": "custom-smtp-sender",
+  "command": "custom-smtp-sender",
+  "description": "A skill to send emails with support for markdown, HTML.",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill to send emails with support for markdown, HTML..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

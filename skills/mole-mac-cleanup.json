@@ -1,0 +1,6 @@
+{
+  "name": "mole-mac-cleanup",
+  "command": "mole-mac-cleanup",
+  "description": "Mac cleanup & optimization tool combining CleanMyMac.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mac cleanup & optimization tool combining CleanMyMac..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

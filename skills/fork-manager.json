@@ -1,0 +1,6 @@
+{
+  "name": "fork-manager",
+  "command": "fork-manager",
+  "description": "Manage forks with open PRs - sync upstream, rebase branches, track PR status, and maintain production branches.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage forks with open PRs - sync upstream, rebase branches, track PR status, and maintain production branches..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "universal-notify",
+  "command": "universal-notify",
+  "description": "Send notifications through multiple channels with a single script.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send notifications through multiple channels with a single script..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

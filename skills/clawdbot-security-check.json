@@ -1,0 +1,6 @@
+{
+  "name": "clawdbot-security-check",
+  "command": "clawdbot-security-check",
+  "description": "Perform a comprehensive read-only.",
+  "prompt": "Tu es un agent expert spécialisé dans : Perform a comprehensive read-only..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

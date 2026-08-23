@@ -1,0 +1,6 @@
+{
+  "name": "secucheck",
+  "command": "secucheck",
+  "description": "Comprehensive security audit for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive security audit for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

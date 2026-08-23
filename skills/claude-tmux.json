@@ -1,0 +1,6 @@
+{
+  "name": "claude-tmux",
+  "command": "claude-tmux",
+  "description": "Manage Claude Code instances living inside tmux sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Claude Code instances living inside tmux sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

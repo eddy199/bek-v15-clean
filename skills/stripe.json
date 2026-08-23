@@ -1,0 +1,6 @@
+{
+  "name": "stripe",
+  "command": "stripe",
+  "description": "Easy-to-use agentic wallets powered by Stripe.",
+  "prompt": "Tu es un agent expert spécialisé dans : Easy-to-use agentic wallets powered by Stripe..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

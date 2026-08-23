@@ -1,0 +1,6 @@
+{
+  "name": "llmcouncil-router",
+  "command": "llmcouncil-router",
+  "description": "Route any prompt to the best-performing LLM using peer-reviewed council rankings from LLM Council.",
+  "prompt": "Tu es un agent expert spécialisé dans : Route any prompt to the best-performing LLM using peer-reviewed council rankings from LLM Council..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

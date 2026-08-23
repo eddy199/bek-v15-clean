@@ -1,0 +1,6 @@
+{
+  "name": "dnd",
+  "command": "dnd",
+  "description": "D&D 5e toolkit for players and DMs.",
+  "prompt": "Tu es un agent expert spécialisé dans : D&D 5e toolkit for players and DMs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

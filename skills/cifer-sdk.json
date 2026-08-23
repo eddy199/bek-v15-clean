@@ -1,0 +1,6 @@
+{
+  "name": "cifer-sdk",
+  "command": "cifer-sdk",
+  "description": "> **Skill for AI Agents** | Enable quantum-resistant encryption in blockchain applications using the CIFER SDK.",
+  "prompt": "Tu es un agent expert spécialisé dans : > **Skill for AI Agents** | Enable quantum-resistant encryption in blockchain applications using the CIFER SDK..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

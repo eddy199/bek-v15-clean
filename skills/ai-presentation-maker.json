@@ -1,0 +1,6 @@
+{
+  "name": "ai-presentation-maker",
+  "command": "ai-presentation-maker",
+  "description": "AI Presentation Maker — the interview-driven pitch deck generator for your OpenClaw agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI Presentation Maker — the interview-driven pitch deck generator for your OpenClaw agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "rollbar",
+  "command": "rollbar",
+  "description": "Monitor and manage Rollbar error tracking.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor and manage Rollbar error tracking..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

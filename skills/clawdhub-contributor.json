@@ -1,0 +1,6 @@
+{
+  "name": "clawdhub-contributor",
+  "command": "clawdhub-contributor",
+  "description": "Contribute to the ClawdHub ecosystem.",
+  "prompt": "Tu es un agent expert spécialisé dans : Contribute to the ClawdHub ecosystem..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

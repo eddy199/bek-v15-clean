@@ -1,0 +1,6 @@
+{
+  "name": "freelance-proposal-engine",
+  "command": "freelance-proposal-engine",
+  "description": "Generate tailored freelance proposals for Upwork, Fiverr, Freelancer, and PeoplePerHour job listings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate tailored freelance proposals for Upwork, Fiverr, Freelancer, and PeoplePerHour job listings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

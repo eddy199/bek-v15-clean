@@ -1,0 +1,6 @@
+{
+  "name": "x-extract",
+  "command": "x-extract",
+  "description": "Extract tweet content from x.com URLs without credentials using browser automation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract tweet content from x.com URLs without credentials using browser automation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

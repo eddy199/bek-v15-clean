@@ -1,0 +1,6 @@
+{
+  "name": "letterboxd-tracker",
+  "command": "letterboxd-tracker",
+  "description": "Your personal movie assistant.",
+  "prompt": "Tu es un agent expert spécialisé dans : Your personal movie assistant..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

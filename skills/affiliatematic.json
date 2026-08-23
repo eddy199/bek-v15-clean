@@ -1,0 +1,6 @@
+{
+  "name": "affiliatematic",
+  "command": "affiliatematic",
+  "description": "Integrate AI-powered Amazon affiliate product recommendations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate AI-powered Amazon affiliate product recommendations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

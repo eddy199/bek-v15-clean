@@ -1,0 +1,6 @@
+{
+  "name": "codecast",
+  "command": "codecast",
+  "description": "Stream coding agent sessions (Claude Code, Codex, Gemini CLI, etc.) to a Discord channel in real-time via webhook.",
+  "prompt": "Tu es un agent expert spécialisé dans : Stream coding agent sessions (Claude Code, Codex, Gemini CLI, etc.) to a Discord channel in real-time via webhook..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

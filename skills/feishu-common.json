@@ -1,0 +1,6 @@
+{
+  "name": "feishu-common",
+  "command": "feishu-common",
+  "description": "Shared Feishu authentication and API helper for OpenClaw Feishu skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Shared Feishu authentication and API helper for OpenClaw Feishu skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

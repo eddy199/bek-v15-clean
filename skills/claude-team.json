@@ -1,0 +1,6 @@
+{
+  "name": "claude-team",
+  "command": "claude-team",
+  "description": "Orchestrate multiple Claude Code workers via iTerm2.",
+  "prompt": "Tu es un agent expert spécialisé dans : Orchestrate multiple Claude Code workers via iTerm2..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

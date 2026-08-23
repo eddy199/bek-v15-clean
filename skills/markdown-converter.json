@@ -1,0 +1,6 @@
+{
+  "name": "markdown-converter",
+  "command": "markdown-converter",
+  "description": "Convert documents and files to Markdown.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert documents and files to Markdown..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

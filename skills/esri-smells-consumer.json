@@ -1,0 +1,6 @@
+{
+  "name": "esri-smells-consumer",
+  "command": "esri-smells-consumer",
+  "description": "Paid client skill for Esri Workflow Smell Detector via x402 (Base/USDC)",
+  "prompt": "Tu es un agent expert spécialisé dans : Paid client skill for Esri Workflow Smell Detector via x402 (Base/USDC).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

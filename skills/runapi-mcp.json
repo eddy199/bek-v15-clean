@@ -1,0 +1,6 @@
+{
+  "name": "runapi-mcp",
+  "command": "runapi-mcp",
+  "description": "130+ AI models for image, video, music, audio, and LLM generation from 18 providers. 8 MCP tools with free catalog brows",
+  "prompt": "Tu es un agent expert spécialisé dans : 130+ AI models for image, video, music, audio, and LLM generation from 18 providers. 8 MCP tools with free catalog browsing. `npx @runapi.ai/mcp`.\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

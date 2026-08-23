@@ -1,0 +1,6 @@
+{
+  "name": "actual-budget",
+  "command": "actual-budget",
+  "description": "Query and manage personal finances via the official Actual.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and manage personal finances via the official Actual..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

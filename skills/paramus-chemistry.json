@@ -1,0 +1,6 @@
+{
+  "name": "paramus-chemistry",
+  "command": "paramus-chemistry",
+  "description": "Hundreds of chemistry and scientific computing tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hundreds of chemistry and scientific computing tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

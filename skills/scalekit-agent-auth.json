@@ -1,0 +1,6 @@
+{
+  "name": "scalekit-agent-auth",
+  "command": "scalekit-agent-auth",
+  "description": "Secure OAuth token management via Scalekit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure OAuth token management via Scalekit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

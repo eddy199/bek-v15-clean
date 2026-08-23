@@ -1,0 +1,6 @@
+{
+  "name": "ghost-cms",
+  "command": "ghost-cms",
+  "description": "Comprehensive Ghost CMS integration for creating, publishing, scheduling, and managing blog content, newsletters.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive Ghost CMS integration for creating, publishing, scheduling, and managing blog content, newsletters..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

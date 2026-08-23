@@ -1,0 +1,6 @@
+{
+  "name": "yt-summary",
+  "command": "yt-summary",
+  "description": "Summarize any YouTube video by dropping the link in chat.",
+  "prompt": "Tu es un agent expert spécialisé dans : Summarize any YouTube video by dropping the link in chat..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "baidu-search",
+  "command": "baidu-search",
+  "description": "Search the web using Baidu AI Search Engine (BDSE).",
+  "prompt": "Tu es un agent expert spécialisé dans : Search the web using Baidu AI Search Engine (BDSE)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

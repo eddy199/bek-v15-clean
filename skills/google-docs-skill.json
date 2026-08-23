@@ -1,0 +1,6 @@
+{
+  "name": "google-docs-skill",
+  "command": "google-docs-skill",
+  "description": "Direct access to the Google Docs API using OAuth 2.0.",
+  "prompt": "Tu es un agent expert spécialisé dans : Direct access to the Google Docs API using OAuth 2.0..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

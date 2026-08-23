@@ -1,0 +1,6 @@
+{
+  "name": "skillstore",
+  "command": "skillstore",
+  "description": "Search, install, and create OpenClaw skills with intelligent matching.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, install, and create OpenClaw skills with intelligent matching..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

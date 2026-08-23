@@ -1,0 +1,6 @@
+{
+  "name": "payrail402",
+  "command": "payrail402",
+  "description": "Cross-rail spend tracking for AI agents — Visa IC, Mastercard Agent Pay, Stripe ACP, x402, and ACH in one dashboard.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cross-rail spend tracking for AI agents — Visa IC, Mastercard Agent Pay, Stripe ACP, x402, and ACH in one dashboard..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

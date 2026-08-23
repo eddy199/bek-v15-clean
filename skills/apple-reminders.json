@@ -1,0 +1,6 @@
+{
+  "name": "apple-reminders",
+  "command": "apple-reminders",
+  "description": "Manage Apple Reminders via the `remindctl` CLI on macOS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Apple Reminders via the `remindctl` CLI on macOS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

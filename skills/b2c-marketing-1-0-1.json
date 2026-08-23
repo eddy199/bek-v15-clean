@@ -1,0 +1,6 @@
+{
+  "name": "b2c-marketing-1-0-1",
+  "command": "b2c-marketing-1-0-1",
+  "description": "B2C mobile app marketing via short-form video content on TikTok, Instagram Reels, and YouTube Shorts.",
+  "prompt": "Tu es un agent expert spécialisé dans : B2C mobile app marketing via short-form video content on TikTok, Instagram Reels, and YouTube Shorts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

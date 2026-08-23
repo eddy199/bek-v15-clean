@@ -1,0 +1,6 @@
+{
+  "name": "aade-api-monitor",
+  "command": "aade-api-monitor",
+  "description": "Real-time monitoring of Greek AADE tax authority systems — tracks deadlines, rate changes, and compliance updates.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time monitoring of Greek AADE tax authority systems — tracks deadlines, rate changes, and compliance updates..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

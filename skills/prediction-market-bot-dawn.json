@@ -1,0 +1,6 @@
+{
+  "name": "prediction-market-bot-dawn",
+  "command": "prediction-market-bot-dawn",
+  "description": "Runs the full Dawn CLI strategy lifecycle from authentication and funding through strategy creation, launch.",
+  "prompt": "Tu es un agent expert spécialisé dans : Runs the full Dawn CLI strategy lifecycle from authentication and funding through strategy creation, launch..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "md-table-image",
+  "command": "md-table-image",
+  "description": "Render markdown tables as PNG images.",
+  "prompt": "Tu es un agent expert spécialisé dans : Render markdown tables as PNG images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cancorteaw-app",
+  "command": "cancorteaw-app",
+  "description": "Local **Expo / React Native** app builder runner for my OpenClaw server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local **Expo / React Native** app builder runner for my OpenClaw server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

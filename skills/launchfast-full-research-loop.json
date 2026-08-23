@@ -1,0 +1,6 @@
+{
+  "name": "launchfast-full-research-loop",
+  "command": "launchfast-full-research-loop",
+  "description": "Complete Amazon FBA product research pipeline using the LaunchFast MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Amazon FBA product research pipeline using the LaunchFast MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

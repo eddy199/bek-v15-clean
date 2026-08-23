@@ -1,0 +1,6 @@
+{
+  "name": "skill-evidenceops",
+  "command": "skill-evidenceops",
+  "description": "Forensic media triage with chain of custody.",
+  "prompt": "Tu es un agent expert spécialisé dans : Forensic media triage with chain of custody..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

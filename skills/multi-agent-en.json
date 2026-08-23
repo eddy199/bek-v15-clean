@@ -1,0 +1,6 @@
+{
+  "name": "multi-agent-en",
+  "command": "multi-agent-en",
+  "description": "Generic Multi-Agent Dispatcher (English): Turns the main agent into a pure dispatcher that delegates all work to 5.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generic Multi-Agent Dispatcher (English): Turns the main agent into a pure dispatcher that delegates all work to 5..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "side-quests",
+  "command": "side-quests",
+  "description": "Full creative synthesis — combine song, visual concept, and TED talk from a single technical insight.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full creative synthesis — combine song, visual concept, and TED talk from a single technical insight..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

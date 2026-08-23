@@ -1,0 +1,6 @@
+{
+  "name": "gmail-tool",
+  "command": "gmail-tool",
+  "description": "Send and read emails via Gmail using App Password.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and read emails via Gmail using App Password..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

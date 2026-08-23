@@ -1,0 +1,6 @@
+{
+  "name": "youtube-editor",
+  "command": "youtube-editor",
+  "description": "Automate YouTube video editing workflow: Download -> Transcribe (Whisper) -> Analyze (GPT-4) -> High-Quality.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate YouTube video editing workflow: Download -> Transcribe (Whisper) -> Analyze (GPT-4) -> High-Quality..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

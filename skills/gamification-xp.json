@@ -1,0 +1,6 @@
+{
+  "name": "gamification-xp",
+  "command": "gamification-xp",
+  "description": "XP system for productivity gamification via ClawdBot - track levels, badges, streaks, and achievements.",
+  "prompt": "Tu es un agent expert spécialisé dans : XP system for productivity gamification via ClawdBot - track levels, badges, streaks, and achievements..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

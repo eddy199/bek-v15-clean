@@ -1,0 +1,6 @@
+{
+  "name": "canva-connect",
+  "command": "canva-connect",
+  "description": "Manage Canva designs, assets, and folders via the Connect API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Canva designs, assets, and folders via the Connect API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "campaign-orchestrator",
+  "command": "campaign-orchestrator",
+  "description": "Multi-channel follow-up campaign orchestrator.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-channel follow-up campaign orchestrator..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

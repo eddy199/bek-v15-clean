@@ -1,0 +1,6 @@
+{
+  "name": "minimax-video",
+  "command": "minimax-video",
+  "description": "Use Zhipu (智谱) web search API for searching the internet.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Zhipu (智谱) web search API for searching the internet..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

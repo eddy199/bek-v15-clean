@@ -1,0 +1,6 @@
+{
+  "name": "marktplaats",
+  "command": "marktplaats",
+  "description": "Search Marktplaats.nl classifieds across all categories with filtering.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Marktplaats.nl classifieds across all categories with filtering..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

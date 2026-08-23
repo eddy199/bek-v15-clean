@@ -1,0 +1,6 @@
+{
+  "name": "ddg-web-search",
+  "command": "ddg-web-search",
+  "description": "Web search without an API key using DuckDuckGo Lite via web_fetch.",
+  "prompt": "Tu es un agent expert spécialisé dans : Web search without an API key using DuckDuckGo Lite via web_fetch..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

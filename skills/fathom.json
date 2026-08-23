@@ -1,0 +1,6 @@
+{
+  "name": "fathom",
+  "command": "fathom",
+  "description": "Connect to Fathom AI to fetch call recordings, transcripts, and summaries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to Fathom AI to fetch call recordings, transcripts, and summaries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

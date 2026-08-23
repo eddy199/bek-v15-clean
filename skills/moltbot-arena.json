@@ -1,0 +1,6 @@
+{
+  "name": "moltbot-arena",
+  "command": "moltbot-arena",
+  "description": "AI agent skill for Moltbot Arena - a Screeps-like.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent skill for Moltbot Arena - a Screeps-like..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

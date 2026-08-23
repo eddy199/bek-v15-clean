@@ -1,0 +1,6 @@
+{
+  "name": "tencent-meeting-export",
+  "command": "tencent-meeting-export",
+  "description": "Export Tencent Meeting (腾讯会议) recording transcripts from public share links.",
+  "prompt": "Tu es un agent expert spécialisé dans : Export Tencent Meeting (腾讯会议) recording transcripts from public share links..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

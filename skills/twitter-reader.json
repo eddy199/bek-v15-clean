@@ -1,0 +1,6 @@
+{
+  "name": "twitter-reader",
+  "command": "twitter-reader",
+  "description": "A comprehensive skill for reading and extracting data from X (formerly Twitter) tweets using multiple reliable data.",
+  "prompt": "Tu es un agent expert spécialisé dans : A comprehensive skill for reading and extracting data from X (formerly Twitter) tweets using multiple reliable data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

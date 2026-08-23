@@ -1,0 +1,6 @@
+{
+  "name": "lsp28-grid",
+  "command": "lsp28-grid",
+  "description": "Manage LSP28 The Grid on LUKSO Universal Profiles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage LSP28 The Grid on LUKSO Universal Profiles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

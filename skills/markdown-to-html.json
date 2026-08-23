@@ -1,0 +1,6 @@
+{
+  "name": "markdown-to-html",
+  "command": "markdown-to-html",
+  "description": "Convert Markdown text to beautifully styled, self-contained HTML with embedded CSS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert Markdown text to beautifully styled, self-contained HTML with embedded CSS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

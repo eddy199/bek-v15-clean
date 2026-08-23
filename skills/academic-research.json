@@ -1,0 +1,6 @@
+{
+  "name": "academic-research",
+  "command": "academic-research",
+  "description": "Search academic papers and conduct literature reviews using OpenAlex API (free, no key needed)",
+  "prompt": "Tu es un agent expert spécialisé dans : Search academic papers and conduct literature reviews using OpenAlex API (free, no key needed).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

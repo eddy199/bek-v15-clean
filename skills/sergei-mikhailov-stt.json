@@ -1,0 +1,6 @@
+{
+  "name": "sergei-mikhailov-stt",
+  "command": "sergei-mikhailov-stt",
+  "description": "Speech recognition from voice messages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Speech recognition from voice messages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

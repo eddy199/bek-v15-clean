@@ -1,0 +1,6 @@
+{
+  "name": "gmail-agent",
+  "command": "gmail-agent",
+  "description": "Summarize unread Gmail, show folder structure, audit/clean labels, and purge spam/trash.",
+  "prompt": "Tu es un agent expert spécialisé dans : Summarize unread Gmail, show folder structure, audit/clean labels, and purge spam/trash..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

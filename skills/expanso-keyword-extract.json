@@ -1,0 +1,6 @@
+{
+  "name": "expanso-keyword-extract",
+  "command": "expanso-keyword-extract",
+  "description": "\"Extract keywords and key phrases from text for SEO, tagging, and indexing\".",
+  "prompt": "Tu es un agent expert spécialisé dans : \"Extract keywords and key phrases from text for SEO, tagging, and indexing\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

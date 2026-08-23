@@ -1,0 +1,6 @@
+{
+  "name": "aholake-expense-tracker",
+  "command": "aholake-expense-tracker",
+  "description": "Track daily expenses in structured markdown files organized by month.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track daily expenses in structured markdown files organized by month..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

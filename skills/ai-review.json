@@ -1,0 +1,6 @@
+{
+  "name": "ai-review",
+  "command": "ai-review",
+  "description": "Reads content from URLs or files, classifies it, and generates structured summaries and comments in a specific.",
+  "prompt": "Tu es un agent expert spécialisé dans : Reads content from URLs or files, classifies it, and generates structured summaries and comments in a specific..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

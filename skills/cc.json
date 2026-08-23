@@ -1,0 +1,6 @@
+{
+  "name": "cc",
+  "command": "cc",
+  "description": "Short slash command wrapper for Claude relay sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Short slash command wrapper for Claude relay sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

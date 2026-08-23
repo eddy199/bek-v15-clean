@@ -1,0 +1,6 @@
+{
+  "name": "hitl-protocol",
+  "command": "hitl-protocol",
+  "description": "HITL Protocol — the open standard for human decisions in autonomous agent workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : HITL Protocol — the open standard for human decisions in autonomous agent workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

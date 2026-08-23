@@ -1,0 +1,6 @@
+{
+  "name": "ryanair-fare-finder",
+  "command": "ryanair-fare-finder",
+  "description": "Build and interpret Ryanair fare-finder URLs for cheap flight searches.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build and interpret Ryanair fare-finder URLs for cheap flight searches..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

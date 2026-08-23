@@ -1,0 +1,6 @@
+{
+  "name": "generect",
+  "command": "generect",
+  "description": "Search B2B leads and companies, find/validate emails via Generect Live API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search B2B leads and companies, find/validate emails via Generect Live API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

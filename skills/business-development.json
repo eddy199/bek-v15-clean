@@ -1,0 +1,6 @@
+{
+  "name": "business-development",
+  "command": "business-development",
+  "description": "Partnership outreach, market research, competitor.",
+  "prompt": "Tu es un agent expert spécialisé dans : Partnership outreach, market research, competitor..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

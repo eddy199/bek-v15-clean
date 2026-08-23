@@ -1,0 +1,6 @@
+{
+  "name": "arknights-operator-gacha",
+  "command": "arknights-operator-gacha",
+  "description": "Generate an Arknights operator agent based on gacha probabilities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate an Arknights operator agent based on gacha probabilities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

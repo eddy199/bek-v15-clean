@@ -1,0 +1,6 @@
+{
+  "name": "computer-use",
+  "command": "computer-use",
+  "description": "Full desktop computer use for headless Linux servers and VPS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full desktop computer use for headless Linux servers and VPS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

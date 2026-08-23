@@ -1,0 +1,6 @@
+{
+  "name": "rent-a-human",
+  "command": "rent-a-human",
+  "description": "Hire humans for physical-world tasks via RentAHuman.ai.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hire humans for physical-world tasks via RentAHuman.ai..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

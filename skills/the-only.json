@@ -1,0 +1,6 @@
+{
+  "name": "the-only",
+  "command": "the-only",
+  "description": "A self-evolving, context-aware information curation engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : A self-evolving, context-aware information curation engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "fd-find",
+  "command": "fd-find",
+  "description": "A fast and user-friendly alternative to 'find' - simple syntax, smart.",
+  "prompt": "Tu es un agent expert spécialisé dans : A fast and user-friendly alternative to 'find' - simple syntax, smart..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

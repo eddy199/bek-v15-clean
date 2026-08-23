@@ -1,0 +1,6 @@
+{
+  "name": "skillgate-gov",
+  "command": "skillgate-gov",
+  "description": "Supply-chain governance for OpenClaw skills: scan, assess, quarantine/restore.",
+  "prompt": "Tu es un agent expert spécialisé dans : Supply-chain governance for OpenClaw skills: scan, assess, quarantine/restore..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

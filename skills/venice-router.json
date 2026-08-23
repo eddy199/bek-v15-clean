@@ -1,0 +1,6 @@
+{
+  "name": "venice-router",
+  "command": "venice-router",
+  "description": "Supreme model router for Venice.ai — the privacy-first, uncensored AI platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Supreme model router for Venice.ai — the privacy-first, uncensored AI platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

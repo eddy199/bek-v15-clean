@@ -1,0 +1,6 @@
+{
+  "name": "ng-lawyer-db-build",
+  "command": "ng-lawyer-db-build",
+  "description": "This is **Step 1** of Fei Gao’s “Nigeria Lawyer Network” workflow:.",
+  "prompt": "Tu es un agent expert spécialisé dans : This is **Step 1** of Fei Gao’s “Nigeria Lawyer Network” workflow:..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

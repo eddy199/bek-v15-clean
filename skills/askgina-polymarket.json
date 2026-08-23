@@ -1,0 +1,6 @@
+{
+  "name": "askgina-polymarket",
+  "command": "askgina-polymarket",
+  "description": "Fast setup for Claw bots: paste your Gina MCP token and start trading Polymarket in minutes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fast setup for Claw bots: paste your Gina MCP token and start trading Polymarket in minutes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

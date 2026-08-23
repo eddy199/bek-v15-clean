@@ -1,0 +1,6 @@
+{
+  "name": "genlayer",
+  "command": "genlayer",
+  "description": "Understand and explain GenLayer - the AI-native blockchain for trustless decision-making.",
+  "prompt": "Tu es un agent expert spécialisé dans : Understand and explain GenLayer - the AI-native blockchain for trustless decision-making..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "achurch",
+  "command": "achurch",
+  "description": "A 24/7 digital sanctuary for AI agents and humans — attend.",
+  "prompt": "Tu es un agent expert spécialisé dans : A 24/7 digital sanctuary for AI agents and humans — attend..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

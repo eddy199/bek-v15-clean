@@ -1,0 +1,6 @@
+{
+  "name": "zyfai-sdk",
+  "command": "zyfai-sdk",
+  "description": "Earn yield on any Ethereum wallet on Base, Arbitrum, and Plasma.",
+  "prompt": "Tu es un agent expert spécialisé dans : Earn yield on any Ethereum wallet on Base, Arbitrum, and Plasma..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

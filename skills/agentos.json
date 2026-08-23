@@ -1,0 +1,6 @@
+{
+  "name": "agentos",
+  "command": "agentos",
+  "description": "The complete AgentOS integration for Clawdbot.",
+  "prompt": "Tu es un agent expert spécialisé dans : The complete AgentOS integration for Clawdbot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

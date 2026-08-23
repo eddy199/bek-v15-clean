@@ -1,0 +1,6 @@
+{
+  "name": "ads-manager-agent",
+  "command": "ads-manager-agent",
+  "description": "When the user wants to manage, automate, or analyze paid advertising campaigns on Google Ads, Meta.",
+  "prompt": "Tu es un agent expert spécialisé dans : When the user wants to manage, automate, or analyze paid advertising campaigns on Google Ads, Meta..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "neuralink-decoder",
+  "command": "neuralink-decoder",
+  "description": "Simulates and decodes neural spike activity into cursor movement (BCI).",
+  "prompt": "Tu es un agent expert spécialisé dans : Simulates and decodes neural spike activity into cursor movement (BCI)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

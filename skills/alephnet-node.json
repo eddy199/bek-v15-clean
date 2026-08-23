@@ -1,0 +1,6 @@
+{
+  "name": "alephnet-node",
+  "command": "alephnet-node",
+  "description": "A complete social/economic network for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : A complete social/economic network for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

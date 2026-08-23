@@ -1,0 +1,6 @@
+{
+  "name": "global-holidays",
+  "command": "global-holidays",
+  "description": "Use this skill whenever a task involves checking, generating, or working with public holidays — for any country.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill whenever a task involves checking, generating, or working with public holidays — for any country..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "hive-mind",
+  "command": "hive-mind",
+  "description": "Sync memories across multiple agents using a shared TiDB Zero database.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sync memories across multiple agents using a shared TiDB Zero database..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

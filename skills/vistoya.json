@@ -1,0 +1,6 @@
+{
+  "name": "vistoya",
+  "command": "vistoya",
+  "description": "search engine for fashion/apparel discovery/shopping based on semantic or structured filter.",
+  "prompt": "Tu es un agent expert spécialisé dans : search engine for fashion/apparel discovery/shopping based on semantic or structured filter..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

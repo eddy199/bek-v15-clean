@@ -1,0 +1,6 @@
+{
+  "name": "cron-worker-guardrails",
+  "command": "cron-worker-guardrails",
+  "description": "Use when hardening OpenClaw cron workers (especially isolated agentTurn jobs) against quoting failures, brittle.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when hardening OpenClaw cron workers (especially isolated agentTurn jobs) against quoting failures, brittle..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

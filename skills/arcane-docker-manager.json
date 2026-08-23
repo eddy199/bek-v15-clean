@@ -1,0 +1,6 @@
+{
+  "name": "arcane-docker-manager",
+  "command": "arcane-docker-manager",
+  "description": "This skill enables you to interact with your Arcane.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables you to interact with your Arcane..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "asia-twitter-api-v1",
+  "command": "asia-twitter-api-v1",
+  "description": "Search X (Twitter) in real time, monitor trends, extract posts, and analyze social media data—perfect for social.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search X (Twitter) in real time, monitor trends, extract posts, and analyze social media data—perfect for social..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

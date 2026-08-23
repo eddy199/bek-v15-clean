@@ -1,0 +1,6 @@
+{
+  "name": "daily-brief-digest",
+  "command": "daily-brief-digest",
+  "description": "Generates a daily brief including urgent emails (himalaya), upcoming calendar events (gog), and relevant news.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates a daily brief including urgent emails (himalaya), upcoming calendar events (gog), and relevant news..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "sure",
+  "command": "sure",
+  "description": "Get report from Sure personal financial board.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get report from Sure personal financial board..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

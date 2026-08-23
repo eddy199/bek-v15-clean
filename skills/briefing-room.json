@@ -1,0 +1,6 @@
+{
+  "name": "briefing-room",
+  "command": "briefing-room",
+  "description": "Daily news briefing generator — produces a conversational radio-host-style audio briefing + DOCX document covering.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily news briefing generator — produces a conversational radio-host-style audio briefing + DOCX document covering..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

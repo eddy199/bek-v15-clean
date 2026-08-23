@@ -1,0 +1,6 @@
+{
+  "name": "crypto-macro-regime",
+  "command": "crypto-macro-regime",
+  "description": "Classify current crypto macro regime (Risk-On / Risk-Off / Neutral) using Fear & Greed Index, BTC dominance, Reddit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Classify current crypto macro regime (Risk-On / Risk-Off / Neutral) using Fear & Greed Index, BTC dominance, Reddit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

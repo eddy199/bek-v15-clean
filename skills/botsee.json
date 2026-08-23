@@ -1,0 +1,6 @@
+{
+  "name": "botsee",
+  "command": "botsee",
+  "description": "Monitor your brand's AI visibility via BotSee API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor your brand's AI visibility via BotSee API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

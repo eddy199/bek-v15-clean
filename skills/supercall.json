@@ -1,0 +1,6 @@
+{
+  "name": "supercall",
+  "command": "supercall",
+  "description": "Make AI-powered phone calls with custom personas and goals.",
+  "prompt": "Tu es un agent expert spécialisé dans : Make AI-powered phone calls with custom personas and goals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "micro-offer-forge",
+  "command": "micro-offer-forge",
+  "description": "Convert a workflow, skill, or capability into a sellable micro-offer with positioning, pricing, packaging.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert a workflow, skill, or capability into a sellable micro-offer with positioning, pricing, packaging..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

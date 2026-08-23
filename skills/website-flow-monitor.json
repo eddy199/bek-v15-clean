@@ -1,0 +1,6 @@
+{
+  "name": "website-flow-monitor",
+  "command": "website-flow-monitor",
+  "description": "Analyze a website URL, discover business-critical user flows to monitor, propose a monitoring plan.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze a website URL, discover business-critical user flows to monitor, propose a monitoring plan..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

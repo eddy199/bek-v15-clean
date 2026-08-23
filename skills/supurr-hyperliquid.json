@@ -1,0 +1,6 @@
+{
+  "name": "supurr-hyperliquid",
+  "command": "supurr-hyperliquid",
+  "description": "Backtest, deploy, and monitor trading bots on Hyperliquid.",
+  "prompt": "Tu es un agent expert spécialisé dans : Backtest, deploy, and monitor trading bots on Hyperliquid..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

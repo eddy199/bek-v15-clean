@@ -1,0 +1,6 @@
+{
+  "name": "giga-coding-agent",
+  "command": "giga-coding-agent",
+  "description": "Run Codex CLI, Claude Code, OpenCode, or Pi Coding Agent via background process for programmatic control.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run Codex CLI, Claude Code, OpenCode, or Pi Coding Agent via background process for programmatic control..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "chill-institute",
+  "command": "chill-institute",
+  "description": "Use chill.institute (web UI) to search for content and click.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use chill.institute (web UI) to search for content and click..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

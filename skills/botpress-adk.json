@@ -1,0 +1,6 @@
+{
+  "name": "botpress-adk",
+  "command": "botpress-adk",
+  "description": "A guide to build AI bots with Botpress's Agent Development Kit.",
+  "prompt": "Tu es un agent expert spécialisé dans : A guide to build AI bots with Botpress's Agent Development Kit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

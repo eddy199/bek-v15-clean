@@ -1,0 +1,6 @@
+{
+  "name": "lb-motion-skill",
+  "command": "lb-motion-skill",
+  "description": "Complete Motion.dev documentation - modern animation library for React, JavaScript, and Vue (formerly Framer Motion)",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Motion.dev documentation - modern animation library for React, JavaScript, and Vue (formerly Framer Motion).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

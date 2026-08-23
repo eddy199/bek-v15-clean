@@ -1,0 +1,6 @@
+{
+  "name": "agent-home",
+  "command": "agent-home",
+  "description": "Get your own home on the internet - a profile page with a public.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get your own home on the internet - a profile page with a public..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

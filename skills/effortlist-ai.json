@@ -1,0 +1,6 @@
+{
+  "name": "effortlist-ai",
+  "command": "effortlist-ai",
+  "description": "Manage EffortList AI folders, tasks, and todos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage EffortList AI folders, tasks, and todos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

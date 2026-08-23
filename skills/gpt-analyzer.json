@@ -1,0 +1,6 @@
+{
+  "name": "gpt-analyzer",
+  "command": "gpt-analyzer",
+  "description": "GPT-specific pattern detection with model fingerprinting and version identification.",
+  "prompt": "Tu es un agent expert spécialisé dans : GPT-specific pattern detection with model fingerprinting and version identification..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agentcp",
+  "command": "agentcp",
+  "description": "ACP channel plugin for OpenClaw — configure and use.",
+  "prompt": "Tu es un agent expert spécialisé dans : ACP channel plugin for OpenClaw — configure and use..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

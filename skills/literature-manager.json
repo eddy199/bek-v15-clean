@@ -1,0 +1,6 @@
+{
+  "name": "literature-manager",
+  "command": "literature-manager",
+  "description": "Search, download, convert, organize, and audit academic literature collections.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, download, convert, organize, and audit academic literature collections..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

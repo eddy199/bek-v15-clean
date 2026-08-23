@@ -1,0 +1,6 @@
+{
+  "name": "tweet-composer",
+  "command": "tweet-composer",
+  "description": "Score and optimize tweets based on X's real open-source ranking algorithm.",
+  "prompt": "Tu es un agent expert spécialisé dans : Score and optimize tweets based on X's real open-source ranking algorithm..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

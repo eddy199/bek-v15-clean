@@ -1,0 +1,6 @@
+{
+  "name": "adcp-advertising",
+  "command": "adcp-advertising",
+  "description": "Automate advertising campaigns with AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate advertising campaigns with AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "pr-triage",
+  "command": "pr-triage",
+  "description": "Triage open PRs by detecting duplicates, assessing quality, and generating prioritized reports.",
+  "prompt": "Tu es un agent expert spécialisé dans : Triage open PRs by detecting duplicates, assessing quality, and generating prioritized reports..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

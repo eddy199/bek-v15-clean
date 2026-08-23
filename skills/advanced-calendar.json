@@ -1,0 +1,6 @@
+{
+  "name": "advanced-calendar",
+  "command": "advanced-calendar",
+  "description": "Advanced calendar skill with natural language.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced calendar skill with natural language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

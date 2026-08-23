@@ -1,0 +1,6 @@
+{
+  "name": "expanso-json-validate",
+  "command": "expanso-json-validate",
+  "description": "\"Validate JSON syntax and structure\".",
+  "prompt": "Tu es un agent expert spécialisé dans : \"Validate JSON syntax and structure\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

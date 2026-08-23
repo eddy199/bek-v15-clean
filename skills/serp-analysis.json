@@ -1,0 +1,6 @@
+{
+  "name": "serp-analysis",
+  "command": "serp-analysis",
+  "description": "Use when the user asks to \"analyze search results\", \"SERP analysis\", \"what ranks for\", \"SERP features\", \"why.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"analyze search results\", \"SERP analysis\", \"what ranks for\", \"SERP features\", \"why..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

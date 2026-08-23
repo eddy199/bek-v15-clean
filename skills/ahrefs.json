@@ -1,0 +1,6 @@
+{
+  "name": "ahrefs",
+  "command": "ahrefs",
+  "description": "Complete Ahrefs API integration for SEO analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Ahrefs API integration for SEO analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

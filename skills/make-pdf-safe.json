@@ -1,0 +1,6 @@
+{
+  "name": "make-pdf-safe",
+  "command": "make-pdf-safe",
+  "description": "Flatten a PDF into a non-interactive “safe” version by uploading it to the Solutions API, polling until completion.",
+  "prompt": "Tu es un agent expert spécialisé dans : Flatten a PDF into a non-interactive “safe” version by uploading it to the Solutions API, polling until completion..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

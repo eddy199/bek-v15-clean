@@ -1,0 +1,6 @@
+{
+  "name": "token-management",
+  "command": "token-management",
+  "description": "Centralized API token management workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Centralized API token management workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

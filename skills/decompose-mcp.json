@@ -1,0 +1,6 @@
+{
+  "name": "decompose-mcp",
+  "command": "decompose-mcp",
+  "description": "Decompose any text into classified semantic units — authority, risk, attention, entities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Decompose any text into classified semantic units — authority, risk, attention, entities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

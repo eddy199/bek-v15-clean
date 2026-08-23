@@ -1,0 +1,6 @@
+{
+  "name": "codex-account-switcher",
+  "command": "codex-account-switcher",
+  "description": "Manage multiple OpenAI Codex accounts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage multiple OpenAI Codex accounts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

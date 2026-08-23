@@ -1,0 +1,6 @@
+{
+  "name": "soul-audit",
+  "command": "soul-audit",
+  "description": "Evaluate any AI agent's soul file, system prompt, or AGENTS.md against the Guardian Angel v0.6 framework (Forrest.",
+  "prompt": "Tu es un agent expert spécialisé dans : Evaluate any AI agent's soul file, system prompt, or AGENTS.md against the Guardian Angel v0.6 framework (Forrest..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

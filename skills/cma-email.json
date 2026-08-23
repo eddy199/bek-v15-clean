@@ -1,0 +1,6 @@
+{
+  "name": "cma-email",
+  "command": "cma-email",
+  "description": "Sends an email via Gmail when a message starts with \"cma\" or \"cmap\".",
+  "prompt": "Tu es un agent expert spécialisé dans : Sends an email via Gmail when a message starts with \"cma\" or \"cmap\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

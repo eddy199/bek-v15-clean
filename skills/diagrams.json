@@ -1,0 +1,6 @@
+{
+  "name": "diagrams",
+  "command": "diagrams",
+  "description": "Generate visual flow diagrams, architecture diagrams, and system maps as SVG/PNG.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate visual flow diagrams, architecture diagrams, and system maps as SVG/PNG..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

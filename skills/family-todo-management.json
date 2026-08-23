@@ -1,0 +1,6 @@
+{
+  "name": "family-todo-management",
+  "command": "family-todo-management",
+  "description": "Manage family todo lists with multi-user support.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage family todo lists with multi-user support..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

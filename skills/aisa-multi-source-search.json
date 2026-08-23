@@ -1,0 +1,6 @@
+{
+  "name": "aisa-multi-source-search",
+  "command": "aisa-multi-source-search",
+  "description": "Intelligent search for agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intelligent search for agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

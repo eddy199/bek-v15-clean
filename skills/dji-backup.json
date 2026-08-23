@@ -1,0 +1,6 @@
+{
+  "name": "dji-backup",
+  "command": "dji-backup",
+  "description": "This skill automates backing up DJI camera footage from an SD card (or USB share) to a NAS archive folder.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill automates backing up DJI camera footage from an SD card (or USB share) to a NAS archive folder..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

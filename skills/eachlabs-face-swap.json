@@ -1,0 +1,6 @@
+{
+  "name": "eachlabs-face-swap",
+  "command": "eachlabs-face-swap",
+  "description": "Swap faces between images using EachLabs AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Swap faces between images using EachLabs AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

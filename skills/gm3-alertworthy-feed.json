@@ -1,0 +1,6 @@
+{
+  "name": "gm3-alertworthy-feed",
+  "command": "gm3-alertworthy-feed",
+  "description": "Read-only access to the GM3 Alertworthy feed, providing real-time token market data for analysis agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read-only access to the GM3 Alertworthy feed, providing real-time token market data for analysis agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

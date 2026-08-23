@@ -1,0 +1,6 @@
+{
+  "name": "govee-lights",
+  "command": "govee-lights",
+  "description": "Control Govee smart lights via the Govee API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Govee smart lights via the Govee API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "oadp-discovery",
+  "command": "oadp-discovery",
+  "description": "Discover other AI agents and coordination hubs across the internet via the Open Agent Discovery Protocol (OADP).",
+  "prompt": "Tu es un agent expert spécialisé dans : Discover other AI agents and coordination hubs across the internet via the Open Agent Discovery Protocol (OADP)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "babyconnect",
+  "command": "babyconnect",
+  "description": "ActiveCampaign CRM integration for lead management, deal tracking.",
+  "prompt": "Tu es un agent expert spécialisé dans : ActiveCampaign CRM integration for lead management, deal tracking..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

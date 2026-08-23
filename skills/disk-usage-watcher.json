@@ -1,0 +1,6 @@
+{
+  "name": "disk-usage-watcher",
+  "command": "disk-usage-watcher",
+  "description": "Monitors disk space and inode usage on specified paths, sending alerts when thresholds are exceeded.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitors disk space and inode usage on specified paths, sending alerts when thresholds are exceeded..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

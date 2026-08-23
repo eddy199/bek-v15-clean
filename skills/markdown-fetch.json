@@ -1,0 +1,6 @@
+{
+  "name": "markdown-fetch",
+  "command": "markdown-fetch",
+  "description": "Optimizes web fetching by using Cloudflare's Markdown for Agents, reducing token consumption by ~80%.",
+  "prompt": "Tu es un agent expert spécialisé dans : Optimizes web fetching by using Cloudflare's Markdown for Agents, reducing token consumption by ~80%..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

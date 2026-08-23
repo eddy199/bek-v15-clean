@@ -1,0 +1,6 @@
+{
+  "name": "codesession",
+  "command": "codesession",
+  "description": "Track agent session costs, file changes, and git commits with codesession-cli.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track agent session costs, file changes, and git commits with codesession-cli..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

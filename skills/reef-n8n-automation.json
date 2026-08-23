@@ -1,0 +1,6 @@
+{
+  "name": "reef-n8n-automation",
+  "command": "reef-n8n-automation",
+  "description": "Build, customize, and deliver n8n workflows using our 2,061-template library.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build, customize, and deliver n8n workflows using our 2,061-template library..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

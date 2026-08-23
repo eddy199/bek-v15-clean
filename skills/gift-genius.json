@@ -1,0 +1,6 @@
+{
+  "name": "gift-genius",
+  "command": "gift-genius",
+  "description": "Location-aware Valentine's Day gift finder.",
+  "prompt": "Tu es un agent expert spécialisé dans : Location-aware Valentine's Day gift finder..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

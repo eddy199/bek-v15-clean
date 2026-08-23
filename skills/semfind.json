@@ -1,0 +1,6 @@
+{
+  "name": "semfind",
+  "command": "semfind",
+  "description": "Semantic search over local text files using embeddings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Semantic search over local text files using embeddings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

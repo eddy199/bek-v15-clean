@@ -1,0 +1,6 @@
+{
+  "name": "dub-youtube-with-voiceai",
+  "command": "dub-youtube-with-voiceai",
+  "description": "Dub YouTube videos with Voice.ai TTS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Dub YouTube videos with Voice.ai TTS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

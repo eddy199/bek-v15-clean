@@ -1,0 +1,6 @@
+{
+  "name": "plex-ctl",
+  "command": "plex-ctl",
+  "description": "> Standalone CLI for controlling Plex Media Server and clients via the Plex API.",
+  "prompt": "Tu es un agent expert spécialisé dans : > Standalone CLI for controlling Plex Media Server and clients via the Plex API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

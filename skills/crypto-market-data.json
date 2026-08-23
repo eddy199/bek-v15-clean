@@ -1,0 +1,6 @@
+{
+  "name": "crypto-market-data",
+  "command": "crypto-market-data",
+  "description": "No API KEY needed for free tier.",
+  "prompt": "Tu es un agent expert spécialisé dans : No API KEY needed for free tier..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

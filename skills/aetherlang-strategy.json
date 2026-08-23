@@ -1,0 +1,6 @@
+{
+  "name": "aetherlang-strategy",
+  "command": "aetherlang-strategy",
+  "description": "> Game theory, Monte Carlo simulations, behavioral economics, and competitive war gaming.",
+  "prompt": "Tu es un agent expert spécialisé dans : > Game theory, Monte Carlo simulations, behavioral economics, and competitive war gaming..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

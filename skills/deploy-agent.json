@@ -1,0 +1,6 @@
+{
+  "name": "deploy-agent",
+  "command": "deploy-agent",
+  "description": "Multi-step deployment agent for full-stack.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-step deployment agent for full-stack..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

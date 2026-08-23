@@ -1,0 +1,6 @@
+{
+  "name": "bahn",
+  "command": "bahn",
+  "description": "Search Deutsche Bahn train connections using the bahn-cli tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Deutsche Bahn train connections using the bahn-cli tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

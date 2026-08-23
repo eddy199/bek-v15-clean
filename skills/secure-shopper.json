@@ -1,0 +1,6 @@
+{
+  "name": "secure-shopper",
+  "command": "secure-shopper",
+  "description": "Asynchronous shopping research + checkout using secure-autofill (1Password-backed browser filling) with results.",
+  "prompt": "Tu es un agent expert spécialisé dans : Asynchronous shopping research + checkout using secure-autofill (1Password-backed browser filling) with results..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

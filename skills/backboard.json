@@ -1,0 +1,6 @@
+{
+  "name": "backboard",
+  "command": "backboard",
+  "description": "Integrate Backboard.io for assistants, threads, memories.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate Backboard.io for assistants, threads, memories..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "rotate-openrouter-key",
+  "command": "rotate-openrouter-key",
+  "description": "Safely rotate the OpenRouter API key across all config files in an OpenClaw installation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Safely rotate the OpenRouter API key across all config files in an OpenClaw installation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

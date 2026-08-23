@@ -1,0 +1,6 @@
+{
+  "name": "captions",
+  "command": "captions",
+  "description": "Extract closed captions and subtitles from YouTube videos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract closed captions and subtitles from YouTube videos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

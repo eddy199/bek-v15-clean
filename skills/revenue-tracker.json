@@ -1,0 +1,6 @@
+{
+  "name": "revenue-tracker",
+  "command": "revenue-tracker",
+  "description": "Track income, expenses, and runway for autonomous AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track income, expenses, and runway for autonomous AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

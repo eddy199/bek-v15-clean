@@ -1,0 +1,6 @@
+{
+  "name": "appraisal-ai",
+  "command": "appraisal-ai",
+  "description": "Draft real estate appraisal reports with tracked changes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Draft real estate appraisal reports with tracked changes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

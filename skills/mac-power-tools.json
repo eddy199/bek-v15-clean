@@ -1,0 +1,6 @@
+{
+  "name": "mac-power-tools",
+  "command": "mac-power-tools",
+  "description": "A unified suite of power user tools for macOS, combining system cleanup and secure Android file transfer.",
+  "prompt": "Tu es un agent expert spécialisé dans : A unified suite of power user tools for macOS, combining system cleanup and secure Android file transfer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

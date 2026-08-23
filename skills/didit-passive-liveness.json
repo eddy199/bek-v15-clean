@@ -1,0 +1,6 @@
+{
+  "name": "didit-passive-liveness",
+  "command": "didit-passive-liveness",
+  "description": "Integrate Didit Passive Liveness standalone API to verify a user is physically present.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate Didit Passive Liveness standalone API to verify a user is physically present..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

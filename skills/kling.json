@@ -1,0 +1,6 @@
+{
+  "name": "kling",
+  "command": "kling",
+  "description": "Generate AI videos using Kling 2.6 (via Kie.ai).",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI videos using Kling 2.6 (via Kie.ai)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

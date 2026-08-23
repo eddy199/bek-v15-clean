@@ -1,0 +1,6 @@
+{
+  "name": "tuebingen-weather",
+  "command": "tuebingen-weather",
+  "description": "Send daily 08:00 weather reports for Tübingen using open-meteo.com.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send daily 08:00 weather reports for Tübingen using open-meteo.com..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

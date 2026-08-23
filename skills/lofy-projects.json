@@ -1,0 +1,6 @@
+{
+  "name": "lofy-projects",
+  "command": "lofy-projects",
+  "description": "Project management for the Lofy AI assistant — tracks multiple projects with milestones, priority scoring engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : Project management for the Lofy AI assistant — tracks multiple projects with milestones, priority scoring engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "my-weather",
+  "command": "my-weather",
+  "description": "Get current weather using wttr.in (no API key required).",
+  "prompt": "Tu es un agent expert spécialisé dans : Get current weather using wttr.in (no API key required)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

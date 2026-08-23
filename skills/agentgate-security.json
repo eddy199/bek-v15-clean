@@ -1,0 +1,6 @@
+{
+  "name": "agentgate-security",
+  "command": "agentgate-security",
+  "description": "displayName: AgentGate - Enterprise Security Firewall for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : displayName: AgentGate - Enterprise Security Firewall for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

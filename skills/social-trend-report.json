@@ -1,0 +1,6 @@
+{
+  "name": "social-trend-report",
+  "command": "social-trend-report",
+  "description": "Automated social media trend monitoring and AI-powered weekly report generation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated social media trend monitoring and AI-powered weekly report generation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

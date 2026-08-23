@@ -1,0 +1,6 @@
+{
+  "name": "solo-stream",
+  "command": "solo-stream",
+  "description": "Interactive decision-making wizard using STREAM 6-layer framework for founders facing high-stakes choices.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interactive decision-making wizard using STREAM 6-layer framework for founders facing high-stakes choices..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

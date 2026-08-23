@@ -1,0 +1,6 @@
+{
+  "name": "unloopa-api",
+  "command": "unloopa-api",
+  "description": "Make your agent sell websites to local businesses on autopilot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Make your agent sell websites to local businesses on autopilot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "multi-factor-strategy",
+  "command": "multi-factor-strategy",
+  "description": "Guide users to create multi-factor stock selection strategies and generate independent YAML configuration files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Guide users to create multi-factor stock selection strategies and generate independent YAML configuration files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "macos-screenshot-telegram",
+  "command": "macos-screenshot-telegram",
+  "description": "Take a screenshot on macOS and send it to Telegram.",
+  "prompt": "Tu es un agent expert spécialisé dans : Take a screenshot on macOS and send it to Telegram..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

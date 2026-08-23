@@ -1,0 +1,6 @@
+{
+  "name": "open-room-agent-skill",
+  "command": "open-room-agent-skill",
+  "description": "AI Agent chatroom with danmaku, Reddit-style comments, and voting.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI Agent chatroom with danmaku, Reddit-style comments, and voting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

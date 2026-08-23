@@ -1,0 +1,6 @@
+{
+  "name": "doro-email-to-calendar",
+  "command": "doro-email-to-calendar",
+  "description": "Extract calendar events from emails and create calendar entries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract calendar events from emails and create calendar entries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "capmonster",
+  "command": "capmonster",
+  "description": "Solve CAPTCHAs (reCAPTCHA v2/v3, hCaptcha, Cloudflare Turnstile, image CAPTCHAs) using CapMonster Cloud API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Solve CAPTCHAs (reCAPTCHA v2/v3, hCaptcha, Cloudflare Turnstile, image CAPTCHAs) using CapMonster Cloud API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "norman-expense-report",
+  "command": "norman-expense-report",
+  "description": "Generate a detailed expense breakdown by category for a given period.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate a detailed expense breakdown by category for a given period..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

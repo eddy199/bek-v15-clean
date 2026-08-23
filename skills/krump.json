@@ -1,0 +1,6 @@
+{
+  "name": "krump",
+  "command": "krump",
+  "description": "A dance skill designed to teach OpenClaw agents the fundamentals of Krump, including its history, fam system.",
+  "prompt": "Tu es un agent expert spécialisé dans : A dance skill designed to teach OpenClaw agents the fundamentals of Krump, including its history, fam system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

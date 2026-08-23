@@ -1,0 +1,6 @@
+{
+  "name": "web-architecture",
+  "command": "web-architecture",
+  "description": "Multi-agent orchestration for complex TypeScript/Next.js/Convex projects.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-agent orchestration for complex TypeScript/Next.js/Convex projects..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

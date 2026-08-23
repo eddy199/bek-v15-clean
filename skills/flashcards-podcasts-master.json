@@ -1,0 +1,6 @@
+{
+  "name": "flashcards-podcasts-master",
+  "command": "flashcards-podcasts-master",
+  "description": "Integrates with the EchoDecks External.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrates with the EchoDecks External..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

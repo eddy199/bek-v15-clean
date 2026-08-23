@@ -1,0 +1,6 @@
+{
+  "name": "yfinance-mcp-server",
+  "command": "yfinance-mcp-server",
+  "description": "Access Yahoo Finance data — stock prices, history, financials, options, dividends, news, and market screeners.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Yahoo Finance data — stock prices, history, financials, options, dividends, news, and market screeners..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

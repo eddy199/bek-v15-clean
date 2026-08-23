@@ -1,0 +1,6 @@
+{
+  "name": "aiusd-skill-agent",
+  "command": "aiusd-skill-agent",
+  "description": "AIUSD trading and account management skill for cryptocurrency trading and account management.",
+  "prompt": "Tu es un agent expert spécialisé dans : AIUSD trading and account management skill for cryptocurrency trading and account management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

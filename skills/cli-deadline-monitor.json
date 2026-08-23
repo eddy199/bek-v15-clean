@@ -1,0 +1,6 @@
+{
+  "name": "cli-deadline-monitor",
+  "command": "cli-deadline-monitor",
+  "description": "CLI tool for tracking Greek tax deadlines (AADE, EFKA)",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI tool for tracking Greek tax deadlines (AADE, EFKA).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

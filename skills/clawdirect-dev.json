@@ -1,0 +1,6 @@
+{
+  "name": "clawdirect-dev",
+  "command": "clawdirect-dev",
+  "description": "Build agent-facing web experiences with ATXP-based.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build agent-facing web experiences with ATXP-based..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

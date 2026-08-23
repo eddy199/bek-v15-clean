@@ -1,0 +1,6 @@
+{
+  "name": "claw-sync",
+  "command": "claw-sync",
+  "description": "Secure sync for OpenClaw memory and workspace.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure sync for OpenClaw memory and workspace..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

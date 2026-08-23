@@ -1,0 +1,6 @@
+{
+  "name": "openalexandria",
+  "command": "openalexandria",
+  "description": "Query and submit artifacts to the OpenAlexandria federated knowledge protocol (reference node by default).",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and submit artifacts to the OpenAlexandria federated knowledge protocol (reference node by default)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

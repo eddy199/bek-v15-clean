@@ -1,0 +1,6 @@
+{
+  "name": "skill-trust-auditor",
+  "command": "skill-trust-auditor",
+  "description": "Audit a ClawHub skill for security risks BEFORE installation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit a ClawHub skill for security risks BEFORE installation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

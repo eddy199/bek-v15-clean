@@ -1,0 +1,6 @@
+{
+  "name": "fellow-aiden",
+  "command": "fellow-aiden",
+  "description": "Control your Fellow Aiden smart coffee brewer via AI assistant.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control your Fellow Aiden smart coffee brewer via AI assistant..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

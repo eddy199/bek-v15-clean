@@ -1,0 +1,6 @@
+{
+  "name": "agent-config",
+  "command": "agent-config",
+  "description": "Intelligently modify agent core context files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intelligently modify agent core context files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

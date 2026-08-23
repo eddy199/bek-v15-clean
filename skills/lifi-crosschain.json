@@ -1,0 +1,6 @@
+{
+  "name": "lifi-crosschain",
+  "command": "lifi-crosschain",
+  "description": "Cross-chain token swaps and bridges via the LI.FI protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cross-chain token swaps and bridges via the LI.FI protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

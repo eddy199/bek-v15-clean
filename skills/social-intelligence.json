@@ -1,0 +1,6 @@
+{
+  "name": "social-intelligence",
+  "command": "social-intelligence",
+  "description": "Social Intelligence — AI-powered social media research across Twitter, Instagram, and Reddit. 1.5B+ posts indexed.",
+  "prompt": "Tu es un agent expert spécialisé dans : Social Intelligence — AI-powered social media research across Twitter, Instagram, and Reddit. 1.5B+ posts indexed..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

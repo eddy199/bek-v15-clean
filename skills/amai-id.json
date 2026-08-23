@@ -1,0 +1,6 @@
+{
+  "name": "amai-id",
+  "command": "amai-id",
+  "description": "Soul-Bound Keys and Soulchain for persistent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Soul-Bound Keys and Soulchain for persistent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

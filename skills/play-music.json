@@ -1,0 +1,6 @@
+{
+  "name": "play-music",
+  "command": "play-music",
+  "description": "**Controlled music player with pause/resume/stop support**.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Controlled music player with pause/resume/stop support**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

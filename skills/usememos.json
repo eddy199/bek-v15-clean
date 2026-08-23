@@ -1,0 +1,6 @@
+{
+  "name": "usememos",
+  "command": "usememos",
+  "description": "Create, read, update, and delete memos on a Memos instance (usememos/memos)",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, read, update, and delete memos on a Memos instance (usememos/memos).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

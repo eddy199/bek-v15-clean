@@ -1,0 +1,6 @@
+{
+  "name": "greek-banking-integration",
+  "command": "greek-banking-integration",
+  "description": "Parses bank statements from all major Greek banks (Alpha, NBG, Eurobank, Piraeus)",
+  "prompt": "Tu es un agent expert spécialisé dans : Parses bank statements from all major Greek banks (Alpha, NBG, Eurobank, Piraeus).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

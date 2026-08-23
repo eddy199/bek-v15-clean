@@ -1,0 +1,6 @@
+{
+  "name": "sentry-observability",
+  "command": "sentry-observability",
+  "description": "Add observability to your OpenClaw instance — errors, logs, and traces sent to Sentry.",
+  "prompt": "Tu es un agent expert spécialisé dans : Add observability to your OpenClaw instance — errors, logs, and traces sent to Sentry..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "repo-pr-triage",
+  "command": "repo-pr-triage",
+  "description": "Triage GitHub PRs and issues using vision-based scoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Triage GitHub PRs and issues using vision-based scoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

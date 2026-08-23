@@ -1,0 +1,6 @@
+{
+  "name": "tappi",
+  "command": "tappi",
+  "description": "Lightweight CDP browser control for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Lightweight CDP browser control for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

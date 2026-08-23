@@ -1,0 +1,6 @@
+{
+  "name": "bountyhub-agent",
+  "command": "bountyhub-agent",
+  "description": "Use H1DR4 BountyHub as an agent: create missions, submit work, dispute, vote, and claim escrow payouts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use H1DR4 BountyHub as an agent: create missions, submit work, dispute, vote, and claim escrow payouts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "flight-tracker",
+  "command": "flight-tracker",
+  "description": "Flight tracking and scheduling.",
+  "prompt": "Tu es un agent expert spécialisé dans : Flight tracking and scheduling..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

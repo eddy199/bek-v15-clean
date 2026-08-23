@@ -1,0 +1,6 @@
+{
+  "name": "social-media-planner",
+  "command": "social-media-planner",
+  "description": "When user asks to plan social media posts, create content calendar, write captions, generate hashtags, schedule.",
+  "prompt": "Tu es un agent expert spécialisé dans : When user asks to plan social media posts, create content calendar, write captions, generate hashtags, schedule..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "tip-with-grove",
+  "command": "tip-with-grove",
+  "description": "Grove CLI guide - philosophy, commands, and quick start.",
+  "prompt": "Tu es un agent expert spécialisé dans : Grove CLI guide - philosophy, commands, and quick start..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

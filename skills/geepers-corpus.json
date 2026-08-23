@@ -1,0 +1,6 @@
+{
+  "name": "geepers-corpus",
+  "command": "geepers-corpus",
+  "description": "Query the COCA (Corpus of Contemporary American English) linguistics API for word frequency, collocations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query the COCA (Corpus of Contemporary American English) linguistics API for word frequency, collocations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

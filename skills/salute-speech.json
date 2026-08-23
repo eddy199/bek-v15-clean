@@ -1,0 +1,6 @@
+{
+  "name": "salute-speech",
+  "command": "salute-speech",
+  "description": "Transcribe audio files using Sber Salute Speech async API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transcribe audio files using Sber Salute Speech async API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

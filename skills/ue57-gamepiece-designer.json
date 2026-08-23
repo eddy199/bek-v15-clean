@@ -1,0 +1,6 @@
+{
+  "name": "ue57-gamepiece-designer",
+  "command": "ue57-gamepiece-designer",
+  "description": "Designs UE5.7 multiplayer-friendly game pieces (Blueprint node chains, data schemas, asset naming, and test.",
+  "prompt": "Tu es un agent expert spécialisé dans : Designs UE5.7 multiplayer-friendly game pieces (Blueprint node chains, data schemas, asset naming, and test..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

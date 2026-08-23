@@ -1,0 +1,6 @@
+{
+  "name": "mixpost",
+  "command": "mixpost",
+  "description": "Mixpost is a self-hosted social media management software that helps you.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mixpost is a self-hosted social media management software that helps you..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

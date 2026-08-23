@@ -1,0 +1,6 @@
+{
+  "name": "usewhisper-autohook",
+  "command": "usewhisper-autohook",
+  "description": "Auto-hook tools for OpenClaw: query Whisper Context before every generation, ingest after every turn.",
+  "prompt": "Tu es un agent expert spécialisé dans : Auto-hook tools for OpenClaw: query Whisper Context before every generation, ingest after every turn..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

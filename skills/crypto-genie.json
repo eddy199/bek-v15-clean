@@ -1,0 +1,6 @@
+{
+  "name": "crypto-genie",
+  "command": "crypto-genie",
+  "description": "AI-powered cryptocurrency safety assistant with database-first architecture.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered cryptocurrency safety assistant with database-first architecture..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

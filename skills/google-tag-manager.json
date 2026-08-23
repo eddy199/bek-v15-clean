@@ -1,0 +1,6 @@
+{
+  "name": "google-tag-manager",
+  "command": "google-tag-manager",
+  "description": "Manage Google Tag Manager containers, tags, triggers, variables, and versions via the GTM API v2.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Google Tag Manager containers, tags, triggers, variables, and versions via the GTM API v2..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

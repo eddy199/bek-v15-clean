@@ -1,0 +1,6 @@
+{
+  "name": "xiaomi-air-purifier",
+  "command": "xiaomi-air-purifier",
+  "description": "Monitor and control Xiaomi Air Purifier 4 Lite via Mi Cloud.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor and control Xiaomi Air Purifier 4 Lite via Mi Cloud..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "eve-online-item-search",
+  "command": "eve-online-item-search",
+  "description": "Search EVE Online items by name via APIs and return item details.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search EVE Online items by name via APIs and return item details..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

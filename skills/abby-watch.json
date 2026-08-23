@@ -1,0 +1,6 @@
+{
+  "name": "abby-watch",
+  "command": "abby-watch",
+  "description": "Simple time display for Abby.",
+  "prompt": "Tu es un agent expert spécialisé dans : Simple time display for Abby..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

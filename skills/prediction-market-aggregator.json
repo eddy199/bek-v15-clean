@@ -1,0 +1,6 @@
+{
+  "name": "prediction-market-aggregator",
+  "command": "prediction-market-aggregator",
+  "description": "Cross-market prediction market data aggregator.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cross-market prediction market data aggregator..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

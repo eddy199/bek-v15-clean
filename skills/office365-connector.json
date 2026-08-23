@@ -1,0 +1,6 @@
+{
+  "name": "office365-connector",
+  "command": "office365-connector",
+  "description": "Office 365 / Outlook connector for email (read/send), calendar (read/write), and contacts (read/write)",
+  "prompt": "Tu es un agent expert spécialisé dans : Office 365 / Outlook connector for email (read/send), calendar (read/write), and contacts (read/write).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

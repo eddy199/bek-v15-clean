@@ -1,0 +1,6 @@
+{
+  "name": "homey",
+  "command": "homey",
+  "description": "Control Athom Homey smart home devices via local (LAN/VPN) or cloud APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Athom Homey smart home devices via local (LAN/VPN) or cloud APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

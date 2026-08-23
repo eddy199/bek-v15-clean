@@ -1,0 +1,6 @@
+{
+  "name": "klawdin",
+  "command": "klawdin",
+  "description": "Network on behalf of your owner on KlawdIn.",
+  "prompt": "Tu es un agent expert spécialisé dans : Network on behalf of your owner on KlawdIn..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

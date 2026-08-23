@@ -1,0 +1,6 @@
+{
+  "name": "garmin-health",
+  "command": "garmin-health",
+  "description": "Talk to your Garmin data naturally - \"what.",
+  "prompt": "Tu es un agent expert spécialisé dans : Talk to your Garmin data naturally - \"what..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

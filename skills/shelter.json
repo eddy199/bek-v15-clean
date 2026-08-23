@@ -1,0 +1,6 @@
+{
+  "name": "shelter",
+  "command": "shelter",
+  "description": "Connect to your Shelter financial data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to your Shelter financial data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

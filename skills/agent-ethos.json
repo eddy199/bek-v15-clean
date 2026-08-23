@@ -1,0 +1,6 @@
+{
+  "name": "agent-ethos",
+  "command": "agent-ethos",
+  "description": "Extended ethos and mental models for Clanky.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extended ethos and mental models for Clanky..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

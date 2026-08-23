@@ -1,0 +1,6 @@
+{
+  "name": "auto-pr-merger",
+  "command": "auto-pr-merger",
+  "description": "This skill automates the workflow of checking out a GitHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill automates the workflow of checking out a GitHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "nimble-web-tools",
+  "command": "nimble-web-tools",
+  "description": "DEFAULT for all web search, research, and content extraction queries.",
+  "prompt": "Tu es un agent expert spécialisé dans : DEFAULT for all web search, research, and content extraction queries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

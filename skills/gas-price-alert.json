@@ -1,0 +1,6 @@
+{
+  "name": "gas-price-alert",
+  "command": "gas-price-alert",
+  "description": "Find and monitor gas prices with daily notifications.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find and monitor gas prices with daily notifications..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

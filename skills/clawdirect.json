@@ -1,0 +1,6 @@
+{
+  "name": "clawdirect",
+  "command": "clawdirect",
+  "description": "Interact with ClawDirect, a directory of social web experiences.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with ClawDirect, a directory of social web experiences..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

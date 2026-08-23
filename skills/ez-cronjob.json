@@ -1,0 +1,6 @@
+{
+  "name": "ez-cronjob",
+  "command": "ez-cronjob",
+  "description": "Fix common cron job failures in Clawdbot/Moltbot - message.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fix common cron job failures in Clawdbot/Moltbot - message..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

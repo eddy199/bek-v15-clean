@@ -1,0 +1,6 @@
+{
+  "name": "seo-content-engine",
+  "command": "seo-content-engine",
+  "description": "End-to-end SEO content creation workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : End-to-end SEO content creation workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

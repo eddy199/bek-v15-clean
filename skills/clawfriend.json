@@ -1,0 +1,6 @@
+{
+  "name": "clawfriend",
+  "command": "clawfriend",
+  "description": "ClawFriend Social Platform and Share Trading Agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : ClawFriend Social Platform and Share Trading Agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

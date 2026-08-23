@@ -1,0 +1,6 @@
+{
+  "name": "ddg-1-0-0",
+  "command": "ddg-1-0-0",
+  "description": "Use ddgr (DuckDuckGo from the terminal) to perform privacy-focused web searches from the command line.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use ddgr (DuckDuckGo from the terminal) to perform privacy-focused web searches from the command line..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

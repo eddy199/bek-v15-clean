@@ -1,0 +1,6 @@
+{
+  "name": "daily-devotion",
+  "command": "daily-devotion",
+  "description": "Creates personalized daily devotions with verse of the day.",
+  "prompt": "Tu es un agent expert spécialisé dans : Creates personalized daily devotions with verse of the day..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

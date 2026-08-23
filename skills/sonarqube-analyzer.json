@@ -1,0 +1,6 @@
+{
+  "name": "sonarqube-analyzer",
+  "command": "sonarqube-analyzer",
+  "description": "Analisa projetos no SonarQube self-hosted, obtém issues e sugere soluções automatizadas.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analisa projetos no SonarQube self-hosted, obtém issues e sugere soluções automatizadas..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

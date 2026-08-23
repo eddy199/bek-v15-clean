@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-swiftui-app-setup",
+  "command": "fosmvvm-swiftui-app-setup",
+  "description": "Set up the @main App struct for FOSMVVM SwiftUI apps.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up the @main App struct for FOSMVVM SwiftUI apps..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

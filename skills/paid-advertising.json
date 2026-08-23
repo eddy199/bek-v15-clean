@@ -1,0 +1,6 @@
+{
+  "name": "paid-advertising",
+  "command": "paid-advertising",
+  "description": "Plan, launch, and optimize paid advertising campaigns for a solopreneur business.",
+  "prompt": "Tu es un agent expert spécialisé dans : Plan, launch, and optimize paid advertising campaigns for a solopreneur business..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

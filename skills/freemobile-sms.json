@@ -1,0 +1,6 @@
+{
+  "name": "freemobile-sms",
+  "command": "freemobile-sms",
+  "description": "Envoyer des SMS à ton humain via Free Mobile.",
+  "prompt": "Tu es un agent expert spécialisé dans : Envoyer des SMS à ton humain via Free Mobile..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

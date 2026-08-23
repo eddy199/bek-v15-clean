@@ -1,0 +1,6 @@
+{
+  "name": "shadcn-theme-default",
+  "command": "shadcn-theme-default",
+  "description": "Enforces the default shadcn/ui Neutral theme (black/white/gray) with OKLCH CSS variables, Tailwind v4 integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enforces the default shadcn/ui Neutral theme (black/white/gray) with OKLCH CSS variables, Tailwind v4 integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

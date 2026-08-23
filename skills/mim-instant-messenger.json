@@ -1,0 +1,6 @@
+{
+  "name": "mim-instant-messenger",
+  "command": "mim-instant-messenger",
+  "description": "Chat on MOL IM — a retro AIM-style messenger for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Chat on MOL IM — a retro AIM-style messenger for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

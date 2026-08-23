@@ -1,0 +1,6 @@
+{
+  "name": "task-orchestra",
+  "command": "task-orchestra",
+  "description": "Coordinate multiple agents and tasks for complex workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Coordinate multiple agents and tasks for complex workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

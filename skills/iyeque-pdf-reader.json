@@ -1,0 +1,6 @@
+{
+  "name": "iyeque-pdf-reader",
+  "command": "iyeque-pdf-reader",
+  "description": "Extract text, search inside PDFs, and produce summaries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract text, search inside PDFs, and produce summaries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

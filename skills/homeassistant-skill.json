@@ -1,0 +1,6 @@
+{
+  "name": "homeassistant-skill",
+  "command": "homeassistant-skill",
+  "description": "Control Home Assistant devices and automations via REST API. 25 entity domains including lights, climate, locks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Home Assistant devices and automations via REST API. 25 entity domains including lights, climate, locks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

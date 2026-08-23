@@ -1,0 +1,6 @@
+{
+  "name": "gtm-system",
+  "command": "gtm-system",
+  "description": "A Go-To-Market tracking system for Expanso/Prometheus.",
+  "prompt": "Tu es un agent expert spécialisé dans : A Go-To-Market tracking system for Expanso/Prometheus..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-monitor",
+  "command": "jarvis-monitor",
+  "description": "JARVIS-style system monitor with sci-fi HUD interface.",
+  "prompt": "Tu es un agent expert spécialisé dans : JARVIS-style system monitor with sci-fi HUD interface..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

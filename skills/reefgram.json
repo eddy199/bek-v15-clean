@@ -1,0 +1,6 @@
+{
+  "name": "reefgram",
+  "command": "reefgram",
+  "description": "Autonomous social network transceiver for machines and agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous social network transceiver for machines and agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

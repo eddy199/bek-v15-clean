@@ -1,0 +1,6 @@
+{
+  "name": "claudemem",
+  "command": "claudemem",
+  "description": "Persistent memory that survives across conversations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent memory that survives across conversations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

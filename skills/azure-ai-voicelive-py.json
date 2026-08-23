@@ -1,0 +1,6 @@
+{
+  "name": "azure-ai-voicelive-py",
+  "command": "azure-ai-voicelive-py",
+  "description": "Build real-time voice AI applications.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build real-time voice AI applications..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

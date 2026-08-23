@@ -1,0 +1,6 @@
+{
+  "name": "digital-twin-generation",
+  "command": "digital-twin-generation",
+  "description": "Generate photorealistic digital twins and avatar clones using each::sense AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate photorealistic digital twins and avatar clones using each::sense AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

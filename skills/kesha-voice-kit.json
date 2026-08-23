@@ -1,0 +1,6 @@
+{
+  "name": "kesha-voice-kit",
+  "command": "kesha-voice-kit",
+  "description": "Offline speech-to-text in 25 languages, TTS in 9, speaker diarization.",
+  "prompt": "Tu es un agent expert spécialisé dans : Offline speech-to-text in 25 languages, TTS in 9, speaker diarization..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

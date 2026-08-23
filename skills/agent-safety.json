@@ -1,0 +1,6 @@
+{
+  "name": "agent-safety",
+  "command": "agent-safety",
+  "description": "Outbound safety for autonomous AI agents — scans YOUR output before it leaves the machine.",
+  "prompt": "Tu es un agent expert spécialisé dans : Outbound safety for autonomous AI agents — scans YOUR output before it leaves the machine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "pine-voice",
+  "command": "pine-voice",
+  "description": "Give your agent a real phone.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give your agent a real phone..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "shelly-social-scheduler",
+  "command": "shelly-social-scheduler",
+  "description": "Generate a full week of social media content for any topic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate a full week of social media content for any topic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

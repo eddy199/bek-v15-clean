@@ -1,0 +1,6 @@
+{
+  "name": "data-cleaning-annotation-workflow",
+  "command": "data-cleaning-annotation-workflow",
+  "description": "Complete workflow for time series datasets (Energy, Manufacturing, Climate) on Kaggle to Data Annotation platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete workflow for time series datasets (Energy, Manufacturing, Climate) on Kaggle to Data Annotation platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

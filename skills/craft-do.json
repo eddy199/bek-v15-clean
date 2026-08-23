@@ -1,0 +1,6 @@
+{
+  "name": "craft-do",
+  "command": "craft-do",
+  "description": "Complete REST API integration for Craft.do - the beautiful.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete REST API integration for Craft.do - the beautiful..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

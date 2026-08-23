@@ -1,0 +1,6 @@
+{
+  "name": "deepthink",
+  "command": "deepthink",
+  "description": "DeepThink is the user's personal knowledge base.",
+  "prompt": "Tu es un agent expert spécialisé dans : DeepThink is the user's personal knowledge base..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

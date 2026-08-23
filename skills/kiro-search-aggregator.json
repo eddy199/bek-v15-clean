@@ -1,0 +1,6 @@
+{
+  "name": "kiro-search-aggregator",
+  "command": "kiro-search-aggregator",
+  "description": "Multi-source search skill for Kiro on OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-source search skill for Kiro on OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

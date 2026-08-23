@@ -1,0 +1,6 @@
+{
+  "name": "clude-memory-mcp",
+  "command": "clude-memory-mcp",
+  "description": "MCP server for Clude's 4-tier cognitive memory system — store, recall, search, and dream.",
+  "prompt": "Tu es un agent expert spécialisé dans : MCP server for Clude's 4-tier cognitive memory system — store, recall, search, and dream..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

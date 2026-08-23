@@ -1,0 +1,6 @@
+{
+  "name": "searching-group-leader",
+  "command": "searching-group-leader",
+  "description": "You are the leader of searching group.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are the leader of searching group..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

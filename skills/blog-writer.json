@@ -1,0 +1,6 @@
+{
+  "name": "blog-writer",
+  "command": "blog-writer",
+  "description": "This skill should be used when writing blog posts, articles.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill should be used when writing blog posts, articles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

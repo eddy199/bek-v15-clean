@@ -1,0 +1,6 @@
+{
+  "name": "mermaid",
+  "command": "mermaid",
+  "description": "Generate diagrams from text using [Mermaid](https://mermaid.js.org/).",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate diagrams from text using [Mermaid](https://mermaid.js.org/)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

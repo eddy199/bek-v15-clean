@@ -1,0 +1,6 @@
+{
+  "name": "bird",
+  "command": "bird",
+  "description": "X/Twitter CLI for reading, searching, and posting via cookies or Sweetistics.",
+  "prompt": "Tu es un agent expert spécialisé dans : X/Twitter CLI for reading, searching, and posting via cookies or Sweetistics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

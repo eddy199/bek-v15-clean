@@ -1,0 +1,6 @@
+{
+  "name": "music-generator",
+  "command": "music-generator",
+  "description": "Generates music from a structured Composition Plan.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates music from a structured Composition Plan..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

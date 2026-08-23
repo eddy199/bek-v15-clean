@@ -1,0 +1,6 @@
+{
+  "name": "chromecast-with-google-tv",
+  "command": "chromecast-with-google-tv",
+  "description": "Cast YouTube videos, Tubi TV show episodes, and TV show episodes from other video streaming apps via ADB.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cast YouTube videos, Tubi TV show episodes, and TV show episodes from other video streaming apps via ADB..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

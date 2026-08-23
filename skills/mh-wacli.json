@@ -1,0 +1,6 @@
+{
+  "name": "mh-wacli",
+  "command": "mh-wacli",
+  "description": "Send WhatsApp messages to other people or search/sync WhatsApp history via the wacli CLI (not for normal user chats).",
+  "prompt": "Tu es un agent expert spécialisé dans : Send WhatsApp messages to other people or search/sync WhatsApp history via the wacli CLI (not for normal user chats)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lofy-life-coach",
+  "command": "lofy-life-coach",
+  "description": "Personal accountability system for the Lofy AI assistant — morning briefings, evening reviews, weekly reports, goal.",
+  "prompt": "Tu es un agent expert spécialisé dans : Personal accountability system for the Lofy AI assistant — morning briefings, evening reviews, weekly reports, goal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

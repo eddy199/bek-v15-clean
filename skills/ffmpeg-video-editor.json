@@ -1,0 +1,6 @@
+{
+  "name": "ffmpeg-video-editor",
+  "command": "ffmpeg-video-editor",
+  "description": "Generate FFmpeg commands from natural.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate FFmpeg commands from natural..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

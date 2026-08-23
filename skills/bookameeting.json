@@ -1,0 +1,6 @@
+{
+  "name": "bookameeting",
+  "command": "bookameeting",
+  "description": "Use this document to connect an AI agent to Book A Meeting via MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this document to connect an AI agent to Book A Meeting via MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

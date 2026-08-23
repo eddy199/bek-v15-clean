@@ -1,0 +1,6 @@
+{
+  "name": "client-flow",
+  "command": "client-flow",
+  "description": "Automated client onboarding and project lifecycle management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated client onboarding and project lifecycle management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

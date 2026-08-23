@@ -1,0 +1,6 @@
+{
+  "name": "solo-pipeline",
+  "command": "solo-pipeline",
+  "description": "Launch automated multi-skill pipeline that chains skills into a loop.",
+  "prompt": "Tu es un agent expert spécialisé dans : Launch automated multi-skill pipeline that chains skills into a loop..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

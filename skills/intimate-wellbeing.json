@@ -1,0 +1,6 @@
+{
+  "name": "intimate-wellbeing",
+  "command": "intimate-wellbeing",
+  "description": "Professional, non-explicit guidance on intimate wellbeing and sexual performance: communication, stress reduction.",
+  "prompt": "Tu es un agent expert spécialisé dans : Professional, non-explicit guidance on intimate wellbeing and sexual performance: communication, stress reduction..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

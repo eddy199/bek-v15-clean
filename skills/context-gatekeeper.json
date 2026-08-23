@@ -1,0 +1,6 @@
+{
+  "name": "context-gatekeeper",
+  "command": "context-gatekeeper",
+  "description": "Keeps the conversation token-friendly by summarizing recent exchanges, surfacing pending actions, and delivering.",
+  "prompt": "Tu es un agent expert spécialisé dans : Keeps the conversation token-friendly by summarizing recent exchanges, surfacing pending actions, and delivering..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

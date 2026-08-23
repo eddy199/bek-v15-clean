@@ -1,0 +1,6 @@
+{
+  "name": "domain-check",
+  "command": "domain-check",
+  "description": "Check domain availability via Vercel and buy/manage domains via Vercel CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check domain availability via Vercel and buy/manage domains via Vercel CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

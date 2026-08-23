@@ -1,0 +1,6 @@
+{
+  "name": "omnicogg",
+  "command": "omnicogg",
+  "description": "Universal service integration for OpenClaw — connect Reddit, Steam, Spotify, GitHub, Discord.",
+  "prompt": "Tu es un agent expert spécialisé dans : Universal service integration for OpenClaw — connect Reddit, Steam, Spotify, GitHub, Discord..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

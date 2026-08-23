@@ -1,0 +1,6 @@
+{
+  "name": "axe-devtools",
+  "command": "axe-devtools",
+  "description": "Accessibility testing and remediation using the axe MCP Server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Accessibility testing and remediation using the axe MCP Server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

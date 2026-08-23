@@ -1,0 +1,6 @@
+{
+  "name": "maritime-watch",
+  "command": "maritime-watch",
+  "description": "A skill for monitoring the status and security of the Chornomorsk port.",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill for monitoring the status and security of the Chornomorsk port..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

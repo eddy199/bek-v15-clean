@@ -1,0 +1,6 @@
+{
+  "name": "blossom-hire",
+  "command": "blossom-hire",
+  "description": "Post a job, task, or paid shift to hire local help in Blossom.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post a job, task, or paid shift to hire local help in Blossom..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "personality-backup",
+  "command": "personality-backup",
+  "description": "Create encrypted backups of agent personality files, memory, config, secrets, and projects.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create encrypted backups of agent personality files, memory, config, secrets, and projects..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

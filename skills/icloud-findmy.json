@@ -1,0 +1,6 @@
+{
+  "name": "icloud-findmy",
+  "command": "icloud-findmy",
+  "description": "Query Find My locations and battery status for family devices.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Find My locations and battery status for family devices..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

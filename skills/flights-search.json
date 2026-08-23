@@ -1,0 +1,6 @@
+{
+  "name": "flights-search",
+  "command": "flights-search",
+  "description": "Search flights via Google Flights.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search flights via Google Flights..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

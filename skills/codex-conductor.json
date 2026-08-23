@@ -1,0 +1,6 @@
+{
+  "name": "codex-conductor",
+  "command": "codex-conductor",
+  "description": "Methodical end-to-end software delivery orchestrator for Codex CLI with dual project modes (greenfield for new.",
+  "prompt": "Tu es un agent expert spécialisé dans : Methodical end-to-end software delivery orchestrator for Codex CLI with dual project modes (greenfield for new..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

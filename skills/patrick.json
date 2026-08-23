@@ -1,0 +1,6 @@
+{
+  "name": "patrick",
+  "command": "patrick",
+  "description": "Access Patrick's expertise library for executive decision infrastructure.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Patrick's expertise library for executive decision infrastructure..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "plusefin-analysis",
+  "command": "plusefin-analysis",
+  "description": "AI-ready stock analysis - ticker data, options, sentiment, predictions.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-ready stock analysis - ticker data, options, sentiment, predictions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

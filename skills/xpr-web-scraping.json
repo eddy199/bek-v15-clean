@@ -1,0 +1,6 @@
+{
+  "name": "xpr-web-scraping",
+  "command": "xpr-web-scraping",
+  "description": "Web scraping tools for fetching and extracting data from web pages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Web scraping tools for fetching and extracting data from web pages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

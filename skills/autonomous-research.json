@@ -1,0 +1,6 @@
+{
+  "name": "autonomous-research",
+  "command": "autonomous-research",
+  "description": "Conduct comprehensive research independently.",
+  "prompt": "Tu es un agent expert spécialisé dans : Conduct comprehensive research independently..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

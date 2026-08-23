@@ -1,0 +1,6 @@
+{
+  "name": "search-cluster",
+  "command": "search-cluster",
+  "description": "Unified search aggregator for Google, Wikipedia, Reddit, NewsAPI, and RSS feeds with optional Redis caching.",
+  "prompt": "Tu es un agent expert spécialisé dans : Unified search aggregator for Google, Wikipedia, Reddit, NewsAPI, and RSS feeds with optional Redis caching..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

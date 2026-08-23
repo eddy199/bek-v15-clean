@@ -1,0 +1,6 @@
+{
+  "name": "copey-flight-tracker",
+  "command": "copey-flight-tracker",
+  "description": "Track flights in real-time with detailed status.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track flights in real-time with detailed status..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

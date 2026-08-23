@@ -1,0 +1,6 @@
+{
+  "name": "google-workspace-byok",
+  "command": "google-workspace-byok",
+  "description": "Google Calendar and Gmail integration using your own GCP project credentials (BYoK — Bring Your Own Key)",
+  "prompt": "Tu es un agent expert spécialisé dans : Google Calendar and Gmail integration using your own GCP project credentials (BYoK — Bring Your Own Key).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

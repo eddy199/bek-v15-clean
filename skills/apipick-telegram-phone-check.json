@@ -1,0 +1,6 @@
+{
+  "name": "apipick-telegram-phone-check",
+  "command": "apipick-telegram-phone-check",
+  "description": "Check if a phone number is registered on Telegram using the apipick Telegram Checker API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check if a phone number is registered on Telegram using the apipick Telegram Checker API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

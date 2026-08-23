@@ -1,0 +1,6 @@
+{
+  "name": "ctf-writeup-generator",
+  "command": "ctf-writeup-generator",
+  "description": "Automatically generate professional CTF writeups from solving sessions with flag detection, challenge.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically generate professional CTF writeups from solving sessions with flag detection, challenge..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

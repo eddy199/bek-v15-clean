@@ -1,0 +1,6 @@
+{
+  "name": "landing-page-builder",
+  "command": "landing-page-builder",
+  "description": "Build a single-page landing page from a text prompt or design brief.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build a single-page landing page from a text prompt or design brief..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

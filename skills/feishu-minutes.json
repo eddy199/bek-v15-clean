@@ -1,0 +1,6 @@
+{
+  "name": "feishu-minutes",
+  "command": "feishu-minutes",
+  "description": "Fetch info, stats, transcript, and media from Feishu.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch info, stats, transcript, and media from Feishu..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "trackyard",
+  "command": "trackyard",
+  "description": "Search and download licensed music from Trackyard's AI-powered catalog.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and download licensed music from Trackyard's AI-powered catalog..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "tuebingen-weather-graphics",
+  "command": "tuebingen-weather-graphics",
+  "description": "Generate and send a 5-day Tübingen weather graphic (PNG) from open-meteo.com.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate and send a 5-day Tübingen weather graphic (PNG) from open-meteo.com..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

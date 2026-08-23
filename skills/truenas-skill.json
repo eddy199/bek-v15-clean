@@ -1,0 +1,6 @@
+{
+  "name": "truenas-skill",
+  "command": "truenas-skill",
+  "description": "Manage TrueNAS SCALE via API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage TrueNAS SCALE via API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

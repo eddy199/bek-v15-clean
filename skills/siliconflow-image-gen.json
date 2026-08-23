@@ -1,0 +1,6 @@
+{
+  "name": "siliconflow-image-gen",
+  "command": "siliconflow-image-gen",
+  "description": "Generate images using SiliconFlow API (FLUX.1, Stable Diffusion, etc.)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images using SiliconFlow API (FLUX.1, Stable Diffusion, etc.).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

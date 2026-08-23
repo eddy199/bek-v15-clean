@@ -1,0 +1,6 @@
+{
+  "name": "didit-id-verification",
+  "command": "didit-id-verification",
+  "description": "Integrate Didit ID Verification standalone API to verify identity documents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate Didit ID Verification standalone API to verify identity documents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

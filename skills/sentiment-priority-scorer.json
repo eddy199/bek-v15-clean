@@ -1,0 +1,6 @@
+{
+  "name": "sentiment-priority-scorer",
+  "command": "sentiment-priority-scorer",
+  "description": "Score normalized real-estate leads using sentiment, urgency, intent, recency, and record type to produce.",
+  "prompt": "Tu es un agent expert spécialisé dans : Score normalized real-estate leads using sentiment, urgency, intent, recency, and record type to produce..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "clauditor",
+  "command": "clauditor",
+  "description": "Tamper-resistant audit watchdog for Clawdbot agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Tamper-resistant audit watchdog for Clawdbot agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

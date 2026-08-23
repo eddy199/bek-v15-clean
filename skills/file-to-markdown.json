@@ -1,0 +1,6 @@
+{
+  "name": "file-to-markdown",
+  "command": "file-to-markdown",
+  "description": "Convert files into **clean, structured, AI-ready Markdown** using the `markdown.new` API powered by **Cloudflare.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert files into **clean, structured, AI-ready Markdown** using the `markdown.new` API powered by **Cloudflare..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

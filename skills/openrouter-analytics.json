@@ -1,0 +1,6 @@
+{
+  "name": "openrouter-analytics",
+  "command": "openrouter-analytics",
+  "description": "Review OpenRouter usage, analytics, and troubleshooting data via API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Review OpenRouter usage, analytics, and troubleshooting data via API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

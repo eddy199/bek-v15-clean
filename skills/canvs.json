@@ -1,0 +1,6 @@
+{
+  "name": "canvs",
+  "command": "canvs",
+  "description": "Create and manipulate collaborative whiteboards and diagrams using Canvs.io tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manipulate collaborative whiteboards and diagrams using Canvs.io tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

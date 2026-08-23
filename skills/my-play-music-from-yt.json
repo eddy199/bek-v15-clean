@@ -1,0 +1,6 @@
+{
+  "name": "my-play-music-from-yt",
+  "command": "my-play-music-from-yt",
+  "description": "Play music on YouTube via browser automation with playwright-cli.",
+  "prompt": "Tu es un agent expert spécialisé dans : Play music on YouTube via browser automation with playwright-cli..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

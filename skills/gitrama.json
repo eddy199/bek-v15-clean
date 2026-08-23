@@ -1,0 +1,6 @@
+{
+  "name": "gitrama",
+  "command": "gitrama",
+  "description": "Git history intelligence powered by AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Git history intelligence powered by AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

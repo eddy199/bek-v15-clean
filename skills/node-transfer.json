@@ -1,0 +1,6 @@
+{
+  "name": "node-transfer",
+  "command": "node-transfer",
+  "description": "High-speed, memory-efficient file transfer between OpenClaw nodes using native Node.js streams.",
+  "prompt": "Tu es un agent expert spécialisé dans : High-speed, memory-efficient file transfer between OpenClaw nodes using native Node.js streams..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

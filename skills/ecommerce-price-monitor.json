@@ -1,0 +1,6 @@
+{
+  "name": "ecommerce-price-monitor",
+  "command": "ecommerce-price-monitor",
+  "description": "This skill enables Claude to monitor and track **product prices across major e-commerce platforms**.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables Claude to monitor and track **product prices across major e-commerce platforms**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

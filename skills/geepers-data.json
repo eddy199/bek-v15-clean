@@ -1,0 +1,6 @@
+{
+  "name": "geepers-data",
+  "command": "geepers-data",
+  "description": "Fetch structured data from 17 authoritative APIs — arXiv, Census Bureau, GitHub, NASA, Wikipedia, PubMed, news.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch structured data from 17 authoritative APIs — arXiv, Census Bureau, GitHub, NASA, Wikipedia, PubMed, news..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

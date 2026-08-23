@@ -1,0 +1,6 @@
+{
+  "name": "wa-relay-skill",
+  "command": "wa-relay-skill",
+  "description": "WhatsApp message relay for OpenClaw v0.2.0.",
+  "prompt": "Tu es un agent expert spécialisé dans : WhatsApp message relay for OpenClaw v0.2.0..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

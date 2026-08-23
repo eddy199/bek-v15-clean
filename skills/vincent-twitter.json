@@ -1,0 +1,6 @@
+{
+  "name": "vincent-twitter",
+  "command": "vincent-twitter",
+  "description": "Use this skill to search tweets, look up user profiles, and retrieve recent tweets from X.com (Twitter).",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill to search tweets, look up user profiles, and retrieve recent tweets from X.com (Twitter)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agent-card-signing-auditor",
+  "command": "agent-card-signing-auditor",
+  "description": "Helps audit Agent Card signing practices in A2A protocol implementations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps audit Agent Card signing practices in A2A protocol implementations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

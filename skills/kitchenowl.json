@@ -1,0 +1,6 @@
+{
+  "name": "kitchenowl",
+  "command": "kitchenowl",
+  "description": "Use kitchenowl-cli from terminal with pipx install, auth, and core read/write commands for KitchenOwl.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use kitchenowl-cli from terminal with pipx install, auth, and core read/write commands for KitchenOwl..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

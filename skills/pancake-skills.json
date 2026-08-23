@@ -1,0 +1,6 @@
+{
+  "name": "pancake-skills",
+  "command": "pancake-skills",
+  "description": "Tương tác với Pancake Platform API để quản lý pages, conversations, messages, customers, statistics, tags, posts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Tương tác với Pancake Platform API để quản lý pages, conversations, messages, customers, statistics, tags, posts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

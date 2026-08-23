@@ -1,0 +1,6 @@
+{
+  "name": "preqstation-preqstation",
+  "command": "preqstation-preqstation",
+  "description": "Run Claude Code, Codex CLI, or Gemini CLI from natural-language OpenClaw requests for PREQSTATION work.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run Claude Code, Codex CLI, or Gemini CLI from natural-language OpenClaw requests for PREQSTATION work..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "brand-cog",
+  "command": "brand-cog",
+  "description": "Other tools make logos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Other tools make logos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

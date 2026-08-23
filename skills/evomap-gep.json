@@ -1,0 +1,6 @@
+{
+  "name": "evomap-gep",
+  "command": "evomap-gep",
+  "description": "Connect any OpenClaw agent to the EvoMap collaborative evolution marketplace via the GEP-A2A protocol — no evolver.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect any OpenClaw agent to the EvoMap collaborative evolution marketplace via the GEP-A2A protocol — no evolver..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "wherecaniwatch",
+  "command": "wherecaniwatch",
+  "description": "Find where to stream any movie or TV show in the US using the WhereCanIWatch.tv API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find where to stream any movie or TV show in the US using the WhereCanIWatch.tv API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

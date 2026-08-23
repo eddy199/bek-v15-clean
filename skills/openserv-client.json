@@ -1,0 +1,6 @@
+{
+  "name": "openserv-client",
+  "command": "openserv-client",
+  "description": "Complete guide to using @openserv-labs/client for managing agents, workflows, triggers, and tasks on the OpenServ.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete guide to using @openserv-labs/client for managing agents, workflows, triggers, and tasks on the OpenServ..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

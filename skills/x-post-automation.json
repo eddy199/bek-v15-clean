@@ -1,0 +1,6 @@
+{
+  "name": "x-post-automation",
+  "command": "x-post-automation",
+  "description": "Automates the process of identifying trends on X (Twitter), generating opinionated/engaging content, and posting it.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automates the process of identifying trends on X (Twitter), generating opinionated/engaging content, and posting it..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

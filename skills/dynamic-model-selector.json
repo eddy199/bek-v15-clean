@@ -1,0 +1,6 @@
+{
+  "name": "dynamic-model-selector",
+  "command": "dynamic-model-selector",
+  "description": "Dynamically select the best AI model for a task based on complexity, cost, and availability in GitHub Copilot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Dynamically select the best AI model for a task based on complexity, cost, and availability in GitHub Copilot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "healthkit-sync",
+  "command": "healthkit-sync",
+  "description": "iOS HealthKit data sync CLI commands and patterns.",
+  "prompt": "Tu es un agent expert spécialisé dans : iOS HealthKit data sync CLI commands and patterns..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

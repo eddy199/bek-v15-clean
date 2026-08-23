@@ -1,0 +1,6 @@
+{
+  "name": "wanikani-sync",
+  "command": "wanikani-sync",
+  "description": "Sync WaniKani Japanese learning progress data from the API to local storage for analysis and insights.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sync WaniKani Japanese learning progress data from the API to local storage for analysis and insights..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

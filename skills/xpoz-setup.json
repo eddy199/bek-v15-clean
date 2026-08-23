@@ -1,0 +1,6 @@
+{
+  "name": "xpoz-setup",
+  "command": "xpoz-setup",
+  "description": "Set up and authenticate the Xpoz MCP server for social media intelligence.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up and authenticate the Xpoz MCP server for social media intelligence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

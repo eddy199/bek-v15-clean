@@ -1,0 +1,6 @@
+{
+  "name": "cortex-ai",
+  "command": "cortex-ai",
+  "description": "Persistent memory for AI agents by Sigma Labs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent memory for AI agents by Sigma Labs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

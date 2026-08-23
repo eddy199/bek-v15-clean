@@ -1,0 +1,6 @@
+{
+  "name": "webnovel-serial-pipeline",
+  "command": "webnovel-serial-pipeline",
+  "description": "Build and publish a Quartz-hosted Korean web-novel serial (draft→cover→webp→episode md→lint→publish)",
+  "prompt": "Tu es un agent expert spécialisé dans : Build and publish a Quartz-hosted Korean web-novel serial (draft→cover→webp→episode md→lint→publish).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

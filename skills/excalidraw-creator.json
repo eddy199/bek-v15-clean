@@ -1,0 +1,6 @@
+{
+  "name": "excalidraw-creator",
+  "command": "excalidraw-creator",
+  "description": "Create hand-drawn style Excalidraw diagrams, flowcharts, and architecture visuals as PNG images.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create hand-drawn style Excalidraw diagrams, flowcharts, and architecture visuals as PNG images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "shed",
+  "command": "shed",
+  "description": "Context window hygiene for long-running LLM agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Context window hygiene for long-running LLM agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

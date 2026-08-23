@@ -1,0 +1,6 @@
+{
+  "name": "sota-tracker-mcp",
+  "command": "sota-tracker-mcp",
+  "description": "**The definitive open-source database of State-of-the-Art AI models.**.",
+  "prompt": "Tu es un agent expert spécialisé dans : **The definitive open-source database of State-of-the-Art AI models.**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

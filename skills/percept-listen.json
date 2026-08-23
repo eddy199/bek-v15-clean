@@ -1,0 +1,6 @@
+{
+  "name": "percept-listen",
+  "command": "percept-listen",
+  "description": "Ambient audio capture and transcription for OpenClaw agents via wearable devices.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ambient audio capture and transcription for OpenClaw agents via wearable devices..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

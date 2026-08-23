@@ -1,0 +1,6 @@
+{
+  "name": "revolut",
+  "command": "revolut",
+  "description": "Revolut web automation via Playwright: login/logout, list accounts, and fetch transactions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Revolut web automation via Playwright: login/logout, list accounts, and fetch transactions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

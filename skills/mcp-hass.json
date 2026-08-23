@@ -1,0 +1,6 @@
+{
+  "name": "mcp-hass",
+  "command": "mcp-hass",
+  "description": "The skill for control Home Assistant smart home devices and query states using MCP protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : The skill for control Home Assistant smart home devices and query states using MCP protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

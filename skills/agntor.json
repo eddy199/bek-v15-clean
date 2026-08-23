@@ -1,0 +1,6 @@
+{
+  "name": "agntor",
+  "command": "agntor",
+  "description": "Trust layer for AI agents — verify identities, guard prompts, redact PII, and manage x402 escrow payments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Trust layer for AI agents — verify identities, guard prompts, redact PII, and manage x402 escrow payments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

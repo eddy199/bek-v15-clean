@@ -1,0 +1,6 @@
+{
+  "name": "on-page-seo-auditor",
+  "command": "on-page-seo-auditor",
+  "description": "Use when the user asks to \"audit page SEO\", \"on-page SEO check\", \"SEO score\", \"page optimization\", \"what SEO issues.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"audit page SEO\", \"on-page SEO check\", \"SEO score\", \"page optimization\", \"what SEO issues..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

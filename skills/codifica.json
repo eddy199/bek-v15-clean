@@ -1,0 +1,6 @@
+{
+  "name": "codifica",
+  "command": "codifica",
+  "description": "Keep context when work moves between agents or between you and a human.",
+  "prompt": "Tu es un agent expert spécialisé dans : Keep context when work moves between agents or between you and a human..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

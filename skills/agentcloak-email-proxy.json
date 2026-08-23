@@ -1,0 +1,6 @@
+{
+  "name": "agentcloak-email-proxy",
+  "command": "agentcloak-email-proxy",
+  "description": "Secure email proxy for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure email proxy for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

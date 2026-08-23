@@ -1,0 +1,6 @@
+{
+  "name": "scanwow-sync",
+  "command": "scanwow-sync",
+  "description": "Sync your OpenClaw agent with the ScanWow iOS app.",
+  "prompt": "Tu es un agent expert spécialisé dans : Sync your OpenClaw agent with the ScanWow iOS app..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

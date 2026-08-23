@@ -1,0 +1,6 @@
+{
+  "name": "lobsterguard",
+  "command": "lobsterguard",
+  "description": "Bilingual security auditor for OpenClaw. 68 checks across 6 categories, 11 auto-fixes, OWASP Agentic AI Top 10.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bilingual security auditor for OpenClaw. 68 checks across 6 categories, 11 auto-fixes, OWASP Agentic AI Top 10..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "data912",
+  "command": "data912",
+  "description": "Query Data912 market data endpoints for Argentina and USA instruments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Data912 market data endpoints for Argentina and USA instruments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

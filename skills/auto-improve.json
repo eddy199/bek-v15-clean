@@ -1,0 +1,6 @@
+{
+  "name": "auto-improve",
+  "command": "auto-improve",
+  "description": "Automatische Selbst-Verbesserung durch Fehler-Lernen und Pattern-Erkennung.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatische Selbst-Verbesserung durch Fehler-Lernen und Pattern-Erkennung..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cc-godmode",
+  "command": "cc-godmode",
+  "description": "Self-orchestrating multi-agent development workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-orchestrating multi-agent development workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

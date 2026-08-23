@@ -1,0 +1,6 @@
+{
+  "name": "gotrain",
+  "command": "gotrain",
+  "description": "MTA system train departures (NYC Subway, LIRR, Metro-North).",
+  "prompt": "Tu es un agent expert spécialisé dans : MTA system train departures (NYC Subway, LIRR, Metro-North)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

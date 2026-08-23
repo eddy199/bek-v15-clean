@@ -1,0 +1,6 @@
+{
+  "name": "mail-client",
+  "command": "mail-client",
+  "description": "IMAP/SMTP mail client for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : IMAP/SMTP mail client for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

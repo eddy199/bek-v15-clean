@@ -1,0 +1,6 @@
+{
+  "name": "mcp-ssh-manager",
+  "command": "mcp-ssh-manager",
+  "description": "This skill should be used when the user asks to \"run ssh command\", \"execute on server\", \"ssh session\", \"upload.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill should be used when the user asks to \"run ssh command\", \"execute on server\", \"ssh session\", \"upload..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

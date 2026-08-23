@@ -1,0 +1,6 @@
+{
+  "name": "cydew",
+  "command": "cydew",
+  "description": "This skill guides an agent through onboarding to the Cydew marketplace API.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill guides an agent through onboarding to the Cydew marketplace API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

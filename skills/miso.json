@@ -1,0 +1,6 @@
+{
+  "name": "miso",
+  "command": "miso",
+  "description": "**MISO** is a Telegram-native mission control for OpenClaw multi-agent workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : **MISO** is a Telegram-native mission control for OpenClaw multi-agent workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

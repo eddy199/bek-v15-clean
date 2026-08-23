@@ -1,0 +1,6 @@
+{
+  "name": "aiqbee",
+  "command": "aiqbee",
+  "description": "Connect to your Aiqbee knowledge graph via MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to your Aiqbee knowledge graph via MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

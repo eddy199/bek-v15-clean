@@ -1,0 +1,6 @@
+{
+  "name": "user-authentication-system",
+  "command": "user-authentication-system",
+  "description": "Role-based access control for Greek accounting firms.",
+  "prompt": "Tu es un agent expert spécialisé dans : Role-based access control for Greek accounting firms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

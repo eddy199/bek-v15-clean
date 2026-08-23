@@ -1,0 +1,6 @@
+{
+  "name": "xthezealot-stealth-browser",
+  "command": "xthezealot-stealth-browser",
+  "description": "Use `/stealth-browser` to access websites with advanced bot protection.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use `/stealth-browser` to access websites with advanced bot protection..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

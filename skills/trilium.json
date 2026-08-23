@@ -1,0 +1,6 @@
+{
+  "name": "trilium",
+  "command": "trilium",
+  "description": "Work with Trilium Notes (notebook app) and automate via Trilium Notes ETAPI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Work with Trilium Notes (notebook app) and automate via Trilium Notes ETAPI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

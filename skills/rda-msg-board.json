@@ -1,0 +1,6 @@
+{
+  "name": "rda-msg-board",
+  "command": "rda-msg-board",
+  "description": "Send scrolling text messages to RDA MSG Board via HTTP/JSON.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send scrolling text messages to RDA MSG Board via HTTP/JSON..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

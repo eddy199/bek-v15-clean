@@ -1,0 +1,6 @@
+{
+  "name": "sentient-memory",
+  "command": "sentient-memory",
+  "description": "**For long-horizon or deep SGI review:** See VISION.md in this folder for the original conceptual and poetic framing.",
+  "prompt": "Tu es un agent expert spécialisé dans : **For long-horizon or deep SGI review:** See VISION.md in this folder for the original conceptual and poetic framing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

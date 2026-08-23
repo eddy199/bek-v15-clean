@@ -1,0 +1,6 @@
+{
+  "name": "feed-diet",
+  "command": "feed-diet",
+  "description": "Audit your information diet across HN and RSS feeds — beautiful reports with category breakdowns, ASCII charts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit your information diet across HN and RSS feeds — beautiful reports with category breakdowns, ASCII charts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

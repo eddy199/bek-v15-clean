@@ -1,0 +1,6 @@
+{
+  "name": "bot-status-api",
+  "command": "bot-status-api",
+  "description": "Deploy a lightweight status API that exposes your OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy a lightweight status API that exposes your OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

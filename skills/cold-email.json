@@ -1,0 +1,6 @@
+{
+  "name": "cold-email",
+  "command": "cold-email",
+  "description": "Generate hyper-personalized cold email sequences using AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate hyper-personalized cold email sequences using AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

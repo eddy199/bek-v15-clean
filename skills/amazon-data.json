@@ -1,0 +1,6 @@
+{
+  "name": "amazon-data",
+  "command": "amazon-data",
+  "description": "Retrieve Amazon product data including pricing, reviews, sales estimates, stock levels, search results, deals.",
+  "prompt": "Tu es un agent expert spécialisé dans : Retrieve Amazon product data including pricing, reviews, sales estimates, stock levels, search results, deals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

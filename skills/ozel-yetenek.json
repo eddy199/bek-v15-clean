@@ -1,0 +1,6 @@
+{
+  "name": "ozel-yetenek",
+  "command": "ozel-yetenek",
+  "description": "review et openclaw skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : review et openclaw skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

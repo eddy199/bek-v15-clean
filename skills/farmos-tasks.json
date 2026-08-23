@@ -1,0 +1,6 @@
+{
+  "name": "farmos-tasks",
+  "command": "farmos-tasks",
+  "description": "Query and manage farm work orders and tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and manage farm work orders and tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

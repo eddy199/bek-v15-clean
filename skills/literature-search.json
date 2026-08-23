@@ -1,0 +1,6 @@
+{
+  "name": "literature-search",
+  "command": "literature-search",
+  "description": "Find and compile academic literature with citation lists across Google Scholar, PubMed, arXiv, IEEE, ACM, Semantic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find and compile academic literature with citation lists across Google Scholar, PubMed, arXiv, IEEE, ACM, Semantic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

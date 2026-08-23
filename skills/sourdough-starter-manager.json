@@ -1,0 +1,6 @@
+{
+  "name": "sourdough-starter-manager",
+  "command": "sourdough-starter-manager",
+  "description": "Manage sourdough starters with feeding schedules, hydration calculations, health tracking, and baking preparation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage sourdough starters with feeding schedules, hydration calculations, health tracking, and baking preparation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

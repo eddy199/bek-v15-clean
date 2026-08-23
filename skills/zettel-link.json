@@ -1,0 +1,6 @@
+{
+  "name": "zettel-link",
+  "command": "zettel-link",
+  "description": "This skill maintains the Note Embeddings for Zettelkasten, to search notes, retrieve notes, and discover.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill maintains the Note Embeddings for Zettelkasten, to search notes, retrieve notes, and discover..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

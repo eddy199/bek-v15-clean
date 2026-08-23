@@ -1,0 +1,6 @@
+{
+  "name": "printpal-3d",
+  "command": "printpal-3d",
+  "description": "Generate 3D models for 3D printing from images or text prompts using PrintPal API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate 3D models for 3D printing from images or text prompts using PrintPal API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

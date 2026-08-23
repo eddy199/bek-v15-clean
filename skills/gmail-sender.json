@@ -1,0 +1,6 @@
+{
+  "name": "gmail-sender",
+  "command": "gmail-sender",
+  "description": "Send emails via Gmail SMTP using Google App Password.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send emails via Gmail SMTP using Google App Password..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

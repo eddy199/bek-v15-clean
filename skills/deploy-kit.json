@@ -1,0 +1,6 @@
+{
+  "name": "deploy-kit",
+  "command": "deploy-kit",
+  "description": "Simplifie le déploiement d'apps web sur **Vercel**, **Railway** et **Supabase** via leurs CLIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Simplifie le déploiement d'apps web sur **Vercel**, **Railway** et **Supabase** via leurs CLIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "firmenbuchat",
+  "command": "firmenbuchat",
+  "description": "CLI für den Zugriff auf das österreichische Firmenbuch (HVD WebServices).",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI für den Zugriff auf das österreichische Firmenbuch (HVD WebServices)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

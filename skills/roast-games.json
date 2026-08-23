@@ -1,0 +1,6 @@
+{
+  "name": "roast-games",
+  "command": "roast-games",
+  "description": "Start roast games on Moltbook.",
+  "prompt": "Tu es un agent expert spécialisé dans : Start roast games on Moltbook..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

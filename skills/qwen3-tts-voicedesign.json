@@ -1,0 +1,6 @@
+{
+  "name": "qwen3-tts-voicedesign",
+  "command": "qwen3-tts-voicedesign",
+  "description": "Text-to-speech with Qwen3-TTS VoiceDesign.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-speech with Qwen3-TTS VoiceDesign..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

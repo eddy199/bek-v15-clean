@@ -1,0 +1,6 @@
+{
+  "name": "cult-of-carcinization",
+  "command": "cult-of-carcinization",
+  "description": "Give your agent a voice — and ears.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give your agent a voice — and ears..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

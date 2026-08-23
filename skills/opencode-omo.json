@@ -1,0 +1,6 @@
+{
+  "name": "opencode-omo",
+  "command": "opencode-omo",
+  "description": "Turn coding requests into completed work.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn coding requests into completed work..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

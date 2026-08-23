@@ -1,0 +1,6 @@
+{
+  "name": "playwright-scraper-skill-1-2-0",
+  "command": "playwright-scraper-skill-1-2-0",
+  "description": "Playwright-based web scraping OpenClaw Skill with anti-bot protection.",
+  "prompt": "Tu es un agent expert spécialisé dans : Playwright-based web scraping OpenClaw Skill with anti-bot protection..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

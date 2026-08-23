@@ -1,0 +1,6 @@
+{
+  "name": "app-builder",
+  "command": "app-builder",
+  "description": "Build, edit, and deploy Instant-backed apps using npx instant-cli, create-instant-app (Next.js + Codex), GitHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build, edit, and deploy Instant-backed apps using npx instant-cli, create-instant-app (Next.js + Codex), GitHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

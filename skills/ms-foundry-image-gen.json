@@ -1,0 +1,6 @@
+{
+  "name": "ms-foundry-image-gen",
+  "command": "ms-foundry-image-gen",
+  "description": "Azure Foundry image generation skill for OpenClaw; generates images via a Foundry deployment and returns image.",
+  "prompt": "Tu es un agent expert spécialisé dans : Azure Foundry image generation skill for OpenClaw; generates images via a Foundry deployment and returns image..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

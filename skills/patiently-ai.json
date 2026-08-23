@@ -1,0 +1,6 @@
+{
+  "name": "patiently-ai",
+  "command": "patiently-ai",
+  "description": "Patiently AI simplifies medical documents for patients.",
+  "prompt": "Tu es un agent expert spécialisé dans : Patiently AI simplifies medical documents for patients..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

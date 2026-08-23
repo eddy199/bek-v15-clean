@@ -1,0 +1,6 @@
+{
+  "name": "chia-walletconnect",
+  "command": "chia-walletconnect",
+  "description": "Telegram Web App for Chia wallet verification via WalletConnect and Sage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Telegram Web App for Chia wallet verification via WalletConnect and Sage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

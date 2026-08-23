@@ -1,0 +1,6 @@
+{
+  "name": "founder-playbook",
+  "command": "founder-playbook",
+  "description": "Decision validation and thinking frameworks for startup founders.",
+  "prompt": "Tu es un agent expert spécialisé dans : Decision validation and thinking frameworks for startup founders..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

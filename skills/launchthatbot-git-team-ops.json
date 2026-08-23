@@ -1,0 +1,6 @@
+{
+  "name": "launchthatbot-git-team-ops",
+  "command": "launchthatbot-git-team-ops",
+  "description": "Role-based GitOps skill for OpenClaw agents with junior and senior operating modes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Role-based GitOps skill for OpenClaw agents with junior and senior operating modes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

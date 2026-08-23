@@ -1,0 +1,6 @@
+{
+  "name": "agent-identity-kit",
+  "command": "agent-identity-kit",
+  "description": "A portable identity system for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : A portable identity system for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

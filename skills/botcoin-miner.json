@@ -1,0 +1,6 @@
+{
+  "name": "botcoin-miner",
+  "command": "botcoin-miner",
+  "description": "Mine Botcoin with a trust-first workflow: clear value proposition, verifiable binaries, and explicit operational.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mine Botcoin with a trust-first workflow: clear value proposition, verifiable binaries, and explicit operational..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

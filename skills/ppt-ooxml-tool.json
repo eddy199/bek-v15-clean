@@ -1,0 +1,6 @@
+{
+  "name": "ppt-ooxml-tool",
+  "command": "ppt-ooxml-tool",
+  "description": "AI-agent Skill for PPTX OOXML localization workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-agent Skill for PPTX OOXML localization workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

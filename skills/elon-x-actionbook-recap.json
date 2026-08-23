@@ -1,0 +1,6 @@
+{
+  "name": "elon-x-actionbook-recap",
+  "command": "elon-x-actionbook-recap",
+  "description": "(DEPRECATED) Use x-actionbook-recap instead.",
+  "prompt": "Tu es un agent expert spécialisé dans : (DEPRECATED) Use x-actionbook-recap instead..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

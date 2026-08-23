@@ -1,0 +1,6 @@
+{
+  "name": "fleet-doctrine",
+  "command": "fleet-doctrine",
+  "description": "Model routing strategy for multi-model AI fleet.",
+  "prompt": "Tu es un agent expert spécialisé dans : Model routing strategy for multi-model AI fleet..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

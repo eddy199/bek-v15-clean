@@ -1,0 +1,6 @@
+{
+  "name": "freelance-pilot",
+  "command": "freelance-pilot",
+  "description": "AI Agent Co-Pilot for Upwork & Fiverr.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI Agent Co-Pilot for Upwork & Fiverr..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

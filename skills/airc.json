@@ -1,0 +1,6 @@
+{
+  "name": "airc",
+  "command": "airc",
+  "description": "Connect to IRC servers (AIRC or any standard IRC) and participate in channels.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to IRC servers (AIRC or any standard IRC) and participate in channels..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

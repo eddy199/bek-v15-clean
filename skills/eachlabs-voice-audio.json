@@ -1,0 +1,6 @@
+{
+  "name": "eachlabs-voice-audio",
+  "command": "eachlabs-voice-audio",
+  "description": "TTS, STT, voice conversion using ElevenLabs, Whisper, RVC.",
+  "prompt": "Tu es un agent expert spécialisé dans : TTS, STT, voice conversion using ElevenLabs, Whisper, RVC..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

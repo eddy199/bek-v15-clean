@@ -1,0 +1,6 @@
+{
+  "name": "remote-skill-engine",
+  "command": "remote-skill-engine",
+  "description": "Cache and use skills from ClawHub and GitHub as if locally installed.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cache and use skills from ClawHub and GitHub as if locally installed..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "addis-assistant-stt",
+  "command": "addis-assistant-stt",
+  "description": "Provides Speech-to-Text (STT) and text.",
+  "prompt": "Tu es un agent expert spécialisé dans : Provides Speech-to-Text (STT) and text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

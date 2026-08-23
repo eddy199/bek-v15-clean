@@ -1,0 +1,6 @@
+{
+  "name": "ub2-csv-data-analyzer",
+  "command": "ub2-csv-data-analyzer",
+  "description": "A skill that enables Claw to load, explore, analyze, and visualize CSV datasets, providing statistical insights.",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill that enables Claw to load, explore, analyze, and visualize CSV datasets, providing statistical insights..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-ui",
+  "command": "jarvis-ui",
+  "description": "JARVIS-style HUD web interface for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : JARVIS-style HUD web interface for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

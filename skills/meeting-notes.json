@@ -1,0 +1,6 @@
+{
+  "name": "meeting-notes",
+  "command": "meeting-notes",
+  "description": "Generate structured meeting minutes from transcripts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate structured meeting minutes from transcripts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mobb-vulnerabilities-fixer",
+  "command": "mobb-vulnerabilities-fixer",
+  "description": "Scan, fix, and remediate security vulnerabilities in a local code repository using Mobb MCP/CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan, fix, and remediate security vulnerabilities in a local code repository using Mobb MCP/CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

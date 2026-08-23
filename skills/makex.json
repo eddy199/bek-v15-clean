@@ -1,0 +1,6 @@
+{
+  "name": "makex",
+  "command": "makex",
+  "description": "OpenClaw is a skill-based integration system that allows apps built on MakeX to discover and execute actions.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw is a skill-based integration system that allows apps built on MakeX to discover and execute actions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

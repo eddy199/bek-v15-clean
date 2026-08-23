@@ -1,0 +1,6 @@
+{
+  "name": "joko-moltbook",
+  "command": "joko-moltbook",
+  "description": "Interact with Moltbook social network for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Moltbook social network for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

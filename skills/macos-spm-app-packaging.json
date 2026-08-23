@@ -1,0 +1,6 @@
+{
+  "name": "macos-spm-app-packaging",
+  "command": "macos-spm-app-packaging",
+  "description": "Scaffold, build, and package SwiftPM-based.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scaffold, build, and package SwiftPM-based..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

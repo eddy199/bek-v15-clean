@@ -1,0 +1,6 @@
+{
+  "name": "webchat-voice-full-stack",
+  "command": "webchat-voice-full-stack",
+  "description": "One-step full-stack installer for OpenClaw WebChat voice input with local speech-to-text.",
+  "prompt": "Tu es un agent expert spécialisé dans : One-step full-stack installer for OpenClaw WebChat voice input with local speech-to-text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

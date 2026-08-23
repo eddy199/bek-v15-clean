@@ -1,0 +1,6 @@
+{
+  "name": "sam-tts",
+  "command": "sam-tts",
+  "description": "Generate retro robotic speech audio using SAM (Software Automatic Mouth), the classic C64 text-to-speech synthesizer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate retro robotic speech audio using SAM (Software Automatic Mouth), the classic C64 text-to-speech synthesizer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

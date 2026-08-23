@@ -1,0 +1,6 @@
+{
+  "name": "install-llm-council",
+  "command": "install-llm-council",
+  "description": "LLM Council — multi-model consensus app with one-command setup.",
+  "prompt": "Tu es un agent expert spécialisé dans : LLM Council — multi-model consensus app with one-command setup..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

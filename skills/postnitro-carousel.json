@@ -1,0 +1,6 @@
+{
+  "name": "postnitro-carousel",
+  "command": "postnitro-carousel",
+  "description": "Generate professional social media carousel posts using the PostNitro.ai Embed API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional social media carousel posts using the PostNitro.ai Embed API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "alexa-cli",
+  "command": "alexa-cli",
+  "description": "Control Amazon Alexa devices and smart home via the `alexacli` CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Amazon Alexa devices and smart home via the `alexacli` CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "medium-writer",
+  "command": "medium-writer",
+  "description": "Writing and publishing articles for the Medium Partner Program.",
+  "prompt": "Tu es un agent expert spécialisé dans : Writing and publishing articles for the Medium Partner Program..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

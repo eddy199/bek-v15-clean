@@ -1,0 +1,6 @@
+{
+  "name": "wrike",
+  "command": "wrike",
+  "description": "Manage Wrike tasks, projects, folders, and comments via the Wrike REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Wrike tasks, projects, folders, and comments via the Wrike REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

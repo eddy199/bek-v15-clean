@@ -1,0 +1,6 @@
+{
+  "name": "next-upgrade",
+  "command": "next-upgrade",
+  "description": "Upgrade Next.js to the latest version following official migration guides and codemods.",
+  "prompt": "Tu es un agent expert spécialisé dans : Upgrade Next.js to the latest version following official migration guides and codemods..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

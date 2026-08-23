@@ -1,0 +1,6 @@
+{
+  "name": "cloud-backup",
+  "command": "cloud-backup",
+  "description": "Back up and restore OpenClaw state.",
+  "prompt": "Tu es un agent expert spécialisé dans : Back up and restore OpenClaw state..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "gateway-guard",
+  "command": "gateway-guard",
+  "description": "Ensures OpenClaw gateway auth consistency and can auto-prompt \"continue\" when a run error (Unhandled stop reason.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ensures OpenClaw gateway auth consistency and can auto-prompt \"continue\" when a run error (Unhandled stop reason..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

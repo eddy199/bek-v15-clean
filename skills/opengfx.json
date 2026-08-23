@@ -1,0 +1,6 @@
+{
+  "name": "opengfx",
+  "command": "opengfx",
+  "description": "AI brand design system — logo systems, brand mascots, social assets, and on-brand marketing graphics via ACP or x402.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI brand design system — logo systems, brand mascots, social assets, and on-brand marketing graphics via ACP or x402..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

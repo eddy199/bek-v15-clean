@@ -1,0 +1,6 @@
+{
+  "name": "hume-evi-langgraph",
+  "command": "hume-evi-langgraph",
+  "description": "Integrate Hume EVI voice AI with LangGraph using interrupt/resume patterns.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate Hume EVI voice AI with LangGraph using interrupt/resume patterns..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

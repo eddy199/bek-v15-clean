@@ -1,0 +1,6 @@
+{
+  "name": "setuporion-byimpa",
+  "command": "setuporion-byimpa",
+  "description": "Setup completo de VPS Ubuntu/Debian para produção com Docker Swarm, Traefik v3 (SSL/HTTPS automático), Portainer CE.",
+  "prompt": "Tu es un agent expert spécialisé dans : Setup completo de VPS Ubuntu/Debian para produção com Docker Swarm, Traefik v3 (SSL/HTTPS automático), Portainer CE..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

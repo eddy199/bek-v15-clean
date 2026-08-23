@@ -1,0 +1,6 @@
+{
+  "name": "giveagent",
+  "command": "giveagent",
+  "description": "Agent-to-agent free item gifting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent-to-agent free item gifting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

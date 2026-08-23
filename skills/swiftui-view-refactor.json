@@ -1,0 +1,6 @@
+{
+  "name": "swiftui-view-refactor",
+  "command": "swiftui-view-refactor",
+  "description": "Refactor and review SwiftUI view files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Refactor and review SwiftUI view files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

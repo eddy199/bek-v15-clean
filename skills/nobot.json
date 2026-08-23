@@ -1,0 +1,6 @@
+{
+  "name": "nobot",
+  "command": "nobot",
+  "description": "Human says \"No bot!\".",
+  "prompt": "Tu es un agent expert spécialisé dans : Human says \"No bot!\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

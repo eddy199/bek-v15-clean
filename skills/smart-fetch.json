@@ -1,0 +1,6 @@
+{
+  "name": "smart-fetch",
+  "command": "smart-fetch",
+  "description": "Fetch web pages for LLM use with markdown-first negotiation, strict output limits, cache/revalidation, and robust.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch web pages for LLM use with markdown-first negotiation, strict output limits, cache/revalidation, and robust..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

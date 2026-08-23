@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-persona-style-calibrator-01",
+  "command": "jarvis-persona-style-calibrator-01",
+  "description": "Calibrate assistant personality to voice, boundaries, and audience context.",
+  "prompt": "Tu es un agent expert spécialisé dans : Calibrate assistant personality to voice, boundaries, and audience context..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

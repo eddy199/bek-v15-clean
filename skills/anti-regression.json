@@ -1,0 +1,6 @@
+{
+  "name": "anti-regression",
+  "command": "anti-regression",
+  "description": "Stop drifting back to chatbot behavior.",
+  "prompt": "Tu es un agent expert spécialisé dans : Stop drifting back to chatbot behavior..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "hytale",
+  "command": "hytale",
+  "description": "Manage a local Hytale dedicated server using the official downloader.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage a local Hytale dedicated server using the official downloader..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

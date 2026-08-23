@@ -1,0 +1,6 @@
+{
+  "name": "eachlabs-product-visuals",
+  "command": "eachlabs-product-visuals",
+  "description": "Generate e-commerce product photography and videos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate e-commerce product photography and videos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

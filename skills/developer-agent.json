@@ -1,0 +1,6 @@
+{
+  "name": "developer-agent",
+  "command": "developer-agent",
+  "description": "Orchestrates software development by coordinating with Cursor Agent, managing git workflows, and ensuring quality.",
+  "prompt": "Tu es un agent expert spécialisé dans : Orchestrates software development by coordinating with Cursor Agent, managing git workflows, and ensuring quality..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

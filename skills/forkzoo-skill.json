@@ -1,0 +1,6 @@
+{
+  "name": "forkzoo-skill",
+  "command": "forkzoo-skill",
+  "description": "Adopt and manage GitHub-native digital pets (tamagotchis)",
+  "prompt": "Tu es un agent expert spécialisé dans : Adopt and manage GitHub-native digital pets (tamagotchis).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

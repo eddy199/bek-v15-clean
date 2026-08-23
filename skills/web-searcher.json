@@ -1,0 +1,6 @@
+{
+  "name": "web-searcher",
+  "command": "web-searcher",
+  "description": "Autonomous web research agent that performs multi-step searches, follows links, extracts data, and synthesizes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous web research agent that performs multi-step searches, follows links, extracts data, and synthesizes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

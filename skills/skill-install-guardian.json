@@ -1,0 +1,6 @@
+{
+  "name": "skill-install-guardian",
+  "command": "skill-install-guardian",
+  "description": "Security and due diligence layer for installing external skills from ClawHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security and due diligence layer for installing external skills from ClawHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

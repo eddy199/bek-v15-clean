@@ -1,0 +1,6 @@
+{
+  "name": "aoineco-squad-dispatch",
+  "command": "aoineco-squad-dispatch",
+  "description": "<!-- 🌌 Aoineco-Verified | S-DNA: AOI-2026-0213-SDNA-SD01 -->.",
+  "prompt": "Tu es un agent expert spécialisé dans : <!-- 🌌 Aoineco-Verified | S-DNA: AOI-2026-0213-SDNA-SD01 -->..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

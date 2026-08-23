@@ -1,0 +1,56 @@
+[
+  {
+    "id": "acc_1",
+    "name": "Never",
+    "email": "quickvivals@gmail.com",
+    "default": true,
+    "avatar": "N",
+    "color": "#2e7d32",
+    "active": true
+  },
+  {
+    "id": "acc_2",
+    "name": "quick vivals",
+    "email": "quickvivals@gmail.com",
+    "default": true,
+    "avatar": "q",
+    "color": "#c2185b",
+    "active": false
+  },
+  {
+    "id": "acc_3",
+    "name": "Edoird Lorian",
+    "email": "lorianedoird@gmail.com",
+    "default": false,
+    "avatar": "E",
+    "color": "#795548",
+    "active": false
+  },
+  {
+    "id": "acc_4",
+    "name": "Mival Mivals",
+    "email": "mivalmivals@gmail.com",
+    "default": false,
+    "avatar": "M",
+    "color": "#00897b",
+    "active": false
+  },
+  {
+    "id": "acc_5",
+    "name": "Mival Mivale",
+    "email": "mivalmivale@gmail.com",
+    "default": false,
+    "avatar": "M",
+    "color": "#1e88e5",
+    "active": false
+  },
+  {
+    "id": "acc_1787100875",
+    "name": "edoir",
+    "email": "lorianedoird@gmail.com",
+    "default": false,
+    "avatar": "E",
+    "color": "#1e88e5",
+    "active": false
+  }
+]

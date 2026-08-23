@@ -1,0 +1,6 @@
+{
+  "name": "client-data-management",
+  "command": "client-data-management",
+  "description": "Secure client database for Greek accounting firms.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure client database for Greek accounting firms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

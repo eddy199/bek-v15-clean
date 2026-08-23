@@ -1,0 +1,6 @@
+{
+  "name": "shelly-brand-name-generator",
+  "command": "shelly-brand-name-generator",
+  "description": "Generate 20 creative brand name suggestions for any industry, with .com domain availability hints.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate 20 creative brand name suggestions for any industry, with .com domain availability hints..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

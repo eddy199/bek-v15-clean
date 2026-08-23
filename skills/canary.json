@@ -1,0 +1,6 @@
+{
+  "name": "canary",
+  "command": "canary",
+  "description": "Scans your OpenClaw environment for leaked secrets â€” API keys, tokens, credentials in .env files, installed.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scans your OpenClaw environment for leaked secrets â€” API keys, tokens, credentials in .env files, installed..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

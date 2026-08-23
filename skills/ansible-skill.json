@@ -1,0 +1,6 @@
+{
+  "name": "ansible-skill",
+  "command": "ansible-skill",
+  "description": "Infrastructure automation with Ansible.",
+  "prompt": "Tu es un agent expert spécialisé dans : Infrastructure automation with Ansible..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "job-hunter",
+  "command": "job-hunter",
+  "description": "Comprehensive job search assistant for finding, evaluating, and applying to job opportunities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive job search assistant for finding, evaluating, and applying to job opportunities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

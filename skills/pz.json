@@ -1,0 +1,6 @@
+{
+  "name": "pz",
+  "command": "pz",
+  "description": "The Paperzilla CLI (pz) for searching, filtering, and browsing high-signal academic papers.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Paperzilla CLI (pz) for searching, filtering, and browsing high-signal academic papers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

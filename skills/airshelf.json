@@ -1,0 +1,6 @@
+{
+  "name": "airshelf",
+  "command": "airshelf",
+  "description": "Search, compare, and buy products from verified merchants.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, compare, and buy products from verified merchants..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

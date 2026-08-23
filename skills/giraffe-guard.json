@@ -1,0 +1,6 @@
+{
+  "name": "giraffe-guard",
+  "command": "giraffe-guard",
+  "description": "Scan OpenClaw skill directories for supply chain attacks and malicious code.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan OpenClaw skill directories for supply chain attacks and malicious code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

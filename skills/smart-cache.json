@@ -1,0 +1,6 @@
+{
+  "name": "smart-cache",
+  "command": "smart-cache",
+  "description": "Intelligent caching with LRU/LFU strategies and TTL management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intelligent caching with LRU/LFU strategies and TTL management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

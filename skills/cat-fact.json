@@ -1,0 +1,6 @@
+{
+  "name": "cat-fact",
+  "command": "cat-fact",
+  "description": "Random cat facts and breed information from catfact.ninja.",
+  "prompt": "Tu es un agent expert spécialisé dans : Random cat facts and breed information from catfact.ninja..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

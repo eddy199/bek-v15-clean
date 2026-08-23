@@ -1,0 +1,6 @@
+{
+  "name": "visa-business-planner",
+  "command": "visa-business-planner",
+  "description": "This skill helps users create comprehensive business plans for obtaining a Japanese Business Manager Visa.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill helps users create comprehensive business plans for obtaining a Japanese Business Manager Visa..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

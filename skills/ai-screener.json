@@ -1,0 +1,6 @@
+{
+  "name": "ai-screener",
+  "command": "ai-screener",
+  "description": "Intellectia stock/crypto screener for Bullish/Bearish Tomorrow/Week/Month presets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intellectia stock/crypto screener for Bullish/Bearish Tomorrow/Week/Month presets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

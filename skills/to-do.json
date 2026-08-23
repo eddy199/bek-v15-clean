@@ -1,0 +1,6 @@
+{
+  "name": "to-do",
+  "command": "to-do",
+  "description": "Give your AI the power to act in the future.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give your AI the power to act in the future..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

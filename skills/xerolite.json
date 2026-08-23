@@ -1,0 +1,6 @@
+{
+  "name": "xerolite",
+  "command": "xerolite",
+  "description": "Integrate OpenClaw with Xerolite - IBKR.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate OpenClaw with Xerolite - IBKR..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

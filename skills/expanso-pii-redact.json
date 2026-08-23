@@ -1,0 +1,6 @@
+{
+  "name": "expanso-pii-redact",
+  "command": "expanso-pii-redact",
+  "description": "\"Redact PII from text, replacing sensitive data with placeholders\".",
+  "prompt": "Tu es un agent expert spécialisé dans : \"Redact PII from text, replacing sensitive data with placeholders\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

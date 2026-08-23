@@ -1,0 +1,6 @@
+{
+  "name": "heartbeat-scanner",
+  "command": "heartbeat-scanner",
+  "description": "Validate your agent nature through SHACL-based heartbeat analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Validate your agent nature through SHACL-based heartbeat analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

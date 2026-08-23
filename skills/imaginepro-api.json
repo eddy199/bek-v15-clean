@@ -1,0 +1,6 @@
+{
+  "name": "imaginepro-api",
+  "command": "imaginepro-api",
+  "description": "Generate AI images via ImaginePro API (Midjourney, Flux, Nano Banana, Lumi Girl, video)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI images via ImaginePro API (Midjourney, Flux, Nano Banana, Lumi Girl, video).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

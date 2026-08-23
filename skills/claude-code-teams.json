@@ -1,0 +1,6 @@
+{
+  "name": "claude-code-teams",
+  "command": "claude-code-teams",
+  "description": "Production skill for orchestrating Claude Code's native agent teams feature.",
+  "prompt": "Tu es un agent expert spécialisé dans : Production skill for orchestrating Claude Code's native agent teams feature..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

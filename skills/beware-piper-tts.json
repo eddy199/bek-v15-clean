@@ -1,0 +1,6 @@
+{
+  "name": "beware-piper-tts",
+  "command": "beware-piper-tts",
+  "description": "Local text-to-speech using Piper for voice message delivery.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local text-to-speech using Piper for voice message delivery..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

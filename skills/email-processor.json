@@ -1,0 +1,6 @@
+{
+  "name": "email-processor",
+  "command": "email-processor",
+  "description": "Automate Gmail inbox processing - categorizes unread emails, marks marketing/newsletters/promotions as read.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate Gmail inbox processing - categorizes unread emails, marks marketing/newsletters/promotions as read..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

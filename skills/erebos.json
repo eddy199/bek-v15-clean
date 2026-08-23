@@ -1,0 +1,6 @@
+{
+  "name": "erebos",
+  "command": "erebos",
+  "description": "Erebos namespace for Netsnek e.U. dark theme and theming engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : Erebos namespace for Netsnek e.U. dark theme and theming engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

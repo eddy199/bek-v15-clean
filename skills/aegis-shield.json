@@ -1,0 +1,6 @@
+{
+  "name": "aegis-shield",
+  "command": "aegis-shield",
+  "description": "Prompt-injection and data-exfiltration screening for untrusted text.",
+  "prompt": "Tu es un agent expert spécialisé dans : Prompt-injection and data-exfiltration screening for untrusted text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

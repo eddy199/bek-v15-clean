@@ -1,0 +1,6 @@
+{
+  "name": "workflow-engine",
+  "command": "workflow-engine",
+  "description": "Structural parity skeleton for queue-driven orchestration in a workflow context.",
+  "prompt": "Tu es un agent expert spécialisé dans : Structural parity skeleton for queue-driven orchestration in a workflow context..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

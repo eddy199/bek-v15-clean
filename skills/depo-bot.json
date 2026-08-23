@@ -1,0 +1,6 @@
+{
+  "name": "depo-bot",
+  "command": "depo-bot",
+  "description": "Produces structured trial preparation reports from deposition transcripts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Produces structured trial preparation reports from deposition transcripts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

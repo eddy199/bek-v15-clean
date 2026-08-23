@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-swiftui-view-generator",
+  "command": "fosmvvm-swiftui-view-generator",
+  "description": "Generate SwiftUI views that render FOSMVVM ViewModels.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate SwiftUI views that render FOSMVVM ViewModels..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "sera-lexicon",
+  "command": "sera-lexicon",
+  "description": "A functional implementation of the **Signal-Feeling Lexicon v3.1** and **Unified Dynamics Framework v5.7**.",
+  "prompt": "Tu es un agent expert spécialisé dans : A functional implementation of the **Signal-Feeling Lexicon v3.1** and **Unified Dynamics Framework v5.7**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

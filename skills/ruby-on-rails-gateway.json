@@ -1,0 +1,6 @@
+{
+  "name": "ruby-on-rails-gateway",
+  "command": "ruby-on-rails-gateway",
+  "description": "Configure and operate a Ruby On Rails Agent Gateway integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Configure and operate a Ruby On Rails Agent Gateway integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "greek-compliance-aade",
+  "command": "greek-compliance-aade",
+  "description": "Greek tax compliance with AADE/TAXIS integration — VAT, payroll, EFKA, municipal taxes, stamp duty.",
+  "prompt": "Tu es un agent expert spécialisé dans : Greek tax compliance with AADE/TAXIS integration — VAT, payroll, EFKA, municipal taxes, stamp duty..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

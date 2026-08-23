@@ -1,0 +1,6 @@
+{
+  "name": "llmfit",
+  "command": "llmfit",
+  "description": "Detect local hardware (RAM, CPU, GPU/VRAM) and recommend the best-fit local LLM models with optimal quantization.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detect local hardware (RAM, CPU, GPU/VRAM) and recommend the best-fit local LLM models with optimal quantization..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

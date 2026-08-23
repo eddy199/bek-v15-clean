@@ -1,0 +1,6 @@
+{
+  "name": "seedance",
+  "command": "seedance",
+  "description": "Generate cinematic video prompts for Seedance 2.0 (ByteDance)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate cinematic video prompts for Seedance 2.0 (ByteDance).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

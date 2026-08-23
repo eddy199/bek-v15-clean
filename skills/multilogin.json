@@ -1,0 +1,6 @@
+{
+  "name": "multilogin",
+  "command": "multilogin",
+  "description": "Use when you need to manage Multilogin X browser profiles — launch quick disposable profiles, list/start/stop saved.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when you need to manage Multilogin X browser profiles — launch quick disposable profiles, list/start/stop saved..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mobile-app-builder-ai",
+  "command": "mobile-app-builder-ai",
+  "description": "Build full-stack web and mobile apps from a text description.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build full-stack web and mobile apps from a text description..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

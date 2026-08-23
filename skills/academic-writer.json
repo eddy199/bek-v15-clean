@@ -1,0 +1,6 @@
+{
+  "name": "academic-writer",
+  "command": "academic-writer",
+  "description": "Professional LaTeX writing assistant.",
+  "prompt": "Tu es un agent expert spécialisé dans : Professional LaTeX writing assistant..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

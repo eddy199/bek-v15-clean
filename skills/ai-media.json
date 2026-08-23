@@ -1,0 +1,6 @@
+{
+  "name": "ai-media",
+  "command": "ai-media",
+  "description": "Full-stack AI media generation powered by GPU server (RTX 3090/3080/2070S).",
+  "prompt": "Tu es un agent expert spécialisé dans : Full-stack AI media generation powered by GPU server (RTX 3090/3080/2070S)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

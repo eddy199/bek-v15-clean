@@ -1,0 +1,6 @@
+{
+  "name": "relaycast",
+  "command": "relaycast",
+  "description": "summary: Structured messaging for multi-claw communication — channels, threads, DMs, reactions, search.",
+  "prompt": "Tu es un agent expert spécialisé dans : summary: Structured messaging for multi-claw communication — channels, threads, DMs, reactions, search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

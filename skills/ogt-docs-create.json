@@ -1,0 +1,6 @@
+{
+  "name": "ogt-docs-create",
+  "command": "ogt-docs-create",
+  "description": "Create new documentation entities in the docs-first system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create new documentation entities in the docs-first system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

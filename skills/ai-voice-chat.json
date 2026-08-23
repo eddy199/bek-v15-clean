@@ -1,0 +1,6 @@
+{
+  "name": "ai-voice-chat",
+  "command": "ai-voice-chat",
+  "description": "Hands-free AI voice conversations via AirPods or any Bluetooth headset.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hands-free AI voice conversations via AirPods or any Bluetooth headset..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

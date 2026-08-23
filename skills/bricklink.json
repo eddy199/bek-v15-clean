@@ -1,0 +1,6 @@
+{
+  "name": "bricklink",
+  "command": "bricklink",
+  "description": "BrickLink Store API helper/CLI (OAuth 1.0 request signing).",
+  "prompt": "Tu es un agent expert spécialisé dans : BrickLink Store API helper/CLI (OAuth 1.0 request signing)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

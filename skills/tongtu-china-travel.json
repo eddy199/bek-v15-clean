@@ -1,0 +1,6 @@
+{
+  "name": "tongtu-china-travel",
+  "command": "tongtu-china-travel",
+  "description": "Multilingual travel guide for foreign tourists visiting China — flights, hotels, trains, attractions, visa, payment, and",
+  "prompt": "Tu es un agent expert spécialisé dans : Multilingual travel guide for foreign tourists visiting China — flights, hotels, trains, attractions, visa, payment, and transport via FlyAI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

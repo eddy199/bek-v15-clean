@@ -1,0 +1,6 @@
+{
+  "name": "brewpage-publish",
+  "command": "brewpage-publish",
+  "description": "Publish HTML, Markdown, files, or sites to brewpage.app; returns URL.",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish HTML, Markdown, files, or sites to brewpage.app; returns URL..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

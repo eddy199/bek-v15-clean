@@ -1,0 +1,6 @@
+{
+  "name": "fleet",
+  "command": "fleet",
+  "description": "Monitor, manage, and orchestrate a fleet of OpenClaw agent gateways.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor, manage, and orchestrate a fleet of OpenClaw agent gateways..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "optical-quantum-skill",
+  "command": "optical-quantum-skill",
+  "description": "Simulates a quantum kernel using optical fiber storage and linear optics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Simulates a quantum kernel using optical fiber storage and linear optics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

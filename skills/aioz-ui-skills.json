@@ -1,0 +1,6 @@
+{
+  "name": "aioz-ui-skills",
+  "command": "aioz-ui-skills",
+  "description": "Build UI components and pages using AIOZ UI V3 design system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build UI components and pages using AIOZ UI V3 design system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

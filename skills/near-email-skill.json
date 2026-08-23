@@ -1,0 +1,6 @@
+{
+  "name": "near-email-skill",
+  "command": "near-email-skill",
+  "description": "Send and read blockchain-native emails using NEAR Email service.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and read blockchain-native emails using NEAR Email service..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cursor-cli-headless",
+  "command": "cursor-cli-headless",
+  "description": "Execute coding tasks using the Cursor CLI in headless print mode.",
+  "prompt": "Tu es un agent expert spécialisé dans : Execute coding tasks using the Cursor CLI in headless print mode..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mo-test-1",
+  "command": "mo-test-1",
+  "description": "Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

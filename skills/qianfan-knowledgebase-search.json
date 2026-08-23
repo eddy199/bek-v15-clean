@@ -1,0 +1,6 @@
+{
+  "name": "qianfan-knowledgebase-search",
+  "command": "qianfan-knowledgebase-search",
+  "description": "Search knowledge from Qianfan Knowledgebase.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search knowledge from Qianfan Knowledgebase..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

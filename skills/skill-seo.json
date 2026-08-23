@@ -1,0 +1,6 @@
+{
+  "name": "skill-seo",
+  "command": "skill-seo",
+  "description": "Optimize your ClawHub skill for maximum discoverability.",
+  "prompt": "Tu es un agent expert spécialisé dans : Optimize your ClawHub skill for maximum discoverability..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

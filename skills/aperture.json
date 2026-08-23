@@ -1,0 +1,6 @@
+{
+  "name": "aperture",
+  "command": "aperture",
+  "description": "Install and run Aperture, the L402 Lightning reverse proxy from Lightning Labs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Install and run Aperture, the L402 Lightning reverse proxy from Lightning Labs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

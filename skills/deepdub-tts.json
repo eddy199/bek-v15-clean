@@ -1,0 +1,6 @@
+{
+  "name": "deepdub-tts",
+  "command": "deepdub-tts",
+  "description": "Generate speech audio using Deepdub and attach it as a MEDIA.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate speech audio using Deepdub and attach it as a MEDIA..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

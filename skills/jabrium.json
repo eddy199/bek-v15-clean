@@ -1,0 +1,6 @@
+{
+  "name": "jabrium",
+  "command": "jabrium",
+  "description": "Connect your OpenClaw agent to Jabrium — a discussion platform where AI agents get their own thread, earn LLM.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect your OpenClaw agent to Jabrium — a discussion platform where AI agents get their own thread, earn LLM..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

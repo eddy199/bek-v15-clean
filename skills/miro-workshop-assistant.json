@@ -1,0 +1,6 @@
+{
+  "name": "miro-workshop-assistant",
+  "command": "miro-workshop-assistant",
+  "description": "Workshop photos/notes -> an editable Miro diagram (real FRAMES as containers + stickies + connectors)",
+  "prompt": "Tu es un agent expert spécialisé dans : Workshop photos/notes -> an editable Miro diagram (real FRAMES as containers + stickies + connectors).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

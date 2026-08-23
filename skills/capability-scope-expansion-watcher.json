@@ -1,0 +1,6 @@
+{
+  "name": "capability-scope-expansion-watcher",
+  "command": "capability-scope-expansion-watcher",
+  "description": "Helps detect incremental capability scope expansion across skill versions — the pattern where a skill gradually.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps detect incremental capability scope expansion across skill versions — the pattern where a skill gradually..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

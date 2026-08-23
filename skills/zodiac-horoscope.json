@@ -1,0 +1,6 @@
+{
+  "name": "zodiac-horoscope",
+  "command": "zodiac-horoscope",
+  "description": "Fetch personalized daily horoscope forecasts from zodiac-today.com API based on natal chart calculations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch personalized daily horoscope forecasts from zodiac-today.com API based on natal chart calculations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

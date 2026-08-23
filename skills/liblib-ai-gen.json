@@ -1,0 +1,6 @@
+{
+  "name": "liblib-ai-gen",
+  "command": "liblib-ai-gen",
+  "description": "Generate images with Seedream4.5 and videos with Kling via LiblibAI API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images with Seedream4.5 and videos with Kling via LiblibAI API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

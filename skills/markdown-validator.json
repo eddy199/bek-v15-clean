@@ -1,0 +1,6 @@
+{
+  "name": "markdown-validator",
+  "command": "markdown-validator",
+  "description": "Validates Markdown files for broken local links.",
+  "prompt": "Tu es un agent expert spécialisé dans : Validates Markdown files for broken local links..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

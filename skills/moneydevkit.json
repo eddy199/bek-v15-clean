@@ -1,0 +1,6 @@
+{
+  "name": "moneydevkit",
+  "command": "moneydevkit",
+  "description": "Accept payments on any website using moneydevkit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Accept payments on any website using moneydevkit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "yahooquery",
+  "command": "yahooquery",
+  "description": "Access Yahoo Finance data including real-time pricing, fundamentals, analyst estimates, options, news.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Yahoo Finance data including real-time pricing, fundamentals, analyst estimates, options, news..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

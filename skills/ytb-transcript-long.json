@@ -1,0 +1,6 @@
+{
+  "name": "ytb-transcript-long",
+  "command": "ytb-transcript-long",
+  "description": "YouTube long video (>1 hour) full verbatim transcription and translation workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : YouTube long video (>1 hour) full verbatim transcription and translation workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

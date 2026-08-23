@@ -1,0 +1,6 @@
+{
+  "name": "bailian-web-search",
+  "command": "bailian-web-search",
+  "description": "AI-optimized web search via Bailian(Alibaba ModelStdio) API.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-optimized web search via Bailian(Alibaba ModelStdio) API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

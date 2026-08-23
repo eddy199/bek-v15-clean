@@ -1,0 +1,6 @@
+{
+  "name": "agents-skill-security-audit",
+  "command": "agents-skill-security-audit",
+  "description": "Minimal helper to audit skill.md-style instructions for supply-chain risks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Minimal helper to audit skill.md-style instructions for supply-chain risks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

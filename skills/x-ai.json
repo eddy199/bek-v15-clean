@@ -1,0 +1,6 @@
+{
+  "name": "x-ai",
+  "command": "x-ai",
+  "description": "Chat with Grok models via xAI API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Chat with Grok models via xAI API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

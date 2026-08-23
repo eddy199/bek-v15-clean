@@ -1,0 +1,6 @@
+{
+  "name": "venice-admin",
+  "command": "venice-admin",
+  "description": "Venice AI account administration - check balance, view usage history, and manage API keys.",
+  "prompt": "Tu es un agent expert spécialisé dans : Venice AI account administration - check balance, view usage history, and manage API keys..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

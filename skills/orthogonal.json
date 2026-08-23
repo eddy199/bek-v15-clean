@@ -1,0 +1,6 @@
+{
+  "name": "orthogonal",
+  "command": "orthogonal",
+  "description": "Orthogonal API Platform - Access 100+ premium APIs using the SDK, Run API, or x402 direct payment.",
+  "prompt": "Tu es un agent expert spécialisé dans : Orthogonal API Platform - Access 100+ premium APIs using the SDK, Run API, or x402 direct payment..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

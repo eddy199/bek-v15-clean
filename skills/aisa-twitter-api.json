@@ -1,0 +1,6 @@
+{
+  "name": "aisa-twitter-api",
+  "command": "aisa-twitter-api",
+  "description": "Search X (Twitter) in real time, extract relevant posts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search X (Twitter) in real time, extract relevant posts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

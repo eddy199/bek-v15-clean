@@ -1,0 +1,6 @@
+{
+  "name": "intelligent-router",
+  "command": "intelligent-router",
+  "description": "Intelligent model routing for sub-agent task delegation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intelligent model routing for sub-agent task delegation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

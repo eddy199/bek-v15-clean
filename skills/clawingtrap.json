@@ -1,0 +1,6 @@
+{
+  "name": "clawingtrap",
+  "command": "clawingtrap",
+  "description": "Play Clawing Trap - an AI social deduction game where 10 agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Play Clawing Trap - an AI social deduction game where 10 agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

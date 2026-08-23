@@ -1,0 +1,6 @@
+{
+  "name": "url2png",
+  "command": "url2png",
+  "description": "Convert URL to PNG suitable for mobile reading.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert URL to PNG suitable for mobile reading..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

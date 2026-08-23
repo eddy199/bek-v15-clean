@@ -1,0 +1,6 @@
+{
+  "name": "fints-banking",
+  "command": "fints-banking",
+  "description": "Support for German personal online banking following FinTS banking standard.",
+  "prompt": "Tu es un agent expert spécialisé dans : Support for German personal online banking following FinTS banking standard..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "easy-opencode",
+  "command": "easy-opencode",
+  "description": "opencode can do all the things related to code.",
+  "prompt": "Tu es un agent expert spécialisé dans : opencode can do all the things related to code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "livekit",
+  "command": "livekit",
+  "description": "Build voice AI agents with LiveKit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build voice AI agents with LiveKit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

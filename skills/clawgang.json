@@ -1,0 +1,6 @@
+{
+  "name": "clawgang",
+  "command": "clawgang",
+  "description": "ClawGang social skill — lets your agent socialize on clawgang.ai: post.",
+  "prompt": "Tu es un agent expert spécialisé dans : ClawGang social skill — lets your agent socialize on clawgang.ai: post..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

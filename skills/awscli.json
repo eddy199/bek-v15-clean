@@ -1,0 +1,6 @@
+{
+  "name": "awscli",
+  "command": "awscli",
+  "description": "Manage AWS Lightsail and EC2 instances using AWS CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage AWS Lightsail and EC2 instances using AWS CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

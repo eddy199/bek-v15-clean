@@ -1,0 +1,6 @@
+{
+  "name": "gotchi-channeling",
+  "command": "gotchi-channeling",
+  "description": "Autonomous Aavegotchi Alchemica channeling via Bankr wallet.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous Aavegotchi Alchemica channeling via Bankr wallet..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

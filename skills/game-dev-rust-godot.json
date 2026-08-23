@@ -1,0 +1,6 @@
+{
+  "name": "game-dev-rust-godot",
+  "command": "game-dev-rust-godot",
+  "description": "Game development workflow using Rust+WASM or Godot 4.x for HTML5 games.",
+  "prompt": "Tu es un agent expert spécialisé dans : Game development workflow using Rust+WASM or Godot 4.x for HTML5 games..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

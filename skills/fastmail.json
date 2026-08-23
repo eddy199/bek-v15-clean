@@ -1,0 +1,6 @@
+{
+  "name": "fastmail",
+  "command": "fastmail",
+  "description": "Manages Fastmail email and calendar via JMAP and CalDAV APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manages Fastmail email and calendar via JMAP and CalDAV APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

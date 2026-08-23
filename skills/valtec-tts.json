@@ -1,0 +1,6 @@
+{
+  "name": "valtec-tts",
+  "command": "valtec-tts",
+  "description": "Local Vietnamese text-to-speech via VITS2 (offline, no cloud)",
+  "prompt": "Tu es un agent expert spécialisé dans : Local Vietnamese text-to-speech via VITS2 (offline, no cloud).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

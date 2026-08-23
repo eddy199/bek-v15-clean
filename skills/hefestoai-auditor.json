@@ -1,0 +1,6 @@
+{
+  "name": "hefestoai-auditor",
+  "command": "hefestoai-auditor",
+  "description": "AI-powered architectural guardian with Socratic Adaptive Constitution.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered architectural guardian with Socratic Adaptive Constitution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

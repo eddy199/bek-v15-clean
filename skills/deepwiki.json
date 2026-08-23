@@ -1,0 +1,6 @@
+{
+  "name": "deepwiki",
+  "command": "deepwiki",
+  "description": "Query the DeepWiki MCP server for GitHub repository documentation, wiki.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query the DeepWiki MCP server for GitHub repository documentation, wiki..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

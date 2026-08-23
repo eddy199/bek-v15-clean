@@ -1,0 +1,6 @@
+{
+  "name": "sol-self-learning",
+  "command": "sol-self-learning",
+  "description": "Persistent memory and self-improvement for AI agents. Writes and refines its own memory files over time.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent memory and self-improvement for AI agents. Writes and refines its own memory files over time..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

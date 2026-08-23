@@ -1,0 +1,6 @@
+{
+  "name": "multi-agent-roles",
+  "command": "multi-agent-roles",
+  "description": "This skill provides a comprehensive framework for designing professional multi-agent systems.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill provides a comprehensive framework for designing professional multi-agent systems..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

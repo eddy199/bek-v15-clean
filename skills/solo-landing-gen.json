@@ -1,0 +1,6 @@
+{
+  "name": "solo-landing-gen",
+  "command": "solo-landing-gen",
+  "description": "Generate landing page content from PRD — hero section, features, A/B headline variants, CTA, and SEO meta tags.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate landing page content from PRD — hero section, features, A/B headline variants, CTA, and SEO meta tags..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

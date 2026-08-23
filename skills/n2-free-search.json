@@ -1,0 +1,6 @@
+{
+  "name": "n2-free-search",
+  "command": "n2-free-search",
+  "description": "Free, unlimited web search for AI agents via SearXNG — no API keys needed.",
+  "prompt": "Tu es un agent expert spécialisé dans : Free, unlimited web search for AI agents via SearXNG — no API keys needed..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

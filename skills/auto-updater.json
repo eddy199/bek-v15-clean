@@ -1,0 +1,6 @@
+{
+  "name": "auto-updater",
+  "command": "auto-updater",
+  "description": "Automatically update Clawdbot and all installed skills once.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically update Clawdbot and all installed skills once..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

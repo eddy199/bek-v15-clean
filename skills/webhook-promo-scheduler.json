@@ -1,0 +1,6 @@
+{
+  "name": "webhook-promo-scheduler",
+  "command": "webhook-promo-scheduler",
+  "description": "Schedule and send promo/alert messages to a Discord webhook URL with an anti-spam ledger.",
+  "prompt": "Tu es un agent expert spécialisé dans : Schedule and send promo/alert messages to a Discord webhook URL with an anti-spam ledger..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "renzo",
+  "command": "renzo",
+  "description": "Query Renzo crypto liquid restaking protocol — DeFi vault yields, TVL, ezETH exchange rates, EigenLayer operators.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Renzo crypto liquid restaking protocol — DeFi vault yields, TVL, ezETH exchange rates, EigenLayer operators..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "spatix",
+  "command": "spatix",
+  "description": "Create beautiful maps in seconds.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create beautiful maps in seconds..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

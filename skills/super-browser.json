@@ -1,0 +1,6 @@
+{
+  "name": "super-browser",
+  "command": "super-browser",
+  "description": "**The ultimate browser automation framework.** Combines the best of 8 top-rated browser skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : **The ultimate browser automation framework.** Combines the best of 8 top-rated browser skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

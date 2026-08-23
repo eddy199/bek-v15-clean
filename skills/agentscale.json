@@ -1,0 +1,6 @@
+{
+  "name": "agentscale",
+  "command": "agentscale",
+  "description": "Deploy web apps and APIs to a public URL with a single command.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy web apps and APIs to a public URL with a single command..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

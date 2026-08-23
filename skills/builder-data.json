@@ -1,0 +1,6 @@
+{
+  "name": "builder-data",
+  "command": "builder-data",
+  "description": "Query builder reputation data via Talent Protocol API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query builder reputation data via Talent Protocol API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "web-monitor-pro",
+  "command": "web-monitor-pro",
+  "description": "Monitor web pages for changes, price drops, stock availability, and custom conditions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor web pages for changes, price drops, stock availability, and custom conditions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ddgs-search",
+  "command": "ddgs-search",
+  "description": "Free multi-engine web search via ddgs CLI (DuckDuckGo, Google, Bing, Brave, Yandex, Yahoo, Wikipedia) + arXiv API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Free multi-engine web search via ddgs CLI (DuckDuckGo, Google, Bing, Brave, Yandex, Yahoo, Wikipedia) + arXiv API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

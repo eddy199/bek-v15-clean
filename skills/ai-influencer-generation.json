@@ -1,0 +1,6 @@
+{
+  "name": "ai-influencer-generation",
+  "command": "ai-influencer-generation",
+  "description": "Generate consistent AI influencer personas and social media content using each::sense API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate consistent AI influencer personas and social media content using each::sense API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

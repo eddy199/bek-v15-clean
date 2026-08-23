@@ -1,0 +1,6 @@
+{
+  "name": "communication-coach",
+  "command": "communication-coach",
+  "description": "Adaptive communication coaching that shapes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Adaptive communication coaching that shapes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

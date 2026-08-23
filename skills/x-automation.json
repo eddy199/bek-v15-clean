@@ -1,0 +1,6 @@
+{
+  "name": "x-automation",
+  "command": "x-automation",
+  "description": "Automate X posts via browser control - bypass $200/month API costs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate X posts via browser control - bypass $200/month API costs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "happenstance",
+  "command": "happenstance",
+  "description": "Search your professional network and research people using the Happenstance API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search your professional network and research people using the Happenstance API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

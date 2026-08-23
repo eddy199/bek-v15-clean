@@ -1,0 +1,6 @@
+{
+  "name": "summarizerx64",
+  "command": "summarizerx64",
+  "description": "Summarize URLs or files with the summarize CLI (x86_64 infrastructure supported).",
+  "prompt": "Tu es un agent expert spécialisé dans : Summarize URLs or files with the summarize CLI (x86_64 infrastructure supported)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

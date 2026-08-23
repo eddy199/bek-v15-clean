@@ -1,0 +1,6 @@
+{
+  "name": "parakeet-local-asr",
+  "command": "parakeet-local-asr",
+  "description": "Install and operate local NVIDIA Parakeet ASR for OpenClaw with an OpenAI-compatible transcription API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Install and operate local NVIDIA Parakeet ASR for OpenClaw with an OpenAI-compatible transcription API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

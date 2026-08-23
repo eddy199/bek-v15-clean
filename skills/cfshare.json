@@ -1,0 +1,6 @@
+{
+  "name": "cfshare",
+  "command": "cfshare",
+  "description": "Use the cfshare CLI to expose local ports/files as temporary Cloudflare Quick Tunnel URLs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the cfshare CLI to expose local ports/files as temporary Cloudflare Quick Tunnel URLs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

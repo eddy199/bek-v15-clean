@@ -1,0 +1,6 @@
+{
+  "name": "brand-guidelines",
+  "command": "brand-guidelines",
+  "description": "Applies Anthropic's official brand colors and typography.",
+  "prompt": "Tu es un agent expert spécialisé dans : Applies Anthropic's official brand colors and typography..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

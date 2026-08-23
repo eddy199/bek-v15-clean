@@ -1,0 +1,6 @@
+{
+  "name": "appstore-rating-pulse",
+  "command": "appstore-rating-pulse",
+  "description": "Monitor App Store ratings for any iOS app across multiple countries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor App Store ratings for any iOS app across multiple countries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

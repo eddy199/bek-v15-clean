@@ -1,0 +1,6 @@
+{
+  "name": "ceaser",
+  "command": "ceaser",
+  "description": "Interact with the Ceaser privacy protocol on Base L2 using the ceaser-mcp MCP tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with the Ceaser privacy protocol on Base L2 using the ceaser-mcp MCP tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

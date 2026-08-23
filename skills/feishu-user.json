@@ -1,0 +1,6 @@
+{
+  "name": "feishu-user",
+  "command": "feishu-user",
+  "description": "Feishu document operations (User Access Token version)",
+  "prompt": "Tu es un agent expert spécialisé dans : Feishu document operations (User Access Token version).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

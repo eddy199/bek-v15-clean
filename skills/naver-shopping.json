@@ -1,0 +1,6 @@
+{
+  "name": "naver-shopping",
+  "command": "naver-shopping",
+  "description": "Search for products on Naver Shopping.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search for products on Naver Shopping..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

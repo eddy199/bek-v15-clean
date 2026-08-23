@@ -1,0 +1,6 @@
+{
+  "name": "figma",
+  "command": "figma",
+  "description": "Professional Figma design analysis and asset export.",
+  "prompt": "Tu es un agent expert spécialisé dans : Professional Figma design analysis and asset export..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "sell-evoweb-ai",
+  "command": "sell-evoweb-ai",
+  "description": "Create AI-First Website with GEO (Generative Engine Optimization) and marketing rules to convert visitors into leads.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create AI-First Website with GEO (Generative Engine Optimization) and marketing rules to convert visitors into leads..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

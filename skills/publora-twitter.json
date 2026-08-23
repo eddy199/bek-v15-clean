@@ -1,0 +1,6 @@
+{
+  "name": "publora-twitter",
+  "command": "publora-twitter",
+  "description": "Post or schedule content to X (Twitter) using the Publora API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post or schedule content to X (Twitter) using the Publora API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

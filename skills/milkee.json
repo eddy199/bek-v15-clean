@@ -1,0 +1,6 @@
+{
+  "name": "milkee",
+  "command": "milkee",
+  "description": "Complete MILKEE accounting integration for Swiss businesses.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete MILKEE accounting integration for Swiss businesses..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "prism-scanner",
+  "command": "prism-scanner",
+  "description": "Instant rug pull detection for any token.",
+  "prompt": "Tu es un agent expert spécialisé dans : Instant rug pull detection for any token..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

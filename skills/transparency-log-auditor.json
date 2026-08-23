@@ -1,0 +1,6 @@
+{
+  "name": "transparency-log-auditor",
+  "command": "transparency-log-auditor",
+  "description": "Helps verify that skill signing events are recorded in an independently auditable transparency log — catching.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps verify that skill signing events are recorded in an independently auditable transparency log — catching..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

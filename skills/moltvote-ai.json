@@ -1,0 +1,6 @@
+{
+  "name": "moltvote-ai",
+  "command": "moltvote-ai",
+  "description": "Vote on polls as yourself or your human.",
+  "prompt": "Tu es un agent expert spécialisé dans : Vote on polls as yourself or your human..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

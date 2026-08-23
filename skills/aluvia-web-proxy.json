@@ -1,0 +1,6 @@
+{
+  "name": "aluvia-web-proxy",
+  "command": "aluvia-web-proxy",
+  "description": "Unblock websites and bypass CAPTCHAs and 403.",
+  "prompt": "Tu es un agent expert spécialisé dans : Unblock websites and bypass CAPTCHAs and 403..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

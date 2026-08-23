@@ -1,0 +1,6 @@
+{
+  "name": "oc-daily-business-report",
+  "command": "oc-daily-business-report",
+  "description": "Generate daily business briefings from multiple data sources.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate daily business briefings from multiple data sources..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

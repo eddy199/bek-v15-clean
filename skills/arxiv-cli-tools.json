@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-cli-tools",
+  "command": "arxiv-cli-tools",
+  "description": "| Key | Value |.",
+  "prompt": "Tu es un agent expert spécialisé dans : | Key | Value |..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

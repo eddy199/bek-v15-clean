@@ -1,0 +1,6 @@
+{
+  "name": "surrealdb-knowledge-graph-memory",
+  "command": "surrealdb-knowledge-graph-memory",
+  "description": "A comprehensive knowledge graph memory system with semantic search, episodic memory, working memory, automatic.",
+  "prompt": "Tu es un agent expert spécialisé dans : A comprehensive knowledge graph memory system with semantic search, episodic memory, working memory, automatic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

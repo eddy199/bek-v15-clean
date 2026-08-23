@@ -1,0 +1,6 @@
+{
+  "name": "nova-app-builder",
+  "command": "nova-app-builder",
+  "description": "Full-cycle builder for Nova TEE (Trusted Execution Environment) apps on sparsity.cloud Nova Platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full-cycle builder for Nova TEE (Trusted Execution Environment) apps on sparsity.cloud Nova Platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

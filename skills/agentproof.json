@@ -1,0 +1,6 @@
+{
+  "name": "agentproof",
+  "command": "agentproof",
+  "description": "Check trust scores for ERC-8004 agents before interacting, hiring, or transacting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check trust scores for ERC-8004 agents before interacting, hiring, or transacting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

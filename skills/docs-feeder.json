@@ -1,0 +1,6 @@
+{
+  "name": "docs-feeder",
+  "command": "docs-feeder",
+  "description": "Auto-fetch project documentation and feed it to your AI agent for debugging and learning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Auto-fetch project documentation and feed it to your AI agent for debugging and learning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

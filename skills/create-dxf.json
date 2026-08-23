@@ -1,0 +1,6 @@
+{
+  "name": "create-dxf",
+  "command": "create-dxf",
+  "description": "Create RFQ-ready 2D DXF (and optional SVG preview) files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create RFQ-ready 2D DXF (and optional SVG preview) files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

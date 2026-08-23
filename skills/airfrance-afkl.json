@@ -1,0 +1,6 @@
+{
+  "name": "airfrance-afkl",
+  "command": "airfrance-afkl",
+  "description": "Track Air France flights using the Air France–KLM Open Data APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track Air France flights using the Air France–KLM Open Data APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "fractal-memory",
+  "command": "fractal-memory",
+  "description": "Automated hierarchical memory compression system that prevents context overflow through daily→weekly→monthly→core.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated hierarchical memory compression system that prevents context overflow through daily→weekly→monthly→core..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

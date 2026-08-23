@@ -1,0 +1,6 @@
+{
+  "name": "sprite-sheet",
+  "command": "sprite-sheet",
+  "description": "**Category**: Game Development | Asset Optimization.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Category**: Game Development | Asset Optimization..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

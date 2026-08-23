@@ -1,0 +1,6 @@
+{
+  "name": "constraint-engine",
+  "command": "constraint-engine",
+  "description": "Learn from consequences, not instructions — generate and enforce constraints from experience.",
+  "prompt": "Tu es un agent expert spécialisé dans : Learn from consequences, not instructions — generate and enforce constraints from experience..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

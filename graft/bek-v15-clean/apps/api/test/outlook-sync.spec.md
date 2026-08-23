@@ -1,0 +1,23 @@
+# bek-v15-clean/apps/api/test/outlook-sync.spec.ts
+
+- Ok · type · L12-L12 — type Ok<T> = { outcome: "ok"; data: T };
+- NotOk · type · L13-L17 — type NotOk = | { outcome: "cursor-invalid"; reason: string } | { outcome: "unauthorized"; reason: string } | { outcome: "rate-limited"; reason: string; retryAfterMs: number } | { outcome: "failed"; reason: string; retryable: boolean };
+- ok · function · L19-L19 — ok = <T>(data: T): Ok<T>
+- Harness · type · L29-L37 — type Harness = { service: OutlookSyncService; stored: IncomingMessage[]; settled: { cursor?: string | null }[]; rateLimited: number[]; reconnected: string[]; failed: string[]; meResolvedAt: { value: number }; };
+- harness · function · L39-L127 — function harness(options: { folder?: (name: string) => Ok<{ id?: string }> | NotOk; pages?: GraphMessage[][]; meDelayMs?: number; }): Harness
+- me · method · L55-L61 — async me()
+- folder · method · L62-L66 — async folder(_token: string, name: string)
+- listMessages · method · L67-L73 — async listMessages()
+- nextPage · method · L74-L82 — async nextPage()
+- accessTokenFor · method · L86-L88 — async accessTokenFor()
+- markRunning · method · L92-L92 — async markRunning()
+- settle · method · L93-L95 — async settle(_id: string, update: { cursor?: string | null })
+- clearCursor · method · L96-L96 — async clearCursor()
+- markNeedsReconnect · method · L97-L99 — async markNeedsReconnect(_id: string, reason: string)
+- markRateLimited · method · L100-L102 — async markRateLimited(_id: string, retryAfterMs: number)
+- markFailed · method · L103-L105 — async markFailed(_id: string, reason: string)
+- context · method · L109-L111 — async context()
+- store · method · L112-L115 — async store(_row: MailboxSync, _options: unknown, parsed: IncomingMessage)
+- rowWith · function · L129-L130 — rowWith = (cursor: string | null): MailboxSync
+- message · function · L132-L146 — function message(overrides: Partial<GraphMessage> = {}): GraphMessage
+- bulk · function · L294-L308 — bulk = (count: number, offset: number): GraphMessage[]

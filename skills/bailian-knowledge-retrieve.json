@@ -1,0 +1,6 @@
+{
+  "name": "bailian-knowledge-retrieve",
+  "command": "bailian-knowledge-retrieve",
+  "description": "Bailian KnowledgeBase(Provided by Alibaba ModelStdio) offers to retrieve any proprietary data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bailian KnowledgeBase(Provided by Alibaba ModelStdio) offers to retrieve any proprietary data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "fitbit-analytics",
+  "command": "fitbit-analytics",
+  "description": "Fitbit health and fitness data integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fitbit health and fitness data integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

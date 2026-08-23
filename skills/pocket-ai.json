@@ -1,0 +1,6 @@
+{
+  "name": "pocket-ai",
+  "command": "pocket-ai",
+  "description": "**Voice recording transcription, semantic search, and meeting intelligence across all conversations.**.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Voice recording transcription, semantic search, and meeting intelligence across all conversations.**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

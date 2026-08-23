@@ -1,0 +1,6 @@
+{
+  "name": "rho-telegram-alerts",
+  "command": "rho-telegram-alerts",
+  "description": "Send formatted trading alerts, portfolio updates, and market signals via Telegram.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send formatted trading alerts, portfolio updates, and market signals via Telegram..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

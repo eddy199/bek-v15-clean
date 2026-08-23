@@ -1,0 +1,6 @@
+{
+  "name": "mobilerun",
+  "command": "mobilerun",
+  "description": "Control Android devices: tap, swipe, type, screenshot (iOS coming soon).",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Android devices: tap, swipe, type, screenshot (iOS coming soon)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

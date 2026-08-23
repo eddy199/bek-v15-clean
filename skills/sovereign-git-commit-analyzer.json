@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-git-commit-analyzer",
+  "command": "sovereign-git-commit-analyzer",
+  "description": "A comprehensive git commit history analysis tool that generates detailed reports.",
+  "prompt": "Tu es un agent expert spécialisé dans : A comprehensive git commit history analysis tool that generates detailed reports..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

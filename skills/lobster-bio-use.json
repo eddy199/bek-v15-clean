@@ -1,0 +1,6 @@
+{
+  "name": "lobster-bio-use",
+  "command": "lobster-bio-use",
+  "description": "Analyze biological data using Lobster AI — single-cell RNA-seq, bulk RNA-seq, literature mining, dataset discovery.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze biological data using Lobster AI — single-cell RNA-seq, bulk RNA-seq, literature mining, dataset discovery..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

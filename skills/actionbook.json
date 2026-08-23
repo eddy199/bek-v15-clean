@@ -1,0 +1,6 @@
+{
+  "name": "actionbook",
+  "command": "actionbook",
+  "description": "Activate when the user needs to interact with any website — browser automation, web scraping, screenshots, form.",
+  "prompt": "Tu es un agent expert spécialisé dans : Activate when the user needs to interact with any website — browser automation, web scraping, screenshots, form..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

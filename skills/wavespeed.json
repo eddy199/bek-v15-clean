@@ -1,0 +1,6 @@
+{
+  "name": "wavespeed",
+  "command": "wavespeed",
+  "description": "Generate and edit images and videos using WaveSpeed AI's 700+ model library.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate and edit images and videos using WaveSpeed AI's 700+ model library..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

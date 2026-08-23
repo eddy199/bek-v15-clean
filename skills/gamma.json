@@ -1,0 +1,6 @@
+{
+  "name": "gamma",
+  "command": "gamma",
+  "description": "Generate AI-powered presentations, documents, and social posts using Gamma.app.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI-powered presentations, documents, and social posts using Gamma.app..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

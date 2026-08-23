@@ -1,0 +1,6 @@
+{
+  "name": "api-key-ui-tab",
+  "command": "api-key-ui-tab",
+  "description": "API Keys management UI tab for OpenClaw dashboard.",
+  "prompt": "Tu es un agent expert spécialisé dans : API Keys management UI tab for OpenClaw dashboard..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

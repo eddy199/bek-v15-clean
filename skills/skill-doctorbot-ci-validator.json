@@ -1,0 +1,6 @@
+{
+  "name": "skill-doctorbot-ci-validator",
+  "command": "skill-doctorbot-ci-validator",
+  "description": "Stop failing in production.",
+  "prompt": "Tu es un agent expert spécialisé dans : Stop failing in production..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

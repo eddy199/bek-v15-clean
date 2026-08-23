@@ -1,0 +1,6 @@
+{
+  "name": "bring-recipes",
+  "command": "bring-recipes",
+  "description": "Use when user wants to browse recipe inspirations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when user wants to browse recipe inspirations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

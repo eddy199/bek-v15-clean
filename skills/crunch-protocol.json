@@ -1,0 +1,6 @@
+{
+  "name": "crunch-protocol",
+  "command": "crunch-protocol",
+  "description": "Natural language interface for Crunch Protocol CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Natural language interface for Crunch Protocol CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

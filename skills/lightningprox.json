@@ -1,0 +1,6 @@
+{
+  "name": "lightningprox",
+  "command": "lightningprox",
+  "description": "Pay-per-request AI model access via Bitcoin Lightning using prepaid spend tokens.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pay-per-request AI model access via Bitcoin Lightning using prepaid spend tokens..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "playwright-skill",
+  "command": "playwright-skill",
+  "description": "Complete browser automation with Playwright.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete browser automation with Playwright..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

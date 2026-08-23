@@ -1,0 +1,6 @@
+{
+  "name": "ogt-docs-create-task",
+  "command": "ogt-docs-create-task",
+  "description": "Create and manage task documents in the docs/todo/ workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage task documents in the docs/todo/ workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

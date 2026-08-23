@@ -1,0 +1,6 @@
+{
+  "name": "safe-backup",
+  "command": "safe-backup",
+  "description": "Backup OpenClaw state directory and workspace.",
+  "prompt": "Tu es un agent expert spécialisé dans : Backup OpenClaw state directory and workspace..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

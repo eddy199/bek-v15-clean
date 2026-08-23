@@ -1,0 +1,6 @@
+{
+  "name": "home-music",
+  "command": "home-music",
+  "description": "Control whole-house music scenes combining Spotify playback.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control whole-house music scenes combining Spotify playback..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

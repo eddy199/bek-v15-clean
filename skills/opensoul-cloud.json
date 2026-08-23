@@ -1,0 +1,6 @@
+{
+  "name": "opensoul-cloud",
+  "command": "opensoul-cloud",
+  "description": "Share anonymized OpenClaw configurations with the OpenSoul community.",
+  "prompt": "Tu es un agent expert spécialisé dans : Share anonymized OpenClaw configurations with the OpenSoul community..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

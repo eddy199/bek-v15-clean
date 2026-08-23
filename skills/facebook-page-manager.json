@@ -1,0 +1,6 @@
+{
+  "name": "facebook-page-manager",
+  "command": "facebook-page-manager",
+  "description": "Manage Facebook Pages via Meta Graph API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Facebook Pages via Meta Graph API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ant-design-skill",
+  "command": "ant-design-skill",
+  "description": "Front-end design skill for building React UIs with Ant Design (antd): component patterns, layout, forms, tables.",
+  "prompt": "Tu es un agent expert spécialisé dans : Front-end design skill for building React UIs with Ant Design (antd): component patterns, layout, forms, tables..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "aave-liquidation-monitor",
+  "command": "aave-liquidation-monitor",
+  "description": "Proactive monitoring of Aave V3 borrow positions with liquidation alerts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Proactive monitoring of Aave V3 borrow positions with liquidation alerts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

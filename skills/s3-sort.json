@@ -1,0 +1,6 @@
+{
+  "name": "s3-sort",
+  "command": "s3-sort",
+  "description": "Upload many files to S3 with automatic organization by first-character prefixes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Upload many files to S3 with automatic organization by first-character prefixes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

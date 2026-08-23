@@ -1,0 +1,6 @@
+{
+  "name": "cleanapp",
+  "command": "cleanapp",
+  "description": "This is a **skill package** that lets an agent submit **any problem signal** into CleanApp (bugs, incidents, scams.",
+  "prompt": "Tu es un agent expert spécialisé dans : This is a **skill package** that lets an agent submit **any problem signal** into CleanApp (bugs, incidents, scams..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

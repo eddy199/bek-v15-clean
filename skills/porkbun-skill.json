@@ -1,0 +1,6 @@
+{
+  "name": "porkbun-skill",
+  "command": "porkbun-skill",
+  "description": "Manage Porkbun DNS records and domains via API v3.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Porkbun DNS records and domains via API v3..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

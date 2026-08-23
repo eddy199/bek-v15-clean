@@ -1,0 +1,6 @@
+{
+  "name": "pipedream-connect",
+  "command": "pipedream-connect",
+  "description": "Connect 2,000+ APIs with managed OAuth via Pipedream.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect 2,000+ APIs with managed OAuth via Pipedream..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

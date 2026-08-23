@@ -1,0 +1,6 @@
+{
+  "name": "stirling-pdf",
+  "command": "stirling-pdf",
+  "description": "PDF manipulation via Stirling-PDF API.",
+  "prompt": "Tu es un agent expert spécialisé dans : PDF manipulation via Stirling-PDF API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

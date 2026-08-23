@@ -1,0 +1,6 @@
+{
+  "name": "agentcli-go",
+  "command": "agentcli-go",
+  "description": "agentcli-go framework reference for building Go CLI tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : agentcli-go framework reference for building Go CLI tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

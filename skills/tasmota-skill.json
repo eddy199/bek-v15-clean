@@ -1,0 +1,6 @@
+{
+  "name": "tasmota-skill",
+  "command": "tasmota-skill",
+  "description": "Discover, monitor, and control Tasmota smart home devices on local networks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Discover, monitor, and control Tasmota smart home devices on local networks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

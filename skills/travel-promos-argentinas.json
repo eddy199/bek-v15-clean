@@ -1,0 +1,6 @@
+{
+  "name": "travel-promos-argentinas",
+  "command": "travel-promos-argentinas",
+  "description": "Consulta promociones de viajes desde Argentina usando Anduin Promos API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Consulta promociones de viajes desde Argentina usando Anduin Promos API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

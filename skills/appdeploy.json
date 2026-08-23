@@ -1,0 +1,6 @@
+{
+  "name": "appdeploy",
+  "command": "appdeploy",
+  "description": "Deploy web apps with backend APIs, database.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy web apps with backend APIs, database..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

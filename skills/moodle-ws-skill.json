@@ -1,0 +1,6 @@
+{
+  "name": "moodle-ws-skill",
+  "command": "moodle-ws-skill",
+  "description": "Integrar con Moodle 4.x usando Web Services REST.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrar con Moodle 4.x usando Web Services REST..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

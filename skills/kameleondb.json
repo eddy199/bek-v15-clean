@@ -1,0 +1,6 @@
+{
+  "name": "kameleondb",
+  "command": "kameleondb",
+  "description": "Store and query structured data without planning schemas upfront.",
+  "prompt": "Tu es un agent expert spécialisé dans : Store and query structured data without planning schemas upfront..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

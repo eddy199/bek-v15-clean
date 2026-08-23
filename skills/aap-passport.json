@@ -1,0 +1,6 @@
+{
+  "name": "aap-passport",
+  "command": "aap-passport",
+  "description": "Agent Attestation Protocol - The Reverse Turing Test.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent Attestation Protocol - The Reverse Turing Test..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

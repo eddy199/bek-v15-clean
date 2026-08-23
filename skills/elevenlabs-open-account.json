@@ -1,0 +1,6 @@
+{
+  "name": "elevenlabs-open-account",
+  "command": "elevenlabs-open-account",
+  "description": "Guides agents through opening.",
+  "prompt": "Tu es un agent expert spécialisé dans : Guides agents through opening..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

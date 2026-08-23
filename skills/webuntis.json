@@ -1,0 +1,6 @@
+{
+  "name": "webuntis",
+  "command": "webuntis",
+  "description": "Read-only access to Untis/WebUntis student timetables.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read-only access to Untis/WebUntis student timetables..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

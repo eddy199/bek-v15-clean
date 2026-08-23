@@ -1,0 +1,6 @@
+{
+  "name": "yt-downloader",
+  "command": "yt-downloader",
+  "description": "Download YouTube videos as MP4 at highest quality.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download YouTube videos as MP4 at highest quality..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

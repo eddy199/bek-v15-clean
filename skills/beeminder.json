@@ -1,0 +1,6 @@
+{
+  "name": "beeminder",
+  "command": "beeminder",
+  "description": "Beeminder API for goal tracking and commitment devices.",
+  "prompt": "Tu es un agent expert spécialisé dans : Beeminder API for goal tracking and commitment devices..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "gandi-skill",
+  "command": "gandi-skill",
+  "description": "Manage Gandi domains, DNS, email, and SSL certificates.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Gandi domains, DNS, email, and SSL certificates..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

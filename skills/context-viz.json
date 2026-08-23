@@ -1,0 +1,6 @@
+{
+  "name": "context-viz",
+  "command": "context-viz",
+  "description": "Visualize the current context window usage — token estimates per component (system prompt, tools, workspace files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Visualize the current context window usage — token estimates per component (system prompt, tools, workspace files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

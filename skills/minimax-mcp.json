@@ -1,0 +1,6 @@
+{
+  "name": "minimax-mcp",
+  "command": "minimax-mcp",
+  "description": "MiniMax MCP server for web search and image understanding.",
+  "prompt": "Tu es un agent expert spécialisé dans : MiniMax MCP server for web search and image understanding..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

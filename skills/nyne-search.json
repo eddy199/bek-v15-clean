@@ -1,0 +1,6 @@
+{
+  "name": "nyne-search",
+  "command": "nyne-search",
+  "description": "Search for people using natural language queries with the Nyne Search API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search for people using natural language queries with the Nyne Search API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

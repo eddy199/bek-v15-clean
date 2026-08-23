@@ -1,0 +1,6 @@
+{
+  "name": "upinvoice",
+  "command": "upinvoice",
+  "description": "This skill allows any OpenClaw-powered agent to extract structured JSON data from invoice images or PDFs.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill allows any OpenClaw-powered agent to extract structured JSON data from invoice images or PDFs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

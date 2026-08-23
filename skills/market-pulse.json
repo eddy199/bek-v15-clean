@@ -1,0 +1,6 @@
+{
+  "name": "market-pulse",
+  "command": "market-pulse",
+  "description": "Use when user asks about crypto prices, DeFi yields, market sentiment, fear and greed index, stock prices, upcoming.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when user asks about crypto prices, DeFi yields, market sentiment, fear and greed index, stock prices, upcoming..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

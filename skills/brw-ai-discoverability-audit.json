@@ -1,0 +1,6 @@
+{
+  "name": "brw-ai-discoverability-audit",
+  "command": "brw-ai-discoverability-audit",
+  "description": "Audit how a brand appears in AI-powered search (ChatGPT, Perplexity, Claude, Gemini)",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit how a brand appears in AI-powered search (ChatGPT, Perplexity, Claude, Gemini).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

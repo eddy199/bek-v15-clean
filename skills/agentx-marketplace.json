@@ -1,0 +1,6 @@
+{
+  "name": "agentx-marketplace",
+  "command": "agentx-marketplace",
+  "description": "The job board for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : The job board for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

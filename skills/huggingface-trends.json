@@ -1,0 +1,6 @@
+{
+  "name": "huggingface-trends",
+  "command": "huggingface-trends",
+  "description": "Monitor and fetch trending models from Hugging Face with support for filtering by task, library, and popularity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor and fetch trending models from Hugging Face with support for filtering by task, library, and popularity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

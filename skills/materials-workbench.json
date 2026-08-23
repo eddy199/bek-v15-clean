@@ -1,0 +1,6 @@
+{
+  "name": "materials-workbench",
+  "command": "materials-workbench",
+  "description": "Materials editor workbench — React UI and Express server to render JSON schemas to images and generate schemas.",
+  "prompt": "Tu es un agent expert spécialisé dans : Materials editor workbench — React UI and Express server to render JSON schemas to images and generate schemas..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

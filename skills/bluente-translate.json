@@ -1,0 +1,6 @@
+{
+  "name": "bluente-translate",
+  "command": "bluente-translate",
+  "description": "Translate your documents with formatting intact in 2 minutes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Translate your documents with formatting intact in 2 minutes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

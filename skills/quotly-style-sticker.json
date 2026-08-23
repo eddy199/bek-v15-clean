@@ -1,0 +1,6 @@
+{
+  "name": "quotly-style-sticker",
+  "command": "quotly-style-sticker",
+  "description": "Generate QuotLy-style stickers from OpenClaw context and return MEDIA for auto-send.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate QuotLy-style stickers from OpenClaw context and return MEDIA for auto-send..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

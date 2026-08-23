@@ -1,0 +1,6 @@
+{
+  "name": "openrouter-usage",
+  "command": "openrouter-usage",
+  "description": "Fetch real-time OpenRouter usage totals and historical per-model spend.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch real-time OpenRouter usage totals and historical per-model spend..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

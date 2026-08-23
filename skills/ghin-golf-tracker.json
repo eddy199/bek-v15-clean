@@ -1,0 +1,6 @@
+{
+  "name": "ghin-golf-tracker",
+  "command": "ghin-golf-tracker",
+  "description": "OpenClaw skill for analyzing GHIN (Golf Handicap and Information Network) golf statistics and handicap tracking.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw skill for analyzing GHIN (Golf Handicap and Information Network) golf statistics and handicap tracking..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

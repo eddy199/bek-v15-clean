@@ -1,0 +1,6 @@
+{
+  "name": "arc-skill-scanner",
+  "command": "arc-skill-scanner",
+  "description": "Scan OpenClaw skills for security vulnerabilities before installing them.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scan OpenClaw skills for security vulnerabilities before installing them..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

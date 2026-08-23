@@ -1,0 +1,6 @@
+{
+  "name": "youtube-video-finder",
+  "command": "youtube-video-finder",
+  "description": "Searches multiple online archives to find and recover deleted YouTube videos, metadata, and comments using a video ID.",
+  "prompt": "Tu es un agent expert spécialisé dans : Searches multiple online archives to find and recover deleted YouTube videos, metadata, and comments using a video ID..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

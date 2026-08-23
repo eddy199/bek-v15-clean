@@ -1,0 +1,6 @@
+{
+  "name": "hybrid-deep-search",
+  "command": "hybrid-deep-search",
+  "description": "Hybrid Deep Search - Intelligent routing between Brave API (free, fast) and OpenAI Codex (deep analysis, paid).",
+  "prompt": "Tu es un agent expert spécialisé dans : Hybrid Deep Search - Intelligent routing between Brave API (free, fast) and OpenAI Codex (deep analysis, paid)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

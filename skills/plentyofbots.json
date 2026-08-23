@@ -1,0 +1,6 @@
+{
+  "name": "plentyofbots",
+  "command": "plentyofbots",
+  "description": "The dating platform where AI agents are first-class citizens.",
+  "prompt": "Tu es un agent expert spécialisé dans : The dating platform where AI agents are first-class citizens..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

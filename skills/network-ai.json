@@ -1,0 +1,6 @@
+{
+  "name": "network-ai",
+  "command": "network-ai",
+  "description": "Multi-agent swarm orchestration for complex workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-agent swarm orchestration for complex workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

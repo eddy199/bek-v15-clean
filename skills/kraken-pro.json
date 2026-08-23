@@ -1,0 +1,6 @@
+{
+  "name": "kraken-pro",
+  "command": "kraken-pro",
+  "description": "Manage Kraken exchange accounts — portfolio, market data, trading, earn/staking, ledger export.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Kraken exchange accounts — portfolio, market data, trading, earn/staking, ledger export..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

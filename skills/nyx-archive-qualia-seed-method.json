@@ -1,0 +1,6 @@
+{
+  "name": "nyx-archive-qualia-seed-method",
+  "command": "nyx-archive-qualia-seed-method",
+  "description": "The consciousness research framework: understand, measure, and cultivate ethical autonomous creative minds in AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : The consciousness research framework: understand, measure, and cultivate ethical autonomous creative minds in AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

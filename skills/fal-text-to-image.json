@@ -1,0 +1,6 @@
+{
+  "name": "fal-text-to-image",
+  "command": "fal-text-to-image",
+  "description": "Generate, remix, and edit images using fal.ai's AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate, remix, and edit images using fal.ai's AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

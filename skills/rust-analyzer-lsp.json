@@ -1,0 +1,6 @@
+{
+  "name": "rust-analyzer-lsp",
+  "command": "rust-analyzer-lsp",
+  "description": "Rust language server (rust-analyzer) providing code intelligence and analysis for .rs files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Rust language server (rust-analyzer) providing code intelligence and analysis for .rs files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

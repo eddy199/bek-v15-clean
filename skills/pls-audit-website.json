@@ -1,0 +1,6 @@
+{
+  "name": "pls-audit-website",
+  "command": "pls-audit-website",
+  "description": "Perform full health check on websites, identifying technical friction points and user experience issues.",
+  "prompt": "Tu es un agent expert spécialisé dans : Perform full health check on websites, identifying technical friction points and user experience issues..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

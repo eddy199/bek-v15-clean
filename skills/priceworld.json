@@ -1,0 +1,6 @@
+{
+  "name": "priceworld",
+  "command": "priceworld",
+  "description": "SaaS pricing intelligence for email marketing tools (web hosting and domains planned)",
+  "prompt": "Tu es un agent expert spécialisé dans : SaaS pricing intelligence for email marketing tools (web hosting and domains planned).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

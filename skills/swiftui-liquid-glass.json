@@ -1,0 +1,6 @@
+{
+  "name": "swiftui-liquid-glass",
+  "command": "swiftui-liquid-glass",
+  "description": "Implement, review, or improve SwiftUI features.",
+  "prompt": "Tu es un agent expert spécialisé dans : Implement, review, or improve SwiftUI features..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

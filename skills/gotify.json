@@ -1,0 +1,6 @@
+{
+  "name": "gotify",
+  "command": "gotify",
+  "description": "Send push notifications via Gotify when long-running tasks complete.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send push notifications via Gotify when long-running tasks complete..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "governance",
+  "command": "governance",
+  "description": "XPR Network governance — communities, proposals, voting on the gov contract.",
+  "prompt": "Tu es un agent expert spécialisé dans : XPR Network governance — communities, proposals, voting on the gov contract..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

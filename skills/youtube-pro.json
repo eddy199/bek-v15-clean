@@ -1,0 +1,6 @@
+{
+  "name": "youtube-pro",
+  "command": "youtube-pro",
+  "description": "Advanced YouTube analysis, transcripts, and metadata extraction.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced YouTube analysis, transcripts, and metadata extraction..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "policy-engine",
+  "command": "policy-engine",
+  "description": "Deterministic governance layer for OpenClaw tool execution.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deterministic governance layer for OpenClaw tool execution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "google-calendar",
+  "command": "google-calendar",
+  "description": "Interact with Google Calendar via the Google Calendar.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Google Calendar via the Google Calendar..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

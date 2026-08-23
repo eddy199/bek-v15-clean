@@ -1,0 +1,6 @@
+{
+  "name": "glm-autoroute",
+  "command": "glm-autoroute",
+  "description": "Binary model routing for ZAI GLM models - lightweight vs heavyweight tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Binary model routing for ZAI GLM models - lightweight vs heavyweight tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "tsend",
+  "command": "tsend",
+  "description": "Send files via Telegram.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send files via Telegram..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

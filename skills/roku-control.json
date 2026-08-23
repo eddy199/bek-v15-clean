@@ -1,0 +1,6 @@
+{
+  "name": "roku-control",
+  "command": "roku-control",
+  "description": "Control Roku devices via local network (ECP protocol)",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Roku devices via local network (ECP protocol).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

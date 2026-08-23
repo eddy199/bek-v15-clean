@@ -1,0 +1,6 @@
+{
+  "name": "training-manager",
+  "command": "training-manager",
+  "description": "Manage and optimize your OpenClaw training workspace -- scaffold files, generate skills, log training sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage and optimize your OpenClaw training workspace -- scaffold files, generate skills, log training sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

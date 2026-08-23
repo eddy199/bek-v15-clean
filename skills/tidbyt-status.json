@@ -1,0 +1,6 @@
+{
+  "name": "tidbyt-status",
+  "command": "tidbyt-status",
+  "description": "HTTP API server that exposes OpenClaw agent status for Tidbyt LED displays.",
+  "prompt": "Tu es un agent expert spécialisé dans : HTTP API server that exposes OpenClaw agent status for Tidbyt LED displays..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

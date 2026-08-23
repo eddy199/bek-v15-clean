@@ -1,0 +1,6 @@
+{
+  "name": "portfolio-watcher",
+  "command": "portfolio-watcher",
+  "description": "Monitor stock/crypto holdings, get price alerts, track portfolio performance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor stock/crypto holdings, get price alerts, track portfolio performance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

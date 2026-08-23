@@ -1,0 +1,6 @@
+{
+  "name": "agent-skills-tools",
+  "command": "agent-skills-tools",
+  "description": "Security audit and validation tools for the Agent Skills ecosystem.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security audit and validation tools for the Agent Skills ecosystem..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

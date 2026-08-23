@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-codebase-onboarding",
+  "command": "sovereign-codebase-onboarding",
+  "description": "Codebase onboarding assistant that maps project architecture, identifies patterns, generates guides, and helps new.",
+  "prompt": "Tu es un agent expert spécialisé dans : Codebase onboarding assistant that maps project architecture, identifies patterns, generates guides, and helps new..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

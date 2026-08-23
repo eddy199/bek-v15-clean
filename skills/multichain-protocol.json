@@ -1,0 +1,6 @@
+{
+  "name": "multichain-protocol",
+  "command": "multichain-protocol",
+  "description": "Turn any AI agent into a 19-chain crypto wallet via MeneseSDK on ICP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn any AI agent into a 19-chain crypto wallet via MeneseSDK on ICP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

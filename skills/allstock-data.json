@@ -1,0 +1,6 @@
+{
+  "name": "allstock-data",
+  "command": "allstock-data",
+  "description": "Query A-share and US stock data via Tencent Finance API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query A-share and US stock data via Tencent Finance API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

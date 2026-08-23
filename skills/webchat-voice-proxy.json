@@ -1,0 +1,6 @@
+{
+  "name": "webchat-voice-proxy",
+  "command": "webchat-voice-proxy",
+  "description": "Voice input and microphone button for OpenClaw WebChat Control UI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Voice input and microphone button for OpenClaw WebChat Control UI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

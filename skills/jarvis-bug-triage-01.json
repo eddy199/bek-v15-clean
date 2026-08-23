@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-bug-triage-01",
+  "command": "jarvis-bug-triage-01",
+  "description": "Triage production bugs fast with repro isolation and risk-first fixes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Triage production bugs fast with repro isolation and risk-first fixes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

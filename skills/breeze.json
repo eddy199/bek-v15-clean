@@ -1,0 +1,6 @@
+{
+  "name": "breeze",
+  "command": "breeze",
+  "description": "Interact with the Breeze yield aggregator through the x402 payment-gated HTTP API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with the Breeze yield aggregator through the x402 payment-gated HTTP API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

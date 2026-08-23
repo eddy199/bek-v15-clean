@@ -1,0 +1,6 @@
+{
+  "name": "vibevoice",
+  "command": "vibevoice",
+  "description": "Local Spanish TTS using Microsoft VibeVoice.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local Spanish TTS using Microsoft VibeVoice..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

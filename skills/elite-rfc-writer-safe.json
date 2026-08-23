@@ -1,0 +1,6 @@
+{
+  "name": "elite-rfc-writer-safe",
+  "command": "elite-rfc-writer-safe",
+  "description": "Write decision-oriented engineering RFCs with strict template enforcement.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write decision-oriented engineering RFCs with strict template enforcement..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

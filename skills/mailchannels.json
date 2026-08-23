@@ -1,0 +1,6 @@
+{
+  "name": "mailchannels",
+  "command": "mailchannels",
+  "description": "Send email via MailChannels Email API and ingest signed.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send email via MailChannels Email API and ingest signed..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

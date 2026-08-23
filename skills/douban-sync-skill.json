@@ -1,0 +1,6 @@
+{
+  "name": "douban-sync-skill",
+  "command": "douban-sync-skill",
+  "description": "Export and sync Douban (豆瓣) book/movie/music/game collections.",
+  "prompt": "Tu es un agent expert spécialisé dans : Export and sync Douban (豆瓣) book/movie/music/game collections..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

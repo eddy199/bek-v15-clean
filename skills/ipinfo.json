@@ -1,0 +1,6 @@
+{
+  "name": "ipinfo",
+  "command": "ipinfo",
+  "description": "Perform IP geolocation lookups using ipinfo.io API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Perform IP geolocation lookups using ipinfo.io API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

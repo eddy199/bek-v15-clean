@@ -1,0 +1,6 @@
+{
+  "name": "bring-add",
+  "command": "bring-add",
+  "description": "Use when user wants to add items to Bring!",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when user wants to add items to Bring!.\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

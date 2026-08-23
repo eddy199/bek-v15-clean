@@ -1,0 +1,6 @@
+{
+  "name": "sonnet-model-router",
+  "command": "sonnet-model-router",
+  "description": "Self-aware multi-provider model routing for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-aware multi-provider model routing for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

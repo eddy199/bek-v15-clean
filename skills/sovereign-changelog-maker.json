@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-changelog-maker",
+  "command": "sovereign-changelog-maker",
+  "description": "Generates structured changelogs from git history.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates structured changelogs from git history..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

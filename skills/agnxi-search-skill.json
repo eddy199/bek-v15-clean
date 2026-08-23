@@ -1,0 +1,6 @@
+{
+  "name": "agnxi-search-skill",
+  "command": "agnxi-search-skill",
+  "description": "The official search utility for Agnxi.com.",
+  "prompt": "Tu es un agent expert spécialisé dans : The official search utility for Agnxi.com..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

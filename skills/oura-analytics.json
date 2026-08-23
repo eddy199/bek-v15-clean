@@ -1,0 +1,6 @@
+{
+  "name": "oura-analytics",
+  "command": "oura-analytics",
+  "description": "Oura Ring data integration and analytics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Oura Ring data integration and analytics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

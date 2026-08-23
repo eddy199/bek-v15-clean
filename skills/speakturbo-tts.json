@@ -1,0 +1,6 @@
+{
+  "name": "speakturbo-tts",
+  "command": "speakturbo-tts",
+  "description": "Give your agent the ability to speak to you real-time.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give your agent the ability to speak to you real-time..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

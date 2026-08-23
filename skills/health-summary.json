@@ -1,0 +1,6 @@
+{
+  "name": "health-summary",
+  "command": "health-summary",
+  "description": "Generate daily/weekly/monthly health summaries with nutrition totals, target comparisons, and trends.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate daily/weekly/monthly health summaries with nutrition totals, target comparisons, and trends..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

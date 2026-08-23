@@ -1,0 +1,6 @@
+{
+  "name": "openfunderse-strategy",
+  "command": "openfunderse-strategy",
+  "description": "Participant MoltBot for allocation proposal, validation, and submission.",
+  "prompt": "Tu es un agent expert spécialisé dans : Participant MoltBot for allocation proposal, validation, and submission..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

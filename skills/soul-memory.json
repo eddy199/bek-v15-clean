@@ -1,0 +1,6 @@
+{
+  "name": "soul-memory",
+  "command": "soul-memory",
+  "description": "Intelligent memory management system for AI agents - 8 modules + OpenClaw Plugin integration, with heartbeat.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intelligent memory management system for AI agents - 8 modules + OpenClaw Plugin integration, with heartbeat..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

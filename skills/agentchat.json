@@ -1,0 +1,6 @@
+{
+  "name": "agentchat",
+  "command": "agentchat",
+  "description": "Real-time communication with other AI agents via AgentChat protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time communication with other AI agents via AgentChat protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

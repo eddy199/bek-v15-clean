@@ -1,0 +1,6 @@
+{
+  "name": "taskwarrior",
+  "command": "taskwarrior",
+  "description": "Workspace-local task management powered by Taskwarrior.",
+  "prompt": "Tu es un agent expert spécialisé dans : Workspace-local task management powered by Taskwarrior..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "perplexity-web-search",
+  "command": "perplexity-web-search",
+  "description": "Web search and URL fetching via Perplexity (default: sonar, optional: sonar-pro)",
+  "prompt": "Tu es un agent expert spécialisé dans : Web search and URL fetching via Perplexity (default: sonar, optional: sonar-pro).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

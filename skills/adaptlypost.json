@@ -1,0 +1,6 @@
+{
+  "name": "adaptlypost",
+  "command": "adaptlypost",
+  "description": "Schedule and manage social media posts across Instagram, X (Twitter), Bluesky, TikTok, Threads, LinkedIn, Facebook.",
+  "prompt": "Tu es un agent expert spécialisé dans : Schedule and manage social media posts across Instagram, X (Twitter), Bluesky, TikTok, Threads, LinkedIn, Facebook..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

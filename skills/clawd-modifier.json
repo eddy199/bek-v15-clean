@@ -1,0 +1,6 @@
+{
+  "name": "clawd-modifier",
+  "command": "clawd-modifier",
+  "description": "Modify Clawd, the Claude Code mascot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Modify Clawd, the Claude Code mascot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

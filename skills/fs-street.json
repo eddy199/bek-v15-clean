@@ -1,0 +1,6 @@
+{
+  "name": "fs-street",
+  "command": "fs-street",
+  "description": "Fetches articles from Farnam Street RSS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetches articles from Farnam Street RSS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

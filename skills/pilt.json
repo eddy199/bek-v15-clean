@@ -1,0 +1,6 @@
+{
+  "name": "pilt",
+  "command": "pilt",
+  "description": "Access Pilt fundraising data -- investor matches, campaign stats, outreach events, and deck analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Pilt fundraising data -- investor matches, campaign stats, outreach events, and deck analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

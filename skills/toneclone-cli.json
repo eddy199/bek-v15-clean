@@ -1,0 +1,6 @@
+{
+  "name": "toneclone-cli",
+  "command": "toneclone-cli",
+  "description": "Write in the user's authentic voice using ToneClone.",
+  "prompt": "Tu es un agent expert spécialisé dans : Write in the user's authentic voice using ToneClone..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

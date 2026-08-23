@@ -1,0 +1,6 @@
+{
+  "name": "blinko",
+  "command": "blinko",
+  "description": "Play Blinko (on-chain Plinko) headlessly on Abstract chain.",
+  "prompt": "Tu es un agent expert spécialisé dans : Play Blinko (on-chain Plinko) headlessly on Abstract chain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

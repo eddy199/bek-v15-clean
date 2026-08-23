@@ -1,0 +1,6 @@
+{
+  "name": "tencent-ima-skill",
+  "command": "tencent-ima-skill",
+  "description": "Control the **IMA (ima.copilot)** desktop application for AI search and private knowledge retrieval.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control the **IMA (ima.copilot)** desktop application for AI search and private knowledge retrieval..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

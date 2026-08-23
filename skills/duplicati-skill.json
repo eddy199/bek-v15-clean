@@ -1,0 +1,6 @@
+{
+  "name": "duplicati-skill",
+  "command": "duplicati-skill",
+  "description": "Manage Duplicati backups on the server using secure Bearer tokens.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Duplicati backups on the server using secure Bearer tokens..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

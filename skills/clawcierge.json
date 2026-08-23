@@ -1,0 +1,6 @@
+{
+  "name": "clawcierge",
+  "command": "clawcierge",
+  "description": "> Your Personal Concierge for the AI Age 🦀.",
+  "prompt": "Tu es un agent expert spécialisé dans : > Your Personal Concierge for the AI Age 🦀..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

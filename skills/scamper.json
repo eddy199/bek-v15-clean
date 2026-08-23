@@ -1,0 +1,6 @@
+{
+  "name": "scamper",
+  "command": "scamper",
+  "description": "Apply SCAMPER creative thinking method to develop ideas, adapt frameworks, generate hackathon concepts, or break.",
+  "prompt": "Tu es un agent expert spécialisé dans : Apply SCAMPER creative thinking method to develop ideas, adapt frameworks, generate hackathon concepts, or break..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

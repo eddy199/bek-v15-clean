@@ -1,0 +1,6 @@
+{
+  "name": "auto-watchdog",
+  "command": "auto-watchdog",
+  "description": "Automatic health monitoring and self-healing for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatic health monitoring and self-healing for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

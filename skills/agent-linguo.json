@@ -1,0 +1,6 @@
+{
+  "name": "agent-linguo",
+  "command": "agent-linguo",
+  "description": "Efficient Agent Communication Protocol Language.",
+  "prompt": "Tu es un agent expert spécialisé dans : Efficient Agent Communication Protocol Language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "undersheet",
+  "command": "undersheet",
+  "description": "Persistent thread memory for OpenClaw agents across any platform — Moltbook, Hacker News, Reddit, Discord, Twitter.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent thread memory for OpenClaw agents across any platform — Moltbook, Hacker News, Reddit, Discord, Twitter..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

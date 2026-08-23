@@ -1,0 +1,6 @@
+{
+  "name": "gatewaystack-governance",
+  "command": "gatewaystack-governance",
+  "description": "Deny-by-default governance for every tool call — identity, scope, rate limiting, injection detection, audit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deny-by-default governance for every tool call — identity, scope, rate limiting, injection detection, audit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

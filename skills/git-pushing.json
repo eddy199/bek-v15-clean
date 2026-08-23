@@ -1,0 +1,6 @@
+{
+  "name": "git-pushing",
+  "command": "git-pushing",
+  "description": "Stage, commit, and push git changes with conventional commit messages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Stage, commit, and push git changes with conventional commit messages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

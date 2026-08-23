@@ -1,0 +1,6 @@
+{
+  "name": "synth-data",
+  "command": "synth-data",
+  "description": "Query volatility forecasts from Synthdata.co for crypto, commodities, and stocks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query volatility forecasts from Synthdata.co for crypto, commodities, and stocks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

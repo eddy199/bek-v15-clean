@@ -1,0 +1,6 @@
+{
+  "name": "aiusd",
+  "command": "aiusd",
+  "description": "AIUSD trading and account management skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : AIUSD trading and account management skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

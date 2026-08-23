@@ -1,0 +1,6 @@
+{
+  "name": "approve-pairing",
+  "command": "approve-pairing",
+  "description": "Approve a pending DM pairing request without the openclaw CLI, by directly editing credential files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Approve a pending DM pairing request without the openclaw CLI, by directly editing credential files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

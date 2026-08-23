@@ -1,0 +1,6 @@
+{
+  "name": "tsx",
+  "command": "tsx",
+  "description": "TSX namespace for Netsnek e.U.",
+  "prompt": "Tu es un agent expert spécialisé dans : TSX namespace for Netsnek e.U..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

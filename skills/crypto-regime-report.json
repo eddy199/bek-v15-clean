@@ -1,0 +1,6 @@
+{
+  "name": "crypto-regime-report",
+  "command": "crypto-regime-report",
+  "description": "Generate market regime reports for crypto perpetuals using Supertrend and ADX indicators.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate market regime reports for crypto perpetuals using Supertrend and ADX indicators..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "internet-search",
+  "command": "internet-search",
+  "description": "How to use the internet_search tool effectively — category routing, query formulation, and multi-search strategies.",
+  "prompt": "Tu es un agent expert spécialisé dans : How to use the internet_search tool effectively — category routing, query formulation, and multi-search strategies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

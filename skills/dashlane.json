@@ -1,0 +1,6 @@
+{
+  "name": "dashlane",
+  "command": "dashlane",
+  "description": "Access passwords, secure notes, secrets and OTP codes from Dashlane vault.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access passwords, secure notes, secrets and OTP codes from Dashlane vault..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

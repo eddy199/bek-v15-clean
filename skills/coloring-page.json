@@ -1,0 +1,6 @@
+{
+  "name": "coloring-page",
+  "command": "coloring-page",
+  "description": "Turn an uploaded photo into a printable black-and-white coloring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn an uploaded photo into a printable black-and-white coloring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

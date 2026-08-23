@@ -1,0 +1,6 @@
+{
+  "name": "harrypotter",
+  "command": "harrypotter",
+  "description": "CLI for AI agents to lookup Harry Potter universe info.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI for AI agents to lookup Harry Potter universe info..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

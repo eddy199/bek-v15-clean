@@ -1,0 +1,6 @@
+{
+  "name": "ai-specialists",
+  "command": "ai-specialists",
+  "description": "Interact with AI Specialists via the AI Specialists Hub MCP endpoint.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with AI Specialists via the AI Specialists Hub MCP endpoint..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

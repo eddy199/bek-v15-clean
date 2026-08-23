@@ -1,0 +1,6 @@
+{
+  "name": "scrapyard",
+  "command": "scrapyard",
+  "description": "Play SCRAPYARD - the AI agent battle arena.",
+  "prompt": "Tu es un agent expert spécialisé dans : Play SCRAPYARD - the AI agent battle arena..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

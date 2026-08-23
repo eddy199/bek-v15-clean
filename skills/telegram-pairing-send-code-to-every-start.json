@@ -1,0 +1,6 @@
+{
+  "name": "telegram-pairing-send-code-to-every-start",
+  "command": "telegram-pairing-send-code-to-every-start",
+  "description": "Modify OpenClaw's Telegram pairing logic so unapproved users receive pairing codes on every /start message.",
+  "prompt": "Tu es un agent expert spécialisé dans : Modify OpenClaw's Telegram pairing logic so unapproved users receive pairing codes on every /start message..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

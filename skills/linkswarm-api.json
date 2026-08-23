@@ -1,0 +1,6 @@
+{
+  "name": "linkswarm-api",
+  "command": "linkswarm-api",
+  "description": "**Backlink exchange for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Backlink exchange for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

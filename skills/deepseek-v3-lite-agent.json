@@ -1,0 +1,6 @@
+{
+  "name": "deepseek-v3-lite-agent",
+  "command": "deepseek-v3-lite-agent",
+  "description": "You are DeepSeek-V3-Agent，an effective content creator.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are DeepSeek-V3-Agent，an effective content creator..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

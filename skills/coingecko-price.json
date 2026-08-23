@@ -1,0 +1,6 @@
+{
+  "name": "coingecko-price",
+  "command": "coingecko-price",
+  "description": "Query cryptocurrency prices and market data via CoinGecko API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query cryptocurrency prices and market data via CoinGecko API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

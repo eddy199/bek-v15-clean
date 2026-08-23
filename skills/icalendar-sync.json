@@ -1,0 +1,6 @@
+{
+  "name": "icalendar-sync",
+  "command": "icalendar-sync",
+  "description": "Synchronizes calendar events between local system and iCloud.",
+  "prompt": "Tu es un agent expert spécialisé dans : Synchronizes calendar events between local system and iCloud..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

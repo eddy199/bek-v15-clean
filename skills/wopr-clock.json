@@ -1,0 +1,6 @@
+{
+  "name": "wopr-clock",
+  "command": "wopr-clock",
+  "description": "A retro W.O.P.R. style countdown clock (WarGames inspired) for tracking the TACO event.",
+  "prompt": "Tu es un agent expert spécialisé dans : A retro W.O.P.R. style countdown clock (WarGames inspired) for tracking the TACO event..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

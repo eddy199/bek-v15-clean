@@ -1,0 +1,6 @@
+{
+  "name": "input-classification-v1",
+  "command": "input-classification-v1",
+  "description": "Deterministic rule-based system for classifying clarified input into a single primary task category and assigning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deterministic rule-based system for classifying clarified input into a single primary task category and assigning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

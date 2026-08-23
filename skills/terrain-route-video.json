@@ -1,0 +1,6 @@
+{
+  "name": "terrain-route-video",
+  "command": "terrain-route-video",
+  "description": "Generate a minimalist terrain-style animated driving route video (MP4) from a list of stops (cities/POIs)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate a minimalist terrain-style animated driving route video (MP4) from a list of stops (cities/POIs).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

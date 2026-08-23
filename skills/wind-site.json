@@ -1,0 +1,6 @@
+{
+  "name": "wind-site",
+  "command": "wind-site",
+  "description": "Wind rose, wind speed/direction at a site; supports site and urban wind assessment (data only; detailed CFD.",
+  "prompt": "Tu es un agent expert spécialisé dans : Wind rose, wind speed/direction at a site; supports site and urban wind assessment (data only; detailed CFD..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

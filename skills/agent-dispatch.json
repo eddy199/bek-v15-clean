@@ -1,0 +1,6 @@
+{
+  "name": "agent-dispatch",
+  "command": "agent-dispatch",
+  "description": "Lightweight agent registry and JIT router.",
+  "prompt": "Tu es un agent expert spécialisé dans : Lightweight agent registry and JIT router..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

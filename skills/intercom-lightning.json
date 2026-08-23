@@ -1,0 +1,6 @@
+{
+  "name": "intercom-lightning",
+  "command": "intercom-lightning",
+  "description": "IntercomSwap (OpenClaw-hardened): operator-run, manual-only P2P RFQ swaps that negotiate over Intercom sidechannels.",
+  "prompt": "Tu es un agent expert spécialisé dans : IntercomSwap (OpenClaw-hardened): operator-run, manual-only P2P RFQ swaps that negotiate over Intercom sidechannels..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

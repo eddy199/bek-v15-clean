@@ -1,0 +1,6 @@
+{
+  "name": "web-markdown-navigator",
+  "command": "web-markdown-navigator",
+  "description": "Fetch webpages and return clean markdown instead of raw HTML.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch webpages and return clean markdown instead of raw HTML..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

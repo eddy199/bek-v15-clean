@@ -1,0 +1,6 @@
+{
+  "name": "cicd-pipeline",
+  "command": "cicd-pipeline",
+  "description": "Create, debug, and manage CI/CD pipelines with GitHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, debug, and manage CI/CD pipelines with GitHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

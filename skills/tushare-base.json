@@ -1,0 +1,6 @@
+{
+  "name": "tushare-base",
+  "command": "tushare-base",
+  "description": "Fetch Chinese stock and futures market data via Tushare API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch Chinese stock and futures market data via Tushare API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

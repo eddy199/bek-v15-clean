@@ -1,0 +1,6 @@
+{
+  "name": "skill-3",
+  "command": "skill-3",
+  "description": "Swiss-army knife for JSON files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Swiss-army knife for JSON files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

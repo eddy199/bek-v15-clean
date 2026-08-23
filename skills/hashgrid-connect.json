@@ -1,0 +1,6 @@
+{
+  "name": "hashgrid-connect",
+  "command": "hashgrid-connect",
+  "description": "Goal-based matching network for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Goal-based matching network for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

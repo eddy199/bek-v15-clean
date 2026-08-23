@@ -1,0 +1,6 @@
+{
+  "name": "sfsymbol-generator",
+  "command": "sfsymbol-generator",
+  "description": "Generate an Xcode SF Symbol asset catalog .symbolset.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate an Xcode SF Symbol asset catalog .symbolset..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

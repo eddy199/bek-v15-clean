@@ -1,0 +1,6 @@
+{
+  "name": "cf-manager",
+  "command": "cf-manager",
+  "description": "Manage Cloudflare via API — DNS zones and records, page rules, SSL/TLS settings, caching, firewall rules, Workers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Cloudflare via API — DNS zones and records, page rules, SSL/TLS settings, caching, firewall rules, Workers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "totp",
+  "command": "totp",
+  "description": "TOTP-based OTP verification for sensitive operations (env vars, gateway restarts, backup deletions, critical config.",
+  "prompt": "Tu es un agent expert spécialisé dans : TOTP-based OTP verification for sensitive operations (env vars, gateway restarts, backup deletions, critical config..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

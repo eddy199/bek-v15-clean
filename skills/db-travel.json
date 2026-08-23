@@ -1,0 +1,6 @@
+{
+  "name": "db-travel",
+  "command": "db-travel",
+  "description": "Plan journeys across Germany and Europe using the Deutsche Bahn API (v6.db.transport.rest)",
+  "prompt": "Tu es un agent expert spécialisé dans : Plan journeys across Germany and Europe using the Deutsche Bahn API (v6.db.transport.rest).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "farmos-equipment",
+  "command": "farmos-equipment",
+  "description": "Query equipment status, maintenance schedules, and service history for the farm fleet.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query equipment status, maintenance schedules, and service history for the farm fleet..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

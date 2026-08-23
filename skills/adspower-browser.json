@@ -1,0 +1,6 @@
+{
+  "name": "adspower-browser",
+  "command": "adspower-browser",
+  "description": "Use when the user asks to create or manage AdsPower browsers, groups, tags, proxies, or check status via AdsPower Local ",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to create or manage AdsPower browsers, groups, tags, proxies, or check status via AdsPower Local API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

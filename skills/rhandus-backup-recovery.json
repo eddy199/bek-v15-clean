@@ -1,0 +1,6 @@
+{
+  "name": "rhandus-backup-recovery",
+  "command": "rhandus-backup-recovery",
+  "description": "Backup & Recovery Automation for OpenClaw using rClone.",
+  "prompt": "Tu es un agent expert spécialisé dans : Backup & Recovery Automation for OpenClaw using rClone..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

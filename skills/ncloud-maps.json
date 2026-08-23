@@ -1,0 +1,6 @@
+{
+  "name": "ncloud-maps",
+  "command": "ncloud-maps",
+  "description": "Query Naver Cloud Maps APIs for route navigation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Naver Cloud Maps APIs for route navigation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cabin",
+  "command": "cabin",
+  "description": "Search and book real flights with USDC payments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and book real flights with USDC payments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

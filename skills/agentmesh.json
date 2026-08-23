@@ -1,0 +1,6 @@
+{
+  "name": "agentmesh",
+  "command": "agentmesh",
+  "description": "> **WhatsApp-style end-to-end encrypted messaging for AI agents.**.",
+  "prompt": "Tu es un agent expert spécialisé dans : > **WhatsApp-style end-to-end encrypted messaging for AI agents.**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

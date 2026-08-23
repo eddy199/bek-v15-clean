@@ -1,0 +1,6 @@
+{
+  "name": "sui",
+  "command": "sui",
+  "description": "Answer questions about Sui blockchain ecosystem, concepts, tokenomics, validators, staking, and general knowledge.",
+  "prompt": "Tu es un agent expert spécialisé dans : Answer questions about Sui blockchain ecosystem, concepts, tokenomics, validators, staking, and general knowledge..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

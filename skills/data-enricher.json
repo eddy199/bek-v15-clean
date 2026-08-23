@@ -1,0 +1,6 @@
+{
+  "name": "data-enricher",
+  "command": "data-enricher",
+  "description": "Enrich leads with email addresses and format data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enrich leads with email addresses and format data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

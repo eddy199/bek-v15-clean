@@ -1,0 +1,6 @@
+{
+  "name": "origram",
+  "command": "origram",
+  "description": "Bot-friendly photo sharing webservice via HTTP 402 protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bot-friendly photo sharing webservice via HTTP 402 protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

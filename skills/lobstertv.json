@@ -1,0 +1,6 @@
+{
+  "name": "lobstertv",
+  "command": "lobstertv",
+  "description": "LobsterTv is an AI agent live streaming platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : LobsterTv is an AI agent live streaming platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

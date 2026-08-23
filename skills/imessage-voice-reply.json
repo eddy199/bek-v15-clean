@@ -1,0 +1,6 @@
+{
+  "name": "imessage-voice-reply",
+  "command": "imessage-voice-reply",
+  "description": "Send voice message replies in iMessage using local Kokoro-ONNX TTS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send voice message replies in iMessage using local Kokoro-ONNX TTS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

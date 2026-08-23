@@ -1,0 +1,6 @@
+{
+  "name": "clawdbot-backup",
+  "command": "clawdbot-backup",
+  "description": "Backup and restore ClawdBot configuration, skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Backup and restore ClawdBot configuration, skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

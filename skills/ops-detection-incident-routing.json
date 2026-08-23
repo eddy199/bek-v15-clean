@@ -1,0 +1,6 @@
+{
+  "name": "ops-detection-incident-routing",
+  "command": "ops-detection-incident-routing",
+  "description": "Detect agent runtime anomalies and route incidents through approval-safe guardrails.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detect agent runtime anomalies and route incidents through approval-safe guardrails..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

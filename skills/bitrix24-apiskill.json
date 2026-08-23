@@ -1,0 +1,6 @@
+{
+  "name": "bitrix24-apiskill",
+  "command": "bitrix24-apiskill",
+  "description": "Design, implement, debug, and harden integrations between AI agents and Bitrix24 REST API (webhooks, OAuth 2.0.",
+  "prompt": "Tu es un agent expert spécialisé dans : Design, implement, debug, and harden integrations between AI agents and Bitrix24 REST API (webhooks, OAuth 2.0..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

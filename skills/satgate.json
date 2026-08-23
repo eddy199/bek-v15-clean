@@ -1,0 +1,6 @@
+{
+  "name": "satgate",
+  "command": "satgate",
+  "description": "Manage your API's economic firewall from the terminal.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage your API's economic firewall from the terminal..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

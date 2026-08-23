@@ -1,0 +1,6 @@
+{
+  "name": "positioning-strategy",
+  "command": "positioning-strategy",
+  "description": "Develop a competitive positioning strategy for a solopreneur business.",
+  "prompt": "Tu es un agent expert spécialisé dans : Develop a competitive positioning strategy for a solopreneur business..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

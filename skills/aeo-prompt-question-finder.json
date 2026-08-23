@@ -1,0 +1,6 @@
+{
+  "name": "aeo-prompt-question-finder",
+  "command": "aeo-prompt-question-finder",
+  "description": "Find question-based Google Autocomplete suggestions for any topic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find question-based Google Autocomplete suggestions for any topic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

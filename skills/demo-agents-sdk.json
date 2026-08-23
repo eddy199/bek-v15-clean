@@ -1,0 +1,6 @@
+{
+  "name": "demo-agents-sdk",
+  "command": "demo-agents-sdk",
+  "description": "Complete Polygon agent toolkit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Polygon agent toolkit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

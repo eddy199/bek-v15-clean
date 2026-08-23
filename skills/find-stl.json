@@ -1,0 +1,6 @@
+{
+  "name": "find-stl",
+  "command": "find-stl",
+  "description": "Search and download ready-to-print 3D model files (STL/3MF/ZIP)",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and download ready-to-print 3D model files (STL/3MF/ZIP).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

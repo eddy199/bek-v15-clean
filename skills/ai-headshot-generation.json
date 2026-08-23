@@ -1,0 +1,6 @@
+{
+  "name": "ai-headshot-generation",
+  "command": "ai-headshot-generation",
+  "description": "Generate professional AI headshots from casual photos using each::sense AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional AI headshots from casual photos using each::sense AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

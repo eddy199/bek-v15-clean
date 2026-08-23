@@ -1,0 +1,6 @@
+{
+  "name": "nk-images-search",
+  "command": "nk-images-search",
+  "description": "Search 1+ million free high-quality AI stock photos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search 1+ million free high-quality AI stock photos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

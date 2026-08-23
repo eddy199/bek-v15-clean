@@ -1,0 +1,6 @@
+{
+  "name": "pi",
+  "command": "pi",
+  "description": "Personal investigator / people lookup skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : Personal investigator / people lookup skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

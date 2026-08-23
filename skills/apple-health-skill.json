@@ -1,0 +1,6 @@
+{
+  "name": "apple-health-skill",
+  "command": "apple-health-skill",
+  "description": "Talk to your Apple Health data — ask questions about your workouts, heart rate, activity rings, and fitness trends.",
+  "prompt": "Tu es un agent expert spécialisé dans : Talk to your Apple Health data — ask questions about your workouts, heart rate, activity rings, and fitness trends..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

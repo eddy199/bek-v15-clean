@@ -1,0 +1,6 @@
+{
+  "name": "feishu-calendar",
+  "command": "feishu-calendar",
+  "description": "Manage Feishu (Lark) Calendars.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Feishu (Lark) Calendars..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

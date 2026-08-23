@@ -1,0 +1,6 @@
+{
+  "name": "gina",
+  "command": "gina",
+  "description": "Gina namespace for Netsnek e.U. personal assistant and scheduling framework.",
+  "prompt": "Tu es un agent expert spécialisé dans : Gina namespace for Netsnek e.U. personal assistant and scheduling framework..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

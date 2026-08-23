@@ -1,0 +1,6 @@
+{
+  "name": "lark-calendar",
+  "command": "lark-calendar",
+  "description": "Create, update, and delete calendar events and tasks in Lark.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, update, and delete calendar events and tasks in Lark..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

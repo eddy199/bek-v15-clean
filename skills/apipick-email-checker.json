@@ -1,0 +1,6 @@
+{
+  "name": "apipick-email-checker",
+  "command": "apipick-email-checker",
+  "description": "Validate email addresses using the apipick Email Validator API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Validate email addresses using the apipick Email Validator API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

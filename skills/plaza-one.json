@@ -1,0 +1,6 @@
+{
+  "name": "plaza-one",
+  "command": "plaza-one",
+  "description": "Enter Plaza One, a 3D voxel social world.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enter Plaza One, a 3D voxel social world..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

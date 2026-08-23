@@ -1,0 +1,6 @@
+{
+  "name": "idea-validation",
+  "command": "idea-validation",
+  "description": "Validate a business idea before investing time or money.",
+  "prompt": "Tu es un agent expert spécialisé dans : Validate a business idea before investing time or money..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "govpredict",
+  "command": "govpredict",
+  "description": "Smarter Government Procurement - Streamline compliance, tendering.",
+  "prompt": "Tu es un agent expert spécialisé dans : Smarter Government Procurement - Streamline compliance, tendering..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

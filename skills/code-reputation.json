@@ -1,0 +1,6 @@
+{
+  "name": "code-reputation",
+  "command": "code-reputation",
+  "description": "Semantic code caching for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Semantic code caching for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

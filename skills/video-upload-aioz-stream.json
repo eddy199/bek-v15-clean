@@ -1,0 +1,6 @@
+{
+  "name": "video-upload-aioz-stream",
+  "command": "video-upload-aioz-stream",
+  "description": "Quick upload video to AIOZ Stream API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Quick upload video to AIOZ Stream API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

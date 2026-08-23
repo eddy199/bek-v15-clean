@@ -1,0 +1,6 @@
+{
+  "name": "hsk-learning",
+  "command": "hsk-learning",
+  "description": "HSK Chinese learning system with spaced repetition mastery tracking, vocabulary analysis, and adaptive quiz.",
+  "prompt": "Tu es un agent expert spécialisé dans : HSK Chinese learning system with spaced repetition mastery tracking, vocabulary analysis, and adaptive quiz..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

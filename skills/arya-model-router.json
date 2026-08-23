@@ -1,0 +1,6 @@
+{
+  "name": "arya-model-router",
+  "command": "arya-model-router",
+  "description": "Token-saver router: elige modelo (cheap/default/pro) y usa sub-agentes para tareas pesadas.",
+  "prompt": "Tu es un agent expert spécialisé dans : Token-saver router: elige modelo (cheap/default/pro) y usa sub-agentes para tareas pesadas..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

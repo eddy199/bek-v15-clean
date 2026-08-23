@@ -1,0 +1,6 @@
+{
+  "name": "autonomy-windowed",
+  "command": "autonomy-windowed",
+  "description": "Time-windowed autonomous task queue.",
+  "prompt": "Tu es un agent expert spécialisé dans : Time-windowed autonomous task queue..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

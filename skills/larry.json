@@ -1,0 +1,6 @@
+{
+  "name": "larry",
+  "command": "larry",
+  "description": "Automate TikTok slideshow marketing for any app or product.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate TikTok slideshow marketing for any app or product..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

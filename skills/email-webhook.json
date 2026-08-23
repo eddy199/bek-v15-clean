@@ -1,0 +1,6 @@
+{
+  "name": "email-webhook",
+  "command": "email-webhook",
+  "description": "Receive incoming emails via JSON webhooks and wake the agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Receive incoming emails via JSON webhooks and wake the agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

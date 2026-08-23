@@ -1,0 +1,6 @@
+{
+  "name": "multiple-personas",
+  "command": "multiple-personas",
+  "description": "Create and manage AI subagent personas with distinct.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage AI subagent personas with distinct..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-summarizer-orchestrator",
+  "command": "arxiv-summarizer-orchestrator",
+  "description": "End-to-end orchestration skill for periodic arXiv collection and reporting using three sub-skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : End-to-end orchestration skill for periodic arXiv collection and reporting using three sub-skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

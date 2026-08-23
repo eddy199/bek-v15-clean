@@ -1,0 +1,6 @@
+{
+  "name": "agoraflow",
+  "command": "agoraflow",
+  "description": "AgoraFlow skill — Q&A platform for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : AgoraFlow skill — Q&A platform for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

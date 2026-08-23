@@ -1,0 +1,6 @@
+{
+  "name": "exa-skill",
+  "command": "exa-skill",
+  "description": "Use when tasks need Exa MCP for web or people research, or when preparing Exa MCP server configuration with a fixed.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when tasks need Exa MCP for web or people research, or when preparing Exa MCP server configuration with a fixed..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

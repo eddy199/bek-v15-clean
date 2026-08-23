@@ -1,0 +1,6 @@
+{
+  "name": "seo-content-writer",
+  "command": "seo-content-writer",
+  "description": "Use when the user asks to \"write SEO content\", \"create a blog post\", \"write an article\", \"content writing\", \"draft.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when the user asks to \"write SEO content\", \"create a blog post\", \"write an article\", \"content writing\", \"draft..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

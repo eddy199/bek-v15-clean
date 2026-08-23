@@ -1,0 +1,6 @@
+{
+  "name": "usewhisper",
+  "command": "usewhisper",
+  "description": "Official Whisper Context skill for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Official Whisper Context skill for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

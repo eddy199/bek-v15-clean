@@ -1,0 +1,6 @@
+{
+  "name": "skill-5",
+  "command": "skill-5",
+  "description": "AI video production workflow using Remotion.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI video production workflow using Remotion..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

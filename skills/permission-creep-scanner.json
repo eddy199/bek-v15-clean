@@ -1,0 +1,6 @@
+{
+  "name": "permission-creep-scanner",
+  "command": "permission-creep-scanner",
+  "description": "Helps detect permission creep in AI agent skills — flags when a skill's actual code accesses resources far.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps detect permission creep in AI agent skills — flags when a skill's actual code accesses resources far..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

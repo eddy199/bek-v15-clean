@@ -1,0 +1,6 @@
+{
+  "name": "daily-questions",
+  "command": "daily-questions",
+  "description": "Daily self-improving questionnaire that learns about the user and refines agent behavior.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily self-improving questionnaire that learns about the user and refines agent behavior..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

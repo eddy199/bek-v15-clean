@@ -1,0 +1,6 @@
+{
+  "name": "creator-alpha-feed",
+  "command": "creator-alpha-feed",
+  "description": "Collect and rank daily AI content for creator-focused publishing workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Collect and rank daily AI content for creator-focused publishing workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

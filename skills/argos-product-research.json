@@ -1,0 +1,6 @@
+{
+  "name": "argos-product-research",
+  "command": "argos-product-research",
+  "description": "Search, compare, and research products.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, compare, and research products..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

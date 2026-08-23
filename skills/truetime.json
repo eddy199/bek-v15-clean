@@ -1,0 +1,6 @@
+{
+  "name": "truetime",
+  "command": "truetime",
+  "description": "Ensure real-time accurate scheduling and planning across UTC, server time, NTP-sourced time, user local time.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ensure real-time accurate scheduling and planning across UTC, server time, NTP-sourced time, user local time..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

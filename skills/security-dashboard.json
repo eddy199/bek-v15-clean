@@ -1,0 +1,6 @@
+{
+  "name": "security-dashboard",
+  "command": "security-dashboard",
+  "description": "Real-time security monitoring dashboard for OpenClaw and Linux server infrastructure.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time security monitoring dashboard for OpenClaw and Linux server infrastructure..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

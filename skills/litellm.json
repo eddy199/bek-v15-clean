@@ -1,0 +1,6 @@
+{
+  "name": "litellm",
+  "command": "litellm",
+  "description": "Call 100+ LLM providers through LiteLLM's unified API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Call 100+ LLM providers through LiteLLM's unified API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

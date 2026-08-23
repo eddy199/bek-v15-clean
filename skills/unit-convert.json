@@ -1,0 +1,6 @@
+{
+  "name": "unit-convert",
+  "command": "unit-convert",
+  "description": "Comprehensive unit converter for length, weight, temperature, area, volume, speed, time, and data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive unit converter for length, weight, temperature, area, volume, speed, time, and data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

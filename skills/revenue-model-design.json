@@ -1,0 +1,6 @@
+{
+  "name": "revenue-model-design",
+  "command": "revenue-model-design",
+  "description": "Design a revenue model for a solopreneur business — how money flows in, from whom, and on what cadence.",
+  "prompt": "Tu es un agent expert spécialisé dans : Design a revenue model for a solopreneur business — how money flows in, from whom, and on what cadence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

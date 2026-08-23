@@ -1,0 +1,6 @@
+{
+  "name": "gh-action-gen",
+  "command": "gh-action-gen",
+  "description": "Generate GitHub Actions workflows from plain English.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate GitHub Actions workflows from plain English..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

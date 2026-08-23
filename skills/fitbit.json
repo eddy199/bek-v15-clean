@@ -1,0 +1,6 @@
+{
+  "name": "fitbit",
+  "command": "fitbit",
+  "description": "Query Fitbit health data including sleep, heart rate, activity, SpO2.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Fitbit health data including sleep, heart rate, activity, SpO2..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

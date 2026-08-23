@@ -1,0 +1,6 @@
+{
+  "name": "better-notion",
+  "command": "better-notion",
+  "description": "Full CRUD for Notion pages, databases.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full CRUD for Notion pages, databases..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

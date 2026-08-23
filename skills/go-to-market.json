@@ -1,0 +1,6 @@
+{
+  "name": "go-to-market",
+  "command": "go-to-market",
+  "description": "Build a go-to-market (GTM) strategy for launching a product or entering a new market.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build a go-to-market (GTM) strategy for launching a product or entering a new market..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

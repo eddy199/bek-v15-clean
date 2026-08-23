@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-ui-tests-generator",
+  "command": "fosmvvm-ui-tests-generator",
+  "description": "Generate UI tests for FOSMVVM SwiftUI views using XCTest and FOSTestingUI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate UI tests for FOSMVVM SwiftUI views using XCTest and FOSTestingUI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

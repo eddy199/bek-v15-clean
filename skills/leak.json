@@ -1,0 +1,6 @@
+{
+  "name": "leak",
+  "command": "leak",
+  "description": "Compatibility stub for migrating from the legacy mixed leak skill to split hardened skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Compatibility stub for migrating from the legacy mixed leak skill to split hardened skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

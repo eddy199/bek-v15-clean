@@ -1,0 +1,6 @@
+{
+  "name": "imortalbrain",
+  "command": "imortalbrain",
+  "description": "Agent AI Autonom Proactiv v5.0 pentru OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent AI Autonom Proactiv v5.0 pentru OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

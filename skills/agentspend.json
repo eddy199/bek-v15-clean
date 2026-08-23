@@ -1,0 +1,6 @@
+{
+  "name": "agentspend",
+  "command": "agentspend",
+  "description": "Use this skill when you need to: search the web, generate images or pictures, create videos, scrape or read.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill when you need to: search the web, generate images or pictures, create videos, scrape or read..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

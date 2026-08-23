@@ -1,0 +1,6 @@
+{
+  "name": "zoomin-scraper-recklessop",
+  "command": "zoomin-scraper-recklessop",
+  "description": "Scrape documentation content from Zoomin Software portals using Playwright browser automation to handle dynamic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scrape documentation content from Zoomin Software portals using Playwright browser automation to handle dynamic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

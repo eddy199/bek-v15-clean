@@ -1,0 +1,6 @@
+{
+  "name": "launchthatbot-convex-backend",
+  "command": "launchthatbot-convex-backend",
+  "description": "Store secrets, memory, and daily logs in your Convex backend instead of local files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Store secrets, memory, and daily logs in your Convex backend instead of local files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

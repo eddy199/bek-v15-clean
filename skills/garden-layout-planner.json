@@ -1,0 +1,6 @@
+{
+  "name": "garden-layout-planner",
+  "command": "garden-layout-planner",
+  "description": "Garden design and layout planning for gardeners.",
+  "prompt": "Tu es un agent expert spécialisé dans : Garden design and layout planning for gardeners..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

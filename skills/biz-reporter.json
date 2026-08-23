@@ -1,0 +1,6 @@
+{
+  "name": "biz-reporter",
+  "command": "biz-reporter",
+  "description": "Automated business intelligence reports pulling data from Google Analytics GA4, Google Search Console, Stripe.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated business intelligence reports pulling data from Google Analytics GA4, Google Search Console, Stripe..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

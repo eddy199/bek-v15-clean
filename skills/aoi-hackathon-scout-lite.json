@@ -1,0 +1,6 @@
+{
+  "name": "aoi-hackathon-scout-lite",
+  "command": "aoi-hackathon-scout-lite",
+  "description": "Public-safe hackathon source registry + filtering output (no crawling, no submissions).",
+  "prompt": "Tu es un agent expert spécialisé dans : Public-safe hackathon source registry + filtering output (no crawling, no submissions)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

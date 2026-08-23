@@ -1,0 +1,6 @@
+{
+  "name": "technical-doc-generator",
+  "command": "technical-doc-generator",
+  "description": "Generate professional technical documentation from codebases — API docs, READMEs, architecture diagrams.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional technical documentation from codebases — API docs, READMEs, architecture diagrams..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

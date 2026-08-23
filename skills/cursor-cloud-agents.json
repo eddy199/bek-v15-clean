@@ -1,0 +1,6 @@
+{
+  "name": "cursor-cloud-agents",
+  "command": "cursor-cloud-agents",
+  "description": "Deploy Cursor AI agents to GitHub repos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy Cursor AI agents to GitHub repos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

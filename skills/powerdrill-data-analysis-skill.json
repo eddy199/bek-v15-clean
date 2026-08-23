@@ -1,0 +1,6 @@
+{
+  "name": "powerdrill-data-analysis-skill",
+  "command": "powerdrill-data-analysis-skill",
+  "description": "This skill should be used when the user wants to analyze, explore, visualize, or query data using Powerdrill.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill should be used when the user wants to analyze, explore, visualize, or query data using Powerdrill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "outlit-sdk",
+  "command": "outlit-sdk",
+  "description": "Integrate Outlit SDK for customer context for agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrate Outlit SDK for customer context for agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

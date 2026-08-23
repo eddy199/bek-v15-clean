@@ -1,0 +1,6 @@
+{
+  "name": "afame",
+  "command": "afame",
+  "description": "Generate diverse creative illustrations via OpenAI Images API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate diverse creative illustrations via OpenAI Images API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

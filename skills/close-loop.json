@@ -1,0 +1,6 @@
+{
+  "name": "close-loop",
+  "command": "close-loop",
+  "description": "End-of-session workflow for shipping changes, consolidating memory, applying self-improvements, and preparing.",
+  "prompt": "Tu es un agent expert spécialisé dans : End-of-session workflow for shipping changes, consolidating memory, applying self-improvements, and preparing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

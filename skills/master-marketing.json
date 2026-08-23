@@ -1,0 +1,6 @@
+{
+  "name": "master-marketing",
+  "command": "master-marketing",
+  "description": "All-in-one marketing engine combining growth strategy, content remixing, and trend monitoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : All-in-one marketing engine combining growth strategy, content remixing, and trend monitoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

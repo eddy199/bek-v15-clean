@@ -1,0 +1,6 @@
+{
+  "name": "rtm",
+  "command": "rtm",
+  "description": "Manage Remember The Milk tasks — list, add, complete, delete, search, prioritize, tag, move, and annotate tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Remember The Milk tasks — list, add, complete, delete, search, prioritize, tag, move, and annotate tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

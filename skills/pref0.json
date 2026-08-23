@@ -1,0 +1,6 @@
+{
+  "name": "pref0",
+  "command": "pref0",
+  "description": "Learn user preferences from conversations and personalize responses automatically.",
+  "prompt": "Tu es un agent expert spécialisé dans : Learn user preferences from conversations and personalize responses automatically..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

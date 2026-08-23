@@ -1,0 +1,6 @@
+{
+  "name": "agent-self-assessment",
+  "command": "agent-self-assessment",
+  "description": "Security self-assessment tool for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security self-assessment tool for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

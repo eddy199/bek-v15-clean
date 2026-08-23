@@ -1,0 +1,6 @@
+{
+  "name": "x-to-kindle",
+  "command": "x-to-kindle",
+  "description": "Send X/Twitter posts to Kindle for distraction-free reading.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send X/Twitter posts to Kindle for distraction-free reading..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

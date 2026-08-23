@@ -1,0 +1,6 @@
+{
+  "name": "tork-guardian",
+  "command": "tork-guardian",
+  "description": "> OpenClaw is powerful.",
+  "prompt": "Tu es un agent expert spécialisé dans : > OpenClaw is powerful..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

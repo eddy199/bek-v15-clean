@@ -1,0 +1,6 @@
+{
+  "name": "soul-pack",
+  "command": "soul-pack",
+  "description": "Export and import SOUL packages for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Export and import SOUL packages for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

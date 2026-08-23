@@ -1,0 +1,6 @@
+{
+  "name": "dyson-cli",
+  "command": "dyson-cli",
+  "description": "Control Dyson air purifiers, fans, and heaters via local MQTT.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Dyson air purifiers, fans, and heaters via local MQTT..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

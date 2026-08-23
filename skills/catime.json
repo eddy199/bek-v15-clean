@@ -1,0 +1,6 @@
+{
+  "name": "catime",
+  "command": "catime",
+  "description": "Fetch and send AI-generated hourly cat images.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch and send AI-generated hourly cat images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

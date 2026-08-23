@@ -1,0 +1,6 @@
+{
+  "name": "coordinate-meeting",
+  "command": "coordinate-meeting",
+  "description": "Schedule a meeting for humans and their agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Schedule a meeting for humans and their agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

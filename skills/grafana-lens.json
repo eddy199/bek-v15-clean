@@ -1,0 +1,6 @@
+{
+  "name": "grafana-lens",
+  "command": "grafana-lens",
+  "description": "Full Grafana access: query, dashboard, alert, trace — 16 agent tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full Grafana access: query, dashboard, alert, trace — 16 agent tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

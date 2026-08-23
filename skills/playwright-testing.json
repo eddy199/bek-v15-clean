@@ -1,0 +1,6 @@
+{
+  "name": "playwright-testing",
+  "command": "playwright-testing",
+  "description": "Test web applications and games using Playwright on MiniPC.",
+  "prompt": "Tu es un agent expert spécialisé dans : Test web applications and games using Playwright on MiniPC..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "travel-price-drop-visa-reminder",
+  "command": "travel-price-drop-visa-reminder",
+  "description": "Plan travel price monitoring and visa or document reminders with safe, read-only guidance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Plan travel price monitoring and visa or document reminders with safe, read-only guidance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

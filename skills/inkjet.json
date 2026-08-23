@@ -1,0 +1,6 @@
+{
+  "name": "inkjet",
+  "command": "inkjet",
+  "description": "Print text, images, and QR codes to a wireless Bluetooth thermal printer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Print text, images, and QR codes to a wireless Bluetooth thermal printer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "aviation-weather",
+  "command": "aviation-weather",
+  "description": "Fetch aviation weather data (METAR, TAF, PIREPs)",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch aviation weather data (METAR, TAF, PIREPs).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

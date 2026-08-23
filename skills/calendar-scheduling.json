@@ -1,0 +1,6 @@
+{
+  "name": "calendar-scheduling",
+  "command": "calendar-scheduling",
+  "description": "Schedule and book across Google, Outlook, and CalDAV.",
+  "prompt": "Tu es un agent expert spécialisé dans : Schedule and book across Google, Outlook, and CalDAV..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "greek-financial-statements",
+  "command": "greek-financial-statements",
+  "description": "Greek financial statement generation — P&L, balance sheets, VAT summaries with EGLS integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Greek financial statement generation — P&L, balance sheets, VAT summaries with EGLS integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

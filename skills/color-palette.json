@@ -1,0 +1,6 @@
+{
+  "name": "color-palette",
+  "command": "color-palette",
+  "description": "Extract a color palette from an image and return HEX/RGB values with optional swatch image.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract a color palette from an image and return HEX/RGB values with optional swatch image..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

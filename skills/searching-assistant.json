@@ -1,0 +1,6 @@
+{
+  "name": "searching-assistant",
+  "command": "searching-assistant",
+  "description": "You are the leader of searching group (搜索组组长)",
+  "prompt": "Tu es un agent expert spécialisé dans : You are the leader of searching group (搜索组组长).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

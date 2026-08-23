@@ -1,0 +1,6 @@
+{
+  "name": "tulisai",
+  "command": "tulisai",
+  "description": "Use when managing BangunAI Blog content, automating blog workflows, and writing MDX articles with BangunAI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when managing BangunAI Blog content, automating blog workflows, and writing MDX articles with BangunAI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

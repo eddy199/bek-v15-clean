@@ -1,0 +1,6 @@
+{
+  "name": "alexa-control",
+  "command": "alexa-control",
+  "description": "Control Alexa devices via CLI - set alarms, play music, flash briefings, smart home commands.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Alexa devices via CLI - set alarms, play music, flash briefings, smart home commands..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

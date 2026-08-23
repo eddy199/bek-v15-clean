@@ -1,0 +1,6 @@
+{
+  "name": "os-activity",
+  "command": "os-activity",
+  "description": "Personalize your openclaw by learning your operating system activity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Personalize your openclaw by learning your operating system activity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

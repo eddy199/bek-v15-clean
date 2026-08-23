@@ -1,0 +1,6 @@
+{
+  "name": "reepl",
+  "command": "reepl",
+  "description": "Manage your LinkedIn presence with Reepl -- create drafts, publish and schedule posts, manage contacts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage your LinkedIn presence with Reepl -- create drafts, publish and schedule posts, manage contacts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

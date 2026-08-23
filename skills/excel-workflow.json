@@ -1,0 +1,6 @@
+{
+  "name": "excel-workflow",
+  "command": "excel-workflow",
+  "description": "Complete Excel workflow with local file processing, Google Drive sync, and formula preservation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Excel workflow with local file processing, Google Drive sync, and formula preservation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-api-mock-generator",
+  "command": "sovereign-api-mock-generator",
+  "description": "Generates mock API servers from OpenAPI specs or examples.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates mock API servers from OpenAPI specs or examples..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

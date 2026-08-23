@@ -1,0 +1,6 @@
+{
+  "name": "photoshop-automator",
+  "command": "photoshop-automator",
+  "description": "Professional Adobe Photoshop automation via COM/ExtendScript bridge.",
+  "prompt": "Tu es un agent expert spécialisé dans : Professional Adobe Photoshop automation via COM/ExtendScript bridge..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "instagram-marketing",
+  "command": "instagram-marketing",
+  "description": "Generate Instagram marketing content from product URLs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate Instagram marketing content from product URLs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

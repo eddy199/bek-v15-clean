@@ -1,0 +1,6 @@
+{
+  "name": "aihotel",
+  "command": "aihotel",
+  "description": "A Skill for searching hotels and querying prices via AIGoHotel MCP (searchHotels / getHotelDetail / getHotelSearchTags)",
+  "prompt": "Tu es un agent expert spécialisé dans : A Skill for searching hotels and querying prices via AIGoHotel MCP (searchHotels / getHotelDetail / getHotelSearchTags).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

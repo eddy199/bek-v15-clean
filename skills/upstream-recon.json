@@ -1,0 +1,6 @@
+{
+  "name": "upstream-recon",
+  "command": "upstream-recon",
+  "description": "Investigate an open-source project before interacting with it — PRs, issues, or comments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Investigate an open-source project before interacting with it — PRs, issues, or comments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

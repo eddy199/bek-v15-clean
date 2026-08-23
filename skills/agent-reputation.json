@@ -1,0 +1,6 @@
+{
+  "name": "agent-reputation",
+  "command": "agent-reputation",
+  "description": "summary: Cross-platform AI agent reputation checker with trust scoring and PayLock escrow recommendations.",
+  "prompt": "Tu es un agent expert spécialisé dans : summary: Cross-platform AI agent reputation checker with trust scoring and PayLock escrow recommendations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

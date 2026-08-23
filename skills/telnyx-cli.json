@@ -1,0 +1,6 @@
+{
+  "name": "telnyx-cli",
+  "command": "telnyx-cli",
+  "description": "Telnyx API integration for Clawdbot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Telnyx API integration for Clawdbot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

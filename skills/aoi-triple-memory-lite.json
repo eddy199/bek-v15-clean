@@ -1,0 +1,6 @@
+{
+  "name": "aoi-triple-memory-lite",
+  "command": "aoi-triple-memory-lite",
+  "description": "AOI Triple Memory (Lite) — file search + decision notes templates (no plugins).",
+  "prompt": "Tu es un agent expert spécialisé dans : AOI Triple Memory (Lite) — file search + decision notes templates (no plugins)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

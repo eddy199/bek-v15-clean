@@ -1,0 +1,6 @@
+{
+  "name": "innovation-catalyst",
+  "command": "innovation-catalyst",
+  "description": "Analyzes system state (memory, tools, events) and generates strategic innovation proposals to break evolution.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyzes system state (memory, tools, events) and generates strategic innovation proposals to break evolution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

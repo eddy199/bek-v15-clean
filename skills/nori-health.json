@@ -1,0 +1,6 @@
+{
+  "name": "nori-health",
+  "command": "nori-health",
+  "description": "Query your personal health data and get coaching from Nori, your AI health coach.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query your personal health data and get coaching from Nori, your AI health coach..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

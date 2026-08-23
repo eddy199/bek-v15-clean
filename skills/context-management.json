@@ -1,0 +1,6 @@
+{
+  "name": "context-management",
+  "command": "context-management",
+  "description": "Manage AI agent context window consumption, prevent compaction death spirals, and enforce sub-agent spawn policies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage AI agent context window consumption, prevent compaction death spirals, and enforce sub-agent spawn policies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

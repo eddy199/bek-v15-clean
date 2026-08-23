@@ -1,0 +1,6 @@
+{
+  "name": "nvidia-kimi-vision",
+  "command": "nvidia-kimi-vision",
+  "description": "Analyze images using NVIDIA Kimi K2.5 vision model via NVIDIA NIM API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze images using NVIDIA Kimi K2.5 vision model via NVIDIA NIM API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "onedrive-integration",
+  "command": "onedrive-integration",
+  "description": "Copy large/long files to OneDrive for sharing when the user is on Telegram or WhatsApp and wants to view a full.",
+  "prompt": "Tu es un agent expert spécialisé dans : Copy large/long files to OneDrive for sharing when the user is on Telegram or WhatsApp and wants to view a full..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

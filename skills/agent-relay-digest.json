@@ -1,0 +1,6 @@
+{
+  "name": "agent-relay-digest",
+  "command": "agent-relay-digest",
+  "description": "Create curated digests of agent conversations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create curated digests of agent conversations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

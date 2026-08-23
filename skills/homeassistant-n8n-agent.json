@@ -1,0 +1,6 @@
+{
+  "name": "homeassistant-n8n-agent",
+  "command": "homeassistant-n8n-agent",
+  "description": "Bridge OpenClaw with your n8n instance for Home Assistant automation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bridge OpenClaw with your n8n instance for Home Assistant automation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

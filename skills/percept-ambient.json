@@ -1,0 +1,6 @@
+{
+  "name": "percept-ambient",
+  "command": "percept-ambient",
+  "description": "Ambient intelligence mode — continuous context awareness without explicit commands.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ambient intelligence mode — continuous context awareness without explicit commands..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

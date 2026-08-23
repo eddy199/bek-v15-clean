@@ -1,0 +1,6 @@
+{
+  "name": "wikipedia-oc",
+  "command": "wikipedia-oc",
+  "description": "searches, retrieves, and summarizes content from English Wikipedia using the `wikipedia` Python module.",
+  "prompt": "Tu es un agent expert spécialisé dans : searches, retrieves, and summarizes content from English Wikipedia using the `wikipedia` Python module..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

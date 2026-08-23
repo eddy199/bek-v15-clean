@@ -1,0 +1,6 @@
+{
+  "name": "chief-editor-desicion",
+  "command": "chief-editor-desicion",
+  "description": "AI agent for chief editor desicion tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent for chief editor desicion tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

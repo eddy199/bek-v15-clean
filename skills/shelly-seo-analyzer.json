@@ -1,0 +1,6 @@
+{
+  "name": "shelly-seo-analyzer",
+  "command": "shelly-seo-analyzer",
+  "description": "Analyze any webpage URL for SEO issues and get actionable recommendations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze any webpage URL for SEO issues and get actionable recommendations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

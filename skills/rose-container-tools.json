@@ -1,0 +1,6 @@
+{
+  "name": "rose-container-tools",
+  "command": "rose-container-tools",
+  "description": "Build and run ROSE compiler tools using ROSE installed in a Docker container.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build and run ROSE compiler tools using ROSE installed in a Docker container..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

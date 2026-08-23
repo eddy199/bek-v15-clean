@@ -1,0 +1,6 @@
+{
+  "name": "granola-mcp",
+  "command": "granola-mcp",
+  "description": "Access Granola AI meeting notes via MCP (mcporter)",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Granola AI meeting notes via MCP (mcporter).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ztp",
+  "command": "ztp",
+  "description": "A mandatory security audit skill for validating new code, skills, and MCP servers against the SEP-2026 Zero Trust.",
+  "prompt": "Tu es un agent expert spécialisé dans : A mandatory security audit skill for validating new code, skills, and MCP servers against the SEP-2026 Zero Trust..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

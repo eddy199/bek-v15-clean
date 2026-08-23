@@ -1,0 +1,6 @@
+{
+  "name": "curl-http",
+  "command": "curl-http",
+  "description": "Essential curl commands for HTTP requests, API testing, and file.",
+  "prompt": "Tu es un agent expert spécialisé dans : Essential curl commands for HTTP requests, API testing, and file..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

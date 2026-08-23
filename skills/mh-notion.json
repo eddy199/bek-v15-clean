@@ -1,0 +1,6 @@
+{
+  "name": "mh-notion",
+  "command": "mh-notion",
+  "description": "Notion API for creating and managing pages, databases, and blocks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Notion API for creating and managing pages, databases, and blocks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

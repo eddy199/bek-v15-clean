@@ -1,0 +1,6 @@
+{
+  "name": "smart-web-scraper",
+  "command": "smart-web-scraper",
+  "description": "Extract structured data from any web page.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract structured data from any web page..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

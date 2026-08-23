@@ -1,0 +1,6 @@
+{
+  "name": "reef-prompt-guard",
+  "command": "reef-prompt-guard",
+  "description": "Detect and filter prompt injection attacks in untrusted input.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detect and filter prompt injection attacks in untrusted input..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

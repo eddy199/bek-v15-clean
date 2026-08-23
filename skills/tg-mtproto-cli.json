@@ -1,0 +1,6 @@
+{
+  "name": "tg-mtproto-cli",
+  "command": "tg-mtproto-cli",
+  "description": "Read-only Telegram CLI via MTProto.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read-only Telegram CLI via MTProto..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

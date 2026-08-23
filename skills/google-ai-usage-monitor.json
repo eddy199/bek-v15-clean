@@ -1,0 +1,6 @@
+{
+  "name": "google-ai-usage-monitor",
+  "command": "google-ai-usage-monitor",
+  "description": "Monitor Google AI Studio (Gemini API) usage, rate limits, and quota consumption with automated alerts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor Google AI Studio (Gemini API) usage, rate limits, and quota consumption with automated alerts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

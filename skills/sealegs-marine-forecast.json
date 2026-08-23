@@ -1,0 +1,6 @@
+{
+  "name": "sealegs-marine-forecast",
+  "command": "sealegs-marine-forecast",
+  "description": "Get AI-powered marine weather forecasts for any location worldwide.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get AI-powered marine weather forecasts for any location worldwide..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "expanso-xml-to-json",
+  "command": "expanso-xml-to-json",
+  "description": "Convert XML to JSON format.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert XML to JSON format..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

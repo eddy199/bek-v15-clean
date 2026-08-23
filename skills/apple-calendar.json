@@ -1,0 +1,6 @@
+{
+  "name": "apple-calendar",
+  "command": "apple-calendar",
+  "description": "Apple Calendar.app integration for macOS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Apple Calendar.app integration for macOS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

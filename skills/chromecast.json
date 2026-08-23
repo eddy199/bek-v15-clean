@@ -1,0 +1,6 @@
+{
+  "name": "chromecast",
+  "command": "chromecast",
+  "description": "Control Chromecast devices on your local network - discover.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Chromecast devices on your local network - discover..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "json-render-table",
+  "command": "json-render-table",
+  "description": "Render compact generic data tables to PNG images with json-render-cli.",
+  "prompt": "Tu es un agent expert spécialisé dans : Render compact generic data tables to PNG images with json-render-cli..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

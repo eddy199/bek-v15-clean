@@ -1,0 +1,6 @@
+{
+  "name": "cybercentry-quantum-cryptography-verification",
+  "command": "cybercentry-quantum-cryptography-verification",
+  "description": "Cybercentry Quantum Cryptography Verification on ACP - Quantum-resistant AES-256-GCM encryption for sensitive data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cybercentry Quantum Cryptography Verification on ACP - Quantum-resistant AES-256-GCM encryption for sensitive data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

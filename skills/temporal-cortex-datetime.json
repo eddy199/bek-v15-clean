@@ -1,0 +1,6 @@
+{
+  "name": "temporal-cortex-datetime",
+  "command": "temporal-cortex-datetime",
+  "description": "Zero-setup datetime resolution, timezone conversion, and DST-aware math.",
+  "prompt": "Tu es un agent expert spécialisé dans : Zero-setup datetime resolution, timezone conversion, and DST-aware math..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

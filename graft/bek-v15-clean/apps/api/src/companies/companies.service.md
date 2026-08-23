@@ -1,0 +1,21 @@
+# bek-v15-clean/apps/api/src/companies/companies.service.ts
+
+- CompanyRow · type · L52-L76 — type CompanyRow = { id: string; name: string; domain: string | null; iconUrl: string | null; iconDarkUrl: string | null; iconTone: string | null; logoUrl: string | null; brandColor: string | null; industry: string | null; enrichmentStatus: EnrichmentStatus; queued: boolean; source: RecordSource; owner: { id: string; name: string; email: string; image: string | null; } | null; contactCount: number; openDealCount: number; lastActivityAt: string | null; createdAt: string; fields: Record<string, string | number | boolean | null>; };
+- CompaniesService · class · L93-L622 — class CompaniesService
+- constructor · method · L96-L104 — constructor( @InjectDatabase() private readonly db: Db, private readonly agent: AgentTriggerService, private readonly queue: AgentQueueService, private readonly favicon: FaviconService, private readonly stamp: ActivityStampService, private readonly conversion: ConversionService, private readonly fields: FieldsService, )
+- list · method · L106-L175 — async list(input: CompanyListInput): Promise<ListResult<CompanyRow>>
+- byId · method · L177-L273 — async byId(id: string)
+- options · method · L275-L282 — async options(q: string)
+- create · method · L284-L329 — async create(input: CompanyCreateInput)
+- update · method · L331-L403 — async update(id: string, input: CompanyUpdateInput)
+- delete · method · L405-L437 — async delete(id: string): Promise<{ id: string; name: string }>
+- bulkAssignOwner · method · L439-L462 — async bulkAssignOwner(input: CompanyBulkOwnerInput): Promise<BulkResult>
+- bulkEnrich · method · L464-L466 — async bulkEnrich(ids: string[]): Promise<BulkResult>
+- bulkDelete · method · L468-L470 — async bulkDelete(ids: string[]): Promise<BulkResult>
+- enrich · method · L472-L489 — async enrich(id: string): Promise<{ id: string; queued: boolean }>
+- research · method · L491-L513 — async research(id: string, actingUserId: string)
+- setPrimaryContact · method · L515-L540 — async setPrimaryContact(companyId: string, contactId: string | null)
+- searchFilter · method · L542-L552 — private searchFilter(q: string): Prisma.CompanyWhereInput
+- buildWhere · method · L554-L573 — private buildWhere(input: CompanyListInput): Prisma.CompanyWhereInput
+- facetCounts · method · L575-L607 — private async facetCounts(input: CompanyListInput)
+- translate · method · L609-L621 — private translate(error: unknown, id: string): unknown

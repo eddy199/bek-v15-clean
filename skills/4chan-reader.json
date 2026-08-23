@@ -1,0 +1,6 @@
+{
+  "name": "4chan-reader",
+  "command": "4chan-reader",
+  "description": "Browse 4chan boards and extract thread discussions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Browse 4chan boards and extract thread discussions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

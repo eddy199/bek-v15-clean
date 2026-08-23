@@ -1,0 +1,6 @@
+{
+  "name": "honcho-setup",
+  "command": "honcho-setup",
+  "description": "Persistent cross-session memory via Honcho.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent cross-session memory via Honcho..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

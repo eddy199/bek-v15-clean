@@ -1,0 +1,6 @@
+{
+  "name": "ops-journal",
+  "command": "ops-journal",
+  "description": "Structured operational journal that captures deployments, incidents, changes, and decisions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Structured operational journal that captures deployments, incidents, changes, and decisions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

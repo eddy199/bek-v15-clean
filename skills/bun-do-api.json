@@ -1,0 +1,6 @@
+{
+  "name": "bun-do-api",
+  "command": "bun-do-api",
+  "description": "Manage bun-do tasks and projects — add tasks, edit tasks, delete tasks, toggle done, manage subtasks, and log.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage bun-do tasks and projects — add tasks, edit tasks, delete tasks, toggle done, manage subtasks, and log..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

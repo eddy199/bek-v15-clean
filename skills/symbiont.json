@@ -1,0 +1,6 @@
+{
+  "name": "symbiont",
+  "command": "symbiont",
+  "description": "**Purpose**: This guide helps AI assistants quickly build secure, compliant Symbiont agents following best practices.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Purpose**: This guide helps AI assistants quickly build secure, compliant Symbiont agents following best practices..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

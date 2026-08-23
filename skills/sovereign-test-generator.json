@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-test-generator",
+  "command": "sovereign-test-generator",
+  "description": "Analyzes codebases and generates comprehensive test suites.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyzes codebases and generates comprehensive test suites..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

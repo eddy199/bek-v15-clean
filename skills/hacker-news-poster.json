@@ -1,0 +1,6 @@
+{
+  "name": "hacker-news-poster",
+  "command": "hacker-news-poster",
+  "description": "Post, comment, and interact on Hacker News.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post, comment, and interact on Hacker News..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

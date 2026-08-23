@@ -1,0 +1,6 @@
+{
+  "name": "cheapest-image-generation",
+  "command": "cheapest-image-generation",
+  "description": "Possibly the cheapest AI image generation (~$0.0036/image)",
+  "prompt": "Tu es un agent expert spécialisé dans : Possibly the cheapest AI image generation (~$0.0036/image).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

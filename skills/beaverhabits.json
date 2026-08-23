@@ -1,0 +1,6 @@
+{
+  "name": "beaverhabits",
+  "command": "beaverhabits",
+  "description": "Track and manage your habits using the Beaver Habit Tracker API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track and manage your habits using the Beaver Habit Tracker API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agents-skill-podcastifier",
+  "command": "agents-skill-podcastifier",
+  "description": "Turn incoming text (email/newsletter) into a short TTS podcast with chunking + ffmpeg concat.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn incoming text (email/newsletter) into a short TTS podcast with chunking + ffmpeg concat..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

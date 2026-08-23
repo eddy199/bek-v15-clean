@@ -1,0 +1,6 @@
+{
+  "name": "caesar-research",
+  "command": "caesar-research",
+  "description": "Deep research using the Caesar API — run queries, follow up with chat, brainstorm, and manage collections.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deep research using the Caesar API — run queries, follow up with chat, brainstorm, and manage collections..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

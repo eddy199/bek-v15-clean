@@ -1,0 +1,6 @@
+{
+  "name": "expanso-json-pretty",
+  "command": "expanso-json-pretty",
+  "description": "\"Pretty print JSON with indentation\".",
+  "prompt": "Tu es un agent expert spécialisé dans : \"Pretty print JSON with indentation\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

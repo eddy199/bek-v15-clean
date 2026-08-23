@@ -1,0 +1,6 @@
+{
+  "name": "accounting-workflows",
+  "command": "accounting-workflows",
+  "description": "File-based workflow coordinator for Greek accounting.",
+  "prompt": "Tu es un agent expert spécialisé dans : File-based workflow coordinator for Greek accounting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

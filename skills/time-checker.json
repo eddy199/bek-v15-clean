@@ -1,0 +1,6 @@
+{
+  "name": "time-checker",
+  "command": "time-checker",
+  "description": "Check accurate current time, date, and timezone information for any location worldwide using time.is.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check accurate current time, date, and timezone information for any location worldwide using time.is..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

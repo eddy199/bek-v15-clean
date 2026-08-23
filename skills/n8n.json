@@ -1,0 +1,6 @@
+{
+  "name": "n8n",
+  "command": "n8n",
+  "description": "Manage n8n workflows and automations via API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage n8n workflows and automations via API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

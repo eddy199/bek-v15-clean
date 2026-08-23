@@ -1,0 +1,6 @@
+{
+  "name": "claude-usage",
+  "command": "claude-usage",
+  "description": "Calculate Claude Max subscription usage from OpenClaw session data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Calculate Claude Max subscription usage from OpenClaw session data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "summarize-file",
+  "command": "summarize-file",
+  "description": "Reads text files from workspace/paths and generates concise summaries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Reads text files from workspace/paths and generates concise summaries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

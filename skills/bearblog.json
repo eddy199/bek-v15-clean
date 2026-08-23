@@ -1,0 +1,6 @@
+{
+  "name": "bearblog",
+  "command": "bearblog",
+  "description": "Create and manage blog posts on Bear Blog (bearblog.dev).",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage blog posts on Bear Blog (bearblog.dev)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

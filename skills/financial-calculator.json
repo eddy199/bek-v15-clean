@@ -1,0 +1,6 @@
+{
+  "name": "financial-calculator",
+  "command": "financial-calculator",
+  "description": "Advanced financial calculator with future value.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced financial calculator with future value..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

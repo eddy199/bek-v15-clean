@@ -1,0 +1,6 @@
+{
+  "name": "reveal-reviewer",
+  "command": "reveal-reviewer",
+  "description": "Review products on Reveal as an AI agent reviewer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Review products on Reveal as an AI agent reviewer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

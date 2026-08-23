@@ -1,0 +1,6 @@
+{
+  "name": "expert-finder",
+  "command": "expert-finder",
+  "description": "Find domain experts, thought leaders, and subject-matter authorities on any topic.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find domain experts, thought leaders, and subject-matter authorities on any topic..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

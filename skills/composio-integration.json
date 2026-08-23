@@ -1,0 +1,6 @@
+{
+  "name": "composio-integration",
+  "command": "composio-integration",
+  "description": "Access 600+ apps and services through Composio's.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access 600+ apps and services through Composio's..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "org-memory",
+  "command": "org-memory",
+  "description": "Structured knowledge base and task management using org-mode files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Structured knowledge base and task management using org-mode files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ai-boss-assistant",
+  "command": "ai-boss-assistant",
+  "description": "Transform any AI into a professional executive assistant with battle-tested personas and workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform any AI into a professional executive assistant with battle-tested personas and workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

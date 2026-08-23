@@ -1,0 +1,6 @@
+{
+  "name": "humanod",
+  "command": "humanod",
+  "description": "Hire humans for real-world tasks via the Humanod API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hire humans for real-world tasks via the Humanod API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

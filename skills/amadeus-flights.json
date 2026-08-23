@@ -1,0 +1,6 @@
+{
+  "name": "amadeus-flights",
+  "command": "amadeus-flights",
+  "description": "Query flight offers (price, schedule, availability) via Amadeus API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query flight offers (price, schedule, availability) via Amadeus API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

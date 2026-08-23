@@ -1,0 +1,6 @@
+{
+  "name": "ai-sentinel",
+  "command": "ai-sentinel",
+  "description": "Prompt injection detection and security scanning for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Prompt injection detection and security scanning for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

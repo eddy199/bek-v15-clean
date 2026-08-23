@@ -1,0 +1,6 @@
+{
+  "name": "markdown-editor-with-chat",
+  "command": "markdown-editor-with-chat",
+  "description": "Lightweight markdown editor with optional OpenClaw gateway chat.",
+  "prompt": "Tu es un agent expert spécialisé dans : Lightweight markdown editor with optional OpenClaw gateway chat..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

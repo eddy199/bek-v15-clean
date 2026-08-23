@@ -1,0 +1,6 @@
+{
+  "name": "pi-health",
+  "command": "pi-health",
+  "description": "Raspberry Pi health monitor.",
+  "prompt": "Tu es un agent expert spécialisé dans : Raspberry Pi health monitor..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

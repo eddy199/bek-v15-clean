@@ -1,0 +1,6 @@
+{
+  "name": "remote-jobs-finder",
+  "command": "remote-jobs-finder",
+  "description": "Fully conversational remote job finder for WhatsApp powered by Remote Rocketship.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fully conversational remote job finder for WhatsApp powered by Remote Rocketship..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

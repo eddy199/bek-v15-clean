@@ -1,0 +1,6 @@
+{
+  "name": "citrineos-assistant",
+  "command": "citrineos-assistant",
+  "description": "Install, configure, and manage CitrineOS (EV charging / OCPP) via natural language.",
+  "prompt": "Tu es un agent expert spécialisé dans : Install, configure, and manage CitrineOS (EV charging / OCPP) via natural language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

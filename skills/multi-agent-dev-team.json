@@ -1,0 +1,6 @@
+{
+  "name": "multi-agent-dev-team",
+  "command": "multi-agent-dev-team",
+  "description": "2-agent collaborative software development workflow for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : 2-agent collaborative software development workflow for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

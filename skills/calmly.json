@@ -1,0 +1,6 @@
+{
+  "name": "calmly",
+  "command": "calmly",
+  "description": "Manage macOS Calendar events from the command line using EventKit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage macOS Calendar events from the command line using EventKit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

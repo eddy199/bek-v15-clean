@@ -1,0 +1,6 @@
+{
+  "name": "code-qc",
+  "command": "code-qc",
+  "description": "Run a structured quality control audit on any codebase.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run a structured quality control audit on any codebase..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

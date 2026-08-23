@@ -1,0 +1,6 @@
+{
+  "name": "moa",
+  "command": "moa",
+  "description": "Mixture of Agents: Make 3 frontier models argue, then synthesize their best insights into one superior answer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mixture of Agents: Make 3 frontier models argue, then synthesize their best insights into one superior answer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

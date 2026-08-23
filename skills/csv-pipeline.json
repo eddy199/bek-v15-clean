@@ -1,0 +1,6 @@
+{
+  "name": "csv-pipeline",
+  "command": "csv-pipeline",
+  "description": "Process, transform, analyze, and report on CSV and JSON.",
+  "prompt": "Tu es un agent expert spécialisé dans : Process, transform, analyze, and report on CSV and JSON..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

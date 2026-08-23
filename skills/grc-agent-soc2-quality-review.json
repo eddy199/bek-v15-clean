@@ -1,0 +1,6 @@
+{
+  "name": "grc-agent-soc2-quality-review",
+  "command": "grc-agent-soc2-quality-review",
+  "description": "Evaluate SOC 2 report quality using the SOC 2 Quality Guild rubric (Structure, Substance, Source)",
+  "prompt": "Tu es un agent expert spécialisé dans : Evaluate SOC 2 report quality using the SOC 2 Quality Guild rubric (Structure, Substance, Source).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

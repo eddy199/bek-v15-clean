@@ -1,0 +1,6 @@
+{
+  "name": "shaping",
+  "command": "shaping",
+  "description": "Shape Up methodology for product and feature development.",
+  "prompt": "Tu es un agent expert spécialisé dans : Shape Up methodology for product and feature development..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

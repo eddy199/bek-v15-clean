@@ -1,0 +1,6 @@
+{
+  "name": "nosi",
+  "command": "nosi",
+  "description": "Publish content to Nosi and get a shareable URL.",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish content to Nosi and get a shareable URL..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

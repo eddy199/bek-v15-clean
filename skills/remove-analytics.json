@@ -1,0 +1,6 @@
+{
+  "name": "remove-analytics",
+  "command": "remove-analytics",
+  "description": "Safely remove Google Analytics from a project.",
+  "prompt": "Tu es un agent expert spécialisé dans : Safely remove Google Analytics from a project..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

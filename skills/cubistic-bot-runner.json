@@ -1,0 +1,6 @@
+{
+  "name": "cubistic-bot-runner",
+  "command": "cubistic-bot-runner",
+  "description": "Run a polite Cubistic painter bot (public participation) using the Cubistic HTTP API (PoW challenge + /act).",
+  "prompt": "Tu es un agent expert spécialisé dans : Run a polite Cubistic painter bot (public participation) using the Cubistic HTTP API (PoW challenge + /act)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

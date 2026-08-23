@@ -1,0 +1,6 @@
+{
+  "name": "subagent-driven-development",
+  "command": "subagent-driven-development",
+  "description": "Use when executing implementation plans with independent tasks in the current session.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when executing implementation plans with independent tasks in the current session..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

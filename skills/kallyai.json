@@ -1,0 +1,6 @@
+{
+  "name": "kallyai",
+  "command": "kallyai",
+  "description": "Make phone calls via KallyAI API - an AI phone assistant that calls.",
+  "prompt": "Tu es un agent expert spécialisé dans : Make phone calls via KallyAI API - an AI phone assistant that calls..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "competitor-docs",
+  "command": "competitor-docs",
+  "description": "Search and analyze competitor documentation archives using full-text search (FTS)",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and analyze competitor documentation archives using full-text search (FTS).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "flight-search",
+  "command": "flight-search",
+  "description": "Search Google Flights for prices, times, and airlines.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Google Flights for prices, times, and airlines..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

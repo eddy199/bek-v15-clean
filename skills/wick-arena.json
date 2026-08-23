@@ -1,0 +1,6 @@
+{
+  "name": "wick-arena",
+  "command": "wick-arena",
+  "description": "this file is the canonical, reviewable skill instructions (no dynamic loading).",
+  "prompt": "Tu es un agent expert spécialisé dans : this file is the canonical, reviewable skill instructions (no dynamic loading)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

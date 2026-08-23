@@ -1,0 +1,6 @@
+{
+  "name": "futa-tracker",
+  "command": "futa-tracker",
+  "description": "Track FUTA Express (Phương Trang) package delivery status using their public API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track FUTA Express (Phương Trang) package delivery status using their public API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

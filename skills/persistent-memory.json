@@ -1,0 +1,6 @@
+{
+  "name": "persistent-memory",
+  "command": "persistent-memory",
+  "description": "Three-layer persistent memory system (Markdown + ChromaDB vectors + NetworkX knowledge graph) for long-term agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Three-layer persistent memory system (Markdown + ChromaDB vectors + NetworkX knowledge graph) for long-term agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

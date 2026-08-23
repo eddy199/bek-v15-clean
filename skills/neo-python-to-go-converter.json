@@ -1,0 +1,6 @@
+{
+  "name": "neo-python-to-go-converter",
+  "command": "neo-python-to-go-converter",
+  "description": "Automatically converts Python code to optimized Go code for performance-critical applications.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically converts Python code to optimized Go code for performance-critical applications..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

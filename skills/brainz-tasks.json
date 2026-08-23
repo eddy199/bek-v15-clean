@@ -1,0 +1,6 @@
+{
+  "name": "brainz-tasks",
+  "command": "brainz-tasks",
+  "description": "Manage Todoist tasks using the `todoist` CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Todoist tasks using the `todoist` CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

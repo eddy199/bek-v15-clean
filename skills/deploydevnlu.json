@@ -1,0 +1,6 @@
+{
+  "name": "deploydevnlu",
+  "command": "deploydevnlu",
+  "description": "Deploy the application to SupplyWhy via Slack natural language commands.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy the application to SupplyWhy via Slack natural language commands..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

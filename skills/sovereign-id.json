@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-id",
+  "command": "sovereign-id",
+  "description": "Enables the agent to manage its own identity (DID) and generate cryptographic proofs for B2B and B2C trust.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enables the agent to manage its own identity (DID) and generate cryptographic proofs for B2B and B2C trust..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

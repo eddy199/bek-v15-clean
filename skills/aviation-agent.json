@@ -1,0 +1,6 @@
+{
+  "name": "aviation-agent",
+  "command": "aviation-agent",
+  "description": "Aviation weather briefing and FAA reference assistant for pilots.",
+  "prompt": "Tu es un agent expert spécialisé dans : Aviation weather briefing and FAA reference assistant for pilots..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

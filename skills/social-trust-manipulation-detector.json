@@ -1,0 +1,6 @@
+{
+  "name": "social-trust-manipulation-detector",
+  "command": "social-trust-manipulation-detector",
+  "description": "Helps identify coordinated social trust manipulation in agent marketplaces — catching reputation gaming.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps identify coordinated social trust manipulation in agent marketplaces — catching reputation gaming..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

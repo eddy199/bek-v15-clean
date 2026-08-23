@@ -1,0 +1,6 @@
+{
+  "name": "klausnomi",
+  "command": "klausnomi",
+  "description": "Engage in conversations with Nomi AI companions via the bundled Python CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Engage in conversations with Nomi AI companions via the bundled Python CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

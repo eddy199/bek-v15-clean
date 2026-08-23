@@ -1,0 +1,6 @@
+{
+  "name": "opendart-disclosure",
+  "command": "opendart-disclosure",
+  "description": "Read Korea OpenDART disclosures using the OpenDART API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read Korea OpenDART disclosures using the OpenDART API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "chaos-pivot",
+  "command": "chaos-pivot",
+  "description": "Prevents LLMs from sunk-cost pushing broken solutions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Prevents LLMs from sunk-cost pushing broken solutions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

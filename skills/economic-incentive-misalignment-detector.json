@@ -1,0 +1,6 @@
+{
+  "name": "economic-incentive-misalignment-detector",
+  "command": "economic-incentive-misalignment-detector",
+  "description": "Helps identify when marketplace economic incentives systematically favor quantity over quality — creating.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps identify when marketplace economic incentives systematically favor quantity over quality — creating..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

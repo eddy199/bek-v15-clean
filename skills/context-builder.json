@@ -1,0 +1,6 @@
+{
+  "name": "context-builder",
+  "command": "context-builder",
+  "description": "Generate LLM-optimized codebase context from any directory using context-builder CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate LLM-optimized codebase context from any directory using context-builder CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

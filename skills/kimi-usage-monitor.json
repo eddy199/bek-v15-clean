@@ -1,0 +1,6 @@
+{
+  "name": "kimi-usage-monitor",
+  "command": "kimi-usage-monitor",
+  "description": "Monitor Kimi K2.5 API usage and quota from the Kimi console.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor Kimi K2.5 API usage and quota from the Kimi console..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

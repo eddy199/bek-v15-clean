@@ -1,0 +1,6 @@
+{
+  "name": "birthday-reminder",
+  "command": "birthday-reminder",
+  "description": "Manage birthdays with natural language.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage birthdays with natural language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "codehooks-backend",
+  "command": "codehooks-backend",
+  "description": "Deploy serverless backends for REST APIs, webhooks, data storage, scheduled jobs, queue workers, and autonomous.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy serverless backends for REST APIs, webhooks, data storage, scheduled jobs, queue workers, and autonomous..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

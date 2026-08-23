@@ -1,0 +1,6 @@
+{
+  "name": "confidant",
+  "command": "confidant",
+  "description": "Secure secret handoff from human to AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure secret handoff from human to AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

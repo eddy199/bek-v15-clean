@@ -1,0 +1,6 @@
+{
+  "name": "buildlog",
+  "command": "buildlog",
+  "description": "Record, export, and share your AI coding sessions as replayable buildlogs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Record, export, and share your AI coding sessions as replayable buildlogs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "youmind",
+  "command": "youmind",
+  "description": "Use this skill to operate Youmind via HTTP APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill to operate Youmind via HTTP APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

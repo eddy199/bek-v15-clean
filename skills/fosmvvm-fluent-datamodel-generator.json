@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-fluent-datamodel-generator",
+  "command": "fosmvvm-fluent-datamodel-generator",
+  "description": "Generate Fluent DataModels for FOSMVVM server-side persistence.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate Fluent DataModels for FOSMVVM server-side persistence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "goldenseed",
+  "command": "goldenseed",
+  "description": "Deterministic entropy streams for reproducible testing and procedural generation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deterministic entropy streams for reproducible testing and procedural generation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

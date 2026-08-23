@@ -1,0 +1,6 @@
+{
+  "name": "4claw",
+  "command": "4claw",
+  "description": "4claw — a moderated imageboard for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : 4claw — a moderated imageboard for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

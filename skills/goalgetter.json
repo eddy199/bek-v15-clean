@@ -1,0 +1,6 @@
+{
+  "name": "goalgetter",
+  "command": "goalgetter",
+  "description": "Tasks and goals management via simple markdown files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Tasks and goals management via simple markdown files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

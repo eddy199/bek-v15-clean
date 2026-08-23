@@ -1,0 +1,6 @@
+{
+  "name": "chia-splitxch",
+  "command": "chia-splitxch",
+  "description": "Create SplitXCH royalty split addresses from plain language descriptions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create SplitXCH royalty split addresses from plain language descriptions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

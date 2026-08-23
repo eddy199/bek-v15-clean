@@ -1,0 +1,6 @@
+{
+  "name": "solo-factory",
+  "command": "solo-factory",
+  "description": "Install the full Solo Factory toolkit — 23 startup skills + solograph MCP server for code intelligence, KB search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Install the full Solo Factory toolkit — 23 startup skills + solograph MCP server for code intelligence, KB search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

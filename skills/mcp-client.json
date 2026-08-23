@@ -1,0 +1,6 @@
+{
+  "name": "mcp-client",
+  "command": "mcp-client",
+  "description": "Model Context Protocol (MCP) client - connect to tools, data sources and services.",
+  "prompt": "Tu es un agent expert spécialisé dans : Model Context Protocol (MCP) client - connect to tools, data sources and services..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

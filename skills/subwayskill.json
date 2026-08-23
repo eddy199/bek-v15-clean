@@ -1,0 +1,6 @@
+{
+  "name": "subwayskill",
+  "command": "subwayskill",
+  "description": "Fetch NYC subway departure times.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch NYC subway departure times..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

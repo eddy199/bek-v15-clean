@@ -1,0 +1,6 @@
+{
+  "name": "lightning-security-module",
+  "command": "lightning-security-module",
+  "description": "Set up an lnd remote signer container that holds private keys separately from the agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up an lnd remote signer container that holds private keys separately from the agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

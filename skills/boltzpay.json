@@ -1,0 +1,6 @@
+{
+  "name": "boltzpay",
+  "command": "boltzpay",
+  "description": "Pay for API data automatically — multi-protocol (x402 + L402), multi-chain.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pay for API data automatically — multi-protocol (x402 + L402), multi-chain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

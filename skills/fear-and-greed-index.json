@@ -1,0 +1,6 @@
+{
+  "name": "fear-and-greed-index",
+  "command": "fear-and-greed-index",
+  "description": "Access the Alternative.me Crypto Fear & Greed Index.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access the Alternative.me Crypto Fear & Greed Index..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "socialite-guide",
+  "command": "socialite-guide",
+  "description": "Expert guidance for generating \"Socialite Style\" (名媛风) images using AI art tools (Nano Banana Pro)",
+  "prompt": "Tu es un agent expert spécialisé dans : Expert guidance for generating \"Socialite Style\" (名媛风) images using AI art tools (Nano Banana Pro).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

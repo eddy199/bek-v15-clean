@@ -1,0 +1,6 @@
+{
+  "name": "social-media-extractor",
+  "command": "social-media-extractor",
+  "description": "This skill enables Claude to extract public data from **Instagram**, **TikTok**, and **Reddit**.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables Claude to extract public data from **Instagram**, **TikTok**, and **Reddit**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

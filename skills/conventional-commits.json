@@ -1,0 +1,6 @@
+{
+  "name": "conventional-commits",
+  "command": "conventional-commits",
+  "description": "Format commit messages using the Conventional.",
+  "prompt": "Tu es un agent expert spécialisé dans : Format commit messages using the Conventional..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

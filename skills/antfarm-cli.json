@@ -1,0 +1,6 @@
+{
+  "name": "antfarm-cli",
+  "command": "antfarm-cli",
+  "description": "Always use full path: `node ~/.openclaw/workspace/antfarm/dist/cli/cli.js`.",
+  "prompt": "Tu es un agent expert spécialisé dans : Always use full path: `node ~/.openclaw/workspace/antfarm/dist/cli/cli.js`..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

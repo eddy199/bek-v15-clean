@@ -1,0 +1,6 @@
+{
+  "name": "webflow-designer-extension",
+  "command": "webflow-designer-extension",
+  "description": "Build Webflow Designer Extensions that run inside the Webflow Designer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build Webflow Designer Extensions that run inside the Webflow Designer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

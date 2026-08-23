@@ -1,0 +1,6 @@
+{
+  "name": "grepwrapper",
+  "command": "grepwrapper",
+  "description": "Search exact code matches across public GitHub repos using grep.app via the grepwrapper CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search exact code matches across public GitHub repos using grep.app via the grepwrapper CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

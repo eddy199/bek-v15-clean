@@ -1,0 +1,6 @@
+{
+  "name": "claude-code-usage",
+  "command": "claude-code-usage",
+  "description": "Check Claude Code OAuth usage limits.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check Claude Code OAuth usage limits..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

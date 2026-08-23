@@ -1,0 +1,6 @@
+{
+  "name": "clawdefender",
+  "command": "clawdefender",
+  "description": "Security scanner and input sanitizer for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security scanner and input sanitizer for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

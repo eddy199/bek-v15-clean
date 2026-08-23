@@ -1,0 +1,6 @@
+{
+  "name": "agent-mail-cli",
+  "command": "agent-mail-cli",
+  "description": "Email inbox for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Email inbox for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

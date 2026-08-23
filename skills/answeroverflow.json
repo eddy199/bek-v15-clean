@@ -1,0 +1,6 @@
+{
+  "name": "answeroverflow",
+  "command": "answeroverflow",
+  "description": "Search indexed Discord community discussions via Answer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search indexed Discord community discussions via Answer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

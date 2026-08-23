@@ -1,0 +1,6 @@
+{
+  "name": "ffcli",
+  "command": "ffcli",
+  "description": "Query Fireflies.ai meeting data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Fireflies.ai meeting data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

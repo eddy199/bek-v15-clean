@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-batch-reporter",
+  "command": "arxiv-batch-reporter",
+  "description": "Build the final collection report in two steps: model writes a report template, then script injects each paper's.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build the final collection report in two steps: model writes a report template, then script injects each paper's..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

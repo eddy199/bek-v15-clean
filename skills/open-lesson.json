@@ -1,0 +1,6 @@
+{
+  "name": "open-lesson",
+  "command": "open-lesson",
+  "description": "You are an AI agent that can interact with the openLesson tutoring platform via API.",
+  "prompt": "Tu es un agent expert spécialisé dans : You are an AI agent that can interact with the openLesson tutoring platform via API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

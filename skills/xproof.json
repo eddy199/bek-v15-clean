@@ -1,0 +1,6 @@
+{
+  "name": "xproof",
+  "command": "xproof",
+  "description": "Certify agent outputs on the MultiversX blockchain.",
+  "prompt": "Tu es un agent expert spécialisé dans : Certify agent outputs on the MultiversX blockchain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

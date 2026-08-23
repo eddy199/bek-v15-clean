@@ -1,0 +1,6 @@
+{
+  "name": "seedance-video-generation-byteplus",
+  "command": "seedance-video-generation-byteplus",
+  "description": "Generate AI videos using BytePlus Seedance API (International)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI videos using BytePlus Seedance API (International).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

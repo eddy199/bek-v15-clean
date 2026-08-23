@@ -1,0 +1,6 @@
+{
+  "name": "content-engine",
+  "command": "content-engine",
+  "description": "Full-stack content creation pipeline from research to publication.",
+  "prompt": "Tu es un agent expert spécialisé dans : Full-stack content creation pipeline from research to publication..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

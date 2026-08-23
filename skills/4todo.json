@@ -1,0 +1,6 @@
+{
+  "name": "4todo",
+  "command": "4todo",
+  "description": "Manage 4todo (4to.do) from chat.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage 4todo (4to.do) from chat..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

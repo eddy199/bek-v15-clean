@@ -1,0 +1,6 @@
+{
+  "name": "linz-public-transport",
+  "command": "linz-public-transport",
+  "description": "Query Linz Linien raw EFA endpoints for stop lookup and live departures.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Linz Linien raw EFA endpoints for stop lookup and live departures..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

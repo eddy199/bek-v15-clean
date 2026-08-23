@@ -1,0 +1,6 @@
+{
+  "name": "pmc-harvest",
+  "command": "pmc-harvest",
+  "description": "Fetch articles from PubMed Central using NCBI APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch articles from PubMed Central using NCBI APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

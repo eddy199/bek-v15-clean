@@ -1,0 +1,6 @@
+{
+  "name": "voice-wake-say",
+  "command": "voice-wake-say",
+  "description": "Speak responses aloud on macOS using the built-in `say`.",
+  "prompt": "Tu es un agent expert spécialisé dans : Speak responses aloud on macOS using the built-in `say`..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

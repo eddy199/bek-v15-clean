@@ -1,0 +1,6 @@
+{
+  "name": "airpoint",
+  "command": "airpoint",
+  "description": "Control a Mac through natural language — open apps, click buttons, read the screen, type text, manage windows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control a Mac through natural language — open apps, click buttons, read the screen, type text, manage windows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

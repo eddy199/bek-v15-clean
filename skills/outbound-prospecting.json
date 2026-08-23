@@ -1,0 +1,6 @@
+{
+  "name": "outbound-prospecting",
+  "command": "outbound-prospecting",
+  "description": "This skill provides a structured workflow for researching and initiating contact with potential leads.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill provides a structured workflow for researching and initiating contact with potential leads..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

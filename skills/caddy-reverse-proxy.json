@@ -1,0 +1,6 @@
+{
+  "name": "caddy-reverse-proxy",
+  "command": "caddy-reverse-proxy",
+  "description": "Add, manage, and troubleshoot Caddy reverse proxy routes for local apps via wildcard subdomains.",
+  "prompt": "Tu es un agent expert spécialisé dans : Add, manage, and troubleshoot Caddy reverse proxy routes for local apps via wildcard subdomains..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

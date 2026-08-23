@@ -1,0 +1,6 @@
+{
+  "name": "duckduckgo-websearch",
+  "command": "duckduckgo-websearch",
+  "description": "High-quality web search using DuckDuckGo (Instant Answer + SERP scraping fallback)",
+  "prompt": "Tu es un agent expert spécialisé dans : High-quality web search using DuckDuckGo (Instant Answer + SERP scraping fallback).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

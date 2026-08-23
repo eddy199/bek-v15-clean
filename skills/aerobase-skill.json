@@ -1,0 +1,6 @@
+{
+  "name": "aerobase-skill",
+  "command": "aerobase-skill",
+  "description": "Search, score, and compare flights with jetlag impact analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search, score, and compare flights with jetlag impact analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

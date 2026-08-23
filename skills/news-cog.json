@@ -1,0 +1,6 @@
+{
+  "name": "news-cog",
+  "command": "news-cog",
+  "description": "Frontier search models with multi-angle research on every query.",
+  "prompt": "Tu es un agent expert spécialisé dans : Frontier search models with multi-angle research on every query..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

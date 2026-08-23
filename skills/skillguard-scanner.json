@@ -1,0 +1,6 @@
+{
+  "name": "skillguard-scanner",
+  "command": "skillguard-scanner",
+  "description": "Security scanner for OpenClaw/ClawHub skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security scanner for OpenClaw/ClawHub skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

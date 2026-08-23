@@ -1,0 +1,6 @@
+{
+  "name": "web3-data",
+  "command": "web3-data",
+  "description": "Explore Web3 on-chain data using Chainbase APIs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Explore Web3 on-chain data using Chainbase APIs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

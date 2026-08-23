@@ -1,0 +1,6 @@
+{
+  "name": "pattern-analyst",
+  "command": "pattern-analyst",
+  "description": "Analyze interactions to identify patterns in what Enzo shares, why he shares it, and how it connects to his goals.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze interactions to identify patterns in what Enzo shares, why he shares it, and how it connects to his goals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

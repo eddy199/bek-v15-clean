@@ -1,0 +1,6 @@
+{
+  "name": "duckse",
+  "command": "duckse",
+  "description": "This skill should be used when users need to search the web for information, find current content, look up news.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill should be used when users need to search the web for information, find current content, look up news..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

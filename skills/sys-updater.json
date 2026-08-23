@@ -1,0 +1,6 @@
+{
+  "name": "sys-updater",
+  "command": "sys-updater",
+  "description": "System package maintenance for Ubuntu (apt), npm, brew, and OpenClaw skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : System package maintenance for Ubuntu (apt), npm, brew, and OpenClaw skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

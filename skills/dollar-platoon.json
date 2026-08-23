@@ -1,0 +1,6 @@
+{
+  "name": "dollar-platoon",
+  "command": "dollar-platoon",
+  "description": "Peer-to-peer task payroll marketplace on Base L2.",
+  "prompt": "Tu es un agent expert spécialisé dans : Peer-to-peer task payroll marketplace on Base L2..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

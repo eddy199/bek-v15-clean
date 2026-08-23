@@ -1,0 +1,6 @@
+{
+  "name": "ragora",
+  "command": "ragora",
+  "description": "Use Ragora MCP tools and REST API to discover, search, and synthesize answers from knowledge bases.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Ragora MCP tools and REST API to discover, search, and synthesize answers from knowledge bases..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "nodejs-project-arch",
+  "command": "nodejs-project-arch",
+  "description": "AI-friendly Node.js architecture — keep files under 400 lines for 70-93% token savings.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-friendly Node.js architecture — keep files under 400 lines for 70-93% token savings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

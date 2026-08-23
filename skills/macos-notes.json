@@ -1,0 +1,6 @@
+{
+  "name": "macos-notes",
+  "command": "macos-notes",
+  "description": "Create, read, search, and manage macOS Notes via AppleScript.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, read, search, and manage macOS Notes via AppleScript..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

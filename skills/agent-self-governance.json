@@ -1,0 +1,6 @@
+{
+  "name": "agent-self-governance",
+  "command": "agent-self-governance",
+  "description": "Self-governance protocol for autonomous agents: WAL (Write-Ahead Log), VBR (Verify Before Reporting), ADL.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-governance protocol for autonomous agents: WAL (Write-Ahead Log), VBR (Verify Before Reporting), ADL..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

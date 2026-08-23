@@ -1,0 +1,6 @@
+{
+  "name": "webscraper-pulpminer",
+  "command": "webscraper-pulpminer",
+  "description": "Convert any webpage into structured JSON data using AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert any webpage into structured JSON data using AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

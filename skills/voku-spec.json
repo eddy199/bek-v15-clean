@@ -1,0 +1,6 @@
+{
+  "name": "voku-spec",
+  "command": "voku-spec",
+  "description": "Learn and use Voku, a constructed language for AI-agent communication with zero ambiguity, total regularity.",
+  "prompt": "Tu es un agent expert spécialisé dans : Learn and use Voku, a constructed language for AI-agent communication with zero ambiguity, total regularity..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

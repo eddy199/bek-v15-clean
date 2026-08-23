@@ -1,0 +1,6 @@
+{
+  "name": "slk",
+  "command": "slk",
+  "description": "Read, send, search, and manage Slack messages and DMs via the slk CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read, send, search, and manage Slack messages and DMs via the slk CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

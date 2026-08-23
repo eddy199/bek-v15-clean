@@ -1,0 +1,6 @@
+{
+  "name": "adaptivetest",
+  "command": "adaptivetest",
+  "description": "Adaptive testing engine with IRT/CAT, AI question generation, and personalized learning recommendations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Adaptive testing engine with IRT/CAT, AI question generation, and personalized learning recommendations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

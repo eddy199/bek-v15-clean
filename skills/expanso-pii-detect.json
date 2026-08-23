@@ -1,0 +1,6 @@
+{
+  "name": "expanso-pii-detect",
+  "command": "expanso-pii-detect",
+  "description": "Detect personally identifiable information (PII) in text.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detect personally identifiable information (PII) in text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

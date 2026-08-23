@@ -1,0 +1,6 @@
+{
+  "name": "masterswarm",
+  "command": "masterswarm",
+  "description": "Analyze any document with 15 parallel AI engines via the MasterSwarm cloud API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze any document with 15 parallel AI engines via the MasterSwarm cloud API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

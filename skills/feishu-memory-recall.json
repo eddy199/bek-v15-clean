@@ -1,0 +1,6 @@
+{
+  "name": "feishu-memory-recall",
+  "command": "feishu-memory-recall",
+  "description": "This skill allows the agent to recover \"lost\".",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill allows the agent to recover \"lost\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

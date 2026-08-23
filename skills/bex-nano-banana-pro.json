@@ -1,0 +1,6 @@
+{
+  "name": "bex-nano-banana-pro",
+  "command": "bex-nano-banana-pro",
+  "description": "Generate or edit images via Gemini 3 Pro Image on Replicate.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate or edit images via Gemini 3 Pro Image on Replicate..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

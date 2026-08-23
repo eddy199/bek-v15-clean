@@ -1,0 +1,6 @@
+{
+  "name": "pandora",
+  "command": "pandora",
+  "description": "Pandora namespace for Netsnek e.U. secrets and configuration management vault.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pandora namespace for Netsnek e.U. secrets and configuration management vault..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

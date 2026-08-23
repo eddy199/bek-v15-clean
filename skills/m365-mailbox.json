@@ -1,0 +1,6 @@
+{
+  "name": "m365-mailbox",
+  "command": "m365-mailbox",
+  "description": "MS365 / Microsoft365 mailbox automation via Microsoft Graph for Microsoft 365 (M365) Business (work/school.",
+  "prompt": "Tu es un agent expert spécialisé dans : MS365 / Microsoft365 mailbox automation via Microsoft Graph for Microsoft 365 (M365) Business (work/school..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

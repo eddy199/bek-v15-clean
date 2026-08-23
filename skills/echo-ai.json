@@ -1,0 +1,6 @@
+{
+  "name": "echo-ai",
+  "command": "echo-ai",
+  "description": "Connect to Echo AI — the customer interaction platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect to Echo AI — the customer interaction platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

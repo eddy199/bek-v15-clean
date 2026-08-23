@@ -1,0 +1,6 @@
+{
+  "name": "codex-orchestrator",
+  "command": "codex-orchestrator",
+  "description": "Monitor, control, and orchestrate background Codex sessions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor, control, and orchestrate background Codex sessions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "hippius",
+  "command": "hippius",
+  "description": "Hippius decentralized storage on Bittensor Subnet 75 — upload files, query storage, manage buckets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hippius decentralized storage on Bittensor Subnet 75 — upload files, query storage, manage buckets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

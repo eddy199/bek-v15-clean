@@ -1,0 +1,6 @@
+{
+  "name": "transition-mcp",
+  "command": "transition-mcp",
+  "description": "AI-powered multisport coaching — get personalized workouts, training plans, and performance analytics for running.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered multisport coaching — get personalized workouts, training plans, and performance analytics for running..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

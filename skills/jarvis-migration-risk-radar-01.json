@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-migration-risk-radar-01",
+  "command": "jarvis-migration-risk-radar-01",
+  "description": "Assess migration risk and design staged rollouts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Assess migration risk and design staged rollouts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "autoresponder",
+  "command": "autoresponder",
+  "description": "Monitor iMessage/SMS conversations and auto-respond based.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor iMessage/SMS conversations and auto-respond based..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

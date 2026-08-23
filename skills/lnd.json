@@ -1,0 +1,6 @@
+{
+  "name": "lnd",
+  "command": "lnd",
+  "description": "Install and run Lightning Terminal (litd) which bundles lnd, loop, pool, tapd, and faraday in a single Docker.",
+  "prompt": "Tu es un agent expert spécialisé dans : Install and run Lightning Terminal (litd) which bundles lnd, loop, pool, tapd, and faraday in a single Docker..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

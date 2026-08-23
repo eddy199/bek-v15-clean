@@ -1,0 +1,6 @@
+{
+  "name": "context-switcher",
+  "command": "context-switcher",
+  "description": "Switches OpenClaw between life modes (Work/Focus, Personal, Creative, Do Not Disturb)",
+  "prompt": "Tu es un agent expert spécialisé dans : Switches OpenClaw between life modes (Work/Focus, Personal, Creative, Do Not Disturb).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

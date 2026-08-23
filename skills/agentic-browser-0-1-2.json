@@ -1,0 +1,6 @@
+{
+  "name": "agentic-browser-0-1-2",
+  "command": "agentic-browser-0-1-2",
+  "description": "Browser automation for AI agents via inference.sh.",
+  "prompt": "Tu es un agent expert spécialisé dans : Browser automation for AI agents via inference.sh..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

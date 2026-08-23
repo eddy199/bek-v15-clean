@@ -1,0 +1,6 @@
+{
+  "name": "signal-pipeline",
+  "command": "signal-pipeline",
+  "description": "Marketing intelligence pipeline - gather signals from RSS, X/Twitter, Telegram, and Gmail newsletters.",
+  "prompt": "Tu es un agent expert spécialisé dans : Marketing intelligence pipeline - gather signals from RSS, X/Twitter, Telegram, and Gmail newsletters..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

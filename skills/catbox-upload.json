@@ -1,0 +1,6 @@
+{
+  "name": "catbox-upload",
+  "command": "catbox-upload",
+  "description": "Upload files to catbox.moe (permanent) or litterbox.catbox.moe.",
+  "prompt": "Tu es un agent expert spécialisé dans : Upload files to catbox.moe (permanent) or litterbox.catbox.moe..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "picsee-short-link",
+  "command": "picsee-short-link",
+  "description": "Shorten URLs using PicSee (pse.is)",
+  "prompt": "Tu es un agent expert spécialisé dans : Shorten URLs using PicSee (pse.is).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

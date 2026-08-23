@@ -1,0 +1,6 @@
+{
+  "name": "telnyx-stt",
+  "command": "telnyx-stt",
+  "description": "Transcribe audio files to text using Telnyx Speech-to-Text API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transcribe audio files to text using Telnyx Speech-to-Text API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

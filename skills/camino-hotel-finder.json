@@ -1,0 +1,6 @@
+{
+  "name": "camino-hotel-finder",
+  "command": "camino-hotel-finder",
+  "description": "Search for hotels, hostels, and lodging near landmarks, conference venues, or neighborhoods using Camino AI's.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search for hotels, hostels, and lodging near landmarks, conference venues, or neighborhoods using Camino AI's..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

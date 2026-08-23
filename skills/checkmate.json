@@ -1,0 +1,6 @@
+{
+  "name": "checkmate",
+  "command": "checkmate",
+  "description": "Enforces task completion: turns your goal into pass/fail criteria, runs a worker, judges the output, feeds back.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enforces task completion: turns your goal into pass/fail criteria, runs a worker, judges the output, feeds back..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

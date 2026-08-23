@@ -1,0 +1,6 @@
+{
+  "name": "vitavault",
+  "command": "vitavault",
+  "description": "Import and query VitaVault health exports (JSON/CSV from iOS app)",
+  "prompt": "Tu es un agent expert spécialisé dans : Import and query VitaVault health exports (JSON/CSV from iOS app).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

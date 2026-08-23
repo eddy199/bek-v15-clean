@@ -1,0 +1,6 @@
+{
+  "name": "researchvault-v3-0-1",
+  "command": "researchvault-v3-0-1",
+  "description": "Local-first research orchestration engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local-first research orchestration engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

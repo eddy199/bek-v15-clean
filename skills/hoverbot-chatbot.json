@@ -1,0 +1,6 @@
+{
+  "name": "hoverbot-chatbot",
+  "command": "hoverbot-chatbot",
+  "description": "Create, embed, and manage AI chatbots for any website in under 2 minutes using HoverBot.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, embed, and manage AI chatbots for any website in under 2 minutes using HoverBot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

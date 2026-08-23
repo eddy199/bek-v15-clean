@@ -1,0 +1,6 @@
+{
+  "name": "strawpoll-cli",
+  "command": "strawpoll-cli",
+  "description": "Create and manage StrawPoll polls, meeting polls, and ranking polls from the terminal using the strawpoll CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage StrawPoll polls, meeting polls, and ranking polls from the terminal using the strawpoll CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

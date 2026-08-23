@@ -1,0 +1,6 @@
+{
+  "name": "sansfiction-library",
+  "command": "sansfiction-library",
+  "description": "Authorized SansFiction library manager.",
+  "prompt": "Tu es un agent expert spécialisé dans : Authorized SansFiction library manager..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

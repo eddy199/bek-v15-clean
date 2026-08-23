@@ -1,0 +1,6 @@
+{
+  "name": "skillshield",
+  "command": "skillshield",
+  "description": "SkillShield v4 — Ultimate security scanner for OpenClaw skills. 65 security checks, SARIF v2.1.0 output, CI/CD.",
+  "prompt": "Tu es un agent expert spécialisé dans : SkillShield v4 — Ultimate security scanner for OpenClaw skills. 65 security checks, SARIF v2.1.0 output, CI/CD..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

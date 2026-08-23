@@ -1,0 +1,6 @@
+{
+  "name": "renderful-generation",
+  "command": "renderful-generation",
+  "description": "Use Renderful from OpenClaw for image/video/audio/3D creation with model discovery, quote-before-generate workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Renderful from OpenClaw for image/video/audio/3D creation with model discovery, quote-before-generate workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

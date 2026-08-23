@@ -1,0 +1,6 @@
+{
+  "name": "p-api",
+  "command": "p-api",
+  "description": "Integration with P-API for WhatsApp automation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integration with P-API for WhatsApp automation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

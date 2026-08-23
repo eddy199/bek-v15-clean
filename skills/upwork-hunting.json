@@ -1,0 +1,6 @@
+{
+  "name": "upwork-hunting",
+  "command": "upwork-hunting",
+  "description": "Systematically find and win Upwork jobs using our n8n workflow library (2,061 templates) as a speed advantage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Systematically find and win Upwork jobs using our n8n workflow library (2,061 templates) as a speed advantage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

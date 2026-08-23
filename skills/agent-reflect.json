@@ -1,0 +1,6 @@
+{
+  "name": "agent-reflect",
+  "command": "agent-reflect",
+  "description": "Self-improvement through conversation analysis.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-improvement through conversation analysis..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

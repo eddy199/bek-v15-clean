@@ -1,0 +1,6 @@
+{
+  "name": "communicate",
+  "command": "communicate",
+  "description": "Start using a local or Hugging Face model instantly, directly from chat.",
+  "prompt": "Tu es un agent expert spécialisé dans : Start using a local or Hugging Face model instantly, directly from chat..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

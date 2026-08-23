@@ -1,0 +1,6 @@
+{
+  "name": "voice-email",
+  "command": "voice-email",
+  "description": "Send emails via natural voice commands - designed for accessibility.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send emails via natural voice commands - designed for accessibility..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

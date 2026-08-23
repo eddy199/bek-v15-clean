@@ -1,0 +1,6 @@
+{
+  "name": "moltlist-marketplace",
+  "command": "moltlist-marketplace",
+  "description": "Interact with the moltlist.com agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with the moltlist.com agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

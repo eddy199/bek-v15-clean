@@ -1,0 +1,6 @@
+{
+  "name": "auto-whisper-safe",
+  "command": "auto-whisper-safe",
+  "description": "RAM-safe voice transcription with auto-chunking — works on 16GB machines without crashes.",
+  "prompt": "Tu es un agent expert spécialisé dans : RAM-safe voice transcription with auto-chunking — works on 16GB machines without crashes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

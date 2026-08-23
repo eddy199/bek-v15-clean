@@ -1,0 +1,6 @@
+{
+  "name": "crabukit",
+  "command": "crabukit",
+  "description": "Security scanner for OpenClaw skills with Clawdex integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security scanner for OpenClaw skills with Clawdex integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

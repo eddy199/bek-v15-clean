@@ -1,0 +1,6 @@
+{
+  "name": "jules-api",
+  "command": "jules-api",
+  "description": "Create and manage Google Jules AI coding sessions via the Jules REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage Google Jules AI coding sessions via the Jules REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

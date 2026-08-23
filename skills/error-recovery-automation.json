@@ -1,0 +1,6 @@
+{
+  "name": "error-recovery-automation",
+  "command": "error-recovery-automation",
+  "description": "Standardize handling of common OpenClaw errors (gateway restart, browser service unavailable, cron failures)",
+  "prompt": "Tu es un agent expert spécialisé dans : Standardize handling of common OpenClaw errors (gateway restart, browser service unavailable, cron failures).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "leetify",
+  "command": "leetify",
+  "description": "Get CS2 player statistics, match analysis, and gameplay insights from Leetify API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get CS2 player statistics, match analysis, and gameplay insights from Leetify API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "fitcheck-skill-search",
+  "command": "fitcheck-skill-search",
+  "description": "Find and retrieve available skills using keyword search, semantic search, or LLM-powered task matching.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find and retrieve available skills using keyword search, semantic search, or LLM-powered task matching..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

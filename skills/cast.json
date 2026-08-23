@@ -1,0 +1,6 @@
+{
+  "name": "cast",
+  "command": "cast",
+  "description": "Skill for managing EVM wallets, transactions, and network helpers via cast; covers onboarding, checks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Skill for managing EVM wallets, transactions, and network helpers via cast; covers onboarding, checks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

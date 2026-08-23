@@ -1,0 +1,6 @@
+{
+  "name": "waste-reminder",
+  "command": "waste-reminder",
+  "description": "A flexible, token-efficient skill for automated waste container collection reminders.",
+  "prompt": "Tu es un agent expert spécialisé dans : A flexible, token-efficient skill for automated waste container collection reminders..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "auto-skill-hunter",
+  "command": "auto-skill-hunter",
+  "description": "Proactively discovers, ranks, and installs high-value ClawHub skills by mining unresolved user needs and agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Proactively discovers, ranks, and installs high-value ClawHub skills by mining unresolved user needs and agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

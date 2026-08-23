@@ -1,0 +1,6 @@
+{
+  "name": "awwwards-design",
+  "command": "awwwards-design",
+  "description": "Create award-winning, memorable websites with advanced animations, creative interactions, and distinctive visual.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create award-winning, memorable websites with advanced animations, creative interactions, and distinctive visual..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

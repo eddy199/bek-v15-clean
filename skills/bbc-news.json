@@ -1,0 +1,6 @@
+{
+  "name": "bbc-news",
+  "command": "bbc-news",
+  "description": "Fetch and display BBC News stories from various sections and regions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch and display BBC News stories from various sections and regions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

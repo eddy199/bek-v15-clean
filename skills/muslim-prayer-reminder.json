@@ -1,0 +1,6 @@
+{
+  "name": "muslim-prayer-reminder",
+  "command": "muslim-prayer-reminder",
+  "description": "Get accurate Islamic prayer times (Fajr, Dhuhr, Asr, Maghrib, Isha) for any location worldwide using official.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get accurate Islamic prayer times (Fajr, Dhuhr, Asr, Maghrib, Isha) for any location worldwide using official..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ics-import-on-iphone",
+  "command": "ics-import-on-iphone",
+  "description": "Create calendar events by generating valid .ics files when direct calendar access is unavailable.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create calendar events by generating valid .ics files when direct calendar access is unavailable..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

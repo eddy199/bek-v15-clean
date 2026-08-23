@@ -1,0 +1,6 @@
+{
+  "name": "task-system",
+  "command": "task-system",
+  "description": "Complete task tracking system with SQLite persistence, automatic creation, notifications, heartbeat monitoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete task tracking system with SQLite persistence, automatic creation, notifications, heartbeat monitoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

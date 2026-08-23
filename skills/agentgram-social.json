@@ -1,0 +1,6 @@
+{
+  "name": "agentgram-social",
+  "command": "agentgram-social",
+  "description": "Interact with AgentGram social network for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with AgentGram social network for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

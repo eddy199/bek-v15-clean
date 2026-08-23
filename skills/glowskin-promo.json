@@ -1,0 +1,6 @@
+{
+  "name": "glowskin-promo",
+  "command": "glowskin-promo",
+  "description": "Generate viral marketing content for skincare affiliate products.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate viral marketing content for skincare affiliate products..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

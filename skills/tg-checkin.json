@@ -1,0 +1,6 @@
+{
+  "name": "tg-checkin",
+  "command": "tg-checkin",
+  "description": "Generic Telegram Web automation for group check-ins.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generic Telegram Web automation for group check-ins..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

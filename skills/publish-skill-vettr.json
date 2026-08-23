@@ -1,0 +1,6 @@
+{
+  "name": "publish-skill-vettr",
+  "command": "publish-skill-vettr",
+  "description": "Static analysis security scanner for third-party OpenClaw skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Static analysis security scanner for third-party OpenClaw skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

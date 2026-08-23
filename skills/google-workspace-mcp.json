@@ -1,0 +1,6 @@
+{
+  "name": "google-workspace-mcp",
+  "command": "google-workspace-mcp",
+  "description": "Gmail, Calendar, Drive, Docs, Sheets — NO Google Cloud Console required.",
+  "prompt": "Tu es un agent expert spécialisé dans : Gmail, Calendar, Drive, Docs, Sheets — NO Google Cloud Console required..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

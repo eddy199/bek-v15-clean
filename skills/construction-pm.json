@@ -1,0 +1,6 @@
+{
+  "name": "construction-pm",
+  "command": "construction-pm",
+  "description": "Construction project management toolkit for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Construction project management toolkit for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

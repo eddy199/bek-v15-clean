@@ -1,0 +1,6 @@
+{
+  "name": "sequence-cli",
+  "command": "sequence-cli",
+  "description": "Manage Sequence smart wallets, projects, API keys, ERC20 transfers, and query blockchain data using the Sequence.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Sequence smart wallets, projects, API keys, ERC20 transfers, and query blockchain data using the Sequence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

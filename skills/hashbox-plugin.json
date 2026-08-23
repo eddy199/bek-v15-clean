@@ -1,0 +1,6 @@
+{
+  "name": "hashbox-plugin",
+  "command": "hashbox-plugin",
+  "description": "OpenClaw plugin that connects an AI agent to the HashBox iOS app via Firebase webhook for push notifications.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw plugin that connects an AI agent to the HashBox iOS app via Firebase webhook for push notifications..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

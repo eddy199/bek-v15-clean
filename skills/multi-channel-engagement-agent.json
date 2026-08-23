@@ -1,0 +1,6 @@
+{
+  "name": "multi-channel-engagement-agent",
+  "command": "multi-channel-engagement-agent",
+  "description": "Autonomous social media engagement across Twitter, Farcaster, and Moltbook.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous social media engagement across Twitter, Farcaster, and Moltbook..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

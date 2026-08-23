@@ -1,0 +1,6 @@
+{
+  "name": "total-recall",
+  "command": "total-recall",
+  "description": "The only memory skill that watches.",
+  "prompt": "Tu es un agent expert spécialisé dans : The only memory skill that watches..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

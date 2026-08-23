@@ -1,0 +1,6 @@
+{
+  "name": "json-repair-kit",
+  "command": "json-repair-kit",
+  "description": "Repair malformed JSON files by normalizing them through Node.js evaluation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Repair malformed JSON files by normalizing them through Node.js evaluation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

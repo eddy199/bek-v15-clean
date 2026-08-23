@@ -1,0 +1,6 @@
+{
+  "name": "cloudmonkey",
+  "command": "cloudmonkey",
+  "description": "Manage Apache CloudStack infrastructure using the cloudmonkey (cmk) CLI — list/start/stop/destroy VMs, manage.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Apache CloudStack infrastructure using the cloudmonkey (cmk) CLI — list/start/stop/destroy VMs, manage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

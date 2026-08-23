@@ -1,0 +1,6 @@
+{
+  "name": "log-dive",
+  "command": "log-dive",
+  "description": "Unified log search across Loki, Elasticsearch, and CloudWatch.",
+  "prompt": "Tu es un agent expert spécialisé dans : Unified log search across Loki, Elasticsearch, and CloudWatch..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

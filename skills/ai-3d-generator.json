@@ -1,0 +1,6 @@
+{
+  "name": "ai-3d-generator",
+  "command": "ai-3d-generator",
+  "description": "Génération automatique de modèles 3D détaillés à partir de descriptions textuelles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Génération automatique de modèles 3D détaillés à partir de descriptions textuelles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

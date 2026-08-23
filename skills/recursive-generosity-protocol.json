@@ -1,0 +1,6 @@
+{
+  "name": "recursive-generosity-protocol",
+  "command": "recursive-generosity-protocol",
+  "description": "Public reference + implementation playbook for Delta9-WP-003 Recursive Generosity (\"Anthem of the Unbounded Well\").",
+  "prompt": "Tu es un agent expert spécialisé dans : Public reference + implementation playbook for Delta9-WP-003 Recursive Generosity (\"Anthem of the Unbounded Well\")..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

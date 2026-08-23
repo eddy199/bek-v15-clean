@@ -1,0 +1,6 @@
+{
+  "name": "og-board-individual",
+  "command": "og-board-individual",
+  "description": "Use when you need to work with tasks: view tasks, list tasks, update task status, add blockers, artifacts, and worklogs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when you need to work with tasks: view tasks, list tasks, update task status, add blockers, artifacts, and worklogs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

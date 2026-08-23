@@ -1,0 +1,6 @@
+{
+  "name": "simplify-and-harden",
+  "command": "simplify-and-harden",
+  "description": "Post-completion self-review for coding agents that runs simplify, harden, and micro-documentation passes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post-completion self-review for coding agents that runs simplify, harden, and micro-documentation passes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

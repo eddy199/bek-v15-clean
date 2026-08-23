@@ -1,0 +1,6 @@
+{
+  "name": "amazon-product-api-skill",
+  "command": "amazon-product-api-skill",
+  "description": "This skill helps users extract structured product listings from Amazon, including titles, ASINs, prices, ratings.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill helps users extract structured product listings from Amazon, including titles, ASINs, prices, ratings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

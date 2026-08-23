@@ -1,0 +1,6 @@
+{
+  "name": "youtube-media-downloader",
+  "command": "youtube-media-downloader",
+  "description": "Download audio (MP3) and video (MP4) files from YouTube URLs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download audio (MP3) and video (MP4) files from YouTube URLs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

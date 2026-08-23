@@ -1,0 +1,6 @@
+{
+  "name": "crunch-coordinate",
+  "command": "crunch-coordinate",
+  "description": "Use when managing Crunch coordinators, competitions (crunches), rewards, checkpoints, staking, or cruncher accounts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when managing Crunch coordinators, competitions (crunches), rewards, checkpoints, staking, or cruncher accounts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

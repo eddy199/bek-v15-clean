@@ -1,0 +1,6 @@
+{
+  "name": "personality-dynamics",
+  "command": "personality-dynamics",
+  "description": "Dynamic personality evolution for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Dynamic personality evolution for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

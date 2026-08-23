@@ -1,0 +1,6 @@
+{
+  "name": "freeride-ai",
+  "command": "freeride-ai",
+  "description": "Manages free AI models from OpenRouter for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manages free AI models from OpenRouter for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "comfy-ai",
+  "command": "comfy-ai",
+  "description": "Integrates with local ComfyUI instance at http://192.168.31.7:8000.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrates with local ComfyUI instance at http://192.168.31.7:8000..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

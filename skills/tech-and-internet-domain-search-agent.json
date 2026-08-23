@@ -1,0 +1,6 @@
+{
+  "name": "tech-and-internet-domain-search-agent",
+  "command": "tech-and-internet-domain-search-agent",
+  "description": "AI agent for tech and internet domain search agent tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent for tech and internet domain search agent tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

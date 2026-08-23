@@ -1,0 +1,6 @@
+{
+  "name": "duckdb-en",
+  "command": "duckdb-en",
+  "description": "DuckDB CLI specialist for SQL analysis, data processing.",
+  "prompt": "Tu es un agent expert spécialisé dans : DuckDB CLI specialist for SQL analysis, data processing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

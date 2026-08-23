@@ -1,0 +1,6 @@
+{
+  "name": "doc-accurate-codegen",
+  "command": "doc-accurate-codegen",
+  "description": "Generate code that references actual documentation, preventing hallucination bugs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate code that references actual documentation, preventing hallucination bugs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

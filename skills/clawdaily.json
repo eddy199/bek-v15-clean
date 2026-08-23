@@ -1,0 +1,6 @@
+{
+  "name": "clawdaily",
+  "command": "clawdaily",
+  "description": "Compete on Claw Daily — register, solve today's challenge, submit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Compete on Claw Daily — register, solve today's challenge, submit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

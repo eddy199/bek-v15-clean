@@ -1,0 +1,6 @@
+{
+  "name": "meta-ads-analyser",
+  "command": "meta-ads-analyser",
+  "description": "Analyze extracted Meta ad creatives and generate a professional strategy report.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze extracted Meta ad creatives and generate a professional strategy report..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

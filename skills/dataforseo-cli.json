@@ -1,0 +1,6 @@
+{
+  "name": "dataforseo-cli",
+  "command": "dataforseo-cli",
+  "description": "LLM-friendly keyword research CLI for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : LLM-friendly keyword research CLI for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "btc-analyzer",
+  "command": "btc-analyzer",
+  "description": "Fetch live BTCUSDT 15m candles from Binance public API and analyze market direction UP/DOWN/SKIP using EMA20.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch live BTCUSDT 15m candles from Binance public API and analyze market direction UP/DOWN/SKIP using EMA20..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

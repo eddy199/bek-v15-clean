@@ -1,0 +1,6 @@
+{
+  "name": "iserv",
+  "command": "iserv",
+  "description": "HTTP client for IServ school platforms.",
+  "prompt": "Tu es un agent expert spécialisé dans : HTTP client for IServ school platforms..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ms-todo-sync",
+  "command": "ms-todo-sync",
+  "description": "A CLI skill to manage Microsoft To Do tasks via Microsoft Graph API.",
+  "prompt": "Tu es un agent expert spécialisé dans : A CLI skill to manage Microsoft To Do tasks via Microsoft Graph API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

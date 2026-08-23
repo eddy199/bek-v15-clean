@@ -1,0 +1,6 @@
+{
+  "name": "taskflow",
+  "command": "taskflow",
+  "description": "Structured project/task management for OpenClaw agents — markdown-first authoring, SQLite-backed querying.",
+  "prompt": "Tu es un agent expert spécialisé dans : Structured project/task management for OpenClaw agents — markdown-first authoring, SQLite-backed querying..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

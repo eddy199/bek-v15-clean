@@ -1,0 +1,6 @@
+{
+  "name": "feishu-sheets",
+  "command": "feishu-sheets",
+  "description": "Feishu online spreadsheet (Sheets) operations including create, read, write, append data, manage worksheets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Feishu online spreadsheet (Sheets) operations including create, read, write, append data, manage worksheets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

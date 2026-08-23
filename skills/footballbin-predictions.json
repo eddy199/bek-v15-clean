@@ -1,0 +1,6 @@
+{
+  "name": "footballbin-predictions",
+  "command": "footballbin-predictions",
+  "description": "Get AI-powered match predictions for Premier League and Champions League including scores, next goal, and corners.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get AI-powered match predictions for Premier League and Champions League including scores, next goal, and corners..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

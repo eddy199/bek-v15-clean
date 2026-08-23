@@ -1,0 +1,6 @@
+{
+  "name": "authy",
+  "command": "authy",
+  "description": "Inject secrets into subprocesses via environment variables.",
+  "prompt": "Tu es un agent expert spécialisé dans : Inject secrets into subprocesses via environment variables..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

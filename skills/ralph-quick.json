@@ -1,0 +1,6 @@
+{
+  "name": "ralph-quick",
+  "command": "ralph-quick",
+  "description": "Fast security spot-check with 10 iterations (~5-10 min)",
+  "prompt": "Tu es un agent expert spécialisé dans : Fast security spot-check with 10 iterations (~5-10 min).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

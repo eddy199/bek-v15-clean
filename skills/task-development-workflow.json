@@ -1,0 +1,6 @@
+{
+  "name": "task-development-workflow",
+  "command": "task-development-workflow",
+  "description": "TDD-first development workflow with structured planning, task tracking, and PR-based code review.",
+  "prompt": "Tu es un agent expert spécialisé dans : TDD-first development workflow with structured planning, task tracking, and PR-based code review..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

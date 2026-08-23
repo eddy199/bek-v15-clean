@@ -1,0 +1,6 @@
+{
+  "name": "portfolio-tracker",
+  "command": "portfolio-tracker",
+  "description": "Automates live portfolio tracking and analysis using browser automation on Yahoo Finance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automates live portfolio tracking and analysis using browser automation on Yahoo Finance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

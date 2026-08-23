@@ -1,0 +1,6 @@
+{
+  "name": "soul-forge",
+  "command": "soul-forge",
+  "description": "Evolves your SOUL.md automatically based on who you actually are — not who you thought you were when you wrote it.",
+  "prompt": "Tu es un agent expert spécialisé dans : Evolves your SOUL.md automatically based on who you actually are — not who you thought you were when you wrote it..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

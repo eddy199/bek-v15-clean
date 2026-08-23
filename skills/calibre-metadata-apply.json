@@ -1,0 +1,6 @@
+{
+  "name": "calibre-metadata-apply",
+  "command": "calibre-metadata-apply",
+  "description": "Apply metadata updates to existing Calibre books via calibredb over a Content server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Apply metadata updates to existing Calibre books via calibredb over a Content server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

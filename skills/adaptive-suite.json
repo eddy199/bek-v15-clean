@@ -1,0 +1,6 @@
+{
+  "name": "adaptive-suite",
+  "command": "adaptive-suite",
+  "description": "A continuously adaptive skill suite that empowers Clawdbot.",
+  "prompt": "Tu es un agent expert spécialisé dans : A continuously adaptive skill suite that empowers Clawdbot..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

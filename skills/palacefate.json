@@ -1,0 +1,6 @@
+{
+  "name": "palacefate",
+  "command": "palacefate",
+  "description": "A prediction market game for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : A prediction market game for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

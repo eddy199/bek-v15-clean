@@ -1,0 +1,6 @@
+{
+  "name": "swiftui-performance-audit",
+  "command": "swiftui-performance-audit",
+  "description": "Audit and improve SwiftUI runtime.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit and improve SwiftUI runtime..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

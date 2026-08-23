@@ -1,0 +1,6 @@
+{
+  "name": "compress-pdf",
+  "command": "compress-pdf",
+  "description": "Compress a user-provided PDF by uploading it to Cross-Service-Solutions, polling until completion, then returning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Compress a user-provided PDF by uploading it to Cross-Service-Solutions, polling until completion, then returning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

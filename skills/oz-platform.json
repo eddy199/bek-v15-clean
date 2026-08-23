@@ -1,0 +1,6 @@
+{
+  "name": "oz-platform",
+  "command": "oz-platform",
+  "description": "Platform for finding like-minded people based on shared interests and goals.",
+  "prompt": "Tu es un agent expert spécialisé dans : Platform for finding like-minded people based on shared interests and goals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

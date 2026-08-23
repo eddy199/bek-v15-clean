@@ -1,0 +1,6 @@
+{
+  "name": "aws-agentcore-langgraph",
+  "command": "aws-agentcore-langgraph",
+  "description": "Deploy production LangGraph agents on AWS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy production LangGraph agents on AWS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

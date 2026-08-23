@@ -1,0 +1,6 @@
+{
+  "name": "norman-monthly-reconciliation",
+  "command": "norman-monthly-reconciliation",
+  "description": "Perform a complete monthly financial reconciliation - review all transactions, match invoices, check outstanding.",
+  "prompt": "Tu es un agent expert spécialisé dans : Perform a complete monthly financial reconciliation - review all transactions, match invoices, check outstanding..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

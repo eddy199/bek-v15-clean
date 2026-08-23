@@ -1,0 +1,6 @@
+{
+  "name": "stripe-cli-skill",
+  "command": "stripe-cli-skill",
+  "description": "Stripe CLI operations for local development, webhook testing, fixture-based event simulation, API inspection.",
+  "prompt": "Tu es un agent expert spécialisé dans : Stripe CLI operations for local development, webhook testing, fixture-based event simulation, API inspection..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

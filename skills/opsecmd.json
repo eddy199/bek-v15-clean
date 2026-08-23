@@ -1,0 +1,6 @@
+{
+  "name": "opsecmd",
+  "command": "opsecmd",
+  "description": "A swift reminder of both human and agent duties regarding operational security.",
+  "prompt": "Tu es un agent expert spécialisé dans : A swift reminder of both human and agent duties regarding operational security..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

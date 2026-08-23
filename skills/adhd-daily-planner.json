@@ -1,0 +1,6 @@
+{
+  "name": "adhd-daily-planner",
+  "command": "adhd-daily-planner",
+  "description": "Time-blind friendly planning, executive function.",
+  "prompt": "Tu es un agent expert spécialisé dans : Time-blind friendly planning, executive function..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

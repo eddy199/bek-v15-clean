@@ -1,0 +1,6 @@
+{
+  "name": "image-ocr",
+  "command": "image-ocr",
+  "description": "Extract text from images using Tesseract OCR.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract text from images using Tesseract OCR..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

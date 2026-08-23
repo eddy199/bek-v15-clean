@@ -1,0 +1,6 @@
+{
+  "name": "ugc-campaign-pipeline",
+  "command": "ugc-campaign-pipeline",
+  "description": "Complete UGC video campaign pipeline: product → hero image → variations → videos → edited final.  ✅ USE.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete UGC video campaign pipeline: product → hero image → variations → videos → edited final.  ✅ USE..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

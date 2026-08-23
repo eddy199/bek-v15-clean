@@ -1,0 +1,6 @@
+{
+  "name": "camofox-mcp",
+  "command": "camofox-mcp",
+  "description": "Anti-detection browser automation MCP skill for OpenClaw agents with 41 tools for navigation, interaction.",
+  "prompt": "Tu es un agent expert spécialisé dans : Anti-detection browser automation MCP skill for OpenClaw agents with 41 tools for navigation, interaction..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

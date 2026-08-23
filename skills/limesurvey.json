@@ -1,0 +1,6 @@
+{
+  "name": "limesurvey",
+  "command": "limesurvey",
+  "description": "Automate LimeSurvey operations via RemoteControl 2 API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate LimeSurvey operations via RemoteControl 2 API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

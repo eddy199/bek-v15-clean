@@ -1,0 +1,6 @@
+{
+  "name": "verify-claims",
+  "command": "verify-claims",
+  "description": "Verify claims and information using professional fact-checking services.",
+  "prompt": "Tu es un agent expert spécialisé dans : Verify claims and information using professional fact-checking services..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

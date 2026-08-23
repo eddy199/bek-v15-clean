@@ -1,0 +1,6 @@
+{
+  "name": "anti-pattern-czar",
+  "command": "anti-pattern-czar",
+  "description": "Detect and fix TypeScript error handling anti-patterns with state persistence and approval workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Detect and fix TypeScript error handling anti-patterns with state persistence and approval workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

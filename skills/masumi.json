@@ -1,0 +1,6 @@
+{
+  "name": "masumi",
+  "command": "masumi",
+  "description": "Enable AI agents to accept Cardano blockchain payments through the decentralized Masumi network by deploying.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enable AI agents to accept Cardano blockchain payments through the decentralized Masumi network by deploying..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

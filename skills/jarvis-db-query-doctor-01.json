@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-db-query-doctor-01",
+  "command": "jarvis-db-query-doctor-01",
+  "description": "Diagnose slow SQL and rewrite queries for safer performance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Diagnose slow SQL and rewrite queries for safer performance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

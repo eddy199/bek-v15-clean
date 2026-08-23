@@ -1,0 +1,6 @@
+{
+  "name": "elevenlabs-agents",
+  "command": "elevenlabs-agents",
+  "description": "Create, manage, and deploy ElevenLabs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, manage, and deploy ElevenLabs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

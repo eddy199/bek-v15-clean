@@ -1,0 +1,6 @@
+{
+  "name": "deep-current",
+  "command": "deep-current",
+  "description": "Persistent research thread manager with a CLI for tracking topics, notes, sources, and findings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent research thread manager with a CLI for tracking topics, notes, sources, and findings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

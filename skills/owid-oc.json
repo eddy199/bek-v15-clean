@@ -1,0 +1,6 @@
+{
+  "name": "owid-oc",
+  "command": "owid-oc",
+  "description": "searches, retrieves, and summarizes content from Our World in Data using the `owid-catalog` Python module.",
+  "prompt": "Tu es un agent expert spécialisé dans : searches, retrieves, and summarizes content from Our World in Data using the `owid-catalog` Python module..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

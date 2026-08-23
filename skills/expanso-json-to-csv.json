@@ -1,0 +1,6 @@
+{
+  "name": "expanso-json-to-csv",
+  "command": "expanso-json-to-csv",
+  "description": "\"Convert JSON array of objects to CSV format\".",
+  "prompt": "Tu es un agent expert spécialisé dans : \"Convert JSON array of objects to CSV format\"..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "marine-watch-planner",
+  "command": "marine-watch-planner",
+  "description": "Generate and adapt a sea-duty daily routine with watch rotations, sleep protection, duty handovers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate and adapt a sea-duty daily routine with watch rotations, sleep protection, duty handovers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

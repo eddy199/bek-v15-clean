@@ -1,0 +1,6 @@
+{
+  "name": "boof",
+  "command": "boof",
+  "description": "Convert PDFs and documents to markdown, index them locally for RAG retrieval, and analyze them token-efficiently.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert PDFs and documents to markdown, index them locally for RAG retrieval, and analyze them token-efficiently..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

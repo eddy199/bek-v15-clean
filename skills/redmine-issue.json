@@ -1,0 +1,6 @@
+{
+  "name": "redmine-issue",
+  "command": "redmine-issue",
+  "description": "Read Redmine issues from any Redmine server via REST API with configurable URL and credentials.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read Redmine issues from any Redmine server via REST API with configurable URL and credentials..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

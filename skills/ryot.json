@@ -1,0 +1,6 @@
+{
+  "name": "ryot",
+  "command": "ryot",
+  "description": "Complete Ryot media tracker with progress tracking, reviews, collections, analytics, calendar, and automated.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Ryot media tracker with progress tracking, reviews, collections, analytics, calendar, and automated..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

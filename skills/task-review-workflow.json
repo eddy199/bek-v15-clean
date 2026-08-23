@@ -1,0 +1,6 @@
+{
+  "name": "task-review-workflow",
+  "command": "task-review-workflow",
+  "description": "Standard PR review and merge workflow for task-driven development.",
+  "prompt": "Tu es un agent expert spécialisé dans : Standard PR review and merge workflow for task-driven development..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

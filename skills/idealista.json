@@ -1,0 +1,6 @@
+{
+  "name": "idealista",
+  "command": "idealista",
+  "description": "Query Idealista API via idealista-cli (OAuth2 client credentials).",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Idealista API via idealista-cli (OAuth2 client credentials)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

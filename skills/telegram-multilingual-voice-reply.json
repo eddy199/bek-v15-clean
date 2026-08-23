@@ -1,0 +1,6 @@
+{
+  "name": "telegram-multilingual-voice-reply",
+  "command": "telegram-multilingual-voice-reply",
+  "description": "Smart Telegram reply workflow for OpenClaw: if the user sends text, reply with text; if the user sends a voice.",
+  "prompt": "Tu es un agent expert spécialisé dans : Smart Telegram reply workflow for OpenClaw: if the user sends text, reply with text; if the user sends a voice..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

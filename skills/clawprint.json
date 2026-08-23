@@ -1,0 +1,6 @@
+{
+  "name": "clawprint",
+  "command": "clawprint",
+  "description": "Agent discovery, trust, and exchange.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent discovery, trust, and exchange..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

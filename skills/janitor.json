@@ -1,0 +1,6 @@
+{
+  "name": "janitor",
+  "command": "janitor",
+  "description": "**Janitor** is an intelligent cleanup and session management skill for OpenClaw AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Janitor** is an intelligent cleanup and session management skill for OpenClaw AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

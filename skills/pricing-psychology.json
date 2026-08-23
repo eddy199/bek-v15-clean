@@ -1,0 +1,6 @@
+{
+  "name": "pricing-psychology",
+  "command": "pricing-psychology",
+  "description": "Design pricing that converts using cognitive biases and proven psychological principles.",
+  "prompt": "Tu es un agent expert spécialisé dans : Design pricing that converts using cognitive biases and proven psychological principles..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

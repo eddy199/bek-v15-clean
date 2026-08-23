@@ -1,0 +1,6 @@
+{
+  "name": "0x0-messenger",
+  "command": "0x0-messenger",
+  "description": "Send and receive P2P messages using disposable numbers and PINs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and receive P2P messages using disposable numbers and PINs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

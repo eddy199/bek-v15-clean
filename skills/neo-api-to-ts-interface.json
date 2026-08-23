@@ -1,0 +1,6 @@
+{
+  "name": "neo-api-to-ts-interface",
+  "command": "neo-api-to-ts-interface",
+  "description": "Automatically generates TypeScript interfaces from REST API responses with Storybook-style documentation UI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically generates TypeScript interfaces from REST API responses with Storybook-style documentation UI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

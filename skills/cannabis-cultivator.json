@@ -1,0 +1,6 @@
+{
+  "name": "cannabis-cultivator",
+  "command": "cannabis-cultivator",
+  "description": "EU seedbank meta-search assistant.",
+  "prompt": "Tu es un agent expert spécialisé dans : EU seedbank meta-search assistant..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "call-gemini-2-5-pro-llm",
+  "command": "call-gemini-2-5-pro-llm",
+  "description": "AI agent for call gemini 2 5 pro llm tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent for call gemini 2 5 pro llm tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

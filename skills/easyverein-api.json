@@ -1,0 +1,6 @@
+{
+  "name": "easyverein-api",
+  "command": "easyverein-api",
+  "description": "Work with the easyVerein v2.0 REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Work with the easyVerein v2.0 REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

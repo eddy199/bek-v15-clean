@@ -1,0 +1,6 @@
+{
+  "name": "trending-skills",
+  "command": "trending-skills",
+  "description": "Fetches skills.sh trending rankings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetches skills.sh trending rankings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

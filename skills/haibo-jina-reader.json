@@ -1,0 +1,6 @@
+{
+  "name": "haibo-jina-reader",
+  "command": "haibo-jina-reader",
+  "description": "Extract clean, readable markdown content from any URL using Jina Reader API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract clean, readable markdown content from any URL using Jina Reader API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mh-apple-reminders",
+  "command": "mh-apple-reminders",
+  "description": "Manage Apple Reminders via remindctl CLI (list, add, edit, complete, delete)",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Apple Reminders via remindctl CLI (list, add, edit, complete, delete).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

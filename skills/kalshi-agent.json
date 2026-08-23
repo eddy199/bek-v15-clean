@@ -1,0 +1,6 @@
+{
+  "name": "kalshi-agent",
+  "command": "kalshi-agent",
+  "description": "Kalshi prediction market agent - analyzes markets and executes trades via the Kalshi v2 API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Kalshi prediction market agent - analyzes markets and executes trades via the Kalshi v2 API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

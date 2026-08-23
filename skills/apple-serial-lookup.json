@@ -1,0 +1,6 @@
+{
+  "name": "apple-serial-lookup",
+  "command": "apple-serial-lookup",
+  "description": "Look up Apple device information from a serial number.",
+  "prompt": "Tu es un agent expert spécialisé dans : Look up Apple device information from a serial number..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

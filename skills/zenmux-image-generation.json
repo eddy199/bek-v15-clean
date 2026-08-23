@@ -1,0 +1,6 @@
+{
+  "name": "zenmux-image-generation",
+  "command": "zenmux-image-generation",
+  "description": "Generate images via ZenMux API (Pro/Elite)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images via ZenMux API (Pro/Elite).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "invoice-collector",
+  "command": "invoice-collector",
+  "description": "Collect invoices/receipts from Gmail and send a summary email with attachments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Collect invoices/receipts from Gmail and send a summary email with attachments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "catalog",
+  "command": "catalog",
+  "description": "Catálogo simples do estúdio (hello world)",
+  "prompt": "Tu es un agent expert spécialisé dans : Catálogo simples do estúdio (hello world).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

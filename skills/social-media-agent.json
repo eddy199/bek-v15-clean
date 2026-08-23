@@ -1,0 +1,6 @@
+{
+  "name": "social-media-agent",
+  "command": "social-media-agent",
+  "description": "Autonomous social media management for X/Twitter using only OpenClaw native tools.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous social media management for X/Twitter using only OpenClaw native tools..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

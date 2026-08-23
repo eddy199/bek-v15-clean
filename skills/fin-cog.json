@@ -1,0 +1,6 @@
+{
+  "name": "fin-cog",
+  "command": "fin-cog",
+  "description": "Wall Street-grade analysis, accessible globally.",
+  "prompt": "Tu es un agent expert spécialisé dans : Wall Street-grade analysis, accessible globally..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "context-budgeting",
+  "command": "context-budgeting",
+  "description": "Manage and optimize OpenClaw context window usage via partitioning, pre-compression checkpointing, and information.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage and optimize OpenClaw context window usage via partitioning, pre-compression checkpointing, and information..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

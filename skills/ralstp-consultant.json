@@ -1,0 +1,6 @@
+{
+  "name": "ralstp-consultant",
+  "command": "ralstp-consultant",
+  "description": "Analyze problems using RALSTP (Recursive Agents and Landmarks Strategic-Tactical Planning)",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze problems using RALSTP (Recursive Agents and Landmarks Strategic-Tactical Planning).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "sq-memory",
+  "command": "sq-memory",
+  "description": "**Give your OpenClaw agents permanent memory.**.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Give your OpenClaw agents permanent memory.**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

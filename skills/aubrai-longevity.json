@@ -1,0 +1,6 @@
+{
+  "name": "aubrai-longevity",
+  "command": "aubrai-longevity",
+  "description": "Meet your SOTA longevity research partner.",
+  "prompt": "Tu es un agent expert spécialisé dans : Meet your SOTA longevity research partner..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

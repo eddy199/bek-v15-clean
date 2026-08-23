@@ -1,0 +1,6 @@
+{
+  "name": "context-onboarding",
+  "command": "context-onboarding",
+  "description": "Provide new contributors and agents with a concise tour of the workspace identity files (SOUL.md, USER.md.",
+  "prompt": "Tu es un agent expert spécialisé dans : Provide new contributors and agents with a concise tour of the workspace identity files (SOUL.md, USER.md..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

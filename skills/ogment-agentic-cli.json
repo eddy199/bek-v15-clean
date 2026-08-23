@@ -1,0 +1,6 @@
+{
+  "name": "ogment-agentic-cli",
+  "command": "ogment-agentic-cli",
+  "description": "Access business integrations (SaaS, APIs, data) securely through Ogment.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access business integrations (SaaS, APIs, data) securely through Ogment..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

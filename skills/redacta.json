@@ -1,0 +1,6 @@
+{
+  "name": "redacta",
+  "command": "redacta",
+  "description": "Redacta pseudonymises medical documents — replacing patient identifiers (NHS numbers, dates of birth, postcodes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Redacta pseudonymises medical documents — replacing patient identifiers (NHS numbers, dates of birth, postcodes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

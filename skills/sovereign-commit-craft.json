@@ -1,0 +1,6 @@
+{
+  "name": "sovereign-commit-craft",
+  "command": "sovereign-commit-craft",
+  "description": "Git commit message expert.",
+  "prompt": "Tu es un agent expert spécialisé dans : Git commit message expert..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

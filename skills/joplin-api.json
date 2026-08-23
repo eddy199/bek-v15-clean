@@ -1,0 +1,6 @@
+{
+  "name": "joplin-api",
+  "command": "joplin-api",
+  "description": "Manage Joplin notes, notebooks, and tags via Joplin Data API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Joplin notes, notebooks, and tags via Joplin Data API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

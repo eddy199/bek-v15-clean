@@ -1,0 +1,6 @@
+{
+  "name": "docstrange",
+  "command": "docstrange",
+  "description": "Document extraction API by Nanonets.",
+  "prompt": "Tu es un agent expert spécialisé dans : Document extraction API by Nanonets..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "basal-ganglia-memory",
+  "command": "basal-ganglia-memory",
+  "description": "Habit formation and procedural learning for AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Habit formation and procedural learning for AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

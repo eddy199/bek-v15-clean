@@ -1,0 +1,6 @@
+{
+  "name": "verify-before-done",
+  "command": "verify-before-done",
+  "description": "Require fresh verification evidence before claiming work is complete.",
+  "prompt": "Tu es un agent expert spécialisé dans : Require fresh verification evidence before claiming work is complete..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

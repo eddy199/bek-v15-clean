@@ -1,0 +1,6 @@
+{
+  "name": "azd-deployment",
+  "command": "azd-deployment",
+  "description": "Deploy containerized applications to Azure Container Apps.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deploy containerized applications to Azure Container Apps..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

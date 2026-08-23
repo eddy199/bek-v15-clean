@@ -1,0 +1,6 @@
+{
+  "name": "tabstack-extractor",
+  "command": "tabstack-extractor",
+  "description": "Extract structured data from websites using Tabstack.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract structured data from websites using Tabstack..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

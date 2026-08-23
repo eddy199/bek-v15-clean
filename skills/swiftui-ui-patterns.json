@@ -1,0 +1,6 @@
+{
+  "name": "swiftui-ui-patterns",
+  "command": "swiftui-ui-patterns",
+  "description": "Best practices and example-driven guidance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Best practices and example-driven guidance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

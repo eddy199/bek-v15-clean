@@ -1,0 +1,6 @@
+{
+  "name": "venice-characters",
+  "command": "venice-characters",
+  "description": "Browse Venice AI's character personas library - discover AI characters for roleplay, creative writing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Browse Venice AI's character personas library - discover AI characters for roleplay, creative writing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

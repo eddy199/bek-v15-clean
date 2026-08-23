@@ -1,0 +1,6 @@
+{
+  "name": "gcal-pro",
+  "command": "gcal-pro",
+  "description": "Google Calendar integration for viewing, creating, and managing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Google Calendar integration for viewing, creating, and managing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

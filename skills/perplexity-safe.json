@@ -1,0 +1,6 @@
+{
+  "name": "perplexity-safe",
+  "command": "perplexity-safe",
+  "description": "Use Perplexity API for web-grounded AI search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Perplexity API for web-grounded AI search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

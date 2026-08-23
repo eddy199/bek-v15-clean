@@ -1,0 +1,6 @@
+{
+  "name": "invoice-template",
+  "command": "invoice-template",
+  "description": "Free simple invoice generator.",
+  "prompt": "Tu es un agent expert spécialisé dans : Free simple invoice generator..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

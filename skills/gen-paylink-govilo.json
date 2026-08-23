@@ -1,0 +1,6 @@
+{
+  "name": "gen-paylink-govilo",
+  "command": "gen-paylink-govilo",
+  "description": "Upload files to Govilo and generate unlock links via Bot API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Upload files to Govilo and generate unlock links via Bot API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

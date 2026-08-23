@@ -1,0 +1,6 @@
+{
+  "name": "json-linter",
+  "command": "json-linter",
+  "description": "Validates JSON syntax across the workspace.",
+  "prompt": "Tu es un agent expert spécialisé dans : Validates JSON syntax across the workspace..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

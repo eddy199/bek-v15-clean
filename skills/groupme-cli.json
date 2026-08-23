@@ -1,0 +1,6 @@
+{
+  "name": "groupme-cli",
+  "command": "groupme-cli",
+  "description": "Send and read GroupMe messages via the groupme CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send and read GroupMe messages via the groupme CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

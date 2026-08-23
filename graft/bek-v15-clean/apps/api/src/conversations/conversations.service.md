@@ -1,0 +1,33 @@
+# bek-v15-clean/apps/api/src/conversations/conversations.service.ts
+
+- ConversationSummary · interface · L26-L34 — interface ConversationSummary
+- BuilderConversationSummary · interface · L36-L52 — interface BuilderConversationSummary
+- ExistingBuilderRequest · type · L54-L59 — type ExistingBuilderRequest = { id: string; conversationId: string; submittedById: string; conversation: { id: string; userId: string; kind: string }; };
+- ConversationsService · class · L62-L1110 — class ConversationsService
+- constructor · method · L65-L68 — constructor( @InjectDatabase() private readonly db: Db, @Optional() private readonly agent?: AgentTriggerService, )
+- list · method · L70-L110 — async list( input: ConversationListInput, userId: string, ): Promise<ConversationSummary[]>
+- listBuilder · method · L112-L172 — async listBuilder(userId: string): Promise<BuilderConversationSummary[]>
+- builderResources · method · L174-L260 — async builderResources(q: string, userId: string)
+- builderById · method · L262-L413 — async builderById(id: string, userId: string)
+- createBuilder · method · L415-L458 — async createBuilder( input: BuilderConversationCreateInput, userId: string, ): Promise<{ id: string }>
+- submitBuilder · method · L460-L518 — async submitBuilder( input: BuilderConversationSubmitInput, userId: string, ): Promise<{ id: string }>
+- answerBuilderQuestion · method · L520-L645 — async answerBuilderQuestion( input: BuilderQuestionResponseInput, userId: string, ): Promise<{ id: string }>
+- markRead · method · L647-L659 — async markRead(id: string, userId: string): Promise<{ id: string }>
+- attachment · method · L661-L712 — async attachment( id: string, userId: string, shareToken?: string, ): Promise<{ name: string; mediaType: string; content: Uint8Array; previewable: boolean; }>
+- rateBuilderResponse · method · L714-L757 — async rateBuilderResponse( input: { id: string; messageId: string; rating: "UP" | "DOWN" | null }, userId: string, )
+- save · method · L759-L862 — async save( input: ConversationSaveInput, userId: string, ): Promise<{ id: string }>
+- updateExisting · function · L764-L810 — updateExisting = async (existing: { id: string; kind: string; userId: string; contactId: string | null; companyId: string | null; dealId: string | null; })
+- events · method · L864-L903 — async events(input: ConversationEventsInput, userId: string)
+- remove · method · L905-L944 — async remove(id: string, userId: string): Promise<{ id: string }>
+- recordId · method · L946-L963 — private recordId(input: { contactId?: string; companyId?: string; dealId?: string; }): string
+- builderMessage · method · L965-L981 — private builderMessage(input: { message: string; resources: BuilderConversationCreateInput["resources"]; attachments: | BuilderConversationCreateInput["attachments"] | BuilderConversationSubmitInput["attachments"]; }): Prisma.InputJsonValue
+- attachmentWrites · method · L983-L993 — private attachmentWrites( attachments: BuilderConversationCreateInput["attachments"], )
+- submissionAttachmentWrites · method · L995-L1053 — private async submissionAttachmentWrites( input: BuilderConversationSubmitInput, userId: string, )
+- assertWorkspaceMember · method · L1055-L1066 — private async assertWorkspaceMember(userId: string): Promise<void>
+- requestByClientId · method · L1068-L1080 — private requestByClientId( clientRequestId: string, ): Promise<ExistingBuilderRequest | null>
+- replayBuilderCreation · method · L1082-L1094 — private replayBuilderCreation( existing: ExistingBuilderRequest, userId: string, ): { id: string }
+- replayBuilderSubmission · method · L1096-L1109 — private replayBuilderSubmission( existing: ExistingBuilderRequest, conversationId: string, userId: string, ): { id: string }
+- isUniqueConstraint · function · L1112-L1117 — function isUniqueConstraint(error: unknown): boolean
+- recordOf · function · L1119-L1123 — function recordOf(value: unknown): Record<string, unknown>
+- arrayOf · function · L1125-L1127 — function arrayOf(value: unknown): unknown[]
+- pendingBuilderQuestionOf · function · L1129-L1185 — function pendingBuilderQuestionOf(value: unknown)

@@ -1,0 +1,6 @@
+{
+  "name": "video-understand",
+  "command": "video-understand",
+  "description": "Analyze and understand video content using AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze and understand video content using AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

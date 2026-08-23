@@ -1,0 +1,6 @@
+{
+  "name": "zapper-api",
+  "command": "zapper-api",
+  "description": "Query DeFi portfolios, token holdings, NFTs, transactions, and prices via Zapper API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query DeFi portfolios, token holdings, NFTs, transactions, and prices via Zapper API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "irish-takeaway",
+  "command": "irish-takeaway",
+  "description": "Find nearby takeaways in Ireland and browse menus.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find nearby takeaways in Ireland and browse menus..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

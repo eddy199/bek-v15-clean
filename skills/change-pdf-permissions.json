@@ -1,0 +1,6 @@
+{
+  "name": "change-pdf-permissions",
+  "command": "change-pdf-permissions",
+  "description": "Change a PDF’s permission flags (edit, print, copy, forms, annotations, etc.) by uploading it to the Solutions API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Change a PDF’s permission flags (edit, print, copy, forms, annotations, etc.) by uploading it to the Solutions API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

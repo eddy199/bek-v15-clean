@@ -1,0 +1,6 @@
+{
+  "name": "client-manager",
+  "command": "client-manager",
+  "description": "Track clients, projects, invoices, payments, earnings, leads, and time for freelancers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track clients, projects, invoices, payments, earnings, leads, and time for freelancers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

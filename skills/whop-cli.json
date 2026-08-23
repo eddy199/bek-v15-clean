@@ -1,0 +1,6 @@
+{
+  "name": "whop-cli",
+  "command": "whop-cli",
+  "description": "Manage Whop digital products store — create products, plans, track payments, manage memberships.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Whop digital products store — create products, plans, track payments, manage memberships..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

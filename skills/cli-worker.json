@@ -1,0 +1,6 @@
+{
+  "name": "cli-worker",
+  "command": "cli-worker",
+  "description": "Delegates coding tasks to Kimi CLI agents in isolated git worktrees.",
+  "prompt": "Tu es un agent expert spécialisé dans : Delegates coding tasks to Kimi CLI agents in isolated git worktrees..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

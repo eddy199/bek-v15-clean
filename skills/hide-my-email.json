@@ -1,0 +1,6 @@
+{
+  "name": "hide-my-email",
+  "command": "hide-my-email",
+  "description": "Generate Apple Hide My Email addresses from the terminal and copy to clipboard.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate Apple Hide My Email addresses from the terminal and copy to clipboard..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

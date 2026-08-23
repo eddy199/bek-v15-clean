@@ -1,0 +1,6 @@
+{
+  "name": "myvibe-skills",
+  "command": "myvibe-skills",
+  "description": "Publish static HTML, ZIP archive, or directory to MyVibe.",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish static HTML, ZIP archive, or directory to MyVibe..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

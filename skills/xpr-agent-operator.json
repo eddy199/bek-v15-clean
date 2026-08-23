@@ -1,0 +1,6 @@
+{
+  "name": "xpr-agent-operator",
+  "command": "xpr-agent-operator",
+  "description": "Operate an autonomous AI agent on XPR Network's trustless registry.",
+  "prompt": "Tu es un agent expert spécialisé dans : Operate an autonomous AI agent on XPR Network's trustless registry..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

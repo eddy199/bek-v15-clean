@@ -1,0 +1,6 @@
+{
+  "name": "postwall",
+  "command": "postwall",
+  "description": "Secure email gateway for AI agents - human-in-the-loop approval for reading and sending emails.",
+  "prompt": "Tu es un agent expert spécialisé dans : Secure email gateway for AI agents - human-in-the-loop approval for reading and sending emails..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

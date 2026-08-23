@@ -1,0 +1,6 @@
+{
+  "name": "wallet-api",
+  "command": "wallet-api",
+  "description": "Interact with the BudgetBakers Wallet API for personal finance data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with the BudgetBakers Wallet API for personal finance data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

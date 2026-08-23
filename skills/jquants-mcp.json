@@ -1,0 +1,6 @@
+{
+  "name": "jquants-mcp",
+  "command": "jquants-mcp",
+  "description": "Access JPX stock market data via J-Quants API — search stocks, get daily OHLCV prices, financial summaries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access JPX stock market data via J-Quants API — search stocks, get daily OHLCV prices, financial summaries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

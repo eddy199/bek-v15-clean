@@ -1,0 +1,6 @@
+{
+  "name": "pr-review-loop",
+  "command": "pr-review-loop",
+  "description": "Autonomous PR review loop with Greptile.",
+  "prompt": "Tu es un agent expert spécialisé dans : Autonomous PR review loop with Greptile..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

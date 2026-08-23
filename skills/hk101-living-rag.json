@@ -1,0 +1,6 @@
+{
+  "name": "hk101-living-rag",
+  "command": "hk101-living-rag",
+  "description": "Simple RAG over local text/markdown.",
+  "prompt": "Tu es un agent expert spécialisé dans : Simple RAG over local text/markdown..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

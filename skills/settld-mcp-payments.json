@@ -1,0 +1,6 @@
+{
+  "name": "settld-mcp-payments",
+  "command": "settld-mcp-payments",
+  "description": "Connect OpenClaw agents to Settld MCP for paid tool calls with quote-bound authorization and verifiable receipts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect OpenClaw agents to Settld MCP for paid tool calls with quote-bound authorization and verifiable receipts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

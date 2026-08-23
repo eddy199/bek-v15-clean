@@ -1,0 +1,6 @@
+{
+  "name": "xmtp-cli",
+  "command": "xmtp-cli",
+  "description": "Run and script the XMTP CLI for testing, debugging, and interacting with XMTP conversations, groups, and messages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run and script the XMTP CLI for testing, debugging, and interacting with XMTP conversations, groups, and messages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "saas-worker",
+  "command": "saas-worker",
+  "description": "Build and launch profitable SAAS products.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build and launch profitable SAAS products..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

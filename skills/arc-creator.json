@@ -1,0 +1,6 @@
+{
+  "name": "arc-creator",
+  "command": "arc-creator",
+  "description": "Create and populate Annotated Research Contexts (ARCs) following the nfdi4plants ARC specification.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and populate Annotated Research Contexts (ARCs) following the nfdi4plants ARC specification..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

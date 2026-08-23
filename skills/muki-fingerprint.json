@@ -1,0 +1,6 @@
+{
+  "name": "muki-fingerprint",
+  "command": "muki-fingerprint",
+  "description": "MUKI asset fingerprinting tool for red team reconnaissance.",
+  "prompt": "Tu es un agent expert spécialisé dans : MUKI asset fingerprinting tool for red team reconnaissance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

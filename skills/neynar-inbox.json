@@ -1,0 +1,6 @@
+{
+  "name": "neynar-inbox",
+  "command": "neynar-inbox",
+  "description": "Email for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Email for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

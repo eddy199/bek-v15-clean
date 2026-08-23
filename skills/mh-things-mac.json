@@ -1,0 +1,6 @@
+{
+  "name": "mh-things-mac",
+  "command": "mh-things-mac",
+  "description": "Manage Things 3 via the `things` CLI on macOS (add/update projects+todos via URL scheme; read/search/list.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Things 3 via the `things` CLI on macOS (add/update projects+todos via URL scheme; read/search/list..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

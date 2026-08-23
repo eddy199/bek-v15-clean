@@ -1,0 +1,6 @@
+{
+  "name": "aetherlang-karpathy-skill",
+  "command": "aetherlang-karpathy-skill",
+  "description": "Implement 10 advanced AI agent node types for any DSL/runtime system — plan compiler, code interpreter, critique.",
+  "prompt": "Tu es un agent expert spécialisé dans : Implement 10 advanced AI agent node types for any DSL/runtime system — plan compiler, code interpreter, critique..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "dj-set-ripper",
+  "command": "dj-set-ripper",
+  "description": "Download individual songs from a DJ set or mix.",
+  "prompt": "Tu es un agent expert spécialisé dans : Download individual songs from a DJ set or mix..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

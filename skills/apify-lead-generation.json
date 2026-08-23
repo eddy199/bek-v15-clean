@@ -1,0 +1,6 @@
+{
+  "name": "apify-lead-generation",
+  "command": "apify-lead-generation",
+  "description": "Generates B2B/B2C leads by scraping Google.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates B2B/B2C leads by scraping Google..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

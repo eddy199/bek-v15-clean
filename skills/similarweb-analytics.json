@@ -1,0 +1,6 @@
+{
+  "name": "similarweb-analytics",
+  "command": "similarweb-analytics",
+  "description": "Analyze websites and domains using SimilarWeb traffic data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze websites and domains using SimilarWeb traffic data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

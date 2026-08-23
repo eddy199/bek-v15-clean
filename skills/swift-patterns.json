@@ -1,0 +1,6 @@
+{
+  "name": "swift-patterns",
+  "command": "swift-patterns",
+  "description": "Review, refactor, or build SwiftUI features with correct state management, modern API usage, optimal view.",
+  "prompt": "Tu es un agent expert spécialisé dans : Review, refactor, or build SwiftUI features with correct state management, modern API usage, optimal view..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

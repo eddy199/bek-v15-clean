@@ -1,0 +1,6 @@
+{
+  "name": "setup-sandbox",
+  "command": "setup-sandbox",
+  "description": "Set up the initial file system for a new sandbox.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up the initial file system for a new sandbox..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

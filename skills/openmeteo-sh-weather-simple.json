@@ -1,0 +1,6 @@
+{
+  "name": "openmeteo-sh-weather-simple",
+  "command": "openmeteo-sh-weather-simple",
+  "description": "Get current weather and forecasts for any city or coordinates using free OpenMeteo API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get current weather and forecasts for any city or coordinates using free OpenMeteo API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

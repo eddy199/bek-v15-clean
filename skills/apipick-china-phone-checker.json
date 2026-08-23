@@ -1,0 +1,6 @@
+{
+  "name": "apipick-china-phone-checker",
+  "command": "apipick-china-phone-checker",
+  "description": "Validate Chinese mobile phone numbers using the apipick China Phone Checker API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Validate Chinese mobile phone numbers using the apipick China Phone Checker API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

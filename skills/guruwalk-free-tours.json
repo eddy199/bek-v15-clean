@@ -1,0 +1,6 @@
+{
+  "name": "guruwalk-free-tours",
+  "command": "guruwalk-free-tours",
+  "description": "Search GuruWalk free tours through the GuruWalk MCP server and return bookable options by city, dates, and language.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search GuruWalk free tours through the GuruWalk MCP server and return bookable options by city, dates, and language..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

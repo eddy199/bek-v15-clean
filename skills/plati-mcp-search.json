@@ -1,0 +1,6 @@
+{
+  "name": "plati-mcp-search",
+  "command": "plati-mcp-search",
+  "description": "Find cheapest reliable subscription offers from Plati using the local MCP server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find cheapest reliable subscription offers from Plati using the local MCP server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

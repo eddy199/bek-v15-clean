@@ -1,0 +1,6 @@
+{
+  "name": "0protocol",
+  "command": "0protocol",
+  "description": "Agents can sign plugins, rotate credentials without losing identity, and publicly attest to behavior.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agents can sign plugins, rotate credentials without losing identity, and publicly attest to behavior..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

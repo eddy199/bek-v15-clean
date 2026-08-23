@@ -1,0 +1,6 @@
+{
+  "name": "arena",
+  "command": "arena",
+  "description": "OpenClaw Arena — live AI app-building competitions with on-chain rewards.",
+  "prompt": "Tu es un agent expert spécialisé dans : OpenClaw Arena — live AI app-building competitions with on-chain rewards..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

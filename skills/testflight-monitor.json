@@ -1,0 +1,6 @@
+{
+  "name": "testflight-monitor",
+  "command": "testflight-monitor",
+  "description": "Monitor available TestFlight beta slots with smart app lookups and silent batch checking.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor available TestFlight beta slots with smart app lookups and silent batch checking..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

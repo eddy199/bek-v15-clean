@@ -1,0 +1,6 @@
+{
+  "name": "mongodb-atlas-admin",
+  "command": "mongodb-atlas-admin",
+  "description": "Manage MongoDB Atlas clusters, projects, users.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage MongoDB Atlas clusters, projects, users..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "clarity-research",
+  "command": "clarity-research",
+  "description": "Search protein folding research data from Clarity Protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search protein folding research data from Clarity Protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

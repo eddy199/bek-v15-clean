@@ -1,0 +1,6 @@
+{
+  "name": "jarvis-mission-control",
+  "command": "jarvis-mission-control",
+  "description": "Set up JARVIS Mission Control — a free, open-source coordination hub where AI agents and humans work as a real team.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up JARVIS Mission Control — a free, open-source coordination hub where AI agents and humans work as a real team..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

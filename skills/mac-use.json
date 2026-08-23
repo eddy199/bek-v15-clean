@@ -1,0 +1,6 @@
+{
+  "name": "mac-use",
+  "command": "mac-use",
+  "description": "Control macOS GUI apps visually — take screenshots, click, scroll, type.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control macOS GUI apps visually — take screenshots, click, scroll, type..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

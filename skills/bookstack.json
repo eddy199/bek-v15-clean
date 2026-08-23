@@ -1,0 +1,6 @@
+{
+  "name": "bookstack",
+  "command": "bookstack",
+  "description": "BookStack Wiki & Documentation API integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : BookStack Wiki & Documentation API integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

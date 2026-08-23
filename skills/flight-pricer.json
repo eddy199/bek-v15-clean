@@ -1,0 +1,6 @@
+{
+  "name": "flight-pricer",
+  "command": "flight-pricer",
+  "description": "A command-line interface (CLI) to search for flight prices using the Duffel API.",
+  "prompt": "Tu es un agent expert spécialisé dans : A command-line interface (CLI) to search for flight prices using the Duffel API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

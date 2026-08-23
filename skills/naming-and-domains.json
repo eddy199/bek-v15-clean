@@ -1,0 +1,6 @@
+{
+  "name": "naming-and-domains",
+  "command": "naming-and-domains",
+  "description": "Name a business, product, or service and secure a matching domain.",
+  "prompt": "Tu es un agent expert spécialisé dans : Name a business, product, or service and secure a matching domain..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

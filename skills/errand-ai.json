@@ -1,0 +1,6 @@
+{
+  "name": "errand-ai",
+  "command": "errand-ai",
+  "description": "Enable your AI assistant to post and manage errands for human workers through the ErrandAI platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enable your AI assistant to post and manage errands for human workers through the ErrandAI platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "desktop-pet",
+  "command": "desktop-pet",
+  "description": "Give OpenClaw a body — a tiny fluid glass ball desktop pet with voice cloning, 15+ eye expressions, desktop lyrics.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give OpenClaw a body — a tiny fluid glass ball desktop pet with voice cloning, 15+ eye expressions, desktop lyrics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

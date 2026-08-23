@@ -1,0 +1,6 @@
+{
+  "name": "guardian-angel",
+  "command": "guardian-angel",
+  "description": "A moral evaluation system rooted in Thomistic virtue ethics.",
+  "prompt": "Tu es un agent expert spécialisé dans : A moral evaluation system rooted in Thomistic virtue ethics..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

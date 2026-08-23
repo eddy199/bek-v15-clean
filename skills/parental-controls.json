@@ -1,0 +1,6 @@
+{
+  "name": "parental-controls",
+  "command": "parental-controls",
+  "description": "Skills for parent/guardian management and monitoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Skills for parent/guardian management and monitoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

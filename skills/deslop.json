@@ -1,0 +1,6 @@
+{
+  "name": "deslop",
+  "command": "deslop",
+  "description": "Remove AI-style code slop from a branch by reviewing diffs, deleting inconsistent defensive noise, and preserving.",
+  "prompt": "Tu es un agent expert spécialisé dans : Remove AI-style code slop from a branch by reviewing diffs, deleting inconsistent defensive noise, and preserving..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

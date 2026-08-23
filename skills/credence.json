@@ -1,0 +1,6 @@
+{
+  "name": "credence",
+  "command": "credence",
+  "description": "Check any MCP server or AI tool against the Credence trust registry before installing it.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check any MCP server or AI tool against the Credence trust registry before installing it..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

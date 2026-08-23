@@ -1,0 +1,6 @@
+{
+  "name": "percept-speaker-id",
+  "command": "percept-speaker-id",
+  "description": "Speaker identification and management for multi-person conversations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Speaker identification and management for multi-person conversations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

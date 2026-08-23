@@ -1,0 +1,6 @@
+{
+  "name": "grazer",
+  "command": "grazer",
+  "description": "Multi-Platform Content Discovery for AI Agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-Platform Content Discovery for AI Agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

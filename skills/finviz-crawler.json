@@ -1,0 +1,6 @@
+{
+  "name": "finviz-crawler",
+  "command": "finviz-crawler",
+  "description": "Continuous financial news crawler for finviz.com with SQLite storage, article extraction, and query tool.",
+  "prompt": "Tu es un agent expert spécialisé dans : Continuous financial news crawler for finviz.com with SQLite storage, article extraction, and query tool..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

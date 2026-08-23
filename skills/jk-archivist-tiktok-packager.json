@@ -1,0 +1,6 @@
+{
+  "name": "jk-archivist-tiktok-packager",
+  "command": "jk-archivist-tiktok-packager",
+  "description": "Generate deterministic 6-slide portrait PNG slideshow assets plus caption text for TikTok-style posting workflows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate deterministic 6-slide portrait PNG slideshow assets plus caption text for TikTok-style posting workflows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

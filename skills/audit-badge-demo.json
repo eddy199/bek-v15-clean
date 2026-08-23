@@ -1,0 +1,6 @@
+{
+  "name": "audit-badge-demo",
+  "command": "audit-badge-demo",
+  "description": "Demo skill showcasing the audit badge workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Demo skill showcasing the audit badge workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

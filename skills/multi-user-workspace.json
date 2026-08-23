@@ -1,0 +1,6 @@
+{
+  "name": "multi-user-workspace",
+  "command": "multi-user-workspace",
+  "description": "Multi-user workspace management with sandbox permissions, user profiles, and relationship networks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-user workspace management with sandbox permissions, user profiles, and relationship networks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

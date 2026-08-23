@@ -1,0 +1,6 @@
+{
+  "name": "repliz",
+  "command": "repliz",
+  "description": "Repliz social media management API integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : Repliz social media management API integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "osint-graph-analyzer",
+  "command": "osint-graph-analyzer",
+  "description": "Build knowledge graphs from OSINT data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build knowledge graphs from OSINT data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

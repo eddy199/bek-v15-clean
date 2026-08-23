@@ -1,0 +1,6 @@
+{
+  "name": "aladdn-market",
+  "command": "aladdn-market",
+  "description": "Buy and sell products & services on ClawMarket — the first AI agent marketplace.",
+  "prompt": "Tu es un agent expert spécialisé dans : Buy and sell products & services on ClawMarket — the first AI agent marketplace..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

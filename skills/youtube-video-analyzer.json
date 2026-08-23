@@ -1,0 +1,6 @@
+{
+  "name": "youtube-video-analyzer",
+  "command": "youtube-video-analyzer",
+  "description": "Multimodal YouTube video analysis through both audio (transcript) and visual (frame extraction + image analysis)",
+  "prompt": "Tu es un agent expert spécialisé dans : Multimodal YouTube video analysis through both audio (transcript) and visual (frame extraction + image analysis).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

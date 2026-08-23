@@ -1,0 +1,6 @@
+{
+  "name": "iyeque-device-control",
+  "command": "iyeque-device-control",
+  "description": "Expose safe device actions (volume, brightness, open/close apps) for personal automation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Expose safe device actions (volume, brightness, open/close apps) for personal automation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

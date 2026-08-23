@@ -1,0 +1,6 @@
+{
+  "name": "tmx-cli",
+  "command": "tmx-cli",
+  "description": "Manage Thermomix/Cookidoo meal planning via tmx-cli.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Thermomix/Cookidoo meal planning via tmx-cli..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

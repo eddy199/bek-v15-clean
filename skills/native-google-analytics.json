@@ -1,0 +1,6 @@
+{
+  "name": "native-google-analytics",
+  "command": "native-google-analytics",
+  "description": "Query Google Analytics 4 (GA4) data directly via the Analytics Data API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Google Analytics 4 (GA4) data directly via the Analytics Data API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

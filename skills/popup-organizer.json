@@ -1,0 +1,6 @@
+{
+  "name": "popup-organizer",
+  "command": "popup-organizer",
+  "description": "Search and hire mobile vendors for events on PopUp.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and hire mobile vendors for events on PopUp..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

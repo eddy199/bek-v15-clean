@@ -1,0 +1,6 @@
+{
+  "name": "script-creator",
+  "command": "script-creator",
+  "description": "Create and modify scripts in ~/.nanobot/workspace/test with strict Git versioning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and modify scripts in ~/.nanobot/workspace/test with strict Git versioning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

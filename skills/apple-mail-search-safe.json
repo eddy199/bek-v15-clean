@@ -1,0 +1,6 @@
+{
+  "name": "apple-mail-search-safe",
+  "command": "apple-mail-search-safe",
+  "description": "Fast & safe Apple Mail search with body.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fast & safe Apple Mail search with body..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

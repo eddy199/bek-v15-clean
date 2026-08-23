@@ -1,0 +1,6 @@
+{
+  "name": "docling",
+  "command": "docling",
+  "description": "Extract and parse content from web pages, PDFs, documents (docx, pptx), and images using the docling CLI with GPU.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract and parse content from web pages, PDFs, documents (docx, pptx), and images using the docling CLI with GPU..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

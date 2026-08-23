@@ -1,0 +1,6 @@
+{
+  "name": "landing-page-roast",
+  "command": "landing-page-roast",
+  "description": "Audit a landing page for clarity, trust, offer strength, and conversion friction; return prioritized fixes and copy.",
+  "prompt": "Tu es un agent expert spécialisé dans : Audit a landing page for clarity, trust, offer strength, and conversion friction; return prioritized fixes and copy..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

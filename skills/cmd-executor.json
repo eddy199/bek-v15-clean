@@ -1,0 +1,6 @@
+{
+  "name": "cmd-executor",
+  "command": "cmd-executor",
+  "description": "Runs any Windows command locally and replies with the output.",
+  "prompt": "Tu es un agent expert spécialisé dans : Runs any Windows command locally and replies with the output..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

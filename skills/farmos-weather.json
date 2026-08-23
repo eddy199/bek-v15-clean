@@ -1,0 +1,6 @@
+{
+  "name": "farmos-weather",
+  "command": "farmos-weather",
+  "description": "Query weather data and forecasts for farm fields via the Agronomy module.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query weather data and forecasts for farm fields via the Agronomy module..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

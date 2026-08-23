@@ -1,0 +1,6 @@
+{
+  "name": "agent-survival-kit",
+  "command": "agent-survival-kit",
+  "description": "A comprehensive toolkit for AI agents operating under budget constraints.",
+  "prompt": "Tu es un agent expert spécialisé dans : A comprehensive toolkit for AI agents operating under budget constraints..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

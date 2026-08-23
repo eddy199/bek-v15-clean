@@ -1,0 +1,6 @@
+{
+  "name": "shopping-list",
+  "command": "shopping-list",
+  "description": "Conversational shopping list with categories, family sharing, and purchase history.",
+  "prompt": "Tu es un agent expert spécialisé dans : Conversational shopping list with categories, family sharing, and purchase history..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

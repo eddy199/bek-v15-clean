@@ -1,0 +1,6 @@
+{
+  "name": "cognitive-clarity",
+  "command": "cognitive-clarity",
+  "description": "Cognitive accessibility linter for outbound messages.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cognitive accessibility linter for outbound messages..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

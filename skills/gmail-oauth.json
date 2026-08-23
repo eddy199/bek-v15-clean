@@ -1,0 +1,6 @@
+{
+  "name": "gmail-oauth",
+  "command": "gmail-oauth",
+  "description": "Set up Gmail API access via gog CLI with manual OAuth flow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up Gmail API access via gog CLI with manual OAuth flow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

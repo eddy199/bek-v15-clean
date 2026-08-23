@@ -1,0 +1,6 @@
+{
+  "name": "medical-clinicaltrials",
+  "command": "medical-clinicaltrials",
+  "description": "Access ClinicalTrials.gov to search clinical trials with advanced filtering options.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access ClinicalTrials.gov to search clinical trials with advanced filtering options..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

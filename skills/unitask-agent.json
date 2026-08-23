@@ -1,0 +1,6 @@
+{
+  "name": "unitask-agent",
+  "command": "unitask-agent",
+  "description": "Start finishing tasks instead of just organizing them: connect your OpenClaw agent to Unitask (unitask.app)",
+  "prompt": "Tu es un agent expert spécialisé dans : Start finishing tasks instead of just organizing them: connect your OpenClaw agent to Unitask (unitask.app).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

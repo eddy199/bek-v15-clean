@@ -1,0 +1,6 @@
+{
+  "name": "echodecks-ultimate",
+  "command": "echodecks-ultimate",
+  "description": "AI-powered flashcard management with automated podcast.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered flashcard management with automated podcast..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "aliyun-mail",
+  "command": "aliyun-mail",
+  "description": "A skill to send emails via Aliyun enterprise email service with support for markdown, HTML text, attachments.",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill to send emails via Aliyun enterprise email service with support for markdown, HTML text, attachments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

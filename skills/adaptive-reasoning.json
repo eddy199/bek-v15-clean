@@ -1,0 +1,6 @@
+{
+  "name": "adaptive-reasoning",
+  "command": "adaptive-reasoning",
+  "description": "Automatically assess task complexity and adjust reasoning level.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically assess task complexity and adjust reasoning level..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

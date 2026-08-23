@@ -1,0 +1,6 @@
+{
+  "name": "bexio",
+  "command": "bexio",
+  "description": "Bexio Swiss business software API for managing contacts, quotes/offers,.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bexio Swiss business software API for managing contacts, quotes/offers,..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

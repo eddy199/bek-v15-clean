@@ -1,0 +1,6 @@
+{
+  "name": "daily-oracle",
+  "command": "daily-oracle",
+  "description": "A background agent that generates a daily life prediction by analyzing local data and social signals.",
+  "prompt": "Tu es un agent expert spécialisé dans : A background agent that generates a daily life prediction by analyzing local data and social signals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

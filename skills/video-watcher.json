@@ -1,0 +1,6 @@
+{
+  "name": "video-watcher",
+  "command": "video-watcher",
+  "description": "Analyze video content by extracting frames at regular intervals.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze video content by extracting frames at regular intervals..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

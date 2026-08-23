@@ -1,0 +1,6 @@
+{
+  "name": "podcast-insider-top10",
+  "command": "podcast-insider-top10",
+  "description": "Professional analytical digest of top 10 podcast industry news, trends, and business insights from premier global.",
+  "prompt": "Tu es un agent expert spécialisé dans : Professional analytical digest of top 10 podcast industry news, trends, and business insights from premier global..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

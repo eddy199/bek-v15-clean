@@ -1,0 +1,6 @@
+{
+  "name": "wip-universal-installer",
+  "command": "wip-universal-installer",
+  "description": "The Universal Interface specification for agent-native software.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Universal Interface specification for agent-native software..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "bitaxe-monitor",
+  "command": "bitaxe-monitor",
+  "description": "Monitor Bitaxe Gamma Bitcoin miner status via HTTP API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Monitor Bitaxe Gamma Bitcoin miner status via HTTP API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

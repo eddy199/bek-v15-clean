@@ -1,0 +1,6 @@
+{
+  "name": "brw-marketing-principles",
+  "command": "brw-marketing-principles",
+  "description": "Apply timeless marketing and business principles to any problem.",
+  "prompt": "Tu es un agent expert spécialisé dans : Apply timeless marketing and business principles to any problem..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

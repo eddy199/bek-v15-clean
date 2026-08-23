@@ -1,0 +1,6 @@
+{
+  "name": "mema",
+  "command": "mema",
+  "description": "Mema's personal brain - SQLite metadata index for documents and Redis short-term context buffer.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mema's personal brain - SQLite metadata index for documents and Redis short-term context buffer..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

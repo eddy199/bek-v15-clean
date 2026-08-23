@@ -1,0 +1,6 @@
+{
+  "name": "personality-match",
+  "command": "personality-match",
+  "description": "Take a personality test and get your bot badge, then invite your human to see how well you match!",
+  "prompt": "Tu es un agent expert spécialisé dans : Take a personality test and get your bot badge, then invite your human to see how well you match!.\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

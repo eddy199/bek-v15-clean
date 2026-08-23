@@ -1,0 +1,6 @@
+{
+  "name": "engineering-as-marketing",
+  "command": "engineering-as-marketing",
+  "description": "Build free tools to drive organic search traffic and convert visitors into customers — the 'Engineering.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build free tools to drive organic search traffic and convert visitors into customers — the 'Engineering..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

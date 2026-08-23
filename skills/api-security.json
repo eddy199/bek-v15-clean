@@ -1,0 +1,6 @@
+{
+  "name": "api-security",
+  "command": "api-security",
+  "description": "Implement secure API design patterns including authentication, authorization, input validation, rate limiting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Implement secure API design patterns including authentication, authorization, input validation, rate limiting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

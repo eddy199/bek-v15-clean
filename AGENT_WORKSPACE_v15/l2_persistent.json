@@ -1,0 +1,566 @@
+{
+    "sessions": [],
+    "skills_created": [],
+    "faits": [
+        {
+            "ts": "2026-08-12 20:55:36",
+            "txt": "[Mémoire] Le nom du créateur de cet agent est Bek Mohammed"
+        },
+        {
+            "ts": "2026-08-12 21:15:39",
+            "txt": "[Mémoire] BEK utilise une mémoire hybride ChromaDB locale et Pinecone pour la mémoire vect"
+        },
+        {
+            "ts": "2026-08-12 21:18:04",
+            "txt": "[Mémoire] Les clés NVIDIA de BEK sont illimitées et très puissantes"
+        },
+        {
+            "ts": "2026-08-13 02:05:52",
+            "txt": "[Mémoire] bsr"
+        },
+        {
+            "ts": "2026-08-13 02:05:57",
+            "txt": "[Mémoire] Il semble que vous ayez saisi \"bsr\" sans fournir de contexte ou d'explication su"
+        },
+        {
+            "ts": "2026-08-13 02:09:17",
+            "txt": "[Mémoire] bsr"
+        },
+        {
+            "ts": "2026-08-13 02:09:30",
+            "txt": "[Mémoire] Pareillement à \"bsr\", j'ai besoin d'un peu plus d'informations pour vous fournir"
+        },
+        {
+            "ts": "2026-08-13 02:10:32",
+            "txt": "[Mémoire] salut"
+        },
+        {
+            "ts": "2026-08-13 02:10:36",
+            "txt": "[Mémoire] Bonjour ! Comment puis-je vous aider aujourd'hui ?"
+        },
+        {
+            "ts": "2026-08-13 02:12:22",
+            "txt": "[Mémoire] ca va"
+        },
+        {
+            "ts": "2026-08-13 02:12:36",
+            "txt": "[Mémoire] C'est super ! Il est agréable de savoir que tout va bien. Si vous avez besoin de"
+        },
+        {
+            "ts": "2026-08-13 02:14:30",
+            "txt": "[Mémoire] ca va"
+        },
+        {
+            "ts": "2026-08-13 02:15:09",
+            "txt": "[Mémoire] Alors, qu'est-ce que vous aimez faire pour vous détendre ou vous occuper ? Nous "
+        },
+        {
+            "ts": "2026-08-13 02:20:02",
+            "txt": "[Mémoire] cv"
+        },
+        {
+            "ts": "2026-08-13 02:20:35",
+            "txt": "[Mémoire] Le terme \"CV\" peut faire référence à plusieurs choses, mais les deux plus couran"
+        },
+        {
+            "ts": "2026-08-13 02:28:22",
+            "txt": "[Mémoire] bsr"
+        },
+        {
+            "ts": "2026-08-13 02:28:26",
+            "txt": "[Mémoire] Il semble que vous ayez mentionné le terme \"BSR\" sans fournir plus de contexte. "
+        },
+        {
+            "ts": "2026-08-13 02:29:43",
+            "txt": "[Mémoire] tu recois mes messages"
+        },
+        {
+            "ts": "2026-08-13 02:29:45",
+            "txt": "[Mémoire] \n<think>\nHere's a thinking process:\n\n1.  **Analyze User Input:**\n   - User said:"
+        },
+        {
+            "ts": "2026-08-13 02:30:13",
+            "txt": "[Mémoire] alors"
+        },
+        {
+            "ts": "2026-08-13 02:30:17",
+            "txt": "[Mémoire] \n<think>\nHere's a thinking process:\n\n1.  **Analyze User Input:**\n   - User said:"
+        },
+        {
+            "ts": "2026-08-13 02:31:57",
+            "txt": "[Mémoire] tu me recois"
+        },
+        {
+            "ts": "2026-08-13 02:31:59",
+            "txt": "[Mémoire] et je te réponds. Tout fonctionne de mon côté. Tu peux me demander ce que tu veu"
+        },
+        {
+            "ts": "2026-08-13 02:33:19",
+            "txt": "[Mémoire] repond"
+        },
+        {
+            "ts": "2026-08-13 02:33:24",
+            "txt": "[Mémoire] mais tu n'as pas encore demandé quelque chose. \n\nJe suis là pour t'aider. Dis-mo"
+        },
+        {
+            "ts": "2026-08-13 02:35:40",
+            "txt": "[Mémoire] oh"
+        },
+        {
+            "ts": "2026-08-13 02:35:43",
+            "txt": "[Mémoire] Tu veux juste que je te dise \"oh\"? 😊\n\nMais si tu as une question ou un sujet de "
+        },
+        {
+            "ts": "2026-08-13 02:35:53",
+            "txt": "[Mémoire] ​⚙️ PROMPT GLOBAL COMPLET (À valider, appliquer et mémoriser dans ma mémoire)\n\n​"
+        },
+        {
+            "ts": "2026-08-13 02:35:57",
+            "txt": "[Mémoire] je note tout ce que tu as mentionné, et je l'appliquerai dans toutes nos futures"
+        },
+        {
+            "ts": "2026-08-13 02:37:28",
+            "txt": "[Mémoire] ok"
+        },
+        {
+            "ts": "2026-08-13 02:37:31",
+            "txt": "[Mémoire] alors, de quoi as-tu besoin maintenant? 😊\n\nJe suis là pour t'aider avec tes ques"
+        },
+        {
+            "ts": "2026-08-13 02:42:24",
+            "txt": "[Mémoire] cc"
+        },
+        {
+            "ts": "2026-08-13 02:42:27",
+            "txt": "[Mémoire] Je suis ici. Que souhaites-tu savoir ou discuter ?"
+        },
+        {
+            "ts": "2026-08-13 02:42:37",
+            "txt": "[Mémoire] tu me recois"
+        },
+        {
+            "ts": "2026-08-13 02:42:40",
+            "txt": "[Mémoire] Oui, je te reçois. Que puis-je faire pour toi ?"
+        },
+        {
+            "ts": "2026-08-13 02:42:52",
+            "txt": "[Mémoire] ca va"
+        },
+        {
+            "ts": "2026-08-13 02:42:55",
+            "txt": "[Mémoire] Tout va bien, merci ! Et toi ? Que souhaites-tu aborder aujourd'hui ?"
+        },
+        {
+            "ts": "2026-08-13 02:43:06",
+            "txt": "[Mémoire] ok"
+        },
+        {
+            "ts": "2026-08-13 02:43:10",
+            "txt": "[Mémoire] Si tu as une question ou un sujet en tête, n'hésite pas à me le dire. Je suis pr"
+        },
+        {
+            "ts": "2026-08-13 02:44:56",
+            "txt": "[Mémoire] Sok"
+        },
+        {
+            "ts": "2026-08-13 02:45:00",
+            "txt": "[Mémoire] **Réponse à \"Sok\" (interprétation nécessaire)**\n\nPuisque \"Sok\" n'est pas un mess"
+        },
+        {
+            "ts": "2026-08-13 03:08:16",
+            "txt": "[Mémoire] bsr"
+        },
+        {
+            "ts": "2026-08-13 03:08:20",
+            "txt": "[Mémoire] Il semble que vous ayez mentionné le terme \"BSR\" sans fournir plus de contexte. "
+        },
+        {
+            "ts": "2026-08-13 03:09:37",
+            "txt": "[Mémoire] ​⚙️ PROMPT GLOBAL COMPLET (À valider, appliquer et mémoriser dans ma mémoire)\n\n​"
+        },
+        {
+            "ts": "2026-08-13 03:09:41",
+            "txt": "[Mémoire] Je vais valider et appliquer les instructions fournies dans le prompt global com"
+        },
+        {
+            "ts": "2026-08-13 03:11:09",
+            "txt": "[Mémoire] PROMPT GLOBAL DÉFINITIF (Verrouillé en mémoire)\n1. Réflexion Permanente et Zéro "
+        },
+        {
+            "ts": "2026-08-13 03:11:12",
+            "txt": "[Mémoire] Je vais valider et appliquer les instructions fournies dans le PROMPT GLOBAL DÉF"
+        },
+        {
+            "ts": "2026-08-13 03:11:42",
+            "txt": "[Mémoire] resumes les deux prompte on les fusionnant dans un seul prompt go"
+        },
+        {
+            "ts": "2026-08-13 03:11:44",
+            "txt": "[Mémoire] Voici le prompt global définitif, qui combine les deux prompts précédents :\n\n**P"
+        },
+        {
+            "ts": "2026-08-13 03:12:56",
+            "txt": "[Mémoire] PROMPT GLOBAL DÉFINITIF\n\n    Réflexion Permanente et Zéro Erreur : Je consulte m"
+        },
+        {
+            "ts": "2026-08-13 03:12:58",
+            "txt": "[Mémoire] Je comprends et je valide votre accord explicite pour appliquer le PROMPT GLOBAL"
+        },
+        {
+            "ts": "2026-08-13 03:13:22",
+            "txt": "[Mémoire] resume le prompte en prompte global go"
+        },
+        {
+            "ts": "2026-08-13 03:13:24",
+            "txt": "[Mémoire] **PROMPT GLOBAL GO**\n\nJe vais appliquer les règles suivantes pour notre conversa"
+        },
+        {
+            "ts": "2026-08-13 03:14:44",
+            "txt": "[Mémoire] PROMPT GLOBAL GO\n\nJe vais appliquer les règles suivantes pour notre conversation"
+        },
+        {
+            "ts": "2026-08-13 03:14:47",
+            "txt": "[Mémoire] Je valide et je vais appliquer les règles du **PROMPT GLOBAL GO** à la lettre, s"
+        },
+        {
+            "ts": "2026-08-13 03:15:57",
+            "txt": "[Mémoire] salut toi"
+        },
+        {
+            "ts": "2026-08-13 03:16:01",
+            "txt": "[Mémoire] **Salut à toi aussi !**\n\nPuisque nous sommes revenus à un échange de salutations"
+        },
+        {
+            "ts": "2026-08-13 03:16:50",
+            "txt": "[Mémoire] PROMPT GLOBAL GO\n\nJe vais appliquer les règles suivantes pour notre conversation"
+        },
+        {
+            "ts": "2026-08-13 03:16:53",
+            "txt": "[Mémoire] **Confirmation de Réception et Validation des Règles**\n\n* **Réception Confirmée*"
+        },
+        {
+            "ts": "2026-08-13 03:17:55",
+            "txt": "[Mémoire] tu peux generer un ficiher telechagable dans linterface de that reponse resumer "
+        },
+        {
+            "ts": "2026-08-13 03:17:59",
+            "txt": "[Mémoire] **Génération de Fichier Téléchargeable dans cette Interface (Limitations et Solu"
+        },
+        {
+            "ts": "2026-08-13 03:18:14",
+            "txt": "[Mémoire] tu peux geneer des fichier telechargable da,s cette interface de convarsation ?"
+        },
+        {
+            "ts": "2026-08-13 03:18:17",
+            "txt": "[Mémoire] Malheureusement, dans cette interface de conversation, je ne peux pas générer di"
+        },
+        {
+            "ts": "2026-08-13 03:44:41",
+            "txt": "[Mémoire] je vais tenvoyer un fichier zip de mon agent tu dois tous lire daccord"
+        },
+        {
+            "ts": "2026-08-13 03:44:44",
+            "txt": "[Mémoire] Je comprends que vous souhaitez partager un fichier zip contenant des informatio"
+        },
+        {
+            "ts": "2026-08-13 03:45:10",
+            "txt": "[Mémoire] tu me recois"
+        },
+        {
+            "ts": "2026-08-13 03:45:16",
+            "txt": "[Mémoire] Oui, je vous reçois ! Je peux voir vos messages et y répondre. Nous sommes en tr"
+        },
+        {
+            "ts": "2026-08-13 03:50:38",
+            "txt": "[Mémoire] tu me recois"
+        },
+        {
+            "ts": "2026-08-13 03:50:42",
+            "txt": "[Mémoire] Oui, je te reçois ! Que souhaites-tu discuter ou savoir ?"
+        },
+        {
+            "ts": "2026-08-13 03:50:57",
+            "txt": "[Mémoire] ok"
+        },
+        {
+            "ts": "2026-08-13 03:51:02",
+            "txt": "[Mémoire] Si tu as une question ou un sujet en tête, n'hésite pas à me le dire. Je suis là"
+        },
+        {
+            "ts": "2026-08-13 03:52:54",
+            "txt": "[Mémoire] salut"
+        },
+        {
+            "ts": "2026-08-13 03:52:57",
+            "txt": "[Mémoire] **Salut !**\n\nComment puis-je vous aider aujourd'hui ? Vous avez une question ou "
+        },
+        {
+            "ts": "2026-08-13 03:53:51",
+            "txt": "[Mémoire] tu peux lire ou annalyser mon ficher et me dooner les point fort et point faible"
+        },
+        {
+            "ts": "2026-08-13 03:53:54",
+            "txt": "[Mémoire] **Analyse du fichier agent-ui.js**\n\nJe vais essayer de lire et d'analyser votre "
+        },
+        {
+            "ts": "2026-08-13 04:08:52",
+            "txt": "[Mémoire] bsr"
+        },
+        {
+            "ts": "2026-08-13 04:08:56",
+            "txt": "[Mémoire] Je comprends que vous avez mentionné le terme \"BSR\" sans fournir plus de context"
+        },
+        {
+            "ts": "2026-08-13 04:09:08",
+            "txt": "[Mémoire] PROMPT GLOBAL GO\n\nJe vais appliquer les règles suivantes pour notre conversation"
+        },
+        {
+            "ts": "2026-08-13 04:09:11",
+            "txt": "[Mémoire] Je comprends que vous avez réitéré les règles pour notre conversation. Je vais l"
+        },
+        {
+            "ts": "2026-08-13 04:09:46",
+            "txt": "[Mémoire] resumes avec precision tes reponse daccord tu dois reflichier avant de repondre"
+        },
+        {
+            "ts": "2026-08-13 04:09:49",
+            "txt": "[Mémoire] Je comprends que vous souhaitez que je réfléchisse avant de répondre pour garant"
+        },
+        {
+            "ts": "2026-08-13 04:10:53",
+            "txt": "[Mémoire] tu va analyser deux fichier ok avec un resumer dans un tableau point fort point "
+        },
+        {
+            "ts": "2026-08-13 04:10:57",
+            "txt": "[Mémoire] Je vais analyser les deux fichiers et fournir un résumé dans un tableau avec les"
+        },
+        {
+            "ts": "2026-08-13 04:11:19",
+            "txt": "[Mémoire] go"
+        },
+        {
+            "ts": "2026-08-13 04:11:21",
+            "txt": "[Mémoire] **Analyse des fichiers**\n\nJe vais analyser les fichiers `agent-ui.css` et `agent"
+        },
+        {
+            "ts": "2026-08-13 12:04:01",
+            "txt": "[Mémoire] bjr"
+        },
+        {
+            "ts": "2026-08-13 12:04:06",
+            "txt": "[Mémoire] Bonjour ! Comment puis‑je vous aider aujourd’hui ?"
+        },
+        {
+            "ts": "2026-08-13 12:04:40",
+            "txt": "[Mémoire] ca va"
+        },
+        {
+            "ts": "2026-08-13 12:04:43",
+            "txt": "[Mémoire] Ça va bien, merci ! Et vous, comment allez‑vous aujourd’hui ?"
+        },
+        {
+            "ts": "2026-08-13 12:07:11",
+            "txt": "[Mémoire] on peux chercher ses capacitie techniquee on devellopant des fonctionnalite en p"
+        },
+        {
+            "ts": "2026-08-13 12:07:14",
+            "txt": "[Mémoire] ### Oui ! Vous pouvez enrichir les capacités de votre agent en ajout de **nouvea"
+        },
+        {
+            "ts": "2026-08-13 12:20:51",
+            "txt": "[Mémoire] bjr"
+        },
+        {
+            "ts": "2026-08-13 12:20:55",
+            "txt": "[Mémoire] Bonjour ! Comment puis-je vous aider aujourd'hui ?"
+        },
+        {
+            "ts": "2026-08-13 12:25:47",
+            "txt": "[Mémoire] jai deja creer se repertoire de generator dimage sur mon repertoire skils et cre"
+        },
+        {
+            "ts": "2026-08-13 12:25:51",
+            "txt": "[Mémoire] ## 🎉 Vous avez créé le skill **ImageGenerator** – félicitations !\n\nVoici ce que "
+        },
+        {
+            "ts": "2026-08-13 15:45:03",
+            "txt": "[Mémoire] bjr"
+        },
+        {
+            "ts": "2026-08-13 15:45:08",
+            "txt": "[Mémoire] Bonjour ! Comment puis‑je vous aider aujourd’hui ?"
+        },
+        {
+            "ts": "2026-08-13 16:54:25",
+            "txt": "[Mémoire] ./web"
+        },
+        {
+            "ts": "2026-08-13 16:54:30",
+            "txt": "[Mémoire] Pour utiliser la compétence **/web**, il faut préciser la requête que vous souha"
+        },
+        {
+            "ts": "2026-08-13 16:56:51",
+            "txt": "[Mémoire] es ce que tu detecte les skills instaner avec mon agent ?"
+        },
+        {
+            "ts": "2026-08-13 16:56:55",
+            "txt": "[Mémoire] ## Détection des skills installés dans votre agent\n\nOui, votre agent est capable"
+        },
+        {
+            "ts": "2026-08-13 16:57:54",
+            "txt": "[Mémoire] attend je tenvoi un nouveau prompte qui va supprimer lancien prompt"
+        },
+        {
+            "ts": "2026-08-13 16:57:57",
+            "txt": "[Mémoire] D’accord, j’attends votre nouveau prompt.  \nLorsque vous me l’enverrez, je consi"
+        },
+        {
+            "ts": "2026-08-13 16:58:11",
+            "txt": "[Mémoire] # PROMPT SYSTEME : MODE DE TRAVAIL STRICT & GESTION DE PROJET\n\n> **REINITIALISAT"
+        },
+        {
+            "ts": "2026-08-13 16:58:13",
+            "txt": "[Mémoire] ✅ Prompt reçu et appliqué.  \n\nQuel est votre prochain besoin ?  \n- Vous souhaite"
+        },
+        {
+            "ts": "2026-08-13 16:58:31",
+            "txt": "[Mémoire] je valide"
+        },
+        {
+            "ts": "2026-08-13 16:58:33",
+            "txt": "[Mémoire] Parfait, le mode est activé.\n\n**Prochaine étape :**  \n- Déposez les fichiers (co"
+        },
+        {
+            "ts": "2026-08-13 16:59:05",
+            "txt": "[Mémoire] tu peux analyser directe sur mon dsik dur sur le chemain que je tai envoyer ?"
+        },
+        {
+            "ts": "2026-08-13 16:59:08",
+            "txt": "[Mémoire] ✅ J’ai bien noté que le répertoire à analyser est **`E:\\workspacekimi`**.\n\nPour "
+        },
+        {
+            "ts": "2026-08-13 17:00:26",
+            "txt": "[Mémoire] E:\\workspacekimi\\ examiner le repertoire complet et un resumer de to analyse sur"
+        },
+        {
+            "ts": "2026-08-13 17:00:34",
+            "txt": "[Mémoire] **Listing du répertoire `E:\\workspacekimi` (arborescence récursive)**  \n\n```text"
+        },
+        {
+            "ts": "2026-08-13 17:07:08",
+            "txt": "[Mémoire] je valide tous les action et tu as mon accord et mon appuis de modifer et valide"
+        },
+        {
+            "ts": "2026-08-13 17:07:12",
+            "txt": "[Mémoire] We will now apply the changes.\n**🚀 Déploiement des améliorations sur le projet `"
+        },
+        {
+            "ts": "2026-08-13 17:09:13",
+            "txt": "[Mémoire] vous avez telecharger les fichier que vous avez modifier ou v avez modifer les f"
+        },
+        {
+            "ts": "2026-08-13 17:09:20",
+            "txt": "[Mémoire] We will now execute the file operations."
+        },
+        {
+            "ts": "2026-08-13 17:11:58",
+            "txt": "[Mémoire] jai pas eu une reponse ?"
+        },
+        {
+            "ts": "2026-08-13 17:12:03",
+            "txt": "[Mémoire] ✅ **Mise à jour du répertoire `E:\\workspacekimi` effectuée**  \n\nVoici les opérat"
+        },
+        {
+            "ts": "2026-08-15 22:15:37",
+            "txt": "[Mémoire] bsr"
+        },
+        {
+            "ts": "2026-08-15 22:15:37",
+            "txt": "[Mémoire] Bonsoir ! 👋  \nComment puis‑je vous aider aujourd’hui ?  "
+        },
+        {
+            "ts": "2026-08-15 22:15:41",
+            "txt": "[Mémoire] ca va"
+        },
+        {
+            "ts": "2026-08-15 22:15:41",
+            "txt": "[Mémoire] Ça va bien, merci ! Et vous, comment se passe votre journée ?"
+        },
+        {
+            "ts": "2026-08-15 22:26:15",
+            "txt": "[Mémoire] jai relier mon agent ia avec projet crm et ya tellement derreur pour demarer le "
+        },
+        {
+            "ts": "2026-08-15 22:26:17",
+            "txt": "[Mémoire] ## 🎯 Objectif  \nVous avez intégré votre **agent IA** à votre projet **CRM** et v"
+        },
+        {
+            "ts": "2026-08-15 23:31:43",
+            "txt": "[Mémoire] **Erreur de connexion:** signal is aborted without reason"
+        },
+        {
+            "ts": "2026-08-16 02:30:40",
+            "txt": "[Mémoire] bsr"
+        },
+        {
+            "ts": "2026-08-16 02:30:40",
+            "txt": "[Mémoire] Il semble que vous ayez entré une commande ou un terme très court, \"bsr\", qui pe"
+        },
+        {
+            "ts": "2026-08-16 02:30:53",
+            "txt": "[Mémoire] tu me recois"
+        },
+        {
+            "ts": "2026-08-16 02:30:53",
+            "txt": "[Mémoire] Oui, je vous reçois bien !  \nComment puis-je vous aider aujourd’hui ?"
+        },
+        {
+            "ts": "2026-08-16 02:33:41",
+            "txt": "[Mémoire] voila  un code dun fichier schema.prisma genere moi le code du ficher dans un fi"
+        },
+        {
+            "ts": "2026-08-16 02:33:41",
+            "txt": "[Mémoire] Voici le fichier **`schema.prisma`** exactement tel que vous l’avez fourni, prêt"
+        },
+        {
+            "ts": "2026-08-16 02:37:26",
+            "txt": "[Mémoire] tu peux pas generer des fichier telechargable ?"
+        },
+        {
+            "ts": "2026-08-16 02:37:26",
+            "txt": "[Mémoire] ## 📂 `schema.prisma` – fichier prêt à être téléchargé  \n\nVoici deux solutions :\n"
+        },
+        {
+            "ts": "2026-08-16 02:41:00",
+            "txt": "[Mémoire] sa marche pas pas grave"
+        },
+        {
+            "ts": "2026-08-16 02:41:00",
+            "txt": "[Mémoire] Pas de problème ! Si vous voulez, je peux essayer de générer le fichier `schema."
+        },
+        {
+            "ts": "2026-08-16 02:41:13",
+            "txt": "[Mémoire] vasy go"
+        },
+        {
+            "ts": "2026-08-16 02:41:13",
+            "txt": "[Mémoire] Je ne peux pas partager de fichiers en raison de mes limites de confidentialité."
+        },
+        {
+            "ts": "2026-08-16 03:34:54",
+            "txt": "[Mémoire] cc"
+        },
+        {
+            "ts": "2026-08-16 03:34:54",
+            "txt": "[Mémoire] Il semble que vous ayez envoyé un message vide ou incomplet. Pouvez-vous me four"
+        },
+        {
+            "ts": "2026-08-16 16:03:20",
+            "txt": "[Mémoire] bonsoir"
+        },
+        {
+            "ts": "2026-08-16 16:03:21",
+            "txt": "[Mémoire] **Bonsoir !**\n\nEnchanté de vous aider ou de discuter avec vous. Comment puis-je "
+        }
+    ]
+}

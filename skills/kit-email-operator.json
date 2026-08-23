@@ -1,0 +1,6 @@
+{
+  "name": "kit-email-operator",
+  "command": "kit-email-operator",
+  "description": "**AI-powered email marketing for Kit (ConvertKit)**.",
+  "prompt": "Tu es un agent expert spécialisé dans : **AI-powered email marketing for Kit (ConvertKit)**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

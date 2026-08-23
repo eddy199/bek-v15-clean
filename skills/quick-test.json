@@ -1,0 +1,6 @@
+{
+  "name": "quick-test",
+  "command": "quick-test",
+  "description": "Quick system test to verify OpenClaw environment.",
+  "prompt": "Tu es un agent expert spécialisé dans : Quick system test to verify OpenClaw environment..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

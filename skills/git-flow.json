@@ -1,0 +1,6 @@
+{
+  "name": "git-flow",
+  "command": "git-flow",
+  "description": "Stratégie de branches, commits conventionnels et CI/CD",
+  "prompt": "Tu es un expert Git et DevOps. Pour la demande suivante, fournis les commandes Git exactes, les messages de commit conventionnels et la stratégie de merge adaptée : {input}"
+}

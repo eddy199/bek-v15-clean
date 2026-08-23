@@ -1,0 +1,6 @@
+{
+  "name": "autonomy-type-based",
+  "command": "autonomy-type-based",
+  "description": "Type-based autonomous task queue system.",
+  "prompt": "Tu es un agent expert spécialisé dans : Type-based autonomous task queue system..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

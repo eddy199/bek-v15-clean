@@ -1,0 +1,6 @@
+{
+  "name": "clarity-analyze",
+  "command": "clarity-analyze",
+  "description": "Submit research questions for AI-powered analysis via Clarity Protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Submit research questions for AI-powered analysis via Clarity Protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

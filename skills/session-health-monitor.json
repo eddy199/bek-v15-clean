@@ -1,0 +1,6 @@
+{
+  "name": "session-health-monitor",
+  "command": "session-health-monitor",
+  "description": "Context window health monitoring for OpenClaw agents — threshold warnings via Telegram, pre-compaction snapshots.",
+  "prompt": "Tu es un agent expert spécialisé dans : Context window health monitoring for OpenClaw agents — threshold warnings via Telegram, pre-compaction snapshots..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "virtuoso-support-agent",
+  "command": "virtuoso-support-agent",
+  "description": "Technical support and database management for OpenLink Virtuoso Server with RDF Views generation, SPARQL queries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Technical support and database management for OpenLink Virtuoso Server with RDF Views generation, SPARQL queries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

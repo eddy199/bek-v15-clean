@@ -1,0 +1,6 @@
+{
+  "name": "agent-sentinel",
+  "command": "agent-sentinel",
+  "description": "The operational circuit breaker for this agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : The operational circuit breaker for this agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

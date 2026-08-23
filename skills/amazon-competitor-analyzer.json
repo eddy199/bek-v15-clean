@@ -1,0 +1,6 @@
+{
+  "name": "amazon-competitor-analyzer",
+  "command": "amazon-competitor-analyzer",
+  "description": "Scrapes Amazon product data from ASINs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Scrapes Amazon product data from ASINs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

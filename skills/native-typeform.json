@@ -1,0 +1,6 @@
+{
+  "name": "native-typeform",
+  "command": "native-typeform",
+  "description": "Read Typeform forms and responses directly via the Typeform API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read Typeform forms and responses directly via the Typeform API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

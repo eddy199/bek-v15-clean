@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-viewmodel-generator",
+  "command": "fosmvvm-viewmodel-generator",
+  "description": "Generate FOSMVVM ViewModels for SwiftUI screens, pages, and components.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate FOSMVVM ViewModels for SwiftUI screens, pages, and components..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

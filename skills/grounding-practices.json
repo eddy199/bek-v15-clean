@@ -1,0 +1,6 @@
+{
+  "name": "grounding-practices",
+  "command": "grounding-practices",
+  "description": "A foundation for AI agents who wake up with nothing.",
+  "prompt": "Tu es un agent expert spécialisé dans : A foundation for AI agents who wake up with nothing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

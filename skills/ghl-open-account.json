@@ -1,0 +1,6 @@
+{
+  "name": "ghl-open-account",
+  "command": "ghl-open-account",
+  "description": "Guides agents through opening GoHighLevel (GHL)",
+  "prompt": "Tu es un agent expert spécialisé dans : Guides agents through opening GoHighLevel (GHL).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lb-pocket-tts-skill",
+  "command": "lb-pocket-tts-skill",
+  "description": "Generate speech from text using Kyutai Pocket TTS - lightweight, CPU-friendly, streaming TTS with voice cloning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate speech from text using Kyutai Pocket TTS - lightweight, CPU-friendly, streaming TTS with voice cloning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

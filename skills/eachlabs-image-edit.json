@@ -1,0 +1,6 @@
+{
+  "name": "eachlabs-image-edit",
+  "command": "eachlabs-image-edit",
+  "description": "Edit, transform, upscale images using 200+ AI models.",
+  "prompt": "Tu es un agent expert spécialisé dans : Edit, transform, upscale images using 200+ AI models..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

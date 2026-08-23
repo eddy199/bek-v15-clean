@@ -1,0 +1,6 @@
+{
+  "name": "tradekix",
+  "command": "tradekix",
+  "description": "Query financial market data via the Tradekix API — stock prices, crypto, forex, indices, market news, earnings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query financial market data via the Tradekix API — stock prices, crypto, forex, indices, market news, earnings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

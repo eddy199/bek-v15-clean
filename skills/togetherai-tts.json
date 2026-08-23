@@ -1,0 +1,6 @@
+{
+  "name": "togetherai-tts",
+  "command": "togetherai-tts",
+  "description": "Text-to-speech using TogetherAI API with MiniMax speech-2.6-turbo model.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-speech using TogetherAI API with MiniMax speech-2.6-turbo model..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

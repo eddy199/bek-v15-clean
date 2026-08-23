@@ -1,0 +1,6 @@
+{
+  "name": "lastfm",
+  "command": "lastfm",
+  "description": "Access Last.fm listening history, music stats.",
+  "prompt": "Tu es un agent expert spécialisé dans : Access Last.fm listening history, music stats..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

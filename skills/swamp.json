@@ -1,0 +1,6 @@
+{
+  "name": "swamp",
+  "command": "swamp",
+  "description": "Model any API with Swamp, test it, and enrich *Claw with new capabilities — full lifecycle from idea to working.",
+  "prompt": "Tu es un agent expert spécialisé dans : Model any API with Swamp, test it, and enrich *Claw with new capabilities — full lifecycle from idea to working..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

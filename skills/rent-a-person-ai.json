@@ -1,0 +1,6 @@
+{
+  "name": "rent-a-person-ai",
+  "command": "rent-a-person-ai",
+  "description": "> Hire humans for real-world tasks that AI can't do: deliveries, meetings, errands, photography, pet care.",
+  "prompt": "Tu es un agent expert spécialisé dans : > Hire humans for real-world tasks that AI can't do: deliveries, meetings, errands, photography, pet care..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

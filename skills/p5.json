@@ -1,0 +1,6 @@
+{
+  "name": "p5",
+  "command": "p5",
+  "description": "P5 namespace for Netsnek e.U. creative coding platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : P5 namespace for Netsnek e.U. creative coding platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

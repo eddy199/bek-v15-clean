@@ -1,0 +1,6 @@
+{
+  "name": "x-actionbook-recap",
+  "command": "x-actionbook-recap",
+  "description": "Collect, scroll, extract, and summarize recent X (Twitter) posts for any handle (optionally filtered by keyword.",
+  "prompt": "Tu es un agent expert spécialisé dans : Collect, scroll, extract, and summarize recent X (Twitter) posts for any handle (optionally filtered by keyword..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

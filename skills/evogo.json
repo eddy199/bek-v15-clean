@@ -1,0 +1,6 @@
+{
+  "name": "evogo",
+  "command": "evogo",
+  "description": "Complete WhatsApp automation via Evolution API Go v3 - instances, messages (text/media/polls/carousels), groups.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete WhatsApp automation via Evolution API Go v3 - instances, messages (text/media/polls/carousels), groups..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

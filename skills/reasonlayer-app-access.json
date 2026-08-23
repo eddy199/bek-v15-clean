@@ -1,0 +1,6 @@
+{
+  "name": "reasonlayer-app-access",
+  "command": "reasonlayer-app-access",
+  "description": "Give your AI agent access to Gmail.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give your AI agent access to Gmail..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

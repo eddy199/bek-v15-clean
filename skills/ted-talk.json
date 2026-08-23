@@ -1,0 +1,6 @@
+{
+  "name": "ted-talk",
+  "command": "ted-talk",
+  "description": "Transform technical insights into full 40-50 minute TED-style talks with concrete examples and Q&A.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform technical insights into full 40-50 minute TED-style talks with concrete examples and Q&A..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

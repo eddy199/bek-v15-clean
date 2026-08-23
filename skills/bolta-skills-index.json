@@ -1,0 +1,6 @@
+{
+  "name": "bolta-skills-index",
+  "command": "bolta-skills-index",
+  "description": "Display name: Bolta Skills Registry.",
+  "prompt": "Tu es un agent expert spécialisé dans : Display name: Bolta Skills Registry..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

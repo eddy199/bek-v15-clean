@@ -1,0 +1,6 @@
+{
+  "name": "runpod",
+  "command": "runpod",
+  "description": "Manage RunPod GPU cloud instances - create, start, stop, connect to pods via SSH and API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage RunPod GPU cloud instances - create, start, stop, connect to pods via SSH and API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

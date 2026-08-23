@@ -1,0 +1,6 @@
+{
+  "name": "1p-shortlink",
+  "command": "1p-shortlink",
+  "description": "Create short URLs and submit feature requests using 1p.io.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create short URLs and submit feature requests using 1p.io..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

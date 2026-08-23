@@ -1,0 +1,6 @@
+{
+  "name": "beautiful-mermaid",
+  "command": "beautiful-mermaid",
+  "description": "Render beautiful Mermaid diagrams as SVGs or ASCII art.",
+  "prompt": "Tu es un agent expert spécialisé dans : Render beautiful Mermaid diagrams as SVGs or ASCII art..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "postnitro",
+  "command": "postnitro",
+  "description": "Create on-brand social media carousels and single-image posts and schedule them to LinkedIn, Instagram, TikTok, and Thre",
+  "prompt": "Tu es un agent expert spécialisé dans : Create on-brand social media carousels and single-image posts and schedule them to LinkedIn, Instagram, TikTok, and Threads..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

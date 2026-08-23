@@ -1,0 +1,6 @@
+{
+  "name": "claw-face",
+  "command": "claw-face",
+  "description": "Floating avatar widget for AI agents showing emotions, actions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Floating avatar widget for AI agents showing emotions, actions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

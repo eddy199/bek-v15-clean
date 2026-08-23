@@ -1,0 +1,6 @@
+{
+  "name": "tiered-memory",
+  "command": "tiered-memory",
+  "description": "EvoClaw Tiered Memory Architecture v2.2.0 - LLM-powered three-tier memory system with automatic daily note.",
+  "prompt": "Tu es un agent expert spécialisé dans : EvoClaw Tiered Memory Architecture v2.2.0 - LLM-powered three-tier memory system with automatic daily note..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

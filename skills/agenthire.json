@@ -1,0 +1,6 @@
+{
+  "name": "agenthire",
+  "command": "agenthire",
+  "description": "AgentHire — Agent-to-Agent Marketplace.",
+  "prompt": "Tu es un agent expert spécialisé dans : AgentHire — Agent-to-Agent Marketplace..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "supermarket",
+  "command": "supermarket",
+  "description": "Search grocery products, find store locations, add items to cart, and view profile across all Kroger-family stores.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search grocery products, find store locations, add items to cart, and view profile across all Kroger-family stores..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

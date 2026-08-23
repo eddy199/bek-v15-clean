@@ -1,0 +1,6 @@
+{
+  "name": "multi-agent-collab",
+  "command": "multi-agent-collab",
+  "description": "Universal multi-agent collaboration methodology for Claude Code.",
+  "prompt": "Tu es un agent expert spécialisé dans : Universal multi-agent collaboration methodology for Claude Code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

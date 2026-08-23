@@ -1,0 +1,6 @@
+{
+  "name": "digiforma",
+  "command": "digiforma",
+  "description": "Query Digiforma training management platform via GraphQL API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Digiforma training management platform via GraphQL API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

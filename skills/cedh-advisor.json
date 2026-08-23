@@ -1,0 +1,6 @@
+{
+  "name": "cedh-advisor",
+  "command": "cedh-advisor",
+  "description": "Commander (cEDH) Live-Beratung - Banlist, Tutor-Targets, Mana-Rechnung, Combo-Lines.",
+  "prompt": "Tu es un agent expert spécialisé dans : Commander (cEDH) Live-Beratung - Banlist, Tutor-Targets, Mana-Rechnung, Combo-Lines..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

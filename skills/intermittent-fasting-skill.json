@@ -1,0 +1,6 @@
+{
+  "name": "intermittent-fasting-skill",
+  "command": "intermittent-fasting-skill",
+  "description": "Intermittent Fasting Expert for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intermittent Fasting Expert for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

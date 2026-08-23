@@ -1,0 +1,6 @@
+{
+  "name": "playwright-npx",
+  "command": "playwright-npx",
+  "description": "Fast browser automation using Node.js scripts with Playwright (run via `node script.mjs`)",
+  "prompt": "Tu es un agent expert spécialisé dans : Fast browser automation using Node.js scripts with Playwright (run via `node script.mjs`).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

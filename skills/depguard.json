@@ -1,0 +1,6 @@
+{
+  "name": "depguard",
+  "command": "depguard",
+  "description": "Dependency audit, vulnerability scanning, and license compliance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Dependency audit, vulnerability scanning, and license compliance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

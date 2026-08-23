@@ -1,0 +1,6 @@
+{
+  "name": "personality-switcher",
+  "command": "personality-switcher",
+  "description": "Create and switch between AI assistant personalities.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and switch between AI assistant personalities..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

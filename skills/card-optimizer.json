@@ -1,0 +1,6 @@
+{
+  "name": "card-optimizer",
+  "command": "card-optimizer",
+  "description": "Credit card rewards optimizer — helps maximize cashback.",
+  "prompt": "Tu es un agent expert spécialisé dans : Credit card rewards optimizer — helps maximize cashback..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

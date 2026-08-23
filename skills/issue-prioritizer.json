@@ -1,0 +1,6 @@
+{
+  "name": "issue-prioritizer",
+  "command": "issue-prioritizer",
+  "description": "Prioritize GitHub issues by ROI, solution sanity, and architectural impact.",
+  "prompt": "Tu es un agent expert spécialisé dans : Prioritize GitHub issues by ROI, solution sanity, and architectural impact..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

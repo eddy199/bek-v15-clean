@@ -1,0 +1,6 @@
+{
+  "name": "camsnap",
+  "command": "camsnap",
+  "description": "Capture frames or clips from RTSP/ONVIF cameras.",
+  "prompt": "Tu es un agent expert spécialisé dans : Capture frames or clips from RTSP/ONVIF cameras..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

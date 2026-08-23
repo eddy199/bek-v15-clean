@@ -1,0 +1,6 @@
+{
+  "name": "tech-security-audit",
+  "command": "tech-security-audit",
+  "description": "This skill integrates Nmap scanning functionality to perform local network vulnerability assessments.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill integrates Nmap scanning functionality to perform local network vulnerability assessments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

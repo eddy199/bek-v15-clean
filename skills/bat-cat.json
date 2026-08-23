@@ -1,0 +1,6 @@
+{
+  "name": "bat-cat",
+  "command": "bat-cat",
+  "description": "A cat clone with syntax highlighting, line numbers, and Git integration.",
+  "prompt": "Tu es un agent expert spécialisé dans : A cat clone with syntax highlighting, line numbers, and Git integration..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

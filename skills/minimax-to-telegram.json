@@ -1,0 +1,6 @@
+{
+  "name": "minimax-to-telegram",
+  "command": "minimax-to-telegram",
+  "description": "Generate images, audio, video using MiniMax MCP and send to Telegram.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images, audio, video using MiniMax MCP and send to Telegram..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

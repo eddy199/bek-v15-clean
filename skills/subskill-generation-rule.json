@@ -1,0 +1,6 @@
+{
+  "name": "subskill-generation-rule",
+  "command": "subskill-generation-rule",
+  "description": "Define and enforce project orgnization rules for generating subskills. put generated recommendation outputs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Define and enforce project orgnization rules for generating subskills. put generated recommendation outputs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

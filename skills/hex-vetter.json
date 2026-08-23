@@ -1,0 +1,6 @@
+{
+  "name": "hex-vetter",
+  "command": "hex-vetter",
+  "description": "Physical-layer hex auditing for skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : Physical-layer hex auditing for skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

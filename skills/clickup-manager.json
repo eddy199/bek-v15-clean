@@ -1,0 +1,6 @@
+{
+  "name": "clickup-manager",
+  "command": "clickup-manager",
+  "description": "Interact with ClickUp API for task management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with ClickUp API for task management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

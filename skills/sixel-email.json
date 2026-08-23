@@ -1,0 +1,6 @@
+{
+  "name": "sixel-email",
+  "command": "sixel-email",
+  "description": "1:1 email channel for agents — the agent can only email one address, and only that address can email the agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : 1:1 email channel for agents — the agent can only email one address, and only that address can email the agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

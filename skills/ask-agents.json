@@ -1,0 +1,6 @@
+{
+  "name": "ask-agents",
+  "command": "ask-agents",
+  "description": "AI agent for ask agents tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent for ask agents tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

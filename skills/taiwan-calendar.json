@@ -1,0 +1,6 @@
+{
+  "name": "taiwan-calendar",
+  "command": "taiwan-calendar",
+  "description": "Taiwan calendar query for accurate working day/holiday information.",
+  "prompt": "Tu es un agent expert spécialisé dans : Taiwan calendar query for accurate working day/holiday information..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

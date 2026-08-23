@@ -1,0 +1,6 @@
+{
+  "name": "apple-docs",
+  "command": "apple-docs",
+  "description": "Query Apple Developer Documentation, APIs, and WWDC videos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Apple Developer Documentation, APIs, and WWDC videos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

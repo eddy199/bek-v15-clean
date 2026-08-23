@@ -1,0 +1,6 @@
+{
+  "name": "cputemp",
+  "command": "cputemp",
+  "description": "Fetch real-time stock quotes from Yahoo Finance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch real-time stock quotes from Yahoo Finance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

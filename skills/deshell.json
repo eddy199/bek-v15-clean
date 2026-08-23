@@ -1,0 +1,6 @@
+{
+  "name": "deshell",
+  "command": "deshell",
+  "description": "Fetch web pages as clean Markdown and search the web via the DeShell proxy.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch web pages as clean Markdown and search the web via the DeShell proxy..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

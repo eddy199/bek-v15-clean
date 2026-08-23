@@ -1,0 +1,6 @@
+{
+  "name": "shelly-meeting-summarizer",
+  "command": "shelly-meeting-summarizer",
+  "description": "Transform raw meeting transcripts into structured, actionable summaries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform raw meeting transcripts into structured, actionable summaries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ztpc-spam-sweep",
+  "command": "ztpc-spam-sweep",
+  "description": "Use a persistent OpenClaw browser profile to access **http://mail.ztpc.com/** (Aliyun Enterprise Mail),.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use a persistent OpenClaw browser profile to access **http://mail.ztpc.com/** (Aliyun Enterprise Mail),..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

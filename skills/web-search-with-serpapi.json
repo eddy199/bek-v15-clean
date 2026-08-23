@@ -1,0 +1,6 @@
+{
+  "name": "web-search-with-serpapi",
+  "command": "web-search-with-serpapi",
+  "description": "Search the web using SerpAPI with customizable engines (Google, Google AI Mode, Bing, etc.)",
+  "prompt": "Tu es un agent expert spécialisé dans : Search the web using SerpAPI with customizable engines (Google, Google AI Mode, Bing, etc.).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

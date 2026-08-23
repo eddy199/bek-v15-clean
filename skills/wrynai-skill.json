@@ -1,0 +1,6 @@
+{
+  "name": "wrynai-skill",
+  "command": "wrynai-skill",
+  "description": "This skill enables OpenClaw to perform advanced web crawling and content extraction using the WrynAI SDK.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill enables OpenClaw to perform advanced web crawling and content extraction using the WrynAI SDK..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

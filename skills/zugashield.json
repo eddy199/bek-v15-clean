@@ -1,0 +1,6 @@
+{
+  "name": "zugashield",
+  "command": "zugashield",
+  "description": "7-layer AI security scanner for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : 7-layer AI security scanner for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mealie",
+  "command": "mealie",
+  "description": "Interact with a self‑hosted Mealie instance (recipe manager & meal planner) via its REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with a self‑hosted Mealie instance (recipe manager & meal planner) via its REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

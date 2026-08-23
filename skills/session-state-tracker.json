@@ -1,0 +1,6 @@
+{
+  "name": "session-state-tracker",
+  "command": "session-state-tracker",
+  "description": "Persistent session state management across compaction and restarts via lifecycle hooks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent session state management across compaction and restarts via lifecycle hooks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

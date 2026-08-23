@@ -1,0 +1,6 @@
+{
+  "name": "echo-agent",
+  "command": "echo-agent",
+  "description": "EchoAgent is a minimal OpenClaw-compatible skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : EchoAgent is a minimal OpenClaw-compatible skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

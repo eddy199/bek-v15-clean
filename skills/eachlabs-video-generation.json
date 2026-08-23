@@ -1,0 +1,6 @@
+{
+  "name": "eachlabs-video-generation",
+  "command": "eachlabs-video-generation",
+  "description": "Generate videos from text/images using AI models.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate videos from text/images using AI models..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

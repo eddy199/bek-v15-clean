@@ -1,0 +1,6 @@
+{
+  "name": "glitch-dashboard",
+  "command": "glitch-dashboard",
+  "description": "Unified web terminal for task management, queue processing, and system monitoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Unified web terminal for task management, queue processing, and system monitoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

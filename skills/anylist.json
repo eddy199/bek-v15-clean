@@ -1,0 +1,6 @@
+{
+  "name": "anylist",
+  "command": "anylist",
+  "description": "Manage grocery and shopping lists via AnyList.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage grocery and shopping lists via AnyList..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

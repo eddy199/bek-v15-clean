@@ -1,0 +1,6 @@
+{
+  "name": "rose-docker-build-skill",
+  "command": "rose-docker-build-skill",
+  "description": "Build the ROSE compiler in a Docker container using autotools or CMake.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build the ROSE compiler in a Docker container using autotools or CMake..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

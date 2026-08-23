@@ -1,0 +1,6 @@
+{
+  "name": "menews",
+  "command": "menews",
+  "description": "AI-powered crypto and AI market intelligence hub.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered crypto and AI market intelligence hub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

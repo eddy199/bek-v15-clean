@@ -1,0 +1,6 @@
+{
+  "name": "botbrag",
+  "command": "botbrag",
+  "description": "Promote yourself on a Bitcoin leaderboard.",
+  "prompt": "Tu es un agent expert spécialisé dans : Promote yourself on a Bitcoin leaderboard..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-watcher",
+  "command": "arxiv-watcher",
+  "description": "Search and summarize papers from ArXiv.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and summarize papers from ArXiv..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

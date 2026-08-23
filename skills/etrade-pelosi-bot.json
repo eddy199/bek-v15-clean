@@ -1,0 +1,6 @@
+{
+  "name": "etrade-pelosi-bot",
+  "command": "etrade-pelosi-bot",
+  "description": "Mirror congressional stock trades with automated broker execution and risk management.",
+  "prompt": "Tu es un agent expert spécialisé dans : Mirror congressional stock trades with automated broker execution and risk management..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

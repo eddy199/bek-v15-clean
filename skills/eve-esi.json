@@ -1,0 +1,6 @@
+{
+  "name": "eve-esi",
+  "command": "eve-esi",
+  "description": "Query and manage EVE Online characters via the ESI (EVE Swagger Interface) REST API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and manage EVE Online characters via the ESI (EVE Swagger Interface) REST API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "aoi-council",
+  "command": "aoi-council",
+  "description": "AOI Council — multi-perspective decision synthesis templates (public-safe).",
+  "prompt": "Tu es un agent expert spécialisé dans : AOI Council — multi-perspective decision synthesis templates (public-safe)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

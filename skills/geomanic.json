@@ -1,0 +1,6 @@
+{
+  "name": "geomanic",
+  "command": "geomanic",
+  "description": "Query and manage GPS travel data from Geomanic — your privacy-first GPS tracking platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query and manage GPS travel data from Geomanic — your privacy-first GPS tracking platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

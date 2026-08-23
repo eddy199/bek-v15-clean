@@ -1,0 +1,6 @@
+{
+  "name": "linux-desktop",
+  "command": "linux-desktop",
+  "description": "Linux desktop automation and control.",
+  "prompt": "Tu es un agent expert spécialisé dans : Linux desktop automation and control..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

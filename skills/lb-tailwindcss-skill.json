@@ -1,0 +1,6 @@
+{
+  "name": "lb-tailwindcss-skill",
+  "command": "lb-tailwindcss-skill",
+  "description": "Complete Tailwind CSS documentation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete Tailwind CSS documentation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

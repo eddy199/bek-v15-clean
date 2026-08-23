@@ -1,0 +1,6 @@
+{
+  "name": "task-sync",
+  "command": "task-sync",
+  "description": "Synchronize TickTick (Dida) and Google Tasks bidirectionally, including list/project mapping, task content sync.",
+  "prompt": "Tu es un agent expert spécialisé dans : Synchronize TickTick (Dida) and Google Tasks bidirectionally, including list/project mapping, task content sync..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

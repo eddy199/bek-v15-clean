@@ -1,0 +1,6 @@
+{
+  "name": "hostinger",
+  "command": "hostinger",
+  "description": "Manage Hostinger account via API — VPS administration (start/stop/restart, snapshots, backups, firewall, Docker)",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Hostinger account via API — VPS administration (start/stop/restart, snapshots, backups, firewall, Docker).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

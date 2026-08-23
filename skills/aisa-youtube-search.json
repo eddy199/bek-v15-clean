@@ -1,0 +1,6 @@
+{
+  "name": "aisa-youtube-search",
+  "command": "aisa-youtube-search",
+  "description": "YouTube SERP Scout for agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : YouTube SERP Scout for agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

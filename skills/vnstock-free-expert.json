@@ -1,0 +1,6 @@
+{
+  "name": "vnstock-free-expert",
+  "command": "vnstock-free-expert",
+  "description": "Runs an end-to-end vnstock workflow for free-tier-safe Vietnam stock valuation, ranking, and API operations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Runs an end-to-end vnstock workflow for free-tier-safe Vietnam stock valuation, ranking, and API operations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

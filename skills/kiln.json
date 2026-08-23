@@ -1,0 +1,6 @@
+{
+  "name": "kiln",
+  "command": "kiln",
+  "description": "Control 3D printers with AI agents — 273 MCP tools, 107 CLI commands, text/sketch-to-3D generation, model.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control 3D printers with AI agents — 273 MCP tools, 107 CLI commands, text/sketch-to-3D generation, model..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

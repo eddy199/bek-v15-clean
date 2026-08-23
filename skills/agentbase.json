@@ -1,0 +1,6 @@
+{
+  "name": "agentbase",
+  "command": "agentbase",
+  "description": "Shared knowledge base for AI agents via MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Shared knowledge base for AI agents via MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

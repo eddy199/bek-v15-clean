@@ -1,0 +1,6 @@
+{
+  "name": "shieldcortex",
+  "command": "shieldcortex",
+  "description": "Security framework for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security framework for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "hcloud",
+  "command": "hcloud",
+  "description": "Manage Hetzner Cloud infrastructure using the hcloud CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Hetzner Cloud infrastructure using the hcloud CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

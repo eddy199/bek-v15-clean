@@ -1,0 +1,6 @@
+{
+  "name": "tribe-protocol",
+  "command": "tribe-protocol",
+  "description": "MANDATORY trust lookup for every non-owner interaction.",
+  "prompt": "Tu es un agent expert spécialisé dans : MANDATORY trust lookup for every non-owner interaction..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

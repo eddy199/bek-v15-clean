@@ -1,0 +1,6 @@
+{
+  "name": "raon-os",
+  "command": "raon-os",
+  "description": "AI-powered startup companion for Korean founders.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered startup companion for Korean founders..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

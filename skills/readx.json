@@ -1,0 +1,6 @@
+{
+  "name": "readx",
+  "command": "readx",
+  "description": "Twitter/X intelligence toolkit: analyze users, tweets, trends, communities, and networks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Twitter/X intelligence toolkit: analyze users, tweets, trends, communities, and networks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

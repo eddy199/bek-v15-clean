@@ -1,0 +1,6 @@
+{
+  "name": "brw-linkedin-authority-builder-1-0-0",
+  "command": "brw-linkedin-authority-builder-1-0-0",
+  "description": "Build a LinkedIn content system for thought leadership.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build a LinkedIn content system for thought leadership..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

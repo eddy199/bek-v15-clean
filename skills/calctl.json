@@ -1,0 +1,6 @@
+{
+  "name": "calctl",
+  "command": "calctl",
+  "description": "Manage Apple Calendar events via icalBuddy + AppleScript CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Apple Calendar events via icalBuddy + AppleScript CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

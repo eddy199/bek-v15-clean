@@ -1,0 +1,6 @@
+{
+  "name": "hallo123",
+  "command": "hallo123",
+  "description": "Live meme battle arena skill for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Live meme battle arena skill for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ztm-tunnel",
+  "command": "ztm-tunnel",
+  "description": "Create and manage TCP/UDP tunnels between ZTM network endpoints.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and manage TCP/UDP tunnels between ZTM network endpoints..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

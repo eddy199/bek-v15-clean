@@ -1,0 +1,6 @@
+{
+  "name": "solo-seo-audit",
+  "command": "solo-seo-audit",
+  "description": "SEO health check for any URL — analyzes meta tags, OG, JSON-LD, sitemap, robots.txt, SERP positions, and scores.",
+  "prompt": "Tu es un agent expert spécialisé dans : SEO health check for any URL — analyzes meta tags, OG, JSON-LD, sitemap, robots.txt, SERP positions, and scores..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

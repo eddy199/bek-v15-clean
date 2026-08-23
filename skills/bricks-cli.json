@@ -1,0 +1,6 @@
+{
+  "name": "bricks-cli",
+  "command": "bricks-cli",
+  "description": "Manage BRICKS workspace via CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage BRICKS workspace via CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

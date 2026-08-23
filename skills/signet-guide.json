@@ -1,0 +1,6 @@
+{
+  "name": "signet-guide",
+  "command": "signet-guide",
+  "description": "Getting started with Signet Mind — local mental health companion with grounding exercises and mood tracking.",
+  "prompt": "Tu es un agent expert spécialisé dans : Getting started with Signet Mind — local mental health companion with grounding exercises and mood tracking..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

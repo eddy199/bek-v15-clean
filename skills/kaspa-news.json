@@ -1,0 +1,6 @@
+{
+  "name": "kaspa-news",
+  "command": "kaspa-news",
+  "description": "Kaspa News — let your Claw know everything about Kaspa in one place: latest news, core development updates.",
+  "prompt": "Tu es un agent expert spécialisé dans : Kaspa News — let your Claw know everything about Kaspa in one place: latest news, core development updates..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

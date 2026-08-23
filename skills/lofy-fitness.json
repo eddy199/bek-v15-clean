@@ -1,0 +1,6 @@
+{
+  "name": "lofy-fitness",
+  "command": "lofy-fitness",
+  "description": "Fitness accountability for the Lofy AI assistant — workout logging from natural language, meal tracking.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fitness accountability for the Lofy AI assistant — workout logging from natural language, meal tracking..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

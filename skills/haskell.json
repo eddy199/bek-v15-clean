@@ -1,0 +1,6 @@
+{
+  "name": "haskell",
+  "command": "haskell",
+  "description": "Expert Haskell development skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : Expert Haskell development skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

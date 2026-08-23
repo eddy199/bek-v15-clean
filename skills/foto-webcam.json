@@ -1,0 +1,6 @@
+{
+  "name": "foto-webcam",
+  "command": "foto-webcam",
+  "description": "Liste und Snapshot-Abruf von Webcams (insb. foto-webcam.eu)",
+  "prompt": "Tu es un agent expert spécialisé dans : Liste und Snapshot-Abruf von Webcams (insb. foto-webcam.eu).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

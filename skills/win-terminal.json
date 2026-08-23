@@ -1,0 +1,6 @@
+{
+  "name": "win-terminal",
+  "command": "win-terminal",
+  "description": "Controls the Windows Terminal to run commands, scripts, and manage processes on Windows.",
+  "prompt": "Tu es un agent expert spécialisé dans : Controls the Windows Terminal to run commands, scripts, and manage processes on Windows..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

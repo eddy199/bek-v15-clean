@@ -1,0 +1,6 @@
+{
+  "name": "apiosk",
+  "command": "apiosk",
+  "description": "**Pay-per-request API access for agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Pay-per-request API access for agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

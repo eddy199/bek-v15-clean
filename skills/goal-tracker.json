@@ -1,0 +1,6 @@
+{
+  "name": "goal-tracker",
+  "command": "goal-tracker",
+  "description": "Track long-term goals with milestones, daily logging, and accountability.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track long-term goals with milestones, daily logging, and accountability..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

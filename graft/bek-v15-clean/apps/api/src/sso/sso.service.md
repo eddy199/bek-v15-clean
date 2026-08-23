@@ -1,0 +1,21 @@
+# bek-v15-clean/apps/api/src/sso/sso.service.ts
+
+- PublicSsoProvider · interface · L30-L33 — interface PublicSsoProvider
+- SignInOptions · interface · L35-L39 — interface SignInOptions
+- SsoProvider · interface · L41-L49 — interface SsoProvider
+- SsoSettings · interface · L51-L54 — interface SsoSettings
+- ProviderRow · type · L64-L66 — type ProviderRow = Prisma.SsoProviderGetPayload<{ select: typeof PROVIDER_SELECT; }>;
+- splitDomains · function · L86-L97 — function splitDomains(value: string): string[]
+- lastFour · function · L99-L103 — function lastFour(clientId: unknown): string | null
+- parseConfig · function · L105-L116 — function parseConfig(value: string | null): Record<string, unknown> | null
+- toProvider · function · L118-L130 — function toProvider(row: ProviderRow): SsoProvider
+- SsoService · class · L133-L299 — class SsoService
+- constructor · method · L136-L136 — constructor(@InjectDatabase() private readonly db: Db)
+- signInOptions · method · L138-L153 — async signInOptions(): Promise<SignInOptions>
+- settings · method · L155-L160 — async settings(userId: string): Promise<SsoSettings>
+- list · method · L162-L178 — async list(input: SsoProviderListInput): Promise<ListResult<SsoProvider>>
+- register · method · L180-L225 — async register( userId: string, headers: Headers, input: RegisterSsoProviderInput, ): Promise<SsoProvider>
+- remove · method · L227-L248 — async remove( userId: string, headers: Headers, input: DeleteSsoProviderInput, ): Promise<{ providerId: string }>
+- searchWhere · method · L250-L265 — private searchWhere(q: string): Prisma.SsoProviderWhereInput
+- call · method · L267-L290 — private async call<T>(run: () => Promise<T>): Promise<T>
+- requireConfigurer · method · L292-L298 — private async requireConfigurer(userId: string): Promise<void>

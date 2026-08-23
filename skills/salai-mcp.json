@@ -1,0 +1,6 @@
+{
+  "name": "salai-mcp",
+  "command": "salai-mcp",
+  "description": "Israeli grocery shopping and price-comparison assistant over Salai MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Israeli grocery shopping and price-comparison assistant over Salai MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

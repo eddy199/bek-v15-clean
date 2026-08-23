@@ -1,0 +1,6 @@
+{
+  "name": "autofillin",
+  "command": "autofillin",
+  "description": "Automated web form filling and file uploading skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated web form filling and file uploading skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

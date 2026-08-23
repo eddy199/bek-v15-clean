@@ -1,0 +1,6 @@
+{
+  "name": "shipp",
+  "command": "shipp",
+  "description": "Shipp is a real-time data connector.",
+  "prompt": "Tu es un agent expert spécialisé dans : Shipp is a real-time data connector..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

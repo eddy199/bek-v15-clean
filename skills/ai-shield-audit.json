@@ -1,0 +1,6 @@
+{
+  "name": "ai-shield-audit",
+  "command": "ai-shield-audit",
+  "description": "Security audit engine for OpenClaw configurations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Security audit engine for OpenClaw configurations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "beauty-generation-api",
+  "command": "beauty-generation-api",
+  "description": "FREE AI image generation service for creating.",
+  "prompt": "Tu es un agent expert spécialisé dans : FREE AI image generation service for creating..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

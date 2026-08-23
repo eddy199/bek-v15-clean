@@ -1,0 +1,6 @@
+{
+  "name": "feed-to-md",
+  "command": "feed-to-md",
+  "description": "Convert RSS or Atom feed URLs into Markdown using the bundled local converter script.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert RSS or Atom feed URLs into Markdown using the bundled local converter script..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

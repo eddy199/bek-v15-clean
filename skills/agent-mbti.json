@@ -1,0 +1,6 @@
+{
+  "name": "agent-mbti",
+  "command": "agent-mbti",
+  "description": "AI Agent personality diagnosis and configuration system based on MBTI framework.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI Agent personality diagnosis and configuration system based on MBTI framework..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

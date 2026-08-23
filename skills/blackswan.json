@@ -1,0 +1,6 @@
+{
+  "name": "blackswan",
+  "command": "blackswan",
+  "description": "Real-time crypto risk intelligence; before and as things break.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time crypto risk intelligence; before and as things break..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

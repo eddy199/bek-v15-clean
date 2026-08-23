@@ -1,0 +1,6 @@
+{
+  "name": "memories-cli",
+  "command": "memories-cli",
+  "description": "CLI reference and workflows for memories.sh — the persistent memory layer for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : CLI reference and workflows for memories.sh — the persistent memory layer for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mealie-api",
+  "command": "mealie-api",
+  "description": "Interact with Mealie recipe manager (recipes, shopping lists, meal plans)",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Mealie recipe manager (recipes, shopping lists, meal plans).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

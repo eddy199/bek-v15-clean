@@ -1,0 +1,6 @@
+{
+  "name": "hevy",
+  "command": "hevy",
+  "description": "Query workout data from Hevy including workouts, routines, exercises.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query workout data from Hevy including workouts, routines, exercises..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

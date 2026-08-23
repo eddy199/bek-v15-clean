@@ -1,0 +1,6 @@
+{
+  "name": "message-parser",
+  "command": "message-parser",
+  "description": "Parse raw WhatsApp exports (TXT or JSON) into normalized message objects with `timestamp`, `sender`, and `content`.",
+  "prompt": "Tu es un agent expert spécialisé dans : Parse raw WhatsApp exports (TXT or JSON) into normalized message objects with `timestamp`, `sender`, and `content`..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

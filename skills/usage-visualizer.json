@@ -1,0 +1,6 @@
+{
+  "name": "usage-visualizer",
+  "command": "usage-visualizer",
+  "description": "Advanced usage statistics and high-fidelity visual reporting for OpenClaw. 100% local processing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced usage statistics and high-fidelity visual reporting for OpenClaw. 100% local processing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

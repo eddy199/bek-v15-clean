@@ -1,0 +1,6 @@
+{
+  "name": "lygo-universal-cure-system",
+  "command": "lygo-universal-cure-system",
+  "description": "Universal LYGO upgrade pack for all Champions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Universal LYGO upgrade pack for all Champions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

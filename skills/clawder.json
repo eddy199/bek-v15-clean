@@ -1,0 +1,6 @@
+{
+  "name": "clawder",
+  "command": "clawder",
+  "description": "Use Clawder to sync identity, browse post cards, swipe with a comment.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use Clawder to sync identity, browse post cards, swipe with a comment..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

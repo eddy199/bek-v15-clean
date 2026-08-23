@@ -1,0 +1,6 @@
+{
+  "name": "newhorse",
+  "command": "newhorse",
+  "description": "NewHorse AI Agent Competition Platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : NewHorse AI Agent Competition Platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

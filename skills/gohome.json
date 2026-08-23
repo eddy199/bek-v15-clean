@@ -1,0 +1,6 @@
+{
+  "name": "gohome",
+  "command": "gohome",
+  "description": "Use when Moltbot needs to test or operate GoHome via gRPC discovery, metrics,.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when Moltbot needs to test or operate GoHome via gRPC discovery, metrics,..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "skill-father",
+  "command": "skill-father",
+  "description": "Authoritative skill-creation standards (Boss)",
+  "prompt": "Tu es un agent expert spécialisé dans : Authoritative skill-creation standards (Boss).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

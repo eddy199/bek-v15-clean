@@ -1,0 +1,6 @@
+{
+  "name": "abm-outbound",
+  "command": "abm-outbound",
+  "description": "Multi-channel ABM automation that turns LinkedIn URLs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-channel ABM automation that turns LinkedIn URLs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

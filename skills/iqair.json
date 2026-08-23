@@ -1,0 +1,6 @@
+{
+  "name": "iqair",
+  "command": "iqair",
+  "description": "Get real-time air quality data from IQAir API for any location worldwide.",
+  "prompt": "Tu es un agent expert spécialisé dans : Get real-time air quality data from IQAir API for any location worldwide..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

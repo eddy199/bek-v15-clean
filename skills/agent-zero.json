@@ -1,0 +1,6 @@
+{
+  "name": "agent-zero",
+  "command": "agent-zero",
+  "description": "Delegate complex coding, research, or autonomous tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Delegate complex coding, research, or autonomous tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

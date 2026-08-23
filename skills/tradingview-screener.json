@@ -1,0 +1,6 @@
+{
+  "name": "tradingview-screener",
+  "command": "tradingview-screener",
+  "description": "Screen markets across 6 asset classes using TradingView data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Screen markets across 6 asset classes using TradingView data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

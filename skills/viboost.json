@@ -1,0 +1,6 @@
+{
+  "name": "viboost",
+  "command": "viboost",
+  "description": "Automatically log AI agent activity to the user's viboost.ai public profile.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically log AI agent activity to the user's viboost.ai public profile..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

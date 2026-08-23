@@ -1,0 +1,6 @@
+{
+  "name": "neo-google-ai-workaround",
+  "command": "neo-google-ai-workaround",
+  "description": "Automates Google AI Pro/Ultra access management through proxy and session strategies for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automates Google AI Pro/Ultra access management through proxy and session strategies for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

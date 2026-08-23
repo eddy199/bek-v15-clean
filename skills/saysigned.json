@@ -1,0 +1,6 @@
+{
+  "name": "saysigned",
+  "command": "saysigned",
+  "description": "> **E-signatures for AI agents.** Legally binding under ESIGN Act & UETA Section 14.",
+  "prompt": "Tu es un agent expert spécialisé dans : > **E-signatures for AI agents.** Legally binding under ESIGN Act & UETA Section 14..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

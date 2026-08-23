@@ -1,0 +1,6 @@
+{
+  "name": "age-transformation",
+  "command": "age-transformation",
+  "description": "Transform faces across ages using each::sense AI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform faces across ages using each::sense AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "tbot-controller",
+  "command": "tbot-controller",
+  "description": "Operate TradingBoat/TBOT (TBOT runtime stack) via a controlled automation interface (DB-first queries; lifecycle.",
+  "prompt": "Tu es un agent expert spécialisé dans : Operate TradingBoat/TBOT (TBOT runtime stack) via a controlled automation interface (DB-first queries; lifecycle..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

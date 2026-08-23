@@ -1,0 +1,6 @@
+{
+  "name": "lh-edge-tts",
+  "command": "lh-edge-tts",
+  "description": "Text-to-speech conversion using Python edge-tts for generating audio from text.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-speech conversion using Python edge-tts for generating audio from text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

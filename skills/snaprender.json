@@ -1,0 +1,6 @@
+{
+  "name": "snaprender",
+  "command": "snaprender",
+  "description": "Give your agent eyes on the web — screenshot any URL as an image file.",
+  "prompt": "Tu es un agent expert spécialisé dans : Give your agent eyes on the web — screenshot any URL as an image file..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

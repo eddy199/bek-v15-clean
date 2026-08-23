@@ -1,0 +1,6 @@
+{
+  "name": "comfyui-tts",
+  "command": "comfyui-tts",
+  "description": "Generate speech audio using ComfyUI Qwen-TTS service.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate speech audio using ComfyUI Qwen-TTS service..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

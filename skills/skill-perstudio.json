@@ -1,0 +1,6 @@
+{
+  "name": "skill-perstudio",
+  "command": "skill-perstudio",
+  "description": "Generate AI images and videos.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI images and videos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

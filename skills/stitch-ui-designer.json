@@ -1,0 +1,6 @@
+{
+  "name": "stitch-ui-designer",
+  "command": "stitch-ui-designer",
+  "description": "Design, preview, and generate UI code using Google Stitch (via MCP)",
+  "prompt": "Tu es un agent expert spécialisé dans : Design, preview, and generate UI code using Google Stitch (via MCP).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

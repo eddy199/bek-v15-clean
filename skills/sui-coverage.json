@@ -1,0 +1,6 @@
+{
+  "name": "sui-coverage",
+  "command": "sui-coverage",
+  "description": "Analyze Sui Move test coverage, identify untested code, write missing tests, and perform security audits.",
+  "prompt": "Tu es un agent expert spécialisé dans : Analyze Sui Move test coverage, identify untested code, write missing tests, and perform security audits..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

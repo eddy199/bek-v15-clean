@@ -1,0 +1,6 @@
+{
+  "name": "meegle-mcp-skill",
+  "command": "meegle-mcp-skill",
+  "description": "Interact with Meegle project management system via MCP protocol.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Meegle project management system via MCP protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

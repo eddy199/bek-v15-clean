@@ -1,0 +1,6 @@
+{
+  "name": "paylobster",
+  "command": "paylobster",
+  "description": "Agent payment infrastructure on Base.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent payment infrastructure on Base..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

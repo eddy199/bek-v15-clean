@@ -1,0 +1,6 @@
+{
+  "name": "seasonal-planting-guide",
+  "command": "seasonal-planting-guide",
+  "description": "Seasonal planting calendar for gardeners.",
+  "prompt": "Tu es un agent expert spécialisé dans : Seasonal planting calendar for gardeners..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

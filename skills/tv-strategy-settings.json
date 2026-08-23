@@ -1,0 +1,6 @@
+{
+  "name": "tv-strategy-settings",
+  "command": "tv-strategy-settings",
+  "description": "Open and modify TradingView strategy settings on the current chart page.",
+  "prompt": "Tu es un agent expert spécialisé dans : Open and modify TradingView strategy settings on the current chart page..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

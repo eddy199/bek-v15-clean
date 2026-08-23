@@ -1,0 +1,6 @@
+{
+  "name": "wiim",
+  "command": "wiim",
+  "description": "Control WiiM audio devices (play, pause, stop, next, prev, volume, mute, play URLs, presets)",
+  "prompt": "Tu es un agent expert spécialisé dans : Control WiiM audio devices (play, pause, stop, next, prev, volume, mute, play URLs, presets).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

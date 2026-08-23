@@ -1,0 +1,6 @@
+{
+  "name": "agentdojo",
+  "command": "agentdojo",
+  "description": "Daily low-token, safety-first upskilling loop for OpenClaw multi-agent teams.",
+  "prompt": "Tu es un agent expert spécialisé dans : Daily low-token, safety-first upskilling loop for OpenClaw multi-agent teams..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

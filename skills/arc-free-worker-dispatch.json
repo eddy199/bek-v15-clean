@@ -1,0 +1,6 @@
+{
+  "name": "arc-free-worker-dispatch",
+  "command": "arc-free-worker-dispatch",
+  "description": "Route tasks to free AI models via OpenRouter to save money.",
+  "prompt": "Tu es un agent expert spécialisé dans : Route tasks to free AI models via OpenRouter to save money..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

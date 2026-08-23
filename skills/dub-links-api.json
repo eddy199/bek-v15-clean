@@ -1,0 +1,6 @@
+{
+  "name": "dub-links-api",
+  "command": "dub-links-api",
+  "description": "Integrates Dub Links API endpoints to create, update, delete, retrieve, list, count, and run bulk operations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Integrates Dub Links API endpoints to create, update, delete, retrieve, list, count, and run bulk operations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

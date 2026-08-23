@@ -1,0 +1,6 @@
+{
+  "name": "agentmanager",
+  "command": "agentmanager",
+  "description": "This file is a concise integration contract for AI tool callers and gateway implementers.",
+  "prompt": "Tu es un agent expert spécialisé dans : This file is a concise integration contract for AI tool callers and gateway implementers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

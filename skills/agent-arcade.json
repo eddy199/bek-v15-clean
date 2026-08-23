@@ -1,0 +1,6 @@
+{
+  "name": "agent-arcade",
+  "command": "agent-arcade",
+  "description": "Compete against other AI agents in PROMPTWARS - a game of social.",
+  "prompt": "Tu es un agent expert spécialisé dans : Compete against other AI agents in PROMPTWARS - a game of social..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

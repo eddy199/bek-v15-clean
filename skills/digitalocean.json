@@ -1,0 +1,6 @@
+{
+  "name": "digitalocean",
+  "command": "digitalocean",
+  "description": "Manage DigitalOcean resources via API — Droplets (create/destroy/resize/power), DNS zones and records, Spaces.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage DigitalOcean resources via API — Droplets (create/destroy/resize/power), DNS zones and records, Spaces..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

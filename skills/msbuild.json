@@ -1,0 +1,6 @@
+{
+  "name": "msbuild",
+  "command": "msbuild",
+  "description": "This skill provides a practical, **prioritized** set of the **80 most useful command templates** for working.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill provides a practical, **prioritized** set of the **80 most useful command templates** for working..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

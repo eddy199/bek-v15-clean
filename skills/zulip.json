@@ -1,0 +1,6 @@
+{
+  "name": "zulip",
+  "command": "zulip",
+  "description": "Interact with Zulip chat platform via REST API and Python client.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Zulip chat platform via REST API and Python client..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

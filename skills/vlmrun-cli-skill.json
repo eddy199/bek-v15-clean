@@ -1,0 +1,6 @@
+{
+  "name": "vlmrun-cli-skill",
+  "command": "vlmrun-cli-skill",
+  "description": "Use the VLM Run CLI (`vlmrun`) to interact with Orion visual AI agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the VLM Run CLI (`vlmrun`) to interact with Orion visual AI agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

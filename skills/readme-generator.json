@@ -1,0 +1,6 @@
+{
+  "name": "readme-generator",
+  "command": "readme-generator",
+  "description": "Generate a production-quality README.md by analyzing project structure, framework, and code.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate a production-quality README.md by analyzing project structure, framework, and code..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

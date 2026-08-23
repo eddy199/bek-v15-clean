@@ -1,0 +1,6 @@
+{
+  "name": "lofy",
+  "command": "lofy",
+  "description": "Personal AI chief of staff — a complete life management system for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Personal AI chief of staff — a complete life management system for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

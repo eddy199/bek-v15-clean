@@ -1,0 +1,6 @@
+{
+  "name": "b3ehive",
+  "command": "b3ehive",
+  "description": "Enable competitive code generation where three isolated AI agents implement the same functionality, evaluate.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enable competitive code generation where three isolated AI agents implement the same functionality, evaluate..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

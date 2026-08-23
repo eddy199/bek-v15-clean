@@ -1,0 +1,6 @@
+{
+  "name": "tiangong-wps-word-automation",
+  "command": "tiangong-wps-word-automation",
+  "description": "Automate common Word/WPS document operations on Windows via COM (read text, replace, insert, headings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate common Word/WPS document operations on Windows via COM (read text, replace, insert, headings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "dxf-to-image",
+  "command": "dxf-to-image",
+  "description": "Convert DXF to PNG, JPG, or SVG for sharing (e.g.",
+  "prompt": "Tu es un agent expert spécialisé dans : Convert DXF to PNG, JPG, or SVG for sharing (e.g..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

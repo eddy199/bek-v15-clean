@@ -1,0 +1,6 @@
+{
+  "name": "omni-stories",
+  "command": "omni-stories",
+  "description": "Omni Stories is a skill that allows AI agents to generate.",
+  "prompt": "Tu es un agent expert spécialisé dans : Omni Stories is a skill that allows AI agents to generate..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "tide-watch",
+  "command": "tide-watch",
+  "description": "Proactive session capacity monitoring and management for OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Proactive session capacity monitoring and management for OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

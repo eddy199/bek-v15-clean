@@ -1,0 +1,6 @@
+{
+  "name": "model-manager",
+  "command": "model-manager",
+  "description": "**💰 Optimize Your API Costs: Route Simple Tasks to Cheaper Models.**.",
+  "prompt": "Tu es un agent expert spécialisé dans : **💰 Optimize Your API Costs: Route Simple Tasks to Cheaper Models.**..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

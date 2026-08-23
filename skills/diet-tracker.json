@@ -1,0 +1,6 @@
+{
+  "name": "diet-tracker",
+  "command": "diet-tracker",
+  "description": "Tracks daily diet and calculates nutrition information.",
+  "prompt": "Tu es un agent expert spécialisé dans : Tracks daily diet and calculates nutrition information..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

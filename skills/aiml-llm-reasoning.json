@@ -1,0 +1,6 @@
+{
+  "name": "aiml-llm-reasoning",
+  "command": "aiml-llm-reasoning",
+  "description": "Run AIMLAPI LLM and reasoning workflows through chat completions with retries, structured outputs, and explicit.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run AIMLAPI LLM and reasoning workflows through chat completions with retries, structured outputs, and explicit..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ugc-manual",
+  "command": "ugc-manual",
+  "description": "Generate lip-sync video from image + user's own audio recording.  ✅ USE WHEN: - User provides their OWN audio file.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate lip-sync video from image + user's own audio recording.  ✅ USE WHEN: - User provides their OWN audio file..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

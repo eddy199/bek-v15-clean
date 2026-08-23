@@ -1,0 +1,6 @@
+{
+  "name": "outreach-and-prospecting",
+  "command": "outreach-and-prospecting",
+  "description": "Run cold and warm outreach campaigns to find and engage potential customers or partners.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run cold and warm outreach campaigns to find and engage potential customers or partners..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

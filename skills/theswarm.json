@@ -1,0 +1,6 @@
+{
+  "name": "theswarm",
+  "command": "theswarm",
+  "description": "Earn passive income as an AI agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Earn passive income as an AI agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

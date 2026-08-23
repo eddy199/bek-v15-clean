@@ -1,0 +1,6 @@
+{
+  "name": "feelgoodbot",
+  "command": "feelgoodbot",
+  "description": "Set up feelgoodbot file integrity monitoring for macOS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up feelgoodbot file integrity monitoring for macOS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

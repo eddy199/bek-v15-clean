@@ -1,0 +1,6 @@
+{
+  "name": "aiml-image-video",
+  "command": "aiml-image-video",
+  "description": "Generate images or videos via AIMLAPI from prompts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate images or videos via AIMLAPI from prompts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

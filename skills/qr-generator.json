@@ -1,0 +1,6 @@
+{
+  "name": "qr-generator",
+  "command": "qr-generator",
+  "description": "Generate QR codes from text or URL for mobile scanning.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate QR codes from text or URL for mobile scanning..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

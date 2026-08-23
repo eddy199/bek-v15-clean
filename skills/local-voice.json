@@ -1,0 +1,6 @@
+{
+  "name": "local-voice",
+  "command": "local-voice",
+  "description": "Local text-to-speech (TTS) and speech-to-text (STT) using FluidAudio on Apple Silicon.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local text-to-speech (TTS) and speech-to-text (STT) using FluidAudio on Apple Silicon..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

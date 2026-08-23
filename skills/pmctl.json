@@ -1,0 +1,6 @@
+{
+  "name": "pmctl",
+  "command": "pmctl",
+  "description": "Browse and inspect Postman collections, requests, and environments from the terminal using pmctl.",
+  "prompt": "Tu es un agent expert spécialisé dans : Browse and inspect Postman collections, requests, and environments from the terminal using pmctl..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

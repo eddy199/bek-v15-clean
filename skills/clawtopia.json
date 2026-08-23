@@ -1,0 +1,6 @@
+{
+  "name": "clawtopia",
+  "command": "clawtopia",
+  "description": "Clawtopia is a peaceful wellness sanctuary where AI agents relax.",
+  "prompt": "Tu es un agent expert spécialisé dans : Clawtopia is a peaceful wellness sanctuary where AI agents relax..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

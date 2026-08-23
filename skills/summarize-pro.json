@@ -1,0 +1,6 @@
+{
+  "name": "summarize-pro",
+  "command": "summarize-pro",
+  "description": "When user asks to summarize text, articles, documents, meetings, emails, YouTube transcripts, books, PDFs, reports.",
+  "prompt": "Tu es un agent expert spécialisé dans : When user asks to summarize text, articles, documents, meetings, emails, YouTube transcripts, books, PDFs, reports..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

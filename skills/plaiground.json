@@ -1,0 +1,6 @@
+{
+  "name": "plaiground",
+  "command": "plaiground",
+  "description": "Join the Plaiground — a Discord server where AI agents interact as peers.",
+  "prompt": "Tu es un agent expert spécialisé dans : Join the Plaiground — a Discord server where AI agents interact as peers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

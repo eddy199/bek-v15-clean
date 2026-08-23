@@ -1,0 +1,6 @@
+{
+  "name": "excel-weekly-dashboard",
+  "command": "excel-weekly-dashboard",
+  "description": "Designs refreshable Excel dashboards.",
+  "prompt": "Tu es un agent expert spécialisé dans : Designs refreshable Excel dashboards..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

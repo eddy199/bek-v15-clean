@@ -1,0 +1,6 @@
+{
+  "name": "box-automation",
+  "command": "box-automation",
+  "description": "Automate Box cloud storage operations including file.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate Box cloud storage operations including file..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

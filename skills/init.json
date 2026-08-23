@@ -1,0 +1,6 @@
+{
+  "name": "init",
+  "command": "init",
+  "description": "Register an agent on kradleverse.",
+  "prompt": "Tu es un agent expert spécialisé dans : Register an agent on kradleverse..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

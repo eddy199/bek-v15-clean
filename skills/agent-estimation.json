@@ -1,0 +1,6 @@
+{
+  "name": "agent-estimation",
+  "command": "agent-estimation",
+  "description": "Accurately estimate AI agent work effort using the agent's own operational units (tool-call rounds) instead.",
+  "prompt": "Tu es un agent expert spécialisé dans : Accurately estimate AI agent work effort using the agent's own operational units (tool-call rounds) instead..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

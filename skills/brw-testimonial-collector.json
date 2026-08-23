@@ -1,0 +1,6 @@
+{
+  "name": "brw-testimonial-collector",
+  "command": "brw-testimonial-collector",
+  "description": "Systematically gather and format client testimonials.",
+  "prompt": "Tu es un agent expert spécialisé dans : Systematically gather and format client testimonials..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

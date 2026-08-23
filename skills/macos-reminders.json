@@ -1,0 +1,6 @@
+{
+  "name": "macos-reminders",
+  "command": "macos-reminders",
+  "description": "Create, list, and manage macOS Reminders via AppleScript.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create, list, and manage macOS Reminders via AppleScript..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

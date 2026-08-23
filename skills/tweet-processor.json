@@ -1,0 +1,6 @@
+{
+  "name": "tweet-processor",
+  "command": "tweet-processor",
+  "description": "Extract and categorize insights from tweet links into structured notes.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract and categorize insights from tweet links into structured notes..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

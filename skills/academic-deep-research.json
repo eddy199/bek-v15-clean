@@ -1,0 +1,6 @@
+{
+  "name": "academic-deep-research",
+  "command": "academic-deep-research",
+  "description": "Transparent, rigorous research with full.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transparent, rigorous research with full..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

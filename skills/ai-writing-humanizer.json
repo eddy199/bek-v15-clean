@@ -1,0 +1,6 @@
+{
+  "name": "ai-writing-humanizer",
+  "command": "ai-writing-humanizer",
+  "description": "Automatically strip AI writing patterns and stock phrases from user-facing prose before sending.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatically strip AI writing patterns and stock phrases from user-facing prose before sending..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

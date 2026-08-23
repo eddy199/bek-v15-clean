@@ -1,0 +1,6 @@
+{
+  "name": "music-cog",
+  "command": "music-cog",
+  "description": "Original music, fully yours.",
+  "prompt": "Tu es un agent expert spécialisé dans : Original music, fully yours..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

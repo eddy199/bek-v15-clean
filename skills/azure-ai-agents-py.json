@@ -1,0 +1,6 @@
+{
+  "name": "azure-ai-agents-py",
+  "command": "azure-ai-agents-py",
+  "description": "Build AI agents using the Azure AI Agents Python SDK.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build AI agents using the Azure AI Agents Python SDK..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

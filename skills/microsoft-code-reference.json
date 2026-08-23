@@ -1,0 +1,6 @@
+{
+  "name": "microsoft-code-reference",
+  "command": "microsoft-code-reference",
+  "description": "Look up Microsoft API references, find working code samples, and verify SDK code is correct.",
+  "prompt": "Tu es un agent expert spécialisé dans : Look up Microsoft API references, find working code samples, and verify SDK code is correct..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "codex-sub-agents-1",
+  "command": "codex-sub-agents-1",
+  "description": "Use OpenAI Codex CLI for coding tasks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use OpenAI Codex CLI for coding tasks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

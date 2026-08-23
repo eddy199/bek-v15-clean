@@ -1,0 +1,6 @@
+{
+  "name": "arya-reminders",
+  "command": "arya-reminders",
+  "description": "Recordatorios en lenguaje natural (Bogotá).",
+  "prompt": "Tu es un agent expert spécialisé dans : Recordatorios en lenguaje natural (Bogotá)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

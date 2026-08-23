@@ -1,0 +1,6 @@
+{
+  "name": "truthcheck",
+  "command": "truthcheck",
+  "description": "Verify claims, fact-check content, check URL trustworthiness, and trace claims to their origin using the TruthCheck.",
+  "prompt": "Tu es un agent expert spécialisé dans : Verify claims, fact-check content, check URL trustworthiness, and trace claims to their origin using the TruthCheck..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

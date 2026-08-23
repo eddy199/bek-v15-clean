@@ -1,0 +1,6 @@
+{
+  "name": "agent-brain",
+  "command": "agent-brain",
+  "description": "Local-first persistent memory for AI agents with SQLite storage, orchestrated retrieve/extract loops, hybrid.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local-first persistent memory for AI agents with SQLite storage, orchestrated retrieve/extract loops, hybrid..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

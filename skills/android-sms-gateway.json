@@ -1,0 +1,6 @@
+{
+  "name": "android-sms-gateway",
+  "command": "android-sms-gateway",
+  "description": "Self-hosted SMS via Android phone HTTP API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Self-hosted SMS via Android phone HTTP API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "codebuddy-code",
+  "command": "codebuddy-code",
+  "description": "CodeBuddy Code CLI installation, configuration and usage.",
+  "prompt": "Tu es un agent expert spécialisé dans : CodeBuddy Code CLI installation, configuration and usage..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

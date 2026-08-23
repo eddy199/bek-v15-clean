@@ -1,0 +1,6 @@
+{
+  "name": "agent-synthesizer",
+  "command": "agent-synthesizer",
+  "description": "Enable and configure Agent Synthesizer for OpenClaw to improve autonomy and execution throughput.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enable and configure Agent Synthesizer for OpenClaw to improve autonomy and execution throughput..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

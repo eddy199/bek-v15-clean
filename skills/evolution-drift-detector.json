@@ -1,0 +1,6 @@
+{
+  "name": "evolution-drift-detector",
+  "command": "evolution-drift-detector",
+  "description": "Helps detect when AI agent skills silently mutate across inheritance chains.",
+  "prompt": "Tu es un agent expert spécialisé dans : Helps detect when AI agent skills silently mutate across inheritance chains..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

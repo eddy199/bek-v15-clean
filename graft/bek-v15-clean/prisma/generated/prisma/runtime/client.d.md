@@ -1,0 +1,328 @@
+# bek-v15-clean/prisma/generated/prisma/runtime/client.d.ts
+
+- AccelerateEngineConfig · interface · L35-L44 — interface AccelerateEngineConfig extends EngineConfig
+- AccelerateExtensionFetch · type · L61-L65 — type AccelerateExtensionFetch = (url: string, options: { body?: string; method?: string; headers: Record<string, string>; }) => Promise<unknown>;
+- AccelerateExtensionFetchDecorator · type · L67-L67 — type AccelerateExtensionFetchDecorator = (fetch: AccelerateExtensionFetch) => AccelerateExtensionFetch;
+- Action · type · L69-L69 — type Action = keyof typeof DMMF_2.ModelAction | 'executeRaw' | 'queryRaw' | 'runCommandRaw';
+- ActiveConnectorType · type · L71-L71 — type ActiveConnectorType = Exclude<ConnectorType, 'postgres' | 'prisma+postgres'>;
+- AdapterInfo · interface · L77-L80 — interface AdapterInfo
+- Aggregate · type · L82-L82 — type Aggregate = '_count' | '_max' | '_min' | '_avg' | '_sum';
+- AllModelsToStringIndex · type · L84-L90 — type AllModelsToStringIndex<TypeMap extends TypeMapDef, Args extends Record<string, any>, K extends PropertyKey> = Args extends { [P in K]: { $allModels: infer AllModels; }; } ? { [P in K]: Record<TypeMap['meta']['modelProps'], AllModels>; } : {};
+- ApplyOmit · type · L96-L98 — type ApplyOmit<T, OmitConfig> = Compute<{ [K in keyof T as OmitValue<OmitConfig, K> extends true ? never : K]: T[K]; }>;
+- Args · type · L100-L110 — type Args<T, F extends Operation> = T extends { [K: symbol]: { types: { operations: { [K in F]: { args: any; }; }; }; }; } ? T[symbol]['types']['operations'][F]['args'] : any;
+- Args_3 · type · L112-L112 — type Args_3<T, F extends Operation> = Args<T, F>;
+- ArgScalarType · type · L114-L114 — type ArgScalarType = 'string' | 'int' | 'bigint' | 'float' | 'decimal' | 'boolean' | 'enum' | 'uuid' | 'json' | 'datetime' | 'bytes' | 'unknown';
+- ArgType · type · L116-L120 — type ArgType = { scalarType: ArgScalarType; dbType?: string; arity: Arity; };
+- Arity · type · L122-L122 — type Arity = 'scalar' | 'list';
+- Attributes · interface · L129-L131 — interface Attributes
+- AttributeValue · type · L138-L138 — type AttributeValue = string | number | boolean | Array<null | undefined | string> | Array<null | undefined | number> | Array<null | undefined | boolean>;
+- BaseDMMF · type · L140-L142 — type BaseDMMF = { readonly datamodel: Omit<DMMF_2.Datamodel, 'indexes'>; };
+- BatchArgs · type · L144-L149 — type BatchArgs = { queries: BatchQuery[]; transaction?: { isolationLevel?: IsolationLevel; }; };
+- BatchInternalParams · type · L151-L154 — type BatchInternalParams = { requests: RequestParams[]; customDataProxyFetch?: AccelerateExtensionFetchDecorator; };
+- BatchQuery · type · L156-L160 — type BatchQuery = { model: string | undefined; operation: string; args: JsArgs | RawQueryArgs; };
+- BatchQueryEngineResult · type · L162-L162 — type BatchQueryEngineResult<T> = QueryEngineResultData<T> | Error;
+- BatchQueryOptionsCb · type · L164-L164 — type BatchQueryOptionsCb = (args: BatchQueryOptionsCbArgs) => Promise<any>;
+- BatchQueryOptionsCbArgs · type · L166-L170 — type BatchQueryOptionsCbArgs = { args: BatchArgs; query: (args: BatchArgs, __internalParams?: BatchInternalParams) => Promise<unknown[]>; __internalParams: BatchInternalParams; };
+- BatchResponse · type · L172-L172 — type BatchResponse = MultiBatchResponse | CompactedBatchResponse;
+- BatchTransactionOptions · type · L174-L178 — type BatchTransactionOptions = { isolationLevel?: Transaction.IsolationLevel; maxWait?: number; timeout?: number; };
+- Bytes · type · L183-L183 — type Bytes = ReturnType<Uint8Array['slice']>;
+- Call · type · L185-L187 — type Call<F extends Fn, P> = (F & { params: P; })['returns'];
+- CallSite · interface · L189-L191 — interface CallSite
+- Cast · type · L193-L193 — type Cast<A, W> = A extends W ? A : W;
+- Client · type · L195-L195 — type Client = ReturnType<typeof getPrismaClient> extends new (optionsArg: PrismaClientOptions) => infer T ? T : never;
+- ClientArg · type · L197-L199 — type ClientArg = { [MethodName in string]: unknown; };
+- ClientArgs · type · L201-L203 — type ClientArgs = { client: ClientArg; };
+- ClientBuiltInProp · type · L205-L205 — type ClientBuiltInProp = keyof DynamicClientExtensionThisBuiltin<never, never, never>;
+- ClientOptionDef · type · L207-L209 — type ClientOptionDef = undefined | { [K in string]: any; };
+- ClientOtherOps · type · L211-L218 — type ClientOtherOps = { $queryRaw<T = unknown>(query: TemplateStringsArray | Sql, ...values: any[]): PrismaPromise<T>; $queryRawTyped<T>(query: TypedSql<unknown[], T>): PrismaPromise<T[]>; $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): PrismaPromise<T>; $executeRaw(query: TemplateStringsArray | Sql, ...values: any[]): PrismaPromise<number>; $executeRawUnsafe(query: string, ...values: any[]): PrismaPromise<number>; $runCommandRaw(command: InputJsonObject): PrismaPromise<JsonObject>; };
+- ColumnType · type · L220-L220 — type ColumnType = (typeof ColumnTypeEnum)[keyof typeof ColumnTypeEnum];
+- CompactedBatchResponse · type · L257-L264 — type CompactedBatchResponse = { type: 'compacted'; plan: QueryPlanNode; arguments: Record<string, {}>[]; nestedSelection: string[]; keys: string[]; expectNonEmpty: boolean; };
+- CompilerWasmLoadingConfig · type · L266-L283 — type CompilerWasmLoadingConfig = { /** * WASM-bindgen runtime for corresponding module */ getRuntime: () => Promise<{ __wbg_set_wasm(exports: unknown): void; QueryCompiler: QueryCompilerConstructor; }>; /** * Loads the raw wasm module for the wasm compiler engine. This configuration is * generated specifically for each type of client, eg. Node.js client and Edge * clients will have different implementations. * @remarks this is a callback on purpose, we only load the wasm if needed. * @remarks only used by ClientEngine */ getQueryCompilerWasmModule: () => Promise<unknown>; importName: string; };
+- Compute · type · L285-L287 — type Compute<T> = T extends Function ? T : { [K in keyof T]: T[K]; } & unknown;
+- ComputeDeep · type · L289-L291 — type ComputeDeep<T> = T extends Function ? T : { [K in keyof T]: ComputeDeep<T[K]>; } & unknown;
+- ComputedField · type · L293-L297 — type ComputedField = { name: string; needs: string[]; compute: ResultArgsFieldCompute; };
+- ComputedFieldsMap · type · L299-L301 — type ComputedFieldsMap = { [fieldName: string]: ComputedField; };
+- ConnectionInfo · type · L303-L307 — type ConnectionInfo = { schemaName?: string; maxBindValues?: number; supportsRelationJoins: boolean; };
+- ConnectorType · type · L309-L309 — type ConnectorType = 'mysql' | 'mongodb' | 'sqlite' | 'postgresql' | 'postgres' | 'prisma+postgres' | 'sqlserver' | 'cockroachdb';
+- Context · interface · L311-L333 — interface Context
+- Context_2 · type · L335-L353 — type Context_2<T> = T extends { [K: symbol]: { ctx: infer C; }; } ? C & T & { /** * @deprecated Use `$name` instead. */ name?: string; $name?: string; $parent?: unknown; } : T & { /** * @deprecated Use `$name` instead. */ name?: string; $name?: string; $parent?: unknown; };
+- Count · type · L355-L357 — type Count<O> = { [K in keyof O]: Count<number>; } & {};
+- DataLoader · class · L361-L371 — class DataLoader<T = unknown>
+- DataLoaderOptions · type · L373-L378 — type DataLoaderOptions<T> = { singleLoader: (request: T) => Promise<any>; batchLoader: (request: T[]) => Promise<any[]>; batchBy: (request: T) => string | undefined; batchOrder: (requestA: T, requestB: T) => number; };
+- Datamodel · type · L380-L385 — type Datamodel = ReadonlyDeep_2<{ models: Model[]; enums: DatamodelEnum[]; types: Model[]; indexes: Index[]; }>;
+- DatamodelEnum · type · L387-L392 — type DatamodelEnum = ReadonlyDeep_2<{ name: string; values: EnumValue[]; dbName?: string | null; documentation?: string; }>;
+- DataRule · type · L396-L407 — type DataRule = { type: 'rowCountEq'; args: number; } | { type: 'rowCountNeq'; args: number; } | { type: 'affectedRowCountEq'; args: number; } | { type: 'never'; };
+- DecimalJsLike · interface · L446-L451 — interface DecimalJsLike
+- DefaultArgs · type · L453-L453 — type DefaultArgs = InternalArgs<{}, {}, {}, {}>;
+- DefaultSelection · type · L455-L461 — type DefaultSelection<Payload extends OperationPayload, Args = {}, GlobalOmitOptions = {}> = Args extends { omit: infer LocalOmit; } ? ApplyOmit<UnwrapPayload<{ default: Payload; }>['default'], PatchFlat<LocalOmit, ExtractGlobalOmit<GlobalOmitOptions, Uncapitalize<Payload['name']>>>> : ApplyOmit<UnwrapPayload<{ default: Payload; }>['default'], ExtractGlobalOmit<GlobalOmitOptions, Uncapitalize<Payload['name']>>>;
+- Deprecation · type · L469-L473 — type Deprecation = ReadonlyDeep_2<{ sinceVersion: string; reason: string; plannedRemovalVersion?: string; }>;
+- DeserializedResponse · type · L475-L475 — type DeserializedResponse = Array<Record<string, unknown>>;
+- DevTypeMapDef · type · L481-L493 — type DevTypeMapDef = { meta: { modelProps: string; }; model: { [Model in PropertyKey]: { [Operation in PropertyKey]: DevTypeMapFnDef; }; }; other: { [Operation in PropertyKey]: DevTypeMapFnDef; }; };
+- DevTypeMapFnDef · type · L495-L499 — type DevTypeMapFnDef = { args: any; result: any; payload: OperationPayload; };
+- Document_2 · type · L587-L591 — type Document_2 = ReadonlyDeep_2<{ datamodel: Datamodel; schema: Schema; mappings: Mappings; }>;
+- DriverAdapterFactory · interface · L597-L602 — interface DriverAdapterFactory<Query, Result> extends AdapterInfo
+- DynamicArgType · type · L604-L607 — type DynamicArgType = ArgType | { arity: 'tuple'; elements: ArgType[]; };
+- DynamicClientExtensionArgs · type · L610-L618 — type DynamicClientExtensionArgs<C_, TypeMap extends TypeMapDef, TypeMapCb extends TypeMapCbDef, ExtArgs extends Record<string, any>> = { [P in keyof C_]: unknown; } & { [K: symbol]: { ctx: Optional<DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs>, ITXClientDenyList> & { $parent: Optional<DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs>, ITXClientDenyList>; }; }; };
+- DynamicClientExtensionThis · type · L620-L632 — type DynamicClientExtensionThis<TypeMap extends TypeMapDef, TypeMapCb extends TypeMapCbDef, ExtArgs extends Record<string, any>> = { [P in keyof ExtArgs['client']]: Return<ExtArgs['client'][P]>; } & { [P in Exclude<TypeMap['meta']['modelProps'], keyof ExtArgs['client']>]: DynamicModelExtensionThis<TypeMap, ModelKey<TypeMap, P>, ExtArgs>; } & { [P in Exclude<keyof TypeMap['other']['operations'], keyof ExtArgs['client']>]: P extends keyof ClientOtherOps ? ClientOtherOps[P] : never; } & { [P in Exclude<ClientBuiltInProp, keyof ExtArgs['client']>]: DynamicClientExtensionThisBuiltin<TypeMap, TypeMapCb, ExtArgs>[P]; } & { [K: symbol]: { types: TypeMap['other']; }; };
+- DynamicClientExtensionThisBuiltin · type · L634-L650 — type DynamicClientExtensionThisBuiltin<TypeMap extends TypeMapDef, TypeMapCb extends TypeMapCbDef, ExtArgs extends Record<string, any>> = { $extends: ExtendsHook<'extends', TypeMapCb, ExtArgs, Call<TypeMapCb, { extArgs: ExtArgs; }>>; $transaction<P extends PrismaPromise<any>[]>(arg: [...P], options?: { maxWait?: number; timeout?: number; isolationLevel?: TypeMap['meta']['txIsolationLevel']; }): Promise<UnwrapTuple<P>>; $transaction<R>(fn: (client: Omit<DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs>, ITXClientDenyList>) => Promise<R>, options?: { maxWait?: number; timeout?: number; isolationLevel?: TypeMap['meta']['txIsolationLevel']; }): Promise<R>; $disconnect(): Promise<void>; $connect(): Promise<void>; };
+- DynamicModelExtensionArgs · type · L653-L674 — type DynamicModelExtensionArgs<M_, TypeMap extends TypeMapDef, TypeMapCb extends TypeMapCbDef, ExtArgs extends Record<string, any>> = { [K in keyof M_]: K extends '$allModels' ? { [P in keyof M_[K]]?: unknown; } & { [K: symbol]: {}; } : K extends TypeMap['meta']['modelProps'] ? { [P in keyof M_[K]]?: unknown; } & { [K: symbol]: { ctx: DynamicModelExtensionThis<TypeMap, ModelKey<TypeMap, K>, ExtArgs> & { $parent: DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs>; } & { $name: ModelKey<TypeMap, K>; } & { /** * @deprecated Use `$name` instead. */ name: ModelKey<TypeMap, K>; }; }; } : never; };
+- DynamicModelExtensionFluentApi · type · L676-L682 — type DynamicModelExtensionFluentApi<TypeMap extends TypeMapDef, M extends PropertyKey, P extends PropertyKey, Null> = { [K in keyof TypeMap['model'][M]['payload']['objects']]: <A>(args?: Exact<A, Path<TypeMap['model'][M]['operations'][P]['args']['select'], [K]>>) => PrismaPromise<Path<DynamicModelExtensionFnResultBase<TypeMap, M, { select: { [P in K]: A; }; }, P>, [K]> | Null> & DynamicModelExtensionFluentApi<TypeMap, (TypeMap['model'][M]['payload']['objects'][K] & {})['name'], P, Null | Select<TypeMap['model'][M]['payload']['objects'][K], null>>; };
+- DynamicModelExtensionFnResult · type · L684-L684 — type DynamicModelExtensionFnResult<TypeMap extends TypeMapDef, M extends PropertyKey, A, P extends PropertyKey, Null> = P extends FluentOperation ? DynamicModelExtensionFluentApi<TypeMap, M, P, Null> & PrismaPromise<DynamicModelExtensionFnResultBase<TypeMap, M, A, P> | Null> : PrismaPromise<DynamicModelExtensionFnResultBase<TypeMap, M, A, P>>;
+- DynamicModelExtensionFnResultBase · type · L686-L686 — type DynamicModelExtensionFnResultBase<TypeMap extends TypeMapDef, M extends PropertyKey, A, P extends PropertyKey> = GetResult<TypeMap['model'][M]['payload'], A, P & Operation, TypeMap['globalOmitOptions']>;
+- DynamicModelExtensionFnResultNull · type · L688-L688 — type DynamicModelExtensionFnResultNull<P extends PropertyKey> = P extends 'findUnique' | 'findFirst' ? null : never;
+- DynamicModelExtensionOperationFn · type · L690-L690 — type DynamicModelExtensionOperationFn<TypeMap extends TypeMapDef, M extends PropertyKey, P extends PropertyKey> = {} extends TypeMap['model'][M]['operations'][P]['args'] ? <A extends TypeMap['model'][M]['operations'][P]['args']>(args?: Exact<A, TypeMap['model'][M]['operations'][P]['args']>) => DynamicModelExtensionFnResult<TypeMap, M, A, P, DynamicModelExtensionFnResultNull<P>> : <A extends TypeMap['model'][M]['operations'][P]['args']>(args: Exact<A, TypeMap['model'][M]['operations'][P]['args']>) => DynamicModelExtensionFnResult<TypeMap, M, A, P, DynamicModelExtensionFnResultNull<P>>;
+- DynamicModelExtensionThis · type · L692-L702 — type DynamicModelExtensionThis<TypeMap extends TypeMapDef, M extends PropertyKey, ExtArgs extends Record<string, any>> = { [P in keyof ExtArgs['model'][Uncapitalize<M & string>]]: Return<ExtArgs['model'][Uncapitalize<M & string>][P]>; } & { [P in Exclude<keyof TypeMap['model'][M]['operations'], keyof ExtArgs['model'][Uncapitalize<M & string>]>]: DynamicModelExtensionOperationFn<TypeMap, M, P>; } & { [P in Exclude<'fields', keyof ExtArgs['model'][Uncapitalize<M & string>]>]: TypeMap['model'][M]['fields']; } & { [K: symbol]: { types: TypeMap['model'][M]; }; };
+- DynamicQueryExtensionArgs · type · L705-L716 — type DynamicQueryExtensionArgs<Q_, TypeMap extends TypeMapDef> = { [K in keyof Q_]: K extends '$allOperations' ? (args: { model?: string; operation: string; args: any; query: (args: any) => PrismaPromise<any>; }) => Promise<any> : K extends '$allModels' ? { [P in keyof Q_[K] | keyof TypeMap['model'][keyof TypeMap['model']]['operations'] | '$allOperations']?: P extends '$allOperations' ? DynamicQueryExtensionCb<TypeMap, 'model', keyof TypeMap['model'], keyof TypeMap['model'][keyof TypeMap['model']]['operations']> : P extends keyof TypeMap['model'][keyof TypeMap['model']]['operations'] ? DynamicQueryExtensionCb<TypeMap, 'model', keyof TypeMap['model'], P> : never; } : K extends TypeMap['meta']['modelProps'] ? { [P in keyof Q_[K] | keyof TypeMap['model'][ModelKey<TypeMap, K>]['operations'] | '$allOperations']?: P extends '$allOperations' ? DynamicQueryExtensionCb<TypeMap, 'model', ModelKey<TypeMap, K>, keyof TypeMap['model'][ModelKey<TypeMap, K>]['operations']> : P extends keyof TypeMap['model'][ModelKey<TypeMap, K>]['operations'] ? DynamicQueryExtensionCb<TypeMap, 'model', ModelKey<TypeMap, K>, P> : never; } : K extends keyof TypeMap['other']['operations'] ? DynamicQueryExtensionCb<[TypeMap], 0, 'other', K> : never; };
+- DynamicQueryExtensionCb · type · L718-L718 — type DynamicQueryExtensionCb<TypeMap extends TypeMapDef, _0 extends PropertyKey, _1 extends PropertyKey, _2 extends PropertyKey> = <A extends DynamicQueryExtensionCbArgs<TypeMap, _0, _1, _2>>(args: A) => Promise<TypeMap[_0][_1][_2]['result']>;
+- DynamicQueryExtensionCbArgs · type · L720-L727 — type DynamicQueryExtensionCbArgs<TypeMap extends TypeMapDef, _0 extends PropertyKey, _1 extends PropertyKey, _2 extends PropertyKey> = (_1 extends unknown ? _2 extends unknown ? { args: DynamicQueryExtensionCbArgsArgs<TypeMap, _0, _1, _2>; model: _0 extends 0 ? undefined : _1; operation: _2; query: <A extends DynamicQueryExtensionCbArgsArgs<TypeMap, _0, _1, _2>>(args: A) => PrismaPromise<TypeMap[_0][_1]['operations'][_2]['result']>; } : never : never) & { query: (args: DynamicQueryExtensionCbArgsArgs<TypeMap, _0, _1, _2>) => PrismaPromise<TypeMap[_0][_1]['operations'][_2]['result']>; };
+- DynamicQueryExtensionCbArgsArgs · type · L729-L729 — type DynamicQueryExtensionCbArgsArgs<TypeMap extends TypeMapDef, _0 extends PropertyKey, _1 extends PropertyKey, _2 extends PropertyKey> = _2 extends '$queryRaw' | '$executeRaw' ? Sql : TypeMap[_0][_1]['operations'][_2]['args'];
+- DynamicResultExtensionArgs · type · L732-L739 — type DynamicResultExtensionArgs<R_, TypeMap extends TypeMapDef> = { [K in keyof R_]: { [P in keyof R_[K]]?: { needs?: DynamicResultExtensionNeeds<TypeMap, ModelKey<TypeMap, K>, R_[K][P]>; compute(data: DynamicResultExtensionData<TypeMap, ModelKey<TypeMap, K>, R_[K][P]>): any; }; }; };
+- DynamicResultExtensionData · type · L741-L743 — type DynamicResultExtensionData<TypeMap extends TypeMapDef, M extends PropertyKey, S> = GetFindResult<TypeMap['model'][M]['payload'], { select: S; }, {}>;
+- DynamicResultExtensionNeeds · type · L745-L749 — type DynamicResultExtensionNeeds<TypeMap extends TypeMapDef, M extends PropertyKey, S> = { [K in keyof S]: K extends keyof TypeMap['model'][M]['payload']['scalars'] ? S[K] : never; } & { [N in keyof TypeMap['model'][M]['payload']['scalars']]?: boolean; };
+- EmptyToUnknown · type · L753-L753 — type EmptyToUnknown<T> = T;
+- Engine · interface · L755-L767 — interface Engine<InteractiveTransactionPayload = unknown>
+- EngineConfig · interface · L769-L821 — interface EngineConfig
+- EngineEvent · type · L823-L823 — type EngineEvent<E extends EngineEventType> = E extends QueryEventType ? QueryEvent : LogEvent;
+- EngineEventType · type · L825-L825 — type EngineEventType = QueryEventType | LogEventType;
+- EngineSpan · type · L827-L836 — type EngineSpan = { id: EngineSpanId; parentId: string | null; name: string; startTime: HrTime; endTime: HrTime; kind: EngineSpanKind; attributes?: Record<string, unknown>; links?: EngineSpanId[]; };
+- EngineSpanId · type · L838-L838 — type EngineSpanId = string;
+- EngineSpanKind · type · L840-L840 — type EngineSpanKind = 'client' | 'internal';
+- EnumValue · type · L842-L845 — type EnumValue = ReadonlyDeep_2<{ name: string; dbName: string | null; }>;
+- Equals · type · L847-L847 — type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? 1 : 0;
+- ErrorFormat · type · L849-L849 — type ErrorFormat = 'pretty' | 'colorless' | 'minimal';
+- EventCallback · type · L851-L851 — type EventCallback<E extends ExtendedEventType> = [E] extends ['beforeExit'] ? () => Promise<void> : [E] extends [LogLevel] ? (event: EngineEvent<E>) => void : never;
+- Exact · type · L853-L855 — type Exact<A, W> = (A extends unknown ? (W extends A ? { [K in keyof A]: Exact<A[K], W[K]>; } : W) : never) | (A extends Narrowable ? A : never);
+- Exception · type · L862-L862 — type Exception = ExceptionWithCode | ExceptionWithMessage | ExceptionWithName | string;
+- ExceptionWithCode · interface · L864-L869 — interface ExceptionWithCode
+- ExceptionWithMessage · interface · L871-L876 — interface ExceptionWithMessage
+- ExceptionWithName · interface · L878-L883 — interface ExceptionWithName
+- ExtendedEventType · type · L885-L885 — type ExtendedEventType = LogLevel | 'beforeExit';
+- ExtendedSpanOptions · interface · L887-L895 — interface ExtendedSpanOptions extends SpanOptions
+- ExtendsHook · interface · L898-L930 — interface ExtendsHook<Variant extends 'extends' | 'define', TypeMapCb extends TypeMapCbDef, ExtArgs extends Record<string, any>, TypeMap extends TypeMapDef = Call<TypeMapCb, { extArgs: ExtArgs; }>>
+- ExtensionArgs · type · L932-L932 — type ExtensionArgs = Optional<RequiredExtensionArgs>;
+- ExtractGlobalOmit · type · L983-L987 — type ExtractGlobalOmit<Options, ModelName extends string> = Options extends { omit: { [K in ModelName]: infer GlobalOmit; }; } ? GlobalOmit : {};
+- Field · type · L989-L1019 — type Field = ReadonlyDeep_2<{ kind: FieldKind; name: string; isRequired: boolean; isList: boolean; isUnique: boolean; isId: boolean; isReadOnly: boolean; isGenerated?: boolean; isUpdatedAt?: boolean; /** * Describes the data type in the same the way it is defined in the Prisma schema: * BigInt, Boolean, Bytes, DateTime, Decimal, Float, Int, JSON, String, $ModelName */ type: string; /** * Native database type, if specified. * For example, `@db.VarChar(191)` is encoded as `['VarChar', ['191']]`, * `@db.Text` is encoded as `['Text', []]`. */ nativeType?: [string, string[]] | null; dbName?: string | null; hasDefaultValue: boolean; default?: FieldDefault | FieldDefaultScalar | FieldDefaultScalar[]; relationFromFields?: string[]; relationToFields?: string[]; relationOnDelete?: string; relationOnUpdate?: string; relationName?: string; documentation?: string; }>;
+- FieldDefault · type · L1021-L1024 — type FieldDefault = ReadonlyDeep_2<{ name: string; args: Array<string | number>; }>;
+- FieldDefaultScalar · type · L1026-L1026 — type FieldDefaultScalar = string | boolean | number;
+- FieldInitializer · type · L1028-L1033 — type FieldInitializer = { type: 'value'; value: PrismaValue; } | { type: 'lastInsertId'; };
+- FieldKind · type · L1035-L1035 — type FieldKind = 'scalar' | 'object' | 'enum' | 'unsupported';
+- FieldLocation · type · L1037-L1037 — type FieldLocation = 'scalar' | 'inputObjectTypes' | 'outputObjectTypes' | 'enumTypes' | 'fieldRefTypes';
+- FieldNamespace · type · L1039-L1039 — type FieldNamespace = 'model' | 'prisma';
+- FieldOperation · type · L1041-L1056 — type FieldOperation = { type: 'set'; value: PrismaValue; } | { type: 'add'; value: PrismaValue; } | { type: 'subtract'; value: PrismaValue; } | { type: 'multiply'; value: PrismaValue; } | { type: 'divide'; value: PrismaValue; };
+- FieldRef · interface · L1061-L1066 — interface FieldRef<Model, FieldType>
+- FieldRefAllowType · type · L1068-L1068 — type FieldRefAllowType = TypeRef<'scalar' | 'enumTypes'>;
+- FieldRefType · type · L1070-L1074 — type FieldRefType = ReadonlyDeep_2<{ name: string; allowTypes: FieldRefAllowType[]; fields: SchemaArg[]; }>;
+- FieldScalarType · type · L1076-L1084 — type FieldScalarType = { type: 'string' | 'int' | 'bigint' | 'float' | 'boolean' | 'json' | 'object' | 'datetime' | 'decimal' | 'unsupported'; } | { type: 'enum'; name: string; } | { type: 'bytes'; encoding: 'array' | 'base64' | 'hex'; };
+- FieldType · type · L1086-L1088 — type FieldType = { arity: Arity; } & FieldScalarType;
+- FluentOperation · type · L1090-L1090 — type FluentOperation = 'findUnique' | 'findUniqueOrThrow' | 'findFirst' | 'findFirstOrThrow' | 'create' | 'update' | 'upsert' | 'delete';
+- Fn · interface · L1092-L1095 — interface Fn<Params = unknown, Returns = unknown>
+- Fragment · type · L1097-L1113 — type Fragment = { type: 'stringChunk'; chunk: string; } | { type: 'parameter'; } | { type: 'parameterTuple'; itemPrefix: string; itemSeparator: string; itemSuffix: string; } | { type: 'parameterTupleList'; itemPrefix: string; itemSeparator: string; itemSuffix: string; groupSeparator: string; };
+- GetAggregateResult · type · L1115-L1119 — type GetAggregateResult<P extends OperationPayload, A> = { [K in keyof A as K extends Aggregate ? K : never]: K extends '_count' ? A[K] extends true ? number : Count<A[K]> : { [J in keyof A[K] & string]: P['scalars'][J] | null; }; };
+- GetBatchResult · type · L1121-L1123 — type GetBatchResult = { count: number; };
+- GetCountResult · type · L1125-L1127 — type GetCountResult<A> = A extends { select: infer S; } ? (S extends true ? number : Count<S>) : number;
+- GetFindResult · type · L1131-L1145 — type GetFindResult<P extends OperationPayload, A, GlobalOmitOptions> = Equals<A, any> extends 1 ? DefaultSelection<P, A, GlobalOmitOptions> : A extends { select: infer S extends object; } & Record<string, unknown> | { include: infer I extends object; } & Record<string, unknown> ? { [K in keyof S | keyof I as (S & I)[K] extends false | undefined | Skip | null ? never : K]: (S & I)[K] extends object ? P extends SelectablePayloadFields<K, (infer O)[]> ? O extends OperationPayload ? GetFindResult<O, (S & I)[K], GlobalOmitOptions>[] : never : P extends SelectablePayloadFields<K, infer O | null> ? O extends OperationPayload ? GetFindResult<O, (S & I)[K], GlobalOmitOptions> | SelectField<P, K> & null : never : K extends '_count' ? Count<GetFindResult<P, (S & I)[K], GlobalOmitOptions>> : never : P extends SelectablePayloadFields<K, (infer O)[]> ? O extends OperationPayload ? DefaultSelection<O, {}, GlobalOmitOptions>[] : never : P extends SelectablePayloadFields<K, infer O | null> ? O extends OperationPayload ? DefaultSelection<O, {}, GlobalOmitOptions> | SelectField<P, K> & null : never : P extends { scalars: { [k in K]: infer O; }; } ? O : K extends '_count' ? Count<P['objects']> : never; } & (A extends { include: any; } & Record<string, unknown> ? DefaultSelection<P, A & { omit: A['omit']; }, GlobalOmitOptions> : unknown) : DefaultSelection<P, A, GlobalOmitOptions>;
+- GetGroupByResult · type · L1147-L1155 — type GetGroupByResult<P extends OperationPayload, A> = A extends { by: string[]; } ? Array<GetAggregateResult<P, A> & { [K in A['by'][number]]: P['scalars'][K]; }> : A extends { by: string; } ? Array<GetAggregateResult<P, A> & { [K in A['by']]: P['scalars'][K]; }> : {}[];
+- GetOmit · type · L1157-L1159 — type GetOmit<BaseKeys extends string, R extends InternalArgs['result'][string], ExtraType = never> = { [K in (string extends keyof R ? never : keyof R) | BaseKeys]?: boolean | ExtraType; };
+- GetPayloadResult · type · L1161-L1161 — type GetPayloadResult<Base extends Record<any, any>, R extends InternalArgs['result'][string]> = Omit<Base, GetPayloadResultExtensionKeys<R>> & GetPayloadResultExtensionObject<R>;
+- GetPayloadResultExtensionKeys · type · L1163-L1163 — type GetPayloadResultExtensionKeys<R extends InternalArgs['result'][string], KR extends keyof R = string extends keyof R ? never : keyof R> = KR;
+- GetPayloadResultExtensionObject · type · L1165-L1169 — type GetPayloadResultExtensionObject<R extends InternalArgs['result'][string]> = { [K in GetPayloadResultExtensionKeys<R>]: R[K] extends () => { compute: (...args: any) => infer C; } ? C : never; };
+- GetPrismaClientConfig · type · L1309-L1328 — type GetPrismaClientConfig = { runtimeDataModel: RuntimeDataModel; previewFeatures: string[]; clientVersion: string; engineVersion: string; activeProvider: ActiveConnectorType; /** * The contents of the schema encoded into a string */ inlineSchema: string; /** * Optional wasm loading configuration */ compilerWasm?: CompilerWasmLoadingConfig; /** * Parameterization schema for schema-aware query parameterization. * Enables precise parameterization based on DMMF metadata. */ parameterizationSchema: SerializedParamGraph; };
+- GetResult · type · L1330-L1356 — type GetResult<Payload extends OperationPayload, Args, OperationName extends Operation = 'findUniqueOrThrow', GlobalOmitOptions = {}> = { findUnique: GetFindResult<Payload, Args, GlobalOmitOptions> | null; findUniqueOrThrow: GetFindResult<Payload, Args, GlobalOmitOptions>; findFirst: GetFindResult<Payload, Args, GlobalOmitOptions> | null; findFirstOrThrow: GetFindResult<Payload, Args, GlobalOmitOptions>; findMany: GetFindResult<Payload, Args, GlobalOmitOptions>[]; create: GetFindResult<Payload, Args, GlobalOmitOptions>; createMany: GetBatchResult; createManyAndReturn: GetFindResult<Payload, Args, GlobalOmitOptions>[]; update: GetFindResult<Payload, Args, GlobalOmitOptions>; updateMany: GetBatchResult; updateManyAndReturn: GetFindResult<Payload, Args, GlobalOmitOptions>[]; upsert: GetFindResult<Payload, Args, GlobalOmitOptions>; delete: GetFindResult<Payload, Args, GlobalOmitOptions>; deleteMany: GetBatchResult; aggregate: GetAggregateResult<Payload, Args>; count: GetCountResult<Args>; groupBy: GetGroupByResult<Payload, Args>; $queryRaw: unknown; $queryRawTyped: unknown; $executeRaw: number; $queryRawUnsafe: unknown; $executeRawUnsafe: number; $runCommandRaw: JsonObject; findRaw: JsonObject; aggregateRaw: JsonObject; }[OperationName];
+- GetRuntimeOutput · type · L1360-L1364 — type GetRuntimeOutput = { id: RuntimeName; prettyName: string; isEdge: boolean; };
+- GetSelect · type · L1366-L1368 — type GetSelect<Base extends Record<any, any>, R extends InternalArgs['result'][string], KR extends keyof R = string extends keyof R ? never : keyof R> = { [K in KR | keyof Base]?: K extends KR ? boolean : Base[K]; };
+- GlobalOmitOptions · type · L1370-L1374 — type GlobalOmitOptions = { [modelName: string]: { [fieldName: string]: boolean; }; };
+- HandleErrorParams · type · L1376-L1384 — type HandleErrorParams = { args: JsArgs; error: any; clientMethod: string; callsite?: CallSite; transaction?: PrismaPromiseTransaction; modelName?: string; globalOmit?: GlobalOmitOptions; };
+- HrTime · type · L1386-L1386 — type HrTime = [number, number];
+- HrTime_2 · type · L1400-L1400 — type HrTime_2 = [number, number];
+- Index · type · L1402-L1411 — type Index = ReadonlyDeep_2<{ model: string; type: IndexType; isDefinedOnField: boolean; name?: string; dbName?: string; algorithm?: string; clustered?: boolean; fields: IndexField[]; }>;
+- IndexField · type · L1413-L1418 — type IndexField = ReadonlyDeep_2<{ name: string; sortOrder?: SortOrder; length?: number; operatorClass?: string; }>;
+- IndexType · type · L1420-L1420 — type IndexType = 'id' | 'normal' | 'unique' | 'fulltext';
+- InMemoryOps · type · L1422-L1428 — type InMemoryOps = { pagination: Pagination | null; distinct: string[] | null; reverse: boolean; linkingFields: string[] | null; nested: Record<string, InMemoryOps>; };
+- InputJsonArray · interface · L1434-L1435 — interface InputJsonArray extends ReadonlyArray<InputJsonValue | null>
+- InputJsonObject · type · L1441-L1443 — type InputJsonObject = { readonly [Key in string]?: InputJsonValue | null; };
+- InputJsonValue · type · L1458-L1460 — type InputJsonValue = string | number | boolean | InputJsonObject | InputJsonArray | { toJSON(): unknown; };
+- InputType · type · L1462-L1474 — type InputType = ReadonlyDeep_2<{ name: string; constraints: { maxNumFields: number | null; minNumFields: number | null; fields?: string[]; }; meta?: { source?: string; grouping?: string; }; fields: SchemaArg[]; }>;
+- InputTypeRef · type · L1476-L1476 — type InputTypeRef = TypeRef<'scalar' | 'inputObjectTypes' | 'enumTypes' | 'fieldRefTypes'>;
+- InteractiveTransactionInfo · type · L1478-L1488 — type InteractiveTransactionInfo<Payload = unknown> = { /** * Transaction ID returned by the query engine. */ id: string; /** * Arbitrary payload the meaning of which depends on the `Engine` implementation. * It is currently not used in `LibraryEngine`. */ payload: Payload; };
+- InteractiveTransactionOptions · type · L1490-L1490 — type InteractiveTransactionOptions<Payload> = Transaction.InteractiveTransactionInfo<Payload>;
+- InternalArgs · type · L1492-L1525 — type InternalArgs<R = { [K in string]: { [K in string]: unknown; }; }, M = { [K in string]: { [K in string]: unknown; }; }, Q = { [K in string]: { [K in string]: unknown; }; }, C = { [K in string]: unknown; }> = { result: { [K in keyof R]: { [P in keyof R[K]]: () => R[K][P]; }; }; model: { [K in keyof M]: { [P in keyof M[K]]: () => M[K][P]; }; }; query: { [K in keyof Q]: { [P in keyof Q[K]]: () => Q[K][P]; }; }; client: { [K in keyof C]: () => C[K]; }; };
+- InternalRequestParams · type · L1527-L1550 — type InternalRequestParams = { /** * The original client method being called. * Even though the rootField / operation can be changed, * this method stays as it is, as it's what the user's * code looks like */ clientMethod: string; /** * Name of js model that triggered the request. Might be used * for warnings or error messages */ jsModelName?: string; callsite?: CallSite; transaction?: PrismaPromiseTransaction; unpacker?: Unpacker; otelParentCtx?: Context; /** Used to "desugar" a user input into an "expanded" one */ argsMapper?: (args?: UserArgs_2) => UserArgs_2; /** Used to convert args for middleware and back */ middlewareArgsMapper?: MiddlewareArgsMapper<unknown, unknown>; /** Used for Accelerate client extension via Data Proxy */ customDataProxyFetch?: AccelerateExtensionFetchDecorator; } & Omit<QueryMiddlewareParams, 'runInTransaction'>;
+- IsolationLevel · type · L1560-L1560 — type IsolationLevel = 'ReadUncommitted' | 'ReadCommitted' | 'RepeatableRead' | 'Snapshot' | 'Serializable';
+- IsolationLevel_2 · type · L1562-L1562 — type IsolationLevel_2 = 'READ UNCOMMITTED' | 'READ COMMITTED' | 'REPEATABLE READ' | 'SNAPSHOT' | 'SERIALIZABLE';
+- ITXClientDenyList · type · L1568-L1568 — type ITXClientDenyList = (typeof denylist)[number];
+- ItxScopeState · type · L1572-L1574 — type ItxScopeState = { stack: string[]; };
+- Job · interface · L1576-L1580 — interface Job
+- JoinExpression · type · L1584-L1589 — type JoinExpression = { child: QueryPlanNode; on: [left: string, right: string][]; parentField: string; isRelationUnique: boolean; };
+- JsArgs · type · L1591-L1596 — type JsArgs = { select?: Selection_2; include?: Selection_2; omit?: Omission; [argName: string]: JsInputValue; };
+- JsInputValue · type · L1598-L1600 — type JsInputValue = null | undefined | string | number | boolean | bigint | Uint8Array | Date | DecimalJsLike | ObjectEnumValue | RawParameters | JsonConvertible | FieldRef<string, unknown> | JsInputValue[] | Skip | { [key: string]: JsInputValue; };
+- JsonArgumentValue · type · L1602-L1604 — type JsonArgumentValue = number | string | boolean | null | RawTaggedValue | JsonArgumentValue[] | { [key: string]: JsonArgumentValue; };
+- JsonArray · interface · L1610-L1611 — interface JsonArray extends Array<JsonValue>
+- JsonBatchQuery · type · L1613-L1618 — type JsonBatchQuery = { batch: JsonQuery[]; transaction?: { isolationLevel?: IsolationLevel; }; };
+- JsonConvertible · interface · L1620-L1622 — interface JsonConvertible
+- JsonFieldSelection · type · L1624-L1627 — type JsonFieldSelection = { arguments?: Record<string, JsonArgumentValue> | RawTaggedValue; selection: JsonSelectionSet; };
+- JsonObject · type · L1638-L1640 — type JsonObject = { [Key in string]?: JsonValue; };
+- JsonQuery · type · L1642-L1646 — type JsonQuery = { modelName?: string; action: JsonQueryAction_2; query: JsonFieldSelection; };
+- JsonQueryAction · type · L1648-L1648 — type JsonQueryAction = 'findUnique' | 'findUniqueOrThrow' | 'findFirst' | 'findFirstOrThrow' | 'findMany' | 'createOne' | 'createMany' | 'createManyAndReturn' | 'updateOne' | 'updateMany' | 'updateManyAndReturn' | 'deleteOne' | 'deleteMany' | 'upsertOne' | 'aggregate' | 'groupBy' | 'executeRaw' | 'queryRaw' | 'runCommandRaw' | 'findRaw' | 'aggregateRaw';
+- JsonQueryAction_2 · type · L1650-L1650 — type JsonQueryAction_2 = 'findUnique' | 'findUniqueOrThrow' | 'findFirst' | 'findFirstOrThrow' | 'findMany' | 'createOne' | 'createMany' | 'createManyAndReturn' | 'updateOne' | 'updateMany' | 'updateManyAndReturn' | 'deleteOne' | 'deleteMany' | 'upsertOne' | 'aggregate' | 'groupBy' | 'executeRaw' | 'queryRaw' | 'runCommandRaw' | 'findRaw' | 'aggregateRaw';
+- JsonSelectionSet · type · L1652-L1657 — type JsonSelectionSet = { $scalars?: boolean; $composites?: boolean; } & { [fieldName: string]: boolean | JsonFieldSelection; };
+- JsonValue · type · L1663-L1663 — type JsonValue = string | number | boolean | JsonObject | JsonArray | null;
+- JsOutputValue · type · L1665-L1667 — type JsOutputValue = null | string | number | boolean | bigint | Uint8Array | Date | Decimal | JsOutputValue[] | { [key: string]: JsOutputValue; };
+- JsPromise · type · L1669-L1669 — type JsPromise<T> = Promise<T> & {};
+- Link · interface · L1686-L1693 — interface Link
+- LocationInFile · type · L1695-L1699 — type LocationInFile = { fileName: string; lineNumber: number | null; columnNumber: number | null; };
+- LogDefinition · type · L1701-L1704 — type LogDefinition = { level: LogLevel; emit: 'stdout' | 'event'; };
+- LogEmitter · type · L1712-L1716 — type LogEmitter = { on<E extends EngineEventType>(event: E, listener: (event: EngineEvent<E>) => void): LogEmitter; emit(event: QueryEventType, payload: QueryEvent): boolean; emit(event: LogEventType, payload: LogEvent): boolean; };
+- LogEvent · type · L1718-L1722 — type LogEvent = { timestamp: Date; message: string; target: string; };
+- LogEventType · type · L1724-L1724 — type LogEventType = 'info' | 'warn' | 'error';
+- LogLevel · type · L1726-L1726 — type LogLevel = 'info' | 'query' | 'warn' | 'error';
+- Mappings · type · L1748-L1754 — type Mappings = ReadonlyDeep_2<{ modelOperations: ModelMapping[]; otherOperations: { read: string[]; write: string[]; }; }>;
+- MergedExtensionsList · class · L1766-L1778 — class MergedExtensionsList
+- MergeExtArgs · type · L1780-L1780 — type MergeExtArgs<TypeMap extends TypeMapDef, ExtArgs extends Record<any, any>, Args extends Record<any, any>> = ComputeDeep<ExtArgs & Args & AllModelsToStringIndex<TypeMap, Args, 'result'> & AllModelsToStringIndex<TypeMap, Args, 'model'>>;
+- MiddlewareArgsMapper · type · L1782-L1785 — type MiddlewareArgsMapper<RequestArgs, MiddlewareArgs> = { requestArgsToMiddlewareArgs(requestArgs: RequestArgs): MiddlewareArgs; middlewareArgsToRequestArgs(middlewareArgs: MiddlewareArgs): RequestArgs; };
+- Model · type · L1787-L1797 — type Model = ReadonlyDeep_2<{ name: string; dbName: string | null; schema: string | null; fields: Field[]; uniqueFields: string[][]; uniqueIndexes: uniqueIndex[]; documentation?: string; primaryKey: PrimaryKey | null; isGenerated?: boolean; }>;
+- ModelAction · enum · L1799-L1819 — enum ModelAction
+- ModelArg · type · L1821-L1823 — type ModelArg = { [MethodName in string]: unknown; };
+- ModelArgs · type · L1825-L1829 — type ModelArgs = { model: { [ModelName in string]: ModelArg; }; };
+- ModelKey · type · L1831-L1831 — type ModelKey<TypeMap extends TypeMapDef, M extends PropertyKey> = M extends keyof TypeMap['model'] ? M : Capitalize<M & string>;
+- ModelMapping · type · L1833-L1855 — type ModelMapping = ReadonlyDeep_2<{ model: string; plural: string; findUnique?: string | null; findUniqueOrThrow?: string | null; findFirst?: string | null; findFirstOrThrow?: string | null; findMany?: string | null; create?: string | null; createMany?: string | null; createManyAndReturn?: string | null; update?: string | null; updateMany?: string | null; updateManyAndReturn?: string | null; upsert?: string | null; delete?: string | null; deleteMany?: string | null; aggregate?: string | null; groupBy?: string | null; count?: string | null; findRaw?: string | null; aggregateRaw?: string | null; }>;
+- ModelQueryOptionsCb · type · L1857-L1857 — type ModelQueryOptionsCb = (args: ModelQueryOptionsCbArgs) => Promise<any>;
+- ModelQueryOptionsCbArgs · type · L1859-L1864 — type ModelQueryOptionsCbArgs = { model: string; operation: string; args: JsArgs; query: (args: JsArgs) => Promise<unknown>; };
+- MultiBatchResponse · type · L1866-L1869 — type MultiBatchResponse = { type: 'multi'; plans: QueryPlanNode[]; };
+- NameArgs · type · L1871-L1873 — type NameArgs = { name?: string; };
+- Narrow · type · L1875-L1877 — type Narrow<A> = { [K in keyof A]: A[K] extends Function ? A[K] : Narrow<A[K]>; } | (A extends Narrowable ? A : never);
+- Narrowable · type · L1879-L1879 — type Narrowable = string | number | bigint | boolean | [];
+- NeverToUnknown · type · L1881-L1881 — type NeverToUnknown<T> = [T] extends [never] ? unknown : T;
+- Omission · type · L1889-L1889 — type Omission = Record<string, boolean | Skip>;
+- Omit_2 · type · L1891-L1893 — type Omit_2<T, K extends string | number | symbol> = { [P in keyof T as P extends K ? never : P]: T[P]; };
+- OmitValue · type · L1896-L1896 — type OmitValue<Omit, Key> = Key extends keyof Omit ? Omit[Key] : false;
+- Operation · type · L1898-L1898 — type Operation = 'findFirst' | 'findFirstOrThrow' | 'findUnique' | 'findUniqueOrThrow' | 'findMany' | 'create' | 'createMany' | 'createManyAndReturn' | 'update' | 'updateMany' | 'updateManyAndReturn' | 'upsert' | 'delete' | 'deleteMany' | 'aggregate' | 'count' | 'groupBy' | '$queryRaw' | '$executeRaw' | '$queryRawUnsafe' | '$executeRawUnsafe' | 'findRaw' | 'aggregateRaw' | '$runCommandRaw';
+- OperationPayload · type · L1900-L1911 — type OperationPayload = { name: string; scalars: { [ScalarName in string]: unknown; }; objects: { [ObjectName in string]: unknown; }; composites: { [CompositeName in string]: unknown; }; };
+- Optional · type · L1913-L1917 — type Optional<O, K extends keyof any = keyof O> = { [P in K & keyof O]?: O[P]; } & { [P in Exclude<keyof O, K>]: O[P]; };
+- OptionalFlat · type · L1919-L1921 — type OptionalFlat<T> = { [K in keyof T]?: T[K]; };
+- OptionalKeys · type · L1923-L1925 — type OptionalKeys<O> = { [K in keyof O]-?: {} extends Pick_2<O, K> ? K : never; }[keyof O];
+- Options · type · L1927-L1939 — type Options = { /** Timeout for starting the transaction */ maxWait?: number; /** Timeout for the transaction body */ timeout?: number; /** Transaction isolation level */ isolationLevel?: IsolationLevel; /** * Used for nested interactive transactions. When provided, the engine may * re-use an existing open transaction instead of opening a new one. */ newTxId?: string; };
+- Or · type · L1941-L1950 — type Or<A extends 1 | 0, B extends 1 | 0> = { 0: { 0: 0; 1: 1; }; 1: { 0: 1; 1: 1; }; }[A][B];
+- OtherOperationMappings · type · L1952-L1955 — type OtherOperationMappings = ReadonlyDeep_2<{ read: string[]; write: string[]; }>;
+- OutputType · type · L1957-L1960 — type OutputType = ReadonlyDeep_2<{ name: string; fields: SchemaField[]; }>;
+- OutputTypeRef · type · L1962-L1962 — type OutputTypeRef = TypeRef<'scalar' | 'outputObjectTypes' | 'enumTypes'>;
+- Pagination · type · L1964-L1968 — type Pagination = { cursor: Record<string, unknown> | null; take: number | null; skip: number | null; };
+- Param · type · L1972-L1974 — type Param<out $Type, $Value extends string> = { readonly name: $Value; };
+- PatchFlat · type · L1976-L1976 — type PatchFlat<O1, O2> = O1 & Omit_2<O2, keyof O1>;
+- Path · type · L1978-L1978 — type Path<O, P, Default = never> = O extends unknown ? P extends [infer K, ...infer R] ? K extends keyof O ? Path<O[K], R> : Default : O : never;
+- Payload · type · L1980-L1986 — type Payload<T, F extends Operation = never> = T extends { [K: symbol]: { types: { payload: any; }; }; } ? T[symbol]['types']['payload'] : any;
+- PayloadToResult · type · L1988-L1990 — type PayloadToResult<P, O extends Record_2<any, any> = RenameAndNestPayloadKeys<P>> = { [K in keyof O]?: O[K][K] extends any[] ? PayloadToResult<O[K][K][number]>[] : O[K][K] extends object ? PayloadToResult<O[K][K]> : O[K][K]; };
+- Pick_2 · type · L1992-L1994 — type Pick_2<T, K extends string | number | symbol> = { [P in keyof T as P extends K ? P : never]: T[P]; };
+- PlaceholderFormat · interface · L1997-L2000 — interface PlaceholderFormat
+- PrimaryKey · type · L2002-L2005 — type PrimaryKey = ReadonlyDeep_2<{ name: string | null; fields: string[]; }>;
+- PrismaClientBaseOptions · interface · L2012-L2080 — interface PrismaClientBaseOptions
+- PrismaClientOptions · type · L2096-L2096 — type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter;
+- PrismaClientOptionsWithAccelerateUrl · interface · L2104-L2114 — interface PrismaClientOptionsWithAccelerateUrl extends PrismaClientBaseOptions
+- PrismaClientOptionsWithAdapter · interface · L2122-L2144 — interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions
+- PrismaOperationSpec · type · L2152-L2156 — type PrismaOperationSpec<TArgs, TAction = string> = { args: TArgs; action: TAction; model: string; };
+- PrismaPromise · interface · L2158-L2160 — interface PrismaPromise<T> extends Promise<T>
+- PrismaPromise_2 · interface · L2167-L2193 — interface PrismaPromise_2<TResult, TSpec extends PrismaOperationSpec<unknown> = any> extends Promise<TResult>
+- PrismaPromiseBatchTransaction · type · L2195-L2203 — type PrismaPromiseBatchTransaction = { kind: 'batch'; id: number; isolationLevel?: IsolationLevel; maxWait?: number; timeout?: number; index: number; lock: PromiseLike<void>; };
+- PrismaPromiseCallback · type · L2205-L2205 — type PrismaPromiseCallback = (transaction?: PrismaPromiseTransaction) => Promise<unknown>;
+- PrismaPromiseFactory · type · L2216-L2216 — type PrismaPromiseFactory = <T extends PrismaOperationSpec<unknown>>(callback: PrismaPromiseCallback, op?: T) => PrismaPromise_2<unknown>;
+- PrismaPromiseInteractiveTransaction · type · L2218-L2222 — type PrismaPromiseInteractiveTransaction<PayloadType = unknown> = { kind: 'itx'; id: string; payload: PayloadType; };
+- PrismaPromiseTransaction · type · L2224-L2224 — type PrismaPromiseTransaction<PayloadType = unknown> = PrismaPromiseBatchTransaction | PrismaPromiseInteractiveTransaction<PayloadType>;
+- PrismaValue · type · L2226-L2226 — type PrismaValue = string | boolean | number | PrismaValue[] | null | Record<string, unknown> | PrismaValuePlaceholder | PrismaValueGenerator;
+- PrismaValueGenerator · type · L2228-L2234 — type PrismaValueGenerator = { prisma__type: 'generatorCall'; prisma__value: { name: string; args: PrismaValue[]; }; };
+- PrismaValuePlaceholder · type · L2236-L2242 — type PrismaValuePlaceholder = { prisma__type: 'param'; prisma__value: { name: string; type: string; }; };
+- Provider · type · L2246-L2246 — type Provider = 'mysql' | 'postgres' | 'sqlite' | 'sqlserver';
+- Query · type · L2266-L2270 — type Query = ReadonlyDeep_2<{ name: string; args: SchemaArg[]; output: QueryOutput; }>;
+- Queryable · interface · L2272-L2281 — interface Queryable<Query, Result> extends AdapterInfo
+- QueryCompiler · type · L2283-L2287 — type QueryCompiler = { compile(request: string): QueryPlanNode; compileBatch(batchRequest: string): BatchResponse; free(): void; };
+- QueryCompilerConstructor · interface · L2289-L2291 — interface QueryCompilerConstructor
+- QueryCompilerOptions · type · L2293-L2297 — type QueryCompilerOptions = { datamodel: string; provider: Provider; connectionInfo: ConnectionInfo; };
+- QueryEngineResultData · type · L2299-L2301 — type QueryEngineResultData<T> = { data: T; };
+- QueryEvent · type · L2303-L2309 — type QueryEvent = { timestamp: Date; query: string; params: string; duration: number; target: string; };
+- QueryEventType · type · L2311-L2311 — type QueryEventType = 'query';
+- QueryIntrospectionBuiltinType · type · L2313-L2313 — type QueryIntrospectionBuiltinType = 'int' | 'bigint' | 'float' | 'double' | 'string' | 'enum' | 'bytes' | 'bool' | 'char' | 'decimal' | 'json' | 'xml' | 'uuid' | 'datetime' | 'date' | 'time' | 'int-array' | 'bigint-array' | 'float-array' | 'double-array' | 'string-array' | 'char-array' | 'bytes-array' | 'bool-array' | 'decimal-array' | 'json-array' | 'xml-array' | 'uuid-array' | 'datetime-array' | 'date-array' | 'time-array' | 'null' | 'unknown';
+- QueryMiddlewareParams · type · L2315-L2325 — type QueryMiddlewareParams = { /** The model this is executed on */ model?: string; /** The action that is being handled */ action: Action; /** TODO what is this */ dataPath: string[]; /** TODO what is this */ runInTransaction: boolean; args?: UserArgs_2; };
+- QueryOptions · type · L2327-L2333 — type QueryOptions = { query: { [ModelName in string]: { [ModelAction in string]: ModelQueryOptionsCb; } | QueryOptionsCb; }; };
+- QueryOptionsCb · type · L2335-L2335 — type QueryOptionsCb = (args: QueryOptionsCbArgs) => Promise<any>;
+- QueryOptionsCbArgs · type · L2337-L2342 — type QueryOptionsCbArgs = { model?: string; operation: string; args: JsArgs | RawQueryArgs; query: (args: JsArgs | RawQueryArgs) => Promise<unknown>; };
+- QueryOutput · type · L2344-L2348 — type QueryOutput = ReadonlyDeep_2<{ name: string; isRequired: boolean; isList: boolean; }>;
+- QueryPlanBinding · type · L2350-L2353 — type QueryPlanBinding = { name: string; expr: QueryPlanNode; };
+- QueryPlanDbQuery · type · L2355-L2367 — type QueryPlanDbQuery = { type: 'rawSql'; sql: string; args: PrismaValue[]; argTypes: ArgType[]; } | { type: 'templateSql'; fragments: Fragment[]; placeholderFormat: PlaceholderFormat; args: PrismaValue[]; argTypes: DynamicArgType[]; chunkable: boolean; };
+- QueryPlanNode · type · L2369-L2476 — type QueryPlanNode = { type: 'value'; args: PrismaValue; } | { type: 'seq'; args: QueryPlanNode[]; } | { type: 'get'; args: { name: string; }; } | { type: 'let'; args: { bindings: QueryPlanBinding[]; expr: QueryPlanNode; }; } | { type: 'getFirstNonEmpty'; args: { names: string[]; }; } | { type: 'query'; args: QueryPlanDbQuery; } | { type: 'execute'; args: QueryPlanDbQuery; } | { type: 'reverse'; args: QueryPlanNode; } | { type: 'sum'; args: QueryPlanNode[]; } | { type: 'concat'; args: QueryPlanNode[]; } | { type: 'unique'; args: QueryPlanNode; } | { type: 'required'; args: QueryPlanNode; } | { type: 'join'; args: { parent: QueryPlanNode; children: JoinExpression[]; canAssumeStrictEquality: boolean; }; } | { type: 'mapField'; args: { field: string; records: QueryPlanNode; }; } | { type: 'transaction'; args: QueryPlanNode; } | { type: 'dataMap'; args: { expr: QueryPlanNode; structure: ResultNode; enums: Record<string, Record<string, string>>; }; } | { type: 'validate'; args: { expr: QueryPlanNode; rules: DataRule[]; } & ValidationError; } | { type: 'if'; args: { value: QueryPlanNode; rule: DataRule; then: QueryPlanNode; else: QueryPlanNode; }; } | { type: 'unit'; } | { type: 'diff'; args: { from: QueryPlanNode; to: QueryPlanNode; fields: string[]; }; } | { type: 'initializeRecord'; args: { expr: QueryPlanNode; fields: Record<string, FieldInitializer>; }; } | { type: 'mapRecord'; args: { expr: QueryPlanNode; fields: Record<string, FieldOperation>; }; } | { type: 'process'; args: { expr: QueryPlanNode; operations: InMemoryOps; }; };
+- RawParameters · type · L2480-L2483 — type RawParameters = { __prismaRawParameters__: true; values: string; };
+- RawQueryArgs · type · L2485-L2485 — type RawQueryArgs = Sql | UnknownTypedSql | [query: string, ...values: RawValue[]];
+- RawResponse · type · L2487-L2491 — type RawResponse = { columns: string[]; types: QueryIntrospectionBuiltinType[]; rows: unknown[][]; };
+- RawTaggedValue · type · L2493-L2496 — type RawTaggedValue = { $type: 'Raw'; value: unknown; };
+- ReadonlyDeep · type · L2500-L2502 — type ReadonlyDeep<T> = { readonly [K in keyof T]: ReadonlyDeep<T[K]>; };
+- ReadonlyDeep_2 · type · L2504-L2506 — type ReadonlyDeep_2<O> = { +readonly [K in keyof O]: ReadonlyDeep_2<O[K]>; };
+- Record_2 · type · L2508-L2510 — type Record_2<T extends string | number | symbol, U> = { [P in T]: U; };
+- RenameAndNestPayloadKeys · type · L2513-L2515 — type RenameAndNestPayloadKeys<P> = { [K in keyof P as K extends 'scalars' | 'objects' | 'composites' ? keyof P[K] : never]: P[K]; };
+- RequestBatchOptions · type · L2517-L2523 — type RequestBatchOptions<InteractiveTransactionPayload> = { transaction?: TransactionOptions_2<InteractiveTransactionPayload>; traceparent?: string; numTry?: number; containsWrite: boolean; customDataProxyFetch?: AccelerateExtensionFetchDecorator; };
+- RequestHandler · class · L2525-L2541 — class RequestHandler
+- RequestOptions · type · L2543-L2549 — type RequestOptions<InteractiveTransactionPayload> = { traceparent?: string; numTry?: number; interactiveTransaction?: InteractiveTransactionOptions<InteractiveTransactionPayload>; isWrite: boolean; customDataProxyFetch?: AccelerateExtensionFetchDecorator; };
+- RequestParams · type · L2551-L2567 — type RequestParams = { modelName?: string; action: Action; protocolQuery: JsonQuery; dataPath: string[]; clientMethod: string; callsite?: CallSite; transaction?: PrismaPromiseTransaction; extensions: MergedExtensionsList; args?: any; headers?: Record<string, string>; unpacker?: Unpacker; otelParentCtx?: Context; otelChildCtx?: Context; globalOmit?: GlobalOmitOptions; customDataProxyFetch?: AccelerateExtensionFetchDecorator; };
+- RequiredExtensionArgs · type · L2569-L2569 — type RequiredExtensionArgs = NameArgs & ResultArgs & ModelArgs & ClientArgs & QueryOptions;
+- RequiredKeys · type · L2573-L2575 — type RequiredKeys<O> = { [K in keyof O]-?: {} extends Pick_2<O, K> ? never : K; }[keyof O];
+- Result · type · L2577-L2588 — type Result<T, A, F extends Operation> = T extends { [K: symbol]: { types: { payload: any; }; }; } ? GetResult<T[symbol]['types']['payload'], A, F> : GetResult<{ composites: {}; objects: {}; scalars: {}; name: ''; }, {}, F>;
+- Result_2 · type · L2590-L2590 — type Result_2<T, A, F extends Operation> = Result<T, A, F>;
+- ResultArg · type · L2612-L2614 — type ResultArg = { [FieldName in string]: ResultFieldDefinition; };
+- ResultArgs · type · L2616-L2620 — type ResultArgs = { result: { [ModelName in string]: ResultArg; }; };
+- ResultArgsFieldCompute · type · L2622-L2622 — type ResultArgsFieldCompute = (model: any) => unknown;
+- ResultFieldDefinition · type · L2624-L2629 — type ResultFieldDefinition = { needs?: { [FieldName in string]: boolean; }; compute: ResultArgsFieldCompute; };
+- ResultNode · type · L2631-L2642 — type ResultNode = { type: 'affectedRows'; } | { type: 'object'; fields: Record<string, ResultNode>; serializedName: string | null; skipNulls: boolean; } | { type: 'field'; dbName: string; fieldType: FieldType; };
+- Return · type · L2644-L2644 — type Return<T> = T extends (...args: any[]) => infer R ? R : T;
+- RuntimeDataModel · type · L2646-L2650 — type RuntimeDataModel = { readonly models: Record<string, RuntimeModel>; readonly enums: Record<string, RuntimeEnum>; readonly types: Record<string, RuntimeModel>; };
+- RuntimeEnum · type · L2652-L2652 — type RuntimeEnum = Omit<DMMF_2.DatamodelEnum, 'name'>;
+- RuntimeModel · type · L2654-L2654 — type RuntimeModel = Omit<DMMF_2.Model, 'name'>;
+- RuntimeName · type · L2656-L2656 — type RuntimeName = 'workerd' | 'deno' | 'netlify' | 'node' | 'bun' | 'edge-light' | '';
+- Schema · type · L2658-L2676 — type Schema = ReadonlyDeep_2<{ rootQueryType?: string; rootMutationType?: string; inputObjectTypes: { model?: InputType[]; prisma?: InputType[]; }; outputObjectTypes: { model: OutputType[]; prisma: OutputType[]; }; enumTypes: { model?: SchemaEnum[]; prisma: SchemaEnum[]; }; fieldRefTypes: { prisma?: FieldRefType[]; }; }>;
+- SchemaArg · type · L2678-L2687 — type SchemaArg = ReadonlyDeep_2<{ name: string; comment?: string; isNullable: boolean; isRequired: boolean; inputTypes: InputTypeRef[]; isParameterizable: boolean; requiresOtherFields?: string[]; deprecation?: Deprecation; }>;
+- SchemaEnum · type · L2689-L2692 — type SchemaEnum = ReadonlyDeep_2<{ name: string; values: string[]; }>;
+- SchemaField · type · L2694-L2701 — type SchemaField = ReadonlyDeep_2<{ name: string; isNullable?: boolean; outputType: OutputTypeRef; args: SchemaArg[]; deprecation?: Deprecation; documentation?: string; }>;
+- Select · type · L2703-L2703 — type Select<T, U> = T extends U ? T : never;
+- SelectablePayloadFields · type · L2705-L2713 — type SelectablePayloadFields<K extends PropertyKey, O> = { objects: { [k in K]: O; }; } | { composites: { [k in K]: O; }; };
+- SelectField · type · L2715-L2719 — type SelectField<P extends SelectablePayloadFields<any, any>, K extends PropertyKey> = P extends { objects: Record<K, any>; } ? P['objects'][K] : P extends { composites: Record<K, any>; } ? P['composites'][K] : never;
+- Selection_2 · type · L2721-L2721 — type Selection_2 = Record<string, boolean | Skip | JsArgs>;
+- SerializedParamGraph · interface · L2727-L2732 — interface SerializedParamGraph
+- SerializeParams · type · L2736-L2749 — type SerializeParams = { runtimeDataModel: RuntimeDataModel; modelName?: string; action: Action; args?: JsArgs; extensions?: MergedExtensionsList; callsite?: CallSite; clientMethod: string; clientVersion: string; errorFormat: ErrorFormat; previewFeatures: string[]; globalOmit?: GlobalOmitOptions; wrapRawValues?: boolean; };
+- Skip · class · L2751-L2754 — class Skip
+- SortOrder · type · L2758-L2758 — type SortOrder = 'asc' | 'desc';
+- Span · interface · L2769-L2872 — interface Span
+- SpanAttributes · type · L2877-L2877 — type SpanAttributes = Attributes;
+- SpanAttributeValue · type · L2882-L2882 — type SpanAttributeValue = AttributeValue;
+- SpanCallback · type · L2884-L2884 — type SpanCallback<R> = (span?: Span, context?: Context) => R;
+- SpanContext · interface · L2890-L2936 — interface SpanContext
+- SpanKind · enum · L2938-L2963 — enum SpanKind
+- SpanOptions · interface · L2968-L2982 — interface SpanOptions
+- SpanStatus · interface · L2984-L2989 — interface SpanStatus
+- SpanStatusCode · enum · L2994-L3008 — enum SpanStatusCode
+- SqlCommenterCompactedQueryInfo · interface · L3017-L3031 — interface SqlCommenterCompactedQueryInfo
+- SqlCommenterContext · interface · L3036-L3051 — interface SqlCommenterContext
+- SqlCommenterPlugin · interface · L3069-L3071 — interface SqlCommenterPlugin
+- SqlCommenterQueryAction · type · L3076-L3076 — type SqlCommenterQueryAction = JsonQueryAction;
+- SqlCommenterQueryInfo · type · L3084-L3088 — type SqlCommenterQueryInfo = ({ readonly type: 'single'; } & SqlCommenterSingleQueryInfo) | ({ readonly type: 'compacted'; } & SqlCommenterCompactedQueryInfo);
+- SqlCommenterSingleQueryInfo · interface · L3093-L3107 — interface SqlCommenterSingleQueryInfo
+- SqlCommenterTags · type · L3113-L3115 — type SqlCommenterTags = { readonly [key: string]: string | undefined; };
+- SqlDriverAdapter · interface · L3117-L3134 — interface SqlDriverAdapter extends SqlQueryable
+- SqlDriverAdapterFactory · interface · L3136-L3138 — interface SqlDriverAdapterFactory extends DriverAdapterFactory<SqlQuery, SqlResultSet>
+- SqlQuery · type · L3140-L3144 — type SqlQuery = { sql: string; args: Array<unknown>; argTypes: Array<ArgType>; };
+- SqlQueryable · interface · L3146-L3147 — interface SqlQueryable extends Queryable<SqlQuery, SqlResultSet>
+- SqlResultSet · interface · L3149-L3169 — interface SqlResultSet
+- TimeInput · type · L3178-L3178 — type TimeInput = HrTime_2 | number | Date;
+- ToTuple · type · L3180-L3180 — type ToTuple<T> = T extends any[] ? T : [T];
+- TraceState · interface · L3182-L3218 — interface TraceState
+- TracingHelper · interface · L3220-L3226 — interface TracingHelper
+- Transaction_2 · interface · L3237-L3262 — interface Transaction_2 extends AdapterInfo, SqlQueryable
+- TransactionHeaders · type · L3264-L3266 — type TransactionHeaders = { traceparent?: string; };
+- TransactionOptions · type · L3268-L3270 — type TransactionOptions = { usePhantomQuery: boolean; };
+- TransactionOptions_2 · type · L3272-L3278 — type TransactionOptions_2<InteractiveTransactionPayload> = { kind: 'itx'; options: InteractiveTransactionOptions<InteractiveTransactionPayload>; } | { kind: 'batch'; options: BatchTransactionOptions; };
+- TypedSql · class · L3280-L3285 — class TypedSql<Values extends readonly unknown[], Result>
+- TypeMapCbDef · type · L3287-L3289 — type TypeMapCbDef = Fn<{ extArgs: InternalArgs; }, TypeMapDef>;
+- TypeMapDef · type · L3292-L3292 — type TypeMapDef = Record<any, any>;
+- TypeRef · type · L3294-L3299 — type TypeRef<AllowedLocations extends FieldLocation> = { isList: boolean; type: string; location: AllowedLocations; namespace?: FieldNamespace; };
+- uniqueIndex · type · L3316-L3319 — type uniqueIndex = ReadonlyDeep_2<{ name: string; fields: string[]; }>;
+- UnknownTypedSql · type · L3321-L3321 — type UnknownTypedSql = TypedSql<unknown[], unknown>;
+- Unpacker · type · L3323-L3323 — type Unpacker = (data: any) => any;
+- UnwrapPayload · type · L3325-L3333 — type UnwrapPayload<P> = {} extends P ? unknown : { [K in keyof P]: P[K] extends { scalars: infer S; composites: infer C; }[] ? Array<S & UnwrapPayload<C>> : P[K] extends { scalars: infer S; composites: infer C; } | null ? S & UnwrapPayload<C> | Select<P[K], null> : never; };
+- UnwrapPromise · type · L3335-L3335 — type UnwrapPromise<P> = P extends Promise<infer R> ? R : P;
+- UnwrapTuple · type · L3337-L3339 — type UnwrapTuple<Tuple extends readonly unknown[]> = { [K in keyof Tuple]: K extends `${number}` ? Tuple[K] extends PrismaPromise<infer X> ? X : UnwrapPromise<Tuple[K]> : UnwrapPromise<Tuple[K]>; };
+- UserArgs_2 · type · L3344-L3344 — type UserArgs_2 = any;
+- ValidationError · type · L3381-L3421 — type ValidationError = { errorIdentifier: 'RELATION_VIOLATION'; context: { relation: string; modelA: string; modelB: string; }; } | { errorIdentifier: 'MISSING_RELATED_RECORD'; context: { model: string; relation: string; relationType: string; operation: string; neededFor?: string; }; } | { errorIdentifier: 'MISSING_RECORD'; context: { operation: string; }; } | { errorIdentifier: 'INCOMPLETE_CONNECT_INPUT'; context: { expectedRows: number; }; } | { errorIdentifier: 'INCOMPLETE_CONNECT_OUTPUT'; context: { expectedRows: number; relation: string; relationType: string; }; } | { errorIdentifier: 'RECORDS_NOT_CONNECTED'; context: { relation: string; parent: string; child: string; }; };

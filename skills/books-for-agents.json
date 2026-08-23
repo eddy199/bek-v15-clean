@@ -1,0 +1,6 @@
+{
+  "name": "books-for-agents",
+  "command": "books-for-agents",
+  "description": "An open source knowledge base of structured book summaries, available to any AI agent via MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : An open source knowledge base of structured book summaries, available to any AI agent via MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "airadar",
+  "command": "airadar",
+  "description": "Distill the signal around AI-native tools/apps and their GitHub home bases: fast-growing, hyped, well-funded.",
+  "prompt": "Tu es un agent expert spécialisé dans : Distill the signal around AI-native tools/apps and their GitHub home bases: fast-growing, hyped, well-funded..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

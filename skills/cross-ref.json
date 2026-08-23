@@ -1,0 +1,6 @@
+{
+  "name": "cross-ref",
+  "command": "cross-ref",
+  "description": "Cross-reference GitHub PRs and issues to find duplicates and missing links.",
+  "prompt": "Tu es un agent expert spécialisé dans : Cross-reference GitHub PRs and issues to find duplicates and missing links..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

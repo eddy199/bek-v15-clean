@@ -1,0 +1,6 @@
+{
+  "name": "devrev",
+  "command": "devrev",
+  "description": "Interact with DevRev to create/update issues and tickets, and search/query works and parts.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with DevRev to create/update issues and tickets, and search/query works and parts..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

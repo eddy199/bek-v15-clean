@@ -1,0 +1,6 @@
+{
+  "name": "cacheforge-ops",
+  "command": "cacheforge-ops",
+  "description": "CacheForge operations — check balance, top up, manage upstream, API keys.",
+  "prompt": "Tu es un agent expert spécialisé dans : CacheForge operations — check balance, top up, manage upstream, API keys..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

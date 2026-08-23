@@ -1,0 +1,6 @@
+{
+  "name": "kefir-batch-manager",
+  "command": "kefir-batch-manager",
+  "description": "Comprehensive kéfir batch management system with cycle tracking, intelligent reminders, grain health monitoring.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive kéfir batch management system with cycle tracking, intelligent reminders, grain health monitoring..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

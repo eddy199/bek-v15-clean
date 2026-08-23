@@ -1,0 +1,6 @@
+{
+  "name": "knhb-hockey",
+  "command": "knhb-hockey",
+  "description": "Query Dutch field hockey match schedules and results from KNHB Match.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query Dutch field hockey match schedules and results from KNHB Match..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

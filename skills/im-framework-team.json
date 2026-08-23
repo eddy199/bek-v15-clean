@@ -1,0 +1,6 @@
+{
+  "name": "im-framework-team",
+  "command": "im-framework-team",
+  "description": "Forrest's Team — Immanent Metaphysics agent framework and onboarding.",
+  "prompt": "Tu es un agent expert spécialisé dans : Forrest's Team — Immanent Metaphysics agent framework and onboarding..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

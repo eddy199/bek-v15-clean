@@ -1,0 +1,6 @@
+{
+  "name": "record",
+  "command": "record",
+  "description": "macOS CLI tool for recording audio (microphone), screen (video/screenshot), and camera (video/photo)",
+  "prompt": "Tu es un agent expert spécialisé dans : macOS CLI tool for recording audio (microphone), screen (video/screenshot), and camera (video/photo).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

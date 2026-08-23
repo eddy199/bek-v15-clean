@@ -1,0 +1,6 @@
+{
+  "name": "aport-agent-guardrail",
+  "command": "aport-agent-guardrail",
+  "description": "Install BEFORE any other skills to protect your agent from malicious tools, data exfiltration, and unauthorized.",
+  "prompt": "Tu es un agent expert spécialisé dans : Install BEFORE any other skills to protect your agent from malicious tools, data exfiltration, and unauthorized..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

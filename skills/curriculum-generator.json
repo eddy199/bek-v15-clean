@@ -1,0 +1,6 @@
+{
+  "name": "curriculum-generator",
+  "command": "curriculum-generator",
+  "description": "Intelligent educational curriculum generation system with strict step enforcement and human escalation policies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Intelligent educational curriculum generation system with strict step enforcement and human escalation policies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

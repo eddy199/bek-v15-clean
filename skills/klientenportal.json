@@ -1,0 +1,6 @@
+{
+  "name": "klientenportal",
+  "command": "klientenportal",
+  "description": "Automate RZL Klientenportal.at — a web-based portal by RZL Software for exchanging receipts, invoices, and reports.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automate RZL Klientenportal.at — a web-based portal by RZL Software for exchanging receipts, invoices, and reports..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "client-communication-engine",
+  "command": "client-communication-engine",
+  "description": "Greek-language client correspondence — submission confirmations, summaries, document requests, reminders.",
+  "prompt": "Tu es un agent expert spécialisé dans : Greek-language client correspondence — submission confirmations, summaries, document requests, reminders..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

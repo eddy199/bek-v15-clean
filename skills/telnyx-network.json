@@ -1,0 +1,6 @@
+{
+  "name": "telnyx-network",
+  "command": "telnyx-network",
+  "description": "Private mesh networking and public IP exposure via Telnyx WireGuard infrastructure.",
+  "prompt": "Tu es un agent expert spécialisé dans : Private mesh networking and public IP exposure via Telnyx WireGuard infrastructure..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

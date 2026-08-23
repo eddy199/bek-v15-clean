@@ -1,0 +1,6 @@
+{
+  "name": "core-refinery",
+  "command": "core-refinery",
+  "description": "Find the core that runs through everything — the ideas.",
+  "prompt": "Tu es un agent expert spécialisé dans : Find the core that runs through everything — the ideas..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

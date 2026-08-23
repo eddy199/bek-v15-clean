@@ -1,0 +1,6 @@
+{
+  "name": "tester",
+  "command": "tester",
+  "description": "Fetch GitHub issues, spawn sub-agents to implement fixes, open PRs, and monitor review comments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch GitHub issues, spawn sub-agents to implement fixes, open PRs, and monitor review comments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

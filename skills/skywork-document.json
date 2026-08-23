@@ -1,0 +1,6 @@
+{
+  "name": "skywork-document",
+  "command": "skywork-document",
+  "description": "Generate professional documents from prompts with automatic web search for up-to-date content.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate professional documents from prompts with automatic web search for up-to-date content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

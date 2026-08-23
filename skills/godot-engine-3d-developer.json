@@ -1,0 +1,6 @@
+{
+  "name": "godot-engine-3d-developer",
+  "command": "godot-engine-3d-developer",
+  "description": "Skills and agent workflows for 3D game development with Godot Engine.",
+  "prompt": "Tu es un agent expert spécialisé dans : Skills and agent workflows for 3D game development with Godot Engine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

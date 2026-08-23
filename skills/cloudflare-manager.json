@@ -1,0 +1,6 @@
+{
+  "name": "cloudflare-manager",
+  "command": "cloudflare-manager",
+  "description": "Manage Cloudflare DNS records, Tunnels (cloudflared), and Zero Trust policies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Cloudflare DNS records, Tunnels (cloudflared), and Zero Trust policies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

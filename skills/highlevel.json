@@ -1,0 +1,6 @@
+{
+  "name": "highlevel",
+  "command": "highlevel",
+  "description": "Connect your AI assistant to GoHighLevel CRM via the official API v2.",
+  "prompt": "Tu es un agent expert spécialisé dans : Connect your AI assistant to GoHighLevel CRM via the official API v2..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

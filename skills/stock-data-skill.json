@@ -1,0 +1,6 @@
+{
+  "name": "stock-data-skill",
+  "command": "stock-data-skill",
+  "description": "Fetch comprehensive stock data from Simplywall.st.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetch comprehensive stock data from Simplywall.st..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

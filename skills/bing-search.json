@@ -1,0 +1,6 @@
+{
+  "name": "bing-search",
+  "command": "bing-search",
+  "description": "Bing search skill for all users.",
+  "prompt": "Tu es un agent expert spécialisé dans : Bing search skill for all users..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

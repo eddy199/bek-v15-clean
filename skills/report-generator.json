@@ -1,0 +1,6 @@
+{
+  "name": "report-generator",
+  "command": "report-generator",
+  "description": "Generates a structured report HTML based on a specific template.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generates a structured report HTML based on a specific template..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

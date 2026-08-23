@@ -1,0 +1,6 @@
+{
+  "name": "fosmvvm-serverrequest-test-generator",
+  "command": "fosmvvm-serverrequest-test-generator",
+  "description": "Generate ServerRequest tests using VaporTesting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate ServerRequest tests using VaporTesting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

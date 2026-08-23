@@ -1,0 +1,6 @@
+{
+  "name": "xpoz-social-search",
+  "command": "xpoz-social-search",
+  "description": "Search Twitter, Instagram, and Reddit posts in real time.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Twitter, Instagram, and Reddit posts in real time..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

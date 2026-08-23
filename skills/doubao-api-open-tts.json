@@ -1,0 +1,6 @@
+{
+  "name": "doubao-api-open-tts",
+  "command": "doubao-api-open-tts",
+  "description": "Text-to-Speech service using Doubao (Volcano Engine)",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-Speech service using Doubao (Volcano Engine).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

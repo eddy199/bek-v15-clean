@@ -1,0 +1,6 @@
+{
+  "name": "twit-mcp",
+  "command": "twit-mcp",
+  "description": "Real-time X/Twitter data via x402 micropayments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time X/Twitter data via x402 micropayments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

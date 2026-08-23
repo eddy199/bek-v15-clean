@@ -1,0 +1,6 @@
+{
+  "name": "claude-code-control",
+  "command": "claude-code-control",
+  "description": "Control Claude Code programmatically through visible Terminal.app windows on macOS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control Claude Code programmatically through visible Terminal.app windows on macOS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

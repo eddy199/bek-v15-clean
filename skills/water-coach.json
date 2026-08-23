@@ -1,0 +1,6 @@
+{
+  "name": "water-coach",
+  "command": "water-coach",
+  "description": "Hydration tracking and coaching skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : Hydration tracking and coaching skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

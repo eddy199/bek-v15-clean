@@ -1,0 +1,6 @@
+{
+  "name": "compression",
+  "command": "compression",
+  "description": "Pre-run prompt compression for iterative AI dev loops.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pre-run prompt compression for iterative AI dev loops..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

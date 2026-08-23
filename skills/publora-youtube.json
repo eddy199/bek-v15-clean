@@ -1,0 +1,6 @@
+{
+  "name": "publora-youtube",
+  "command": "publora-youtube",
+  "description": "Post or schedule video content to YouTube using the Publora API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post or schedule video content to YouTube using the Publora API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

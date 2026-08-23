@@ -1,0 +1,6 @@
+{
+  "name": "skillzmarket",
+  "command": "skillzmarket",
+  "description": "Search and call monetized AI skills from Skillz Market with automatic USDC payments on Base.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and call monetized AI skills from Skillz Market with automatic USDC payments on Base..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

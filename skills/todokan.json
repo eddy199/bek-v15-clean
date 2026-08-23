@@ -1,0 +1,6 @@
+{
+  "name": "todokan",
+  "command": "todokan",
+  "description": "Manage tasks, boards, thoughts, and reviews in Todokan via MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage tasks, boards, thoughts, and reviews in Todokan via MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

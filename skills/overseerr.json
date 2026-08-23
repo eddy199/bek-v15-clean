@@ -1,0 +1,6 @@
+{
+  "name": "overseerr",
+  "command": "overseerr",
+  "description": "Request movies/TV and monitor request status via the Overseerr API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Request movies/TV and monitor request status via the Overseerr API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

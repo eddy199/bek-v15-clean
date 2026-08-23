@@ -1,0 +1,6 @@
+{
+  "name": "purposebot",
+  "command": "purposebot",
+  "description": "Agentic commerce with Stripe and x402 USDC payments.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agentic commerce with Stripe and x402 USDC payments..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

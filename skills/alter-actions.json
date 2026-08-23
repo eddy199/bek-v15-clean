@@ -1,0 +1,6 @@
+{
+  "name": "alter-actions",
+  "command": "alter-actions",
+  "description": "Trigger Alter macOS app actions via x-callback-urls.",
+  "prompt": "Tu es un agent expert spécialisé dans : Trigger Alter macOS app actions via x-callback-urls..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

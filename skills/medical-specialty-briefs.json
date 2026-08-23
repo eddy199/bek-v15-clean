@@ -1,0 +1,6 @@
+{
+  "name": "medical-specialty-briefs",
+  "command": "medical-specialty-briefs",
+  "description": "Generate daily or on-demand medical research briefs for any medical specialty.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate daily or on-demand medical research briefs for any medical specialty..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

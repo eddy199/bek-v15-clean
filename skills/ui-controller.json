@@ -1,0 +1,6 @@
+{
+  "name": "ui-controller",
+  "command": "ui-controller",
+  "description": "UI Controller is an OpenClaw skill that allows controlling local user interface.",
+  "prompt": "Tu es un agent expert spécialisé dans : UI Controller is an OpenClaw skill that allows controlling local user interface..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

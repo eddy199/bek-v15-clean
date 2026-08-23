@@ -1,0 +1,6 @@
+{
+  "name": "announcer",
+  "command": "announcer",
+  "description": "Announce text throughout the house via AirPlay speakers using Airfoil +.",
+  "prompt": "Tu es un agent expert spécialisé dans : Announce text throughout the house via AirPlay speakers using Airfoil +..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

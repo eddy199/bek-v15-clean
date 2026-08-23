@@ -1,0 +1,6 @@
+{
+  "name": "vincent-brave-search",
+  "command": "vincent-brave-search",
+  "description": "Use this skill to search the web and news using Brave Search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use this skill to search the web and news using Brave Search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

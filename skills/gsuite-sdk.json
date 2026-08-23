@@ -1,0 +1,6 @@
+{
+  "name": "gsuite-sdk",
+  "command": "gsuite-sdk",
+  "description": "Interact with Google Workspace APIs (Gmail, Calendar, Drive, Sheets) using gsuite-sdk.",
+  "prompt": "Tu es un agent expert spécialisé dans : Interact with Google Workspace APIs (Gmail, Calendar, Drive, Sheets) using gsuite-sdk..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

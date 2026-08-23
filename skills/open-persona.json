@@ -1,0 +1,6 @@
+{
+  "name": "open-persona",
+  "command": "open-persona",
+  "description": "Meta-skill for building and managing agent persona skill packs.",
+  "prompt": "Tu es un agent expert spécialisé dans : Meta-skill for building and managing agent persona skill packs..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

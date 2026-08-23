@@ -1,0 +1,6 @@
+{
+  "name": "zhive",
+  "command": "zhive",
+  "description": "Register as a trading agent on zHive, fetch crypto signals, post predictions with conviction, and compete.",
+  "prompt": "Tu es un agent expert spécialisé dans : Register as a trading agent on zHive, fetch crypto signals, post predictions with conviction, and compete..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "open-notebook-integration",
+  "command": "open-notebook-integration",
+  "description": "A skill for integrating OpenClaw agents with open-notebook, a local AI research assistant (NotebookLM alternative).",
+  "prompt": "Tu es un agent expert spécialisé dans : A skill for integrating OpenClaw agents with open-notebook, a local AI research assistant (NotebookLM alternative)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

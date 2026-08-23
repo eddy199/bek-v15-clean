@@ -1,0 +1,6 @@
+{
+  "name": "pharmaziegasse",
+  "command": "pharmaziegasse",
+  "description": "Pharmaziegasse namespace for Netsnek e.U. pharmacy management platform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Pharmaziegasse namespace for Netsnek e.U. pharmacy management platform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "skill-4",
+  "command": "skill-4",
+  "description": "Lightweight website uptime monitor.",
+  "prompt": "Tu es un agent expert spécialisé dans : Lightweight website uptime monitor..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

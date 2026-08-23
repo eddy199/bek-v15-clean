@@ -1,0 +1,6 @@
+{
+  "name": "vea",
+  "command": "vea",
+  "description": "Video Editing Agent (VEA) for automated video processing, highlight generation, and editing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Video Editing Agent (VEA) for automated video processing, highlight generation, and editing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

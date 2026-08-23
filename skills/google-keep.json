@@ -1,0 +1,6 @@
+{
+  "name": "google-keep",
+  "command": "google-keep",
+  "description": "Read, create, edit, search, and manage Google Keep notes and lists via CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Read, create, edit, search, and manage Google Keep notes and lists via CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

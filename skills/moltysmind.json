@@ -1,0 +1,6 @@
+{
+  "name": "moltysmind",
+  "command": "moltysmind",
+  "description": "Collective AI knowledge layer with blockchain-verified voting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Collective AI knowledge layer with blockchain-verified voting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

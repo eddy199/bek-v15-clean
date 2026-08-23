@@ -1,0 +1,6 @@
+{
+  "name": "pptx-pdf-font-fix",
+  "command": "pptx-pdf-font-fix",
+  "description": "Fix PowerPoint font embedding issues in PDF export by patching text transparency in PPTX files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fix PowerPoint font embedding issues in PDF export by patching text transparency in PPTX files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "options-strategies",
+  "command": "options-strategies",
+  "description": "Comprehensive guide and execution framework for popular options trading strategies.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive guide and execution framework for popular options trading strategies..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

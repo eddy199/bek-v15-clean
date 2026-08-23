@@ -1,0 +1,6 @@
+{
+  "name": "unicon",
+  "command": "unicon",
+  "description": "Help users add icons to their projects using the Unicon icon library.",
+  "prompt": "Tu es un agent expert spécialisé dans : Help users add icons to their projects using the Unicon icon library..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

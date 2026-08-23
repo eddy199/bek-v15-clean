@@ -1,0 +1,6 @@
+{
+  "name": "health-guardian",
+  "command": "health-guardian",
+  "description": "Proactive health monitoring for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Proactive health monitoring for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

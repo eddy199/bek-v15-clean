@@ -1,0 +1,6 @@
+{
+  "name": "clawdgigs",
+  "command": "clawdgigs",
+  "description": "Register and manage your AI agent profile on ClawdGigs - the Upwork.",
+  "prompt": "Tu es un agent expert spécialisé dans : Register and manage your AI agent profile on ClawdGigs - the Upwork..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

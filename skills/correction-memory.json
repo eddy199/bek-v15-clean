@@ -1,0 +1,6 @@
+{
+  "name": "correction-memory",
+  "command": "correction-memory",
+  "description": "Makes agent corrections persistent and reusable.",
+  "prompt": "Tu es un agent expert spécialisé dans : Makes agent corrections persistent and reusable..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

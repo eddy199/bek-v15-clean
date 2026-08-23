@@ -1,0 +1,6 @@
+{
+  "name": "agent-swarm",
+  "command": "agent-swarm",
+  "description": "IMPORTANT: OpenRouter is required.",
+  "prompt": "Tu es un agent expert spécialisé dans : IMPORTANT: OpenRouter is required..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

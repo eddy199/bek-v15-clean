@@ -1,0 +1,6 @@
+{
+  "name": "minimax-cli-web-search",
+  "command": "minimax-cli-web-search",
+  "description": "Web search via MiniMax MCP using a local CLI wrapper (mcporter), with environment preflight, API-key/config checks.",
+  "prompt": "Tu es un agent expert spécialisé dans : Web search via MiniMax MCP using a local CLI wrapper (mcporter), with environment preflight, API-key/config checks..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

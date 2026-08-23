@@ -1,0 +1,6 @@
+{
+  "name": "communication-skill",
+  "command": "communication-skill",
+  "description": "Deep Listening & Response Crafting - Transform.",
+  "prompt": "Tu es un agent expert spécialisé dans : Deep Listening & Response Crafting - Transform..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

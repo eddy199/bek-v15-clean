@@ -1,0 +1,6 @@
+{
+  "name": "vn-market-news-monitor",
+  "command": "vn-market-news-monitor",
+  "description": "Tracks Vietnam market and sector narratives from major domestic financial media; used when users ask for market.",
+  "prompt": "Tu es un agent expert spécialisé dans : Tracks Vietnam market and sector narratives from major domestic financial media; used when users ask for market..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

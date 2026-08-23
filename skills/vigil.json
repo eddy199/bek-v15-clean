@@ -1,0 +1,6 @@
+{
+  "name": "vigil",
+  "command": "vigil",
+  "description": "AI agent safety guardrails for tool calls.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI agent safety guardrails for tool calls..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

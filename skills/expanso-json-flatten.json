@@ -1,0 +1,6 @@
+{
+  "name": "expanso-json-flatten",
+  "command": "expanso-json-flatten",
+  "description": "Flatten nested JSON objects.",
+  "prompt": "Tu es un agent expert spécialisé dans : Flatten nested JSON objects..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

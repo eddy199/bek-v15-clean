@@ -1,0 +1,6 @@
+{
+  "name": "hyperliquid",
+  "command": "hyperliquid",
+  "description": "Read-only Hyperliquid market data assistant (perps + spot optional)",
+  "prompt": "Tu es un agent expert spécialisé dans : Read-only Hyperliquid market data assistant (perps + spot optional).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

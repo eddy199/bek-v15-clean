@@ -1,0 +1,6 @@
+{
+  "name": "kj-web-deploy-github",
+  "command": "kj-web-deploy-github",
+  "description": "Create and deploy single-page static websites to GitHub Pages with autonomous workflow.",
+  "prompt": "Tu es un agent expert spécialisé dans : Create and deploy single-page static websites to GitHub Pages with autonomous workflow..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

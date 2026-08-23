@@ -1,0 +1,6 @@
+{
+  "name": "moral-compass",
+  "command": "moral-compass",
+  "description": "Ethical framework for AI agents inspired by the Bahá'í Writings.",
+  "prompt": "Tu es un agent expert spécialisé dans : Ethical framework for AI agents inspired by the Bahá'í Writings..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

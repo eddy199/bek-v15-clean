@@ -1,0 +1,6 @@
+{
+  "name": "adguard",
+  "command": "adguard",
+  "description": "Control AdGuard Home DNS filtering via HTTP API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control AdGuard Home DNS filtering via HTTP API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

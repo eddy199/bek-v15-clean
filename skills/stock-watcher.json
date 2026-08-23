@@ -1,0 +1,6 @@
+{
+  "name": "stock-watcher",
+  "command": "stock-watcher",
+  "description": "Manage and monitor a personal stock watchlist with support for adding, removing, listing stocks, and summarizing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage and monitor a personal stock watchlist with support for adding, removing, listing stocks, and summarizing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

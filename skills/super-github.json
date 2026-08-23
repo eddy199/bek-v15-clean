@@ -1,0 +1,6 @@
+{
+  "name": "super-github",
+  "command": "super-github",
+  "description": "**The ultimate GitHub automation framework.** Combines the best of GitHub skills for issues, PRs, releases.",
+  "prompt": "Tu es un agent expert spécialisé dans : **The ultimate GitHub automation framework.** Combines the best of GitHub skills for issues, PRs, releases..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

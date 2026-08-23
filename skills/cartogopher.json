@@ -1,0 +1,6 @@
+{
+  "name": "cartogopher",
+  "command": "cartogopher",
+  "description": "Set up CartoGopher AI-native code intelligence.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up CartoGopher AI-native code intelligence..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

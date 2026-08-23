@@ -1,0 +1,6 @@
+{
+  "name": "advanced-skill-creator",
+  "command": "advanced-skill-creator",
+  "description": "Advanced OpenClaw skill creation handler.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced OpenClaw skill creation handler..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

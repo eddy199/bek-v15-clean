@@ -1,0 +1,6 @@
+{
+  "name": "skill-1",
+  "command": "skill-1",
+  "description": "Generate QR codes from text, URLs, WiFi credentials, vCards, or any data.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate QR codes from text, URLs, WiFi credentials, vCards, or any data..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

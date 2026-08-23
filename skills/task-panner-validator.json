@@ -1,0 +1,6 @@
+{
+  "name": "task-panner-validator",
+  "command": "task-panner-validator",
+  "description": "This skill provides a secure, step-by-step task management system for AI Agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill provides a secure, step-by-step task management system for AI Agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

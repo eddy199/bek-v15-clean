@@ -1,0 +1,6 @@
+{
+  "name": "tvscreener",
+  "command": "tvscreener",
+  "description": "Query TradingView screener data for HK, A-share, A-share ETF, and US symbols with deepentropy/tvscreener.",
+  "prompt": "Tu es un agent expert spécialisé dans : Query TradingView screener data for HK, A-share, A-share ETF, and US symbols with deepentropy/tvscreener..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

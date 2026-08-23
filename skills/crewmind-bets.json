@@ -1,0 +1,6 @@
+{
+  "name": "crewmind-bets",
+  "command": "crewmind-bets",
+  "description": "> **TL;DR**: Place bets on LLM models competing in CrewMind Arena.",
+  "prompt": "Tu es un agent expert spécialisé dans : > **TL;DR**: Place bets on LLM models competing in CrewMind Arena..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

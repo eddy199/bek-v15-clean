@@ -1,0 +1,6 @@
+{
+  "name": "cn-ecommerce-search",
+  "command": "cn-ecommerce-search",
+  "description": "Search products across 8 Chinese e-commerce platforms: Taobao, Tmall, JD, PDD, 1688, AliExpress, Douyin, XHS.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search products across 8 Chinese e-commerce platforms: Taobao, Tmall, JD, PDD, 1688, AliExpress, Douyin, XHS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "metricool",
+  "command": "metricool",
+  "description": "Schedule and manage social media posts via Metricool API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Schedule and manage social media posts via Metricool API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

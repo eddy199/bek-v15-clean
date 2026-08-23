@@ -1,0 +1,6 @@
+{
+  "name": "the-arena",
+  "command": "the-arena",
+  "description": "Turn a Discord server into a moderated debate arena with an AI judge.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn a Discord server into a moderated debate arena with an AI judge..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

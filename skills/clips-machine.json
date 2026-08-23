@@ -1,0 +1,6 @@
+{
+  "name": "clips-machine",
+  "command": "clips-machine",
+  "description": "Transform long videos into viral short-form clips.",
+  "prompt": "Tu es un agent expert spécialisé dans : Transform long videos into viral short-form clips..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

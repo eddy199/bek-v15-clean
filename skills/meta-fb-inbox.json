@@ -1,0 +1,6 @@
+{
+  "name": "meta-fb-inbox",
+  "command": "meta-fb-inbox",
+  "description": "Check Facebook page inbox messages via Meta Business Suite browser automation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check Facebook page inbox messages via Meta Business Suite browser automation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

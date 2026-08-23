@@ -1,0 +1,6 @@
+{
+  "name": "agenticflow-skill",
+  "command": "agenticflow-skill",
+  "description": "Comprehensive guide for building AI workflows, agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Comprehensive guide for building AI workflows, agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "release-tracker",
+  "command": "release-tracker",
+  "description": "Track GitHub repository releases and generate prioritized summaries.",
+  "prompt": "Tu es un agent expert spécialisé dans : Track GitHub repository releases and generate prioritized summaries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

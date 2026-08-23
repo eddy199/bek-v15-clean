@@ -1,0 +1,6 @@
+{
+  "name": "ttt",
+  "command": "ttt",
+  "description": "Manage TinyTalkingTodos lists and items via the ttt CLI.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage TinyTalkingTodos lists and items via the ttt CLI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

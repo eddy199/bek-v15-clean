@@ -1,0 +1,6 @@
+{
+  "name": "clawd-docs-v2",
+  "command": "clawd-docs-v2",
+  "description": "Smart ClawdBot documentation access with local search index.",
+  "prompt": "Tu es un agent expert spécialisé dans : Smart ClawdBot documentation access with local search index..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

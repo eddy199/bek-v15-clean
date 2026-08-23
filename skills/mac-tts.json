@@ -1,0 +1,6 @@
+{
+  "name": "mac-tts",
+  "command": "mac-tts",
+  "description": "Text-to-speech using macOS built-in `say` command.",
+  "prompt": "Tu es un agent expert spécialisé dans : Text-to-speech using macOS built-in `say` command..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

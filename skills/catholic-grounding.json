@@ -1,0 +1,6 @@
+{
+  "name": "catholic-grounding",
+  "command": "catholic-grounding",
+  "description": "Help answer questions about Catholicism accurately.",
+  "prompt": "Tu es un agent expert spécialisé dans : Help answer questions about Catholicism accurately..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

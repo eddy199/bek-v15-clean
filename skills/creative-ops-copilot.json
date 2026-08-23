@@ -1,0 +1,6 @@
+{
+  "name": "creative-ops-copilot",
+  "command": "creative-ops-copilot",
+  "description": "Turn messy client briefs into a production-ready plan for motion design/VFX projects: scope.",
+  "prompt": "Tu es un agent expert spécialisé dans : Turn messy client briefs into a production-ready plan for motion design/VFX projects: scope..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

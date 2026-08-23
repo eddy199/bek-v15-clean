@@ -1,0 +1,6 @@
+{
+  "name": "google-gemini-media",
+  "command": "google-gemini-media",
+  "description": "Use the Gemini API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use the Gemini API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

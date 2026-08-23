@@ -1,0 +1,6 @@
+{
+  "name": "genome-manager",
+  "command": "genome-manager",
+  "description": "Complete genome lifecycle management for GEP (Genome Evolution Protocol)",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete genome lifecycle management for GEP (Genome Evolution Protocol).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

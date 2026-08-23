@@ -1,0 +1,6 @@
+{
+  "name": "dirigera-control",
+  "command": "dirigera-control",
+  "description": "Control IKEA Dirigera smart home devices.",
+  "prompt": "Tu es un agent expert spécialisé dans : Control IKEA Dirigera smart home devices..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

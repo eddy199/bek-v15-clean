@@ -1,0 +1,6 @@
+{
+  "name": "auteng-docs",
+  "command": "auteng-docs",
+  "description": "Publish technical docs with Mermaid diagrams, KaTeX math, and code highlighting.",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish technical docs with Mermaid diagrams, KaTeX math, and code highlighting..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

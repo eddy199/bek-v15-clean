@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-agentic-verifier",
+  "command": "arxiv-agentic-verifier",
+  "description": "**Source Paper:** [Scaling Agentic Verifier for Competitive Coding](https://arxiv.org/abs/2602.09012) (ID.",
+  "prompt": "Tu es un agent expert spécialisé dans : **Source Paper:** [Scaling Agentic Verifier for Competitive Coding](https://arxiv.org/abs/2602.09012) (ID..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

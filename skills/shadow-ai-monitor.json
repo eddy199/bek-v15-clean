@@ -1,0 +1,6 @@
+{
+  "name": "shadow-ai-monitor",
+  "command": "shadow-ai-monitor",
+  "description": "Shadow AI Monitor - Enterprise-grade dashboard for tracking employee AI tool usage, data exposure risks, and PIPEDA.",
+  "prompt": "Tu es un agent expert spécialisé dans : Shadow AI Monitor - Enterprise-grade dashboard for tracking employee AI tool usage, data exposure risks, and PIPEDA..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

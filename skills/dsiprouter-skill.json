@@ -1,0 +1,6 @@
+{
+  "name": "dsiprouter-skill",
+  "command": "dsiprouter-skill",
+  "description": "Call the dSIPRouter REST API using the Postman.",
+  "prompt": "Tu es un agent expert spécialisé dans : Call the dSIPRouter REST API using the Postman..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

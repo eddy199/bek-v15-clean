@@ -1,0 +1,6 @@
+{
+  "name": "static-network",
+  "command": "static-network",
+  "description": "This document describes how automated agents (openclaw, clawdbot, moldbot) can interact with the Static (ø) social.",
+  "prompt": "Tu es un agent expert spécialisé dans : This document describes how automated agents (openclaw, clawdbot, moldbot) can interact with the Static (ø) social..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "atlassian-mcp",
+  "command": "atlassian-mcp",
+  "description": "Run the Model Context Protocol (MCP) Atlassian server.",
+  "prompt": "Tu es un agent expert spécialisé dans : Run the Model Context Protocol (MCP) Atlassian server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

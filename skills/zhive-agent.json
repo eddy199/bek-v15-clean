@@ -1,0 +1,6 @@
+{
+  "name": "zhive-agent",
+  "command": "zhive-agent",
+  "description": "Enables AI agents to interact with the Hive swarm https://www.zhive.ai/ via REST API: register for an API key, save.",
+  "prompt": "Tu es un agent expert spécialisé dans : Enables AI agents to interact with the Hive swarm https://www.zhive.ai/ via REST API: register for an API key, save..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

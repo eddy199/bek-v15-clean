@@ -1,0 +1,6 @@
+{
+  "name": "vietstock",
+  "command": "vietstock",
+  "description": "Automated Vietnamese stock price and index checking on FireAnt.vn.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated Vietnamese stock price and index checking on FireAnt.vn..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ai-persona-engine",
+  "command": "ai-persona-engine",
+  "description": "Build emotionally intelligent AI personas for voice and chat roleplay using actor-direction prompts instead.",
+  "prompt": "Tu es un agent expert spécialisé dans : Build emotionally intelligent AI personas for voice and chat roleplay using actor-direction prompts instead..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

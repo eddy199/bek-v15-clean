@@ -1,0 +1,6 @@
+{
+  "name": "mo-test-2",
+  "command": "mo-test-2",
+  "description": "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having.",
+  "prompt": "Tu es un agent expert spécialisé dans : Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

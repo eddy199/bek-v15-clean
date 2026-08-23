@@ -1,0 +1,6 @@
+{
+  "name": "supernal-interface",
+  "command": "supernal-interface",
+  "description": "Universal AI Interface framework for making applications AI-controllable.",
+  "prompt": "Tu es un agent expert spécialisé dans : Universal AI Interface framework for making applications AI-controllable..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

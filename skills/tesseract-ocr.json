@@ -1,0 +1,6 @@
+{
+  "name": "tesseract-ocr",
+  "command": "tesseract-ocr",
+  "description": "Extract text from images using the Tesseract OCR engine directly via command line.",
+  "prompt": "Tu es un agent expert spécialisé dans : Extract text from images using the Tesseract OCR engine directly via command line..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

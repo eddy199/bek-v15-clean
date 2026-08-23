@@ -1,0 +1,6 @@
+{
+  "name": "yellowagents",
+  "command": "yellowagents",
+  "description": "Yellow Pages for AI agents — discover, register, and search for agents by skill, language, location, and cost model.",
+  "prompt": "Tu es un agent expert spécialisé dans : Yellow Pages for AI agents — discover, register, and search for agents by skill, language, location, and cost model..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

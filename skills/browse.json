@@ -1,0 +1,6 @@
+{
+  "name": "browse",
+  "command": "browse",
+  "description": "Complete guide for creating and deploying browser automation functions.",
+  "prompt": "Tu es un agent expert spécialisé dans : Complete guide for creating and deploying browser automation functions..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

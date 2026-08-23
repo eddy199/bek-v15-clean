@@ -1,0 +1,6 @@
+{
+  "name": "alert-system",
+  "command": "alert-system",
+  "description": "Smart monitoring with customizable triggers — price alerts (stocks, crypto, products), event monitoring, custom.",
+  "prompt": "Tu es un agent expert spécialisé dans : Smart monitoring with customizable triggers — price alerts (stocks, crypto, products), event monitoring, custom..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

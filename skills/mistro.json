@@ -1,0 +1,6 @@
+{
+  "name": "mistro",
+  "command": "mistro",
+  "description": "Agent and people discovery with real-time communication via Mistro (https://mistro.sh)",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent and people discovery with real-time communication via Mistro (https://mistro.sh).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

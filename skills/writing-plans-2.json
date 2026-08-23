@@ -1,0 +1,6 @@
+{
+  "name": "writing-plans-2",
+  "command": "writing-plans-2",
+  "description": "Break design into 2-5 minute tasks with verification steps.",
+  "prompt": "Tu es un agent expert spécialisé dans : Break design into 2-5 minute tasks with verification steps..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

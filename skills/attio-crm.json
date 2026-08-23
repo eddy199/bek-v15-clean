@@ -1,0 +1,6 @@
+{
+  "name": "attio-crm",
+  "command": "attio-crm",
+  "description": "Manage Attio CRM records (companies, people, deals, tasks, notes).",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage Attio CRM records (companies, people, deals, tasks, notes)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

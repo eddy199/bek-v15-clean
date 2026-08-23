@@ -1,0 +1,6 @@
+{
+  "name": "jubjub",
+  "command": "jubjub",
+  "description": "Publish to all major media platforms, track cross-platform analytics, and automate on-chain royalty and revenue splits v",
+  "prompt": "Tu es un agent expert spécialisé dans : Publish to all major media platforms, track cross-platform analytics, and automate on-chain royalty and revenue splits via MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

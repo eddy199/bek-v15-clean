@@ -1,0 +1,6 @@
+{
+  "name": "yc-new-way",
+  "command": "yc-new-way",
+  "description": "Apply Y Combinator’s “New Way to Build a Startup” playbook to ship fast, validate with real distribution.",
+  "prompt": "Tu es un agent expert spécialisé dans : Apply Y Combinator’s “New Way to Build a Startup” playbook to ship fast, validate with real distribution..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

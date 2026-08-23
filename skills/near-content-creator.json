@@ -1,0 +1,6 @@
+{
+  "name": "near-content-creator",
+  "command": "near-content-creator",
+  "description": "Generate NEAR-focused content (threads, market updates, ecosystem news, tutorials).",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate NEAR-focused content (threads, market updates, ecosystem news, tutorials)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

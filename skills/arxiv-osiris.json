@@ -1,0 +1,6 @@
+{
+  "name": "arxiv-osiris",
+  "command": "arxiv-osiris",
+  "description": "Search and download research papers from arXiv.org - Research version for OpenClaw agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search and download research papers from arXiv.org - Research version for OpenClaw agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

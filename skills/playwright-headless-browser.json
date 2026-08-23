@@ -1,0 +1,6 @@
+{
+  "name": "playwright-headless-browser",
+  "command": "playwright-headless-browser",
+  "description": "Set up headless browser automation in Clawdbot using Playwright Chromium.",
+  "prompt": "Tu es un agent expert spécialisé dans : Set up headless browser automation in Clawdbot using Playwright Chromium..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "chichi-speech",
+  "command": "chichi-speech",
+  "description": "A RESTful service for high-quality text-to-speech using Qwen3.",
+  "prompt": "Tu es un agent expert spécialisé dans : A RESTful service for high-quality text-to-speech using Qwen3..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

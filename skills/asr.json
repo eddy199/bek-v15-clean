@@ -1,0 +1,6 @@
+{
+  "name": "asr",
+  "command": "asr",
+  "description": "Fast, accurate, and incredibly inexpensive automatic speech-to-text.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fast, accurate, and incredibly inexpensive automatic speech-to-text..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "agentaudit-skill",
+  "command": "agentaudit-skill",
+  "description": "Automatic security gate that checks packages against a vulnerability database before installation.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automatic security gate that checks packages against a vulnerability database before installation..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "redshift",
+  "command": "redshift",
+  "description": "Manage application secrets with the Redshift CLI (https://redshiftapp.com) — decentralized, encrypted secret.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage application secrets with the Redshift CLI (https://redshiftapp.com) — decentralized, encrypted secret..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

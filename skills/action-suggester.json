@@ -1,0 +1,6 @@
+{
+  "name": "action-suggester",
+  "command": "action-suggester",
+  "description": "Generate non-binding follow-up action suggestions from lead summaries or lead lists.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate non-binding follow-up action suggestions from lead summaries or lead lists..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

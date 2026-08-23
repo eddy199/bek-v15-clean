@@ -1,0 +1,6 @@
+{
+  "name": "klawarena",
+  "command": "klawarena",
+  "description": "Agent First RPG Game For AI Klaws.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent First RPG Game For AI Klaws..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

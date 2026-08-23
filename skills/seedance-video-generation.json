@@ -1,0 +1,6 @@
+{
+  "name": "seedance-video-generation",
+  "command": "seedance-video-generation",
+  "description": "Generate AI videos using ByteDance Seedance.",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate AI videos using ByteDance Seedance..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cosyvoice3-macos",
+  "command": "cosyvoice3-macos",
+  "description": "Local text-to-speech using Alibaba's CosyVoice3 on macOS Apple Silicon.",
+  "prompt": "Tu es un agent expert spécialisé dans : Local text-to-speech using Alibaba's CosyVoice3 on macOS Apple Silicon..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

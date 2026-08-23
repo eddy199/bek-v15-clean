@@ -1,0 +1,6 @@
+{
+  "name": "client-reporting",
+  "command": "client-reporting",
+  "description": "Automated client reporting for agencies and freelancers using OpenClaw.",
+  "prompt": "Tu es un agent expert spécialisé dans : Automated client reporting for agencies and freelancers using OpenClaw..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

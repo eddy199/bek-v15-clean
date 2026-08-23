@@ -1,0 +1,6 @@
+{
+  "name": "json-modifier",
+  "command": "json-modifier",
+  "description": "Safely apply structured JSON patches (RFC 6902) to files.",
+  "prompt": "Tu es un agent expert spécialisé dans : Safely apply structured JSON patches (RFC 6902) to files..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

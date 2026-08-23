@@ -1,0 +1,6 @@
+{
+  "name": "kroger",
+  "command": "kroger",
+  "description": "Search Kroger products and add items to a Kroger cart via the Kroger API.",
+  "prompt": "Tu es un agent expert spécialisé dans : Search Kroger products and add items to a Kroger cart via the Kroger API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "braindb",
+  "command": "braindb",
+  "description": "Persistent, semantic memory for AI agents.",
+  "prompt": "Tu es un agent expert spécialisé dans : Persistent, semantic memory for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

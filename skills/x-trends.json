@@ -1,0 +1,6 @@
+{
+  "name": "x-trends",
+  "command": "x-trends",
+  "description": "Fetches current top trending topics on X (Twitter) for any country using public aggregators.",
+  "prompt": "Tu es un agent expert spécialisé dans : Fetches current top trending topics on X (Twitter) for any country using public aggregators..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

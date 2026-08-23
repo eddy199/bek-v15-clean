@@ -1,0 +1,6 @@
+{
+  "name": "ragflow",
+  "command": "ragflow",
+  "description": "Universal Ragflow API client for RAG operations.",
+  "prompt": "Tu es un agent expert spécialisé dans : Universal Ragflow API client for RAG operations..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "popup-referrals",
+  "command": "popup-referrals",
+  "description": "Check your PopUp referral link, track earnings, and see referred vendor status.",
+  "prompt": "Tu es un agent expert spécialisé dans : Check your PopUp referral link, track earnings, and see referred vendor status..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

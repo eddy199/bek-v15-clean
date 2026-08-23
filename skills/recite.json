@@ -1,0 +1,6 @@
+{
+  "name": "recite",
+  "command": "recite",
+  "description": "AI-driven receipt bookkeeping via the Recite Vision API.",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-driven receipt bookkeeping via the Recite Vision API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

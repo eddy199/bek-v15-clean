@@ -1,0 +1,6 @@
+{
+  "name": "ui-designer-skill",
+  "command": "ui-designer-skill",
+  "description": "Design beautiful interfaces using Material You, Minimalism, Glassmorphism, Neo-Brutalism, and Claymorphism.",
+  "prompt": "Tu es un agent expert spécialisé dans : Design beautiful interfaces using Material You, Minimalism, Glassmorphism, Neo-Brutalism, and Claymorphism..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

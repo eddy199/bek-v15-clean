@@ -1,0 +1,6 @@
+{
+  "name": "acorn-prover",
+  "command": "acorn-prover",
+  "description": "Verify and write proofs using the Acorn theorem prover for mathematical and cryptographic formalization.",
+  "prompt": "Tu es un agent expert spécialisé dans : Verify and write proofs using the Acorn theorem prover for mathematical and cryptographic formalization..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

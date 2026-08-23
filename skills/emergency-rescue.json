@@ -1,0 +1,6 @@
+{
+  "name": "emergency-rescue",
+  "command": "emergency-rescue",
+  "description": "Recover from developer disasters.",
+  "prompt": "Tu es un agent expert spécialisé dans : Recover from developer disasters..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ultra-agent-stinct",
+  "command": "ultra-agent-stinct",
+  "description": "Internal debugging and coding skill.",
+  "prompt": "Tu es un agent expert spécialisé dans : Internal debugging and coding skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

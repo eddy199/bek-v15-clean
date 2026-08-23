@@ -1,0 +1,6 @@
+{
+  "name": "skills-4",
+  "command": "skills-4",
+  "description": "How to use the coala-client CLI for chat with LLMs, MCP servers, and skills.",
+  "prompt": "Tu es un agent expert spécialisé dans : How to use the coala-client CLI for chat with LLMs, MCP servers, and skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

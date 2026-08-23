@@ -1,0 +1,6 @@
+{
+  "name": "clawgatesecure",
+  "command": "clawgatesecure",
+  "description": "Advanced security protocol for LLM agents focusing.",
+  "prompt": "Tu es un agent expert spécialisé dans : Advanced security protocol for LLM agents focusing..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

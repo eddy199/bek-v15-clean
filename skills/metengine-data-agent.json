@@ -1,0 +1,6 @@
+{
+  "name": "metengine-data-agent",
+  "command": "metengine-data-agent",
+  "description": "Real-time smart money analytics API for Polymarket prediction markets, Hyperliquid perpetual futures, and Meteora.",
+  "prompt": "Tu es un agent expert spécialisé dans : Real-time smart money analytics API for Polymarket prediction markets, Hyperliquid perpetual futures, and Meteora..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

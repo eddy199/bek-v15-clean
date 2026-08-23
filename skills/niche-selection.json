@@ -1,0 +1,6 @@
+{
+  "name": "niche-selection",
+  "command": "niche-selection",
+  "description": "Select and refine a profitable, focused niche for a solopreneur business.",
+  "prompt": "Tu es un agent expert spécialisé dans : Select and refine a profitable, focused niche for a solopreneur business..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

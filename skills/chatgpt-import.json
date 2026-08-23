@@ -1,0 +1,6 @@
+{
+  "name": "chatgpt-import",
+  "command": "chatgpt-import",
+  "description": "Import ChatGPT conversation history into OpenClaw's memory search.",
+  "prompt": "Tu es un agent expert spécialisé dans : Import ChatGPT conversation history into OpenClaw's memory search..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

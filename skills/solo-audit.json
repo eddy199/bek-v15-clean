@@ -1,0 +1,6 @@
+{
+  "name": "solo-audit",
+  "command": "solo-audit",
+  "description": "Health check knowledge base for broken links, missing frontmatter, tag inconsistencies, and coverage gaps.",
+  "prompt": "Tu es un agent expert spécialisé dans : Health check knowledge base for broken links, missing frontmatter, tag inconsistencies, and coverage gaps..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

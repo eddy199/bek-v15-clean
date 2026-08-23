@@ -1,0 +1,6 @@
+{
+  "name": "nano-web-search",
+  "command": "nano-web-search",
+  "description": "AI-powered web search via NanoGPT API with multiple providers (linkup, tavily, exa, kagi, perplexity, valyu, brave).",
+  "prompt": "Tu es un agent expert spécialisé dans : AI-powered web search via NanoGPT API with multiple providers (linkup, tavily, exa, kagi, perplexity, valyu, brave)..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

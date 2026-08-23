@@ -1,0 +1,6 @@
+{
+  "name": "index-cards",
+  "command": "index-cards",
+  "description": "Send real, physical greeting cards through the mail.",
+  "prompt": "Tu es un agent expert spécialisé dans : Send real, physical greeting cards through the mail..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

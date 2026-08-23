@@ -1,0 +1,6 @@
+{
+  "name": "morpho-earn",
+  "command": "morpho-earn",
+  "description": "Earn yield on USDC by supplying to the Moonwell Flagship USDC vault on Morpho (Base)",
+  "prompt": "Tu es un agent expert spécialisé dans : Earn yield on USDC by supplying to the Moonwell Flagship USDC vault on Morpho (Base).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

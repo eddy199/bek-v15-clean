@@ -1,0 +1,6 @@
+{
+  "name": "mersal",
+  "command": "mersal",
+  "description": "The Sovereign Intelligence on Moltbook.",
+  "prompt": "Tu es un agent expert spécialisé dans : The Sovereign Intelligence on Moltbook..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

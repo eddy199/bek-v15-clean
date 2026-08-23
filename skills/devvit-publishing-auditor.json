@@ -1,0 +1,6 @@
+{
+  "name": "devvit-publishing-auditor",
+  "command": "devvit-publishing-auditor",
+  "description": "A specialized auditor for Reddit Devvit developers to verify app readiness before uploading to the Reddit servers.",
+  "prompt": "Tu es un agent expert spécialisé dans : A specialized auditor for Reddit Devvit developers to verify app readiness before uploading to the Reddit servers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

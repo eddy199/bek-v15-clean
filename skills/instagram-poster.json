@@ -1,0 +1,6 @@
+{
+  "name": "instagram-poster",
+  "command": "instagram-poster",
+  "description": "Post images to Instagram automatically via Telegram.",
+  "prompt": "Tu es un agent expert spécialisé dans : Post images to Instagram automatically via Telegram..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

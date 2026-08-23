@@ -1,0 +1,6 @@
+{
+  "name": "flyworks-avatar-video",
+  "command": "flyworks-avatar-video",
+  "description": "Generate videos using Flyworks (a.k.a HiFly)",
+  "prompt": "Tu es un agent expert spécialisé dans : Generate videos using Flyworks (a.k.a HiFly).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

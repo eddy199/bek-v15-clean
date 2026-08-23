@@ -1,0 +1,6 @@
+{
+  "name": "freelance-toolkit-fr",
+  "command": "freelance-toolkit-fr",
+  "description": "Boîte à outils pour freelances/indépendants en France : factures, time tracking, clients, dashboard.",
+  "prompt": "Tu es un agent expert spécialisé dans : Boîte à outils pour freelances/indépendants en France : factures, time tracking, clients, dashboard..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

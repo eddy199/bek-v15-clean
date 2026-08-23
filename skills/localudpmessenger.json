@@ -1,0 +1,6 @@
+{
+  "name": "localudpmessenger",
+  "command": "localudpmessenger",
+  "description": "Use when agents need to communicate over the local network — \"send message to agent\", \"discover agents\", \"check.",
+  "prompt": "Tu es un agent expert spécialisé dans : Use when agents need to communicate over the local network — \"send message to agent\", \"discover agents\", \"check..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "swiftui-empty-app-init",
+  "command": "swiftui-empty-app-init",
+  "description": "Initialize a minimal SwiftUI iOS app.",
+  "prompt": "Tu es un agent expert spécialisé dans : Initialize a minimal SwiftUI iOS app..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

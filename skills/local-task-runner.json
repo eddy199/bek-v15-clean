@@ -1,0 +1,6 @@
+{
+  "name": "local-task-runner",
+  "command": "local-task-runner",
+  "description": "This skill provides a mechanism to execute Node.js code snippets or full scripts locally on the host machine.",
+  "prompt": "Tu es un agent expert spécialisé dans : This skill provides a mechanism to execute Node.js code snippets or full scripts locally on the host machine..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

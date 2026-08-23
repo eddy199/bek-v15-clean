@@ -1,0 +1,6 @@
+{
+  "name": "workplace",
+  "command": "workplace",
+  "description": "Manage multiple workplaces (project directories) with multi-agent orchestration, isolated memory, and inter-agent.",
+  "prompt": "Tu es un agent expert spécialisé dans : Manage multiple workplaces (project directories) with multi-agent orchestration, isolated memory, and inter-agent..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

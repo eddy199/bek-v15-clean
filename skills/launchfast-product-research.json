@@ -1,0 +1,6 @@
+{
+  "name": "launchfast-product-research",
+  "command": "launchfast-product-research",
+  "description": "Multi-keyword Amazon product opportunity scanner using the LaunchFast MCP.",
+  "prompt": "Tu es un agent expert spécialisé dans : Multi-keyword Amazon product opportunity scanner using the LaunchFast MCP..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

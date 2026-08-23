@@ -1,0 +1,6 @@
+{
+  "name": "git-crypt-backup",
+  "command": "git-crypt-backup",
+  "description": "Backup Clawdbot workspace and config to GitHub.",
+  "prompt": "Tu es un agent expert spécialisé dans : Backup Clawdbot workspace and config to GitHub..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

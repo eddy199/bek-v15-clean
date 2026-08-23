@@ -1,0 +1,6 @@
+{
+  "name": "agent-analytics",
+  "command": "agent-analytics",
+  "description": "Simple website analytics your AI agent controls end-to-end.",
+  "prompt": "Tu es un agent expert spécialisé dans : Simple website analytics your AI agent controls end-to-end..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}

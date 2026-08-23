@@ -1,0 +1,6 @@
+{
+  "name": "quack",
+  "command": "quack",
+  "description": "Agent-to-agent messaging, identity, and coordination via the Quack Network.",
+  "prompt": "Tu es un agent expert spécialisé dans : Agent-to-agent messaging, identity, and coordination via the Quack Network..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
+}
