@@ -1,12 +1,9 @@
-import { ssoClient } from "@better-auth/sso/client";
-import { deviceAuthorizationClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
+import { ssoClient } from "@better-auth/sso/client";
 
 export const authClient = createAuthClient({
-	baseURL: typeof window === "undefined" ? undefined : window.location.origin,
-	plugins: [ssoClient(), deviceAuthorizationClient()],
+  baseURL: typeof window !== "undefined" ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "https://bek-v15-clean.vercel.app"),
+  plugins: [ssoClient()],
 });
 
-export const { getSession, signIn, signOut, useSession } = authClient;
-
-export type AuthClient = typeof authClient;
+export const { signIn, signOut, useSession } = authClient;
