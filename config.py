@@ -12,13 +12,7 @@ if sys.platform == 'win32':
 ROOT = Path(__file__).parent.resolve()
 ENV = {}
 
-env_file = ROOT / ".env.txt"
-if not env_file.exists():
-    env_file = ROOT / "env.txt"
-if not env_file.exists():
-    env_file = ROOT / ".env"
-ENV_FILE = env_file
-
+env_file = ROOT / "env.txt"
 if env_file.exists():
     with open(env_file, "r", encoding="utf-8-sig") as f:
         for line in f:
@@ -34,14 +28,13 @@ def _env(key, default=""):
 
 GROQ_API_KEY = _env("GROQ_API_KEY", "")
 NVIDIA_API_KEY = _env("NVIDIA_API_KEY", "")
+OPENROUTER_API_KEY = _env("OPENROUTER_API_KEY", "")
 PINECONE_API_KEY = _env("PINECONE_API_KEY", "")
 PINECONE_INDEX_NAME = _env("PINECONE_INDEX_NAME", "bek-memory")
 FLASK_SECRET_KEY = _env("FLASK_SECRET_KEY", "dev-secret-key-change-in-production")
 
 AGENT_NAME = "BEK-v15-HYBRID"
-AGENT_AUTHOR = "Bek Mohammed"
 
-# Seuls NVIDIA et Groq sont conservés
 MODELS = {
     "nvidia": {
         "base_url": "https://integrate.api.nvidia.com/v1",
@@ -52,39 +45,13 @@ MODELS = {
         "base_url": "https://api.groq.com/openai/v1",
         "model": "llama-3.3-70b-versatile",
         "key": GROQ_API_KEY
+    },
+    "openrouter": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "model": "0x-alpha/0x-alpha",
+        "key": OPENROUTER_API_KEY
     }
 }
-
-# ─── Chargement des modèles NVIDIA depuis env.txt ───
-NVIDIA_MODELS = []
-
-for key, val in ENV.items():
-    if (
-        key.startswith("meta/")
-        or key.startswith("nvidia/")
-        or key.startswith("openai/")
-        or key.startswith("mistralai/")
-        or key.startswith("google/")
-        or key.startswith("nv-")
-        or key in [
-            "paligemma",
-            "esm2-650m",
-            "esmfold",
-            "riva-translate-4b-instruct-v1",
-            "Background-Noise-Removal",
-            "Studio-Voice",
-            "llama-3.1-nemotron-safety-guard-8b-v3",
-            "solar-10.7b-instruct",
-            "Bevformer",
-            "Sparsedrive"
-        ]
-    ):
-        NVIDIA_MODELS.append({
-            "id": key,
-            "model": key,
-            "key": val or NVIDIA_API_KEY,
-            "base_url": "https://integrate.api.nvidia.com/v1"
-        })
 
 WS_DIR = ROOT / "AGENT_WORKSPACE_v15"
 SKILLS_DIR = ROOT / "skills"
