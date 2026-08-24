@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 # ─── CONFIGURATION DES ESPACES DE TRAVAIL & ENVIRONNEMENTS ───
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
-SKILLS_DIR = os.path.join(WORKSPACE_DIR, "skills")
+SKILLS_DIR = os.path.join(WORKSPACE_DIR, "awesome-openclaw-skills")
 FILES_DIR = os.path.join(WORKSPACE_DIR, "uploads")
 GENERATED_DIR = os.path.join(WORKSPACE_DIR, "generated")
 PLUGINS_DIR = os.path.join(WORKSPACE_DIR, "plugins")
@@ -83,7 +83,8 @@ def get_all_nvidia_models():
         "meta/llama-3.2-11b-vision-instruct",
         "nvidia/llama-3.3-nemotron-super-49b-v1",
         "nvidia/nemotron-3-super-120b-a12b",
-        "mistralai/mistral-nemotron"
+        "mistralai/mistral-nemotron",
+        "openai/gpt-oss-120b"
     ]
 
 # ─── AGENT CHERCHEUR (ROUTAGE DES SKILLS) ───
@@ -135,22 +136,89 @@ def get_config():
         {"id": "groq", "name": "Groq", "configured": bool(get_api_key("GROQ_API_KEY"))},
         {"id": "nvidia", "name": "NVIDIA NIM", "configured": bool(get_api_key("NVIDIA_API_KEY"))},
         {"id": "gemini", "name": "Google Gemini", "configured": bool(get_api_key("GEMINI_API_KEY"))},
-        {"id": "openrouter", "name": "OpenRouter", "configured": bool(get_api_key("OPENROUTER_API_KEY"))}
+        {"id": "openrouter", "name": "OpenRouter", "configured": bool(get_api_key("OPENROUTER_API_KEY"))},
+        {"id": "agentrouter", "name": "AgentRouter", "configured": bool(get_api_key("AGENTROUTER_API_KEY"))}
     ]
     
     models = {
         "groq": ["openai/gpt-oss-120b", "llama-3.3-70b-versatile"],
         "nvidia": get_all_nvidia_models(),
-        "gemini": ["gemini-3.6-flash", "gemini-3.5-flash"],
-        "openrouter": ["0x-alpha/0x-alpha", "anthropic/claude-3.5-sonnet"]
+        "gemini": [
+            "gemini-1.5-pro", 
+            "gemini-1.5-flash", 
+            "gemini-1.0-pro",
+            "gemini-3.5-flash",
+            "gemini-3.6-flash"
+        ],
+        "openrouter": ["0x-alpha/0x-alpha", "anthropic/claude-3.5-sonnet"],
+        "agentrouter": [
+            "gpt-5.6-sol",
+            "deepseek-v4f",
+            "travail-de-proximité-5",
+            "travail-de-près-4-8"
+        ]
     }
+
+    # --- COMPTAGE POUR LE MENU DE L'INTERFACE ---
+    dossier_principal = os.path.join(WORKSPACE_DIR, "awesome-openclaw-skills")
+    dossier_secours = os.path.join(WORKSPACE_DIR, "skills")
+    chemin_dossier = dossier_principal if os.path.exists(dossier_principal) else dossier_secours
     
+    skills_count = 0
+    if os.path.exists(chemin_dossier):
+        try:
+            skills_count = len([f for f in os.listdir(chemin_dossier) if f.endswith('.json') or f.endswith('.txt')])
+        except Exception:
+            pass
+            
     return jsonify({
         "providers": providers,
         "models": models,
         "context_loaded": bool(GLOBAL_SYSTEM_CONTEXT),
-        "radar_status": event_bus.get_radar_status()
+        "radar_status": event_bus.get_radar_status(),
+        "skills_count": skills_count
     })
+
+@app.route('/api/skills', methods=['GET'])
+@app.route('/skills', methods=['GET'])
+def get_skills():
+    dossier_principal = os.path.join(WORKSPACE_DIR, "awesome-openclaw-skills")
+    dossier_secours = os.path.join(WORKSPACE_DIR, "skills")
+    chemin_dossier = dossier_principal if os.path.exists(dossier_principal) else dossier_secours
+    
+    if not os.path.exists(chemin_dossier):
+        return jsonify({"status": "error", "count": 0, "total": 0, "skills": []}), 404
+        
+    try:
+        skills_list = []
+        fichiers = [f for f in os.listdir(chemin_dossier) if f.endswith('.json') or f.endswith('.txt')]
+        total = len(fichiers)
+        
+        for f in fichiers[:100]:
+            path = os.path.join(chemin_dossier, f)
+            if f.endswith('.json'):
+                try:
+                    with open(path, 'r', encoding='utf-8') as file:
+                        data = json.load(file)
+                        skills_list.append({
+                            "name": data.get("name", f),
+                            "description": data.get("description", "Compétence JSON"),
+                            "command": data.get("command", f.replace('.json', ''))
+                        })
+                except Exception:
+                    skills_list.append({"name": f, "description": "Fichier JSON", "command": f})
+            else:
+                skills_list.append({"name": f, "description": "Compétence Texte", "command": f.replace('.txt', '')})
+                
+        return jsonify({
+            "status": "success",
+            "count": total,
+            "total": total,
+            "total_skills": total,
+            "skills": skills_list
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e), "count": 0, "skills": []}), 500
 
 # ─── MOTEUR MULTI-AGENTS & EXÉCUTEUR ───
 @app.route('/api/chat', methods=['POST'])
@@ -183,6 +251,9 @@ def chat():
     elif provider == "openrouter":
         api_key = get_api_key("OPENROUTER_API_KEY")
         api_url = "https://openrouter.ai/api/v1/chat/completions"
+    elif provider == "agentrouter":
+        api_key = get_api_key("AGENTROUTER_API_KEY")
+        api_url = "https://agentrouter.org/v1/chat/completions"
     else:
         api_key = get_api_key("GROQ_API_KEY")
         api_url = "https://api.groq.com/openai/v1/chat/completions"
@@ -194,19 +265,25 @@ def chat():
 
         dynamic_context = ""
         if last_user_msg:
-            yield f"data: {json.dumps({'chunk': '> 🧠 **Agent Superviseur** : Analyse...\n'})}\n\n"
+            yield f"data: {json.dumps({'chunk': '> 🧠 **Agent Superviseur** : Analyse en cours...\n'})}\n\n"
             
+            # --- RÉVEIL VISUEL DE L'AGENT MÉMOIRE (PINECONE) ---
             if use_memory:
+                yield f"data: {json.dumps({'chunk': '> 🗄️ **Agent Mémoire** : Interrogation de Pinecone...\n'})}\n\n"
                 try:
                     memory_results = search_memory(last_user_msg)
                     if memory_results:
                         dynamic_context += f"CTX:{str(memory_results).strip()[:300]}\n"
+                        yield f"data: {json.dumps({'chunk': '> 🗄️ **Agent Mémoire** : Souvenirs pertinents injectés.\n'})}\n\n"
                 except Exception:
                     pass
 
+            # --- RÉVEIL VISUEL DE L'AGENT CHERCHEUR ---
+            yield f"data: {json.dumps({'chunk': '> 🔎 **Agent Chercheur** : Scan de vos compétences...\n'})}\n\n"
             relevant_skills = _agent_researcher_get_skills(last_user_msg)
             if relevant_skills:
                 dynamic_context += relevant_skills
+                yield f"data: {json.dumps({'chunk': '> 🔎 **Agent Chercheur** : Compétences trouvées et chargées !\n'})}\n\n"
 
         supervisor_prompt = (
             "Agent CRM Neon. Tu réponds UNIQUEMENT un JSON minifié si l'utilisateur demande une action CRM :\n"
@@ -243,7 +320,7 @@ def chat():
             # --- RÉFLEXE DE RAISONNEMENT ---
             def format_thought(match):
                 thought = match.group(1).strip()
-                return f"\n\n> 🧠 **Réflexion Profonde (0x Alpha)** :\n> *{thought.replace(chr(10), chr(10) + '> ')}*\n\n"
+                return f"\n\n> 🧠 **Réflexion Profonde ({model})** :\n> *{thought.replace(chr(10), chr(10) + '> ')}*\n\n"
             cleaned_text = re.sub(r'<think>([\s\S]*?)</think>', format_thought, llm_text).strip()
             # -------------------------------
 
