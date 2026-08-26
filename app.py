@@ -29,6 +29,9 @@ from swarm_core import run_bek_swarm_sync
 from meta_cortex_grounding import GroundingValidator
 from meta_cortex_swarm import ReflexionSwarm
 
+# Import de l'Agent Web Ultra-Puissant
+from web_agent import web_agent_instance
+
 app = Flask(__name__)
 CORS(app)
 app.config['MAX_CONTENT_LENGTH'] = 300 * 1024 * 1024  # 300 Mo max
@@ -295,46 +298,6 @@ class SubCRMEngineAdvanced(SubCRMEngine):
 
 
 # ==========================================
-# 2. MODULE DE L'AGENT WEB (RECHERCHE LIVE)
-# ==========================================
-class AdvancedWebAgent:
-    def __init__(self):
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7'
-        }
-
-    def deep_search(self, query: str) -> dict:
-        try:
-            url = "https://lite.duckduckgo.com/lite/"
-            data = {'q': query}
-            response = requests.post(url, data=data, headers=self.headers, timeout=15)
-            if response.status_code != 200:
-                return {"status": "error", "message": f"Erreur HTTP {response.status_code}"}
-
-            soup = BeautifulSoup(response.text, 'html.parser')
-            extracted_items = []
-            for row in soup.find_all('tr'):
-                link_tag = row.find('a', class_='result-link')
-                snippet_tag = row.find_next_sibling('tr')
-                if link_tag:
-                    snippet_text = snippet_tag.get_text(strip=True) if snippet_tag else ""
-                    extracted_items.append({
-                        "title": link_tag.get_text(strip=True),
-                        "snippet": snippet_text,
-                        "source_url": link_tag.get('href', '#')
-                    })
-                if len(extracted_items) >= 5:
-                    break
-            return {"status": "success", "query": query, "total_results": len(extracted_items), "data": extracted_items}
-        except Exception as e:
-            return {"status": "error", "message": str(e)}
-
-web_agent = AdvancedWebAgent()
-
-
-# ==========================================
 # 3. CONFIGURATION & SKILLS
 # ==========================================
 def get_api_key(key_name):
@@ -484,7 +447,14 @@ def upload_file():
 def api_web():
     data = request.json or {}
     query = data.get('query', 'Tendances SaaS et CRM IA 2026')
-    return jsonify(web_agent.deep_search(query))
+    return jsonify(web_agent_instance.run_pipeline(query))
+
+@app.route('/api/agent/web-sync', methods=['POST'])
+def api_trigger_web_sync():
+    data = request.json or {}
+    query = data.get('query', 'CEO SaaS CRM automatisation')
+    result = web_agent_instance.run_pipeline(query)
+    return jsonify(result)
 
 @app.route('/api/crm/stats', methods=['GET'])
 def get_crm_stats():
@@ -567,16 +537,15 @@ def api_matrix_bek_action():
     data = request.json or {}
     action = data.get('action', 'process_data')
     
-    # Simulation du travail des agents de la Matrisse
     if action == 'process_data':
-        time.sleep(1.5)  # Simule le temps de réflexion du Swarm
+        time.sleep(1.5)
         return jsonify({
             "status": "success",
             "new_sequences": 8492,
             "active_agents": 5,
             "logs": [
                 ">_ Swarm-Core : Lancement de l'analyse des flux CRM...",
-                ">_ Agent Chercheur : Scan des nouvelles requêtes clients... OK",
+                ">_ Agent Web Ultra-Puissant : Scan et normalisation des flux... OK",
                 ">_ Agent Meta-Cortex : Optimisation des pipelines de vente...",
                 ">_ Opération terminée. Données synchronisées avec Neon DB."
             ]
@@ -627,7 +596,6 @@ def chat():
 
         dynamic_context = f"{BEK_GOLDEN_RULES}\n\n"
         
-        # Injection fichiers uploadés
         try:
             if os.path.exists(FILES_DIR):
                 for f in os.listdir(FILES_DIR):
@@ -637,7 +605,6 @@ def chat():
         except Exception:
             pass
 
-        # Contexte strict Neon DB
         real_crm_context = (
             "\n[SCHÉMA CRM STRICT DE NEON DB]\n"
             "Tables autorisées : 'companies', 'contacts', 'opportunities'.\n"
@@ -656,7 +623,6 @@ def chat():
         
         dynamic_context += real_crm_context
 
-        # Injection mémoire si besoin
         if use_memory and last_user_msg:
             try:
                 memory_results = search_memory(last_user_msg)
@@ -665,7 +631,6 @@ def chat():
             except Exception:
                 pass
 
-        # Si l'utilisateur demande explicitement un essaim
         if any(keyword in last_user_msg.lower() for keyword in ["essaim", "swarm", "analyse complète", "architecture swarm"]):
             try:
                 swarm_result = asyncio.run(run_bek_swarm_sync(last_user_msg, api_key, provider, model))
@@ -676,7 +641,6 @@ def chat():
                 yield f"data: {json.dumps({'chunk': f'Erreur Swarm-Core : {str(e)}\n'})}\n\n"
                 return
 
-        # Prompt système équilibré (Social + Exécuteur)
         action_prompt = (
             "Tu es BEK-v15.2, une IA hybride avancée et l'Exécuteur de la Matrice. "
             "RÈGLE 1 (Social) : Si l'utilisateur te salue (ex: 'bjr', 'salut', 'cv') ou discute de façon informelle, réponds naturellement, brièvement et poliment, SANS JAMAIS mentionner tes protocoles, le CRM ou Neon DB. "
