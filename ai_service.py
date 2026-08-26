@@ -23,6 +23,10 @@ PROVIDER_NAMES = {
     "nvidia": "NVIDIA"
 }
 
+# ─── GROQ : modèles actifs et stables (août 2026) ───
+# Retirés : llama-3.3-70b-versatile (retiré par Groq le 16/08/2026),
+# deepseek-r1-distill-llama-70b (décommissionné),
+# compound-beta et compound-beta-mini (erreur 400 rôle message)
 GROQ_MODELS = [
     "openai/gpt-oss-120b",
     "openai/gpt-oss-20b",
@@ -30,10 +34,24 @@ GROQ_MODELS = [
     "allam-2-7b"
 ]
 
+# ─── NVIDIA NIM : modèles testés et fonctionnels (août 2026) ───
+# Retirés : openai/gpt-oss-* (403 Forbidden), mistralai/* (410 Gone / 400),
+# embeddings (404), et tous les modèles spécialisés audio/vision/bio/safety (404)
 NVIDIA_ACTIVE_MODELS = [
-    "nvidia/nemotron-3-super-120b-a12b",
+    # Meta Llama
+    "meta/llama-3.3-70b-instruct",
+    "meta/llama-3.1-70b-instruct",
+    "meta/llama-3.1-8b-instruct",
     "meta/llama-3.2-11b-vision-instruct",
-    "nvidia/nvidia-nemotron-nano-9b-v2"
+    "meta/llama-3.2-90b-vision-instruct",
+    # NVIDIA Nemotron
+    "nvidia/llama-3.3-nemotron-super-49b-v1",
+    "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+    "nvidia/nemotron-3-super-120b-a12b",
+    "nvidia/nemotron-nano-12b-v2-vl",
+    "nvidia/nvidia-nemotron-nano-9b-v2",
+    # Google
+    "google/gemma-4-31b-it",
 ]
 
 def configured_providers():

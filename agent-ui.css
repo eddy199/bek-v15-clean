@@ -182,7 +182,8 @@ input, textarea, select { font: inherit; color: inherit; }
 .chip:hover { border-color: var(--accent); color: var(--accent-soft); }
 
 .message { display: flex; flex-direction: column; max-width: 100%; }
-.message.user { align-items: flex-end; }
+.message.user { align-items: flex-end; cursor: pointer; }
+.message.user .msg-bubble:hover { filter: brightness(1.1); }
 .message.assistant { align-items: stretch; }
 .msg-meta {
   display: flex; align-items: center; gap: 8px;
@@ -225,19 +226,65 @@ input, textarea, select { font: inherit; color: inherit; }
   background: var(--bg-soft); padding: 2px 6px; border-radius: 4px;
   font-family: 'SF Mono', 'JetBrains Mono', monospace; font-size: 12.5px; color: #e8a6a6;
 }
-.msg-bubble pre {
-  background: #0a0d12; border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
-  padding: 12px 14px; overflow-x: auto; margin: 10px 0; position: relative;
+
+/* Styles pour les blocs de code avec en-tête d'action (Télécharger / Copier type Gemini) */
+.code-container {
+  position: relative;
+  margin: 12px 0;
+  border-radius: var(--radius-sm);
+  background: #0a0d12;
+  border: 1px solid var(--border-strong);
+  overflow: hidden;
 }
-.msg-bubble pre code { background: none; padding: 0; color: var(--text); font-size: 12.5px; line-height: 1.55; display: block; }
-.code-head {
-  position: absolute; top: 0; right: 0;
-  display: flex; align-items: center; gap: 6px;
-  padding: 4px 8px; background: var(--bg-card);
-  border-bottom-left-radius: 8px; font-size: 10px; color: var(--text-faint);
+
+.code-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #14181d;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-faint);
 }
-.code-head .copy-code { color: var(--text-dim); padding: 2px 6px; border-radius: 4px; font-size: 10px; }
-.code-head .copy-code:hover { background: var(--bg-hover); color: var(--accent-soft); }
+
+.code-action-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: 0.15s;
+}
+
+.code-action-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-hi);
+}
+
+.code-container pre {
+  margin: 0;
+  padding: 12px 14px;
+  overflow-x: auto;
+  background: none;
+  border: none;
+}
+
+.code-container code {
+  background: none;
+  padding: 0;
+  color: var(--text);
+  font-size: 12.5px;
+  line-height: 1.55;
+  display: block;
+  font-family: 'SF Mono', 'JetBrains Mono', monospace;
+}
+
 .msg-bubble table { border-collapse: collapse; margin: 10px 0; width: 100%; font-size: 12.5px; }
 .msg-bubble th, .msg-bubble td { border: 1px solid var(--border-strong); padding: 6px 10px; text-align: left; }
 .msg-bubble th { background: var(--bg-soft); color: var(--text-hi); }

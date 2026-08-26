@@ -43,12 +43,12 @@ MODELS = {
     },
     "groq": {
         "base_url": "https://api.groq.com/openai/v1",
-        "model": "llama-3.3-70b-versatile",
+        "model": "openai/gpt-oss-120b",
         "key": GROQ_API_KEY
     },
     "openrouter": {
         "base_url": "https://openrouter.ai/api/v1",
-        "model": "0x-alpha/0x-alpha",
+        "model": "openrouter/auto",
         "key": OPENROUTER_API_KEY
     }
 }

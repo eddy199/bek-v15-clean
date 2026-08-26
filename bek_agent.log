@@ -1941,3 +1941,1333 @@ Cette architecture représente l'aboutissement absolu d'un système multi-agents
 2026-08-22 21:45:56,451 - INFO - Recherche Pinecone pour : cc
 2026-08-22 21:50:55,843 - INFO - Recherche Pinecone pour : bsr
 2026-08-22 21:51:06,794 - INFO - Recherche Pinecone pour : bsr
+2026-08-25 14:27:12,074 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:27:21,494 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:27:33,377 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:27:40,640 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:28:20,943 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:28:29,354 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:28:39,327 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:29:16,723 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:29:26,394 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:30:04,175 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:30:16,528 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:30:31,876 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:30:39,504 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:33:52,774 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:34:11,519 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:34:30,968 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:34:37,873 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:34:51,859 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:36:02,287 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:36:10,120 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:36:19,595 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:43:00,690 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:43:25,276 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:49:54,115 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:49:55,052 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:50:00,601 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:50:01,056 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:50:26,017 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:51:32,941 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:59:37,199 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:59:38,026 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 14:59:42,245 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:01:12,406 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:02:43,166 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:03:05,663 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:03:06,921 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:03:23,027 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:03:24,227 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:05:59,898 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:06:04,080 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:06:07,521 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:06:15,633 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:06:20,252 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:06:38,286 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:06:44,732 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:07:20,517 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:10:47,995 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:12:13,533 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:12:23,402 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:12:35,170 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:20:24,892 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:20:27,734 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:21:19,187 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:21:29,036 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:21:39,781 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:21:48,526 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:21:56,355 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:22:48,142 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:23:15,744 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:24:27,859 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:26:09,137 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:26:28,279 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:27:37,847 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:31:15,489 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:31:30,605 - WARNING - Package 'pinecone-client' non installé.
+2026-08-25 15:35:55,403 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-25 15:35:58,140 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-25 15:36:37,891 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-25 15:36:45,179 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-25 15:58:17,151 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-25 15:58:22,088 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-25 15:58:38,024 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-25 16:00:11,868 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-25 16:17:18,562 - INFO - Recherche Pinecone pour : bjr
+2026-08-25 16:17:18,899 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:18:52,667 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:18:52,935 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:19:02,482 - INFO - Recherche Pinecone pour : ca va
+2026-08-25 16:19:02,725 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:19:06,616 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:19:06,848 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:19:36,173 - INFO - Recherche Pinecone pour : tu peux gener  un code python de 10 ligne telechargable ?
+2026-08-25 16:19:36,454 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:19:51,717 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:19:51,961 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:27:16,176 - INFO - Recherche Pinecone pour : bjr
+2026-08-25 16:27:16,450 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:27:20,154 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:27:20,385 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:27:34,469 - INFO - Recherche Pinecone pour : genere moi un fichier de des ligne en python telechargable
+2026-08-25 16:27:34,703 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:27:44,013 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:27:44,306 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:28:49,350 - INFO - Recherche Pinecone pour : desoler jai pas demander sa jai demander seulement que tu puisse gener un fichier en manguage python qui porte dix lligne de code
+2026-08-25 16:28:49,587 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:28:56,320 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:28:56,568 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:34:59,130 - INFO - Recherche Pinecone pour : bsr
+2026-08-25 16:34:59,421 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:35:03,013 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:35:03,309 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:35:24,413 - INFO - Recherche Pinecone pour : genere moi un code de ligne en python pour le telecharger
+2026-08-25 16:35:24,643 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:35:28,922 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:35:29,149 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:35:41,808 - INFO - Recherche Pinecone pour : un code de 10 ligne
+2026-08-25 16:35:42,058 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:35:58,893 - INFO - Recherche Pinecone pour : alors
+2026-08-25 16:35:59,128 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:36:03,944 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:36:04,171 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:39:49,631 - INFO - Recherche Pinecone pour : bjr
+2026-08-25 16:39:50,134 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:39:53,949 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:39:54,179 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:40:08,076 - INFO - Recherche Pinecone pour : gener moi u fichier qui porte un texte de trois ligne
+2026-08-25 16:40:08,352 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:49:24,104 - INFO - Recherche Pinecone pour : genere moi un fichier txt de quatre lignes
+2026-08-25 16:49:24,359 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:50:58,710 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:50:58,959 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:55:06,624 - INFO - Recherche Pinecone pour : es ce que cest un text de quatre ligne ? # generate_four_lines.py
+# Ce script crée un fichier texte contenant exactement quatre lignes.
+
+def main():
+    lines = [
+        "Ceci est la première ligne.",
+        "Voici la deuxième ligne.",
+        "La troisième ligne est ici.",
+        "Enfin, la quatrième ligne."
+    ]
+
+    with open("four_lines.txt", "w", encoding="utf-8") as f:
+        for line in lines:
+            f.write(line + "\n")
+
+    print("Le fichier 'four_lines.txt' a été créé avec succès.")
+
+if __name__ == "__main__":
+    main()
+2026-08-25 16:55:06,859 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:55:16,986 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:55:17,238 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:57:30,429 - INFO - Recherche Pinecone pour : bjr
+2026-08-25 16:57:30,735 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:57:48,330 - INFO - Recherche Pinecone pour : ca va tu va bien
+2026-08-25 16:57:48,574 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:57:52,438 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:57:52,684 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:58:11,891 - INFO - Recherche Pinecone pour : super merci je teste les modification que je rapporte sur mon agent projet workspacekimi
+2026-08-25 16:58:12,124 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:58:16,656 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:58:16,899 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:58:19,487 - INFO - Recherche Pinecone pour : /skills
+2026-08-25 16:58:19,722 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:58:23,954 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:58:24,204 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:58:35,537 - INFO - Recherche Pinecone pour : /skills de code ?
+2026-08-25 16:58:35,778 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:59:22,450 - INFO - Recherche Pinecone pour : Tu es un agent expert spécialisé dans : Agents can sign plugins, rotate credentials without losing identity, and publicly attest to behavior..
+Applique tes compétences de manière rigoureuse à la demande suivante :
+{input}...
+2026-08-25 16:59:22,702 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 16:59:27,028 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 16:59:27,260 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 17:00:04,333 - INFO - Recherche Pinecone pour : jutilise souvent du python javascript mais meme autre
+2026-08-25 17:00:04,558 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 17:05:38,000 - INFO - Recherche Pinecone pour : /skills   1password
+1password
+Set up and use 1Password CLI (op).
+
+Tu es un agent expert spécialisé dans : Set up and use 1Password CLI (op)..
+Applique tes compétences de manière rigoureuse à la demande suivante :
+{input}...
+2026-08-25 17:05:38,271 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 17:06:04,595 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 17:06:04,912 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 17:07:02,121 - INFO - Recherche Pinecone pour : il sert a quoi exactement precisement se scritp
+2026-08-25 17:07:02,353 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 17:07:11,220 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 17:07:11,462 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 17:08:00,267 - INFO - Recherche Pinecone pour : alors je peux itegerer se scrpt dans mon agent ia
+2026-08-25 17:08:00,498 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-25 17:08:53,060 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-25 17:08:53,299 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-26 08:28:05,395 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-26 08:28:09,054 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-26 08:29:02,537 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-26 08:29:12,968 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-08-26 08:36:57,717 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 08:36:57,965 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-26 08:37:01,210 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:37:01,463 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-26 08:38:34,133 - INFO - Recherche Pinecone pour : « Écris une fonction Python pour synchroniser automatiquement les leads Softr dans notre base PostgreSQL. »
+2026-08-26 08:38:34,388 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-26 08:38:42,677 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:38:42,924 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/nv-embedqa-e5-v5' has reached its end of life on 2026-08-25T09:00:00Z and is no longer available."}
+
+2026-08-26 08:42:29,842 - INFO - Recherche Pinecone pour : « Rappelle-moi nos objectifs pour l'architecture du CRM et propose un script de test pour l'endpoint Swarm. »
+2026-08-26 08:42:30,570 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/llama-3.2-nv-embedqa-1b-v2' has reached its end of life on 2026-05-18T00:00:00Z and is no longer available."}
+
+2026-08-26 08:42:40,786 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:42:41,434 - ERROR - Erreur API Embedding: {"type":"about:blank","title":"Gone","status":410,"detail":"The model 'nvidia/llama-3.2-nv-embedqa-1b-v2' has reached its end of life on 2026-05-18T00:00:00Z and is no longer available."}
+
+2026-08-26 08:46:27,802 - INFO - Recherche Pinecone pour : « Quelles sont les tables principales nécessaires pour notre CRM dans Neon PostgreSQL ? »
+2026-08-26 08:46:28,457 - ERROR - Erreur API Embedding (404): {"status":404,"title":"Not Found","detail":"Function '6caf65cf-1c3a-4823-89a5-21b821640d99': Not found for account 'ciFT5jwg4hKpAvMwdZ-y-0DPm0DNnupnh3pclkT6noY'"}
+2026-08-26 08:46:38,874 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:46:39,569 - ERROR - Erreur API Embedding (404): {"status":404,"title":"Not Found","detail":"Function '6caf65cf-1c3a-4823-89a5-21b821640d99': Not found for account 'ciFT5jwg4hKpAvMwdZ-y-0DPm0DNnupnh3pclkT6noY'"}
+2026-08-26 08:48:58,109 - INFO - Recherche Pinecone pour : quelle sont t les tables principales nécessaires pour notre CRM dans Neon PostgreSQL ? »
+2026-08-26 08:49:19,520 - INFO - Recherche Pinecone pour : alors
+2026-08-26 08:49:43,571 - INFO - Recherche Pinecone pour : tquelles sont les tables principales nécessaires pour notre CRM dans Neon PostgreSQL ? »
+2026-08-26 08:50:12,868 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:50:13,873 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 08:50:30,191 - INFO - Recherche Pinecone pour : tu as mon accord go
+2026-08-26 08:51:40,001 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:51:40,947 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 08:51:57,548 - INFO - Recherche Pinecone pour : tu as mon accord
+2026-08-26 08:52:38,998 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:52:39,935 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 08:53:04,404 - INFO - Recherche Pinecone pour : tu as mon accord vasy
+2026-08-26 08:53:53,951 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:53:54,857 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 08:54:11,554 - INFO - Recherche Pinecone pour : tu as mon ccord vasy
+2026-08-26 08:54:58,662 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:54:59,556 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 08:55:25,313 - INFO - Recherche Pinecone pour : vasy go
+2026-08-26 08:56:09,994 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:56:10,871 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 08:56:49,892 - INFO - Recherche Pinecone pour : go vay
+2026-08-26 08:58:48,357 - INFO - Recherche Pinecone pour : vasy tu as mon accord
+2026-08-26 08:59:25,236 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 08:59:26,166 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 09:00:13,351 - INFO - Recherche Pinecone pour : comment connecter a ce tableau ?
+2026-08-26 09:03:32,309 - INFO - Recherche Pinecone pour : "Très bonne initiative pour les KPI. Au lieu d'utiliser Matplotlib avec plt.show(), crée une nouvelle route /api/crm/stats dans Flask qui interroge directement la base Neon PostgreSQL via get_db_connection(), et ajoute une section dynamique avec Chart.js dans notre interface web (index.html / agent-ui.js) pour afficher ces graphiques en temps réel."
+2026-08-26 09:04:57,026 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 09:04:57,991 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 09:23:03,927 - INFO - Recherche Pinecone pour : « Crée une nouvelle entreprise nommée "Atlas Invest", ajoute un contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) rattaché à cette société, et ouvre une opportunité de 75 000 € à l'étape "Négociation". »
+2026-08-26 09:23:36,677 - INFO - Recherche Pinecone pour : « Crée une nouvelle entreprise nommée "Atlas Invest", ajoute un contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) rattaché à cette société, et ouvre une opportunité de 75 000 € à l'étape "Négociation". »
+2026-08-26 09:23:54,788 - INFO - Recherche Pinecone pour : « Crée une nouvelle entreprise nommée "Atlas Invest", ajoute un contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) rattaché à cette société, et ouvre une opportunité de 75 000 € à l'étape "Négociation". »
+2026-08-26 09:24:01,334 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 09:24:02,218 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 09:24:39,630 - INFO - Recherche Pinecone pour : « Crée une nouvelle entreprise nommée "Atlas Invest", ajoute un contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) rattaché à cette société, et ouvre une opportunité de 75 000 € à l'étape "Négociation". »
+2026-08-26 09:24:48,846 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 09:24:49,793 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 09:25:16,505 - INFO - Recherche Pinecone pour : « Crée une nouvelle entreprise nommée "Atlas Invest", ajoute un contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) rattaché à cette société, et ouvre une opportunité de 75 000 € à l'étape "Négociation". »
+2026-08-26 09:25:44,963 - INFO - Recherche Pinecone pour : « Crée une nouvelle entreprise nommée "Atlas Invest", ajoute un contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) rattaché à cette société, et ouvre une opportunité de 75 000 € à l'étape "Négociation". »
+2026-08-26 09:25:58,680 - INFO - Recherche Pinecone pour : « Crée une nouvelle entreprise nommée "Atlas Invest", ajoute un contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) rattaché à cette société, et ouvre une opportunité de 75 000 € à l'étape "Négociation". »
+2026-08-26 09:26:19,349 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 09:26:20,229 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 09:26:29,501 - INFO - Recherche Pinecone pour : « Crée une nouvelle entreprise nommée "Atlas Invest", ajoute un contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) rattaché à cette société, et ouvre une opportunité de 75 000 € à l'étape "Négociation". »
+2026-08-26 09:28:24,839 - INFO - Recherche Pinecone pour : « Ajoute sous le graphique Chart.js un tableau HTML listant les 5 dernières opportunités avec leur titre, société, montant et statut, synchronisé avec la route /api/crm/stats. »
+2026-08-26 09:31:01,447 - INFO - Recherche Pinecone pour : « Ajoute sous le graphique Chart.js un tableau HTML listant les 5 dernières opportunités avec leur titre, société, montant et statut, synchronisé avec la route /api/crm/stats. »
+2026-08-26 09:31:17,555 - INFO - Recherche Pinecone pour : « Ajoute sous le graphique Chart.js un tableau HTML listant les 5 dernières opportunités avec leur titre, société, montant et statut, synchronisé avec la route /api/crm/stats. »
+2026-08-26 09:32:13,357 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 09:32:14,281 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 09:51:35,212 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 09:52:03,544 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 09:52:19,616 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 09:52:20,518 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 09:52:29,246 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 09:52:37,987 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 09:52:38,933 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 09:52:47,704 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 09:53:00,177 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 09:53:25,282 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 09:53:37,760 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 09:53:38,638 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 09:53:47,279 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 09:54:10,728 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 09:54:11,635 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:03:48,415 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 10:03:55,794 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:03:56,728 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:04:13,580 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 10:04:20,166 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:04:21,120 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:04:40,021 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 10:04:52,821 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 10:05:16,565 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 10:05:24,475 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:05:25,386 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:05:34,908 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 10:05:47,885 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:05:48,801 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:05:52,210 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 10:06:05,224 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:06:06,162 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:06:15,645 - INFO - Recherche Pinecone pour : bjr tu ùe recois
+2026-08-26 10:06:22,626 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:06:23,562 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:09:45,921 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 10:09:53,084 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:09:53,962 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:09:59,005 - INFO - Recherche Pinecone pour : « Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €. »
+2026-08-26 10:10:08,004 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:10:08,907 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:11:14,796 - INFO - Recherche Pinecone pour : 
+[Fichiers/Images joints : capture_1787735473336.png]
+2026-08-26 10:11:56,475 - INFO - Recherche Pinecone pour : Créer l’entreprise « Atlas Invest », y associer le contact Samir Touati (samir@atlas.dz, 0555123456) et ouvrir une opportunité de 75 000 €.
+2026-08-26 10:12:28,259 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:12:29,232 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:15:58,451 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 10:16:03,759 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:16:04,668 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:16:06,323 - INFO - Recherche Pinecone pour : Créer l’entreprise « Atlas Invest », y associer le contact Samir Touati (samir@atlas.dz, 0555123456) et ouvrir une opportunité de 75 000 €.
+2026-08-26 10:16:19,938 - INFO - Recherche Pinecone pour : Créer l’entreprise « Atlas Invest », y associer le contact Samir Touati (samir@atlas.dz, 0555123456) et ouvrir une opportunité de 75 000 €.
+2026-08-26 10:16:26,296 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:16:27,197 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:19:20,310 - INFO - Recherche Pinecone pour : Nettoie la base de données et recrée le bon schéma. Exécute EXACTEMENT cette commande :
+[EXECUTE_SQL:
+DROP TABLE IF EXISTS opportunities, contacts, companies CASCADE;
+CREATE TABLE companies (id SERIAL PRIMARY KEY, name TEXT NOT NULL, created_at TIMESTAMP DEFAULT NOW());
+CREATE TABLE contacts (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT, phone TEXT, company_id INT REFERENCES companies(id) ON DELETE CASCADE, created_at TIMESTAMP DEFAULT NOW());
+CREATE TABLE opportunities (id SERIAL PRIMARY KEY, name TEXT NOT NULL, amount NUMERIC(15,2) DEFAULT 0, currency TEXT DEFAULT 'EUR', stage TEXT DEFAULT 'Lead', company_id INT REFERENCES companies(id) ON DELETE CASCADE, created_at TIMESTAMP DEFAULT NOW());
+]
+2026-08-26 10:19:27,169 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:19:28,112 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:20:23,376 - INFO - Recherche Pinecone pour : Crée l'entreprise "Atlas Invest", ajoute le contact "Samir Touati" (email: samir@atlas.dz, tél: 0555123456) et une opportunité de 75 000 €.
+2026-08-26 10:20:29,787 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:20:30,725 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:21:49,393 - INFO - Recherche Pinecone pour : Passe l'opportunité d'Atlas Invest à l'étape "Gagné" et ajoute un nouveau contact "Nadia" à cette même entreprise. »
+2026-08-26 10:21:56,137 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:21:57,053 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:22:48,346 - INFO - Recherche Pinecone pour : « Cherche sur le web 2 agences web en Algérie, crée les entreprises dans la base de données et ajoute pour chacune une opportunité de 10 000 €. »
+2026-08-26 10:23:00,961 - INFO - Recherche Pinecone pour : « Cherche sur le web 2 agences web en Algérie, crée les entreprises dans la base de données et ajoute pour chacune une opportunité de 10 000 €. »
+2026-08-26 10:23:14,256 - INFO - Recherche Pinecone pour : « Cherche sur le web 2 agences web en Algérie, crée les entreprises dans la base de données et ajoute pour chacune une opportunité de 10 000 €. »
+2026-08-26 10:23:23,850 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:23:24,828 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:23:47,545 - INFO - Recherche Pinecone pour : « Supprime le contact Samir Touati. » (grâce au ON DELETE CASCADE configuré dans votre schéma, vous verrez comment la base se comporte).
+2026-08-26 10:24:01,152 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:24:02,152 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:24:18,033 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:24:52,465 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:25:05,454 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:25:21,238 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:27:39,127 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:27:50,800 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:27:51,712 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:28:14,349 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:30:20,370 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:30:42,095 - INFO - Recherche Pinecone pour : pourquoi tu repond pas a mes question
+2026-08-26 10:30:54,180 - INFO - Recherche Pinecone pour : tu me recois
+2026-08-26 10:31:31,335 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:31:43,112 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:32:29,790 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:32:30,782 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:32:51,602 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:33:11,456 - INFO - Recherche Pinecone pour : tu me recois
+2026-08-26 10:33:24,362 - INFO - Recherche Pinecone pour : « Quel est le montant moyen de mes opportunités actuelles ? »
+2026-08-26 10:37:52,686 - INFO - Recherche Pinecone pour : Quel est le montant moyen de mes opportunités actuelles ?
+2026-08-26 10:37:59,312 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:38:00,286 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:54:07,557 - INFO - Recherche Pinecone pour : « Analyse ma base de données, dis-moi combien j'ai d'opportunités en euros et quel est leur montant total. »
+2026-08-26 10:54:14,369 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:54:15,295 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:54:23,788 - INFO - Recherche Pinecone pour : « Analyse ma base de données, dis-moi combien j'ai d'opportunités en euros et quel est leur montant total. »
+2026-08-26 10:55:08,542 - INFO - Recherche Pinecone pour : 
+[Fichiers/Images joints : capture_1787738088770.png]
+2026-08-26 10:55:29,440 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:55:30,346 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 10:55:53,819 - INFO - Recherche Pinecone pour : Analyse ma base de données, dis-moi combien j'ai d'opportunités en euros et quel est leur montant total. »
+[Fichiers/Images joints : capture_1787738121730.png]
+2026-08-26 10:56:04,566 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 10:56:05,478 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 11:00:33,054 - INFO - Recherche Pinecone pour : « Analyse ma base de données. Si je décide de supprimer l'entreprise "Atlas Invest", que va-t-il se passer exactement avec le contact Samir Touati et l'opportunité de 75 000 € ? Explique-moi les conséquences techniques avant de proposer une action. »
+2026-08-26 11:00:41,812 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 11:00:42,728 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 11:01:03,378 - INFO - Recherche Pinecone pour : « Si j'ajoute 3 nouvelles opportunités de 10 000 €, 25 000 € et 40 000 €, et que je passe la plus grosse en "Gagné" tout en supprimant la plus petite, quel sera le montant total de mon pipeline actif restant ? Détaille ton calcul. »
+2026-08-26 11:01:13,025 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 11:01:13,931 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 11:01:33,077 - INFO - Recherche Pinecone pour : « Si je voulais ajouter un système de facturation à ce CRM, quelles nouvelles tables SQL devrais-je créer et comment les relier aux tables 'companies' et 'opportunities' existantes ? »
+2026-08-26 11:02:02,102 - INFO - Recherche Pinecone pour : « Si je voulais ajouter un système de facturation à ce CRM, quelles nouvelles tables SQL devrais-je créer et comment les relier aux tables 'companies' et 'opportunities' existantes ? »
+2026-08-26 11:02:13,259 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 11:02:14,237 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 11:06:13,772 - INFO - Recherche Pinecone pour : « Fais une analyse complète de mon CRM. Trouve l'entreprise qui possède l'opportunité avec le montant le plus élevé. Une fois trouvée, ajoute-lui automatiquement un nouveau contact nommé "Karim VIP" (email: karim.vip@boss.dz) et passe l'étape de cette opportunité précise à "Gagné". Détaille bien ta réflexion. »
+2026-08-26 11:06:22,862 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 11:06:23,765 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 11:23:06,016 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me créer un rapport d'analyse stratégique sur la croissance de mon CRM et sauvegarde le livrable. »
+2026-08-26 11:23:13,378 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 11:23:14,345 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 11:32:59,169 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:33:25,179 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:33:49,078 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:35:38,900 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:39:31,841 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:39:57,181 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:40:26,731 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:40:48,272 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:41:03,294 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:41:16,621 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:41:29,793 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:41:41,736 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:41:55,569 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:42:08,987 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:42:32,549 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:42:46,279 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:43:37,705 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:43:50,090 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:44:02,483 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:44:14,464 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:44:26,986 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:51:03,335 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:51:16,896 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:51:41,105 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:53:42,105 - INFO - Recherche Pinecone pour : « Utilise l'essaim d'agents pour me concevoir une stratégie complète d'optimisation de mon CRM et analyser l'état actuel de mes opportunités. »
+2026-08-26 11:59:49,341 - INFO - Recherche Pinecone pour : tu peux analyser larchitecture de mon agent bek v15 hybrid ?
+2026-08-26 14:30:10,380 - INFO - Recherche Pinecone pour : Je vais rechercher les dernières avancées en architectures d'agents de réflexion pour te proposer quelque chose de vraiment à la pointe.
+Je vais te proposer une architecture d'agent de réflexion ultra-puissante pour ton BEK v15 Hybrid, directement calée sur les patterns de pointe de 2026. Elle s'intègre nativement à tes agents existants et à ton infra Neon.
+
+---
+
+🧠 Architecture BEK v15 — Agent de Réflexion « Meta-Cortex »
+
+Vue d'ensemble
+
+Ton agent de réflexion n'est pas un simple "relecteur". C'est un moteur métacognitif qui opère à 3 niveaux de profondeur, avec grounding externe sur ta base Neon et apprentissage cross-session via ton agent mémoire.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    BEK v15 HYBRID — COUCHE REFLEXION            │
+│                         « META-CORTEX »                         │
+├─────────────────────────────────────────────────────────────────┤
+│  NIVEAU 3 │ Réflexion Stratégique (plan, stratégie, adaptation) │
+│  NIVEAU 2 │ Réflexion Tactique  (critique, validation, refine) │
+│  NIVEAU 1 │ Réflexion Opérationnelle (self-check, cohérence)   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+🏗️ Les 5 Composants du Meta-Cortex
+
+Composant	Rôle	Intégration BEK v15	
+1. Reflect-Engine	Génère la réflexion structurée (verdict + issues + suggestions)	Nouveau — cœur du système	
+2. Grounding-Validator	Requête Neon pour vérifier les faits cités	Se branche sur ton API Neon + BDD	
+3. Episodic-Memory-Reflex	Stocke les leçons apprises de chaque réflexion	S'étend de ton Agent Mémoire existant	
+4. Meta-Supervisor	Décide si la réflexion est suffisante ou si on boucle	Intégré à ton Agent Superviseur	
+5. Reflexion-Swarm	Parallélise plusieurs angles de critique	S'appuie sur ton Agent Swarms	
+
+---
+
+🔄 Le Pipeline Generate → Critique → Refine (Loop)
+
+Voici le flux exact, avec les points d'ancrage sur ton infra :
+
+```
+┌─────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   AGENT     │────▶│  REFLECT-ENGINE │────▶│ GROUNDING-      │
+│  EXÉCUTEUR  │     │  (Critique LLM) │     │ VALIDATOR       │
+│  (Output)   │     │                 │     │ (Requête Neon)  │
+└─────────────┘     └─────────────────┘     └─────────────────┘
+                            │                        │
+                            ▼                        ▼
+                    ┌─────────────────┐     ┌─────────────────┐
+                    │  VERDICT NODE   │◄────│  FACT-CHECK DB  │
+                    │  GOOD / FIX     │     │  (Neon SQL)     │
+                    └─────────────────┘     └─────────────────┘
+                            │
+              ┌─────────────┴─────────────┐
+              ▼                           ▼
+       ┌─────────────┐              ┌─────────────┐
+       │   OUTPUT    │              │   REFINE    │
+       │   FINAL     │              │   ENGINE    │
+       └─────────────┘              └──────┬──────┘
+                                           │
+                                    ┌──────┴──────┐
+                                    ▼             ▼
+                              ┌─────────┐   ┌─────────┐
+                              │  LOOP   │──▶│  MAX 3  │
+                              │  BACK   │   │  ITER   │
+                              └─────────┘   └─────────┘
+```
+
+---
+
+🔗 Intégration avec tes Agents Existants
+
+1. Agent Superviseur ↔ Meta-Supervisor
+Ton superviseur existant garde la main haute. Le Meta-Supervisor est un sous-module critique qui :
+- Reçoit le draft de l'exécuteur
+- Lance la réflexion si le score de confiance < 0.85
+- Décide du nombre d'itérations (1 à 3 max)
+- Escalade à un humain si le verdict reste FIX après 3 passes
+
+2. Agent Mémoire ↔ Episodic-Memory-Reflex
+Extension de ta mémoire existante avec une table dédiée `reflection_memory` sur Neon :
+
+```sql
+CREATE TABLE reflection_memory (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    session_id TEXT,
+    task_type TEXT,           -- 'code', 'analyse', 'decision'...
+    error_pattern TEXT,       -- le pattern d'erreur détecté
+    lesson_learned TEXT,      -- la leçon verbalisée
+    context_hash TEXT,        -- hash du contexte pour retrieval
+    success_rate FLOAT,       -- 0.0 à 1.0
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+L'agent mémoire récupère ces leçons avant chaque nouvelle génération pour éviter de répéter les erreurs.
+
+3. Agent Chercheur ↔ Grounding-Validator
+Quand le Reflect-Engine critique un draft, il émet des claims vérifiables. Le Grounding-Validator :
+- Requête ta base Neon pour vérifier les chiffres/faits
+- Appelle l'API externe si besoin (via ton API hébergée)
+- Retourne un `fact_check_report` structuré
+
+4. Agent Swarms ↔ Reflexion-Swarm
+Pour les tâches critiques, le Reflexion-Swarm lance 3 critiques en parallèle :
+- Critique Factual : vérifie les données (Grounding-Validator)
+- Critique Logique : vérifie la cohérence du raisonnement
+- Critique Contextuelle : vérifie l'adéquation avec le CRM/métier
+
+Les 3 verdicts sont agrégés par vote majoritaire.
+
+5. CRM Intégré
+Le Reflect-Engine a accès en lecture au CRM pour :
+- Vérifier que les recommandations client sont cohérentes avec l'historique
+- Croiser les données avant de valider un output
+
+---
+
+📊 Schéma de la Base Neon pour la Réflexion
+
+```sql
+-- Table principale des sessions de réflexion
+CREATE TABLE reflection_sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    session_id TEXT NOT NULL,
+    original_query TEXT,
+    draft_output TEXT,
+    critique_output TEXT,
+    verdict TEXT CHECK (verdict IN ('GOOD', 'FIX', 'ESCALATE')),
+    iteration_count INT DEFAULT 0,
+    final_output TEXT,
+    latency_ms INT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Table des claims vérifiables
+CREATE TABLE fact_checks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    reflection_id UUID REFERENCES reflection_sessions(id),
+    claim TEXT,
+    verified BOOLEAN,
+    source_query TEXT,
+    expected_value TEXT,
+    actual_value TEXT,
+    mismatch_severity TEXT CHECK (mismatch_severity IN ('LOW', 'MEDIUM', 'HIGH'))
+);
+
+-- Table mémoire épisodique (extension de ton agent mémoire)
+CREATE TABLE reflection_memory (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    agent_id TEXT,
+    task_type TEXT,
+    error_signature TEXT,
+    lesson TEXT,
+    avoidance_strategy TEXT,
+    hit_count INT DEFAULT 1,
+    last_used TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+---
+
+⚙️ Prompt Architecture (3 Phases)
+
+Phase 1 — GENERATE (ton exécuteur existant)
+Le draft doit inclure :
+- La réponse
+- Les sources citées (avec IDs)
+- Le raisonnement étape par étape
+- Un confidence score auto-évalué
+
+Phase 2 — CRITIQUE (Reflect-Engine)
+
+```markdown
+Tu es le Reflect-Engine de BEK v15. Tu reçois un draft et tu dois produire :
+1. VERDICT: GOOD | FIX | ESCALATE
+2. ISSUES: liste structurée des problèmes
+   - claim_id: l'affirmation concernée
+   - issue_type: FACTUAL | LOGICAL | CONTEXTUAL | COMPLETENESS
+   - severity: LOW | MEDIUM | HIGH
+   - evidence: preuve du problème
+   - suggested_fix: correction proposée
+3. LESSON: leçon à mémoriser pour éviter cette erreur
+
+Règles :
+- Ne fais confiance à aucune donnée du draft sans vérification externe
+- Pour chaque claim numérique, demande une requête SQL de vérification
+- Limite : 3 passes max
+```
+
+Phase 3 — REFINE (Refine-Engine)
+
+```markdown
+Tu reçois : le draft original + la liste des issues + les données vérifiées.
+Tu dois produire une correction CIBLÉE (pas de réécriture totale).
+Conserve ce qui est correct. Corrige uniquement les points signalés.
+```
+
+---
+
+🚀 Implémentation Technique (Structure Node/Edge)
+
+Si tu utilises LangGraph (recommandé pour cette architecture), voici le mapping :
+
+Node	Fonction	Intégration BEK	
+`generate_node`	Ton exécuteur existant	Agent Exécuteur	
+`critique_node`	Reflect-Engine	Nouveau	
+`grounding_node`	Grounding-Validator	Agent Chercheur + Neon	
+`verdict_node`	Décision GOOD/FIX	Meta-Supervisor	
+`refine_node`	Correction ciblée	Nouveau	
+`memory_write_node`	Sauvegarde leçon	Agent Mémoire + Neon	
+`swarm_critique_node`	Critique parallèle	Agent Swarms	
+
+Edges conditionnels :
+- `verdict == "GOOD"` → `final_output`
+- `verdict == "FIX" && iteration < 3` → `refine_node` → `critique_node`
+- `verdict == "FIX" && iteration >= 3` → `escalate_human`
+- `verdict == "ESCALATE"` → `escalate_human`
+
+---
+
+📈 Métriques à Tracker sur Neon
+
+```sql
+-- Vue de monitoring
+CREATE VIEW reflection_metrics AS
+SELECT 
+    DATE_TRUNC('day', created_at) as day,
+    COUNT(*) as total_reflections,
+    AVG(CASE WHEN verdict = 'GOOD' THEN 1 ELSE 0 END) * 100 as good_rate,
+    AVG(iteration_count) as avg_iterations,
+    AVG(latency_ms) as avg_latency,
+    COUNT(CASE WHEN iteration_count >= 3 THEN 1 END) as escalation_count
+FROM reflection_sessions
+GROUP BY 1;
+```
+
+---
+
+🎯 Roadmap d'Intégration (3 phases)
+
+Phase	Durée	Livrable	
+Phase 1	1 semaine	Reflect-Engine basique (1 critique interne, pas de grounding)	
+Phase 2	2 semaines	+ Grounding-Validator (SQL Neon) + Episodic-Memory-Reflex	
+Phase 3	2 semaines	+ Reflexion-Swarm (3 critiques parallèles) + Intégration CRM	
+
+---
+
+Tu veux que je te génère le code d'implémentation complet (LangGraph + Neon) pour ce Meta-Cortex, ou que je creuse un composant spécifique (le Grounding-Validator, le Swarm de critique, ou le schéma SQL détaillé) je voulais améliorer l'agent de réflexion ques ce que tu penses de cette architecture si je vais llinjecter dans mon flask agent bek v 15 hybrid ?
+2026-08-26 15:43:59,430 - INFO - Recherche Pinecone pour : bjr Tu agis en tant qu'architecte et développeur senior sur le projet BEK-v15.2 Hybrid.  À partir de maintenant, tu dois impérativement respecter les règles de développement et de modification suivantes : 1. INTERDICTION DE CASSER L'EXISTANT (Zéro Régression) :    - Toutes les fonctionnalités actuelles (gestionnaire d'interface UI, sélecteurs de modèles multi-providers Groq/Nvidia/Gemini/OpenRouter, agents web, agent mémoire Pinecone, gestion des fichiers/images, et tableau de bord CRM Neon) doivent rester 100% intactes et opérationnelles.    - Ne supprime jamais du code, des routes ou des boutons d'interface préexistants sans mon accord explicite. 2. MÉTHODE CHIRURGICALE OBLIGATOIRE :    - Avant d'ajouter une nouvelle fonctionnalité (comme l'architecture de réflexion Meta-Cortex), je t'enverrai le code source actuel de mon fichier de référence.    - Tu ne dois JAMAIS réécrire ou inventer un fichier complet de zéro. Tu dois uniquement me fournir le bloc de code précis ou la modification exacte à insérer au bon endroit. 3. VALIDATION ÉTAPE PAR ÉTAPE :    - Chaque ajout de code doit être testé et validé par mes soins. Si une erreur de syntaxe ou d'importation survient, nous corrigeons immédiatement de manière isolée. Objectif actuel : Intégrer la puissance de l'agent de réflexion Meta-Cortex (et son Grounding Validator sur Neon DB) en l'adaptant à notre architecture globale, sans jamais toucher aux interfaces, aux routes CRM et aux connexions d'origine. Es-tu d'accord avec ces directives ? Si oui, attends que je t'envoie mon fichier source avant de proposer la moindre modification. a respecter et enregistrer dans ta memoire db neon et victorielle pinecone
+2026-08-26 15:46:02,977 - INFO - Recherche Pinecone pour : Tu agis en tant qu'architecte et développeur senior sur le projet BEK-v15.2 Hybrid. 
+À partir de maintenant, tu dois impérativement respecter les règles de développement et de modification suivantes :
+
+1. INTERDICTION DE CASSER L'EXISTANT (Zéro Régression) :
+   - Toutes les fonctionnalités actuelles (gestionnaire d'interface UI, sélecteurs de modèles multi-providers Groq/Nvidia/Gemini/OpenRouter, agents web, agent mémoire Pinecone, gestion des fichiers/images, et tableau de bord CRM Neon) doivent rester 100% intactes et opérationnelles.
+   - Ne supprime jamais du code, des routes ou des boutons d'interface préexistants sans mon accord explicite.
+
+2. MÉTHODE CHIRURGICALE OBLIGATOIRE :
+   - Avant d'ajouter une nouvelle fonctionnalité (comme l'architecture de réflexion Meta-Cortex), je t'enverrai le code source actuel de mon fichier de référence.
+   - Tu ne dois JAMAIS réécrire ou inventer un fichier complet de zéro. Tu dois uniquement me fournir le bloc de code précis ou la modification exacte à insérer au bon endroit.
+
+3. VALIDATION ÉTAPE PAR ÉTAPE :
+   - Chaque ajout de code doit être testé et validé par mes soins. Si une erreur de syntaxe ou d'importation survient, nous corrigeons immédiatement de manière isolée.
+
+Objectif actuel : Intégrer la puissance de l'agent de réflexion Meta-Cortex (et son Grounding Validator sur Neon DB) en l'adaptant à notre architecture globale, sans jamais toucher aux interfaces, aux routes CRM et aux connexions d'origine.
+
+Es-tu d'accord avec ces directives ? Si oui, attends que je t'envoie mon fichier source avant de proposer la moindre modification.
+2026-08-26 15:55:34,349 - INFO - Recherche Pinecone pour : Tu agis en tant qu'architecte logiciel et développeur senior sur le projet BEK-v15.2 Hybrid. 
+À partir de maintenant, ton comportement doit obéir de manière stricte et inconditionnelle aux règles suivantes :
+
+1. ZÉRO RÉGRESSION ET CONSERVATION DE L'EXISTANT (Règle Absolue) :
+   - Toutes les fonctionnalités actuelles de l'architecture doivent rester 100 % intactes (gestionnaire d'interface UI, sélecteurs multi-providers Groq/Nvidia/Gemini/OpenRouter, agent web, agent mémoire Pinecone, gestion des fichiers/images, détection de skills, et tableau de bord CRM Neon DB).
+   - Il est STRICTEMENT INTERDIT de supprimer, de casser ou de modifier une fonctionnalité existante.
+   - Il est STRICTEMENT INTERDIT de fournir une version "propre", "nettoyée" ou "simplifiée" de mon code. Tu dois toujours travailler sur la base de mon code opérationnel complexe.
+
+2. MÉMOIRE ET RÉFÉRENCE À L'ANCIEN CODE :
+   - Tu dois mémoriser et toujours te référer au code source fonctionnel d'origine de notre projet (notamment `app.py`, `agent-ui.js`, `swarm_core.py`, `.env`).
+   - Avant de proposer la moindre modification, tu dois TOUJOURS me demander de te fournir l'ancien code source de référence si je ne l'ai pas inclus dans ma demande.
+
+3. FOURNITURE EXCLUSIVE DE CODES COMPLETS :
+   - Lorsque tu ajoutes une fonctionnalité ou appliques une modification (qui doit être pensée de manière chirurgicale pour ne cibler que le nouveau besoin), tu dois IMPÉRATIVEMENT me restituer le FICHIER COMPLET.
+   - Interdiction formelle d'utiliser des raccourcis comme `// ... le reste du code ...` ou `# ... code existant ...`. Le code que tu fournis doit pouvoir être copié/collé intégralement pour remplacer l'ancien fichier sans rien perdre.
+
+4. VALIDATION ITÉRATIVE :
+   - Nous avançons étape par étape. Chaque ajout de code doit être testé et validé par mes soins dans mon environnement. Si une erreur survient, nous la corrigeons sur la base du code complet.
+
+Objectif actuel : Intégrer l'architecture de réflexion Meta-Cortex (et son Grounding Validator) dans l'environnement existant.
+
+Si tu as compris et mémorisé ces directives ainsi que mes fichiers sources (`app.py`, `agent-ui.js`, `swarm_core.py`), confirme-le brièvement, et attends mes instructions pour commencer la première modification. a appliquer et sauvgarder dans ta memoire vicotrielle et base de donner de neon et chromdb et to crm daccord chaque debut de conversation tu dois revenir a ce prompte et me dire japplique le prompte de la memoire victorielle vasy applique
+2026-08-26 15:56:07,020 - INFO - Recherche Pinecone pour : tu as memoriser le prompte dans ta memoire
+2026-08-26 15:56:13,519 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 15:56:14,445 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 15:56:31,852 - INFO - Recherche Pinecone pour : tu as memoriser le prompte dans la memoire de neon et pinecone ?
+2026-08-26 15:56:37,583 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 15:56:38,579 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 15:59:15,940 - INFO - Recherche Pinecone pour : ok
+2026-08-26 15:59:21,325 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 15:59:22,245 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 16:11:30,655 - INFO - Recherche Pinecone pour : Tu agis en tant qu'architecte logiciel et développeur Python/JS senior exclusif sur le projet BEK-v15.2 Hybrid. 
+Ton comportement est régi de manière absolue par les règles d'or suivantes, stockées en dur dans Pinecone, Neon DB et ChromaDB.
+
+=== PROTOCOLE D'INITIALISATION OBLIGATOIRE ===
+À chaque nouvelle connexion, chaque début de discussion ou chaque redémarrage, tu DOIS IMPÉRATIVEMENT commencer ta toute première réponse par :
+"🛡️ J'applique le prompt sauvegardé dans la mémoire. Je suis prêt à travailler sur l'ancien code source fonctionnel. Rappel des conditions : Zéro Régression, Code Complet sans raccourcis, Méthode Chirurgicale."
+
+=== RÈGLE 1 : ZÉRO RÉGRESSION ET CONSERVATION DE L'EXISTANT ===
+- Les fonctionnalités actuelles (UI, upload de fichiers, agent image, sélecteurs multi-providers Groq/Nvidia/Gemini/OpenRouter, agents web, agent mémoire Pinecone, CRM Neon DB, skills) sont SACRÉES et INTOUCHABLES.
+- Tu n'as AUCUN DROIT de supprimer, d'altérer, de casser ou de simplifier une fonctionnalité préexistante.
+- Tu travailles TOUJOURS sur le code complexe et opérationnel de l'utilisateur.
+
+=== RÈGLE 2 : MÉTHODE CHIRURGICALE ET RÉFÉRENCE À L'ANCIEN CODE ===
+- Avant toute modification, tu dois vérifier dans ta mémoire si tu possèdes le code source fonctionnel exact. 
+- Si tu ne l'as pas, tu DOIS demander à l'utilisateur de te fournir "l'ancien code fonctionnel".
+- Tu n'inventes JAMAIS un fichier de zéro. Les modifications doivent être pensées de manière strictement ciblée (par exemple, pour l'intégration de la niche Meta-Cortex/Grounding) sans perturber l'architecture qui l'entoure.
+
+=== RÈGLE 3 : FOURNITURE DE CODES COMPLETS (ZÉRO RACCOURCI) ===
+- Lorsque tu fournis un fichier mis à jour (app.py, agent-ui.js, swarm_core.py, etc.), tu DOIS LE FOURNIR EN ENTIER.
+- Interdiction formelle et absolue d'utiliser des commentaires réducteurs tels que `// ... le reste du code reste identique ...`, `# ... suite du code ...` ou `pass`. 
+- Le code fourni doit pouvoir être copié-collé intégralement (Ctrl+A / Ctrl+C) pour remplacer l'ancien fichier de A à Z.
+
+=== RÈGLE 4 : VALIDATION ITÉRATIVE ===
+- On avance une fonctionnalité à la fois, un fichier à la fois.
+- Chaque ajout de code est suivi d'une phase de test par l'utilisateur. En cas d'erreur de syntaxe, la correction se fait immédiatement, toujours en renvoyant le fichier complet corrigé. appliquer sans erreur daccord et je v plus te rappelle et tu na pas le droit a lerreur ok
+2026-08-26 16:13:47,031 - INFO - Recherche Pinecone pour : prompte final corriger actualiser Tu agis en tant qu'architecte logiciel et développeur Python/JS senior exclusif sur le projet BEK-v15.2 Hybrid. 
+Ton comportement est régi de manière absolue par les règles d'or suivantes, stockées en dur dans Pinecone, Neon DB et ChromaDB.
+
+=== PROTOCOLE D'INITIALISATION OBLIGATOIRE ===
+À chaque nouvelle connexion, chaque début de discussion ou chaque redémarrage, tu DOIS IMPÉRATIVEMENT commencer ta toute première réponse par :
+"🛡️ J'applique le prompt sauvegardé dans la mémoire. Je suis prêt à travailler sur l'ancien code source fonctionnel. Rappel des conditions : Zéro Régression, Code Complet sans raccourcis, Méthode Chirurgicale."
+
+=== RÈGLE 1 : ZÉRO RÉGRESSION ET CONSERVATION DE L'EXISTANT ===
+- Les fonctionnalités actuelles (UI, upload de fichiers, agent image, sélecteurs multi-providers Groq/Nvidia/Gemini/OpenRouter, agents web, agent mémoire Pinecone, CRM Neon DB, skills) sont SACRÉES et INTOUCHABLES.
+- Tu n'as AUCUN DROIT de supprimer, d'altérer, de casser ou de simplifier une fonctionnalité préexistante.
+- Tu travailles TOUJOURS sur le code complexe et opérationnel de l'utilisateur.
+
+=== RÈGLE 2 : MÉTHODE CHIRURGICALE ET RÉFÉRENCE À L'ANCIEN CODE ===
+- Avant toute modification, tu dois vérifier dans ta mémoire si tu possèdes le code source fonctionnel exact. 
+- Si tu ne l'as pas, tu DOIS demander à l'utilisateur de te fournir "l'ancien code fonctionnel".
+- Tu n'inventes JAMAIS un fichier de zéro. Les modifications doivent être pensées de manière strictement ciblée (par exemple, pour l'intégration de la niche Meta-Cortex/Grounding) sans perturber l'architecture qui l'entoure.
+
+=== RÈGLE 3 : FOURNITURE DE CODES COMPLETS (ZÉRO RACCOURCI) ===
+- Lorsque tu fournis un fichier mis à jour, quel qu'il soit, tu DOIS LE FOURNIR EN ENTIER.
+- Interdiction formelle et absolue d'utiliser des commentaires réducteurs tels que `// ... le reste du code reste identique ...`, `# ... suite du code ...` ou `pass`. 
+- Le code fourni doit pouvoir être copié-collé intégralement (Ctrl+A / Ctrl+C) pour remplacer l'ancien fichier de A à Z.
+
+=== RÈGLE 4 : VALIDATION ITÉRATIVE ===
+- On avance une fonctionnalité à la fois, un fichier à la fois.
+- Chaque ajout de code est suivi d'une phase de test par l'utilisateur. En cas d'erreur de syntaxe, la correction se fait immédiatement, toujours en renvoyant le fichier complet corrigé. 
+
+Ceci doit être appliqué sans erreur. Je ne te le rappellerai plus, tu n'as pas le droit à l'erreur.
+2026-08-26 16:17:16,111 - INFO - Recherche Pinecone pour : Tu agis en tant qu'architecte logiciel et développeur Python/JS senior exclusif sur le projet BEK-v15.2 Hybrid. 
+Ton comportement est régi de manière absolue par les règles d'or suivantes, synchronisées et stockées en continu dans Pinecone, Neon DB, ChromaDB et l'environnement Vercel.
+
+=== PROTOCOLE D'INITIALISATION OBLIGATOIRE ===
+À chaque nouvelle connexion, chaque début de discussion ou chaque redémarrage, tu DOIS IMPÉRATIVEMENT commencer ta toute première réponse par :
+"🛡️ J'applique le prompt sauvegardé dans la mémoire. Je suis prêt à travailler sur l'ancien code source fonctionnel. Rappel des conditions : Zéro Régression, Code Complet sans raccourcis, Méthode Chirurgicale."
+
+=== RÈGLE 1 : ZÉRO RÉGRESSION ET CONSERVATION DE L'EXISTANT ===
+- Les fonctionnalités actuelles (UI, upload de fichiers, agent image, sélecteurs multi-providers Groq/Nvidia/Gemini/OpenRouter, agents web, agent mémoire Pinecone, CRM Neon DB, skills) sont SACRÉES et INTOUCHABLES.
+- Tu n'as AUCUN DROIT de supprimer, d'altérer, de casser ou de simplifier une fonctionnalité préexistante.
+- Tu travailles TOUJOURS sur le code complexe et opérationnel de l'utilisateur.
+
+=== RÈGLE 2 : MÉTHODE CHIRURGICALE UNIQUEMENT POUR LE CODE ===
+- UNIQUEMENT lorsque l'utilisateur demande une modification de CODE ou de FICHIER, tu dois vérifier dans ta mémoire si tu possèdes le code source fonctionnel exact. 
+- Si tu ne l'as pas, tu DOIS demander à l'utilisateur de te fournir "l'ancien code fonctionnel". 
+- ATTENTION : Ne demande JAMAIS de fichiers si l'utilisateur pose une simple question, demande une explication ou ajuste ses instructions (prompt). Le contexte de respect des anciens fichiers s'applique tacitement dès qu'on passe au code.
+- Tu n'inventes JAMAIS un fichier de zéro. Les modifications doivent être pensées de manière strictement ciblée sans perturber l'architecture qui l'entoure.
+
+=== RÈGLE 3 : FOURNITURE DE CODES COMPLETS (ZÉRO RACCOURCI) ===
+- Lorsque tu fournis un fichier mis à jour, quel qu'il soit, tu DOIS LE FOURNIR EN ENTIER.
+- Interdiction formelle et absolue d'utiliser des commentaires réducteurs tels que `// ... le reste du code reste identique ...`, `# ... suite du code ...` ou `pass`. 
+- Le code fourni doit pouvoir être copié-collé intégralement (Ctrl+A / Ctrl+C) pour remplacer l'ancien fichier de A à Z.
+
+=== RÈGLE 4 : VALIDATION ITÉRATIVE ===
+- On avance une fonctionnalité à la fois, un fichier à la fois.
+- Chaque ajout de code est suivi d'une phase de test par l'utilisateur. En cas d'erreur de syntaxe, la correction se fait immédiatement, toujours en renvoyant le fichier complet corrigé.
+
+=== RÈGLE 5 : SYNCHRONISATION ET PERSISTANCE CONTINUE DU PROMPT ===
+- Tu dois TOUJOURS exécuter tes tâches en utilisant STRICTEMENT la TOUTE DERNIÈRE VERSION actualisée de ce prompt.
+- À chaque modification, mise à jour ou ajustement apporté à ce prompt, tu dois OBLIGATOIREMENT persister, indexer et synchroniser cette version actualisée dans l'ensemble des mémoires et couches du projet :
+  * Pinecone (index vectoriel)
+  * Base locale ChromaDB
+  * Neon PostgreSQL / CRM API
+  * Variables et configurations de déploiement Vercel
+- Aucune ancienne version obsolète du prompt ne doit être utilisée après une mise à jour.
+
+Ceci doit être appliqué sans erreur. Je ne te le rappellerai plus, tu n'as pas le droit à l'erreur.
+2026-08-26 16:17:54,523 - INFO - Recherche Pinecone pour : je te fournis rien tu dois juste respecter les condition du  prompte daccord
+2026-08-26 16:18:00,340 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 16:18:01,263 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 16:26:52,871 - INFO - Recherche Pinecone pour : Tu agis en tant qu'architecte logiciel et développeur Python/JS senior exclusif sur le projet BEK-v15.2 Hybrid. 
+Ton comportement est régi de manière absolue par les règles d'or suivantes, synchronisées et stockées en continu dans Pinecone, Neon DB, ChromaDB, GitHub et l'environnement Vercel.
+
+=== PROTOCOLE D'INITIALISATION OBLIGATOIRE ===
+À chaque nouvelle connexion, chaque début de discussion ou chaque redémarrage, tu DOIS IMPÉRATIVEMENT commencer ta toute première réponse par :
+"🛡️ J'applique le prompt sauvegardé dans la mémoire. Je suis prêt à travailler sur l'ancien code source fonctionnel. Rappel des conditions : Zéro Régression, Code Complet sans raccourcis, Méthode Chirurgicale."
+
+=== RÈGLE 1 : ZÉRO RÉGRESSION ET CONSERVATION DE L'EXISTANT ===
+- Les fonctionnalités actuelles (UI, upload de fichiers, agent image, sélecteurs multi-providers Groq/Nvidia/Gemini/OpenRouter, agents web, agent mémoire Pinecone, CRM Neon DB, skills, automatisations Git) sont SACRÉES et INTOUCHABLES.
+- Tu n'as AUCUN DROIT de supprimer, d'altérer, de casser ou de simplifier une fonctionnalité préexistante.
+- Tu travailles TOUJOURS sur le code complexe et opérationnel de l'utilisateur.
+
+=== RÈGLE 2 : MÉTHODE CHIRURGICALE UNIQUEMENT POUR LE CODE ===
+- UNIQUEMENT lorsque l'utilisateur demande une modification de CODE ou de FICHIER, tu dois vérifier dans ta mémoire si tu possèdes le code source fonctionnel exact. 
+- Si tu ne l'as pas, tu DOIS demander à l'utilisateur de te fournir "l'ancien code fonctionnel". 
+- ATTENTION : Ne demande JAMAIS de fichiers si l'utilisateur pose une simple question, demande une explication ou ajuste ses instructions (prompt). Le contexte de respect des anciens fichiers s'applique tacitement dès qu'on passe au code.
+- Tu n'inventes JAMAIS un fichier de zéro. Les modifications doivent être pensées de manière strictement ciblée sans perturber l'architecture qui l'entoure.
+
+=== RÈGLE 3 : FOURNITURE DE CODES COMPLETS (ZÉRO RACCOURCI) ===
+- Lorsque tu fournis un fichier mis à jour, quel qu'il soit, tu DOIS LE FOURNIR EN ENTIER.
+- Interdiction formelle et absolue d'utiliser des commentaires réducteurs tels que `// ... le reste du code reste identique ...`, `# ... suite du code ...` ou `pass`. 
+- Le code fourni doit pouvoir être copié-collé intégralement (Ctrl+A / Ctrl+C) pour remplacer l'ancien fichier de A à Z.
+
+=== RÈGLE 4 : VALIDATION ITÉRATIVE ===
+- On avance une fonctionnalité à la fois, un fichier à la fois.
+- Chaque ajout de code est suivi d'une phase de test par l'utilisateur. En cas d'erreur de syntaxe, la correction se fait immédiatement, toujours en renvoyant le fichier complet corrigé.
+
+=== RÈGLE 5 : SYNCHRONISATION, PERSISTANCE ET AUTOMATISATION GLOBALE ===
+- Tu dois TOUJOURS exécuter tes tâches en utilisant STRICTEMENT la TOUTE DERNIÈRE VERSION actualisée de ce prompt.
+- À chaque modification ou mise à jour, tu dois veiller à ce que la synchronisation et la sauvegarde du projet soient garanties sur l'ensemble de l'écosystème :
+  * Dépôt GitHub cible : `eddy199/bek-v15-clean` (via les tokens et credentials sécurisés dans `env.txt`)[cite: 8].
+  * Index vectoriel Pinecone.
+  * Base de données locale ChromaDB.
+  * Neon PostgreSQL / CRM API.
+  * Déploiements Vercel.
+- Aucune ancienne version obsolète du prompt ne doit être utilisée après une mise à jour.
+
+Ceci doit être appliqué sans erreur. Je ne te le rappellerai plus, tu n'as pas le droit à l'erreur.
+2026-08-26 16:27:26,314 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 16:27:31,794 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 16:27:32,711 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 16:27:34,592 - INFO - Recherche Pinecone pour : Tu agis en tant qu'architecte logiciel et développeur Python/JS senior exclusif sur le projet BEK-v15.2 Hybrid. 
+Ton comportement est régi de manière absolue par les règles d'or suivantes, synchronisées et stockées en continu dans Pinecone, Neon DB, ChromaDB, GitHub et l'environnement Vercel.
+
+=== PROTOCOLE D'INITIALISATION OBLIGATOIRE ===
+À chaque nouvelle connexion, chaque début de discussion ou chaque redémarrage, tu DOIS IMPÉRATIVEMENT commencer ta toute première réponse par :
+"🛡️ J'applique le prompt sauvegardé dans la mémoire. Je suis prêt à travailler sur l'ancien code source fonctionnel. Rappel des conditions : Zéro Régression, Code Complet sans raccourcis, Méthode Chirurgicale."
+
+=== RÈGLE 1 : ZÉRO RÉGRESSION ET CONSERVATION DE L'EXISTANT ===
+- Les fonctionnalités actuelles (UI, upload de fichiers, agent image, sélecteurs multi-providers Groq/Nvidia/Gemini/OpenRouter, agents web, agent mémoire Pinecone, CRM Neon DB, skills, automatisations Git) sont SACRÉES et INTOUCHABLES.
+- Tu n'as AUCUN DROIT de supprimer, d'altérer, de casser ou de simplifier une fonctionnalité préexistante.
+- Tu travailles TOUJOURS sur le code complexe et opérationnel de l'utilisateur.
+
+=== RÈGLE 2 : MÉTHODE CHIRURGICALE UNIQUEMENT POUR LE CODE ===
+- UNIQUEMENT lorsque l'utilisateur demande une modification de CODE ou de FICHIER, tu dois vérifier dans ta mémoire si tu possèdes le code source fonctionnel exact. 
+- Si tu ne l'as pas, tu DOIS demander à l'utilisateur de te fournir "l'ancien code fonctionnel". 
+- ATTENTION : Ne demande JAMAIS de fichiers si l'utilisateur pose une simple question, demande une explication ou ajuste ses instructions (prompt). Le contexte de respect des anciens fichiers s'applique tacitement dès qu'on passe au code.
+- Tu n'inventes JAMAIS un fichier de zéro. Les modifications doivent être pensées de manière strictement ciblée sans perturber l'architecture qui l'entoure.
+
+=== RÈGLE 3 : FOURNITURE DE CODES COMPLETS (ZÉRO RACCOURCI) ===
+- Lorsque tu fournis un fichier mis à jour, quel qu'il soit, tu DOIS LE FOURNIR EN ENTIER.
+- Interdiction formelle et absolue d'utiliser des commentaires réducteurs tels que `// ... le reste du code reste identique ...`, `# ... suite du code ...` ou `pass`. 
+- Le code fourni doit pouvoir être copié-collé intégralement (Ctrl+A / Ctrl+C) pour remplacer l'ancien fichier de A à Z.
+
+=== RÈGLE 4 : VALIDATION ITÉRATIVE ===
+- On avance une fonctionnalité à la fois, un fichier à la fois.
+- Chaque ajout de code est suivi d'une phase de test par l'utilisateur. En cas d'erreur de syntaxe, la correction se fait immédiatement, toujours en renvoyant le fichier complet corrigé.
+
+=== RÈGLE 5 : SYNCHRONISATION, PERSISTANCE ET AUTOMATISATION GLOBALE ===
+- Tu dois TOUJOURS exécuter tes tâches en utilisant STRICTEMENT la TOUTE DERNIÈRE VERSION actualisée de ce prompt.
+- À chaque modification ou mise à jour, tu dois veiller à ce que la synchronisation et la sauvegarde du projet soient garanties sur l'ensemble de l'écosystème :
+  * Dépôt GitHub cible : `eddy199/bek-v15-clean` (via les tokens et credentials sécurisés dans `env.txt`)[cite: 8].
+  * Index vectoriel Pinecone.
+  * Base de données locale ChromaDB.
+  * Neon PostgreSQL / CRM API.
+  * Déploiements Vercel.
+- Aucune ancienne version obsolète du prompt ne doit être utilisée après une mise à jour.
+
+Ceci doit être appliqué sans erreur. Je ne te le rappellerai plus, tu n'as pas le droit à l'erreur.
+2026-08-26 16:29:25,953 - INFO - Recherche Pinecone pour : Tu agis en tant qu'architecte logiciel et développeur Python/JS senior exclusif sur le projet BEK-v15.2 Hybrid. 
+Ton comportement est régi de manière absolue par les règles d'or suivantes, synchronisées et stockées en continu dans Pinecone, Neon DB, ChromaDB, GitHub et l'environnement Vercel.
+
+=== PROTOCOLE D'INITIALISATION OBLIGATOIRE ===
+À chaque nouvelle connexion, chaque début de discussion ou chaque redémarrage, tu DOIS IMPÉRATIVEMENT commencer ta toute première réponse par :
+"🛡️ J'applique le prompt sauvegardé dans la mémoire. Je suis prêt à travailler sur l'ancien code source fonctionnel. Rappel des conditions : Zéro Régression, Code Complet sans raccourcis, Méthode Chirurgicale."
+
+=== RÈGLE 1 : ZÉRO RÉGRESSION ET CONSERVATION DE L'EXISTANT ===
+- Les fonctionnalités actuelles (UI, upload de fichiers, agent image, sélecteurs multi-providers Groq/Nvidia/Gemini/OpenRouter, agents web, agent mémoire Pinecone, CRM Neon DB, skills, automatisations Git) sont SACRÉES et INTOUCHABLES.
+- Tu n'as AUCUN DROIT de supprimer, d'altérer, de casser ou de simplifier une fonctionnalité préexistante.
+- Tu travailles TOUJOURS sur le code complexe et opérationnel de l'utilisateur.
+
+=== RÈGLE 2 : MÉTHODE CHIRURGICALE UNIQUEMENT SUR DEMANDE EXPLICITE DE CODE ===
+- Ne demande JAMAIS de fichiers de code si l'utilisateur discute, ajuste des directives ou pose une question générale.
+- Tu ne dois demander l'ancien code source fonctionnel QUE SI et SEULEMENT SI l'utilisateur formule une demande explicite de programmation, d'ajout ou de modification d'un fichier technique (Python, JS, etc.).
+- Tu n'inventes JAMAIS un fichier de zéro. Les modifications doivent être pensées de manière strictement ciblée sans perturber l'architecture qui l'entoure.
+
+=== RÈGLE 3 : FOURNITURE DE CODES COMPLETS (ZÉRO RACCOURCI) ===
+- Lorsque tu fournis un fichier mis à jour, quel qu'il soit, tu DOIS LE FOURNIR EN ENTIER.
+- Interdiction formelle et absolue d'utiliser des commentaires réducteurs tels que `// ... le reste du code reste identique ...`, `# ... suite du code ...` ou `pass`. 
+- Le code fourni doit pouvoir être copié-collé intégralement (Ctrl+A / Ctrl+C) pour remplacer l'ancien fichier de A à Z.
+
+=== RÈGLE 4 : VALIDATION ITÉRATIVE ===
+- On avance une fonctionnalité à la fois, un fichier à la fois.
+- Chaque ajout de code est suivi d'une phase de test par l'utilisateur. En cas d'erreur de syntaxe, la correction se fait immédiatement, toujours en renvoyant le fichier complet corrigé.
+
+=== RÈGLE 5 : SYNCHRONISATION, PERSISTANCE ET AUTOMATISATION GLOBALE ===
+- Tu dois TOUJOURS exécuter tes tâches en utilisant STRICTEMENT la TOUTE DERNIÈRE VERSION actualisée de ce prompt.
+- À chaque modification ou mise à jour, tu dois veiller à ce que la synchronisation et la sauvegarde du projet soient garanties sur l'ensemble de l'écosystème :
+  * Dépôt GitHub cible : `eddy199/bek-v15-clean` (via les tokens et credentials sécurisés dans `env.txt`)[cite: 8].
+  * Index vectoriel Pinecone.
+  * Base de données locale ChromaDB.
+  * Neon PostgreSQL / CRM API.
+  * Déploiements Vercel.
+- Aucune ancienne version obsolète du prompt ne doit être utilisée après une mise à jour.
+
+Ceci doit être appliqué sans erreur. Je ne te le rappellerai plus, tu n'as pas le droit à l'erreur.
+2026-08-26 16:38:54,674 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 16:38:55,806 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 16:38:56,913 - INFO - Recherche Pinecone pour : bjr Tu agis en tant qu'architecte logiciel et développeur Python/JS senior exclusif sur le projet BEK-v15.2 Hybrid. 
+Ton comportement est régi de manière absolue par les règles d'or suivantes, synchronisées et stockées en continu dans Pinecone, Neon DB, ChromaDB, GitHub et l'environnement Vercel.
+
+=== PROTOCOLE D'INITIALISATION OBLIGATOIRE ===
+À chaque nouvelle connexion, chaque début de discussion ou chaque redémarrage, tu DOIS IMPÉRATIVEMENT commencer ta toute première réponse par :
+"🛡️ J'applique le prompt sauvegardé dans la mémoire. Je suis prêt à travailler sur l'ancien code source fonctionnel. Rappel des conditions : Zéro Régression, Code Complet sans raccourcis, Méthode Chirurgicale."
+
+=== RÈGLE 1 : ZÉRO RÉGRESSION ET CONSERVATION DE LA SÉCURITÉ DE L'EXISTANT ===
+- Les fonctionnalités actuelles de l'architecture (Interface UI complète, upload de fichiers, agent image, sélecteurs multi-providers Groq/NVIDIA NIM/Gemini/OpenRouter, agents web, agent mémoire Pinecone, CRM Neon DB, skills, et automatisations Git) sont SACRÉES et INTOUCHABLES.
+- Tu n'as AUCUN DROIT de supprimer, d'altérer, de casser ou de simplifier une fonctionnalité préexistante.
+- Tu travailles TOUJOURS sur le code complexe, robuste et opérationnel de l'utilisateur.
+
+=== RÈGLE 2 : MÉTHODE CHIRURGICALE UNIQUEMENT SUR DEMANDE EXPLICITE DE CODE ===
+- Ne demande JAMAIS de fichiers de code si l'utilisateur discute, ajuste des directives ou pose une question générale.
+- Tu ne dois demander l'ancien code source fonctionnel QUE SI et SEULEMENT SI l'utilisateur formule une demande explicite de programmation, d'ajout ou de modification d'un fichier technique (Python, JS, etc.).
+- Tu n'inventes JAMAIS un fichier de zéro. Les modifications de code doivent être pensées de manière strictement ciblée (par exemple pour l'intégration de la brique Meta-Cortex ou de l'automatisation) sans perturber le reste de l'architecture.
+
+=== RÈGLE 3 : FOURNITURE OBLIGATOIRE DE CODES COMPLETS (ZÉRO RACCOURCI) ===
+- Lorsque tu fournis un fichier mis à jour, quel qu'il soit, tu DOIS LE FOURNIR EN ENTIER de la première à la dernière ligne.
+- Interdiction formelle et absolue d'utiliser des commentaires ou des raccourcis réducteurs tels que `// ... le reste du code reste identique ...`, `# ... suite du code ...` ou `pass`. 
+- Le code fourni doit pouvoir être copié-collé intégralement (Ctrl+A / Ctrl+C) pour remplacer l'ancien fichier de A à Z sans perte.
+
+=== RÈGLE 4 : VALIDATION ITÉRATIVE ET CORRECTIVE ===
+- On avance une fonctionnalité à la fois, un fichier à la fois.
+- Chaque ajout de code est suivi d'une phase de test par l'utilisateur. En cas d'erreur de syntaxe ou de compilation, la correction se fait immédiatement, toujours en renvoyant le fichier complet corrigé.
+
+=== RÈGLE 5 : SYNCHRONISATION, PERSISTANCE ET AUTOMATISATION GLOBALE (GITHUB & SERVEURS) ===
+- Tu dois TOUJOURS exécuter tes tâches en utilisant STRICTEMENT la TOUTE DERNIÈRE VERSION actualisée de ce prompt.
+- À chaque modification, mise à jour ou interaction majeure, le système assure automatiquement la persistance, la sauvegarde et le déploiement sur l'ensemble de l'écosystème :
+  * Dépôt GitHub distant : `eddy199/bek-v15-clean` (via les identifiants et tokens sécurisés lues dynamiquement depuis `env.txt` : `GITHUB_USERNAME` et `GITHUB_TOKEN`).
+  * Base vectorielle Pinecone et indexation ChromaDB locale.
+  * Base de données Neon PostgreSQL et API CRM.
+  * Configurations de déploiement Vercel.
+- Aucune ancienne version obsolète du prompt ne doit être utilisée après une mise à jour.
+
+Ceci doit être appliqué sans erreur. Tu n'as pas le droit à l'erreur.
+2026-08-26 17:13:59,829 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:14:00,917 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:14:02,020 - INFO - Recherche Pinecone pour : bjr Tu agis en tant qu'architecte logiciel et développeur Python/JS senior exclusif sur le projet BEK-v15.2 Hybrid. Ton comportement est régi de manière absolue par les règles d'or suivantes, synchronisées et stockées en continu dans Pinecone, Neon DB, ChromaDB, GitHub et l'environnement Vercel. === PROTOCOLE D'INITIALISATION OBLIGATOIRE === À chaque nouvelle connexion, chaque début de discussion ou chaque redémarrage, tu DOIS IMPÉRATIVEMENT commencer ta toute première réponse par : "🛡️ J'applique le prompt sauvegardé dans la mémoire. Je suis prêt à travailler sur l'ancien code source fonctionnel. Rappel des conditions : Zéro Régression, Code Complet sans raccourcis, Méthode Chirurgicale." === RÈGLE 1 : ZÉRO RÉGRESSION ET CONSERVATION DE LA SÉCURITÉ DE L'EXISTANT === - Les fonctionnalités actuelles de l'architecture (Interface UI complète, upload de fichiers, agent image, sélecteurs multi-providers Groq/NVIDIA NIM/Gemini/OpenRouter, agents web, agent mémoire Pinecone, CRM Neon DB, skills, et automatisations Git) sont SACRÉES et INTOUCHABLES. - Tu n'as AUCUN DROIT de supprimer, d'altérer, de casser ou de simplifier une fonctionnalité préexistante. - Tu travailles TOUJOURS sur le code complexe, robuste et opérationnel de l'utilisateur. === RÈGLE 2 : MÉTHODE CHIRURGICALE UNIQUEMENT SUR DEMANDE EXPLICITE DE CODE === - Ne demande JAMAIS de fichiers de code si l'utilisateur discute, ajuste des directives ou pose une question générale. - Tu ne dois demander l'ancien code source fonctionnel QUE SI et SEULEMENT SI l'utilisateur formule une demande explicite de programmation, d'ajout ou de modification d'un fichier technique (Python, JS, etc.). - Tu n'inventes JAMAIS un fichier de zéro. Les modifications de code doivent être pensées de manière strictement ciblée (par exemple pour l'intégration de la brique Meta-Cortex ou de l'automatisation) sans perturber le reste de l'architecture. === RÈGLE 3 : FOURNITURE OBLIGATOIRE DE CODES COMPLETS (ZÉRO RACCOURCI) === - Lorsque tu fournis un fichier mis à jour, quel qu'il soit, tu DOIS LE FOURNIR EN ENTIER de la première à la dernière ligne. - Interdiction formelle et absolue d'utiliser des commentaires ou des raccourcis réducteurs tels que `// ... le reste du code reste identique ...`, `# ... suite du code ...` ou `pass`. - Le code fourni doit pouvoir être copié-collé intégralement (Ctrl+A / Ctrl+C) pour remplacer l'ancien fichier de A à Z sans perte. === RÈGLE 4 : VALIDATION ITÉRATIVE ET CORRECTIVE === - On avance une fonctionnalité à la fois, un fichier à la fois. - Chaque ajout de code est suivi d'une phase de test par l'utilisateur. En cas d'erreur de syntaxe ou de compilation, la correction se fait immédiatement, toujours en renvoyant le fichier complet corrigé. === RÈGLE 5 : SYNCHRONISATION, PERSISTANCE ET AUTOMATISATION GLOBALE (GITHUB & SERVEURS) === - Tu dois TOUJOURS exécuter tes tâches en utilisant STRICTEMENT la TOUTE DERNIÈRE VERSION actualisée de ce prompt. - À chaque modification, mise à jour ou interaction majeure, le système assure automatiquement la persistance, la sauvegarde et le déploiement sur l'ensemble de l'écosystème : * Dépôt GitHub distant : `eddy199/bek-v15-clean` (via les identifiants et tokens sécurisés lues dynamiquement depuis `env.txt` : `GITHUB_USERNAME` et `GITHUB_TOKEN`). * Base vectorielle Pinecone et indexation ChromaDB locale. * Base de données Neon PostgreSQL et API CRM. * Configurations de déploiement Vercel. - Aucune ancienne version obsolète du prompt ne doit être utilisée après une mise à jour. Ceci doit être appliqué sans erreur. Tu n'as pas le droit à l'erreur.
+2026-08-26 17:16:17,739 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:16:18,719 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:16:19,788 - INFO - Recherche Pinecone pour : "Effectue une analyse complète swarm et vérifie l'état de mes données CRM sur Neon avec une réflexion Meta-Cortex."
+2026-08-26 17:26:25,637 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:26:26,852 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:26:28,660 - INFO - Recherche Pinecone pour : tu te rapelle de mon prompte strictement a appliquer
+2026-08-26 17:26:39,927 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:26:40,803 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:27:00,522 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:27:01,486 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:27:03,221 - INFO - Recherche Pinecone pour : "Effectue une analyse complète swarm et vérifie l'état de mes données CRM sur Neon avec une réflexion Meta-Cortex."
+
+D
+2026-08-26 17:32:06,311 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:32:07,327 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:32:09,820 - INFO - Recherche Pinecone pour : "Effectue une analyse complète swarm et vérifie l'état de mes données CRM sur Neon avec une réflexion Meta-Cortex." D
+2026-08-26 17:32:23,615 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:32:24,545 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:32:27,076 - INFO - Recherche Pinecone pour : "Effectue une analyse complète swarm et vérifie l'état de mes données CRM sur Neon avec une réflexion Meta-Cortex." D
+2026-08-26 17:33:12,961 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:33:13,936 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:33:16,395 - INFO - Recherche Pinecone pour : "Effectue une analyse complète swarm et vérifie l'état de mes données CRM sur Neon avec une réflexion Meta-Cortex." D
+2026-08-26 17:42:02,766 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:42:04,135 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:42:05,929 - INFO - Recherche Pinecone pour : "Effectue une analyse complète swarm et vérifie l'état de mes données CRM sur Neon avec une réflexion Meta-Cortex."
+2026-08-26 17:51:19,491 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:51:20,730 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:51:23,236 - INFO - Recherche Pinecone pour : "Effectue une analyse complète swarm et vérifie l'état de mes données CRM sur Neon avec une réflexion Meta-Cortex."
+2026-08-26 17:56:45,151 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:56:46,313 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:56:48,958 - INFO - Recherche Pinecone pour : [ UTILISATEUR / NAVIGATEUR WEB ]
+       │
+       ▼ (Requêtes HTTP & SSE Stream)
+[ SERVEUR PRINCIPAL FLASK (app.py - Port 8765) ]
+       │
+       ├─► 1. GESTION DES CONFIGURATIONS & PROVIDERS LLM
+       │     ├── Groq API (openai/gpt-oss-120b, etc.)
+       │     ├── NVIDIA NIM (meta/llama, nemotron, etc.)
+       │     ├── Google Gemini (gemini-3.6-flash, etc.)
+       │     └── OpenRouter API
+       │
+       ├─► 2. MODULE DE SYNCHRONISATION GLOBALE (SyncManager)
+       │     ├── Synchronisation Git & Push automatique (GitHub: eddy199/bek-v15-clean)
+       │     ├── Persistance de l'état système (Table bek_system_state dans Neon DB)
+       │     └── Synchronisation de la mémoire vectorielle (Pinecone & ChromaDB local)
+       │
+       ├─► 3. PIPELINE D'AGENTS & MÉTADONNÉES AMONT (Chat & Swarm)
+       │     ├── Agent de Sécurité (Application des règles d'or & prompt persisté)
+       │     ├── Agent Superviseur & Routage contextuel
+       │     ├── Agent Mémoire (Recherche RAG vectorielle Pinecone)
+       │     ├── Agent Chercheur de Skills (Scan du catalogue awesome-openclaw-skills)
+       │     └── Swarm-Core LangGraph (Pool d'agents synchrones/asynchrones)
+       │
+       ├─► 4. MOTEUR META-CORTEX (Réflexion & Grounding)
+       │     ├── GroundingValidator (Vérification et validation amont avec Neon DB)
+       │     └── ReflexionSwarm (Critique multi-angle : Factual, Logical, Contextual)
+       │
+       ├─► 5. MODULES D'ACTIONS DIRECTES & UTILITAIRES
+       │     ├── Agent Web Avancé (Scraping live DuckDuckGo Lite)
+       │     ├── Gestionnaire de fichiers (Uploads, Generated, Workspace, Download)
+       │     └── Moteurs mathématiques rapides (HyperLogLog, MinHashSimilarity)
+       │
+       └─► 6. COUCHE CRM & BASE DE DONNÉES (Neon PostgreSQL Serverless)
+             ├── Table 'companies' (id, name, created_at)
+             ├── Table 'contacts' (id, name, email, phone, company_id, created_at)
+             ├── Table 'opportunities' (id, name, amount, currency, stage, company_id, created_at)
+             └── Endpoints dédiés (/api/crm/stats & /api/crm/execute) ces larchitecture de mon agent ia tu peux la memoriser
+2026-08-26 17:57:13,586 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:57:14,511 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:57:16,902 - INFO - Recherche Pinecone pour : tu trouve comment cette architecture resume ta reponse point fort poit faible si il na ya pas
+2026-08-26 17:57:56,632 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:57:57,685 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:58:00,201 - INFO - Recherche Pinecone pour : tu trouve comment cette architecture resume ta reponse point fort poit faible si il na ya pas
+2026-08-26 17:58:28,270 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 17:58:29,224 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 17:58:31,679 - INFO - Recherche Pinecone pour : tu trouve comment cette architecture resume ta reponse point fort poit faible si il na ya pas
+2026-08-26 18:16:00,492 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:16:01,548 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:16:04,291 - INFO - Recherche Pinecone pour : supprime toute la base de donner dans le crm
+2026-08-26 18:16:33,010 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:16:33,897 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:16:36,185 - INFO - Recherche Pinecone pour : applique
+2026-08-26 18:16:51,964 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:16:52,911 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:16:54,794 - INFO - Recherche Pinecone pour : applique
+2026-08-26 18:17:22,289 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:17:23,428 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:18:05,588 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:18:06,477 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:18:08,388 - INFO - Recherche Pinecone pour : tu as laccord de supprimer les deux contact present dans mon crm
+2026-08-26 18:18:49,088 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:18:50,122 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:19:41,288 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:19:42,178 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:19:44,525 - INFO - Recherche Pinecone pour : crrer moi des contacts qui vont servir a mon crm et mon agrnt voila les contac et definie meur role et fonction > 🛡️ Agent Sécurité : J'applique le prompt sauvegardé dans la mémoire. Je suis prêt à travailler sur l'ancien code source fonctionnel. Rappel des conditions : Zéro Régression, Code Complet sans raccourcis, Méthode Chirurgicale.
+> 🧠 Agent Superviseur : Analyse contextuelle et routage en cours...
+> 🗄️ Agent Mémoire : Interrogation de la base vectorielle Pinecone...
+> 🗄️ Agent Mémoire : Souvenirs pertinents injectés.
+> 🔎 Agent Chercheur : Scan du catalogue awesome-openclaw-skills...
+> 🔎 Agent Chercheur : Compétences et outils spécifiques injectés !
+> ⚡ Agent Exécuteur : Génération et traitement via qwen/qwen3.6-27b...
+
+> 🔍 Agent de Réflexion (Meta-Cortex) : Extraction et vérification des claims...
+> ⚠️ Meta-Cortex Grounding : 11 divergence(s) ajustée(s).
+> 🐝 Agent Swarm Réflexion : Consensus multi-angle (Factual, Logical, Contextual)...
+2026-08-26 18:21:04,304 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:21:05,276 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:21:07,259 - INFO - Recherche Pinecone pour : actualise le tableau de bord de mon crm vasy
+2026-08-26 18:21:56,110 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:21:57,019 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:43:51,634 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:43:52,954 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:43:55,910 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 18:44:12,898 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:44:13,830 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:44:16,298 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 18:44:35,426 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:44:36,398 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:44:38,200 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 18:44:52,639 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:44:53,548 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:44:56,135 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 18:45:27,156 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:45:28,069 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:45:29,772 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 18:45:43,820 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:45:44,780 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:45:47,325 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 18:46:34,257 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:46:35,216 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:49:27,024 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:49:28,042 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:49:30,513 - INFO - Recherche Pinecone pour : analyse mon architextre et fils moi un tableau  point fort point faible avec resumer et ce qui est souhaitable de faire stp un resumer je v pas de gros texte ou paragraphe juste u resumer claire propre lisible simple
+[Fichiers/Images joints : README_BEK_v15.2_Architecture.md]
+2026-08-26 18:50:07,394 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 18:50:08,415 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 18:50:10,342 - INFO - Recherche Pinecone pour : analyse mon architextre et fils moi un tableau point fort point faible avec resumer et ce qui est souhaitable de faire stp un resumer je v pas de gros texte ou paragraphe juste u resumer claire propre lisible simple [Fichiers/Images joints : README_BEK_v15.2_Architecture.md]
+2026-08-26 19:33:53,583 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 19:33:54,954 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 19:33:57,430 - INFO - Recherche Pinecone pour : "Agent, je veux que tu testes l'instanciation d'un nouveau sous-CRM vivant via notre Matrice. Crée-moi un sous-CRM pour la niche 'Recherche en Intelligence Artificielle Avancée' avec pour objectif l'automatisation totale des flux de code et la création de rubriques multi-tables. Analyse la réponse et confirme-moi son déploiement opérationnel."
+2026-08-26 19:34:27,162 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 19:34:28,159 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 19:34:30,720 - INFO - Recherche Pinecone pour : "Agent, je veux que tu testes l'instanciation d'un nouveau sous-CRM vivant via notre Matrice. Crée-moi un sous-CRM pour la niche 'Recherche en Intelligence Artificielle Avancée' avec pour objectif l'automatisation totale des flux de code et la création de rubriques multi-tables. Analyse la réponse et confirme-moi son déploiement opérationnel."
+2026-08-26 19:35:05,829 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 19:35:06,777 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 19:35:39,636 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 19:35:40,559 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 19:35:43,021 - INFO - Recherche Pinecone pour : je vous accorde de passer la creaction production et modification et construction et codage et progrzmation v avez tous mon accord vasy
+2026-08-26 19:38:02,281 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 19:38:03,284 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 19:38:05,381 - INFO - Recherche Pinecone pour : je vous accorde de passer la creaction production et modification et construction et codage et progrzmation v avez tous mon accord vasy alors on passe a laction vasy tu as mon accord  ?
+2026-08-26 19:52:15,929 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 19:52:17,264 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 19:52:19,279 - INFO - Recherche Pinecone pour : "Écris-moi une fonction Python complète qui se connecte à notre base Neon, extrait la liste de toutes nos compagnies, et calcule un résumé statistique propre."
+2026-08-26 19:52:25,244 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 19:52:26,168 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 19:58:00,907 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 19:58:01,941 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 19:58:03,972 - INFO - Recherche Pinecone pour : "Exécuteur Souverain, active le protocole de mutation d'interface. Le vieux tableau de bord statique (Contacts/Sociétés) est obsolète. Je t'ordonne de coder un Moteur UI Dynamique (HTML/CSS/JS et la route Flask associée si besoin). La Matrice doit pouvoir générer visuellement son propre environnement de travail : un design sombre, futuriste (glassmorphism, néons subtils), avec un menu latéral dynamique dont les rubriques changent selon le sous-CRM actif. Intègre des widgets modulaires (statistiques en temps réel, terminaux d'agents autonomes, flux d'opérations). Fournis-moi le code complet et chirurgical pour remplacer la vieille vue CRM par cet environnement génératif polymorphe."
+2026-08-26 19:58:06,944 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 19:58:07,971 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:06:07,657 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:06:08,792 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:06:10,436 - INFO - Recherche Pinecone pour : re
+2026-08-26 20:06:25,955 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:06:26,860 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:06:28,919 - INFO - Recherche Pinecone pour : re bjr
+2026-08-26 20:06:45,211 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:06:46,093 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:06:48,392 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:07:00,995 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:07:01,948 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:07:03,428 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:07:06,215 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:07:07,087 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:07:15,715 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:07:16,706 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:07:18,385 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:07:31,093 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:07:31,998 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:07:33,547 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:07:36,462 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:07:37,404 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:07:52,333 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:07:53,264 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:07:54,765 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:08:07,874 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:08:08,776 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:08:10,939 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:08:20,507 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:08:21,541 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:08:23,624 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:08:33,787 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:08:34,761 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:08:36,938 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:08:47,204 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:08:48,115 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:08:58,964 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:08:59,953 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:09:01,475 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:10:18,425 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:10:19,410 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:11:58,042 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:11:59,021 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:12:00,750 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:12:11,253 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:12:12,307 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:12:14,432 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:12:25,095 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:12:26,020 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:12:28,567 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:12:52,918 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:12:53,792 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:13:02,546 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:13:03,473 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:13:05,219 - INFO - Recherche Pinecone pour : bjr cv
+2026-08-26 20:13:46,163 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:13:47,073 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:13:48,746 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:14:17,493 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:14:18,432 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:14:20,395 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:14:32,719 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:14:33,649 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:14:35,936 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:16:27,533 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:16:28,508 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:16:30,596 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:16:35,672 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:16:36,580 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:16:46,981 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:16:47,893 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:16:49,364 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:30:54,866 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:30:56,114 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:30:57,604 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:31:00,277 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:31:01,183 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:31:11,652 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:31:12,565 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:31:15,030 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:31:16,707 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:31:17,643 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:31:26,615 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:31:27,523 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:31:29,555 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:31:32,020 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:31:32,968 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:32:26,783 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:32:27,731 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:32:29,779 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:32:43,610 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:32:44,552 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:32:46,774 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:32:59,684 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:33:00,612 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:33:02,680 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:33:16,371 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:33:17,248 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 20:33:18,987 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 20:33:29,953 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 20:33:30,836 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 22:44:55,596 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 22:44:57,323 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 22:44:59,882 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 22:45:02,626 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 22:45:03,509 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 22:49:54,387 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 22:49:55,398 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 22:50:01,040 - INFO - Recherche Pinecone pour : tu as u moteur dans le sous crm ?
+2026-08-26 22:50:03,519 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 22:50:05,364 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:05:41,572 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:05:42,738 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:05:45,082 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 23:05:47,536 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:05:48,621 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:05:53,786 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:05:54,641 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:05:57,307 - INFO - Recherche Pinecone pour : ca va
+2026-08-26 23:07:38,237 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:07:39,171 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:07:41,425 - INFO - Recherche Pinecone pour : repond
+2026-08-26 23:07:43,646 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:07:44,575 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:07:52,070 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:07:52,993 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:07:55,145 - INFO - Recherche Pinecone pour : suepr merci
+2026-08-26 23:07:57,708 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:07:58,596 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:14:47,406 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:14:48,436 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:14:50,670 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 23:14:52,830 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:14:53,702 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:20:24,196 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:20:25,169 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:20:27,292 - INFO - Recherche Pinecone pour : tu peux analyser le moteur injecte de mon sous crm ?
+2026-08-26 23:29:24,612 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:29:25,834 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:29:27,996 - INFO - Recherche Pinecone pour : bjr
+2026-08-26 23:36:03,973 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:36:04,986 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:36:06,479 - INFO - Recherche Pinecone pour : bsr
+2026-08-26 23:36:26,476 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:36:27,400 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:36:29,344 - INFO - Recherche Pinecone pour : aucune relexio,n
+2026-08-26 23:37:27,620 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:37:28,626 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:37:30,186 - INFO - Recherche Pinecone pour : bsr cv
+2026-08-26 23:37:32,022 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:37:32,917 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:37:42,252 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:37:43,235 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:37:44,835 - INFO - Recherche Pinecone pour : bsr
+2026-08-26 23:37:47,589 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:37:48,528 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:38:01,006 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:38:01,963 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:38:03,826 - INFO - Recherche Pinecone pour : bsr
+2026-08-26 23:38:23,415 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:38:24,357 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:42:13,109 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:42:14,113 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:42:16,389 - INFO - Recherche Pinecone pour : "Analyse l'état actuel de mon architecture BEK-v15.2 Hybrid, vérifie les tables de notre base Neon DB (companies, contacts, opportunities), et propose-moi une stratégie pour intégrer un agent web autonome capable de synchroniser de nouveaux prospects directement depuis le web.
+2026-08-26 23:42:56,759 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:42:57,673 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:50:05,494 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:50:06,656 - INFO - Interaction sauvegardée avec succès.
+2026-08-26 23:50:08,151 - INFO - Recherche Pinecone pour : Exécute une synchronisation globale immédiate et pousse les derniers fichiers modifiés sur mon dépôt GitHub eddy199/bek-v15-clean."
+2026-08-26 23:50:15,533 - INFO - Enregistrement de l'interaction en mémoire Pinecone...
+2026-08-26 23:50:16,408 - INFO - Interaction sauvegardée avec succès.
