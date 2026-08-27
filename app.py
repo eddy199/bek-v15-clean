@@ -32,6 +32,9 @@ from meta_cortex_swarm import ReflexionSwarm
 # Import de l'Agent Web Ultra-Puissant
 from web_agent import web_agent_instance
 
+# Import du Noyau Hermes (GOAP, Bus MCP, Security Kernel & Workers)
+from hermes_core import hermes, start_background_workers
+
 app = Flask(__name__)
 CORS(app)
 app.config['MAX_CONTENT_LENGTH'] = 300 * 1024 * 1024  # 300 Mo max
@@ -56,6 +59,17 @@ security_guard = SecurityGuard()
 event_bus = EventBusKafka()
 minhash_engine = MinHashSimilarity()
 hll_counter = HyperLogLog()
+
+# Démarrage des travailleurs d'arrière-plan de la Matrisse
+start_background_workers()
+
+# ==========================================
+# ENREGISTREMENT DES OUTILS DANS LE BUS HERMES (MCP)
+# ==========================================
+hermes.register_tool("web_sync", lambda query: web_agent_instance.run_pipeline(query), risk_level="L3")
+hermes.register_tool("neon_audit", lambda: {"status": "Neon DB connectée et stable", "tables": ["companies", "contacts", "opportunities"]}, risk_level="L1")
+hermes.register_tool("default_llm", lambda query: {"response": f"Agence IA prête pour : {query}"}, risk_level="L1")
+
 
 # ==========================================
 # PROMPT SYSTÈME GLOBAL & RÈGLES D'OR (PERSISTÉ)
@@ -104,6 +118,26 @@ def sync_and_persist_global_state(commit_message="BEK-v15.2 Auto-Sync & Persist 
                 );
             """)
             cur.execute("""
+                CREATE TABLE IF NOT EXISTS bek_mission_logs (
+                    id SERIAL PRIMARY KEY,
+                    trace_id VARCHAR(64) UNIQUE NOT NULL,
+                    objective TEXT NOT NULL,
+                    goap_plan JSONB,
+                    execution_results JSONB,
+                    status VARCHAR(32) NOT NULL,
+                    execution_ms INT,
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS skill_performance_metrics (
+                    skill_name TEXT PRIMARY KEY,
+                    success_count INT DEFAULT 0,
+                    failure_count INT DEFAULT 0,
+                    last_score FLOAT DEFAULT 1.0
+                );
+            """)
+            cur.execute("""
                 INSERT INTO bek_system_state (state_key, state_data) 
                 VALUES ('global_prompt_v15.2', %s)
                 ON CONFLICT (state_key) 
@@ -112,7 +146,7 @@ def sync_and_persist_global_state(commit_message="BEK-v15.2 Auto-Sync & Persist 
             conn.commit()
             cur.close()
             conn.close()
-            print("[SyncManager] ✅ État et prompt persistés dans Neon PostgreSQL avec succès.")
+            print("[SyncManager] ✅ État et tables d'observabilité et skills persistés dans Neon PostgreSQL avec succès.")
     except Exception as db_err:
         print(f"[SyncManager] ⚠️ Erreur persistance Neon DB: {db_err}")
 
@@ -121,6 +155,31 @@ def sync_and_persist_global_state(commit_message="BEK-v15.2 Auto-Sync & Persist 
         print("[SyncManager] ✅ Mémoire vectorielle Pinecone & ChromaDB synchronisées.")
     except Exception as mem_err:
         print(f"[SyncManager] ⚠️ Erreur persistance mémoire: {mem_err}")
+
+
+def log_mission_to_neon(trace_id, objective, plan, execution):
+    try:
+        conn = get_db_connection()
+        if not conn:
+            return
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO bek_mission_logs (trace_id, objective, goap_plan, execution_results, status, execution_ms)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            ON CONFLICT (trace_id) DO NOTHING;
+        """, (
+            trace_id,
+            objective,
+            json.dumps(plan),
+            json.dumps(execution.get("results", {})),
+            execution.get("status", "UNKNOWN"),
+            execution.get("execution_ms", 0)
+        ))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        print(f"[Neon DB Log Error]: {e}")
 
 
 # ==========================================
@@ -298,7 +357,7 @@ class SubCRMEngineAdvanced(SubCRMEngine):
 
 
 # ==========================================
-# 3. CONFIGURATION & SKILLS
+# 3. CONFIGURATION & SKILLS (AVEC FEEDBACK LOOP DYNAMIQUE)
 # ==========================================
 def get_api_key(key_name):
     val = os.environ.get(key_name, "")
@@ -325,12 +384,55 @@ def get_all_nvidia_models():
         "nvidia/nvidia-nemotron-nano-9b-v2", "openai/gpt-oss-120b", "google/gemma-4-31b-it",
     ]
 
+def record_skill_feedback(skill_name: str, success: bool):
+    """Enregistre le succès ou l'échec d'un skill et met à jour son score dans Neon DB."""
+    conn = get_db_connection()
+    if not conn:
+        return
+    try:
+        cur = conn.cursor()
+        if success:
+            cur.execute("""
+                INSERT INTO skill_performance_metrics (skill_name, success_count, failure_count, last_score)
+                VALUES (%s, 1, 0, 1.0)
+                ON CONFLICT (skill_name) 
+                DO UPDATE SET success_count = skill_performance_metrics.success_count + 1,
+                              last_score = LEAST(2.0, skill_performance_metrics.last_score + 0.1);
+            """, (skill_name,))
+        else:
+            cur.execute("""
+                INSERT INTO skill_performance_metrics (skill_name, success_count, failure_count, last_score)
+                VALUES (%s, 0, 1, 0.5)
+                ON CONFLICT (skill_name) 
+                DO UPDATE SET failure_count = skill_performance_metrics.failure_count + 1,
+                              last_score = GREATEST(0.1, skill_performance_metrics.last_score - 0.2);
+            """, (skill_name,))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        print(f"[SkillFeedback Error]: {e}")
+
 def _build_skills_index():
     index = []
     dirs_to_scan = [SKILLS_DIR]
     fallback_dir = os.path.join(WORKSPACE_DIR, "skills")
     if os.path.exists(fallback_dir) and fallback_dir not in dirs_to_scan:
         dirs_to_scan.append(fallback_dir)
+
+    # Récupération des scores de performance depuis Neon DB pour pondérer le tri
+    skill_scores = {}
+    try:
+        conn = get_db_connection()
+        if conn:
+            cur = conn.cursor()
+            cur.execute("SELECT skill_name, last_score FROM skill_performance_metrics;")
+            for row in cur.fetchall():
+                skill_scores[row[0]] = float(row[1])
+            cur.close()
+            conn.close()
+    except Exception:
+        pass
 
     for directory in dirs_to_scan:
         if not os.path.exists(directory):
@@ -341,29 +443,21 @@ def _build_skills_index():
                 if f.endswith(".json"):
                     with open(path, "r", encoding="utf-8") as file:
                         data = json.load(file)
-                        index.append({"name": data.get("name", f), "description": data.get("description", ""), "prompt": data.get("prompt", ""), "command": data.get("command", f)})
+                        name = data.get("name", f)
+                        score = skill_scores.get(name, 1.0)
+                        index.append({"name": name, "description": data.get("description", ""), "prompt": data.get("prompt", ""), "command": data.get("command", f), "score": score})
                 elif f.endswith((".txt", ".md")):
                     with open(path, "r", encoding="utf-8") as file:
                         content = file.read()
                         lines = content.split('\n', 2)
-                        index.append({"name": lines[0].strip() if lines else f, "description": "Document", "prompt": content, "command": f})
+                        name = lines[0].strip() if lines else f
+                        score = skill_scores.get(name, 1.0)
+                        index.append({"name": name, "description": "Document", "prompt": content, "command": f, "score": score})
             except Exception:
                 continue
+    # Tri intelligent par score de performance décroissant (Phase 3 - Feedback Loop)
+    index.sort(key=lambda x: x.get("score", 1.0), reverse=True)
     return index
-
-def _agent_researcher_get_skills(query: str) -> str:
-    skills_index = _build_skills_index()
-    if not skills_index or not query:
-        return ""
-    query_words = set(re.findall(r'\w+', query.lower()))
-    scored = []
-    for s in skills_index:
-        name_words = set(re.findall(r'\w+', s["name"].lower()))
-        score = sum(3 for w in query_words if w in name_words)
-        if score > 0:
-            scored.append((score, s))
-    scored.sort(key=lambda x: x[0], reverse=True)
-    return "".join([f"SKILL:{s['name']}|{s['prompt']}\n" for score, s in scored[:3]])
 
 
 # ==========================================
@@ -456,6 +550,49 @@ def api_trigger_web_sync():
     result = web_agent_instance.run_pipeline(query)
     return jsonify(result)
 
+# --- ROUTE HERMES GOAP + SÉCURITÉ & OBSERVABILITÉ ---
+@app.route('/api/hermes/goap-execute', methods=['POST'])
+def api_hermes_goap():
+    data = request.json or {}
+    user_objective = data.get("query", "Analyse globale de la Matrisse 2026")
+    override_approval = data.get("override_approval", False)
+    
+    plan = hermes.goap_planner(user_objective)
+    execution_result = hermes.dispatch_parallel(plan, user_override_approval=override_approval)
+    
+    log_mission_to_neon(
+        trace_id=execution_result.get("trace_id", "BEK-TRC-UNKNOWN"),
+        objective=user_objective,
+        plan=plan,
+        execution=execution_result
+    )
+    
+    return jsonify({
+        "objective": user_objective,
+        "goap_plan": plan,
+        "execution": execution_result
+    })
+
+# --- ROUTE D'OBSERVABILITÉ POUR L'INTERFACE ---
+@app.route('/api/matrix/observability-logs', methods=['GET'])
+def get_observability_logs():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"status": "error", "message": "Neon DB non connectée"})
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT trace_id, objective, status, execution_ms, created_at FROM bek_mission_logs ORDER BY created_at DESC LIMIT 10;")
+        logs = [dict(zip([d[0] for d in cur.description], r)) for r in cur.fetchall()]
+        
+        cur.execute("SELECT job_id, task_name, status, created_at FROM system_jobs ORDER BY created_at DESC LIMIT 5;")
+        jobs = [dict(zip([d[0] for d in cur.description], r)) for r in cur.fetchall()]
+        
+        cur.close()
+        conn.close()
+        return jsonify({"status": "success", "mission_logs": logs, "system_jobs": jobs})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+
 @app.route('/api/crm/stats', methods=['GET'])
 def get_crm_stats():
     conn = get_db_connection()
@@ -531,7 +668,6 @@ def api_spawn_alive_sub_crm():
     )
     return jsonify(result)
 
-# --- ROUTE ACTIVE : MATRISSE CRM BEK ---
 @app.route('/api/matrix/bek-action', methods=['POST'])
 def api_matrix_bek_action():
     data = request.json or {}
@@ -642,7 +778,7 @@ def chat():
                 return
 
         action_prompt = (
-            "Tu es BEK-v15.2, une IA hybride avancée et l'Exécuteur de la Matrice. "
+            "Tu es BEK-v15.2, une IA hybride avancée et l'Exécuteur de la Matrisse. "
             "RÈGLE 1 (Social) : Si l'utilisateur te salue (ex: 'bjr', 'salut', 'cv') ou discute de façon informelle, réponds naturellement, brièvement et poliment, SANS JAMAIS mentionner tes protocoles, le CRM ou Neon DB. "
             "RÈGLE 2 (Technique) : Si l'utilisateur demande du code, une création ou interroge les données, active le mode Exécuteur : sois direct, chirurgical, fournis le code pur sans blabla d'agent."
         )

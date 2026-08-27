@@ -385,6 +385,28 @@
             root@matrisse-bek:~# En attente d'instruction... <span class="pulse-cursor"></span>
           </div>
         </div>
+
+        <!-- Panneau d'Observabilité des Missions & Workers (Phase 4) -->
+        <div class="matrix-widget" style="grid-column: 1 / -1; margin-top: 20px;">
+          <h3 style="color: var(--accent-blue); margin-top: 0; font-size: 1.2em; font-weight: 600;">📊 Observabilité en Direct & Trace IDs (Neon DB)</h3>
+          <div style="margin-top: 15px; overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+              <thead>
+                <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-dim);">
+                  <th style="padding: 8px;">Trace ID</th>
+                  <th style="padding: 8px;">Objectif</th>
+                  <th style="padding: 8px;">Statut</th>
+                  <th style="padding: 8px;">Temps (ms)</th>
+                  <th style="padding: 8px;">Date</th>
+                </tr>
+              </thead>
+              <tbody id="observabilityTableBody">
+                <tr><td colspan="5" style="padding: 12px; text-align: center; color: var(--text-dim);">Chargement des logs d'observabilité...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -411,6 +433,7 @@
           matrixBtn.classList.add('active');
           matrixView.classList.add('active');
           matrixView.style.display = 'block'; 
+          loadObservabilityLogs(); // Chargement direct au clic
         });
 
         allNavs.forEach(btn => {
@@ -427,6 +450,38 @@
       }
     }, 500);
   });
+
+  // Fonction de chargement du panneau d'observabilité (Phase 4)
+  async function loadObservabilityLogs() {
+    try {
+      const res = await fetch('/api/matrix/observability-logs');
+      const data = await res.json();
+      if(data.status === 'success' && data.mission_logs) {
+        const tbody = document.getElementById('observabilityTableBody');
+        if(tbody) {
+          tbody.innerHTML = data.mission_logs.map(log => `
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+              <td style="padding: 8px; font-family: monospace; color: var(--accent-blue);">${log.trace_id}</td>
+              <td style="padding: 8px;">${log.objective}</td>
+              <td style="padding: 8px;"><span style="background: rgba(74,222,128,0.1); color: #4ade80; padding: 2px 8px; border-radius: 4px; font-size: 11px;">${log.status}</span></td>
+              <td style="padding: 8px; font-family: monospace;">${log.execution_ms} ms</td>
+              <td style="padding: 8px; color: var(--text-dim); font-size: 11px;">${new Date(log.created_at).toLocaleTimeString('fr-FR')}</td>
+            </tr>
+          `).join('') || '<tr><td colspan="5" style="padding: 12px; text-align: center;">Aucun journal de mission enregistré.</td></tr>';
+        }
+      }
+    } catch (e) {
+      console.error("Erreur chargement observabilité:", e);
+    }
+  }
+
+  // Actualisation toutes les 10 secondes lorsque la vue Matrisse est active
+  setInterval(() => {
+    const matrixView = document.getElementById('viewMatrixBek');
+    if (matrixView && matrixView.classList.contains('active')) {
+      loadObservabilityLogs();
+    }
+  }, 10000);
 
   function runMatrixAction() {
     const terminal = document.getElementById('bek-terminal');
@@ -447,6 +502,9 @@
            el.style.color = "var(--accent-blue)";
            setTimeout(() => el.style.color = originalColor, 800);
         });
+        
+        // Rafraîchir les logs d'observabilité après l'action
+        loadObservabilityLogs();
       }
     })
     .catch(err => {
