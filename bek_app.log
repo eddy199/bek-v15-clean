@@ -1,0 +1,65 @@
+2026-08-29 17:11:55,593 - INFO - Workers Hermes démarrés.
+2026-08-29 17:11:55,611 - INFO - ==========================================
+2026-08-29 17:11:55,613 - INFO - BEK-v15.2 HYBRID démarrage
+2026-08-29 17:11:55,613 - INFO - Host: 0.0.0.0
+2026-08-29 17:11:55,614 - INFO - Port: 8765
+2026-08-29 17:11:55,615 - INFO - Debug: False
+2026-08-29 17:11:55,615 - INFO - Hermes SecurityGuard: actif
+2026-08-29 17:11:55,616 - INFO - ==========================================
+2026-08-29 17:12:46,657 - INFO - Workers Hermes démarrés.
+2026-08-29 17:12:46,676 - INFO - ==========================================
+2026-08-29 17:12:46,677 - INFO - BEK-v15.2 HYBRID démarrage
+2026-08-29 17:12:46,678 - INFO - Host: 0.0.0.0
+2026-08-29 17:12:46,678 - INFO - Port: 8765
+2026-08-29 17:12:46,679 - INFO - Debug: False
+2026-08-29 17:12:46,679 - INFO - Hermes SecurityGuard: actif
+2026-08-29 17:12:46,680 - INFO - ==========================================
+2026-08-29 17:13:19,478 - INFO - Workers Hermes démarrés.
+2026-08-29 17:13:19,498 - INFO - ==========================================
+2026-08-29 17:13:19,499 - INFO - BEK-v15.2 HYBRID démarrage
+2026-08-29 17:13:19,500 - INFO - Host: 0.0.0.0
+2026-08-29 17:13:19,501 - INFO - Port: 8765
+2026-08-29 17:13:19,501 - INFO - Debug: False
+2026-08-29 17:13:19,502 - INFO - Hermes SecurityGuard: actif
+2026-08-29 17:13:19,502 - INFO - ==========================================
+2026-08-29 17:33:56,020 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 17:33:57,591 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 17:34:02,931 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 17:34:26,378 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 17:34:27,966 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 17:34:29,925 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 17:34:56,580 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 17:34:58,450 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 17:35:00,364 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 17:35:36,829 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 17:35:38,585 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 17:35:40,532 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 17:36:38,524 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 17:36:40,008 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 17:36:41,878 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 18:10:17,683 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 18:10:20,214 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 18:10:22,457 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 18:10:43,948 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 18:10:45,559 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 18:10:47,322 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 18:12:05,626 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 18:12:07,116 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 18:12:08,955 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 18:12:20,673 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 18:12:22,171 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 18:12:23,809 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 18:15:00,611 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 18:15:02,217 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 18:15:04,043 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 18:17:12,139 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 18:17:13,764 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 18:17:15,722 - INFO - [SyncManager] Mémoire vectorielle synchronisée.
+2026-08-29 19:39:04,604 - INFO - Workers Hermes démarrés.
+2026-08-29 19:39:04,703 - INFO - ==========================================
+2026-08-29 19:39:04,727 - INFO - BEK-v15.2 HYBRID démarrage
+2026-08-29 19:39:04,727 - INFO - Host: 0.0.0.0
+2026-08-29 19:39:04,736 - INFO - Port: 8765
+2026-08-29 19:39:04,737 - INFO - Debug: False
+2026-08-29 19:39:04,737 - INFO - Hermes SecurityGuard: actif
+2026-08-29 19:39:04,738 - INFO - ==========================================
