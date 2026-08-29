@@ -4065,3 +4065,11 @@ moh@moh-Aspire-ES1-571:/media/moh/84B00E0BB00E0500/workspacekimi$
 2026-08-29 22:05:53,093 - INFO - Enregistrement interaction en mémoire Pinecone.
 2026-08-29 22:05:53,368 - WARNING - NVIDIA embedding unavailable: 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings
 2026-08-29 22:05:55,157 - INFO - Interaction sauvegardée | record=4296df80-fd0d-4eaf-828b-51d9405f0726
+2026-08-29 22:10:47,105 - INFO - Enregistrement interaction en mémoire Pinecone.
+2026-08-29 22:10:47,415 - WARNING - NVIDIA embedding unavailable: 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings
+2026-08-29 22:10:49,176 - INFO - Interaction sauvegardée | record=5d824718-0032-4c71-a86d-f6ceb12f0579
+2026-08-29 22:10:52,999 - INFO - Recherche mémoire Pinecone | query_length=3 | top_k=2
+2026-08-29 22:10:53,302 - WARNING - NVIDIA embedding unavailable: 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings
+2026-08-29 22:10:54,642 - INFO - Enregistrement interaction en mémoire Pinecone.
+2026-08-29 22:10:54,886 - WARNING - NVIDIA embedding unavailable: 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings
+2026-08-29 22:10:55,551 - INFO - Interaction sauvegardée | record=55db0352-436b-4722-9b8d-4086a4bf108b
