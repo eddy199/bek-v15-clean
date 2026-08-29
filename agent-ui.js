@@ -102,7 +102,6 @@
                 0%, 100% { opacity: 1; }
                 50% { opacity: 0.2; }
             }
-            /* ─── META-CORTEX PANEL SSE ─── */
             .meta-cortex-reflection-panel {
                 background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
                 border: 1px solid #0f3460;
@@ -160,23 +159,10 @@
                 font-weight: 500;
             }
             .verdict-confidence { margin-left: auto; font-size: 11px; opacity: 0.8; }
-            .correction-badge {
-                font-size: 11px;
-                color: #f59e0b;
-                margin-top: 4px;
-                display: inline-block;
-                background: rgba(245, 158, 11, 0.1);
-                padding: 2px 8px;
-                border-radius: 4px;
-                border: 1px solid #f59e0b30;
-            }
         `;
         document.head.appendChild(style);
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // CLASSE META-CORTEX UI CONTROLLER
-    // ═══════════════════════════════════════════════════════════════
     class MetaCortexUI {
         constructor(chatContainer) {
             this.container = chatContainer;
@@ -184,7 +170,7 @@
             this.progressBar = null;
         }
 
-        showPanel(data) {
+        showPanel() {
             if (this.reflectionPanel) return;
             const panel = document.createElement('div');
             panel.className = 'meta-cortex-reflection-panel';
@@ -207,7 +193,7 @@
         }
 
         addStep(message, detail = '', icon = '📋', progress = 30) {
-            if (!this.reflectionPanel) this.showPanel({});
+            if (!this.reflectionPanel) this.showPanel();
             const stepsContainer = this.reflectionPanel.querySelector('.reflection-steps');
             const step = document.createElement('div');
             step.className = 'reflection-step';
@@ -243,12 +229,15 @@
             if (this.progressBar) this.progressBar.style.width = '100%';
             scrollToBottom();
         }
+    }
 
-        hidePanel() {
-            if (this.reflectionPanel) {
-                this.reflectionPanel.style.opacity = '0.7';
-                this.reflectionPanel = null;
-            }
+    // Fonction de correction des chaînes Mojibake éventuelles côté client
+    function fixMojibake(str) {
+        if (!str || typeof str !== 'string') return str;
+        try {
+            return decodeURIComponent(escape(str));
+        } catch (e) {
+            return str;
         }
     }
 
@@ -313,22 +302,6 @@
         } catch (e) {}
     }
 
-    window.switchCrmTab = function(tabName) {
-        document.querySelectorAll('.crm-section').forEach(sec => sec.style.display = 'none');
-        document.querySelectorAll('.crm-tab-btn').forEach(btn => {
-            btn.style.color = 'var(--text-dim)';
-            btn.style.fontWeight = 'normal';
-        });
-
-        const targetSec = document.getElementById(`crmSec-${tabName}`);
-        const targetBtn = document.getElementById(`tabBtn-${tabName}`);
-        if (targetSec) targetSec.style.display = 'block';
-        if (targetBtn) {
-            targetBtn.style.color = 'var(--accent-soft)';
-            targetBtn.style.fontWeight = 'bold';
-        }
-    };
-
     async function loadCRMStats() {
         try {
             const res = await fetch(`${API_BASE}/api/crm/stats`);
@@ -343,70 +316,6 @@
             if (coElem) coElem.innerText = data.num_companies;
             if (oElem) oElem.innerText = data.num_opportunities;
             if (aElem) aElem.innerText = Number(data.total_amount || 0).toLocaleString('fr-FR');
-
-            const tContacts = document.getElementById('crmTableContacts');
-            if (tContacts && data.contacts) {
-                tContacts.innerHTML = data.contacts.map(c => `
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding:10px; color:var(--text-dim);">${c.id}</td>
-                        <td style="padding:10px; font-weight:600; color:var(--text);">${c.name}</td>
-                        <td style="padding:10px; color:var(--text-dim);">${c.email || '-'}</td>
-                        <td style="padding:10px; color:var(--text-dim);">${c.phone || '-'}</td>
-                        <td style="padding:10px; color:var(--accent-soft); font-weight:500;">${c.company_name}</td>
-                    </tr>
-                `).join('') || '<tr><td colspan="5" style="padding:15px; text-align:center;">Aucun contact trouvé.</td></tr>';
-            }
-
-            const tCompanies = document.getElementById('crmTableCompanies');
-            if (tCompanies && data.companies) {
-                tCompanies.innerHTML = data.companies.map(co => `
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding:10px; color:var(--text-dim);">${co.id}</td>
-                        <td style="padding:10px; font-weight:600; color:var(--text);">${co.name}</td>
-                        <td style="padding:10px; color:var(--text-dim);">${new Date(co.created_at).toLocaleDateString('fr-FR')}</td>
-                    </tr>
-                `).join('') || '<tr><td colspan="3" style="padding:15px; text-align:center;">Aucune entreprise trouvée.</td></tr>';
-            }
-
-            const tOpp = document.getElementById('crmTableOpportunities');
-            if (tOpp && data.opportunities) {
-                tOpp.innerHTML = data.opportunities.map(o => `
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding:10px; font-weight:600; color:var(--text);">${o.name}</td>
-                        <td style="padding:10px; color:var(--accent-soft);">${o.company_name}</td>
-                        <td style="padding:10px; color:#36a2eb; font-weight:bold;">${Number(o.amount).toLocaleString('fr-FR')} ${o.currency}</td>
-                        <td style="padding:10px;"><span style="background:var(--bg-active); padding:3px 8px; border-radius:4px; font-size:12px;">${o.stage || 'Lead'}</span></td>
-                    </tr>
-                `).join('') || '<tr><td colspan="4" style="padding:15px; text-align:center;">Aucune opportunité trouvée.</td></tr>';
-            }
-
-            const canvas = document.getElementById('crmStatsChart');
-            if (canvas && typeof Chart !== 'undefined') {
-                const ctx = canvas.getContext('2d');
-                if (crmChartInstance) crmChartInstance.destroy();
-                crmChartInstance = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Contacts', 'Sociétés', 'Opportunités'],
-                        datasets: [{
-                            data: [data.num_contacts, data.num_companies, data.num_opportunities],
-                            backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(255, 206, 86, 0.6)'],
-                            borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 206, 86, 1)'],
-                            borderWidth: 1.5,
-                            borderRadius: 6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-                            x: { grid: { display: false } }
-                        }
-                    }
-                });
-            }
         } catch (e) {
             console.error('Erreur chargement CRM stats :', e);
         }
@@ -419,11 +328,10 @@
             skills.map(s => `
                 <div style="background:var(--bg-card); border:1px solid var(--border); padding:14px; border-radius:8px;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <strong style="color:var(--accent-soft); font-size:14px;">${s.name}</strong>
-                        <span style="font-size:11px; background:var(--bg-active); padding:2px 6px; border-radius:4px; font-family:monospace;">${s.command}</span>
+                        <strong style="color:var(--accent-blue); font-size:14px;">${s.name}</strong>
+                        <span style="font-size:11px; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-family:monospace;">${s.command}</span>
                     </div>
                     <p style="color:var(--text-dim); font-size:12.5px; margin-top:6px;">${s.description}</p>
-                    <pre style="background:var(--bg-input); padding:10px; border-radius:6px; margin-top:8px; overflow-x:auto; font-size:11.5px; color:var(--text);"><code>${escapeHtml(s.prompt.substring(0, 400))}...</code></pre>
                 </div>
             `).join('') + `</div>`;
     }
@@ -432,11 +340,11 @@
         const viewFiles = document.getElementById('viewFiles');
         if (!viewFiles) return;
         viewFiles.innerHTML = `<h2>Fichiers du projet & de la session (${files.length})</h2><div style="margin-top:16px; display:flex; flex-direction:column; gap:8px;">` +
-            (files.length === 0 ? '<p style="color:var(--text-faint);">Aucun fichier disponible.</p>' : 
+            (files.length === 0 ? '<p style="color:var(--text-dim);">Aucun fichier disponible.</p>' : 
             files.map(f => `
-                <div style="background:var(--bg-card); border:1px solid var(--border); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>📄 <strong>${f.name}</strong> <span style="color:var(--text-faint); font-size:11px; margin-left:8px;">${(f.size/1024).toFixed(1)} Ko</span></span>
-                    <a href="${API_BASE}/api/download/${f.name}" target="_blank" style="background:var(--accent); color:#fff; padding:6px 12px; border-radius:6px; font-size:12px; text-decoration:none;">Télécharger / Voir</a>
+                <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>📄 <strong>${f.name}</strong> <span style="color:var(--text-dim); font-size:11px; margin-left:8px;">${(f.size/1024).toFixed(1)} Ko</span></span>
+                    <a href="${API_BASE}/api/download/${f.name}" target="_blank" style="background:var(--accent-blue); color:#fff; padding:6px 12px; border-radius:6px; font-size:12px; text-decoration:none;">Télécharger</a>
                 </div>
             `).join('')) + `</div>`;
     }
@@ -474,9 +382,6 @@
                 } else {
                     const viewEl = document.getElementById(`view${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
                     if (viewEl) viewEl.classList.add('active');
-                    if (tabName === 'plugins') {
-                        loadCRMStats();
-                    }
                 }
             });
         });
@@ -485,7 +390,6 @@
     function setupEventListeners() {
         if (DOM.providerSelect) DOM.providerSelect.addEventListener('change', updateModelSelect);
         if (DOM.modelSelect) DOM.modelSelect.addEventListener('change', (e) => { currentModel = e.target.value; });
-        if (DOM.refreshCrmBtn) DOM.refreshCrmBtn.addEventListener('click', loadCRMStats);
 
         if (DOM.sendBtn && DOM.userInput) {
             DOM.sendBtn.addEventListener('click', handleSendOrStop);
@@ -516,23 +420,6 @@
             if (DOM.chatBox) DOM.chatBox.innerHTML = '';
             messageHistory = [];
             saveCurrentConversation();
-            DOM.dropdownMenu.style.display = 'none';
-        });
-
-        document.getElementById('menuShare')?.addEventListener('click', () => {
-            const conversationText = messageHistory.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n\n');
-            navigator.clipboard.writeText(conversationText);
-            alert("📋 Résumé de la conversation copié !");
-            DOM.dropdownMenu.style.display = 'none';
-        });
-
-        document.getElementById('menuFiles')?.addEventListener('click', () => {
-            document.querySelector('[data-tab="files"]').click();
-            DOM.dropdownMenu.style.display = 'none';
-        });
-
-        document.getElementById('menuExportPdf')?.addEventListener('click', () => {
-            window.print();
             DOM.dropdownMenu.style.display = 'none';
         });
 
@@ -576,9 +463,7 @@
     function loadConversationsFromStorage() {
         try {
             const saved = localStorage.getItem('bek_conversations');
-            if (saved) {
-                conversations = JSON.parse(saved);
-            }
+            if (saved) conversations = JSON.parse(saved);
         } catch (e) {
             conversations = [];
         }
@@ -596,7 +481,7 @@
         if (!DOM.convList) return;
         DOM.convList.innerHTML = '';
         if (conversations.length === 0) {
-            DOM.convList.innerHTML = '<div class="conv-empty">Aucune conversation</div>';
+            DOM.convList.innerHTML = '<div class="conv-empty" style="color:var(--text-dim); padding:10px;">Aucune conversation</div>';
             return;
         }
 
@@ -689,7 +574,6 @@
     async function uploadFileToServer(file) {
         const formData = new FormData();
         formData.append('file', file);
-        renderFilePreview(file, 'uploading');
 
         try {
             const resp = await fetch(`${API_BASE}/api/upload`, {
@@ -699,7 +583,6 @@
             const data = await resp.json();
             if (resp.ok) {
                 attachedFiles.push(data.filename);
-                renderFilePreview(file, 'success');
                 loadFilesList();
             } else {
                 alert(`Erreur upload : ${data.error}`);
@@ -707,15 +590,6 @@
         } catch (err) {
             alert(`Erreur réseau`);
         }
-    }
-
-    function renderFilePreview(file, status) {
-        if (!DOM.filePreviewBar) return;
-        DOM.filePreviewBar.style.display = 'flex';
-        const tag = document.createElement('div');
-        tag.style.cssText = "background:var(--bg-input); border:1px solid var(--border-strong); padding:6px 12px; border-radius:8px; font-size:12px; display:flex; align-items:center; gap:8px;";
-        tag.innerHTML = `<span>📎 ${file.name} ${status === 'uploading' ? '⏳' : '✅'}</span>`;
-        DOM.filePreviewBar.appendChild(tag);
     }
 
     function handleSendOrStop() {
@@ -737,7 +611,7 @@
             DOM.userInput.disabled = false;
             DOM.userInput.focus();
         }
-        appendSystemMessage('⏹️ Génération interrompue par l\'utilisateur.');
+        appendSystemMessage('⏹️ Génération interrompue.');
     }
 
     async function sendMessage() {
@@ -747,16 +621,12 @@
 
         let fullTextContent = text;
         if (attachedFiles.length > 0) {
-            fullTextContent += `\n[Fichiers/Images joints : ${attachedFiles.join(', ')}]`;
+            fullTextContent += `\n[Fichiers joints : ${attachedFiles.join(', ')}]`;
         }
 
         appendUserMessage(fullTextContent, true);
         DOM.userInput.value = '';
         attachedFiles = [];
-        if (DOM.filePreviewBar) {
-            DOM.filePreviewBar.innerHTML = '';
-            DOM.filePreviewBar.style.display = 'none';
-        }
 
         isStreaming = true;
         activeController = new AbortController();
@@ -783,7 +653,10 @@
         try {
             const resp = await fetch(`${API_BASE}/api/chat`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Accept': 'text/event-stream; charset=utf-8'
+                },
                 body: JSON.stringify(payload),
                 signal: activeController.signal
             });
@@ -791,7 +664,7 @@
             if (!resp.ok) throw new Error(`Erreur HTTP ${resp.status}`);
 
             const reader = resp.body.getReader();
-            const decoder = new TextDecoder();
+            const decoder = new TextDecoder('utf-8', { fatal: false });
             let buffer = '';
 
             while (true) {
@@ -810,7 +683,7 @@
                     try {
                         const data = JSON.parse(dataStr);
                         if (data.chunk) {
-                            fullResponse += data.chunk;
+                            fullResponse += fixMojibake(data.chunk);
                             assistantDiv.innerHTML = formatMarkdown(fullResponse) + '<span class="gemini-cursor"></span>';
                             scrollToBottom();
                         }
@@ -825,7 +698,7 @@
 
         } catch (err) {
             if (err.name !== 'AbortError') {
-                assistantDiv.innerHTML = `<div class="error-bubble">🔴 Erreur : ${err.message}</div>`;
+                assistantDiv.innerHTML = `<div style="color:#ff4a4a; padding:10px;">🔴 Erreur : ${err.message}</div>`;
             }
         } finally {
             isStreaming = false;
@@ -844,28 +717,19 @@
         return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    function appendUserMessage(text, save = true) {
+    function appendUserMessage(text) {
         if (!DOM.chatBox) return;
         const div = document.createElement('div');
         div.className = 'message user-message';
-        div.title = "Cliquez pour copier ce message";
-        
         const bubble = document.createElement('div');
         bubble.className = 'msg-bubble';
         bubble.textContent = text;
         div.appendChild(bubble);
-
-        div.addEventListener('click', () => {
-            navigator.clipboard.writeText(text).then(() => {
-                alert("💬 Message utilisateur copié dans le presse-papier !");
-            });
-        });
-
         DOM.chatBox.appendChild(div);
         scrollToBottom();
     }
 
-    function appendAssistantMessage(html, save = true) {
+    function appendAssistantMessage(html) {
         if (!DOM.chatBox) return document.createElement('div');
         const div = document.createElement('div');
         div.className = 'message assistant-message';
@@ -879,7 +743,7 @@
         if (!DOM.chatBox) return;
         const div = document.createElement('div');
         div.className = 'message system-message';
-        div.style.cssText = "text-align: center; color: var(--text-faint); font-size: 12px; margin: 10px 0;";
+        div.style.cssText = "text-align: center; color: var(--text-dim); font-size: 12px; margin: 10px 0;";
         div.textContent = text;
         DOM.chatBox.appendChild(div);
         scrollToBottom();
@@ -895,49 +759,17 @@
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
 
-        safeText = safeText.replace(/&lt;thought&gt;([\s\S]*?)(&lt;\/thought&gt;|$)/g, (match, p1, p2) => {
-            const isFinished = !!p2;
-            const summaryText = isFinished ? 'Agent de Réflexion Meta-Cortex terminé' : 'L\'Agent de Réflexion analyse...';
-            const pulseClass = isFinished ? '' : 'pulse-anim';
-            
-            return `
-            <details class="agent-reflection" ${isFinished ? '' : 'open'}>
-                <summary class="${pulseClass}">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M12 16v-4"></path>
-                        <path d="M12 8h.01"></path>
-                    </svg>
-                    <span>${summaryText}</span>
-                </summary>
-                <div class="reflection-content">${p1.replace(/\n/g, '<br>')}</div>
-            </details>`;
-        });
-
         safeText = safeText.replace(/```(\w*)?\n([\s\S]*?)```/g, (match, lang, codeContent) => {
             const language = lang || 'code';
             const cleanCode = codeContent
                 .replace(/&amp;/g, '&')
                 .replace(/&lt;/g, '<')
                 .replace(/&gt;/g, '>');
-            
-            const blockId = 'code_' + Math.random().toString(36).substr(2, 9);
-            window[blockId] = cleanCode;
 
             return `
-                <div class="code-container">
-                    <div class="code-header">
-                        <span>${language.toUpperCase()}</span>
-                        <div style="display: flex; gap: 6px;">
-                            <button class="code-action-btn" onclick="downloadCodeBlock('${blockId}', '${language}')" title="Télécharger le fichier">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            </button>
-                            <button class="code-action-btn" onclick="copyCodeBlock('${blockId}')" title="Copier le code">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <pre><code>${escapeHtml(cleanCode)}</code></pre>
+                <div class="code-container" style="background:#0a0a0c; border:1px solid var(--border-color); border-radius:8px; margin:10px 0; overflow:hidden;">
+                    <div style="padding:6px 12px; background:rgba(255,255,255,0.05); color:var(--text-dim); font-size:11px; font-weight:bold;">${language.toUpperCase()}</div>
+                    <pre style="padding:12px; margin:0; overflow-x:auto; font-family:'Ubuntu Mono', monospace; font-size:13px; color:#e0e0e0;"><code>${escapeHtml(cleanCode)}</code></pre>
                 </div>
             `;
         });
@@ -945,35 +777,9 @@
         return safeText
             .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
             .replace(/\*(.*?)\*/g, '<i>$1</i>')
-            .replace(/`([^`]+)`/g, '<code>$1</code>')
+            .replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.1); padding:2px 5px; border-radius:4px; font-family:\'Ubuntu Mono\', monospace;">$1</code>')
             .replace(/\n/g, '<br>');
     }
-
-    window.downloadCodeBlock = function(blockId, lang) {
-        const code = window[blockId];
-        if (!code) return;
-        const extensions = { python: 'py', javascript: 'js', html: 'html', css: 'css', json: 'json', bash: 'sh', markdown: 'md', txt: 'txt', code: 'txt' };
-        const ext = extensions[lang] || 'txt';
-        const filename = `snippet_${Date.now()}.${ext}`;
-
-        const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    };
-
-    window.copyCodeBlock = function(blockId) {
-        const code = window[blockId];
-        if (!code) return;
-        navigator.clipboard.writeText(code).then(() => {
-            alert("📋 Code copié dans le presse-papier !");
-        });
-    };
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

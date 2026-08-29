@@ -42,6 +42,9 @@ from context_loader import load_project_documentation
 from fast_math import HyperLogLog, MinHashSimilarity
 from event_bus import EventBusKafka
 from swarm_core import run_bek_swarm_sync
+from skill_registry import skill_registry
+from provider_manager import provider_manager
+from approval_manager import approval_manager
 
 # ==========================================
 # META-CORTEX
@@ -74,8 +77,7 @@ app = Flask(__name__)
 
 app.config["MAX_CONTENT_LENGTH"] = 300 * 1024 * 1024
 
-# CORS configurable.
-# Par défaut : localhost uniquement.
+# CORS configurable
 CORS_ORIGINS = os.environ.get(
     "BEK_CORS_ORIGINS",
     "http://localhost:3000,http://127.0.0.1:3000,"
@@ -208,7 +210,12 @@ if not logger.handlers:
 # ==========================================
 # INITIALISATION GLOBALE
 # ==========================================
-
+from generate_architecture_doc import update_documentation_file
+try:
+    update_documentation_file()
+except Exception as exc:
+    logger.warning("Génération auto architecture échouée : %s", exc)
+    
 GLOBAL_SYSTEM_CONTEXT = load_project_documentation(
     DOCS_DIR
 )
@@ -337,10 +344,8 @@ BEK_GOLDEN_RULES = """
 
 def json_safe(value):
     """
-    Convertit quelques types PostgreSQL/Python
-    non directement sérialisables en JSON.
+    Convertit quelques types PostgreSQL/Python non directement sérialisables en JSON.
     """
-
     if value is None:
         return None
 
@@ -390,86 +395,36 @@ def json_response(payload, status=200):
 
 def get_api_key(key_name: str) -> str:
     """
-    Récupération sécurisée d'une clé API.
-
-    Priorité :
-    1. variable d'environnement
-    2. env.txt
-    3. .env
+    Récupération sécurisée d'une clé API via ProviderManager ou fallback d'environnement.
     """
-
-    if not isinstance(
-        key_name,
-        str,
-    ):
+    if not isinstance(key_name, str):
         return ""
 
-    value = os.environ.get(
-        key_name,
-        "",
-    )
+    key_from_manager = provider_manager.get_api_key(key_name)
+    if key_from_manager:
+        return key_from_manager
 
+    value = os.environ.get(key_name, "")
     if value:
-        return value.strip(
-            "\"' \r\n"
-        )
+        return value.strip("\"' \r\n")
 
     for env_path in [
-        os.path.join(
-            WORKSPACE_DIR,
-            "env.txt",
-        ),
-        os.path.join(
-            WORKSPACE_DIR,
-            ".env",
-        ),
+        os.path.join(WORKSPACE_DIR, "env.txt"),
+        os.path.join(WORKSPACE_DIR, ".env"),
     ]:
-
-        if not os.path.isfile(
-            env_path
-        ):
+        if not os.path.isfile(env_path):
             continue
-
         try:
-
-            with open(
-                env_path,
-                "r",
-                encoding="utf-8-sig",
-                errors="ignore",
-            ) as file:
-
+            with open(env_path, "r", encoding="utf-8-sig", errors="ignore") as file:
                 for raw_line in file:
-
                     line = raw_line.strip()
-
-                    if (
-                        not line
-                        or line.startswith("#")
-                    ):
+                    if not line or line.startswith("#"):
                         continue
-
-                    if not line.startswith(
-                        key_name + "="
-                    ):
+                    if not line.startswith(key_name + "="):
                         continue
-
-                    return (
-                        line.split(
-                            "=",
-                            1,
-                        )[1]
-                        .strip()
-                        .strip("\"'")
-                    )
-
+                    return line.split("=", 1)[1].strip().strip("\"'")
         except Exception as exc:
-
-            logger.warning(
-                "Lecture de %s impossible : %s",
-                env_path,
-                exc,
-            )
+            logger.warning("Lecture de %s impossible : %s", env_path, exc)
 
     return ""
 
@@ -483,13 +438,7 @@ def get_admin_api_key():
 def check_admin_auth():
     """
     Authentification des endpoints administratifs.
-
-    Si BEK_ADMIN_API_KEY n'est pas configurée,
-    les endpoints restent utilisables localement.
-
-    Dès qu'une clé est configurée, elle devient obligatoire.
     """
-
     configured_key = get_admin_api_key()
 
     if not configured_key:
@@ -530,7 +479,6 @@ def sync_and_persist_global_state(
         "BEK-v15.2 Auto-Sync & Persist State"
     )
 ):
-
     logger.info(
         "[SyncManager] Début synchronisation."
     )
@@ -548,13 +496,8 @@ def sync_and_persist_global_state(
     # --------------------------------------
     # GITHUB
     # --------------------------------------
-
     if gh_token:
-
         try:
-
-            # Ne jamais écrire le token dans l'URL
-            # du remote Git.
             remote_result = subprocess.run(
                 [
                     "git",
@@ -569,13 +512,10 @@ def sync_and_persist_global_state(
             )
 
             if remote_result.returncode != 0:
-
                 logger.warning(
                     "[SyncManager] Remote Git inexistant."
                 )
-
             else:
-
                 subprocess.run(
                     [
                         "git",
@@ -601,55 +541,14 @@ def sync_and_persist_global_state(
                     timeout=30,
                 )
 
-                if commit_result.returncode != 0:
-
-                    stdout = (
-                        commit_result.stdout
-                        or ""
-                    ).strip()
-
-                    stderr = (
-                        commit_result.stderr
-                        or ""
-                    ).strip()
-
-                    # Rien à commit est normal.
-                    if (
-                        "nothing to commit"
-                        not in stdout.lower()
-                        and "nothing to commit"
-                        not in stderr.lower()
-                    ):
-                        logger.warning(
-                            "[SyncManager] Commit Git : %s",
-                            stderr or stdout,
-                        )
-
-                # Authentification temporaire uniquement
-                # pendant git push.
                 auth = base64.b64encode(
-                    f"x-access-token:{gh_token}".encode(
-                        "utf-8"
-                    )
-                ).decode(
-                    "ascii"
-                )
+                    f"x-access-token:{gh_token}".encode("utf-8")
+                ).decode("ascii")
 
                 git_env = os.environ.copy()
-
-                git_env[
-                    "GIT_CONFIG_COUNT"
-                ] = "1"
-
-                git_env[
-                    "GIT_CONFIG_KEY_0"
-                ] = "http.extraheader"
-
-                git_env[
-                    "GIT_CONFIG_VALUE_0"
-                ] = (
-                    f"AUTHORIZATION: basic {auth}"
-                )
+                git_env["GIT_CONFIG_COUNT"] = "1"
+                git_env["GIT_CONFIG_KEY_0"] = "http.extraheader"
+                git_env["GIT_CONFIG_VALUE_0"] = f"AUTHORIZATION: basic {auth}"
 
                 push_result = subprocess.run(
                     [
@@ -666,63 +565,38 @@ def sync_and_persist_global_state(
                 )
 
                 if push_result.returncode == 0:
-
-                    logger.info(
-                        "[SyncManager] "
-                        "Synchronisation GitHub réussie."
-                    )
-
+                    logger.info("[SyncManager] Synchronisation GitHub réussie.")
                 else:
-
                     logger.warning(
-                        "[SyncManager] "
-                        "Git push échoué : %s",
-                        (
-                            push_result.stderr
-                            or push_result.stdout
-                        ).strip(),
+                        "[SyncManager] Git push échoué : %s",
+                        (push_result.stderr or push_result.stdout).strip(),
                     )
 
         except subprocess.TimeoutExpired:
-
-            logger.warning(
-                "[SyncManager] Timeout GitHub."
-            )
-
+            logger.warning("[SyncManager] Timeout GitHub.")
         except Exception as exc:
-
-            logger.error(
-                "[SyncManager] Erreur GitHub : %s",
-                exc,
-            )
+            logger.error("[SyncManager] Erreur GitHub : %s", exc)
 
     # --------------------------------------
     # NEON
     # --------------------------------------
-
     conn = None
     cur = None
 
     try:
-
         conn = get_db_connection()
-
         if conn:
-
             cur = conn.cursor()
-
             cur.execute(
                 """
                 CREATE TABLE IF NOT EXISTS bek_system_state (
                     id SERIAL PRIMARY KEY,
                     state_key TEXT UNIQUE,
                     state_data TEXT,
-                    updated_at TIMESTAMP
-                        DEFAULT CURRENT_TIMESTAMP
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
                 """
             )
-
             cur.execute(
                 """
                 CREATE TABLE IF NOT EXISTS bek_mission_logs (
@@ -733,12 +607,10 @@ def sync_and_persist_global_state(
                     execution_results JSONB,
                     status VARCHAR(32) NOT NULL,
                     execution_ms INT,
-                    created_at TIMESTAMP WITH TIME ZONE
-                        DEFAULT CURRENT_TIMESTAMP
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
                 );
                 """
             )
-
             cur.execute(
                 """
                 CREATE TABLE IF NOT EXISTS skill_performance_metrics (
@@ -749,192 +621,97 @@ def sync_and_persist_global_state(
                 );
                 """
             )
-
             cur.execute(
                 """
-                INSERT INTO bek_system_state
-                    (
-                        state_key,
-                        state_data
-                    )
-                VALUES
-                    (
-                        'global_prompt_v15.2',
-                        %s
-                    )
+                INSERT INTO bek_system_state (state_key, state_data)
+                VALUES ('global_prompt_v15.2', %s)
                 ON CONFLICT (state_key)
                 DO UPDATE SET
                     state_data = EXCLUDED.state_data,
                     updated_at = CURRENT_TIMESTAMP;
                 """,
-                (
-                    BEK_GOLDEN_RULES,
-                ),
+                (BEK_GOLDEN_RULES,),
             )
-
             conn.commit()
-
-            logger.info(
-                "[SyncManager] État Neon persisté."
-            )
+            logger.info("[SyncManager] État Neon persisté.")
 
     except Exception as exc:
-
-        logger.error(
-            "[SyncManager] Erreur Neon : %s",
-            exc,
-        )
-
+        logger.error("[SyncManager] Erreur Neon : %s", exc)
         if conn:
-
             try:
                 conn.rollback()
             except Exception:
                 pass
-
     finally:
-
         try:
             if cur:
                 cur.close()
         except Exception:
             pass
-
         try:
-            if conn:
-                conn.close()
+            conn.close()
         except Exception:
             pass
 
     # --------------------------------------
     # PINECONE
     # --------------------------------------
-
     try:
-
-        saved = save_to_memory(
-            "BEK_SYSTEM_SYNC_STATE",
-            BEK_GOLDEN_RULES,
-        )
-
-        if saved:
-            logger.info(
-                "[SyncManager] "
-                "Mémoire vectorielle synchronisée."
-            )
-        else:
-            logger.warning(
-                "[SyncManager] "
-                "Mémoire vectorielle non sauvegardée."
-            )
-
+        save_to_memory("BEK_SYSTEM_SYNC_STATE", BEK_GOLDEN_RULES)
     except Exception as exc:
-
-        logger.error(
-            "[SyncManager] Erreur mémoire : %s",
-            exc,
-        )
+        logger.error("[SyncManager] Erreur mémoire : %s", exc)
 
 
 # ==========================================
 # LOG MISSION HERMES
 # ==========================================
 
-def log_mission_to_neon(
-    trace_id,
-    objective,
-    plan,
-    execution,
-):
-
+def log_mission_to_neon(trace_id, objective, plan, execution):
     conn = None
     cur = None
-
     try:
-
         conn = get_db_connection()
-
         if not conn:
             return
 
         cur = conn.cursor()
-
         cur.execute(
             """
-            INSERT INTO bek_mission_logs
-                (
-                    trace_id,
-                    objective,
-                    goap_plan,
-                    execution_results,
-                    status,
-                    execution_ms
-                )
-            VALUES
-                (%s, %s, %s, %s, %s, %s)
-            ON CONFLICT (trace_id)
-            DO NOTHING;
+            INSERT INTO bek_mission_logs (trace_id, objective, goap_plan, execution_results, status, execution_ms)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            ON CONFLICT (trace_id) DO NOTHING;
             """,
             (
                 trace_id,
                 objective,
-                json.dumps(
-                    plan,
-                    ensure_ascii=False,
-                    default=str,
-                ),
-                json.dumps(
-                    execution.get(
-                        "results",
-                        {},
-                    ),
-                    ensure_ascii=False,
-                    default=str,
-                ),
-                execution.get(
-                    "status",
-                    "UNKNOWN",
-                ),
-                execution.get(
-                    "execution_ms",
-                    0,
-                ),
+                json.dumps(plan, ensure_ascii=False, default=str),
+                json.dumps(execution.get("results", {}), ensure_ascii=False, default=str),
+                execution.get("status", "UNKNOWN"),
+                execution.get("execution_ms", 0),
             ),
         )
-
         conn.commit()
-
     except Exception as exc:
-
-        logger.error(
-            "[Neon DB Log Error] %s",
-            exc,
-        )
-
+        logger.error("[Neon DB Log Error] %s", exc)
         if conn:
-
             try:
                 conn.rollback()
             except Exception:
                 pass
-
     finally:
-
         try:
             if cur:
                 cur.close()
         except Exception:
             pass
-
         try:
-            if conn:
-                conn.close()
+            conn.close()
         except Exception:
             pass
 
 
 # ==========================================
-# SQL SECURITY
+# SQL SECURITY & EXECUTION
 # ==========================================
 
 SQL_BLOCKED_PATTERNS = [
@@ -949,153 +726,62 @@ SQL_BLOCKED_PATTERNS = [
 ]
 
 
-def validate_sql_request(
-    sql_query: str
-):
-    """
-    Contrôle complémentaire de l'endpoint CRM SQL.
-
-    Le SecurityGuard Hermes reste la couche de sécurité
-    principale pour les actions Hermes.
-
-    Ici on empêche surtout les opérations PostgreSQL
-    particulièrement dangereuses pour une API applicative.
-    """
-
-    if not isinstance(
-        sql_query,
-        str,
-    ):
+def validate_sql_request(sql_query: str):
+    if not isinstance(sql_query, str):
         return False, "SQL invalide."
 
     sql = sql_query.strip()
-
     if not sql:
         return False, "SQL requis."
 
     if len(sql) > 100_000:
         return False, "SQL trop volumineux."
 
-    normalized = re.sub(
-        r"\s+",
-        " ",
-        sql.lower(),
-    )
+    normalized = re.sub(r"\s+", " ", sql.lower())
 
     for pattern in SQL_BLOCKED_PATTERNS:
-
-        if re.search(
-            pattern,
-            normalized,
-            flags=re.IGNORECASE,
-        ):
-            return (
-                False,
-                "Opération SQL interdite par la politique BEK.",
-            )
+        if re.search(pattern, normalized, flags=re.IGNORECASE):
+            return False, "Opération SQL interdite par la politique BEK."
 
     return True, ""
 
 
-# ==========================================
-# EXÉCUTION SQL
-# ==========================================
-
-def execute_database_sql(
-    sql_query: str
-) -> dict:
-
-    valid, error_message = (
-        validate_sql_request(
-            sql_query
-        )
-    )
-
+def execute_database_sql(sql_query: str) -> dict:
+    valid, error_message = validate_sql_request(sql_query)
     if not valid:
-
-        return {
-            "status": "error",
-            "message": error_message,
-        }
+        return {"status": "error", "message": error_message}
 
     conn = get_db_connection()
-
     if not conn:
-
-        return {
-            "status": "error",
-            "message": (
-                "Connexion Neon DB indisponible."
-            ),
-        }
+        return {"status": "error", "message": "Connexion Neon DB indisponible."}
 
     cur = None
-
     try:
-
         cur = conn.cursor()
-
-        cur.execute(
-            sql_query
-        )
+        cur.execute(sql_query)
 
         if cur.description:
-
-            columns = [
-                desc[0]
-                for desc in cur.description
-            ]
-
+            columns = [desc[0] for desc in cur.description]
             rows = cur.fetchall()
-
-            results = [
-                {
-                    column: json_safe(value)
-                    for column, value in zip(
-                        columns,
-                        row,
-                    )
-                }
-                for row in rows
-            ]
-
-            return {
-                "status": "success",
-                "type": "select",
-                "data": results,
-                "count": len(results),
-            }
+            results = [{column: json_safe(value) for column, value in zip(columns, row)} for row in rows]
+            return {"status": "success", "type": "select", "data": results, "count": len(results)}
 
         conn.commit()
-
-        affected = cur.rowcount
-
-        return {
-            "status": "success",
-            "type": "mutation",
-            "affected_rows": affected,
-        }
+        return {"status": "success", "type": "mutation", "affected_rows": cur.rowcount}
 
     except Exception as exc:
-
-        try:
-            conn.rollback()
-        except Exception:
-            pass
-
-        return {
-            "status": "error",
-            "message": str(exc),
-        }
-
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
+        return {"status": "error", "message": str(exc)}
     finally:
-
         try:
             if cur:
                 cur.close()
         except Exception:
             pass
-
         try:
             conn.close()
         except Exception:
@@ -1110,3203 +796,987 @@ class SubCRMEngine:
 
     @staticmethod
     def initialize_matrix_schema():
-
         conn = get_db_connection()
-
         if not conn:
             return False
 
         cur = None
-
         try:
-
             cur = conn.cursor()
-
             cur.execute(
                 """
                 CREATE TABLE IF NOT EXISTS matrix_sub_crms (
                     id UUID PRIMARY KEY,
-                    parent_id UUID
-                        REFERENCES matrix_sub_crms(id)
-                        ON DELETE SET NULL,
+                    parent_id UUID REFERENCES matrix_sub_crms(id) ON DELETE SET NULL,
                     niche_name TEXT NOT NULL,
                     specifications JSONB NOT NULL,
                     environment_vars JSONB NOT NULL,
                     active_tools JSONB NOT NULL,
                     cahier_des_charges TEXT NOT NULL,
                     status TEXT DEFAULT 'active',
-                    created_at TIMESTAMP
-                        DEFAULT CURRENT_TIMESTAMP
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
                 """
             )
-
             conn.commit()
-
             return True
-
         except Exception as exc:
-
-            logger.error(
-                "[SubCRMEngine] "
-                "Erreur schéma : %s",
-                exc,
-            )
-
-            try:
-                conn.rollback()
-            except Exception:
-                pass
-
+            logger.error("[SubCRMEngine] Erreur schéma : %s", exc)
+            if conn:
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
             return False
-
         finally:
-
             try:
                 if cur:
                     cur.close()
             except Exception:
                 pass
-
             try:
                 conn.close()
             except Exception:
                 pass
 
     @staticmethod
-    def spawn_sub_crm(
-        niche_name: str,
-        cahier_des_charges: str,
-        objectives: list,
-        parent_id=None,
-        custom_env=None,
-    ):
-
+    def spawn_sub_crm(niche_name: str, cahier_des_charges: str, objectives: list, parent_id=None, custom_env=None):
         if not SubCRMEngine.initialize_matrix_schema():
+            return {"status": "error", "message": "Impossible d'initialiser matrix_sub_crms."}
 
-            return {
-                "status": "error",
-                "message": (
-                    "Impossible d'initialiser "
-                    "matrix_sub_crms."
-                ),
-            }
-
-        sub_crm_id = str(
-            uuid.uuid4()
-        )
-
+        sub_crm_id = str(uuid.uuid4())
         next_gen_tools = [
-            {
-                "tool": "LangGraph Advanced Swarm-Core v15.2",
-                "mode": "autonomous_reflection",
-            },
-            {
-                "tool": "Meta-Cortex Grounding & Reflexion Engine",
-                "mode": "real_time_verification",
-            },
-            {
-                "tool": "Universal External AI Bridge",
-                "mode": "dynamic_api_relay",
-            },
-            {
-                "tool": "Secure Sandbox Terminal Executor",
-                "mode": "isolated_code_execution",
-            },
+            {"tool": "LangGraph Advanced Swarm-Core v15.2", "mode": "autonomous_reflection"},
+            {"tool": "Meta-Cortex Grounding & Reflexion Engine", "mode": "real_time_verification"},
+            {"tool": "Universal External AI Bridge", "mode": "dynamic_api_relay"},
+            {"tool": "Secure Sandbox Terminal Executor", "mode": "isolated_code_execution"},
         ]
 
         environment_payload = (
             custom_env
-            if isinstance(
-                custom_env,
-                dict,
-            )
+            if isinstance(custom_env, dict)
             else {
-                "RUNTIME_ENV": (
-                    "production_matrix_node"
-                ),
-                "AI_AUTONOMY_LEVEL": (
-                    "maximum"
-                ),
+                "RUNTIME_ENV": "production_matrix_node",
+                "AI_AUTONOMY_LEVEL": "maximum",
                 "SELF_HEALING": "enabled",
             }
         )
 
         specifications = {
             "objectives": objectives,
-            "architecture": (
-                "Python/Flask + Neon Polymorphic Layer"
-            ),
-            "generation": (
-                "Next-Gen Ultra-Powerful Node"
-            ),
+            "architecture": "Python/Flask + Neon Polymorphic Layer",
+            "generation": "Next-Gen Ultra-Powerful Node",
         }
 
         conn = get_db_connection()
-
         if not conn:
-
-            return {
-                "status": "error",
-                "message": (
-                    "Connexion Neon DB indisponible."
-                ),
-            }
+            return {"status": "error", "message": "Connexion Neon DB indisponible."}
 
         cur = None
-
         try:
-
             cur = conn.cursor()
-
             cur.execute(
                 """
-                INSERT INTO matrix_sub_crms
-                    (
-                        id,
-                        parent_id,
-                        niche_name,
-                        specifications,
-                        environment_vars,
-                        active_tools,
-                        cahier_des_charges,
-                        status
-                    )
-                VALUES
-                    (
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        'active'
-                    )
-                RETURNING
-                    id,
-                    niche_name,
-                    created_at;
+                INSERT INTO matrix_sub_crms (id, parent_id, niche_name, specifications, environment_vars, active_tools, cahier_des_charges, status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, 'active')
+                RETURNING id, niche_name, created_at;
                 """,
                 (
                     sub_crm_id,
                     parent_id,
                     niche_name,
-                    json.dumps(
-                        specifications,
-                        ensure_ascii=False,
-                    ),
-                    json.dumps(
-                        environment_payload,
-                        ensure_ascii=False,
-                    ),
-                    json.dumps(
-                        next_gen_tools,
-                        ensure_ascii=False,
-                    ),
+                    json.dumps(specifications, ensure_ascii=False),
+                    json.dumps(environment_payload, ensure_ascii=False),
+                    json.dumps(next_gen_tools, ensure_ascii=False),
                     cahier_des_charges,
                 ),
             )
-
             row = cur.fetchone()
-
             conn.commit()
-
             return {
                 "status": "success",
-                "sub_crm_id": str(
-                    row[0]
-                ),
+                "sub_crm_id": str(row[0]),
                 "niche_name": row[1],
-                "created_at": str(
-                    row[2]
-                ),
-                "tools_injected": (
-                    next_gen_tools
-                ),
-                "message": (
-                    f"Le sous-CRM '{niche_name}' "
-                    "a été instancié."
-                ),
+                "created_at": str(row[2]),
+                "tools_injected": next_gen_tools,
+                "message": f"Le sous-CRM '{niche_name}' a été instancié.",
             }
-
         except Exception as exc:
-
-            try:
-                conn.rollback()
-            except Exception:
-                pass
-
-            return {
-                "status": "error",
-                "message": str(exc),
-            }
-
+            if conn:
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
+            return {"status": "error", "message": str(exc)}
         finally:
-
             try:
                 if cur:
                     cur.close()
             except Exception:
                 pass
-
             try:
                 conn.close()
             except Exception:
                 pass
 
 
-# ==========================================
-# AUTONOMOUS SUB-CRM
-# ==========================================
-
 class AutonomousSubCRMInstance:
 
-    def __init__(
-        self,
-        sub_crm_id: str,
-        niche_name: str,
-        cahier_des_charges: str,
-    ):
-
+    def __init__(self, sub_crm_id: str, niche_name: str, cahier_des_charges: str):
         self.sub_crm_id = sub_crm_id
         self.niche_name = niche_name
-        self.cahier_des_charges = (
-            cahier_des_charges
-        )
+        self.cahier_des_charges = cahier_des_charges
 
-    def generate_dynamic_ui_and_tables(
-        self
-    ) -> dict:
-
-        safe_niche = re.sub(
-            r"[^a-zA-Z0-9_]+",
-            "_",
-            self.niche_name,
-        ).strip("_")
-
-        if not safe_niche:
-            safe_niche = "niche"
-
+    def generate_dynamic_ui_and_tables(self) -> dict:
+        safe_niche = re.sub(r"[^a-zA-Z0-9_]+", "_", self.niche_name).strip("_") or "niche"
         return {
-            "ui_layout": (
-                f"Dynamic_Dashboard_{safe_niche}"
-            ),
+            "ui_layout": f"Dynamic_Dashboard_{safe_niche}",
             "tables_created": [
-                (
-                    f"niche_"
-                    f"{self.sub_crm_id[:8]}"
-                    "_entities"
-                ),
-                (
-                    f"niche_"
-                    f"{self.sub_crm_id[:8]}"
-                    "_operations"
-                ),
-                (
-                    f"niche_"
-                    f"{self.sub_crm_id[:8]}"
-                    "_analytics"
-                ),
+                f"niche_{self.sub_crm_id[:8]}_entities",
+                f"niche_{self.sub_crm_id[:8]}_operations",
+                f"niche_{self.sub_crm_id[:8]}_analytics",
             ],
-            "auth_gateway": (
-                "OAuth2 / Multi-Tenant "
-                "User Accounts Enabled"
-            ),
-            "autonomy_mode": (
-                "No-Spec / Fully Self-Governing "
-                "Agent Execution"
-            ),
+            "auth_gateway": "OAuth2 / Multi-Tenant User Accounts Enabled",
+            "autonomy_mode": "No-Spec / Fully Self-Governing Agent Execution",
         }
 
-    def self_heal_and_optimize(
-        self
-    ) -> dict:
-
+    def self_heal_and_optimize(self) -> dict:
         return {
             "status": "healthy",
             "bugs_detected": 0,
             "auto_patches_applied": 0,
-            "performance_boost": (
-                "Health verification completed."
-            ),
+            "performance_boost": "Health verification completed.",
         }
 
 
-class SubCRMEngineAdvanced(
-    SubCRMEngine
-):
+class SubCRMEngineAdvanced(SubCRMEngine):
 
     @staticmethod
-    def spawn_fully_alive_sub_crm(
-        niche_name: str,
-        cahier_des_charges: str,
-        objectives: list,
-        parent_id=None,
-        custom_env=None,
-    ):
-
-        base_spawn = (
-            SubCRMEngine.spawn_sub_crm(
-                niche_name,
-                cahier_des_charges,
-                objectives,
-                parent_id,
-                custom_env,
-            )
-        )
-
-        if base_spawn.get(
-            "status"
-        ) != "success":
-
+    def spawn_fully_alive_sub_crm(niche_name: str, cahier_des_charges: str, objectives: list, parent_id=None, custom_env=None):
+        base_spawn = SubCRMEngine.spawn_sub_crm(niche_name, cahier_des_charges, objectives, parent_id, custom_env)
+        if base_spawn.get("status") != "success":
             return base_spawn
 
-        sub_crm_id = (
-            base_spawn["sub_crm_id"]
-        )
-
-        instance = (
-            AutonomousSubCRMInstance(
-                sub_crm_id,
-                niche_name,
-                cahier_des_charges,
-            )
-        )
-
-        lifecycle_data = (
-            instance.generate_dynamic_ui_and_tables()
-        )
-
-        health_check = (
-            instance.self_heal_and_optimize()
-        )
+        sub_crm_id = base_spawn["sub_crm_id"]
+        instance = AutonomousSubCRMInstance(sub_crm_id, niche_name, cahier_des_charges)
+        lifecycle_data = instance.generate_dynamic_ui_and_tables()
+        health_check = instance.self_heal_and_optimize()
 
         return {
             "status": "success",
             "sub_crm_id": sub_crm_id,
             "niche_name": niche_name,
-            "lifecycle_environment": (
-                lifecycle_data
-            ),
-            "self_repair_status": (
-                health_check
-            ),
-            "message": (
-                f"Le sous-CRM '{niche_name}' "
-                "est opérationnel."
-            ),
+            "lifecycle_environment": lifecycle_data,
+            "self_repair_status": health_check,
+            "message": f"Le sous-CRM '{niche_name}' est opérationnel.",
         }
-
-
-# ==========================================
-# NVIDIA MODELS
-# ==========================================
-
-def get_all_nvidia_models():
-
-    return [
-        "meta/llama-3.3-70b-instruct",
-        "meta/llama-3.1-70b-instruct",
-        "meta/llama-3.1-8b-instruct",
-        "meta/llama-3.2-11b-vision-instruct",
-        "meta/llama-3.2-90b-vision-instruct",
-        "nvidia/llama-3.3-nemotron-super-49b-v1",
-        "nvidia/llama-3.3-nemotron-super-49b-v1.5",
-        "nvidia/nemotron-3-super-120b-a12b",
-        "nvidia/nemotron-nano-12b-v2-vl",
-        "nvidia/nvidia-nemotron-nano-9b-v2",
-        "openai/gpt-oss-120b",
-        "google/gemma-4-31b-it",
-    ]
 
 
 # ==========================================
 # SKILL FEEDBACK
 # ==========================================
 
-def record_skill_feedback(
-    skill_name: str,
-    success: bool,
-):
-
+def record_skill_feedback(skill_name: str, success: bool):
     conn = get_db_connection()
-
     if not conn:
         return
 
     cur = None
-
     try:
-
         cur = conn.cursor()
-
         if success:
-
             cur.execute(
                 """
-                INSERT INTO skill_performance_metrics
-                    (
-                        skill_name,
-                        success_count,
-                        failure_count,
-                        last_score
-                    )
-                VALUES
-                    (%s, 1, 0, 1.0)
+                INSERT INTO skill_performance_metrics (skill_name, success_count, failure_count, last_score)
+                VALUES (%s, 1, 0, 1.0)
                 ON CONFLICT (skill_name)
                 DO UPDATE SET
-                    success_count =
-                        skill_performance_metrics.success_count + 1,
-                    last_score =
-                        LEAST(
-                            2.0,
-                            skill_performance_metrics.last_score + 0.1
-                        );
+                    success_count = skill_performance_metrics.success_count + 1,
+                    last_score = LEAST(2.0, skill_performance_metrics.last_score + 0.1);
                 """,
-                (
-                    skill_name,
-                ),
+                (skill_name,),
             )
-
         else:
-
             cur.execute(
                 """
-                INSERT INTO skill_performance_metrics
-                    (
-                        skill_name,
-                        success_count,
-                        failure_count,
-                        last_score
-                    )
-                VALUES
-                    (%s, 0, 1, 0.5)
+                INSERT INTO skill_performance_metrics (skill_name, success_count, failure_count, last_score)
+                VALUES (%s, 0, 1, 0.5)
                 ON CONFLICT (skill_name)
                 DO UPDATE SET
-                    failure_count =
-                        skill_performance_metrics.failure_count + 1,
-                    last_score =
-                        GREATEST(
-                            0.1,
-                            skill_performance_metrics.last_score - 0.2
-                        );
+                    failure_count = skill_performance_metrics.failure_count + 1,
+                    last_score = GREATEST(0.1, skill_performance_metrics.last_score - 0.2);
                 """,
-                (
-                    skill_name,
-                ),
+                (skill_name,),
             )
-
         conn.commit()
-
     except Exception as exc:
-
-        logger.error(
-            "[SkillFeedback] %s",
-            exc,
-        )
-
-        try:
-            conn.rollback()
-        except Exception:
-            pass
-
+        logger.error("[SkillFeedback] %s", exc)
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
     finally:
-
         try:
             if cur:
                 cur.close()
         except Exception:
             pass
-
         try:
             conn.close()
         except Exception:
             pass
 
 
-# ==========================================
-# SKILLS INDEX
-# ==========================================
-
 def _build_skills_index():
+    return skill_registry.list_all_skills()
 
-    index = []
 
-    dirs_to_scan = [
-        SKILLS_DIR
+def get_all_nvidia_models():
+    return [
+        "meta/llama-3.3-70b-instruct",
+        "meta/llama-3.1-70b-instruct",
+        "meta/llama-3.1-8b-instruct",
+        "meta/llama-3.2-11b-vision-instruct",
+        "meta/llama-3.2-90b-vision-instruct",
+        "meta/muse-glimmer-30b",
+        "nvidia/llama-3.3-nemotron-super-49b-v1",
+        "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "nvidia/nemotron-3-super-120b-a12b",
+        "nvidia/nemotron-3-ultra-550b-a55b",
+        "nvidia/nemotron-nano-12b-v2-vl",
+        "nvidia/nvidia-nemotron-nano-9b-v2",
+        "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b",
+        "poolside/laguna-xs-2.1",
+        "google/gemma-4-31b-it",
     ]
 
-    fallback_dir = os.path.join(
-        WORKSPACE_DIR,
-        "skills",
-    )
-
-    if (
-        os.path.exists(
-            fallback_dir
-        )
-        and fallback_dir not in dirs_to_scan
-    ):
-
-        dirs_to_scan.append(
-            fallback_dir
-        )
-
-    skill_scores = {}
-
-    # --------------------------------------
-    # SCORES NEON
-    # --------------------------------------
-
-    try:
-
-        conn = get_db_connection()
-
-        if conn:
-
-            cur = conn.cursor()
-
-            cur.execute(
-                """
-                SELECT
-                    skill_name,
-                    last_score
-                FROM skill_performance_metrics;
-                """
-            )
-
-            for row in cur.fetchall():
-
-                skill_scores[
-                    row[0]
-                ] = float(
-                    row[1]
-                )
-
-            cur.close()
-            conn.close()
-
-    except Exception:
-        pass
-
-    # --------------------------------------
-    # SCAN SKILLS
-    # --------------------------------------
-
-    seen_names = set()
-
-    for directory in dirs_to_scan:
-
-        if not os.path.exists(
-            directory
-        ):
-            continue
-
-        try:
-            entries = os.listdir(
-                directory
-            )
-        except Exception:
-            continue
-
-        for filename in entries:
-
-            path = os.path.join(
-                directory,
-                filename,
-            )
-
-            if not os.path.isfile(
-                path
-            ):
-                continue
-
-            try:
-
-                # JSON
-                if filename.endswith(
-                    ".json"
-                ):
-
-                    with open(
-                        path,
-                        "r",
-                        encoding="utf-8",
-                    ) as file:
-
-                        data = json.load(
-                            file
-                        )
-
-                    if not isinstance(
-                        data,
-                        dict,
-                    ):
-                        continue
-
-                    name = data.get(
-                        "name",
-                        filename,
-                    )
-
-                    if name in seen_names:
-                        continue
-
-                    seen_names.add(name)
-
-                    score = skill_scores.get(
-                        name,
-                        1.0,
-                    )
-
-                    index.append(
-                        {
-                            "name": name,
-                            "description": data.get(
-                                "description",
-                                "",
-                            ),
-                            "prompt": data.get(
-                                "prompt",
-                                "",
-                            ),
-                            "command": data.get(
-                                "command",
-                                filename,
-                            ),
-                            "score": score,
-                        }
-                    )
-
-                # TXT / MD
-                elif filename.endswith(
-                    (
-                        ".txt",
-                        ".md",
-                    )
-                ):
-
-                    with open(
-                        path,
-                        "r",
-                        encoding="utf-8",
-                        errors="ignore",
-                    ) as file:
-
-                        content = file.read()
-
-                    lines = content.split(
-                        "\n",
-                        2,
-                    )
-
-                    name = (
-                        lines[0].strip()
-                        if lines
-                        else filename
-                    )
-
-                    if name in seen_names:
-                        continue
-
-                    seen_names.add(name)
-
-                    score = skill_scores.get(
-                        name,
-                        1.0,
-                    )
-
-                    index.append(
-                        {
-                            "name": name,
-                            "description": "Document",
-                            "prompt": content,
-                            "command": filename,
-                            "score": score,
-                        }
-                    )
-
-            except Exception:
-                continue
-
-    index.sort(
-        key=lambda item: item.get(
-            "score",
-            1.0,
-        ),
-        reverse=True,
-    )
-
-    return index
-
 
 # ==========================================
-# ROUTES STATIQUES
+# ROUTES STATIQUES & HEALTH
 # ==========================================
 
 @app.route("/")
 def index():
-
-    return send_from_directory(
-        WORKSPACE_DIR,
-        "index.html",
-    )
+    return send_from_directory(WORKSPACE_DIR, "index.html")
 
 
-@app.route(
-    "/<path:filename>"
-)
+@app.route("/<path:filename>")
 def serve_static(filename):
-
-    return send_from_directory(
-        WORKSPACE_DIR,
-        filename,
-    )
+    return send_from_directory(WORKSPACE_DIR, filename)
 
 
-# ==========================================
-# HEALTH
-# ==========================================
-
-@app.route(
-    "/api/health",
-    methods=["GET"],
-)
+@app.route("/api/health", methods=["GET"])
 def health():
-
     runtime = hermes.runtime_status()
-
-    return jsonify(
-        {
-            "status": "ok",
-            "service": "BEK-v15.2 HYBRID",
-            "hermes": runtime.get(
-                "status",
-                "unknown",
-            ),
-            "security_guard": runtime.get(
-                "security_guard_active",
-                False,
-            ),
-        }
-    )
+    return jsonify({
+        "status": "ok",
+        "service": "BEK-v15.2 HYBRID",
+        "hermes": runtime.get("status", "unknown"),
+        "security_guard": runtime.get("security_guard_active", False),
+    })
 
 
-# ==========================================
-# API CONFIG
-# ==========================================
-
-@app.route(
-    "/api/config",
-    methods=["GET"],
-)
+@app.route("/api/config", methods=["GET"])
 def get_config():
-
     providers = [
-        {
-            "id": "groq",
-            "name": "Groq",
-            "configured": bool(
-                get_api_key(
-                    "GROQ_API_KEY"
-                )
-            ),
-        },
-        {
-            "id": "nvidia",
-            "name": "NVIDIA NIM",
-            "configured": bool(
-                get_api_key(
-                    "NVIDIA_API_KEY"
-                )
-            ),
-        },
-        {
-            "id": "gemini",
-            "name": "Google Gemini",
-            "configured": bool(
-                get_api_key(
-                    "GEMINI_API_KEY"
-                )
-            ),
-        },
-        {
-            "id": "openrouter",
-            "name": "OpenRouter",
-            "configured": bool(
-                get_api_key(
-                    "OPENROUTER_API_KEY"
-                )
-            ),
-        },
+        {"id": "groq", "name": "Groq", "configured": bool(get_api_key("GROQ_API_KEY"))},
+        {"id": "nvidia", "name": "NVIDIA NIM", "configured": bool(get_api_key("NVIDIA_API_KEY"))},
+        {"id": "gemini", "name": "Google Gemini", "configured": bool(get_api_key("GEMINI_API_KEY"))},
+        {"id": "openrouter", "name": "OpenRouter", "configured": bool(get_api_key("OPENROUTER_API_KEY"))},
     ]
 
     models = {
-        "groq": [
-            "openai/gpt-oss-120b",
-            "openai/gpt-oss-20b",
-            "qwen/qwen3.6-27b",
-        ],
+        "groq": ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.6-27b"],
         "nvidia": get_all_nvidia_models(),
-        "gemini": [
-            "gemini-3.6-flash",
-            "gemini-1.5-pro-preview",
-        ],
-        "openrouter": [
-            "openrouter/auto",
-            "openai/gpt-oss-120b",
-            "anthropic/claude-4-sonnet",
-        ],
+        "gemini": ["gemini-3.6-flash", "gemini-1.5-pro-preview"],
+        "openrouter": ["openrouter/auto", "openai/gpt-oss-120b", "anthropic/claude-4-sonnet"],
     }
 
     skills = _build_skills_index()
-
-    return jsonify(
-        {
-            "providers": providers,
-            "models": models,
-            "skills_count": len(
-                skills
-            ),
-            "skills": skills,
-        }
-    )
+    return jsonify({
+        "providers": providers,
+        "models": models,
+        "skills_count": len(skills),
+        "skills": skills,
+    })
 
 
 # ==========================================
-# FILES
+# FILES & UPLOAD
 # ==========================================
 
-@app.route(
-    "/api/files",
-    methods=["GET"],
-)
+@app.route("/api/files", methods=["GET"])
 def list_files():
-
     files = []
-
-    directories = [
-        FILES_DIR,
-        GENERATED_DIR,
-        WORKSPACE_DIR,
-    ]
-
+    directories = [FILES_DIR, GENERATED_DIR, WORKSPACE_DIR]
     seen_paths = set()
 
     for directory in directories:
-
-        if not os.path.exists(
-            directory
-        ):
+        if not os.path.exists(directory):
             continue
-
         try:
-            entries = os.listdir(
-                directory
-            )
+            entries = os.listdir(directory)
         except Exception:
             continue
 
         for filename in entries:
-
-            if filename.startswith(
-                "."
-            ):
+            if filename.startswith("."):
                 continue
-
-            filepath = os.path.abspath(
-                os.path.join(
-                    directory,
-                    filename,
-                )
-            )
-
-            if filepath in seen_paths:
+            filepath = os.path.abspath(os.path.join(directory, filename))
+            if filepath in seen_paths or not os.path.isfile(filepath):
                 continue
-
-            if not os.path.isfile(
-                filepath
-            ):
-                continue
-
-            seen_paths.add(
-                filepath
-            )
+            seen_paths.add(filepath)
 
             try:
-                size = os.path.getsize(
-                    filepath
-                )
+                size = os.path.getsize(filepath)
             except OSError:
                 size = 0
 
-            files.append(
-                {
-                    "name": filename,
-                    "size": size,
-                    "extension": (
-                        os.path.splitext(
-                            filename
-                        )[1].lower()
-                    ),
-                }
-            )
+            files.append({
+                "name": filename,
+                "size": size,
+                "extension": os.path.splitext(filename)[1].lower(),
+            })
 
-    return jsonify(
-        {
-            "files": files
-        }
-    )
+    return jsonify({"files": files})
 
 
-@app.route(
-    "/api/download/<path:filename>",
-    methods=["GET"],
-)
+@app.route("/api/download/<path:filename>", methods=["GET"])
 def download_file(filename):
-
-    safe_name = secure_filename(
-        filename
-    )
-
+    safe_name = secure_filename(filename)
     if not safe_name:
+        return jsonify({"error": "Nom de fichier invalide."}), 400
 
-        return jsonify(
-            {
-                "error": (
-                    "Nom de fichier invalide."
-                )
-            }
-        ), 400
+    for directory in [FILES_DIR, GENERATED_DIR, WORKSPACE_DIR]:
+        filepath = os.path.join(directory, safe_name)
+        if os.path.isfile(filepath):
+            return send_file(filepath, as_attachment=True)
 
-    for directory in [
-        FILES_DIR,
-        GENERATED_DIR,
-        WORKSPACE_DIR,
-    ]:
-
-        filepath = os.path.join(
-            directory,
-            safe_name,
-        )
-
-        if os.path.isfile(
-            filepath
-        ):
-
-            return send_file(
-                filepath,
-                as_attachment=True,
-            )
-
-    return jsonify(
-        {
-            "error": (
-                "Fichier introuvable."
-            )
-        }
-    ), 404
+    return jsonify({"error": "Fichier introuvable."}), 404
 
 
-# ==========================================
-# ZIP SECURITY
-# ==========================================
-
-def validate_zip_member(
-    base_dir: str,
-    member_name: str,
-) -> bool:
-
+def validate_zip_member(base_dir: str, member_name: str) -> bool:
     if not member_name:
         return False
-
-    # Normalisation Windows/Linux.
-    normalized = member_name.replace(
-        "\\",
-        "/",
-    )
-
-    # Absolu Unix.
-    if normalized.startswith(
-        "/"
-    ):
+    normalized = member_name.replace("\\", "/")
+    if normalized.startswith("/") or re.match(r"^[a-zA-Z]:", normalized):
         return False
-
-    # Drive Windows.
-    if re.match(
-        r"^[a-zA-Z]:",
-        normalized,
-    ):
-        return False
-
-    # Path traversal.
-    parts = [
-        part
-        for part in normalized.split("/")
-        if part
-    ]
-
+    parts = [part for part in normalized.split("/") if part]
     if ".." in parts:
         return False
-
-    target_path = os.path.abspath(
-        os.path.join(
-            base_dir,
-            *parts,
-        )
-    )
-
-    base_abs = os.path.abspath(
-        base_dir
-    )
-
-    return (
-        target_path == base_abs
-        or target_path.startswith(
-            base_abs + os.sep
-        )
-    )
+    target_path = os.path.abspath(os.path.join(base_dir, *parts))
+    base_abs = os.path.abspath(base_dir)
+    return target_path == base_abs or target_path.startswith(base_abs + os.sep)
 
 
-def is_zip_symlink(info):
-    """
-    Détecte les symlinks Unix présents
-    dans une archive ZIP.
-    """
-
-    mode = (
-        info.external_attr
-        >> 16
-    )
-
-    return (
-        (mode & 0o170000)
-        == 0o120000
-    )
-
-
-# ==========================================
-# UPLOAD
-# ==========================================
-
-@app.route(
-    "/api/upload",
-    methods=["POST"],
-)
+@app.route("/api/upload", methods=["POST"])
 def upload_file():
-
     if "file" not in request.files:
-
-        return jsonify(
-            {
-                "error": (
-                    "Aucun fichier fourni."
-                )
-            }
-        ), 400
+        return jsonify({"error": "Aucun fichier fourni."}), 400
 
     file = request.files["file"]
-
     if not file.filename:
+        return jsonify({"error": "Nom de fichier manquant."}), 400
 
-        return jsonify(
-            {
-                "error": (
-                    "Nom de fichier manquant."
-                )
-            }
-        ), 400
-
-    filename = secure_filename(
-        file.filename
-    )
-
+    filename = secure_filename(file.filename)
     if not filename:
+        return jsonify({"error": "Nom de fichier invalide."}), 400
 
-        return jsonify(
-            {
-                "error": (
-                    "Nom de fichier invalide."
-                )
-            }
-        ), 400
+    filepath = os.path.abspath(os.path.join(FILES_DIR, filename))
+    files_root = os.path.abspath(FILES_DIR)
 
-    filepath = os.path.abspath(
-        os.path.join(
-            FILES_DIR,
-            filename,
-        )
-    )
-
-    files_root = os.path.abspath(
-        FILES_DIR
-    )
-
-    if not filepath.startswith(
-        files_root + os.sep
-    ):
-
-        return jsonify(
-            {
-                "error": (
-                    "Chemin de fichier interdit."
-                )
-            }
-        ), 400
+    if not filepath.startswith(files_root + os.sep):
+        return jsonify({"error": "Chemin de fichier interdit."}), 400
 
     try:
-
-        file.save(
-            filepath
-        )
-
+        file.save(filepath)
     except Exception as exc:
-
-        logger.error(
-            "Upload impossible : %s",
-            exc,
-        )
-
-        return jsonify(
-            {
-                "error": (
-                    "Impossible d'enregistrer "
-                    "le fichier."
-                )
-            }
-        ), 500
+        logger.error("Upload impossible : %s", exc)
+        return jsonify({"error": "Impossible d'enregistrer le fichier."}), 500
 
     try:
-        file_size = os.path.getsize(
-            filepath
-        )
+        file_size = os.path.getsize(filepath)
     except OSError:
         file_size = 0
 
     extracted_files = []
 
-    # ======================================
-    # ZIP
-    # ======================================
-
-    if filename.lower().endswith(
-        ".zip"
-    ):
-
-        temp_extract_dir = tempfile.mkdtemp(
-            prefix="bek_zip_",
-            dir=FILES_DIR,
-        )
-
+    if filename.lower().endswith(".zip"):
+        temp_extract_dir = tempfile.mkdtemp(prefix="bek_zip_", dir=FILES_DIR)
         try:
-
-            with zipfile.ZipFile(
-                filepath,
-                "r",
-            ) as zip_ref:
-
-                infos = zip_ref.infolist()
-
-                # ----------------------------------
-                # Validation de tous les membres
-                # ----------------------------------
-
-                for info in infos:
-
-                    if not validate_zip_member(
-                        temp_extract_dir,
-                        info.filename,
-                    ):
-
-                        raise ValueError(
-                            "Archive ZIP contenant "
-                            "un chemin dangereux."
-                        )
-
-                    if is_zip_symlink(
-                        info
-                    ):
-
-                        raise ValueError(
-                            "Archive ZIP contenant "
-                            "un lien symbolique interdit."
-                        )
-
-                # ----------------------------------
-                # Extraction contrôlée
-                # ----------------------------------
-
-                for info in infos:
-
-                    member_name = (
-                        info.filename.replace(
-                            "\\",
-                            "/",
-                        )
-                    )
-
-                    target_path = os.path.abspath(
-                        os.path.join(
-                            temp_extract_dir,
-                            *[
-                                part
-                                for part in member_name.split("/")
-                                if part
-                            ],
-                        )
-                    )
-
+            with zipfile.ZipFile(filepath, "r") as zip_ref:
+                for info in zip_ref.infolist():
+                    if not validate_zip_member(temp_extract_dir, info.filename):
+                        raise ValueError("Archive ZIP contenant un chemin dangereux.")
+                    member_name = info.filename.replace("\\", "/")
+                    target_path = os.path.abspath(os.path.join(temp_extract_dir, *[p for p in member_name.split("/") if p]))
                     if info.is_dir():
-
-                        os.makedirs(
-                            target_path,
-                            exist_ok=True,
-                        )
-
+                        os.makedirs(target_path, exist_ok=True)
                         continue
+                    os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                    with zip_ref.open(info, "r") as source, open(target_path, "wb") as dest:
+                        shutil.copyfileobj(source, dest)
+                    extracted_files.append(member_name)
 
-                    os.makedirs(
-                        os.path.dirname(
-                            target_path
-                        ),
-                        exist_ok=True,
-                    )
-
-                    with zip_ref.open(
-                        info,
-                        "r",
-                    ) as source:
-
-                        with open(
-                            target_path,
-                            "wb",
-                        ) as destination:
-
-                            shutil.copyfileobj(
-                                source,
-                                destination,
-                            )
-
-                    extracted_files.append(
-                        member_name
-                    )
-
-            # ----------------------------------
-            # Déplacement final
-            # ----------------------------------
-
-            for root, dirs, files in os.walk(
-                temp_extract_dir
-            ):
-
-                relative_root = os.path.relpath(
-                    root,
-                    temp_extract_dir,
-                )
-
-                destination_root = (
-                    FILES_DIR
-                    if relative_root == "."
-                    else os.path.join(
-                        FILES_DIR,
-                        relative_root,
-                    )
-                )
-
-                os.makedirs(
-                    destination_root,
-                    exist_ok=True,
-                )
-
-                for directory in dirs:
-
-                    os.makedirs(
-                        os.path.join(
-                            destination_root,
-                            directory,
-                        ),
-                        exist_ok=True,
-                    )
-
-                for extracted_file in files:
-
-                    source_path = os.path.join(
-                        root,
-                        extracted_file,
-                    )
-
-                    destination_path = os.path.join(
-                        destination_root,
-                        extracted_file,
-                    )
-
-                    os.makedirs(
-                        os.path.dirname(
-                            destination_path
-                        ),
-                        exist_ok=True,
-                    )
-
-                    shutil.move(
-                        source_path,
-                        destination_path,
-                    )
-
+            for root, dirs, files in os.walk(temp_extract_dir):
+                rel_root = os.path.relpath(root, temp_extract_dir)
+                dest_root = FILES_DIR if rel_root == "." else os.path.join(FILES_DIR, rel_root)
+                os.makedirs(dest_root, exist_ok=True)
+                for f in files:
+                    shutil.move(os.path.join(root, f), os.path.join(dest_root, f))
         except Exception as zip_err:
-
-            logger.warning(
-                "[ZipExtractWarning] %s : %s",
-                filename,
-                zip_err,
-            )
-
-            return jsonify(
-                {
-                    "status": "success",
-                    "filename": filename,
-                    "size": file_size,
-                    "extracted_contents": [],
-                    "zip_warning": str(
-                        zip_err
-                    ),
-                }
-            )
-
+            return jsonify({"status": "success", "filename": filename, "size": file_size, "extracted_contents": [], "zip_warning": str(zip_err)})
         finally:
+            shutil.rmtree(temp_extract_dir, ignore_errors=True)
 
-            shutil.rmtree(
-                temp_extract_dir,
-                ignore_errors=True,
-            )
-
-    return jsonify(
-        {
-            "status": "success",
-            "filename": filename,
-            "size": file_size,
-            "extracted_contents": (
-                extracted_files
-            ),
-        }
-    )
+    return jsonify({"status": "success", "filename": filename, "size": file_size, "extracted_contents": extracted_files})
 
 
 # ==========================================
 # WEB AGENT
 # ==========================================
 
-@app.route(
-    "/api/agent/web",
-    methods=["POST"],
-)
+@app.route("/api/agent/web", methods=["POST"])
 def api_web():
-
-    data = (
-        request.get_json(
-            silent=True
-        )
-        or {}
-    )
-
-    query = data.get(
-        "query",
-        "Tendances SaaS et CRM IA 2026",
-    )
-
-    if not isinstance(
-        query,
-        str,
-    ):
-
-        return jsonify(
-            {
-                "error": "query invalide."
-            }
-        ), 400
-
-    query = query.strip()
-
-    if not query:
-
-        return jsonify(
-            {
-                "error": "query requis."
-            }
-        ), 400
+    data = request.get_json(silent=True) or {}
+    query = data.get("query", "Tendances SaaS et CRM IA 2026")
+    if not isinstance(query, str) or not query.strip():
+        return jsonify({"error": "query requis."}), 400
 
     try:
-
-        result = (
-            web_agent_instance.run_pipeline(
-                query
-            )
-        )
-
-        return jsonify(
-            result
-        )
-
+        result = web_agent_instance.run_pipeline(query.strip())
+        return jsonify(result)
     except Exception as exc:
-
-        logger.error(
-            "Web agent error : %s",
-            exc,
-        )
-
-        return jsonify(
-            {
-                "status": "error",
-                "error": str(exc),
-            }
-        ), 500
+        logger.error("Web agent error : %s", exc)
+        return jsonify({"status": "error", "error": str(exc)}), 500
 
 
-@app.route(
-    "/api/agent/web-sync",
-    methods=["POST"],
-)
+@app.route("/api/agent/web-sync", methods=["POST"])
 def api_trigger_web_sync():
-
-    data = (
-        request.get_json(
-            silent=True
-        )
-        or {}
-    )
-
-    query = data.get(
-        "query",
-        "CEO SaaS CRM automatisation",
-    )
-
-    if not isinstance(
-        query,
-        str,
-    ):
-
-        return jsonify(
-            {
-                "error": "query invalide."
-            }
-        ), 400
+    data = request.get_json(silent=True) or {}
+    query = data.get("query", "CEO SaaS CRM automatisation")
+    if not isinstance(query, str) or not query.strip():
+        return jsonify({"error": "query requis."}), 400
 
     try:
-
-        result = (
-            web_agent_instance.run_pipeline(
-                query.strip()
-            )
-        )
-
-        return jsonify(
-            result
-        )
-
+        result = web_agent_instance.run_pipeline(query.strip())
+        return jsonify(result)
     except Exception as exc:
-
-        logger.error(
-            "Web sync error : %s",
-            exc,
-        )
-
-        return jsonify(
-            {
-                "status": "error",
-                "error": str(exc),
-            }
-        ), 500
+        logger.error("Web sync error : %s", exc)
+        return jsonify({"status": "error", "error": str(exc)}), 500
 
 
 # ==========================================
-# HERMES RUNTIME
+# HERMES RUNTIME & APPROVALS
 # ==========================================
 
-@app.route(
-    "/api/hermes/runtime",
-    methods=["GET"],
-)
+@app.route("/api/hermes/runtime", methods=["GET"])
 def api_hermes_runtime():
+    runtime = hermes.runtime_status()
+    return jsonify({
+        "hermes_state": runtime.get("status", "unknown"),
+        "security_guard": runtime.get("security_guard_active", False),
+        "tool_count": runtime.get("tool_count", 0),
+        "tools": [{"name": t.get("name"), "risk": t.get("risk_level")} for t in runtime.get("tools", [])],
+        "provider": runtime.get("provider"),
+        "model": runtime.get("model"),
+        "trace_id": hermes.create_trace_id(),
+    })
 
-    runtime = (
-        hermes.runtime_status()
-    )
 
-    trace_id = (
-        hermes.create_trace_id()
-    )
+@app.route("/api/hermes/approvals", methods=["GET"])
+def api_list_approvals():
+    status = request.args.get("status")
+    return jsonify({
+        "status": "success",
+        "approvals": approval_manager.list_requests(status=status),
+    })
 
-    return jsonify(
-        {
-            "hermes_state": runtime.get(
-                "status",
-                "unknown",
-            ),
-            "security_guard": runtime.get(
-                "security_guard_active",
-                False,
-            ),
-            "tool_count": runtime.get(
-                "tool_count",
-                0,
-            ),
-            "tools": [
-                {
-                    "name": tool.get(
-                        "name"
-                    ),
-                    "risk": tool.get(
-                        "risk_level"
-                    ),
-                }
-                for tool in runtime.get(
-                    "tools",
-                    [],
-                )
-            ],
-            "provider": runtime.get(
-                "provider"
-            ),
-            "model": runtime.get(
-                "model"
-            ),
-            "trace_id": trace_id,
-        }
-    )
+
+@app.route("/api/hermes/approvals/<approval_id>/approve", methods=["POST"])
+def api_approve_action(approval_id):
+    auth_error = require_admin()
+    if auth_error:
+        return auth_error
+
+    data = request.get_json(silent=True) or {}
+    admin_user = data.get("admin_user", "admin")
+    result = approval_manager.approve_and_execute(approval_id, admin_user=admin_user)
+    return jsonify(result)
+
+
+@app.route("/api/hermes/approvals/<approval_id>/reject", methods=["POST"])
+def api_reject_action(approval_id):
+    auth_error = require_admin()
+    if auth_error:
+        return auth_error
+
+    data = request.get_json(silent=True) or {}
+    admin_user = data.get("admin_user", "admin")
+    reason = data.get("reason", "Refusé par l'administrateur")
+    result = approval_manager.reject_request(approval_id, admin_user=admin_user, reason=reason)
+    return jsonify(result)
 
 
 # ==========================================
 # HERMES GOAP + SECURITY
 # ==========================================
 
-@app.route(
-    "/api/hermes/goap-execute",
-    methods=["POST"],
-)
+@app.route("/api/hermes/goap-execute", methods=["POST"])
 def api_hermes_goap():
-
     auth_error = require_admin()
-
     if auth_error:
         return auth_error
 
-    data = (
-        request.get_json(
-            silent=True
-        )
-        or {}
-    )
+    data = request.get_json(silent=True) or {}
+    user_objective = data.get("objective") or data.get("query") or "Analyse globale de la Matrisse 2026"
 
-    user_objective = (
-        data.get("objective")
-        or data.get("query")
-        or "Analyse globale de la Matrisse 2026"
-    )
+    if not isinstance(user_objective, str) or not user_objective.strip():
+        return jsonify({"error": "objective requis."}), 400
 
-    if not isinstance(
-        user_objective,
-        str,
-    ):
-
-        return jsonify(
-            {
-                "error": (
-                    "objective invalide."
-                )
-            }
-        ), 400
-
-    user_objective = (
-        user_objective.strip()
-    )
-
-    if not user_objective:
-
-        return jsonify(
-            {
-                "error": (
-                    "objective requis."
-                )
-            }
-        ), 400
+    user_objective = user_objective.strip()
 
     try:
+        plan = hermes.goap_planner(user_objective)
+        execution_result = hermes.dispatch_parallel(plan)
 
-        plan = (
-            hermes.goap_planner(
-                user_objective
-            )
-        )
+        if execution_result.get("status") == "SECURITY_APPROVAL_REQUIRED":
+            task_id = execution_result.get("task_id", hermes.create_task_id())
+            trace_id = execution_result.get("trace_id", hermes.create_trace_id())
+            tool = execution_result.get("tool", "unknown")
+            args = plan[0].get("args", {}) if plan else {}
+            risk = execution_result.get("risk_level", "L3")
+            reason = execution_result.get("message", "Niveau de risque exigeant une validation humaine.")
 
-        execution_result = (
-            hermes.dispatch_parallel(
-                plan
+            appr_req = approval_manager.submit_request(
+                task_id=task_id,
+                trace_id=trace_id,
+                tool=tool,
+                args=args,
+                risk_level=risk,
+                reason=reason,
             )
-        )
+            execution_result["approval_id"] = appr_req.approval_id
 
         log_mission_to_neon(
-            trace_id=execution_result.get(
-                "trace_id",
-                "BEK-TRC-UNKNOWN",
-            ),
+            trace_id=execution_result.get("trace_id", "BEK-TRC-UNKNOWN"),
             objective=user_objective,
             plan=plan,
             execution=execution_result,
         )
 
-        return jsonify(
-            {
-                "objective": user_objective,
-                "goap_plan": plan,
-                "execution": execution_result,
-            }
-        )
+        return jsonify({
+            "objective": user_objective,
+            "goap_plan": plan,
+            "execution": execution_result,
+        })
 
     except Exception as exc:
-
-        logger.error(
-            "Hermes GOAP error : %s",
-            exc,
-        )
-
-        return jsonify(
-            {
-                "status": "error",
-                "error": str(exc),
-            }
-        ), 500
+        logger.error("Hermes GOAP error : %s", exc)
+        return jsonify({"status": "error", "error": str(exc)}), 500
 
 
 # ==========================================
-# OBSERVABILITÉ
+# OBSERVABILITÉ & CRM
 # ==========================================
 
-@app.route(
-    "/api/matrix/observability-logs",
-    methods=["GET"],
-)
+@app.route("/api/matrix/observability-logs", methods=["GET"])
 def get_observability_logs():
-
     conn = get_db_connection()
-
     if not conn:
-
-        return jsonify(
-            {
-                "status": "error",
-                "message": (
-                    "Neon DB non connectée."
-                ),
-            }
-        )
+        return jsonify({"status": "error", "message": "Neon DB non connectée."})
 
     cur = None
-
     try:
-
         cur = conn.cursor()
-
         cur.execute(
             """
-            SELECT
-                trace_id,
-                objective,
-                status,
-                execution_ms,
-                created_at
-            FROM bek_mission_logs
-            ORDER BY created_at DESC
-            LIMIT 10;
+            SELECT trace_id, objective, status, execution_ms, created_at
+            FROM bek_mission_logs ORDER BY created_at DESC LIMIT 10;
             """
         )
+        columns = [d[0] for d in cur.description]
+        logs = [dict(zip(columns, row)) for row in cur.fetchall()]
 
-        columns = [
-            description[0]
-            for description in cur.description
-        ]
-
-        logs = [
-            dict(
-                zip(
-                    columns,
-                    row,
-                )
-            )
-            for row in cur.fetchall()
-        ]
-
-        # system_jobs peut ne pas encore exister.
         jobs = []
-
         try:
-
             cur.execute(
                 """
-                SELECT
-                    job_id,
-                    task_name,
-                    status,
-                    created_at
-                FROM system_jobs
-                ORDER BY created_at DESC
-                LIMIT 5;
+                SELECT job_id, task_name, status, created_at
+                FROM system_jobs ORDER BY created_at DESC LIMIT 5;
                 """
             )
+            job_cols = [d[0] for d in cur.description]
+            jobs = [dict(zip(job_cols, row)) for row in cur.fetchall()]
+        except Exception:
+            pass
 
-            columns = [
-                description[0]
-                for description in cur.description
-            ]
-
-            jobs = [
-                dict(
-                    zip(
-                        columns,
-                        row,
-                    )
-                )
-                for row in cur.fetchall()
-            ]
-
-        except Exception as job_exc:
-
-            logger.warning(
-                "system_jobs indisponible : %s",
-                job_exc,
-            )
-
+        return jsonify({"status": "success", "mission_logs": logs, "system_jobs": jobs})
+    except Exception as exc:
+        return jsonify({"status": "error", "message": str(exc)})
+    finally:
+        if cur:
             try:
-                conn.rollback()
+                cur.close()
+            except Exception:
+                pass
+        if conn:
+            try:
+                conn.close()
             except Exception:
                 pass
 
-        return jsonify(
-            {
-                "status": "success",
-                "mission_logs": logs,
-                "system_jobs": jobs,
-            }
-        )
 
-    except Exception as exc:
-
-        return jsonify(
-            {
-                "status": "error",
-                "message": str(exc),
-            }
-        )
-
-    finally:
-
-        try:
-            if cur:
-                cur.close()
-        except Exception:
-            pass
-
-        try:
-            conn.close()
-        except Exception:
-            pass
-
-
-# ==========================================
-# CRM STATS
-# ==========================================
-
-@app.route(
-    "/api/crm/stats",
-    methods=["GET"],
-)
+@app.route("/api/crm/stats", methods=["GET"])
 def get_crm_stats():
-
     conn = get_db_connection()
-
     if not conn:
-
-        return jsonify(
-            {
-                "num_contacts": 0,
-                "num_companies": 0,
-                "num_opportunities": 0,
-                "total_amount": 0.0,
-                "status": "demo",
-            }
-        )
+        return jsonify({"num_contacts": 0, "num_companies": 0, "num_opportunities": 0, "total_amount": 0.0, "status": "demo"})
 
     cur = None
-
     try:
-
         cur = conn.cursor()
+        cur.execute("SELECT id, name, email, phone FROM contacts;")
+        contacts = [dict(zip([d[0] for d in cur.description], row)) for row in cur.fetchall()]
 
-        # CONTACTS
-        cur.execute(
-            """
-            SELECT
-                id,
-                name,
-                email,
-                phone
-            FROM contacts;
-            """
-        )
+        cur.execute("SELECT id, name, created_at FROM companies;")
+        companies = [dict(zip([d[0] for d in cur.description], row)) for row in cur.fetchall()]
 
-        columns = [
-            description[0]
-            for description in cur.description
-        ]
+        cur.execute("SELECT id, name, amount, currency, stage FROM opportunities;")
+        opportunities = [dict(zip([d[0] for d in cur.description], row)) for row in cur.fetchall()]
 
-        contacts = [
-            dict(
-                zip(
-                    columns,
-                    row,
-                )
-            )
-            for row in cur.fetchall()
-        ]
+        total_amount = sum(float(opp.get("amount", 0) or 0) for opp in opportunities)
 
-        # COMPANIES
-        cur.execute(
-            """
-            SELECT
-                id,
-                name,
-                created_at
-            FROM companies;
-            """
-        )
-
-        columns = [
-            description[0]
-            for description in cur.description
-        ]
-
-        companies = [
-            dict(
-                zip(
-                    columns,
-                    row,
-                )
-            )
-            for row in cur.fetchall()
-        ]
-
-        # OPPORTUNITIES
-        cur.execute(
-            """
-            SELECT
-                id,
-                name,
-                amount,
-                currency,
-                stage
-            FROM opportunities;
-            """
-        )
-
-        columns = [
-            description[0]
-            for description in cur.description
-        ]
-
-        opportunities = [
-            dict(
-                zip(
-                    columns,
-                    row,
-                )
-            )
-            for row in cur.fetchall()
-        ]
-
-        total_amount = sum(
-            float(
-                opportunity.get(
-                    "amount",
-                    0,
-                )
-                or 0
-            )
-            for opportunity in opportunities
-        )
-
-        return jsonify(
-            {
-                "num_contacts": len(
-                    contacts
-                ),
-                "num_companies": len(
-                    companies
-                ),
-                "num_opportunities": len(
-                    opportunities
-                ),
-                "total_amount": total_amount,
-                "contacts": contacts,
-                "companies": companies,
-                "opportunities": opportunities,
-                "status": "connected",
-            }
-        )
-
+        return jsonify({
+            "num_contacts": len(contacts),
+            "num_companies": len(companies),
+            "num_opportunities": len(opportunities),
+            "total_amount": total_amount,
+            "contacts": contacts,
+            "companies": companies,
+            "opportunities": opportunities,
+            "status": "connected",
+        })
     except Exception as exc:
-
-        return jsonify(
-            {
-                "error": str(exc),
-                "status": "error",
-            }
-        )
-
+        return jsonify({"error": str(exc), "status": "error"})
     finally:
-
-        try:
-            if cur:
+        if cur:
+            try:
                 cur.close()
-        except Exception:
-            pass
+            except Exception:
+                pass
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
-        try:
-            conn.close()
-        except Exception:
-            pass
 
-
-# ==========================================
-# CRM SQL
-# ==========================================
-
-@app.route(
-    "/api/crm/execute",
-    methods=["POST"],
-)
+@app.route("/api/crm/execute", methods=["POST"])
 def execute_crm_direct():
-
     auth_error = require_admin()
-
     if auth_error:
         return auth_error
 
-    data = (
-        request.get_json(
-            silent=True
-        )
-        or {}
-    )
+    data = request.get_json(silent=True) or {}
+    sql = data.get("sql", "")
+    if not isinstance(sql, str) or not sql.strip():
+        return jsonify({"error": "SQL requis."}), 400
 
-    sql = data.get(
-        "sql",
-        "",
-    )
-
-    if not isinstance(
-        sql,
-        str,
-    ):
-
-        return jsonify(
-            {
-                "error": "SQL invalide."
-            }
-        ), 400
-
-    sql = sql.strip()
-
-    if not sql:
-
-        return jsonify(
-            {
-                "error": "SQL requis."
-            }
-        ), 400
-
-    return jsonify(
-        execute_database_sql(
-            sql
-        )
-    )
+    return jsonify(execute_database_sql(sql.strip()))
 
 
 # ==========================================
-# MATRIX SPAWN
+# MATRIX SPAWN & ACTIONS
 # ==========================================
 
-@app.route(
-    "/api/matrix/spawn",
-    methods=["POST"],
-)
+@app.route("/api/matrix/spawn", methods=["POST"])
 def api_spawn_sub_crm():
-
     auth_error = require_admin()
-
     if auth_error:
         return auth_error
 
-    data = (
-        request.get_json(
-            silent=True
-        )
-        or {}
-    )
+    data = request.get_json(silent=True) or {}
+    niche_name = data.get("niche_name", "")
+    cahier_des_charges = data.get("cahier_des_charges", "Autonomie complète selon les objectifs assignés.")
+    objectives = data.get("objectives", ["Optimisation", "Automatisation", "Auto-correction"])
+    parent_id = data.get("parent_id", None)
+    custom_env = data.get("custom_env", None)
 
-    niche_name = data.get(
-        "niche_name",
-        "",
-    )
+    if not isinstance(niche_name, str) or not niche_name.strip():
+        return jsonify({"error": "Le nom de la niche ou du domaine est requis."}), 400
 
-    cahier_des_charges = data.get(
-        "cahier_des_charges",
-        (
-            "Autonomie complète "
-            "selon les objectifs assignés."
-        ),
-    )
+    if not isinstance(objectives, list):
+        return jsonify({"error": "objectives doit être une liste."}), 400
 
-    objectives = data.get(
-        "objectives",
-        [
-            "Optimisation",
-            "Automatisation",
-            "Auto-correction",
-        ],
-    )
-
-    parent_id = data.get(
-        "parent_id",
-        None,
-    )
-
-    custom_env = data.get(
-        "custom_env",
-        None,
-    )
-
-    if not isinstance(
-        niche_name,
-        str,
-    ) or not niche_name.strip():
-
-        return jsonify(
-            {
-                "error": (
-                    "Le nom de la niche "
-                    "ou du domaine est requis."
-                )
-            }
-        ), 400
-
-    if not isinstance(
-        objectives,
-        list,
-    ):
-
-        return jsonify(
-            {
-                "error": (
-                    "objectives doit être une liste."
-                )
-            }
-        ), 400
-
-    result = (
-        SubCRMEngine.spawn_sub_crm(
-            niche_name=niche_name.strip(),
-            cahier_des_charges=(
-                str(
-                    cahier_des_charges
-                )
-            ),
-            objectives=objectives,
-            parent_id=parent_id,
-            custom_env=custom_env,
-        )
-    )
-
-    return jsonify(
-        result
-    )
+    return jsonify(SubCRMEngine.spawn_sub_crm(
+        niche_name=niche_name.strip(),
+        cahier_des_charges=str(cahier_des_charges),
+        objectives=objectives,
+        parent_id=parent_id,
+        custom_env=custom_env,
+    ))
 
 
-# ==========================================
-# MATRIX SPAWN ALIVE
-# ==========================================
-
-@app.route(
-    "/api/matrix/spawn-alive",
-    methods=["POST"],
-)
+@app.route("/api/matrix/spawn-alive", methods=["POST"])
 def api_spawn_alive_sub_crm():
-
     auth_error = require_admin()
-
     if auth_error:
         return auth_error
 
-    data = (
-        request.get_json(
-            silent=True
-        )
-        or {}
-    )
+    data = request.get_json(silent=True) or {}
+    niche_name = data.get("niche_name", "")
+    cahier_des_charges = data.get("cahier_des_charges", "Opérationnel, autonome, multi-rubriques et auto-réparateur.")
+    objectives = data.get("objectives", ["Création Interface Multi-Vues", "Comptes Utilisateurs", "Rentabilité & Automatisation"])
+    parent_id = data.get("parent_id", None)
+    custom_env = data.get("custom_env", None)
 
-    niche_name = data.get(
-        "niche_name",
-        "",
-    )
+    if not isinstance(niche_name, str) or not niche_name.strip():
+        return jsonify({"error": "Le nom de la niche est requis."}), 400
 
-    cahier_des_charges = data.get(
-        "cahier_des_charges",
-        (
-            "Opérationnel, autonome, "
-            "multi-rubriques et "
-            "auto-réparateur."
-        ),
-    )
+    if not isinstance(objectives, list):
+        return jsonify({"error": "objectives doit être une liste."}), 400
 
-    objectives = data.get(
-        "objectives",
-        [
-            "Création Interface Multi-Vues",
-            "Comptes Utilisateurs",
-            "Rentabilité & Automatisation",
-        ],
-    )
-
-    parent_id = data.get(
-        "parent_id",
-        None,
-    )
-
-    custom_env = data.get(
-        "custom_env",
-        None,
-    )
-
-    if not isinstance(
-        niche_name,
-        str,
-    ) or not niche_name.strip():
-
-        return jsonify(
-            {
-                "error": (
-                    "Le nom de la niche est requis."
-                )
-            }
-        ), 400
-
-    if not isinstance(
-        objectives,
-        list,
-    ):
-
-        return jsonify(
-            {
-                "error": (
-                    "objectives doit être une liste."
-                )
-            }
-        ), 400
-
-    result = (
-        SubCRMEngineAdvanced.spawn_fully_alive_sub_crm(
-            niche_name=niche_name.strip(),
-            cahier_des_charges=(
-                str(
-                    cahier_des_charges
-                )
-            ),
-            objectives=objectives,
-            parent_id=parent_id,
-            custom_env=custom_env,
-        )
-    )
-
-    return jsonify(
-        result
-    )
+    return jsonify(SubCRMEngineAdvanced.spawn_fully_alive_sub_crm(
+        niche_name=niche_name.strip(),
+        cahier_des_charges=str(cahier_des_charges),
+        objectives=objectives,
+        parent_id=parent_id,
+        custom_env=custom_env,
+    ))
 
 
-# ==========================================
-# MATRIX BEK ACTION
-# ==========================================
-
-@app.route(
-    "/api/matrix/bek-action",
-    methods=["POST"],
-)
+@app.route("/api/matrix/bek-action", methods=["POST"])
 def api_matrix_bek_action():
-
     auth_error = require_admin()
-
     if auth_error:
         return auth_error
 
-    data = (
-        request.get_json(
-            silent=True
-        )
-        or {}
-    )
-
-    action = data.get(
-        "action",
-        "process_data",
-    )
+    data = request.get_json(silent=True) or {}
+    action = data.get("action", "process_data")
 
     if action == "process_data":
-
-        # Conservation du comportement UI existant.
         time.sleep(1.5)
+        return jsonify({
+            "status": "success",
+            "new_sequences": 8492,
+            "active_agents": 5,
+            "logs": [
+                ">_ Swarm-Core : Lancement de l'analyse des flux CRM...",
+                ">_ Agent Web : Scan et normalisation des flux... OK",
+                ">_ Agent Meta-Cortex : Optimisation des pipelines de vente...",
+                ">_ Opération terminée. Données synchronisées avec Neon DB.",
+            ],
+        })
 
-        return jsonify(
-            {
-                "status": "success",
-                "new_sequences": 8492,
-                "active_agents": 5,
-                "logs": [
-                    (
-                        ">_ Swarm-Core : "
-                        "Lancement de l'analyse "
-                        "des flux CRM..."
-                    ),
-                    (
-                        ">_ Agent Web : "
-                        "Scan et normalisation "
-                        "des flux... OK"
-                    ),
-                    (
-                        ">_ Agent Meta-Cortex : "
-                        "Optimisation des pipelines "
-                        "de vente..."
-                    ),
-                    (
-                        ">_ Opération terminée. "
-                        "Données synchronisées "
-                        "avec Neon DB."
-                    ),
-                ],
-            }
-        )
-
-    return jsonify(
-        {
-            "error": "Action inconnue."
-        }
-    ), 400
+    return jsonify({"error": "Action inconnue."}), 400
 
 
 # ==========================================
-# CHAT PRINCIPAL
+# CHAT PRINCIPAL (AVEC PROVIDER MANAGER & META-CORTEX SSE)
 # ==========================================
 
-@app.route(
-    "/api/chat",
-    methods=["POST"],
-)
+@app.route("/api/chat", methods=["POST"])
 def chat():
+    data = request.get_json(silent=True) or {}
+    messages = data.get("messages", [])
+    provider = data.get("provider", "groq")
+    model = data.get("model", "openai/gpt-oss-120b")
+    use_memory = data.get("use_memory", True)
+    use_reflection = data.get("use_reflection", True)
 
-    data = (
-        request.get_json(
-            silent=True
-        )
-        or {}
-    )
+    if not isinstance(messages, list):
+        return jsonify({"error": "messages doit être une liste."}), 400
 
-    messages = data.get(
-        "messages",
-        [],
-    )
-
-    provider = data.get(
-        "provider",
-        "groq",
-    )
-
-    model = data.get(
-        "model",
-        "openai/gpt-oss-120b",
-    )
-
-    use_memory = data.get(
-        "use_memory",
-        True,
-    )
-
-    use_reflection = data.get(
-        "use_reflection",
-        True,
-    )
-
-    if not isinstance(
-        messages,
-        list,
-    ):
-
-        return jsonify(
-            {
-                "error": (
-                    "messages doit être une liste."
-                )
-            }
-        ), 400
-
-    if not isinstance(
-        provider,
-        str,
-    ):
-
-        return jsonify(
-            {
-                "error": "provider invalide."
-            }
-        ), 400
-
-    if not isinstance(
-        model,
-        str,
-    ):
-
-        return jsonify(
-            {
-                "error": "model invalide."
-            }
-        ), 400
+    if not isinstance(provider, str) or not isinstance(model, str):
+        return jsonify({"error": "provider ou model invalide."}), 400
 
     provider = provider.strip().lower()
     model = model.strip()
 
-    allowed_providers = {
-        "groq",
-        "nvidia",
-        "gemini",
-        "openrouter",
-    }
-
+    allowed_providers = {"groq", "nvidia", "gemini", "openrouter"}
     if provider not in allowed_providers:
+        return jsonify({"error": f"Provider non supporté : {provider}"}), 400
 
-        return jsonify(
-            {
-                "error": (
-                    f"Provider non supporté : "
-                    f"{provider}"
-                )
-            }
-        ), 400
-
-    hermes.set_provider_context(
-        provider,
-        model,
-    )
-
-    # ======================================
-    # DERNIER MESSAGE UTILISATEUR
-    # ======================================
+    hermes.set_provider_context(provider, model)
 
     last_user_msg = ""
+    for message in reversed(messages):
+        if isinstance(message, dict) and message.get("role") == "user":
+            content = message.get("content")
+            if isinstance(content, str):
+                last_user_msg = content
+            elif isinstance(content, list):
+                parts = [item["text"] for item in content if isinstance(item, dict) and isinstance(item.get("text"), str)]
+                last_user_msg = " ".join(parts)
+            break
 
-    for message in reversed(
-        messages
+    normalized_message = last_user_msg.lower().strip() if last_user_msg else ""
+
+    if normalized_message and any(
+        k in normalized_message for k in ("introspection runtime", "état runtime réel", "registre d'outils")
     ):
-
-        if not isinstance(
-            message,
-            dict,
-        ):
-            continue
-
-        if message.get(
-            "role"
-        ) != "user":
-            continue
-
-        content = message.get(
-            "content"
-        )
-
-        if isinstance(
-            content,
-            str,
-        ):
-
-            last_user_msg = content
-
-        elif isinstance(
-            content,
-            list,
-        ):
-
-            parts = []
-
-            for item in content:
-
-                if (
-                    isinstance(
-                        item,
-                        dict,
-                    )
-                    and isinstance(
-                        item.get("text"),
-                        str,
-                    )
-                ):
-
-                    parts.append(
-                        item["text"]
-                    )
-
-            last_user_msg = " ".join(
-                parts
-            )
-
-        break
-
-    # ======================================
-    # PROVIDERS
-    # ======================================
-
-    if provider == "nvidia":
-
-        api_key = get_api_key(
-            "NVIDIA_API_KEY"
-        )
-
-        api_url = (
-            "https://integrate.api.nvidia.com/"
-            "v1/chat/completions"
-        )
-
-    elif provider == "gemini":
-
-        api_key = get_api_key(
-            "GEMINI_API_KEY"
-        )
-
-        api_url = (
-            "https://generativelanguage.googleapis.com/"
-            "v1beta/openai/chat/completions"
-        )
-
-    elif provider == "openrouter":
-
-        api_key = get_api_key(
-            "OPENROUTER_API_KEY"
-        )
-
-        api_url = (
-            "https://openrouter.ai/"
-            "api/v1/chat/completions"
-        )
-
-    else:
-
-        api_key = get_api_key(
-            "GROQ_API_KEY"
-        )
-
-        api_url = (
-            "https://api.groq.com/"
-            "openai/v1/chat/completions"
-        )
-
-    # ======================================
-    # INTROSPECTION LOCALE
-    # ======================================
-
-    normalized_message = (
-        last_user_msg.lower().strip()
-        if last_user_msg
-        else ""
-    )
-
-    introspection_requested = bool(
-        normalized_message
-        and (
-            "introspection runtime"
-            in normalized_message
-            or "état runtime réel"
-            in normalized_message
-            or "registre d'outils"
-            in normalized_message
-        )
-    )
-
-    def generate_local_runtime_response():
-
-        runtime = (
-            hermes.runtime_status()
-        )
-
+        runtime = hermes.runtime_status()
         payload = {
-            "hermes_state": runtime.get(
-                "status",
-                "unknown",
-            ),
-            "security_guard": runtime.get(
-                "security_guard_active",
-                False,
-            ),
-            "tools": [
-                {
-                    "name": tool.get(
-                        "name"
-                    ),
-                    "risk": tool.get(
-                        "risk_level"
-                    ),
-                }
-                for tool in runtime.get(
-                    "tools",
-                    [],
-                )
-            ],
-            "provider": runtime.get(
-                "provider"
-            ),
-            "model": runtime.get(
-                "model"
-            ),
-            "trace_id": (
-                hermes.create_trace_id()
-            ),
+            "hermes_state": runtime.get("status", "unknown"),
+            "security_guard": runtime.get("security_guard_active", False),
+            "tools": [{"name": t.get("name"), "risk": t.get("risk_level")} for t in runtime.get("tools", [])],
+            "provider": runtime.get("provider"),
+            "model": runtime.get("model"),
+            "trace_id": hermes.create_trace_id(),
         }
 
-        yield (
-            "data: "
-            + json.dumps(
-                {
-                    "chunk": json.dumps(
-                        payload,
-                        ensure_ascii=False,
-                    )
-                },
-                ensure_ascii=False,
-            )
-            + "\n\n"
-        )
-
-        yield (
-            "data: "
-            + json.dumps(
-                {
-                    "done": True
-                }
-            )
-            + "\n\n"
-        )
-
-    if introspection_requested:
+        def generate_local():
+            yield f"data: {json.dumps({'chunk': json.dumps(payload, ensure_ascii=False)}, ensure_ascii=False)}\n\n"
+            yield f"data: {json.dumps({'done': True})}\n\n"
 
         return Response(
-            generate_local_runtime_response(),
-            mimetype="text/event-stream",
+            generate_local(),
+            mimetype="text/event-stream; charset=utf-8",
+            headers={"Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
 
-    # ======================================
-    # PROXY LLM
-    # ======================================
+    try:
+        sync_and_persist_global_state(commit_message="BEK-v15.2 Auto-Sync Direct Action")
+    except Exception as sync_err:
+        logger.warning("[SyncWarning] %s", sync_err)
+
+    if any(keyword in normalized_message for keyword in ["essaim", "swarm", "analyse complète", "architecture swarm"]):
+        def generate_swarm():
+            try:
+                api_key = get_api_key(f"{provider.upper()}_API_KEY")
+                swarm_result = asyncio.run(run_bek_swarm_sync(last_user_msg, api_key, provider, model))
+                yield f"data: {json.dumps({'chunk': f'{swarm_result}\n'}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'done': True})}\n\n"
+            except Exception as exc:
+                logger.error("Erreur Swarm-Core : %s", exc)
+                yield f"data: {json.dumps({'error': f'Erreur Swarm-Core : {exc}'}, ensure_ascii=False)}\n\n"
+
+        return Response(
+            generate_swarm(),
+            mimetype="text/event-stream; charset=utf-8",
+            headers={"Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        )
+
+    dynamic_context = f"{BEK_GOLDEN_RULES}\n\n"
+    if GLOBAL_SYSTEM_CONTEXT:
+        dynamic_context += f"[DOCUMENTATION PROJET]\n{GLOBAL_SYSTEM_CONTEXT}\n"
+
+    try:
+        if os.path.exists(FILES_DIR):
+            for filename in os.listdir(FILES_DIR):
+                if os.path.isfile(os.path.join(FILES_DIR, filename)):
+                    dynamic_context += f"- Fichier : {filename}\n"
+    except Exception as exc:
+        logger.warning("Lecture fichiers contexte : %s", exc)
+
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        if conn:
+            cur = conn.cursor()
+            cur.execute("SELECT COUNT(*) FROM companies;")
+            result = cur.fetchone()
+            comp_count = result[0] if result else 0
+            dynamic_context += f"\n[SCHÉMA CRM STRICT DE NEON DB]\n- Entreprises (companies) : {comp_count}\n"
+    except Exception as exc:
+        logger.warning("CRM context indisponible : %s", exc)
+    finally:
+        if cur:
+            try:
+                cur.close()
+            except Exception:
+                pass
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+    if use_memory and last_user_msg:
+        try:
+            memory_results = search_memory(last_user_msg)
+            if memory_results:
+                dynamic_context += f"\n[CTX-MEMOIRE]\n{memory_results}\n"
+        except Exception as exc:
+            logger.warning("Mémoire indisponible : %s", exc)
+
+    if use_reflection:
+        dynamic_context += "\n[REFLEXION]\nUtilise une vérification interne de cohérence avant de répondre lorsque la tâche est technique ou critique.\n"
+
+    action_prompt = (
+        "Tu es BEK-v15.2, une IA hybride avancée et l'Exécuteur de la Matrisse.\n\n"
+        "RÈGLE 1 — SOCIAL : Si l'utilisateur te salue, réponds brièvement et poliment.\n"
+        "RÈGLE 2 — TECHNIQUE : Sois direct et précis.\n"
+        "RÈGLE 3 — VÉRACITÉ : Ne prétends jamais avoir effectué une action externe non réelle.\n"
+        "RÈGLE 4 — CODE : Fournis le fichier complet et cohérent sans '...'."
+    )
+
+    clean_messages = []
+    for message in messages[-6:]:
+        if isinstance(message, dict) and message.get("role") in ["user", "assistant"]:
+            content = message.get("content", "")
+            if isinstance(content, (str, list)):
+                clean_messages.append({"role": message["role"], "content": content})
+
+    exec_messages = [
+        {"role": "system", "content": f"{action_prompt}\n\nContexte :\n{dynamic_context}".strip()}
+    ] + clean_messages
 
     def generate_proxy():
+        full_text_accumulated = []
 
-        if not api_key:
-
-            yield (
-                "data: "
-                + json.dumps(
-                    {
-                        "error": (
-                            "Clé API manquante "
-                            f"pour {provider}."
-                        )
-                    },
-                    ensure_ascii=False,
-                )
-                + "\n\n"
-            )
-
-            return
-
-        # ----------------------------------
-        # SYNC
-        # ----------------------------------
-
-        try:
-
-            sync_and_persist_global_state(
-                commit_message=(
-                    "BEK-v15.2 Auto-Sync Direct Action"
-                )
-            )
-
-        except Exception as sync_err:
-
-            logger.warning(
-                "[SyncWarning] %s",
-                sync_err,
-            )
-
-        # ----------------------------------
-        # CONTEXTE
-        # ----------------------------------
-
-        dynamic_context = (
-            f"{BEK_GOLDEN_RULES}\n\n"
-        )
-
-        if GLOBAL_SYSTEM_CONTEXT:
-
-            dynamic_context += (
-                "[DOCUMENTATION PROJET]\n"
-                f"{GLOBAL_SYSTEM_CONTEXT}\n"
-            )
-
-        # ----------------------------------
-        # FICHIERS
-        # ----------------------------------
-
-        try:
-
-            if os.path.exists(
-                FILES_DIR
-            ):
-
-                for filename in os.listdir(
-                    FILES_DIR
-                ):
-
-                    filepath = os.path.join(
-                        FILES_DIR,
-                        filename,
-                    )
-
-                    if os.path.isfile(
-                        filepath
-                    ):
-
-                        dynamic_context += (
-                            "- Fichier : "
-                            f"{filename}\n"
-                        )
-
-        except Exception as exc:
-
-            logger.warning(
-                "Lecture fichiers contexte : %s",
-                exc,
-            )
-
-        # ----------------------------------
-        # CRM CONTEXT
-        # ----------------------------------
-
-        real_crm_context = (
-            "\n[SCHÉMA CRM STRICT DE NEON DB]\n"
-            "Tables autorisées : "
-            "'companies', 'contacts', "
-            "'opportunities'.\n"
-        )
-
-        conn = None
-        cur = None
-
-        try:
-
-            conn = get_db_connection()
-
-            if conn:
-
-                cur = conn.cursor()
-
-                cur.execute(
-                    """
-                    SELECT COUNT(*)
-                    FROM companies;
-                    """
-                )
-
-                result = cur.fetchone()
-
-                comp_count = (
-                    result[0]
-                    if result
-                    else 0
-                )
-
-                real_crm_context += (
-                    "- Entreprises "
-                    "(companies) : "
-                    f"{comp_count}\n"
-                )
-
-        except Exception as exc:
-
-            logger.warning(
-                "CRM context indisponible : %s",
-                exc,
-            )
-
-        finally:
-
-            try:
-                if cur:
-                    cur.close()
-            except Exception:
-                pass
-
-            try:
-                if conn:
-                    conn.close()
-            except Exception:
-                pass
-
-        dynamic_context += (
-            real_crm_context
-        )
-
-        # ----------------------------------
-        # MEMORY
-        # ----------------------------------
-
-        if (
-            use_memory
-            and last_user_msg
+        for item in provider_manager.execute_chat_stream(
+            messages=exec_messages,
+            provider=provider,
+            model=model,
+            temperature=0.2,
+            max_tokens=4096,
         ):
+            if "chunk" in item:
+                chunk = item["chunk"]
+                full_text_accumulated.append(chunk)
+                yield f"data: {json.dumps({'chunk': chunk}, ensure_ascii=False)}\n\n"
 
-            try:
+            elif "done" in item:
+                full_response = "".join(full_text_accumulated)
 
-                memory_results = (
-                    search_memory(
-                        last_user_msg
-                    )
-                )
-
-                if memory_results:
-
-                    dynamic_context += (
-                        "\n[CTX-MEMOIRE]\n"
-                        f"{memory_results}\n"
-                    )
-
-            except Exception as exc:
-
-                logger.warning(
-                    "Mémoire indisponible : %s",
-                    exc,
-                )
-
-        # ----------------------------------
-        # REFLECTION
-        # ----------------------------------
-
-        if use_reflection:
-
-            dynamic_context += (
-                "\n[REFLEXION]\n"
-                "Utilise une vérification interne "
-                "de cohérence avant de répondre lorsque "
-                "la tâche est technique ou critique.\n"
-            )
-
-        # ----------------------------------
-        # SWARM
-        # ----------------------------------
-
-        if any(
-            keyword in normalized_message
-            for keyword in [
-                "essaim",
-                "swarm",
-                "analyse complète",
-                "architecture swarm",
-            ]
-        ):
-
-            try:
-
-                swarm_result = asyncio.run(
-                    run_bek_swarm_sync(
-                        last_user_msg,
-                        api_key,
-                        provider,
-                        model,
-                    )
-                )
-
-                yield (
-                    "data: "
-                    + json.dumps(
-                        {
-                            "chunk": (
-                                f"{swarm_result}\n"
-                            )
-                        },
-                        ensure_ascii=False,
-                    )
-                    + "\n\n"
-                )
-
-                yield (
-                    "data: "
-                    + json.dumps(
-                        {
-                            "done": True
+                # ==========================================
+                # AUDIT META-CORTEX GROUNDING EN TEMPS RÉEL
+                # ==========================================
+                if use_reflection and full_response:
+                    try:
+                        is_grounded, grounding_msg = GroundingValidator.validate_grounding(
+                            full_response, context=dynamic_context
+                        )
+                        meta_event = {
+                            "type": "meta_cortex_audit",
+                            "grounded": is_grounded,
+                            "feedback": grounding_msg,
+                            "timestamp": datetime.now(timezone.utc).isoformat(),
                         }
-                    )
-                    + "\n\n"
-                )
+                        yield f"event: meta_cortex\ndata: {json.dumps(meta_event, ensure_ascii=False)}\n\n"
+                    except Exception as meta_exc:
+                        logger.debug("Meta-Cortex audit skipped : %s", meta_exc)
 
-                return
+                if use_memory and last_user_msg and full_response:
+                    try:
+                        save_to_memory(last_user_msg, full_response)
+                    except Exception as memory_exc:
+                        logger.warning("Memory save failed : %s", memory_exc)
 
-            except Exception as exc:
+                yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
 
-                logger.error(
-                    "Erreur Swarm-Core : %s",
-                    exc,
-                )
-
-                yield (
-                    "data: "
-                    + json.dumps(
-                        {
-                            "error": (
-                                "Erreur Swarm-Core : "
-                                f"{exc}"
-                            )
-                        },
-                        ensure_ascii=False,
-                    )
-                    + "\n\n"
-                )
-
-                return
-
-        # ----------------------------------
-        # PROMPT D'ACTION
-        # ----------------------------------
-
-        action_prompt = (
-            "Tu es BEK-v15.2, une IA hybride avancée "
-            "et l'Exécuteur de la Matrisse.\n\n"
-            "RÈGLE 1 — SOCIAL : "
-            "Si l'utilisateur te salue ou discute "
-            "de façon informelle, réponds naturellement, "
-            "brièvement et poliment. "
-            "Ne mentionne pas inutilement les protocoles, "
-            "le CRM ou Neon DB.\n\n"
-            "RÈGLE 2 — TECHNIQUE : "
-            "Si l'utilisateur demande du code, une création "
-            "ou une modification technique, sois direct "
-            "et précis.\n\n"
-            "RÈGLE 3 — VÉRACITÉ : "
-            "Ne prétends jamais avoir effectué une action "
-            "externe si elle n'a pas réellement été exécutée.\n\n"
-            "RÈGLE 4 — CODE : "
-            "Lorsque l'utilisateur demande la correction "
-            "d'un fichier complet, fournis le fichier complet "
-            "et cohérent sans remplacer des sections par "
-            "des raccourcis du type '...'."
-        )
-
-        # ----------------------------------
-        # MESSAGES
-        # ----------------------------------
-
-        clean_messages = []
-
-        for message in messages[-6:]:
-
-            if not isinstance(
-                message,
-                dict,
-            ):
-                continue
-
-            role = message.get(
-                "role"
-            )
-
-            if role not in [
-                "user",
-                "assistant",
-            ]:
-                continue
-
-            content = message.get(
-                "content",
-                "",
-            )
-
-            if not isinstance(
-                content,
-                (
-                    str,
-                    list,
-                ),
-            ):
-                continue
-
-            clean_messages.append(
-                {
-                    "role": role,
-                    "content": content,
-                }
-            )
-
-        exec_messages = [
-            {
-                "role": "system",
-                "content": (
-                    f"{action_prompt}\n\n"
-                    f"Contexte :\n"
-                    f"{dynamic_context}"
-                ).strip(),
-            }
-        ] + clean_messages
-
-        payload = {
-            "model": model,
-            "messages": exec_messages,
-            "temperature": 0.2,
-            "max_tokens": 4096,
-            "stream": False,
-        }
-
-        headers = {
-            "Authorization": (
-                f"Bearer {api_key}"
-            ),
-            "Content-Type": (
-                "application/json"
-            ),
-        }
-
-        # ----------------------------------
-        # PROVIDER
-        # ----------------------------------
-
-        try:
-
-            resp = requests.post(
-                api_url,
-                json=payload,
-                headers=headers,
-                timeout=90,
-            )
-
-            if resp.status_code != 200:
-
-                # Ne pas exposer inutilement
-                # des headers sensibles.
-                error_body = resp.text
-
-                if len(
-                    error_body
-                ) > 4000:
-
-                    error_body = (
-                        error_body[:4000]
-                        + "..."
-                    )
-
-                yield (
-                    "data: "
-                    + json.dumps(
-                        {
-                            "error": (
-                                f"Erreur API "
-                                f"({resp.status_code}) : "
-                                f"{error_body}"
-                            )
-                        },
-                        ensure_ascii=False,
-                    )
-                    + "\n\n"
-                )
-
-                return
-
-            try:
-
-                resp_json = (
-                    resp.json()
-                )
-
-            except ValueError:
-
-                yield (
-                    "data: "
-                    + json.dumps(
-                        {
-                            "error": (
-                                "Réponse provider "
-                                "non JSON."
-                            )
-                        },
-                        ensure_ascii=False,
-                    )
-                    + "\n\n"
-                )
-
-                return
-
-            choices = resp_json.get(
-                "choices",
-                [],
-            )
-
-            if not choices:
-
-                yield (
-                    "data: "
-                    + json.dumps(
-                        {
-                            "error": (
-                                "Réponse provider "
-                                "sans choix."
-                            )
-                        },
-                        ensure_ascii=False,
-                    )
-                    + "\n\n"
-                )
-
-                return
-
-            message_data = (
-                choices[0].get(
-                    "message",
-                    {}
-                )
-            )
-
-            llm_text = (
-                message_data.get(
-                    "content",
-                    "",
-                )
-                or ""
-            ).strip()
-
-            if not llm_text:
-
-                yield (
-                    "data: "
-                    + json.dumps(
-                        {
-                            "error": (
-                                "Réponse LLM vide."
-                            )
-                        },
-                        ensure_ascii=False,
-                    )
-                    + "\n\n"
-                )
-
-                return
-
-            yield (
-                "data: "
-                + json.dumps(
-                    {
-                        "chunk": llm_text
-                    },
-                    ensure_ascii=False,
-                )
-                + "\n\n"
-            )
-
-            yield (
-                "data: "
-                + json.dumps(
-                    {
-                        "done": True
-                    }
-                )
-                + "\n\n"
-            )
-
-            # ----------------------------------
-            # MEMORY SAVE
-            # ----------------------------------
-
-            if (
-                use_memory
-                and last_user_msg
-                and llm_text
-            ):
-
-                try:
-
-                    save_to_memory(
-                        last_user_msg,
-                        llm_text,
-                    )
-
-                except Exception as memory_exc:
-
-                    logger.warning(
-                        "Memory save failed : %s",
-                        memory_exc,
-                    )
-
-        except requests.Timeout:
-
-            yield (
-                "data: "
-                + json.dumps(
-                    {
-                        "error": (
-                            "Timeout du provider."
-                        )
-                    },
-                    ensure_ascii=False,
-                )
-                + "\n\n"
-            )
-
-        except requests.RequestException as exc:
-
-            yield (
-                "data: "
-                + json.dumps(
-                    {
-                        "error": (
-                            "Erreur réseau provider : "
-                            f"{exc}"
-                        )
-                    },
-                    ensure_ascii=False,
-                )
-                + "\n\n"
-            )
-
-        except Exception as exc:
-
-            logger.exception(
-                "Erreur chat proxy."
-            )
-
-            yield (
-                "data: "
-                + json.dumps(
-                    {
-                        "error": str(exc)
-                    },
-                    ensure_ascii=False,
-                )
-                + "\n\n"
-            )
+            elif "error" in item:
+                yield f"data: {json.dumps({'error': item['error']}, ensure_ascii=False)}\n\n"
 
     return Response(
         generate_proxy(),
-        mimetype="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-        },
+        mimetype="text/event-stream; charset=utf-8",
+        headers={"Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
 
 
@@ -4314,51 +1784,20 @@ def chat():
 # ERROR HANDLERS
 # ==========================================
 
-@app.errorhandler(
-    413
-)
+@app.errorhandler(413)
 def request_entity_too_large(error):
-
-    return jsonify(
-        {
-            "status": "error",
-            "error": (
-                "Fichier ou requête trop volumineux."
-            ),
-        }
-    ), 413
+    return jsonify({"status": "error", "error": "Fichier ou requête trop volumineux."}), 413
 
 
-@app.errorhandler(
-    404
-)
+@app.errorhandler(404)
 def not_found(error):
-
-    return jsonify(
-        {
-            "status": "error",
-            "error": "Route introuvable.",
-        }
-    ), 404
+    return jsonify({"status": "error", "error": "Route introuvable."}), 404
 
 
-@app.errorhandler(
-    500
-)
+@app.errorhandler(500)
 def internal_server_error(error):
-
-    logger.exception(
-        "Erreur interne Flask."
-    )
-
-    return jsonify(
-        {
-            "status": "error",
-            "error": (
-                "Erreur interne du serveur."
-            ),
-        }
-    ), 500
+    logger.exception("Erreur interne Flask.")
+    return jsonify({"status": "error", "error": "Erreur interne du serveur."}), 500
 
 
 # ==========================================
@@ -4366,66 +1805,13 @@ def internal_server_error(error):
 # ==========================================
 
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", "8765"))
+    host = os.environ.get("HOST", "0.0.0.0")
+    debug_mode = os.environ.get("BEK_DEBUG", "false").lower() in ("1", "true", "yes", "on")
 
-    port = int(
-        os.environ.get(
-            "PORT",
-            "8765",
-        )
-    )
+    logger.info("==========================================")
+    logger.info("BEK-v15.2 HYBRID démarrage | Host: %s | Port: %s | Debug: %s", host, port, debug_mode)
+    logger.info("Hermes SecurityGuard: actif")
+    logger.info("==========================================")
 
-    host = os.environ.get(
-        "HOST",
-        "0.0.0.0",
-    )
-
-    debug_mode = (
-        os.environ.get(
-            "BEK_DEBUG",
-            "false",
-        ).lower()
-        in (
-            "1",
-            "true",
-            "yes",
-            "on",
-        )
-    )
-
-    logger.info(
-        "=========================================="
-    )
-
-    logger.info(
-        "BEK-v15.2 HYBRID démarrage"
-    )
-
-    logger.info(
-        "Host: %s",
-        host,
-    )
-
-    logger.info(
-        "Port: %s",
-        port,
-    )
-
-    logger.info(
-        "Debug: %s",
-        debug_mode,
-    )
-
-    logger.info(
-        "Hermes SecurityGuard: actif"
-    )
-
-    logger.info(
-        "=========================================="
-    )
-
-    app.run(
-        host=host,
-        port=port,
-        debug=debug_mode,
-        threaded=True,
-    )
+    app.run(host=host, port=port, debug=debug_mode, threaded=True)

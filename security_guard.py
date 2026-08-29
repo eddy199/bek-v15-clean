@@ -32,9 +32,9 @@ class SecurityGuard:
         "search_contact": ("query",),
         "update_contact": ("name", "email", "phone"),
         "get_stats": (),
-        "web_sync": ("query",),
+        "web_sync": ("query", "skill", "prompt"),
         "neon_audit": (),
-        "default_llm": ("query",),
+        "default_llm": ("query", "skill", "prompt"),
     }
 
     FORBIDDEN_PATTERNS = (
@@ -170,7 +170,6 @@ class SecurityGuard:
         ).hexdigest()
         return hmac.compare_digest(expected, signature)
 
-
     def runtime_status(self) -> Dict[str, Any]:
         """Retourne uniquement l'état local du Guard, sans appel externe."""
         return {
@@ -178,4 +177,3 @@ class SecurityGuard:
             "policy": "ALLOWLIST + HMAC",
             "allowed_actions": sorted(self.allowed_actions.keys()),
         }
-

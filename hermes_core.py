@@ -1,11 +1,11 @@
 """
-BEK Hermes Core V2 - HARDENED
------------------------------
+BEK Hermes Core V2 - HARDENED & DYNAMIC GOAP
+--------------------------------------------
 Noyau d'orchestration Hermes / GOAP / Workers.
 
 Responsabilités :
 - registre sécurisé des tools ;
-- planification GOAP simple ;
+- planification GOAP dynamique via Skill Registry ;
 - validation stricte des tâches ;
 - contrôle SecurityGuard avant exécution ;
 - gestion des risques L1 -> L5 ;
@@ -34,6 +34,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 from memory import get_db_connection
 from security_guard import SecurityGuard
+from skill_registry import skill_registry
 
 
 logger = logging.getLogger("bek.hermes")
@@ -127,10 +128,6 @@ class HermesCore:
         security_guard: Optional[SecurityGuard] = None,
     ) -> None:
 
-        # ----------------------------------------------------
-        # Configuration validation
-        # ----------------------------------------------------
-
         if not isinstance(max_workers, int):
             raise TypeError("max_workers must be an integer.")
 
@@ -149,38 +146,20 @@ class HermesCore:
                 f"{MIN_TASK_TIMEOUT} and {MAX_TASK_TIMEOUT} seconds."
             )
 
-        # ----------------------------------------------------
-        # Tool registry
-        # ----------------------------------------------------
-
         self.tools: Dict[str, HermesTool] = {}
-
-        # IMPORTANT :
-        # le registre peut être consulté/modifié depuis plusieurs
-        # threads.
         self._tool_lock = threading.RLock()
-
-        # ----------------------------------------------------
-        # Security Guard
-        # ----------------------------------------------------
 
         self.security_guard = security_guard
 
         if self.security_guard is None:
             try:
                 self.security_guard = SecurityGuard()
-
             except Exception as exc:
                 logger.error(
                     "Hermes SecurityGuard initialization failed: %s",
                     exc,
                 )
-
                 self.security_guard = None
-
-        # ----------------------------------------------------
-        # Runtime configuration
-        # ----------------------------------------------------
 
         self.max_workers = max_workers
         self.task_timeout = task_timeout
@@ -190,17 +169,9 @@ class HermesCore:
             thread_name_prefix="bek-hermes",
         )
 
-        # ----------------------------------------------------
-        # Lifecycle
-        # ----------------------------------------------------
-
         self._worker_lock = threading.Lock()
         self._workers_started = False
         self._shutdown = False
-
-        # ----------------------------------------------------
-        # Provider context
-        # ----------------------------------------------------
 
         self.current_provider: Optional[str] = None
         self.current_model: Optional[str] = None
@@ -211,6 +182,27 @@ class HermesCore:
             max_workers,
             task_timeout,
             self.security_guard is not None,
+        )
+
+        # Enregistrement natif des outils par défaut
+        self._register_default_tools()
+
+    def _register_default_tools(self) -> None:
+        """Enregistre les outils natifs de base dès l'initialisation."""
+        self.register_tool(
+            "default_llm",
+            lambda query="", **kwargs: {"response": f"Exécution terminée pour : {query}"},
+            risk_level="L1",
+        )
+        self.register_tool(
+            "neon_audit",
+            lambda **kwargs: {"status": "Neon DB audit demandé", "tables": ["companies", "contacts", "opportunities"]},
+            risk_level="L1",
+        )
+        self.register_tool(
+            "web_sync",
+            lambda query="", **kwargs: {"status": "success", "synced_query": query},
+            risk_level="L3",
         )
 
     # ========================================================
@@ -252,14 +244,12 @@ class HermesCore:
         )
 
         with self._tool_lock:
-
             if name in self.tools:
                 logger.warning(
                     "Hermes tool replaced | name=%s | risk=%s",
                     name,
                     risk_level,
                 )
-
             self.tools[name] = tool
 
         logger.info(
@@ -269,28 +259,22 @@ class HermesCore:
         )
 
     def unregister_tool(self, name: str) -> bool:
-
         if not isinstance(name, str):
             return False
 
         with self._tool_lock:
-
             if name in self.tools:
                 del self.tools[name]
-
                 logger.info(
                     "Hermes tool unregistered | name=%s",
                     name,
                 )
-
                 return True
 
         return False
 
     def list_tools(self) -> List[Dict[str, str]]:
-
         with self._tool_lock:
-
             return [
                 {
                     "name": tool.name,
@@ -303,12 +287,11 @@ class HermesCore:
         self,
         tool_name: str,
     ) -> Optional[HermesTool]:
-
         with self._tool_lock:
             return self.tools.get(tool_name)
 
     # ========================================================
-    # GOAP PLANNER
+    # GOAP PLANNER DYNAMIQUE AVEC SKILL REGISTRY
     # ========================================================
 
     def goap_planner(
@@ -317,87 +300,56 @@ class HermesCore:
         trace_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
 
-        if not isinstance(objective, str):
+        if not isinstance(objective, str) or not objective.strip():
             return []
-
-        if not objective.strip():
-            return []
-
-        obj = objective.lower().strip()
 
         tasks: List[Dict[str, Any]] = []
+        obj_lower = objective.lower().strip()
 
-        # ----------------------------------------------------
-        # WEB
-        # ----------------------------------------------------
+        # 1. Recherche dynamique dans le Skill Registry (P1)
+        best_skills = skill_registry.search_skills(objective, limit=2)
+        
+        if best_skills:
+            top_skill = best_skills[0]
+            logger.info("GOAP sélection : %s (score=%.2f)", top_skill.name, top_skill.score)
 
-        if any(
-            keyword in obj
-            for keyword in (
-                "prospect",
-                "web",
-                "cherche",
-                "recherche",
-            )
-        ):
-
-            if self._get_tool("web_sync") is not None:
-
-                tasks.append(
-                    {
+            # Raccordement aux outils requis ou fallback vers default_llm
+            if top_skill.required_tools:
+                for req_tool in top_skill.required_tools:
+                    tasks.append({
                         "task_id": self.create_task_id(),
-                        "tool": "web_sync",
-                        "args": {
-                            "query": objective,
-                        },
-                    }
-                )
+                        "tool": req_tool,
+                        "args": {"query": objective, "skill": top_skill.name, "prompt": top_skill.prompt[:400]},
+                    })
+            else:
+                tasks.append({
+                    "task_id": self.create_task_id(),
+                    "tool": "default_llm",
+                    "args": {"query": objective, "skill": top_skill.name, "prompt": top_skill.prompt[:400]},
+                })
 
-        # ----------------------------------------------------
-        # DATABASE
-        # ----------------------------------------------------
-
-        if any(
-            keyword in obj
-            for keyword in (
-                "crm",
-                "neon",
-                "base",
-                "database",
-                "sql",
-            )
-        ):
-
-            if self._get_tool("neon_audit") is not None:
-
-                tasks.append(
-                    {
-                        "task_id": self.create_task_id(),
-                        "tool": "neon_audit",
-                        "args": {},
-                    }
-                )
-
-        # ----------------------------------------------------
-        # DEFAULT LLM
-        # ----------------------------------------------------
-
+        # 2. Règles natives de secours si aucune skill n'a été trouvée
         if not tasks:
-
-            if self._get_tool("default_llm") is not None:
-
-                tasks.append(
-                    {
-                        "task_id": self.create_task_id(),
-                        "tool": "default_llm",
-                        "args": {
-                            "query": objective,
-                        },
-                    }
-                )
+            if any(k in obj_lower for k in ("prospect", "web", "cherche", "recherche")):
+                tasks.append({
+                    "task_id": self.create_task_id(),
+                    "tool": "web_sync",
+                    "args": {"query": objective},
+                })
+            elif any(k in obj_lower for k in ("crm", "neon", "base", "database", "sql")):
+                tasks.append({
+                    "task_id": self.create_task_id(),
+                    "tool": "neon_audit",
+                    "args": {},
+                })
+            else:
+                tasks.append({
+                    "task_id": self.create_task_id(),
+                    "tool": "default_llm",
+                    "args": {"query": objective},
+                })
 
         if trace_id:
-
             for task in tasks:
                 task["trace_id"] = trace_id
 
@@ -411,7 +363,6 @@ class HermesCore:
     def requires_human_approval(
         tool: HermesTool,
     ) -> bool:
-
         return tool.risk_level in HUMAN_APPROVAL_LEVELS
 
     # ========================================================
@@ -426,64 +377,34 @@ class HermesCore:
 
         args = args or {}
 
-        # ----------------------------------------------------
-        # HUMAN APPROVAL GATE
-        # ----------------------------------------------------
-
         if self.requires_human_approval(tool):
-
             return {
                 "decision": "REQUIRE_HUMAN",
                 "risk_level": tool.risk_level,
-                "reason": (
-                    "Niveau de risque exigeant "
-                    "une validation humaine."
-                ),
+                "reason": "Niveau de risque exigeant une validation humaine.",
             }
 
-        # ----------------------------------------------------
-        # SECURITY GUARD REQUIRED
-        # ----------------------------------------------------
-
         if self.security_guard is None:
-
             return {
                 "decision": "DENY",
                 "risk_level": tool.risk_level,
                 "reason": "SecurityGuard indisponible.",
             }
 
-        # ----------------------------------------------------
-        # SINGLE SECURITY CERTIFICATION
-        # ----------------------------------------------------
-
         try:
-
-            ok, message, envelope = (
-                self.security_guard.validate_and_certify(
-                    tool.name,
-                    args,
-                )
-            )
-
-        except Exception as exc:
-
-            logger.exception(
-                "SecurityGuard exception | tool=%s",
+            ok, message, envelope = self.security_guard.validate_and_certify(
                 tool.name,
+                args,
             )
-
+        except Exception as exc:
+            logger.exception("SecurityGuard exception | tool=%s", tool.name)
             return {
                 "decision": "DENY",
                 "risk_level": tool.risk_level,
-                "reason": (
-                    "SecurityGuard exception: "
-                    f"{type(exc).__name__}"
-                ),
+                "reason": f"SecurityGuard exception: {type(exc).__name__}",
             }
 
         if not ok:
-
             return {
                 "decision": "DENY",
                 "risk_level": tool.risk_level,
@@ -507,151 +428,73 @@ class HermesCore:
         trace_id: str,
     ) -> Optional[Dict[str, Any]]:
 
-        # ----------------------------------------------------
-        # TASK TYPE
-        # ----------------------------------------------------
-
         if not isinstance(task, dict):
-
             return {
                 "status": "INVALID_TASK",
                 "message": "Task must be a dictionary.",
                 "trace_id": trace_id,
             }
 
-        # ----------------------------------------------------
-        # TASK ID
-        # ----------------------------------------------------
-
         task_id = task.get("task_id")
-
         if not isinstance(task_id, str) or not task_id.strip():
             task_id = self.create_task_id()
 
-        # ----------------------------------------------------
-        # TOOL NAME
-        # ----------------------------------------------------
-
         tool_name = task.get("tool")
-
-        if not tool_name:
-
+        if not tool_name or not isinstance(tool_name, str) or not tool_name.strip():
             return {
                 "status": "INVALID_TASK",
-                "message": "Missing tool name.",
-                "trace_id": trace_id,
-                "task_id": task_id,
-            }
-
-        if not isinstance(tool_name, str):
-
-            return {
-                "status": "INVALID_TASK",
-                "message": "Tool name must be a string.",
+                "message": "Invalid or missing tool name.",
                 "trace_id": trace_id,
                 "task_id": task_id,
             }
 
         tool_name = tool_name.strip()
-
-        if not tool_name:
-
-            return {
-                "status": "INVALID_TASK",
-                "message": "Tool name cannot be empty.",
-                "trace_id": trace_id,
-                "task_id": task_id,
-            }
-
-        # ----------------------------------------------------
-        # ARGS
-        # ----------------------------------------------------
-
         args = task.get("args", {})
-
         if args is None:
             args = {}
 
         if not isinstance(args, dict):
-
             return {
                 "status": "INVALID_TASK",
-                "message": (
-                    f"Invalid args for tool '{tool_name}'."
-                ),
+                "message": f"Invalid args for tool '{tool_name}'.",
                 "trace_id": trace_id,
                 "task_id": task_id,
                 "tool": tool_name,
             }
 
-        # ----------------------------------------------------
-        # IMPORTANT HARDENING
-        #
-        # On vérifie d'abord que le tool existe.
-        #
-        # L'ancien ordre envoyait le nom du tool au Guard
-        # avant même de savoir si Hermes possédait réellement
-        # ce tool.
-        # ----------------------------------------------------
-
         tool = self._get_tool(tool_name)
-
         if tool is None:
-
             logger.warning(
                 "Unknown Hermes tool | trace=%s | task=%s | tool=%s",
                 trace_id,
                 task_id,
                 tool_name,
             )
-
             return {
                 "status": "UNKNOWN_TOOL",
-                "message": (
-                    f"Unknown Hermes tool: {tool_name}"
-                ),
+                "message": f"Unknown Hermes tool: {tool_name}",
                 "trace_id": trace_id,
                 "task_id": task_id,
                 "tool": tool_name,
             }
 
-        # ----------------------------------------------------
-        # SECURITY GATE
-        #
-        # C'est maintenant le point unique de certification.
-        # On ne certifie pas deux fois la même action.
-        # ----------------------------------------------------
-
-        security = self.security_check(
-            tool,
-            args,
-        )
-
+        security = self.security_check(tool, args)
         decision = security["decision"]
 
-        # ----------------------------------------------------
-        # DENY / HUMAN APPROVAL
-        # ----------------------------------------------------
-
         if decision != "ALLOW":
-
             logger.warning(
-                "Hermes security decision | "
-                "trace=%s | task=%s | tool=%s | "
-                "risk=%s | decision=%s",
+                "Hermes security decision | trace=%s | task=%s | tool=%s | risk=%s | decision=%s",
                 trace_id,
                 task_id,
                 tool_name,
                 tool.risk_level,
                 decision,
             )
-
             status = (
                 "SECURITY_APPROVAL_REQUIRED"
                 if decision == "REQUIRE_HUMAN"
                 else "SECURITY_DENIED"
             )
-
             return {
                 "status": status,
                 "message": security["reason"],
@@ -662,10 +505,6 @@ class HermesCore:
                 "security_decision": decision,
             }
 
-        # ----------------------------------------------------
-        # VALIDATED TASK
-        # ----------------------------------------------------
-
         return {
             "task_id": task_id,
             "trace_id": trace_id,
@@ -673,9 +512,7 @@ class HermesCore:
             "args": args,
             "risk_level": tool.risk_level,
             "security_decision": "ALLOW",
-            "security_envelope": security.get(
-                "envelope"
-            ),
+            "security_envelope": security.get("envelope"),
         }
 
     # ========================================================
@@ -689,15 +526,9 @@ class HermesCore:
     ) -> Dict[str, Any]:
 
         trace_id = trace_id or self.create_trace_id()
-
         start_time = time.monotonic()
 
-        # ----------------------------------------------------
-        # SHUTDOWN
-        # ----------------------------------------------------
-
         if self._shutdown:
-
             return {
                 "trace_id": trace_id,
                 "execution_ms": 0,
@@ -705,105 +536,47 @@ class HermesCore:
                 "status": "HERMES_SHUTDOWN",
             }
 
-        # ----------------------------------------------------
-        # TASK LIST VALIDATION
-        # ----------------------------------------------------
-
-        if not isinstance(task_list, list):
-
+        if not isinstance(task_list, list) or not task_list:
             return {
                 "trace_id": trace_id,
                 "execution_ms": 0,
                 "results": {},
-                "status": "INVALID_TASK_LIST",
-                "message": "task_list must be a list.",
+                "status": "NO_TASKS" if isinstance(task_list, list) else "INVALID_TASK_LIST",
             }
-
-        if not task_list:
-
-            return {
-                "trace_id": trace_id,
-                "execution_ms": 0,
-                "results": {},
-                "status": "NO_TASKS",
-            }
-
-        # ----------------------------------------------------
-        # VALIDATION PHASE
-        #
-        # Aucune tâche n'est exécutée pendant cette phase.
-        # Toute la liste doit passer les contrôles avant
-        # lancement des workers.
-        # ----------------------------------------------------
 
         validated_tasks: List[Dict[str, Any]] = []
 
         for task in task_list:
-
-            validated = self._validate_task(
-                task,
-                trace_id,
-            )
-
+            validated = self._validate_task(task, trace_id)
             if validated is None:
                 continue
 
             if validated.get("status"):
-
                 return {
                     "trace_id": trace_id,
-                    "execution_ms": round(
-                        (
-                            time.monotonic()
-                            - start_time
-                        )
-                        * 1000,
-                        2,
-                    ),
+                    "execution_ms": round((time.monotonic() - start_time) * 1000, 2),
                     "results": {},
                     **validated,
                 }
-
             validated_tasks.append(validated)
 
-        # ----------------------------------------------------
-        # EMPTY AFTER VALIDATION
-        # ----------------------------------------------------
-
         if not validated_tasks:
-
             return {
                 "trace_id": trace_id,
-                "execution_ms": round(
-                    (
-                        time.monotonic()
-                        - start_time
-                    )
-                    * 1000,
-                    2,
-                ),
+                "execution_ms": round((time.monotonic() - start_time) * 1000, 2),
                 "results": {},
                 "status": "NO_VALID_TASKS",
             }
 
-        # ----------------------------------------------------
-        # SUBMIT PHASE
-        # ----------------------------------------------------
-
         futures = []
 
         for task in validated_tasks:
-
             task_id = task["task_id"]
             tool_name = task["tool"]
             args = task["args"]
-
             tool = self._get_tool(tool_name)
 
-            # Théoriquement impossible car validé juste avant.
-            # On garde néanmoins cette défense supplémentaire.
             if tool is None:
-
                 results = {
                     task_id: ToolResult(
                         task_id=task_id,
@@ -814,17 +587,9 @@ class HermesCore:
                         error_type="ToolNotFound",
                     ).to_dict()
                 }
-
                 return {
                     "trace_id": trace_id,
-                    "execution_ms": round(
-                        (
-                            time.monotonic()
-                            - start_time
-                        )
-                        * 1000,
-                        2,
-                    ),
+                    "execution_ms": round((time.monotonic() - start_time) * 1000, 2),
                     "results": results,
                     "status": "FAILED",
                     "task_count": 1,
@@ -834,7 +599,6 @@ class HermesCore:
                 }
 
             try:
-
                 future = self.executor.submit(
                     self._execute_tool,
                     tool,
@@ -842,85 +606,31 @@ class HermesCore:
                     trace_id,
                     task_id,
                 )
-
             except RuntimeError as exc:
-
-                logger.exception(
-                    "Hermes executor rejected task | "
-                    "trace=%s | task=%s | tool=%s",
-                    trace_id,
-                    task_id,
-                    tool_name,
-                )
-
-                futures.append(
-                    (
-                        task_id,
-                        tool_name,
-                        None,
-                        exc,
-                    )
-                )
-
+                futures.append((task_id, tool_name, None, exc))
                 continue
 
-            futures.append(
-                (
-                    task_id,
-                    tool_name,
-                    future,
-                    None,
-                )
-            )
-
-        # ----------------------------------------------------
-        # RESULT PHASE
-        # ----------------------------------------------------
+            futures.append((task_id, tool_name, future, None))
 
         results: Dict[str, Dict[str, Any]] = {}
 
-        for (
-            task_id,
-            tool_name,
-            future,
-            submit_error,
-        ) in futures:
-
-            # -----------------------------------------------
-            # SUBMISSION ERROR
-            # -----------------------------------------------
-
+        for task_id, tool_name, future, submit_error in futures:
             if future is None:
-
                 results[task_id] = ToolResult(
                     task_id=task_id,
                     trace_id=trace_id,
                     tool=tool_name,
                     success=False,
                     error=str(submit_error),
-                    error_type=type(
-                        submit_error
-                    ).__name__,
+                    error_type=type(submit_error).__name__,
                 ).to_dict()
-
                 continue
 
-            # -----------------------------------------------
-            # RESULT
-            # -----------------------------------------------
-
             try:
-
-                result = future.result(
-                    timeout=self.task_timeout
-                )
-
+                result = future.result(timeout=self.task_timeout)
                 if isinstance(result, ToolResult):
-
                     results[task_id] = result.to_dict()
-
                 else:
-
                     results[task_id] = ToolResult(
                         task_id=task_id,
                         trace_id=trace_id,
@@ -928,25 +638,8 @@ class HermesCore:
                         success=True,
                         data=result,
                     ).to_dict()
-
-            # -----------------------------------------------
-            # TIMEOUT
-            # -----------------------------------------------
-
             except concurrent.futures.TimeoutError:
-
-                logger.error(
-                    "Hermes tool timeout | "
-                    "trace=%s | task=%s | tool=%s",
-                    trace_id,
-                    task_id,
-                    tool_name,
-                )
-
-                # cancel() peut empêcher l'exécution si le future
-                # n'a pas encore commencé.
                 future.cancel()
-
                 results[task_id] = ToolResult(
                     task_id=task_id,
                     trace_id=trace_id,
@@ -956,21 +649,7 @@ class HermesCore:
                     error_type="TimeoutError",
                     timed_out=True,
                 ).to_dict()
-
-            # -----------------------------------------------
-            # UNEXPECTED FUTURE ERROR
-            # -----------------------------------------------
-
             except Exception as exc:
-
-                logger.exception(
-                    "Hermes future failed | "
-                    "trace=%s | task=%s | tool=%s",
-                    trace_id,
-                    task_id,
-                    tool_name,
-                )
-
                 results[task_id] = ToolResult(
                     task_id=task_id,
                     trace_id=trace_id,
@@ -980,63 +659,21 @@ class HermesCore:
                     error_type=type(exc).__name__,
                 ).to_dict()
 
-        # ----------------------------------------------------
-        # METRICS
-        # ----------------------------------------------------
-
-        execution_ms = round(
-            (
-                time.monotonic()
-                - start_time
-            )
-            * 1000,
-            2,
-        )
-
-        success_count = sum(
-            1
-            for result in results.values()
-            if result.get("success") is True
-        )
-
-        failure_count = (
-            len(results)
-            - success_count
-        )
-
-        timed_out_count = sum(
-            1
-            for result in results.values()
-            if result.get("timed_out") is True
-        )
-
-        # ----------------------------------------------------
-        # STATUS
-        # ----------------------------------------------------
+        execution_ms = round((time.monotonic() - start_time) * 1000, 2)
+        success_count = sum(1 for result in results.values() if result.get("success") is True)
+        failure_count = len(results) - success_count
+        timed_out_count = sum(1 for result in results.values() if result.get("timed_out") is True)
 
         if not results:
-
             status = "FAILED"
-
         elif success_count == len(results):
-
             status = "SUCCESS"
-
         elif timed_out_count == len(results):
-
             status = "TIMEOUT"
-
         elif success_count > 0:
-
             status = "PARTIAL_SUCCESS"
-
         else:
-
             status = "FAILED"
-
-        # ----------------------------------------------------
-        # RESPONSE
-        # ----------------------------------------------------
 
         return {
             "trace_id": trace_id,
@@ -1062,10 +699,8 @@ class HermesCore:
     ) -> ToolResult:
 
         start_time = time.monotonic()
-
         logger.info(
-            "Hermes executing tool | "
-            "trace=%s | task=%s | tool=%s | risk=%s",
+            "Hermes executing tool | trace=%s | task=%s | tool=%s | risk=%s",
             trace_id,
             task_id,
             tool.name,
@@ -1073,18 +708,8 @@ class HermesCore:
         )
 
         try:
-
             data = tool.func(**args)
-
-            execution_ms = round(
-                (
-                    time.monotonic()
-                    - start_time
-                )
-                * 1000,
-                2,
-            )
-
+            execution_ms = round((time.monotonic() - start_time) * 1000, 2)
             return ToolResult(
                 task_id=task_id,
                 trace_id=trace_id,
@@ -1093,26 +718,14 @@ class HermesCore:
                 data=data,
                 execution_ms=execution_ms,
             )
-
         except Exception as exc:
-
-            execution_ms = round(
-                (
-                    time.monotonic()
-                    - start_time
-                )
-                * 1000,
-                2,
-            )
-
+            execution_ms = round((time.monotonic() - start_time) * 1000, 2)
             logger.exception(
-                "Hermes tool exception | "
-                "trace=%s | task=%s | tool=%s",
+                "Hermes tool exception | trace=%s | task=%s | tool=%s",
                 trace_id,
                 task_id,
                 tool.name,
             )
-
             return ToolResult(
                 task_id=task_id,
                 trace_id=trace_id,
@@ -1150,16 +763,9 @@ class HermesCore:
     # ========================================================
 
     def runtime_status(self) -> Dict[str, Any]:
-
         return {
-            "status": (
-                "shutdown"
-                if self._shutdown
-                else "operational"
-            ),
-            "security_guard_active": (
-                self.security_guard is not None
-            ),
+            "status": "shutdown" if self._shutdown else "operational",
+            "security_guard_active": self.security_guard is not None,
             "tools": self.list_tools(),
             "tool_count": len(self.tools),
             "provider": self.current_provider,
@@ -1178,53 +784,23 @@ class HermesCore:
         provider: Optional[str],
         model: Optional[str],
     ) -> None:
-
-        self.current_provider = (
-            provider.strip()
-            if isinstance(provider, str)
-            and provider.strip()
-            else None
-        )
-
-        self.current_model = (
-            model.strip()
-            if isinstance(model, str)
-            and model.strip()
-            else None
-        )
+        self.current_provider = provider.strip() if isinstance(provider, str) and provider.strip() else None
+        self.current_model = model.strip() if isinstance(model, str) and model.strip() else None
 
     # ========================================================
     # SHUTDOWN
     # ========================================================
 
-    def shutdown(
-        self,
-        wait: bool = True,
-    ) -> None:
-
+    def shutdown(self, wait: bool = True) -> None:
         if self._shutdown:
             return
-
-        logger.info(
-            "Hermes executor shutting down."
-        )
-
+        logger.info("Hermes executor shutting down.")
         self._shutdown = True
-
-        self.executor.shutdown(
-            wait=wait,
-            cancel_futures=True,
-        )
-
-        logger.info(
-            "Hermes executor stopped."
-        )
+        self.executor.shutdown(wait=wait, cancel_futures=True)
+        logger.info("Hermes executor stopped.")
 
 
-# ============================================================
-# GLOBAL HERMES INSTANCE
-# ============================================================
-
+# Instance Singleton globale
 hermes = HermesCore()
 
 
@@ -1233,24 +809,14 @@ hermes = HermesCore()
 # ============================================================
 
 def init_system_jobs_table() -> None:
-
     conn = get_db_connection()
-
     if not conn:
-
-        logger.warning(
-            "Unable to initialize system_jobs: "
-            "no DB connection."
-        )
-
+        logger.warning("Unable to initialize system_jobs: no DB connection.")
         return
 
     cur = None
-
     try:
-
         cur = conn.cursor()
-
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS system_jobs (
@@ -1259,33 +825,23 @@ def init_system_jobs_table() -> None:
                 status VARCHAR(32) NOT NULL,
                 retry_count INT DEFAULT 0,
                 error_message TEXT,
-                created_at TIMESTAMP WITH TIME ZONE
-                    DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
             """
         )
-
         conn.commit()
-
     except Exception:
-
-        logger.exception(
-            "System jobs table initialization failed."
-        )
-
+        logger.exception("System jobs table initialization failed.")
         try:
             conn.rollback()
         except Exception:
             pass
-
     finally:
-
         try:
             if cur:
                 cur.close()
         except Exception:
             pass
-
         try:
             conn.close()
         except Exception:
@@ -1297,76 +853,36 @@ def init_system_jobs_table() -> None:
 # ============================================================
 
 def background_guardian_worker() -> None:
-
     try:
-
         init_system_jobs_table()
-
     except Exception:
-
-        logger.exception(
-            "Guardian failed during table initialization."
-        )
+        logger.exception("Guardian failed during table initialization.")
 
     while not hermes._shutdown:
-
         conn = None
         cur = None
-
         try:
-
             conn = get_db_connection()
-
             if conn:
-
                 job_id = hermes.create_job_id()
-
                 cur = conn.cursor()
-
                 cur.execute(
                     """
-                    INSERT INTO system_jobs
-                        (
-                            job_id,
-                            task_name,
-                            status,
-                            retry_count
-                        )
-                    VALUES
-                        (%s, %s, %s, %s);
+                    INSERT INTO system_jobs (job_id, task_name, status, retry_count)
+                    VALUES (%s, %s, %s, %s);
                     """,
-                    (
-                        job_id,
-                        "matrix_silent_audit",
-                        "RUNNING",
-                        0,
-                    ),
+                    (job_id, "matrix_silent_audit", "RUNNING", 0),
                 )
-
                 conn.commit()
-
-                logger.info(
-                    "Guardian job started | job=%s",
-                    job_id,
-                )
-
-                # --------------------------------------------
-                # Audit simulation / placeholder
-                # --------------------------------------------
+                logger.info("Guardian job started | job=%s", job_id)
 
                 for _ in range(20):
-
                     if hermes._shutdown:
                         break
-
                     time.sleep(0.1)
 
                 if hermes._shutdown:
                     break
-
-                # --------------------------------------------
-                # SUCCESS
-                # --------------------------------------------
 
                 cur.execute(
                     """
@@ -1374,72 +890,41 @@ def background_guardian_worker() -> None:
                     SET status = %s
                     WHERE job_id = %s;
                     """,
-                    (
-                        "SUCCESS",
-                        job_id,
-                    ),
+                    ("SUCCESS", job_id),
                 )
-
                 conn.commit()
-
-                logger.info(
-                    "Guardian job completed | job=%s",
-                    job_id,
-                )
-
-            # -----------------------------------------------
-            # Wait before next audit
-            # -----------------------------------------------
+                logger.info("Guardian job completed | job=%s", job_id)
 
             for _ in range(180):
-
                 if hermes._shutdown:
                     break
-
                 time.sleep(10)
 
         except Exception:
-
-            logger.exception(
-                "Hermes guardian worker failure."
-            )
-
+            logger.exception("Hermes guardian worker failure.")
             if conn:
-
                 try:
                     conn.rollback()
-
                 except Exception:
                     pass
-
-            # -----------------------------------------------
-            # Recovery delay
-            # -----------------------------------------------
-
             for _ in range(60):
-
                 if hermes._shutdown:
                     break
-
                 time.sleep(1)
 
         finally:
-
             try:
                 if cur:
                     cur.close()
             except Exception:
                 pass
-
             try:
                 if conn:
                     conn.close()
             except Exception:
                 pass
 
-    logger.info(
-        "Hermes guardian worker stopped."
-    )
+    logger.info("Hermes guardian worker stopped.")
 
 
 # ============================================================
@@ -1447,24 +932,8 @@ def background_guardian_worker() -> None:
 # ============================================================
 
 def start_background_workers() -> None:
-
     with hermes._worker_lock:
-
-        if hermes._shutdown:
-
-            logger.warning(
-                "Cannot start background workers: "
-                "Hermes is shutdown."
-            )
-
-            return
-
-        if hermes._workers_started:
-
-            logger.info(
-                "Hermes background workers already started."
-            )
-
+        if hermes._shutdown or hermes._workers_started:
             return
 
         thread = threading.Thread(
@@ -1472,92 +941,46 @@ def start_background_workers() -> None:
             name="bek-hermes-guardian",
             daemon=True,
         )
-
         thread.start()
-
         hermes._workers_started = True
-
-        logger.info(
-            "Hermes background guardian started."
-        )
+        logger.info("Hermes background guardian started.")
 
 
 # ============================================================
 # PUBLIC API
 # ============================================================
 
-def register_tool(
-    name: str,
-    func: Callable[..., Any],
-    risk_level: str = "L1",
-) -> None:
-
-    hermes.register_tool(
-        name=name,
-        func=func,
-        risk_level=risk_level,
-    )
+def register_tool(name: str, func: Callable[..., Any], risk_level: str = "L1") -> None:
+    hermes.register_tool(name=name, func=func, risk_level=risk_level)
 
 
-def unregister_tool(
-    name: str,
-) -> bool:
-
+def unregister_tool(name: str) -> bool:
     return hermes.unregister_tool(name)
 
 
 def list_tools() -> List[Dict[str, str]]:
-
     return hermes.list_tools()
 
 
-def goap_planner(
-    objective: str,
-) -> List[Dict[str, Any]]:
-
+def goap_planner(objective: str) -> List[Dict[str, Any]]:
     return hermes.goap_planner(objective)
 
 
-def dispatch_parallel(
-    task_list: List[Dict[str, Any]],
-) -> Dict[str, Any]:
-
-    return hermes.dispatch_parallel(
-        task_list
-    )
+def dispatch_parallel(task_list: List[Dict[str, Any]]) -> Dict[str, Any]:
+    return hermes.dispatch_parallel(task_list)
 
 
-def dispatch(
-    tool_name: str,
-    args: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
-
-    return hermes.dispatch(
-        tool_name=tool_name,
-        args=args,
-    )
+def dispatch(tool_name: str, args: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    return hermes.dispatch(tool_name=tool_name, args=args)
 
 
 def runtime_status() -> Dict[str, Any]:
-
     return hermes.runtime_status()
 
 
-def set_provider_context(
-    provider: Optional[str],
-    model: Optional[str],
-) -> None:
-
-    hermes.set_provider_context(
-        provider=provider,
-        model=model,
-    )
+def set_provider_context(provider: Optional[str], model: Optional[str]) -> None:
+    hermes.set_provider_context(provider=provider, model=model)
 
 
-def shutdown(
-    wait: bool = True,
-) -> None:
-
-    hermes.shutdown(
-        wait=wait
-    )
+def shutdown(wait: bool = True) -> None:
+    hermes.shutdown(wait=wait)
