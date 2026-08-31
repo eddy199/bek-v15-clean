@@ -1,11 +1,12 @@
 """
-BEK Hermes Core V2 - HARDENED & DYNAMIC GOAP
---------------------------------------------
+BEK Hermes Core V2 - HARDENED & DYNAMIC GOAP WITH PLAN ACTION HOOKS
+-------------------------------------------------------------------
 Noyau d'orchestration Hermes / GOAP / Workers.
 
 Responsabilités :
 - registre sécurisé des tools ;
 - planification GOAP dynamique via Skill Registry ;
+- hooks de cycle de vie de plan (Pre-Plan, Step/Re-Plan, Post-Plan) ;
 - validation stricte des tâches ;
 - contrôle SecurityGuard avant exécution ;
 - gestion des risques L1 -> L5 ;
@@ -29,8 +30,8 @@ import logging
 import threading
 import time
 import uuid
-from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional
+from dataclasses import dataclass, field
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from memory import get_db_connection
 from security_guard import SecurityGuard
@@ -116,6 +117,15 @@ class ToolResult:
 
 
 # ============================================================
+# PLAN HOOK TYPES
+# ============================================================
+
+PrePlanHook = Callable[[str, Optional[str]], Tuple[bool, Optional[str], Optional[List[Dict[str, Any]]]]]
+StepHook = Callable[[Dict[str, Any], Dict[str, Any]], Tuple[bool, Optional[Dict[str, Any]]]]
+PostPlanHook = Callable[[List[Dict[str, Any]], Dict[str, Any]], Dict[str, Any]]
+
+
+# ============================================================
 # HERMES CORE
 # ============================================================
 
@@ -176,6 +186,11 @@ class HermesCore:
         self.current_provider: Optional[str] = None
         self.current_model: Optional[str] = None
 
+        # Hooks de Plan d'Action
+        self._pre_plan_hooks: List[PrePlanHook] = []
+        self._step_hooks: List[StepHook] = []
+        self._post_plan_hooks: List[PostPlanHook] = []
+
         logger.info(
             "Hermes initialized | workers=%s | timeout=%ss | "
             "security_guard=%s",
@@ -204,6 +219,22 @@ class HermesCore:
             lambda query="", **kwargs: {"status": "success", "synced_query": query},
             risk_level="L3",
         )
+
+    # ========================================================
+    # HOOK REGISTRATION
+    # ========================================================
+
+    def register_pre_plan_hook(self, hook: PrePlanHook) -> None:
+        """Enregistre un intercepteur avant planification."""
+        self._pre_plan_hooks.append(hook)
+
+    def register_step_hook(self, hook: StepHook) -> None:
+        """Enregistre un intercepteur d'étape/re-plan."""
+        self._step_hooks.append(hook)
+
+    def register_post_plan_hook(self, hook: PostPlanHook) -> None:
+        """Enregistre un intercepteur post-évaluation."""
+        self._post_plan_hooks.append(hook)
 
     # ========================================================
     # IDS
@@ -291,7 +322,7 @@ class HermesCore:
             return self.tools.get(tool_name)
 
     # ========================================================
-    # GOAP PLANNER DYNAMIQUE AVEC SKILL REGISTRY
+    # GOAP PLANNER DYNAMIQUE AVEC SKILL REGISTRY & HOOK PRE-PLAN
     # ========================================================
 
     def goap_planner(
@@ -302,6 +333,21 @@ class HermesCore:
 
         if not isinstance(objective, str) or not objective.strip():
             return []
+
+        trace_id = trace_id or self.create_trace_id()
+
+        # [HOOK POINT A] : Pre-Plan Interceptors
+        for hook in self._pre_plan_hooks:
+            try:
+                allowed, reason, override_tasks = hook(objective, trace_id)
+                if not allowed:
+                    logger.warning("Pre-Plan Hook a rejeté l'objectif : %s", reason)
+                    return []
+                if override_tasks is not None:
+                    logger.info("Pre-Plan Hook a fourni un plan sur mesure (%d tâches)", len(override_tasks))
+                    return override_tasks
+            except Exception as hook_err:
+                logger.error("Erreur exécution Pre-Plan Hook : %s", hook_err)
 
         tasks: List[Dict[str, Any]] = []
         obj_lower = objective.lower().strip()
@@ -516,7 +562,7 @@ class HermesCore:
         }
 
     # ========================================================
-    # PARALLEL DISPATCH
+    # PARALLEL DISPATCH AVEC STEP & POST-PLAN HOOKS
     # ========================================================
 
     def dispatch_parallel(
@@ -616,7 +662,7 @@ class HermesCore:
 
         for task_id, tool_name, future, submit_error in futures:
             if future is None:
-                results[task_id] = ToolResult(
+                res_dict = ToolResult(
                     task_id=task_id,
                     trace_id=trace_id,
                     tool=tool_name,
@@ -624,40 +670,51 @@ class HermesCore:
                     error=str(submit_error),
                     error_type=type(submit_error).__name__,
                 ).to_dict()
-                continue
-
-            try:
-                result = future.result(timeout=self.task_timeout)
-                if isinstance(result, ToolResult):
-                    results[task_id] = result.to_dict()
-                else:
-                    results[task_id] = ToolResult(
+            else:
+                try:
+                    result = future.result(timeout=self.task_timeout)
+                    if isinstance(result, ToolResult):
+                        res_dict = result.to_dict()
+                    else:
+                        res_dict = ToolResult(
+                            task_id=task_id,
+                            trace_id=trace_id,
+                            tool=tool_name,
+                            success=True,
+                            data=result,
+                        ).to_dict()
+                except concurrent.futures.TimeoutError:
+                    future.cancel()
+                    res_dict = ToolResult(
                         task_id=task_id,
                         trace_id=trace_id,
                         tool=tool_name,
-                        success=True,
-                        data=result,
+                        success=False,
+                        error="TASK_TIMEOUT",
+                        error_type="TimeoutError",
+                        timed_out=True,
                     ).to_dict()
-            except concurrent.futures.TimeoutError:
-                future.cancel()
-                results[task_id] = ToolResult(
-                    task_id=task_id,
-                    trace_id=trace_id,
-                    tool=tool_name,
-                    success=False,
-                    error="TASK_TIMEOUT",
-                    error_type="TimeoutError",
-                    timed_out=True,
-                ).to_dict()
-            except Exception as exc:
-                results[task_id] = ToolResult(
-                    task_id=task_id,
-                    trace_id=trace_id,
-                    tool=tool_name,
-                    success=False,
-                    error=str(exc),
-                    error_type=type(exc).__name__,
-                ).to_dict()
+                except Exception as exc:
+                    res_dict = ToolResult(
+                        task_id=task_id,
+                        trace_id=trace_id,
+                        tool=tool_name,
+                        success=False,
+                        error=str(exc),
+                        error_type=type(exc).__name__,
+                    ).to_dict()
+
+            # [HOOK POINT B] : Step / Re-Plan Hooks
+            current_task_spec = next((t for t in validated_tasks if t["task_id"] == task_id), {})
+            for step_hook in self._step_hooks:
+                try:
+                    ok, replacement_res = step_hook(current_task_spec, res_dict)
+                    if replacement_res is not None:
+                        res_dict = replacement_res
+                except Exception as step_err:
+                    logger.error("Erreur Step Hook : %s", step_err)
+
+            results[task_id] = res_dict
 
         execution_ms = round((time.monotonic() - start_time) * 1000, 2)
         success_count = sum(1 for result in results.values() if result.get("success") is True)
@@ -675,7 +732,7 @@ class HermesCore:
         else:
             status = "FAILED"
 
-        return {
+        final_payload = {
             "trace_id": trace_id,
             "execution_ms": execution_ms,
             "results": results,
@@ -685,6 +742,15 @@ class HermesCore:
             "failure_count": failure_count,
             "timeout_count": timed_out_count,
         }
+
+        # [HOOK POINT C] : Post-Plan Evaluation Hooks
+        for post_hook in self._post_plan_hooks:
+            try:
+                final_payload = post_hook(validated_tasks, final_payload)
+            except Exception as post_err:
+                logger.error("Erreur Post-Plan Hook : %s", post_err)
+
+        return final_payload
 
     # ========================================================
     # TOOL EXECUTION
@@ -773,6 +839,11 @@ class HermesCore:
             "max_workers": self.max_workers,
             "task_timeout": self.task_timeout,
             "workers_started": self._workers_started,
+            "active_hooks": {
+                "pre_plan": len(self._pre_plan_hooks),
+                "step_replan": len(self._step_hooks),
+                "post_plan": len(self._post_plan_hooks),
+            }
         }
 
     # ========================================================

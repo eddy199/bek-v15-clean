@@ -2,7 +2,7 @@ import time
 import json
 import threading
 from queue import Queue
-from typing import Dict, Any, Callable
+from typing import Dict, Any, Callable, List, Optional
 
 class EventBusKafka:
     """
@@ -18,8 +18,10 @@ class EventBusKafka:
     def __init__(self):
         self.queues: Dict[str, Queue] = {t: Queue() for t in self.VALID_TOPICS}
         self.radar_red_active: bool = False
-        self.subscribers: Dict[str, list] = {t: [] for t in self.VALID_TOPICS}
+        self.subscribers: Dict[str, List[Callable[[Dict[str, Any]], None]]] = {t: [] for t in self.VALID_TOPICS}
         self._running = True
+        self._event_counter: int = 0
+        self._lock = threading.RLock()
 
         # Démarrage des consommateurs en tâche de fond
         self.worker_thread = threading.Thread(target=self._dispatch_loop, daemon=True)
@@ -29,7 +31,12 @@ class EventBusKafka:
         if topic not in self.VALID_TOPICS:
             raise ValueError(f"Topic inconnu : {topic}. Valides : {self.VALID_TOPICS}")
 
+        with self._lock:
+            self._event_counter += 1
+            current_id = self._event_counter
+
         event = {
+            "id": current_id,
             "topic": topic,
             "timestamp": time.time(),
             "payload": payload
@@ -62,11 +69,16 @@ class EventBusKafka:
     def get_radar_status(self) -> Dict[str, Any]:
         return {
             "radar_red": self.radar_red_active,
-            "mode": "POLICE_ISOLATION" if self.radar_red_active else "NORMAL"
+            "mode": "POLICE_ISOLATION" if self.radar_red_active else "NORMAL",
+            "total_events_processed": self._event_counter
         }
 
     def reset_radar(self):
         self.radar_red_active = False
+
+    def stop(self):
+        """Arrêt propre du thread de dispatch."""
+        self._running = False
 
 
 if __name__ == "__main__":
@@ -88,4 +100,4 @@ if __name__ == "__main__":
     # Publication anomalie
     bus.publish("error-signals", {"msg": "Tentative d'accès non certifié à Neon", "code": 500})
     time.sleep(0.1)
-    print(f"Statut Radar après alerte : {bus.get_radar_status()}") 
+    print(f"Statut Radar après alerte : {bus.get_radar_status()}")

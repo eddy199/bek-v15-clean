@@ -6,6 +6,7 @@ Gestionnaire découplé des fournisseurs d'intelligence artificielle :
 - Résolution dynamique des clés API
 - Cascade de fallback automatique en cas d'erreur (504, 429, 500)
 - Support streaming SSE et forçage UTF-8 strict anti-mojibake
+- Aiguillage optionnel Headroom Proxy transparent (:8787)
 """
 
 from __future__ import annotations
@@ -97,9 +98,35 @@ class ProviderManager:
     ) -> Tuple[str, str, str]:
         """
         Retourne (provider_résolu, api_key, api_url).
+        Supporte l'injection transparente du proxy Headroom si USE_HEADROOM=true.
         """
+        use_headroom = (
+            os.environ.get("USE_HEADROOM", self.env_cache.get("USE_HEADROOM", "false"))
+            .lower()
+            .strip()
+            == "true"
+        )
+        headroom_port = os.environ.get(
+            "HEADROOM_PORT", self.env_cache.get("HEADROOM_PORT", "8787")
+        )
+
         p = provider.lower().strip()
 
+        if use_headroom:
+            # Récupération de la clé correspondante pour le transit par Headroom Proxy
+            if p == "nvidia":
+                model_key = self.get_api_key(model)
+                key = model_key or self.get_api_key("NVIDIA_API_KEY")
+            elif p == "gemini":
+                key = self.get_api_key("GEMINI_API_KEY")
+            elif p == "openrouter":
+                key = self.get_api_key("OPENROUTER_API_KEY")
+            else:
+                key = self.get_api_key("GROQ_API_KEY")
+
+            return p, key, f"http://localhost:{headroom_port}/v1/chat/completions"
+
+        # Endpoints natifs par défaut
         if p == "nvidia":
             model_key = self.get_api_key(model)
             key = model_key or self.get_api_key("NVIDIA_API_KEY")

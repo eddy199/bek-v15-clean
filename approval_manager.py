@@ -3,6 +3,7 @@ BEK-v15.2 HYBRID - Human Approval Manager
 -----------------------------------------
 Gestion de la file d'attente et de la validation humaine pour les
 actions sensibles Hermes Core V2 (Niveaux de risque L3, L4, L5).
+Pont d'observabilité avec EventBusKafka et signatures de dérogation.
 """
 
 from __future__ import annotations
@@ -80,7 +81,7 @@ class ApprovalManager:
         reason: str,
         ttl_seconds: int = 3600,
     ) -> ApprovalRequest:
-        """Enregistre une nouvelle demande en attente d'approbation."""
+        """Enregistre une nouvelle demande en attente d'approbation et alerte l'EventBus."""
         approval_id = self.create_approval_id()
         now = time.time()
 
@@ -105,6 +106,23 @@ class ApprovalManager:
             tool,
             risk_level,
         )
+
+        # Notification EventBus Kafka sur le topic error-signals si niveau critique L4/L5
+        if risk_level in ("L4", "L5"):
+            try:
+                from event_bus import EventBusKafka
+                bus = EventBusKafka()
+                bus.publish(
+                    "error-signals",
+                    {
+                        "msg": f"Action sensible retenue pour validation humaine ({risk_level}) : {tool}",
+                        "approval_id": approval_id,
+                        "trace_id": trace_id,
+                    },
+                )
+            except Exception:
+                pass
+
         return req
 
     def get_request(self, approval_id: str) -> Optional[ApprovalRequest]:

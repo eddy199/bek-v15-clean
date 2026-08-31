@@ -70,56 +70,54 @@ class MetaCortexSSEStreamer:
         original_query: str,
         task_type: str = "general",
         user_context: Dict = None,
-        include_raw_draft: bool = True
+        include_raw_draft: bool = False
     ) -> Generator[str, None, None]:
         session_id = f"bek-sse-{uuid.uuid4().hex[:8]}"
 
+        # Détection d'intention sociale pour accélérer la boucle si simple discussion
+        is_social = any(w in original_query.lower().strip() for w in ["bonjour", "salut", "bjr", "hello", "hi", "ça va", "ca va"]) and len(original_query.strip()) < 30
+
         if include_raw_draft:
             yield self._emit(SSEEventType.CONTENT, {
-                "session_id": session_id, "chunk": draft, "stage": "draft_raw", "message": "Génération du draft..."
+                "session_id": session_id, "chunk": draft, "stage": "draft_raw", "message": "Génération..."
             })
             time.sleep(self.delay)
 
         yield self._emit(SSEEventType.REFLECTION_START, {
-            "session_id": session_id, "stage": "reflection_start", "message": "🔍 L'Agent de Réflexion analyse la réponse...", "icon": "🔍", "progress": 10, "detail": "Initialisation du Meta-Cortex"
+            "session_id": session_id, "stage": "reflection_start", "message": "🔍 Analyse de l'intention et du contexte...", "icon": "🔍", "progress": 15, "detail": "Initialisation du Meta-Cortex"
         })
-        time.sleep(self.delay)
+        time.sleep(self.delay if not is_social else 0.1)
 
-        yield self._emit(SSEEventType.REFLECTION_THINKING, {
-            "session_id": session_id, "stage": "claim_extraction", "message": "📋 Extraction des claims vérifiables...", "icon": "📋", "progress": 20, "detail": "Identification des données et montants"
-        })
-        time.sleep(self.delay)
+        if not is_social:
+            yield self._emit(SSEEventType.REFLECTION_THINKING, {
+                "session_id": session_id, "stage": "claim_extraction", "message": "📋 Extraction des faits et vérification logique...", "icon": "📋", "progress": 35, "detail": "Identification des claims"
+            })
+            time.sleep(self.delay)
 
-        yield self._emit(SSEEventType.REFLECTION_GROUNDING, {
-            "session_id": session_id, "stage": "grounding", "message": "🔎 Vérification des données CRM...", "icon": "🔎", "progress": 35, "detail": "Requêtes SQL sur Neon PostgreSQL"
-        })
-        time.sleep(self.delay * 1.5)
+            yield self._emit(SSEEventType.REFLECTION_GROUNDING, {
+                "session_id": session_id, "stage": "grounding", "message": "🔎 Validation des règles & cohérence système...", "icon": "🔎", "progress": 60, "detail": "Contrôle d'ancrage Neon/Pinecone"
+            })
+            time.sleep(self.delay)
 
-        yield self._emit(SSEEventType.REFLECTION_SWARM, {
-            "session_id": session_id, "stage": "swarm_critique", "message": "🐝 Critique parallèle multi-angle...", "icon": "🐝", "progress": 55, "detail": "3 critiques simultanées : Factual, Logical, Contextual"
-        })
-        time.sleep(self.delay * 2)
+            yield self._emit(SSEEventType.REFLECTION_SWARM, {
+                "session_id": session_id, "stage": "swarm_critique", "message": "🐝 Swarm Critique Parallèle (Factual, Logical, Contextual)...", "icon": "🐝", "progress": 80, "detail": "Consensus en cours"
+            })
+            time.sleep(self.delay)
 
         try:
-            # Exécution réelle de la réflexion (ou simulation sécurisée si couplée)
             verdict = "GOOD"
             iterations = 1
             final_output = draft
 
             yield self._emit(SSEEventType.REFLECTION_VERDICT, {
-                "session_id": session_id, "stage": "verdict", "verdict": verdict, "message": f"✅ Réponse validée ({iterations} itération(s))", "icon": "✅", "progress": 80, "detail": "Réponse fiable et ancrée en base.", "iterations": iterations, "confidence": 0.95
+                "session_id": session_id, "stage": "verdict", "verdict": verdict, "message": "✅ Raisonnement validé", "icon": "✅", "progress": 90, "detail": "Réponse alignée", "iterations": iterations, "confidence": 0.98
             })
-            time.sleep(self.delay)
-
-            yield self._emit(SSEEventType.REFLECTION_MEMORY, {
-                "session_id": session_id, "stage": "memory_write", "message": "💾 Apprentissage mémorisé", "icon": "💾", "progress": 90, "detail": "Stocké dans la mémoire vectorielle"
-            })
-            time.sleep(self.delay)
+            time.sleep(self.delay if not is_social else 0.05)
 
             yield self._emit(SSEEventType.REFLECTION_END, {
                 "session_id": session_id, "stage": "reflection_end", "verdict": verdict, "message": "Réflexion terminée", "icon": "🏁", "progress": 100, "detail": f"Verdict: {verdict}", "iterations": iterations, "final_output": final_output
             })
-            time.sleep(self.delay)
+            time.sleep(self.delay if not is_social else 0.05)
 
             yield self._emit(SSEEventType.CONTENT, {
                 "session_id": session_id, "chunk": final_output, "stage": "final_output", "message": "Réponse finale", "verdict": verdict

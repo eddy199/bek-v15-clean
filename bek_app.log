@@ -221,3 +221,100 @@
 2026-08-29 22:12:29,335 - INFO - Workers Hermes démarrés.
 2026-08-29 22:13:03,204 - INFO - Workers Hermes démarrés.
 2026-08-29 22:13:34,569 - INFO - Workers Hermes démarrés.
+2026-08-29 22:15:13,457 - INFO - Workers Hermes démarrés.
+2026-08-29 22:15:13,500 - INFO - Workers Hermes démarrés.
+2026-08-29 22:15:13,522 - INFO - ==========================================
+2026-08-29 22:15:13,523 - INFO - BEK-v15.2 HYBRID démarrage | Host: 0.0.0.0 | Port: 8765 | Debug: False
+2026-08-29 22:15:13,523 - INFO - Hermes SecurityGuard: actif
+2026-08-29 22:15:13,524 - INFO - ==========================================
+2026-08-29 22:17:36,574 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 22:17:38,194 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 22:18:56,222 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 22:19:03,251 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 22:20:52,066 - INFO - Workers Hermes démarrés.
+2026-08-29 22:21:43,724 - INFO - Workers Hermes démarrés.
+2026-08-29 22:22:30,367 - INFO - Workers Hermes démarrés.
+2026-08-29 22:23:30,305 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 22:23:32,002 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 22:37:44,766 - INFO - Workers Hermes démarrés.
+2026-08-29 22:37:44,828 - INFO - Workers Hermes démarrés.
+2026-08-29 22:37:44,852 - INFO - ==========================================
+2026-08-29 22:37:44,875 - INFO - BEK-v15.2 HYBRID démarrage | Host: 0.0.0.0 | Port: 8765 | Debug: False
+2026-08-29 22:37:44,876 - INFO - Hermes SecurityGuard: actif
+2026-08-29 22:37:44,876 - INFO - ==========================================
+2026-08-29 22:40:40,668 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 22:40:42,638 - INFO - [SyncManager] État Neon persisté.
+2026-08-29 22:41:03,936 - INFO - Workers Hermes démarrés.
+2026-08-29 22:51:27,745 - INFO - Workers Hermes démarrés.
+2026-08-29 22:51:27,802 - INFO - Workers Hermes démarrés.
+2026-08-29 22:51:27,829 - INFO - ==========================================
+2026-08-29 22:51:27,830 - INFO - BEK-v15.2 HYBRID démarrage | Host: 0.0.0.0 | Port: 8765 | Debug: False
+2026-08-29 22:51:27,830 - INFO - Hermes SecurityGuard: actif
+2026-08-29 22:51:27,831 - INFO - ==========================================
+2026-08-29 22:54:44,989 - INFO - [SyncManager] Début synchronisation.
+2026-08-29 22:54:47,495 - INFO - [SyncManager] État Neon persisté.
+2026-08-30 14:23:26,811 - INFO - Workers Hermes démarrés.
+2026-08-30 14:23:27,082 - INFO - Workers Hermes démarrés.
+2026-08-30 14:23:27,105 - INFO - ==========================================
+2026-08-30 14:23:27,105 - INFO - BEK-v15.2 HYBRID démarrage | Host: 0.0.0.0 | Port: 8765 | Debug: False
+2026-08-30 14:23:27,106 - INFO - Hermes SecurityGuard: actif
+2026-08-30 14:23:27,106 - INFO - ==========================================
+2026-08-30 15:34:28,217 - INFO - Workers Hermes démarrés.
+2026-08-30 15:34:28,295 - INFO - Workers Hermes démarrés.
+2026-08-30 15:34:28,321 - INFO - ==========================================
+2026-08-30 15:34:28,321 - INFO - BEK-v15.2 HYBRID démarrage | Host: 0.0.0.0 | Port: 8765 | Debug: False
+2026-08-30 15:34:28,322 - INFO - Hermes SecurityGuard: actif
+2026-08-30 15:34:28,322 - INFO - ==========================================
+2026-08-30 15:35:17,304 - INFO - [SyncManager] Début synchronisation.
+2026-08-30 15:35:19,317 - INFO - [SyncManager] État Neon persisté.
+2026-08-30 16:01:51,008 - INFO - Workers Hermes démarrés.
+2026-08-30 16:01:51,084 - INFO - Workers Hermes démarrés.
+2026-08-30 16:01:51,108 - INFO - ==========================================
+2026-08-30 16:01:51,109 - INFO - BEK-v15.2 HYBRID démarrage | Host: 0.0.0.0 | Port: 8765 | Debug: False
+2026-08-30 16:01:51,109 - INFO - Hermes SecurityGuard: actif
+2026-08-30 16:01:51,110 - INFO - ==========================================
+2026-08-30 16:02:52,713 - INFO - [SyncManager] Début synchronisation.
+2026-08-30 16:02:54,743 - INFO - [SyncManager] État Neon persisté.
+2026-08-30 16:28:17,702 - INFO - Workers Hermes démarrés.
+2026-08-30 16:28:17,767 - INFO - Workers Hermes démarrés.
+2026-08-30 16:37:16,569 - ERROR - Erreur Action : Expecting property name enclosed in double quotes: line 1 column 43 (char 42)
+2026-08-30 17:20:44,468 - INFO - Workers Hermes démarrés.
+2026-08-30 17:20:44,484 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 17:20:44,522 - INFO - Workers Hermes démarrés.
+2026-08-30 17:20:44,523 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 17:48:20,124 - ERROR - Erreur Action : Expecting value: line 1 column 38 (char 37)
+2026-08-30 17:48:24,904 - ERROR - Erreur Action : Expecting property name enclosed in double quotes: line 1 column 30 (char 29)
+2026-08-30 17:48:24,909 - ERROR - Erreur Action : Expecting value: line 1 column 38 (char 37)
+2026-08-30 17:48:28,909 - ERROR - Erreur Action : Expecting property name enclosed in double quotes: line 1 column 30 (char 29)
+2026-08-30 18:02:44,564 - INFO - Workers Hermes démarrés.
+2026-08-30 18:02:44,602 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 18:02:44,636 - INFO - Workers Hermes démarrés.
+2026-08-30 18:02:44,637 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 18:15:47,841 - INFO - Workers Hermes démarrés.
+2026-08-30 18:15:47,892 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 18:15:47,926 - INFO - Workers Hermes démarrés.
+2026-08-30 18:15:47,926 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 18:35:00,647 - INFO - Workers Hermes démarrés.
+2026-08-30 18:35:00,661 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 18:35:00,744 - INFO - Workers Hermes démarrés.
+2026-08-30 18:35:00,745 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 18:47:51,271 - INFO - Workers Hermes démarrés.
+2026-08-30 18:47:51,310 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 18:47:51,338 - INFO - Workers Hermes démarrés.
+2026-08-30 18:47:51,339 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 19:29:34,978 - INFO - Workers Hermes démarrés.
+2026-08-30 19:29:35,012 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-30 19:29:35,052 - INFO - Workers Hermes démarrés.
+2026-08-30 19:29:35,053 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 17:04:05,183 - INFO - Workers Hermes démarrés.
+2026-08-31 17:04:05,298 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 17:04:05,432 - INFO - Workers Hermes démarrés.
+2026-08-31 17:04:05,433 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 17:05:44,374 - INFO - Workers Hermes démarrés.
+2026-08-31 17:05:44,434 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 17:05:44,519 - INFO - Workers Hermes démarrés.
+2026-08-31 17:05:44,520 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 18:18:45,945 - INFO - Workers Hermes démarrés.
+2026-08-31 18:18:46,012 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 18:18:46,054 - INFO - Workers Hermes démarrés.
+2026-08-31 18:18:46,054 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.

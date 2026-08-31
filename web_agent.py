@@ -1,6 +1,7 @@
 # web_agent.py - Agent Web Ultra-Puissant & Responsable pour BEK-v15.2
 import os
 import re
+import asyncio
 import logging
 import requests
 from bs4 import BeautifulSoup
@@ -40,18 +41,50 @@ class WebAgent:
                 company = company[:-len(suf)]
         return company.strip()
 
+    async def _fetch_headless_playwright(self, url: str) -> str:
+        """Tentative de récupération dynamique via Playwright Headless si disponible."""
+        try:
+            from playwright.async_api import async_playwright
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(headless=True)
+                context = await browser.new_context(user_agent=self.headers['User-Agent'])
+                page = await context.new_page()
+                await page.goto(url, timeout=20000, wait_until="domcontentloaded")
+                content = await page.content()
+                await browser.close()
+                return content
+        except Exception as exc:
+            logger.debug("Moteur Playwright headless bypass/fallback: %s", exc)
+            return ""
+
     def fetch_and_parse_duckduckgo(self, query: str, limit: int = 5) -> List[Dict]:
-        """Node Fetcher & Parser : Recherche propre et extraction via DuckDuckGo Lite (sans contournement de protection)."""
+        """Node Fetcher & Parser : Recherche propre et extraction via DuckDuckGo Lite & support Headless."""
         print(f"[WebAgent] Recherche web autonome pour : {query}")
         try:
             url = "https://lite.duckduckgo.com/lite/"
             data = {'q': query}
-            response = requests.post(url, data=data, headers=self.headers, timeout=15)
-            if response.status_code != 200:
-                logger.error(f"Erreur HTTP DuckDuckGo: {response.status_code}")
-                return []
+            
+            # Essai headless dynamique en tâche de fond si applicable
+            html_text = ""
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # Dans un contexte d'exécution de boucle existante
+                    html_text = ""
+                else:
+                    html_text = loop.run_until_complete(self._fetch_headless_playwright(url))
+            except Exception:
+                html_text = ""
 
-            soup = BeautifulSoup(response.text, 'html.parser')
+            # Fallback direct standard requests
+            if not html_text:
+                response = requests.post(url, data=data, headers=self.headers, timeout=15)
+                if response.status_code != 200:
+                    logger.error(f"Erreur HTTP DuckDuckGo: {response.status_code}")
+                    return []
+                html_text = response.text
+
+            soup = BeautifulSoup(html_text, 'html.parser')
             extracted_items = []
             
             for row in soup.find_all('tr'):

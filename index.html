@@ -5,42 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BEK-v15 Hybrid — Agent IA & Matrice</title>
 <link rel="stylesheet" href="agent-ui.css">
-<!-- CDN Chart.js pour l'affichage des graphiques KPI -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Polices type Linux (Ubuntu) conservées pour une lisibilité parfaite -->
 <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono&display=swap" rel="stylesheet">
 
 <style>
-  /* ========================================================
-     OVERRIDE THÈME "DARK WOOD / MESSENGER" + POLICE LINUX
-     ======================================================== */
   :root {
-      /* Fond effet "bois gris foncé" via un dégradé profond et riche */
       --bg-main: linear-gradient(135deg, #2b2b2d 0%, #1e1e20 50%, #141415 100%);
-      --bg-sidebar: rgba(26, 26, 28, 0.85); /* Sidebar sombre translucide */
-      --text-main: #ffffff;       /* Blanc pur pour la lisibilité parfaite */
-      --text-dim: #a0a0a5;        /* Gris clair pour les textes secondaires */
-      --border-color: #3e3e42;    /* Bordures subtiles en gris boisé */
-      --accent-blue: #5c9ce6;     /* Bleu adouci pour trancher avec le sombre */
-      --bg-card: rgba(35, 35, 38, 0.7); /* Panneaux et widgets assombris */
+      --bg-sidebar: rgba(26, 26, 28, 0.85);
+      --text-main: #ffffff;
+      --text-dim: #a0a0a5;
+      --border-color: #3e3e42;
+      --accent-blue: #5c9ce6;
+      --bg-card: rgba(35, 35, 38, 0.7);
   }
-  
-  /* Application de la police Linux et du fond global */
   body, html, #app {
       font-family: 'Ubuntu', sans-serif !important;
       background: var(--bg-main) !important;
       color: var(--text-main) !important;
   }
-
-  /* SIDEBAR */
   .sidebar {
       background: var(--bg-sidebar) !important;
       backdrop-filter: blur(10px);
       border-right: 1px solid var(--border-color) !important;
-  }
-  .sidebar .brand-text strong, .sidebar .brand-text span {
-      color: var(--text-main) !important;
   }
   .nav-item {
       color: var(--text-main) !important;
@@ -54,32 +40,20 @@
       border: 1px solid var(--border-color);
   }
   .nav-item svg { stroke: currentColor !important; }
-
-  /* CHAT ET INPUTS */
-  .header, .input-area {
-      background-color: transparent !important;
-      border-color: var(--border-color) !important;
-  }
-  
-  /* --- BOÎTE DE DIALOGUE (Style Gemini : Pilule / Arrondie) --- */
   textarea#user-input {
       background-color: rgba(0, 0, 0, 0.4) !important;
       color: var(--text-main) !important;
       border: 1px solid var(--border-color) !important;
-      border-radius: 24px !important; /* Bordures très arrondies façon pilule */
+      border-radius: 24px !important;
       font-family: 'Ubuntu', sans-serif !important;
-      padding: 12px 20px !important; 
-      min-height: 48px !important; 
+      padding: 12px 20px !important;
+      min-height: 48px !important;
       font-size: 15px !important;
-      line-height: 1.5 !important;
-      resize: vertical !important; 
+      resize: vertical !important;
   }
-  textarea#user-input::placeholder { color: var(--text-dim) !important; }
-
-  /* --- CORRECTIF : BOUTON ENVOI / STOP --- */
   .send-btn {
       background-color: var(--accent-blue) !important;
-      border-radius: 14px !important; /* Carré arrondi comme sur ta photo */
+      border-radius: 14px !important;
       border: none !important;
       width: 40px !important;
       height: 40px !important;
@@ -87,84 +61,59 @@
       align-items: center !important;
       justify-content: center !important;
       cursor: pointer !important;
-      transition: all 0.2s ease !important;
   }
-  .send-btn svg {
-      stroke: #ffffff !important; /* Icône BLANCHE pour un contraste parfait */
-      fill: none;
-      width: 18px !important;
-      height: 18px !important;
-  }
-  .send-btn.loading svg rect, .send-btn.stop svg rect {
-      fill: #ffffff !important; /* Carré stop en blanc */
-      stroke: #ffffff !important;
-  }
-
-  /* --- CORRECTIF : BADGE DU MODÈLE (Curseur de réflexion) --- */
   #modelBadge {
       background-color: rgba(92, 156, 230, 0.15) !important;
       color: var(--accent-blue) !important;
       padding: 4px 12px !important;
       border-radius: 12px !important;
       font-family: 'Ubuntu Mono', monospace !important;
-      font-size: 13px !important;
+      font-size: 12px !important;
       display: inline-block;
-      margin-right: 8px;
-  }
-
-  /* WIDGETS ET MATRISSE */
-  .matrix-glass-panel, .crm-section {
-      background: var(--bg-card) !important;
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border-color) !important;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
   .matrix-widget {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 24px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      padding: 20px;
   }
-  .matrix-widget:hover {
-      border-color: #5c9ce6;
-      box-shadow: 0 4px 20px rgba(92, 156, 230, 0.2);
-      transform: translateY(-2px);
-  }
-  
-  /* TERMINAL LINUX DANS LE THEME SOMBRE */
   .matrix-terminal {
       background: rgba(10, 10, 12, 0.9);
       color: #e0e0e0;
       font-family: 'Ubuntu Mono', monospace;
-      padding: 20px;
+      padding: 16px;
       border-radius: 8px;
       border: 1px solid #3e3e42;
-      line-height: 1.6;
-      font-size: 14px;
+      font-size: 13.5px;
   }
-  .pulse-cursor {
-      display: inline-block;
-      width: 8px; height: 16px;
-      background-color: var(--text-main);
-      vertical-align: middle;
-      animation: blink 1s step-end infinite;
+  .crm-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 20px;
   }
-  @keyframes blink { 50% { opacity: 0; } }
-
-  /* OVERRIDES DIVERS POUR LA LISIBILITÉ BLANCHE */
-  h2, h3, h4, p, span { color: var(--text-main); }
-  .view { background: transparent !important; }
-  table th { border-bottom: 1px solid var(--border-color) !important; color: var(--text-dim) !important; }
-  table td { color: var(--text-main) !important; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .crm-modal-overlay.active { display: flex; }
+  .crm-modal-container {
+      background: #181a1e;
+      border: 1px solid #3e3e42;
+      border-radius: 14px;
+      width: 100%; max-width: 920px; max-height: 85vh;
+      display: flex; flex-direction: column; overflow: hidden;
+  }
+  .crm-tab-btn {
+      padding: 8px 16px; border-radius: 6px;
+      color: var(--text-dim); font-size: 13px; cursor: pointer;
+  }
+  .crm-tab-btn.active {
+      background: rgba(92, 156, 230, 0.2);
+      color: var(--accent-blue); font-weight: bold;
+  }
 </style>
 </head>
 <body>
 
 <div id="app">
-  <!-- ═══════════ SIDEBAR ═══════════ -->
   <aside class="sidebar">
     <div class="sb-brand">
       <div class="brand-logo" style="display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius:8px;">
@@ -177,16 +126,12 @@
     </div>
 
     <button class="new-chat" id="newChatBtn" style="background-color: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border-color); border-radius: 8px;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M12 5v14M5 12h14"/>
-      </svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
       Nouvelle conversation
     </button>
 
     <div class="sb-search">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="7"/><path d="M20 20l-4.35-4.35"/>
-      </svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.35-4.35"/></svg>
       <input id="convSearch" type="text" placeholder="Rechercher..." style="background:transparent; color:white;">
     </div>
 
@@ -196,93 +141,51 @@
     <nav class="sb-nav">
       <div class="sb-section" style="color: var(--text-dim);">Navigation</div>
       <button class="nav-item active" data-tab="chat">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         <span>Chat</span>
       </button>
       <button class="nav-item" data-tab="skills">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2l2.5 5 5.5.8-4 3.9.9 5.5L12 14.5 7.1 17.2l.9-5.5-4-3.9L9.5 7z"/>
-        </svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.5 5 5.5.8-4 3.9.9 5.5L12 14.5 7.1 17.2l.9-5.5-4-3.9L9.5 7z"/></svg>
         <span>Compétences</span>
         <span class="nav-badge" id="navSkillsCount">0</span>
       </button>
       <button class="nav-item" data-tab="files">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/>
-        </svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/></svg>
         <span>Fichiers</span>
         <span class="nav-badge" id="navFilesCount">0</span>
       </button>
       <button class="nav-item" data-tab="memory">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 18h6M10 21h4M12 3a6 6 0 016 6c0 2-.5 3-1.5 4.5C15.3 15 15 15.7 15 17h-6c0-1.3-.3-2-1.5-3.5C6.5 12 6 11 6 9a6 6 0 016-6z"/>
-        </svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 21h4M12 3a6 6 0 016 6c0 2-.5 3-1.5 4.5C15.3 15 15 15.7 15 17h-6c0-1.3-.3-2-1.5-3.5C6.5 12 6 11 6 9a6 6 0 016-6z"/></svg>
         <span>Mémoire</span>
       </button>
       <button class="nav-item" data-tab="connectors">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
-          <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
-        </svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
         <span>Connecteurs</span>
       </button>
-
-      <!-- RUBRIQUE : MATRISSE CRM BEK -->
-      <div class="sb-section" style="margin-top: 24px; color: var(--accent-blue); font-weight: bold; letter-spacing: 1px;">NOYAU CENTRAL</div>
       <button class="nav-item" data-tab="matrix-bek">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-        </svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
         <span>Matrisse CRM BEK</span>
       </button>
     </nav>
-
-    <div class="sb-footer">
-      <button class="settings-btn" id="settingsBtn" style="color: var(--text-main);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06-.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
-        </svg>
-        <span>Paramètres</span>
-      </button>
-      <div class="status-line">
-        <span class="dot ok" id="statusDot"></span>
-        <span id="statusText">Système actif</span>
-      </div>
-    </div>
   </aside>
 
-  <!-- ═══════════ MAIN ═══════════ -->
   <main class="main" id="main">
+    <!-- VUE CHAT -->
     <div id="viewChat" class="view active">
       <header class="header">
-        <h2 id="chatTitle" style="color:white;">Chat</h2>
+        <h2 id="chatTitle">Chat</h2>
         <div class="header-center">
-          <select id="providerSelect" class="select" style="background:var(--bg-card); color:white; border-color:var(--border-color);">
-            <option>Chargement...</option>
-          </select>
-          <select id="modelSelect" class="select model-select" style="background:var(--bg-card); color:white; border-color:var(--border-color);">
-            <option>Chargement...</option>
-          </select>
-          <button class="icon-btn" id="memoryToggle" title="Mémoire activée/désactivée" style="color:white;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 18h6M10 21h4M12 3a6 6 0 016 6c0 2-.5 3-1.5 4.5C15.3 15 15 15.7 15 17h-6c0-1.3-.3-2-1.5-3.5C6.5 12 6 11 6 9a6 6 0 016-6z"/>
-            </svg>
-          </button>
+          <select id="providerSelect" class="select"></select>
+          <select id="modelSelect" class="select model-select"></select>
         </div>
         <div class="header-right" style="position: relative;">
-          <!-- Menu 3 points -->
-          <button class="icon-btn" id="menuOptionsBtn" title="Options de discussion" style="color:white;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
-            </svg>
+          <button class="icon-btn" id="menuOptionsBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
           </button>
-          <div id="dropdownMenu" style="display:none; position:absolute; right:0; top:40px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,0.5); width:200px; z-index:100; padding:6px 0; backdrop-filter: blur(10px);">
-            <button id="menuShare" style="width:100%; text-align:left; padding:8px 14px; font-size:12.5px; color:var(--text-main); border:none; background:transparent;">Partager la conversation</button>
-            <button id="menuFiles" style="width:100%; text-align:left; padding:8px 14px; font-size:12.5px; color:var(--text-main); border:none; background:transparent;">Fichiers de la discussion</button>
-            <button id="menuExportPdf" style="width:100%; text-align:left; padding:8px 14px; font-size:12.5px; color:var(--text-main); border:none; background:transparent;">Télécharger en PDF</button>
-            <button id="menuClear" style="width:100%; text-align:left; padding:8px 14px; font-size:12.5px; color:#ff4a4a; border:none; background:transparent;">Supprimer</button>
+          <div id="dropdownMenu" style="display:none; position:absolute; right:0; top:40px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; width:200px; z-index:100; padding:6px 0;">
+            <button id="menuShare" style="width:100%; text-align:left; padding:8px 14px; font-size:12.5px; color:var(--text-main);">Partager la discussion</button>
+            <button id="menuExportPdf" style="width:100%; text-align:left; padding:8px 14px; font-size:12.5px; color:var(--text-main);">Exporter / Imprimer (PDF)</button>
+            <button id="menuClear" style="width:100%; text-align:left; padding:8px 14px; font-size:12.5px; color:#ff4a4a;">Vider la conversation</button>
           </div>
         </div>
       </header>
@@ -292,226 +195,95 @@
         <div class="input-area">
           <div id="filePreviewBar" style="display:none; flex-wrap:wrap; gap:8px; padding-bottom:8px;"></div>
           <div class="input-wrap" style="position: relative;">
-            
-            <button class="icon-btn" id="uploadBtn" title="Ajouter des fichiers ou des images" style="margin-right:4px; color:white;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M12 5v14M5 12h14"/>
-              </svg>
+            <button class="icon-btn" id="uploadBtn" style="margin-right:4px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             </button>
-            
-            <input type="file" id="hiddenFileInput" style="display: none;" multiple accept="image/*,.pdf,.zip,.txt,.py,.json,.csv">
+            <input type="file" id="hiddenFileInput" style="display: none;" multiple accept="*/*">
             <input type="file" id="hiddenImageInput" style="display: none;" accept="image/*">
 
-            <div id="uploadMenu" style="display:none; position:absolute; left:0; bottom:55px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; box-shadow:0 8px 32px rgba(0,0,0,0.5); width:220px; z-index:100; padding:6px 0; backdrop-filter:blur(10px);">
-              <button id="btnImportFile" style="width:100%; text-align:left; padding:9px 14px; font-size:12.5px; color:var(--text-main); display:flex; align-items:center; gap:8px; border:none; background:transparent;">📎 Importer des fichiers</button>
-              <button id="btnImportImage" style="width:100%; text-align:left; padding:9px 14px; font-size:12.5px; color:var(--text-main); display:flex; align-items:center; gap:8px; border:none; background:transparent;">🖼️ Envoyer une image</button>
+            <div id="uploadMenu" style="display:none; position:absolute; left:0; bottom:55px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; width:220px; z-index:100; padding:6px 0;">
+              <button id="btnImportFile" style="width:100%; text-align:left; padding:9px 14px; font-size:12.5px; color:var(--text-main); display:flex; gap:8px;">📎 Importer des fichiers</button>
+              <button id="btnImportImage" style="width:100%; text-align:left; padding:9px 14px; font-size:12.5px; color:var(--text-main); display:flex; gap:8px;">🖼️ Envoyer une image</button>
             </div>
 
-            <!-- Boîte de texte style Gemini (Arrondie) -->
-            <textarea id="user-input" rows="1" placeholder="Écrivez votre message, collez une image (Ctrl+V) ou joignez un fichier..."></textarea>
-            
-            <!-- Bouton d'envoi corrigé : Icone blanche sur fond bleu -->
-            <button class="send-btn" id="send-btn" title="Envoyer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-              </svg>
+            <textarea id="user-input" rows="1" placeholder="Écrivez votre message, collez une image (Ctrl+V) ou joignez un fichier jusqu'à 300 Mo..."></textarea>
+            <button class="send-btn" id="send-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             </button>
           </div>
-          <div class="input-hint" style="color:var(--text-dim);">
-            <span id="modelBadge">—</span>
+          <div class="input-hint" style="color:var(--text-dim); margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+            <span id="modelBadge">— Initialisation</span>
             <span>Enter pour envoyer · Shift+Enter pour nouvelle ligne</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- VUES DE NAVIGATION SECONDAIRES -->
-    <div id="viewSkills" class="view" style="padding: 24px; overflow-y: auto;">
-      <h2>Compétences chargées</h2>
-      <p style="color:var(--text-dim); margin-top: 8px;">Toutes les skills de l'agent sont opérationnelles et injectées dynamiquement.</p>
-    </div>
+    <!-- VUES SECONDAIRES -->
+    <div id="viewSkills" class="view" style="padding: 24px; overflow-y: auto;"></div>
+    <div id="viewFiles" class="view" style="padding: 24px; overflow-y: auto;"></div>
+    <div id="viewMemory" class="view" style="padding: 24px; overflow-y: auto;"></div>
+    <div id="viewConnectors" class="view" style="padding: 24px; overflow-y: auto;"></div>
 
-    <div id="viewFiles" class="view" style="padding: 24px; overflow-y: auto;">
-      <h2>Fichiers de la session</h2>
-      <p style="color:var(--text-dim); margin-top: 8px;">Gérez vos uploads et documents de travail (jusqu'à 300 Mo).</p>
-    </div>
-
-    <div id="viewMemory" class="view" style="padding: 24px; overflow-y: auto;">
-      <h2>Mémoire Long Terme (Pinecone)</h2>
-      <p style="color:var(--text-dim); margin-top: 8px;">Historique vectoriel et souvenirs persistants connectés.</p>
-    </div>
-
-    <div id="viewConnectors" class="view" style="padding: 24px; overflow-y: auto;">
-      <h2>Connecteurs externes</h2>
-      <p style="color:var(--text-dim); margin-top: 8px;">Passerelles API et ponts de communication.</p>
-    </div>
-
-    <!-- ═══════════ NOUVELLE VUE : MATRISSE CRM BEK ═══════════ -->
+    <!-- VUE MATRISSE CRM -->
     <div id="viewMatrixBek" class="view" style="padding: 24px; overflow-y: auto;">
-      
       <header class="matrix-glass-panel" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <h2 style="margin: 0; font-size: 1.8em; font-weight: 700; display:flex; align-items:center; gap:10px;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          MATRISSE CRM BEK
-        </h2>
-        <div style="font-size: 1.1em; color: var(--text-dim);">
-          Statut : <span style="color: #66cc8a; font-weight: bold;">Cœur Opérationnel Actif</span>
-        </div>
+        <h2 style="margin: 0; font-size: 1.8em; font-weight: 700;">⚡ MATRISSE CRM BEK</h2>
       </header>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
-        
-        <div class="matrix-widget">
-          <h3 style="color: var(--text-dim); margin-top: 0; font-size: 1.1em; font-weight: 500;">Flux de Données Traités</h3>
-          <div class="stat-value" style="font-size: 2.8em; font-weight: 700; margin-top: 10px;">8,492</div>
-        </div>
-
-        <div class="matrix-widget">
-          <h3 style="color: var(--text-dim); margin-top: 0; font-size: 1.1em; font-weight: 500;">Agents Autonomes Assignés</h3>
-          <div class="stat-value" style="font-size: 2.8em; font-weight: 700; color: var(--accent-blue); margin-top: 10px;">5</div>
-        </div>
-
-        <!-- Terminal Swarm -->
-        <div class="matrix-widget" style="grid-column: 1 / -1;">
+        <div class="matrix-widget" style="grid-column: 1 / 2;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 style="color: var(--text-dim); margin: 0; font-size: 1.1em; font-weight: 500;">Terminal Swarm (Opérations Directes)</h3>
-            <button onclick="runMatrixAction()" style="background: rgba(255,255,255,0.1); border:1px solid var(--border-color); color: #fff; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 500; font-family: inherit;">
-              ⚡ Lancer Opération
-            </button>
+            <h3 style="color: var(--accent-blue); margin: 0;">⚡ Sous-CRMs Instanciés</h3>
+            <div style="display: flex; gap: 6px;">
+              <button onclick="promptSpawnNewSubCRM()" style="background: var(--accent-blue); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">+ Nouveau</button>
+              <button onclick="loadSubCRMsUI()" style="background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 6px; font-size: 12px;">Actualiser</button>
+            </div>
           </div>
-          <div id="bek-terminal" class="matrix-terminal">
-            root@matrisse-bek:~# Initialisation des nœuds d'analyse... OK<br>
-            root@matrisse-bek:~# Connexion DB établie.<br>
-            root@matrisse-bek:~# En attente d'instruction... <span class="pulse-cursor"></span>
-          </div>
+          <div id="subCrmsListContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto;"></div>
         </div>
 
-        <!-- Panneau d'Observabilité des Missions & Workers (Phase 4) -->
-        <div class="matrix-widget" style="grid-column: 1 / -1; margin-top: 20px;">
-          <h3 style="color: var(--accent-blue); margin-top: 0; font-size: 1.2em; font-weight: 600;">📊 Observabilité en Direct & Trace IDs (Neon DB)</h3>
-          <div style="margin-top: 15px; overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
-              <thead>
-                <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-dim);">
-                  <th style="padding: 8px;">Trace ID</th>
-                  <th style="padding: 8px;">Objectif</th>
-                  <th style="padding: 8px;">Statut</th>
-                  <th style="padding: 8px;">Temps (ms)</th>
-                  <th style="padding: 8px;">Date</th>
-                </tr>
-              </thead>
-              <tbody id="observabilityTableBody">
-                <tr><td colspan="5" style="padding: 12px; text-align: center; color: var(--text-dim);">Chargement des logs d'observabilité...</td></tr>
-              </tbody>
-            </table>
+        <div class="matrix-widget" style="grid-column: 2 / 3;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="color: #4ade80; margin: 0;">💼 Pipeline (Neon DB)</h3>
+            <div style="display: flex; gap: 6px;">
+              <button onclick="promptCreateOpportunity()" style="background: #4ade80; color: #000; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">+ Opportunité</button>
+              <button onclick="loadOpportunitiesUI()" style="background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 6px; font-size: 12px;">Actualiser</button>
+            </div>
           </div>
+          <div id="opportunitiesListContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;"></div>
         </div>
-
       </div>
     </div>
-
   </main>
 </div>
 
-<!-- Surcharge chirurgicale du routage pour forcer l'affichage de la Matrice -->
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(() => {
-      const matrixBtn = document.querySelector('[data-tab="matrix-bek"]');
-      const matrixView = document.getElementById('viewMatrixBek');
-      const allViews = document.querySelectorAll('.view');
-      const allNavs = document.querySelectorAll('.nav-item');
-
-      if(matrixBtn && matrixView) {
-        matrixBtn.addEventListener('click', (e) => {
-          e.stopImmediatePropagation();
-          allNavs.forEach(b => b.classList.remove('active'));
-          allViews.forEach(v => {
-            v.classList.remove('active');
-            v.style.display = 'none'; 
-          });
-          matrixBtn.classList.add('active');
-          matrixView.classList.add('active');
-          matrixView.style.display = 'block'; 
-          loadObservabilityLogs(); // Chargement direct au clic
-        });
-
-        allNavs.forEach(btn => {
-          if (btn !== matrixBtn) {
-            btn.addEventListener('click', () => {
-              matrixView.style.display = 'none'; 
-              matrixView.classList.remove('active');
-              allViews.forEach(v => {
-                 if (v !== matrixView) v.style.display = ''; 
-              });
-            });
-          }
-        });
-      }
-    }, 500);
-  });
-
-  // Fonction de chargement du panneau d'observabilité (Phase 4)
-  async function loadObservabilityLogs() {
-    try {
-      const res = await fetch('/api/matrix/observability-logs');
-      const data = await res.json();
-      if(data.status === 'success' && data.mission_logs) {
-        const tbody = document.getElementById('observabilityTableBody');
-        if(tbody) {
-          tbody.innerHTML = data.mission_logs.map(log => `
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <td style="padding: 8px; font-family: monospace; color: var(--accent-blue);">${log.trace_id}</td>
-              <td style="padding: 8px;">${log.objective}</td>
-              <td style="padding: 8px;"><span style="background: rgba(74,222,128,0.1); color: #4ade80; padding: 2px 8px; border-radius: 4px; font-size: 11px;">${log.status}</span></td>
-              <td style="padding: 8px; font-family: monospace;">${log.execution_ms} ms</td>
-              <td style="padding: 8px; color: var(--text-dim); font-size: 11px;">${new Date(log.created_at).toLocaleTimeString('fr-FR')}</td>
-            </tr>
-          `).join('') || '<tr><td colspan="5" style="padding: 12px; text-align: center;">Aucun journal de mission enregistré.</td></tr>';
-        }
-      }
-    } catch (e) {
-      console.error("Erreur chargement observabilité:", e);
-    }
-  }
-
-  // Actualisation toutes les 10 secondes lorsque la vue Matrisse est active
-  setInterval(() => {
-    const matrixView = document.getElementById('viewMatrixBek');
-    if (matrixView && matrixView.classList.contains('active')) {
-      loadObservabilityLogs();
-    }
-  }, 10000);
-
-  function runMatrixAction() {
-    const terminal = document.getElementById('bek-terminal');
-    terminal.innerHTML = `root@matrisse-bek:~# Déploiement de l'Essaim en cours... <span class="pulse-cursor"></span>`;
-    
-    fetch('/api/matrix/bek-action', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'process_data' })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data.status === 'success') {
-        terminal.innerHTML = data.logs.join('<br>') + `<br>root@matrisse-bek:~# En attente... <span class="pulse-cursor"></span>`;
-        
-        document.querySelectorAll('.matrix-widget .stat-value').forEach(el => {
-           let originalColor = el.style.color;
-           el.style.color = "var(--accent-blue)";
-           setTimeout(() => el.style.color = originalColor, 800);
-        });
-        
-        // Rafraîchir les logs d'observabilité après l'action
-        loadObservabilityLogs();
-      }
-    })
-    .catch(err => {
-      terminal.innerHTML = `<span style="color:#ff4a4a">Erreur critique : ${err}</span>`;
-    });
-  }
-</script>
+<!-- MODALE SOUS-CRM -->
+<div id="subCrmModal" class="crm-modal-overlay">
+  <div class="crm-modal-container">
+    <div style="padding: 18px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h3 id="modalNicheTitle" style="margin: 0; color: #fff;"></h3>
+        <span id="modalSubId" style="font-size: 11px; color: var(--text-dim); font-family: monospace;"></span>
+      </div>
+      <button onclick="closeSubCRMModal()" style="font-size: 24px; color: var(--text-dim);">&times;</button>
+    </div>
+    <div style="padding: 10px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between;">
+      <div style="display: flex; gap: 8px;">
+        <button onclick="promptAddEntity()" style="background: var(--accent-blue); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px;">+ Ajouter Entité</button>
+        <button onclick="promptAddOperation()" style="background: rgba(255,255,255,0.08); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px;">+ Nouvelle Opération</button>
+      </div>
+    </div>
+    <div style="padding: 12px 24px; border-bottom: 1px solid var(--border-color); display: flex; gap: 10px;">
+      <button class="crm-tab-btn active" id="tabBtnEntities" onclick="switchModalTab('entities')">👥 Entités / Contacts</button>
+      <button class="crm-tab-btn" id="tabBtnOps" onclick="switchModalTab('operations')">⚙️ Opérations</button>
+      <button class="crm-tab-btn" id="tabBtnAnalytics" onclick="switchModalTab('analytics')">📈 Analytics</button>
+    </div>
+    <div style="padding: 20px 24px; flex: 1; overflow-y: auto;">
+      <div id="modalTabContent" style="background: rgba(10,10,12,0.8); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; font-family: monospace; font-size: 12.5px; overflow-x: auto;"></div>
+    </div>
+  </div>
+</div>
 
 <script src="agent-ui.js"></script>
 </body>
