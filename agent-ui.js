@@ -1,5 +1,5 @@
 /**
- * BEK-v15-HYBRID — Agent UI Controller (Version Intégrale Restaurée & Enrichie)
+ * BEK-v15-HYBRID — Agent UI Controller (Gestion Fichiers Dynamique & Anti-Cache)
  */
 (function() {
     'use strict';
@@ -40,21 +40,27 @@
     let globalSkills = [];
     let loadedSubCRMData = null;
 
-    function injectReflectionCSS() {
+    window.__codeSnippetsRegistry = window.__codeSnippetsRegistry || {};
+
+    function injectEnhancedCSS() {
         if (document.getElementById('metacortex-ui-css')) return;
         const style = document.createElement('style');
         style.id = 'metacortex-ui-css';
         style.innerHTML = `
+            #chat-box, .message, .msg-bubble, pre, code {
+                user-select: text !important;
+                -webkit-user-select: text !important;
+            }
             .gemini-cursor {
                 display: inline-block;
                 width: 8px;
                 height: 16px;
-                background-color: var(--accent-blue, #5c9ce6);
+                background-color: var(--accent, #4f8ef7);
                 animation: gemini-blink 0.8s infinite;
                 vertical-align: middle;
                 margin-left: 6px;
                 border-radius: 2px;
-                box-shadow: 0 0 8px var(--accent-blue, #5c9ce6);
+                box-shadow: 0 0 8px var(--accent-glow);
             }
             @keyframes gemini-blink {
                 0%, 100% { opacity: 1; }
@@ -65,7 +71,7 @@
     }
 
     async function init() {
-        injectReflectionCSS();
+        injectEnhancedCSS();
         await loadConfig();
         setupEventListeners();
         setupNavigationTabs();
@@ -82,7 +88,8 @@
 
     async function loadConfig() {
         try {
-            const res = await fetch(`${API_BASE}/api/config`);
+            const res = await fetch(`${API_BASE}/api/config?t=${Date.now()}`);
+            if (!res.ok) throw new Error("API Config non disponible");
             const data = await res.json();
             availableModels = data.models || {};
             const providersList = data.providers || [];
@@ -101,19 +108,78 @@
             if (DOM.skillsCounter) DOM.skillsCounter.textContent = data.skills_count || globalSkills.length;
             populateSkillsView(globalSkills);
             updateModelSelect();
-            loadFilesList();
+            await loadFilesList();
         } catch (e) {
-            console.error('Erreur config :', e);
+            console.warn('Erreur config :', e);
         }
     }
 
+    // --- RECHARGEMENT DYNAMIQUE DES FICHIERS ---
     window.loadFilesList = async function() {
         try {
-            const res = await fetch(`${API_BASE}/api/files`);
+            const res = await fetch(`${API_BASE}/api/files?t=${Date.now()}`);
+            if (!res.ok) return;
             const data = await res.json();
-            if (DOM.filesCounter) DOM.filesCounter.textContent = (data.files || []).length;
-            populateFilesView(data.files || []);
-        } catch (e) {}
+            const files = data.files || [];
+            if (DOM.filesCounter) DOM.filesCounter.textContent = files.length;
+            populateFilesView(files);
+        } catch (e) {
+            console.error("Erreur chargement fichiers :", e);
+        }
+    };
+
+    function populateFilesView(files) {
+        const view = document.getElementById('viewFiles');
+        if (!view) return;
+        view.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h2 style="margin:0;">Fichiers de session (${files.length})</h2>
+                <div style="display:flex; gap:8px;">
+                    <button id="btnRefreshFiles" onclick="loadFilesList()" style="background:rgba(255,255,255,0.08); border:1px solid var(--border-color); color:var(--text-main); padding:6px 14px; border-radius:6px; font-size:12px; cursor:pointer; font-weight:600;">🔄 Actualiser</button>
+                    ${files.length > 0 ? `<button onclick="deleteAllProjectFiles()" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); color:#ef4444; padding:6px 14px; border-radius:6px; font-size:12px; cursor:pointer; font-weight:bold;">🗑️ Tout supprimer</button>` : ''}
+                </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">` +
+            (files.length === 0 ? '<p style="color:var(--text-dim); text-align:center; padding:30px;">Aucun fichier déposé ou généré.</p>' : 
+            files.map(f => `
+                <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>📄 <strong>${escapeHtml(f.name)}</strong> <span style="color:var(--text-dim); font-size:11px; margin-left:8px;">(${(f.size/1024).toFixed(1)} Ko - ${escapeHtml(f.folder)})</span></span>
+                    <div style="display:flex; gap:8px;">
+                        <a href="${API_BASE}/api/download/${encodeURIComponent(f.name)}" target="_blank" style="background:var(--accent-blue); color:#fff; padding:6px 12px; border-radius:6px; font-size:12px; text-decoration:none;">Télécharger</a>
+                        <button onclick="deleteProjectFile('${escapeHtml(f.name)}')" style="background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Supprimer</button>
+                    </div>
+                </div>
+            `).join('')) + `</div>`;
+    }
+
+    window.deleteProjectFile = async function(filename) {
+        if (!confirm(`Confirmer la suppression définitive de : ${filename} ?`)) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/files/${encodeURIComponent(filename)}`, { method: 'DELETE' });
+            const json = await res.json();
+            if (res.ok) {
+                await loadFilesList();
+            } else {
+                alert(json.error || "Erreur lors de la suppression");
+            }
+        } catch (e) {
+            alert("Erreur réseau lors de la suppression");
+        }
+    };
+
+    window.deleteAllProjectFiles = async function() {
+        if (!confirm("Voulez-vous vraiment TOUT supprimer dans uploads et generated ?")) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/files/delete-all`, { method: 'POST' });
+            const json = await res.json();
+            if (res.ok) {
+                await loadFilesList();
+            } else {
+                alert(json.error || "Erreur de purge");
+            }
+        } catch (e) {
+            alert("Erreur réseau");
+        }
     };
 
     function populateSkillsView(skills) {
@@ -123,8 +189,8 @@
             skills.map(s => `
                 <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:14px; border-radius:8px; display:flex; flex-direction:column; justify-content:space-between;">
                     <div>
-                        <strong style="color:var(--text-main); font-size:14px;">${s.name}</strong>
-                        <p style="color:var(--text-dim); font-size:12px; margin: 6px 0 10px;">${s.description || 'Skill autonome'}</p>
+                        <strong style="color:var(--text-main); font-size:14px;">${escapeHtml(s.name)}</strong>
+                        <p style="color:var(--text-dim); font-size:12px; margin: 6px 0 10px;">${escapeHtml(s.description || 'Skill autonome')}</p>
                     </div>
                     <div style="margin-top: 6px;">
                         <button onclick="insertPromptToChat('${s.command.startsWith('/') ? s.command : '/' + s.command}')" style="cursor:pointer; background:rgba(92,156,230,0.15); border:1px solid rgba(92,156,230,0.4); color:var(--accent-blue); padding:4px 10px; border-radius:6px; font-family:'Ubuntu Mono', monospace; font-size:12px; font-weight:bold; width:100%; text-align:left;">
@@ -144,74 +210,25 @@
         }
     };
 
-    function populateFilesView(files) {
-        const view = document.getElementById('viewFiles');
-        if (!view) return;
-        view.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                <h2 style="margin:0;">Fichiers de session (${files.length})</h2>
-                <div style="display:flex; gap:8px;">
-                    <button onclick="loadFilesList()" style="background:rgba(255,255,255,0.08); border:1px solid var(--border-color); color:var(--text-main); padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Actualiser</button>
-                    ${files.length > 0 ? `<button onclick="deleteAllProjectFiles()" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); color:#ef4444; padding:6px 14px; border-radius:6px; font-size:12px; cursor:pointer; font-weight:bold;">🗑️ Tout supprimer</button>` : ''}
-                </div>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:8px;">` +
-            (files.length === 0 ? '<p style="color:var(--text-dim); text-align:center; padding:30px;">Aucun fichier déposé ou généré.</p>' : 
-            files.map(f => `
-                <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>📄 <strong>${f.name}</strong> <span style="color:var(--text-dim); font-size:11px; margin-left:8px;">(${(f.size/1024).toFixed(1)} Ko - ${f.folder})</span></span>
-                    <div style="display:flex; gap:8px;">
-                        <a href="${API_BASE}/api/download/${f.name}" target="_blank" style="background:var(--accent-blue); color:#fff; padding:6px 12px; border-radius:6px; font-size:12px; text-decoration:none;">Télécharger</a>
-                        <button onclick="deleteProjectFile('${f.name}')" style="background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Supprimer</button>
-                    </div>
-                </div>
-            `).join('')) + `</div>`;
-    }
-
-    window.deleteProjectFile = async function(filename) {
-        if (!confirm(`Confirmer la suppression définitive de : ${filename} ?`)) return;
-        try {
-            const res = await fetch(`${API_BASE}/api/files/${encodeURIComponent(filename)}`, { method: 'DELETE' });
-            const json = await res.json();
-            if (res.ok) {
-                loadFilesList();
-            } else {
-                alert(json.error || "Erreur de suppression");
-            }
-        } catch (e) {
-            alert("Erreur réseau");
-        }
-    };
-
-    window.deleteAllProjectFiles = async function() {
-        if (!confirm("Voulez-vous vraiment TOUT supprimer physiquement dans uploads et generated ?")) return;
-        try {
-            const res = await fetch(`${API_BASE}/api/files/delete-all`, { method: 'POST' });
-            const json = await res.json();
-            if (res.ok) {
-                loadFilesList();
-            } else {
-                alert(json.error || "Erreur purge groupée");
-            }
-        } catch (e) {
-            alert("Erreur réseau");
-        }
-    };
-
     async function loadMemoryView() {
         const view = document.getElementById('viewMemory');
         if (!view) return;
         try {
-            const res = await fetch(`${API_BASE}/api/memory`);
+            const res = await fetch(`${API_BASE}/api/memory?t=${Date.now()}`);
+            if (!res.ok) throw new Error("API manquante");
             const data = await res.json();
+            let pineconeColor = data.pinecone_status.includes('Connecté') ? '#4ade80' : '#f5a623';
+            
             view.innerHTML = `
                 <h2>Mémoire Long Terme & Index Vectoriel</h2>
                 <div style="margin-top:16px; display:flex; flex-direction:column; gap:12px;">
                     <div class="matrix-widget">
-                        <h3>Pinecone Vector Database : <span style="color:#4ade80;">Active</span></h3>
+                        <h3>Pinecone Vector Database : <span style="color:${pineconeColor};">${data.pinecone_status}</span></h3>
                         <p style="color:var(--text-dim); font-size:13px; margin-top:8px;">Indexation vectorielle des conversations et règles d'or synchronisée en temps réel.</p>
                         <div style="margin-top:12px; font-family:monospace; font-size:12px; color:var(--accent-blue);">
-                            - États Neon DB persistés : ${data.neon_state_entries}<br>
+                            - Entités Neon DB totales : ${data.neon_state_entries}<br>
+                            &nbsp;&nbsp;↳ <em>${data.details_crm}</em><br>
+                            &nbsp;&nbsp;↳ <em>${data.details_opps}</em><br>
                             - Règles BEK synchronisées : ${data.system_rules_synced ? 'OUI' : 'NON'}
                         </div>
                     </div>
@@ -226,21 +243,25 @@
         const view = document.getElementById('viewConnectors');
         if (!view) return;
         try {
-            const res = await fetch(`${API_BASE}/api/connectors`);
+            const res = await fetch(`${API_BASE}/api/connectors?t=${Date.now()}`);
+            if (!res.ok) throw new Error("API manquante");
             const data = await res.json();
-            view.innerHTML = `<h2>Connecteurs Système</h2><div style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">` +
-                data.connectors.map(c => `
+            view.innerHTML = `<h2>Connecteurs Système & Serveurs</h2><div style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">` +
+                data.connectors.map(c => {
+                    let statusColor = c.status.includes('Actif') || c.status.includes('Prêt') ? '#4ade80' : '#f5a623';
+                    if (c.status.includes('Erreur')) statusColor = '#ff4a4a';
+                    return `
                     <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
                         <div>
-                            <strong>${c.name}</strong>
-                            <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Type : ${c.type}</div>
+                            <strong>${escapeHtml(c.name)}</strong>
+                            <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Type : ${escapeHtml(c.type)}</div>
                         </div>
                         <div style="display:flex; align-items:center; gap:10px;">
                             <span style="font-size:11px; font-family:monospace; color:var(--text-dim);">${c.latency_ms} ms</span>
-                            <span style="background:rgba(74,222,128,0.15); color:#4ade80; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">${c.status}</span>
+                            <span style="background:rgba(255,255,255,0.05); color:${statusColor}; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">${escapeHtml(c.status)}</span>
                         </div>
                     </div>
-                `).join('') + `</div>`;
+                `}).join('') + `</div>`;
         } catch (e) {
             view.innerHTML = `<p style="color:#ff4a4a">Erreur connecteurs.</p>`;
         }
@@ -344,7 +365,7 @@
         document.getElementById('menuShare')?.addEventListener('click', () => {
             DOM.dropdownMenu.style.display = 'none';
             navigator.clipboard.writeText(JSON.stringify(messageHistory, null, 2));
-            alert("Historique de conversation copié dans le presse-papier !");
+            alert("Historique copié !");
         });
 
         if (DOM.uploadBtn && DOM.uploadMenu) {
@@ -401,17 +422,17 @@
         const formData = new FormData();
         formData.append('file', file);
         try {
-            const resp = await fetch(`${API_BASE}/api/upload`, { method: 'POST', body: formData });
+            const resp = await fetch(`${API_BASE}/api/upload?t=${Date.now()}`, { method: 'POST', body: formData });
             const data = await resp.json();
             if (resp.ok) {
                 attachedFiles.push(data.filename);
                 renderAttachedFilesPreview();
-                loadFilesList();
+                await loadFilesList();
             } else {
                 alert(`Erreur upload : ${data.error}`);
             }
         } catch (err) {
-            alert(`Erreur réseau lors de l'upload.`);
+            alert("Erreur réseau lors de l'upload.");
         }
     }
 
@@ -425,7 +446,7 @@
         DOM.filePreviewBar.style.display = 'flex';
         DOM.filePreviewBar.innerHTML = attachedFiles.map((f, i) => `
             <span style="background:rgba(92,156,230,0.2); color:var(--accent-blue); padding:4px 8px; border-radius:6px; font-size:11px; display:flex; align-items:center; gap:6px;">
-                📎 ${f} <button onclick="removeAttachedFile(${i})" style="color:#ff4a4a; font-weight:bold;">&times;</button>
+                📎 ${escapeHtml(f)} <button onclick="removeAttachedFile(${i})" style="color:#ff4a4a; font-weight:bold;">&times;</button>
             </span>
         `).join('');
     }
@@ -522,11 +543,9 @@
                 messageHistory.push({ role: 'assistant', content: fullResponse });
                 saveCurrentConversation();
                 if (fullResponse.includes('[Action Exécutée')) {
+                    await loadFilesList();
                     loadSubCRMsUI();
                     loadOpportunitiesUI();
-                    if (loadedSubCRMData && loadedSubCRMData.sub_crm_id) {
-                        openSubCRMModal(loadedSubCRMData.sub_crm_id, document.getElementById('modalNicheTitle').innerText);
-                    }
                 }
             }
         } catch (err) {
@@ -544,9 +563,11 @@
     function appendUserMessage(text) {
         if (!DOM.chatBox) return;
         const div = document.createElement('div');
-        div.className = 'message user-message';
-        div.style.cssText = "display:flex; justify-content:flex-end; margin:10px 0;";
-        div.innerHTML = `<div style="background:var(--accent-blue); color:#fff; padding:10px 16px; border-radius:18px 18px 4px 18px; max-width:75%; font-size:14px; word-break:break-word;">${escapeHtml(text).replace(/\n/g, '<br>')}</div>`;
+        div.className = 'message user'; 
+        div.innerHTML = `
+            <div class="msg-meta"><span class="name">Vous</span></div>
+            <div class="msg-bubble">${escapeHtml(text).replace(/\n/g, '<br>')}</div>
+        `;
         DOM.chatBox.appendChild(div);
         DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
     }
@@ -554,9 +575,19 @@
     function appendAssistantMessage(html) {
         if (!DOM.chatBox) return document.createElement('div');
         const div = document.createElement('div');
-        div.className = 'message assistant-message';
-        div.style.cssText = "margin:10px 0;";
-        div.innerHTML = `<div style="font-size:11px; color:var(--text-dim); margin-bottom:4px;">${currentProvider} • ${currentModel.split('/').pop()}</div><div class="content" style="background:var(--bg-card); border:1px solid var(--border-color); padding:12px 16px; border-radius:18px 18px 18px 4px; max-width:90%; font-size:14px; line-height:1.6;">${html}</div>`;
+        div.className = 'message assistant';
+        div.innerHTML = `
+            <div class="msg-meta">
+                <span class="name">BEK-v15 Hybrid</span>
+                <span class="model-tag">${currentProvider} • ${currentModel.split('/').pop()}</span>
+            </div>
+            <div class="msg-bubble content">${html}</div>
+            <div class="msg-actions">
+                <button onclick="copyWholeMessage(this)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copier
+                </button>
+            </div>
+        `;
         DOM.chatBox.appendChild(div);
         DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
         return div.querySelector('.content');
@@ -572,17 +603,45 @@
     }
 
     function formatMarkdown(text) {
-        let safe = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        safe = safe.replace(/```(\w*)?\n([\s\S]*?)```/g, (m, lang, code) => `
-            <div style="background:#0a0a0c; border:1px solid var(--border-color); border-radius:6px; margin:8px 0; padding:10px; overflow-x:auto;">
-                <pre style="margin:0; font-family:'Ubuntu Mono', monospace; font-size:12.5px; color:#e0e0e0;"><code>${code}</code></pre>
-            </div>
-        `);
-        return safe.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.1); padding:2px 4px; border-radius:4px; font-family:\'Ubuntu Mono\', monospace;">$1</code>').replace(/\n/g, '<br>');
+        if (typeof marked !== 'undefined') {
+            const renderer = new marked.Renderer();
+            renderer.code = function(codeObj, language) {
+                let actualCode = "";
+                let actualLang = language || 'text';
+                if (typeof codeObj === 'object' && codeObj !== null) {
+                    actualCode = codeObj.text || "";
+                    actualLang = codeObj.lang || language || 'text';
+                } else {
+                    actualCode = codeObj || "";
+                }
+                const cleanLang = (actualLang).trim().toLowerCase();
+                const snippetId = 'snip_' + Math.random().toString(36).substring(2, 9);
+                window.__codeSnippetsRegistry[snippetId] = { code: actualCode, lang: cleanLang };
+
+                return `
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-lang-name">${cleanLang.toUpperCase()}</span>
+                        <div class="code-actions-group">
+                            <button class="code-action-btn" title="Télécharger" onclick="downloadCodeSnippet('${snippetId}')">Télécharger</button>
+                            <button class="code-action-btn" title="Copier" onclick="copyCodeSnippet('${snippetId}', this)">Copier</button>
+                        </div>
+                    </div>
+                    <pre><code>${escapeHtml(actualCode)}</code></pre>
+                </div>`;
+            };
+            try {
+                return marked.parse(text, { renderer: renderer, gfm: true, breaks: true });
+            } catch (e) {
+                return escapeHtml(text).replace(/\n/g, '<br>');
+            }
+        }
+        return escapeHtml(text).replace(/\n/g, '<br>');
     }
 
     function escapeHtml(text) {
-        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        if (text === null || text === undefined) return "";
+        return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
     function loadConversationsFromStorage() {
@@ -646,22 +705,19 @@
         saveConversationsToStorage();
     }
 
-    // GESTION MATRIX SOUS-CRMS & PIPELINE
     window.loadSubCRMsUI = async function() {
         const container = document.getElementById('subCrmsListContainer');
         if (!container) return;
         try {
-            const res = await fetch(`${API_BASE}/api/matrix/sub_crms`);
+            const res = await fetch(`${API_BASE}/api/matrix/sub_crms?t=${Date.now()}`);
             const json = await res.json();
             container.innerHTML = (json.data || []).map(item => `
                 <div style="background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:8px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <div style="font-weight:600; color:#fff; font-size:13.5px;">${item.niche_name}</div>
-                        <div style="font-size:11px; color:var(--text-dim); font-family:monospace;">ID: ${item.id}</div>
+                        <div style="font-weight:600; color:#fff; font-size:13.5px;">${escapeHtml(item.niche_name)}</div>
+                        <div style="font-size:11px; color:var(--text-dim); font-family:monospace;">ID: ${escapeHtml(item.id)}</div>
                     </div>
-                    <div style="display:flex; gap:6px;">
-                        <button onclick="openSubCRMModal('${item.id}', '${item.niche_name}')" style="background:rgba(92,156,230,0.2); color:var(--accent-blue); padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Ouvrir ➜</button>
-                    </div>
+                    <button onclick="openSubCRMModal('${item.id}', '${escapeHtml(item.niche_name)}')" style="background:rgba(92,156,230,0.2); color:var(--accent-blue); padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Ouvrir ➜</button>
                 </div>
             `).join('') || '<div style="color:var(--text-dim); text-align:center; padding:10px;">Aucun sous-CRM instancié.</div>';
         } catch (e) {}
@@ -671,17 +727,17 @@
         const container = document.getElementById('opportunitiesListContainer');
         if (!container) return;
         try {
-            const res = await fetch(`${API_BASE}/api/crm/opportunities`);
+            const res = await fetch(`${API_BASE}/api/crm/opportunities?t=${Date.now()}`);
             const json = await res.json();
             container.innerHTML = (json.data || []).map(opp => `
                 <div style="background:rgba(0,0,0,0.25); border:1px solid var(--border-color); border-radius:6px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <div style="color:#fff; font-size:13px;">${opp.name}</div>
-                        <span style="font-size:10px; background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:4px; color:var(--text-dim);">${opp.stage}</span>
+                        <div style="color:#fff; font-size:13px;">${escapeHtml(opp.name)}</div>
+                        <span style="font-size:10px; background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:4px; color:var(--text-dim);">${escapeHtml(opp.stage)}</span>
                     </div>
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <div style="font-weight:bold; color:#4ade80; font-size:13px;">${Number(opp.amount).toLocaleString('fr-FR')} ${opp.currency}</div>
-                        <button onclick="deleteOpportunityRecord('${opp.id}')" style="color:#ef4444; padding:2px 6px; font-size:11px;">&times;</button>
+                        <div style="font-weight:bold; color:#4ade80; font-size:13px;">${Number(opp.amount).toLocaleString('fr-FR')} ${escapeHtml(opp.currency)}</div>
+                        <button onclick="deleteOpportunityRecord('${opp.id}')" style="color:#ef4444; padding:2px 6px; font-size:11px; cursor:pointer;">&times;</button>
                     </div>
                 </div>
             `).join('') || '<div style="color:var(--text-dim); text-align:center; padding:10px;">Aucune opportunité.</div>';
@@ -696,90 +752,6 @@
             body: JSON.stringify({ sql: `DELETE FROM opportunities WHERE id = ${id};` })
         });
         loadOpportunitiesUI();
-    };
-
-    window.promptCreateOpportunity = async function() {
-        const name = prompt("Nom de l'opportunité :");
-        if (!name) return;
-        const amount = prompt("Montant (EUR) :", "50000");
-        const stage = prompt("Étape (Qualification / Closing / Gagné) :", "Qualification");
-        await fetch(`${API_BASE}/api/crm/execute`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sql: `INSERT INTO opportunities (name, amount, currency, stage) VALUES ('${name.replace(/'/g, "''")}', ${parseFloat(amount) || 0}, 'EUR', '${stage}');` })
-        });
-        loadOpportunitiesUI();
-    };
-
-    window.promptSpawnNewSubCRM = async function() {
-        const niche = prompt("Nom de la niche (ex: Clinique Vétérinaire) :");
-        if (!niche) return;
-        await fetch(`${API_BASE}/api/matrix/spawn-alive`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ niche_name: niche, objectives: ["Gestion", "Automatisation"] })
-        });
-        loadSubCRMsUI();
-    };
-
-    window.openSubCRMModal = async function(subCrmId, nicheName) {
-        const modal = document.getElementById('subCrmModal');
-        document.getElementById('modalNicheTitle').innerText = nicheName;
-        document.getElementById('modalSubId').innerText = `ID: ${subCrmId}`;
-        modal.classList.add('active');
-        const res = await fetch(`${API_BASE}/api/matrix/sub_crm/${subCrmId}`);
-        loadedSubCRMData = await res.json();
-        loadedSubCRMData.sub_crm_id = subCrmId;
-        switchModalTab('entities');
-    };
-
-    window.closeSubCRMModal = function() {
-        document.getElementById('subCrmModal').classList.remove('active');
-        loadedSubCRMData = null;
-    };
-
-    window.switchModalTab = function(tabKey) {
-        document.querySelectorAll('.crm-tab-btn').forEach(b => b.classList.remove('active'));
-        if (tabKey === 'entities') document.getElementById('tabBtnEntities').classList.add('active');
-        if (tabKey === 'operations') document.getElementById('tabBtnOps').classList.add('active');
-        if (tabKey === 'analytics') document.getElementById('tabBtnAnalytics').classList.add('active');
-        const contentDiv = document.getElementById('modalTabContent');
-        const data = loadedSubCRMData ? loadedSubCRMData[tabKey] : [];
-        if (Array.isArray(data) && data.length > 0) {
-            const keys = Object.keys(data[0]);
-            contentDiv.innerHTML = `<table style="width:100%; border-collapse:collapse; text-align:left;"><thead><tr style="border-bottom:1px solid var(--border-color); color:var(--text-dim);">${keys.map(k => `<th style="padding:8px;">${k.toUpperCase()}</th>`).join('')}</tr></thead><tbody>${data.map(r => `<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">${keys.map(k => `<td style="padding:8px;">${typeof r[k] === 'object' ? escapeHtml(JSON.stringify(r[k])) : escapeHtml(String(r[k]))}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
-        } else {
-            contentDiv.innerHTML = `<div style="text-align:center; color:var(--text-dim); padding:25px;">Table vide (0 enregistrement).</div>`;
-        }
-    };
-
-    window.promptAddEntity = async function() {
-        if (!loadedSubCRMData || !loadedSubCRMData.sub_crm_id) return;
-        const name = prompt("Nom de l'entité / client (ex: Dr. Sophie Vétérinaire) :");
-        if (!name) return;
-        const type = prompt("Type (Contact / Company / VIP) :", "Contact");
-        const rawId = loadedSubCRMData.sub_crm_id.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
-        const prefix = `niche_${rawId}`;
-        await fetch(`${API_BASE}/api/crm/execute`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sql: `INSERT INTO ${prefix}_entities (name, type, metadata) VALUES ('${name.replace(/'/g, "''")}', '${(type || 'Contact').replace(/'/g, "''")}', '{}');` })
-        });
-        openSubCRMModal(loadedSubCRMData.sub_crm_id, document.getElementById('modalNicheTitle').innerText);
-    };
-
-    window.promptAddOperation = async function() {
-        if (!loadedSubCRMData || !loadedSubCRMData.sub_crm_id) return;
-        const action = prompt("Nom de l'opération (ex: Rappel Vaccin Chien) :");
-        if (!action) return;
-        const rawId = loadedSubCRMData.sub_crm_id.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
-        const prefix = `niche_${rawId}`;
-        await fetch(`${API_BASE}/api/crm/execute`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sql: `INSERT INTO ${prefix}_operations (entity_id, action_name, status) VALUES (1, '${action.replace(/'/g, "''")}', 'in_progress');` })
-        });
-        openSubCRMModal(loadedSubCRMData.sub_crm_id, document.getElementById('modalNicheTitle').innerText);
     };
 
     document.addEventListener('DOMContentLoaded', init);

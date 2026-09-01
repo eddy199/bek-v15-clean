@@ -7,6 +7,7 @@ Gestionnaire découplé des fournisseurs d'intelligence artificielle :
 - Cascade de fallback automatique en cas d'erreur (504, 429, 500)
 - Support streaming SSE et forçage UTF-8 strict anti-mojibake
 - Aiguillage optionnel Headroom Proxy transparent (:8787)
+- Configuration anti-coupure (8192 tokens, timeout 180s, top_p 0.9)
 """
 
 from __future__ import annotations
@@ -30,7 +31,7 @@ class ProviderManager:
     Gestionnaire centralisé et résilient des requêtes LLM.
     """
 
-    # Liste des modèles par fournisseur
+    # Liste complète des modèles par fournisseur
     PROVIDER_MODELS = {
         "groq": [
             "openai/gpt-oss-120b",
@@ -41,9 +42,14 @@ class ProviderManager:
             "meta/llama-3.3-70b-instruct",
             "meta/llama-3.1-70b-instruct",
             "meta/llama-3.1-8b-instruct",
+            "meta/llama-3.2-11b-vision-instruct",
+            "meta/llama-3.2-90b-vision-instruct",
             "nvidia/llama-3.3-nemotron-super-49b-v1",
             "nvidia/llama-3.3-nemotron-super-49b-v1.5",
             "nvidia/nemotron-3-super-120b-a12b",
+            "nvidia/nemotron-nano-12b-v2-vl",
+            "nvidia/nvidia-nemotron-nano-9b-v2",
+            "openai/gpt-oss-120b",
             "google/gemma-4-31b-it",
         ],
         "gemini": [
@@ -113,7 +119,6 @@ class ProviderManager:
         p = provider.lower().strip()
 
         if use_headroom:
-            # Récupération de la clé correspondante pour le transit par Headroom Proxy
             if p == "nvidia":
                 model_key = self.get_api_key(model)
                 key = model_key or self.get_api_key("NVIDIA_API_KEY")
@@ -126,7 +131,6 @@ class ProviderManager:
 
             return p, key, f"http://localhost:{headroom_port}/v1/chat/completions"
 
-        # Endpoints natifs par défaut
         if p == "nvidia":
             model_key = self.get_api_key(model)
             key = model_key or self.get_api_key("NVIDIA_API_KEY")
@@ -167,11 +171,12 @@ class ProviderManager:
         messages: List[Dict[str, Any]],
         provider: str = "groq",
         model: str = "openai/gpt-oss-120b",
-        temperature: float = 0.2,
-        max_tokens: int = 4096,
+        temperature: float = 0.7,
+        max_tokens: int = 8192,
+        top_p: float = 0.9,
     ) -> Generator[Dict[str, Any], None, None]:
         """
-        Exécute la requête LLM avec bascule automatique (fallback) et encodage UTF-8 strict.
+        Exécute la requête LLM en streaming avec capacité étendue, bascule automatique et UTF-8 strict.
         """
         clean_msgs = self.format_messages(messages)
         if not clean_msgs:
@@ -182,7 +187,8 @@ class ProviderManager:
         last_error_message = ""
 
         for current_prov in attempt_providers:
-            current_model = model if current_prov == provider else self.PROVIDER_MODELS[current_prov][0]
+            available_models = self.PROVIDER_MODELS.get(current_prov, [])
+            current_model = model if (current_prov == provider or model in available_models) else (available_models[0] if available_models else model)
             resolved_p, api_key, api_url = self.resolve_provider_endpoint(current_prov, current_model)
 
             if not api_key:
@@ -200,11 +206,12 @@ class ProviderManager:
                 "model": current_model,
                 "messages": clean_msgs,
                 "temperature": temperature,
+                "top_p": top_p,
                 "max_tokens": max_tokens,
                 "stream": True,
             }
 
-            logger.info("Appel LLM | provider=%s | model=%s", resolved_p, current_model)
+            logger.info("Appel LLM | provider=%s | model=%s | max_tokens=%d", resolved_p, current_model, max_tokens)
 
             try:
                 with requests.post(
@@ -212,9 +219,8 @@ class ProviderManager:
                     json=payload,
                     headers=headers,
                     stream=True,
-                    timeout=(10, 60),
+                    timeout=(15, 180),
                 ) as resp:
-                    # FORÇAGE STRICT DE L'ENCODAGE UTF-8
                     resp.encoding = "utf-8"
 
                     if resp.status_code != 200:
@@ -233,7 +239,6 @@ class ProviderManager:
                         if not raw_line:
                             continue
 
-                        # Sécurisation anti-mojibake sur les octets bruts
                         if isinstance(raw_line, bytes):
                             line = raw_line.decode("utf-8", errors="replace")
                         else:
@@ -242,7 +247,7 @@ class ProviderManager:
                         line = line.strip()
                         if not line.startswith("data:"):
                             continue
-                        if line == "data: [DONE]" or line == "data:[DONE]":
+                        if line in ("data: [DONE]", "data:[DONE]"):
                             break
 
                         try:
@@ -266,7 +271,7 @@ class ProviderManager:
                         return
 
             except requests.Timeout:
-                logger.warning("Timeout sur le provider %s. Bascule...", resolved_p)
+                logger.warning("Timeout sur le provider %s (délai 180s dépassé). Bascule...", resolved_p)
                 last_error_message = f"Timeout ({resolved_p})"
                 continue
             except requests.RequestException as exc:

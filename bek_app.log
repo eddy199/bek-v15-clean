@@ -318,3 +318,76 @@
 2026-08-31 18:18:46,012 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
 2026-08-31 18:18:46,054 - INFO - Workers Hermes démarrés.
 2026-08-31 18:18:46,054 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 19:01:10,994 - ERROR - Erreur Swarm-Core : cannot import name 'solve_response_format_t' from 'openai.lib._parsing' (/media/moh/84B00E0BB00E0500/workspacekimi/venv/lib/python3.12/site-packages/openai/lib/_parsing/__init__.py)
+2026-08-31 19:07:59,812 - ERROR - Erreur Swarm-Core : cannot import name 'solve_response_format_t' from 'openai.lib._parsing' (/media/moh/84B00E0BB00E0500/workspacekimi/venv/lib/python3.12/site-packages/openai/lib/_parsing/__init__.py)
+2026-08-31 19:10:51,645 - ERROR - Erreur Swarm-Core : cannot import name 'SyncNextCursorPage' from 'openai.pagination' (/media/moh/84B00E0BB00E0500/workspacekimi/venv/lib/python3.12/site-packages/openai/pagination.py)
+2026-08-31 19:41:31,867 - INFO - Workers Hermes démarrés.
+2026-08-31 19:41:31,882 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 19:41:31,915 - INFO - Workers Hermes démarrés.
+2026-08-31 19:41:31,916 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 20:27:47,313 - INFO - Workers Hermes démarrés.
+2026-08-31 20:27:47,317 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 20:27:47,372 - INFO - Workers Hermes démarrés.
+2026-08-31 20:27:47,373 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 20:30:14,332 - INFO - Workers Hermes démarrés.
+2026-08-31 20:30:14,334 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 20:30:14,373 - INFO - Workers Hermes démarrés.
+2026-08-31 20:30:14,374 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 20:39:10,572 - INFO - Workers Hermes démarrés.
+2026-08-31 20:39:10,574 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 20:39:10,618 - INFO - Workers Hermes démarrés.
+2026-08-31 20:39:10,619 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 21:01:10,256 - INFO - Workers Hermes démarrés.
+2026-08-31 21:01:10,266 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 21:01:10,345 - INFO - Workers Hermes démarrés.
+2026-08-31 21:01:10,346 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 21:05:23,591 - ERROR - [Stream Error] 'CompressResult' object is not iterable
+2026-08-31 21:06:39,156 - ERROR - [Stream Error] 'CompressResult' object is not iterable
+2026-08-31 21:09:06,438 - INFO - Workers Hermes démarrés.
+2026-08-31 21:09:06,458 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 21:09:06,514 - INFO - Workers Hermes démarrés.
+2026-08-31 21:09:06,515 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 21:19:10,235 - INFO - Workers Hermes démarrés.
+2026-08-31 21:19:10,268 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 21:19:10,365 - INFO - Workers Hermes démarrés.
+2026-08-31 21:19:10,366 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 21:20:14,956 - ERROR - [Stream Error] 'CompressResult' object is not iterable
+2026-08-31 21:24:19,058 - ERROR - [Stream Error] 'CompressResult' object is not iterable
+2026-08-31 21:25:36,825 - ERROR - [Stream Error] 'CompressResult' object is not iterable
+2026-08-31 21:46:02,493 - ERROR - [Stream Error] 'CompressResult' object is not iterable
+2026-08-31 21:46:18,199 - ERROR - [Stream Error] 'CompressResult' object is not iterable
+2026-08-31 21:52:55,098 - INFO - Workers Hermes démarrés.
+2026-08-31 21:52:55,142 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 21:52:55,169 - INFO - Workers Hermes démarrés.
+2026-08-31 21:52:55,170 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 22:03:03,764 - INFO - Workers Hermes démarrés.
+2026-08-31 22:03:03,766 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 22:03:03,797 - INFO - Workers Hermes démarrés.
+2026-08-31 22:03:03,798 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 22:04:13,816 - INFO - [Headroom] Contexte compressé avec succès pour le modèle openai/gpt-oss-120b
+2026-08-31 22:04:21,628 - INFO - [Headroom] Contexte compressé avec succès pour le modèle openai/gpt-oss-120b
+2026-08-31 22:08:02,596 - INFO - [Headroom] Contexte compressé avec succès pour le modèle openai/gpt-oss-120b
+2026-08-31 22:12:37,575 - INFO - [Headroom] Contexte compressé avec succès pour le modèle openai/gpt-oss-120b
+2026-08-31 22:13:04,793 - INFO - [Headroom] Contexte compressé avec succès pour le modèle openai/gpt-oss-120b
+2026-08-31 22:17:46,792 - INFO - [Headroom] Contexte compressé avec succès pour le modèle openai/gpt-oss-120b
+2026-08-31 22:34:31,699 - INFO - Workers Hermes démarrés.
+2026-08-31 22:34:31,745 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-08-31 22:34:31,762 - INFO - Workers Hermes démarrés.
+2026-08-31 22:34:31,774 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-09-01 02:21:11,853 - INFO - Workers Hermes démarrés.
+2026-09-01 02:21:11,892 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-09-01 02:21:11,933 - INFO - Workers Hermes démarrés.
+2026-09-01 02:21:11,934 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-09-01 04:31:20,585 - INFO - Workers Hermes démarrés.
+2026-09-01 04:31:20,645 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-09-01 04:31:20,682 - INFO - Workers Hermes démarrés.
+2026-09-01 04:31:20,683 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-09-01 04:49:08,631 - ERROR - Erreur Action : Expecting ',' delimiter: line 3 column 83 (char 125)
+2026-09-01 04:54:27,562 - INFO - Workers Hermes démarrés.
+2026-09-01 04:54:27,588 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-09-01 04:54:27,637 - INFO - Workers Hermes démarrés.
+2026-09-01 04:54:27,638 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-09-01 05:03:59,733 - INFO - Workers Hermes démarrés.
+2026-09-01 05:03:59,802 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-09-01 05:03:59,843 - INFO - Workers Hermes démarrés.
+2026-09-01 05:03:59,844 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
