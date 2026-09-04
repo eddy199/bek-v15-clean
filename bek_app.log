@@ -501,3 +501,9 @@
 2026-09-04 09:37:35,581 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
 2026-09-04 09:37:35,598 - INFO - Workers Hermes démarrés.
 2026-09-04 09:37:35,598 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-09-04 10:06:46,395 - INFO - Table de compensation sync_log initialisée avec succès.
+2026-09-04 10:06:48,032 - INFO - Table de compensation sync_log initialisée avec succès.
+2026-09-04 10:06:48,037 - INFO - Workers Hermes démarrés.
+2026-09-04 10:06:48,037 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
+2026-09-04 10:06:48,069 - INFO - Workers Hermes démarrés.
+2026-09-04 10:06:48,070 - INFO - Mémoire vectorielle Pinecone & ChromaDB connectées : namespaces initialisés.
