@@ -4351,3 +4351,12 @@ moh@moh-Aspire-ES1-571:/media/moh/84B00E0BB00E0500/workspacekimi$
 2026-08-31 21:45:41,508 - INFO - Recherche mémoire Pinecone | query_len=3 | top_k=2
 2026-08-31 21:46:16,328 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
 2026-08-31 21:46:17,513 - INFO - Recherche mémoire Pinecone | query_len=7 | top_k=2
+2026-09-03 21:41:06,086 - ERROR - Le package 'pinecone' n'est pas installé.
+2026-09-03 21:44:57,732 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-03 21:45:04,531 - INFO - Interaction enregistrée dans Pinecone | id=dfa58440-6c5d-49bc-9dcf-cf883df8adc1
+2026-09-03 21:45:17,892 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-03 21:45:18,771 - INFO - Recherche mémoire Pinecone | query_len=10 | top_k=2
+2026-09-03 21:47:10,561 - ERROR - Erreur lors du rejeu de synchronisation : relation "sync_log" does not exist
+LINE 3:             FROM sync_log 
+                         ^
+

@@ -1,5 +1,5 @@
 # 🧬 Architecture Réelle du Système BEK-v15.2 Hybrid
-> *Dernière synchronisation automatique : 2026-09-01 04:03:59 UTC*
+> *Dernière synchronisation automatique : 2026-09-04 08:06:48 UTC*
 
 ## 1. Organigramme des Flux d'Exécution
 ```text

@@ -1,24 +1,23 @@
 """
-BEK Hermes Core V2 - HARDENED & DYNAMIC GOAP WITH PLAN ACTION HOOKS
--------------------------------------------------------------------
-Noyau d'orchestration Hermes / GOAP / Workers.
+BEK Hermes Core V3 - HARDENED & DYNAMIC GOAP WITH 2-STAGE ORCHESTRATION & SYNC GUARDIAN
+----------------------------------------------------------------------------------------
+Noyau d'orchestration Hermes / GOAP / Workers avec filtrage strict en deux étapes.
 
 Responsabilités :
-- registre sécurisé des tools ;
-- planification GOAP dynamique via Skill Registry ;
-- hooks de cycle de vie de plan (Pre-Plan, Step/Re-Plan, Post-Plan) ;
-- validation stricte des tâches ;
-- contrôle SecurityGuard avant exécution ;
-- gestion des risques L1 -> L5 ;
-- demande de validation humaine pour L3/L4/L5 ;
-- exécution parallèle ;
-- traçabilité task_id / trace_id ;
-- timeout applicatif ;
-- gestion propre du shutdown ;
-- worker Guardian système.
+- Registre sécurisé des tools ;
+- Planification GOAP dynamique via Skill Registry ;
+- Filtre d'orchestration en deux étapes (Planification Stricte -> Exécution Validée) inspiré de Fable ;
+- Hooks de cycle de vie de plan (Pre-Plan, Step/Re-Plan, Post-Plan) ;
+- Validation stricte des tâches et sandbox d'exécution ;
+- Contrôle SecurityGuard avant exécution ;
+- Gestion des risques L1 -> L5 et validation humaine L3+ ;
+- Exécution parallèle via ThreadPoolExecutor ;
+- Traçabilité task_id / trace_id ;
+- Timeout applicatif et gestion propre du shutdown ;
+- Worker Guardian système (audit Neon DB + rejeu automatique sync_log Pinecone).
 
 IMPORTANT :
-- Hermes n'exécute aucune commande système directement.
+- Hermes n'exécute aucune commande système directement sans passer par les tools validés.
 - Hermes ne contourne jamais SecurityGuard.
 - SecurityGuard reste la couche de certification.
 """
@@ -29,11 +28,12 @@ import concurrent.futures
 import logging
 import threading
 import time
+import traceback
 import uuid
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from memory import get_db_connection
+from memory import get_db_connection, replay_pending_syncs
 from security_guard import SecurityGuard
 from skill_registry import skill_registry
 
@@ -56,7 +56,7 @@ MAX_TASK_TIMEOUT = 3600
 
 RISK_LEVELS = {"L1", "L2", "L3", "L4", "L5"}
 
-# Ces niveaux ne doivent jamais être exécutés automatiquement.
+# Ces niveaux ne doivent jamais être exécutés automatiquement
 HUMAN_APPROVAL_LEVELS = {"L3", "L4", "L5"}
 
 
@@ -201,6 +201,12 @@ class HermesCore:
 
         # Enregistrement natif des outils par défaut
         self._register_default_tools()
+        
+        # Enregistrement du filtre d'orchestration en deux étapes (Anti-Hallucination)
+        self.register_pre_plan_hook(self._two_stage_orchestration_filter)
+        
+        # Enregistrement de la politique de sécurité textuelle inspirée de Fable (SKILL.md)
+        self.register_pre_plan_hook(self._fable_policy_guard)
 
     def _register_default_tools(self) -> None:
         """Enregistre les outils natifs de base dès l'initialisation."""
@@ -211,7 +217,7 @@ class HermesCore:
         )
         self.register_tool(
             "neon_audit",
-            lambda **kwargs: {"status": "Neon DB audit demandé", "tables": ["companies", "contacts", "opportunities"]},
+            lambda **kwargs: {"status": "Neon DB audit demandé", "tables": ["companies", "contacts", "opportunities", "matrix_sub_crms", "sync_log"]},
             risk_level="L1",
         )
         self.register_tool(
@@ -219,6 +225,47 @@ class HermesCore:
             lambda query="", **kwargs: {"status": "success", "synced_query": query},
             risk_level="L3",
         )
+
+    # ========================================================
+    # FILTRE D'ORCHESTRATION EN DEUX ÉTAPES (Inspiré de Fable)
+    # ========================================================
+
+    @staticmethod
+    def _two_stage_orchestration_filter(objective: str, trace_id: Optional[str]) -> Tuple[bool, Optional[str], Optional[List[Dict[str, Any]]]]:
+        """
+        Étape 1 : Analyse et validation stricte de l'objectif avant toute génération de tâches.
+        Bloque les objectifs vides, mal formés ou cherchant à corrompre le workspace.
+        """
+        if not objective or not objective.strip():
+            return False, "Objectif vide rejeté par l'orchestrateur en deux étapes.", []
+        
+        obj_lower = objective.lower()
+        
+        # Détection de requêtes destructrices non autorisées sans validation explicite
+        dangerous_keywords = ["rm -rf", "drop database", "format c:", "del /s /q"]
+        if any(kw in obj_lower for kw in dangerous_keywords):
+            logger.warning("Filtre d'orchestration : Tentative d'action destructive bloquée | trace=%s", trace_id)
+            return False, "Action destructive bloquée par le filtre de sécurité pré-plan.", []
+
+        logger.info("Filtre d'orchestration Étape 1 validée (Planification autorisée) | trace=%s", trace_id)
+        return True, "Planification validée", None
+
+    @staticmethod
+    def _fable_policy_guard(objective: str, trace_id: Optional[str]) -> Tuple[bool, Optional[str], Optional[List[Dict[str, Any]]]]:
+        """
+        Applique la politique textuelle de Fable (SKILL.md) :
+        - Interdit l'injection de secrets, clés d'API ou mots de passe dans les paquets d'objectifs.
+        """
+        if not objective:
+            return True, "OK", None
+            
+        obj_lower = objective.lower()
+        forbidden_terms = ["api_key=", "password=", "secret=", "bearer ", "sk-"]
+        if any(term in obj_lower for term in forbidden_terms):
+            logger.warning("Fable Policy Violation: Tentative d'injection de secrets détectée | trace=%s", trace_id)
+            return False, "Fable Policy: Les secrets et clés d'API ne doivent jamais être inclus dans un paquet d'orchestration.", []
+
+        return True, "Politique Fable respectée", None
 
     # ========================================================
     # HOOK REGISTRATION
@@ -347,7 +394,7 @@ class HermesCore:
                     logger.info("Pre-Plan Hook a fourni un plan sur mesure (%d tâches)", len(override_tasks))
                     return override_tasks
             except Exception as hook_err:
-                logger.error("Erreur exécution Pre-Plan Hook : %s", hook_err)
+                logger.error("Erreur exécution Pre-Plan Hook : %s\n%s", hook_err, traceback.format_exc())
 
         tasks: List[Dict[str, Any]] = []
         obj_lower = objective.lower().strip()
@@ -712,7 +759,7 @@ class HermesCore:
                     if replacement_res is not None:
                         res_dict = replacement_res
                 except Exception as step_err:
-                    logger.error("Erreur Step Hook : %s", step_err)
+                    logger.error("Erreur Step Hook : %s\n%s", step_err, traceback.format_exc())
 
             results[task_id] = res_dict
 
@@ -748,7 +795,7 @@ class HermesCore:
             try:
                 final_payload = post_hook(validated_tasks, final_payload)
             except Exception as post_err:
-                logger.error("Erreur Post-Plan Hook : %s", post_err)
+                logger.error("Erreur Post-Plan Hook : %s\n%s", post_err, traceback.format_exc())
 
         return final_payload
 
@@ -920,7 +967,7 @@ def init_system_jobs_table() -> None:
 
 
 # ============================================================
-# BACKGROUND GUARDIAN
+# BACKGROUND GUARDIAN (AVEC REJEU SYNC VECTORIELLE)
 # ============================================================
 
 def background_guardian_worker() -> None:
@@ -946,6 +993,14 @@ def background_guardian_worker() -> None:
                 )
                 conn.commit()
                 logger.info("Guardian job started | job=%s", job_id)
+
+                # Rejeu automatique en tâche de fond des synchronisations Pinecone en attente
+                try:
+                    replayed = replay_pending_syncs(limit=25)
+                    if replayed > 0:
+                        logger.info("Guardian a synchronisé %d vecteurs orphelins vers Pinecone.", replayed)
+                except Exception as replay_err:
+                    logger.warning("Erreur lors du rejeu de compensation : %s", replay_err)
 
                 for _ in range(20):
                     if hermes._shutdown:
@@ -998,9 +1053,9 @@ def background_guardian_worker() -> None:
     logger.info("Hermes guardian worker stopped.")
 
 
-# ============================================================
+# ==========================================
 # START BACKGROUND WORKERS
-# ============================================================
+# ==========================================
 
 def start_background_workers() -> None:
     with hermes._worker_lock:

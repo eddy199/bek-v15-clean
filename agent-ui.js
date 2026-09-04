@@ -1,5 +1,5 @@
 /**
- * BEK-v15-HYBRID — Agent UI Controller (Gestion Fichiers Dynamique & Anti-Cache)
+ * BEK-v15-HYBRID — Agent UI Controller (Gestion Fichiers Dynamique, Anti-Cache & Auto-Expand Gemini)
  */
 (function() {
     'use strict';
@@ -42,6 +42,92 @@
 
     window.__codeSnippetsRegistry = window.__codeSnippetsRegistry || {};
 
+    // --- CHARGEMENT DU MOTEUR DE COLORATION SYNTAXIQUE (HIGHLIGHT.JS) ---
+    function loadSyntaxHighlighter() {
+        if (!document.getElementById('hljs-style')) {
+            const link = document.createElement('link');
+            link.id = 'hljs-style';
+            link.rel = 'stylesheet';
+            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css';
+            document.head.appendChild(link);
+        }
+        if (!window.hljs && !document.getElementById('hljs-script')) {
+            const script = document.createElement('script');
+            script.id = 'hljs-script';
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+            script.onload = () => {
+                if (window.marked) {
+                    const messages = document.querySelectorAll('.msg-bubble');
+                    messages.forEach(m => {
+                        m.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+                    });
+                }
+            };
+            document.head.appendChild(script);
+        }
+    }
+
+    // --- FONCTIONS CLOUD / CLIPBOARD COPIE STYLE GEMINI ---
+    window.copyWholeMessage = async function(btn) {
+        if (!btn) return;
+        const msgEl = btn.closest('.message');
+        if (!msgEl) return;
+        const bubble = msgEl.querySelector('.msg-bubble');
+        if (!bubble) return;
+
+        const textToCopy = bubble.innerText.trim();
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> <span style="color:#4ade80; font-weight:600;">Copié !</span>`;
+            btn.style.borderColor = 'rgba(74, 222, 128, 0.6)';
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.style.borderColor = '';
+            }, 2000);
+        } catch (err) {
+            console.error('Erreur lors de la copie du message :', err);
+        }
+    };
+
+    window.copyCodeSnippet = async function(snippetId, btn) {
+        const item = window.__codeSnippetsRegistry[snippetId];
+        if (!item || !item.code) return;
+        try {
+            await navigator.clipboard.writeText(item.code);
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span style="color:#4ade80; font-weight:600;">✓ Copié !</span>`;
+            btn.style.borderColor = '#4ade80';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.borderColor = '';
+            }, 2000);
+        } catch (err) {
+            console.error('Erreur copie code :', err);
+        }
+    };
+
+    window.downloadCodeSnippet = function(snippetId) {
+        const item = window.__codeSnippetsRegistry[snippetId];
+        if (!item || !item.code) return;
+        const extMap = {
+            python: 'py', py: 'py', javascript: 'js', js: 'js',
+            typescript: 'ts', ts: 'ts', html: 'html', css: 'css',
+            json: 'json', markdown: 'md', md: 'md', sh: 'sh',
+            bash: 'sh', sql: 'sql', text: 'txt'
+        };
+        const ext = extMap[item.lang] || 'txt';
+        const blob = new Blob([item.code], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `code_${snippetId}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
     function injectEnhancedCSS() {
         if (document.getElementById('metacortex-ui-css')) return;
         const style = document.createElement('style');
@@ -71,6 +157,7 @@
     }
 
     async function init() {
+        loadSyntaxHighlighter();
         injectEnhancedCSS();
         await loadConfig();
         setupEventListeners();
@@ -331,6 +418,16 @@
             if (DOM.modelBadge) DOM.modelBadge.innerText = `● ${currentProvider.toUpperCase()} / ${currentModel.split('/').pop()}`;
         });
 
+        // --- GESTION DU REDIMENSIONNEMENT DYNAMIQUE DU TEXTAREA (AUTO-EXPAND STYLE GEMINI) ---
+        if (DOM.userInput) {
+            DOM.userInput.addEventListener('input', function() {
+                this.style.height = '24px';
+                const newHeight = Math.min(this.scrollHeight, 180);
+                this.style.height = newHeight + 'px';
+                this.style.overflowY = this.scrollHeight > 180 ? 'auto' : 'hidden';
+            });
+        }
+
         if (DOM.sendBtn && DOM.userInput) {
             DOM.sendBtn.addEventListener('click', handleSendOrStop);
             DOM.userInput.addEventListener('keydown', (e) => {
@@ -484,7 +581,12 @@
         }
 
         appendUserMessage(fullTextContent);
+        
+        // Réinitialisation de la hauteur de la boîte de saisie à sa taille compacte initiale
         DOM.userInput.value = '';
+        DOM.userInput.style.height = '24px';
+        DOM.userInput.style.overflowY = 'hidden';
+        
         attachedFiles = [];
         renderAttachedFilesPreview();
 
@@ -567,6 +669,11 @@
         div.innerHTML = `
             <div class="msg-meta"><span class="name">Vous</span></div>
             <div class="msg-bubble">${escapeHtml(text).replace(/\n/g, '<br>')}</div>
+            <div class="msg-actions">
+                <button onclick="copyWholeMessage(this)" title="Copier ce message">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copier
+                </button>
+            </div>
         `;
         DOM.chatBox.appendChild(div);
         DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
@@ -583,7 +690,7 @@
             </div>
             <div class="msg-bubble content">${html}</div>
             <div class="msg-actions">
-                <button onclick="copyWholeMessage(this)">
+                <button onclick="copyWholeMessage(this)" title="Copier la réponse complète">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copier
                 </button>
             </div>
@@ -618,6 +725,19 @@
                 const snippetId = 'snip_' + Math.random().toString(36).substring(2, 9);
                 window.__codeSnippetsRegistry[snippetId] = { code: actualCode, lang: cleanLang };
 
+                let highlightedCode = escapeHtml(actualCode);
+                if (typeof hljs !== 'undefined') {
+                    try {
+                        if (cleanLang && hljs.getLanguage(cleanLang)) {
+                            highlightedCode = hljs.highlight(actualCode, { language: cleanLang }).value;
+                        } else {
+                            highlightedCode = hljs.highlightAuto(actualCode).value;
+                        }
+                    } catch (e) {
+                        highlightedCode = escapeHtml(actualCode);
+                    }
+                }
+
                 return `
                 <div class="code-container">
                     <div class="code-header">
@@ -627,7 +747,7 @@
                             <button class="code-action-btn" title="Copier" onclick="copyCodeSnippet('${snippetId}', this)">Copier</button>
                         </div>
                     </div>
-                    <pre><code>${escapeHtml(actualCode)}</code></pre>
+                    <pre><code class="hljs language-${cleanLang}">${highlightedCode}</code></pre>
                 </div>`;
             };
             try {

@@ -51,12 +51,36 @@ NVIDIA_ACTIVE_MODELS: List[str] = [
 GEMINI_MODELS: List[str] = [
     "gemini-3.6-flash",
     "gemini-1.5-pro-preview",
+    "gemini-3-flash-preview",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-image",
+    "gemini-3.1-flash-lite-image",
+    "gemini-3-pro-image",
+    "gemini-3.5-live-translate-preview",
+    "gemini-3.1-flash-live-preview",
+    "gemini-3.1-flash-tts-preview",
+    "gemini-2.5-flash-image",
+    "gemini-2.5-flash-native-audio-preview-12-2025",
+    "gemini-2.5-flash-preview-tts",
+    "gemini-2.5-pro-preview-tts",
+    "veo-3.1-gene-prev",
+    "veo-3.1-lite-gene-prev",
+    "gemini-omni-flash",
+    "lyria-3-pro-preview",
+    "lyria-3-clip-preview",
+    "lyria-realtime-preview",
 ]
 
 OPENROUTER_MODELS: List[str] = [
     "openrouter/auto",
     "openai/gpt-oss-120b",
     "anthropic/claude-4-sonnet",
+    "dots3-note-preview",
+    "lfm2.5-2.6b",
+    "nemotron-3.5-lightning",
+    "laguna-s-2.1",
+    "laguna-xs-2.1",
+    "free-models-router",
 ]
 
 ALL_MODELS: Dict[str, List[str]] = {

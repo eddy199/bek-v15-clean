@@ -1,13 +1,15 @@
 """
-BEK-v15.2 HYBRID
-Memory Layer (Dual Hybrid: ChromaDB Local + Pinecone Cloud + Neon PostgreSQL)
------------------------------------------------------------------------------
-Couche mémoire locale / Pinecone / Neon PostgreSQL / ChromaDB.
+BEK-v15.3 HYBRID
+Memory Layer (Dual Hybrid: ChromaDB Local + Pinecone Cloud + Neon PostgreSQL + Sync Compensation)
+--------------------------------------------------------------------------------------------------
+Couche mémoire locale / Pinecone / Neon PostgreSQL / ChromaDB avec compensation de synchronisation.
 
 Responsabilités :
 - Chargement sécurisé de la configuration via provider_manager et env.txt ;
 - Gestion des embeddings (NVIDIA API avec fallback déterministe) ;
 - Mémoire vectorielle hybride : Pinecone (distant) + ChromaDB (local) ;
+- Table de compensation sync_log dans Neon DB pour les pannes réseau Pinecone ;
+- Mécanisme de rejeu asynchrone replay_pending_syncs ;
 - Connexion PostgreSQL / Neon DB ;
 - Journalisation et normalisation des entrées.
 
@@ -20,6 +22,7 @@ from __future__ import annotations
 
 import datetime
 import hashlib
+import json
 import logging
 import math
 import os
@@ -326,11 +329,201 @@ def get_pinecone_index() -> Optional[Any]:
 
 
 # ============================================================
-# MEMORY SEARCH (HYBRIDE DUAL)
+# DATABASE / NEON & TABLE DE COMPENSATION SYNC_LOG
 # ============================================================
 
+def get_db_connection() -> Optional[Any]:
+    """Connexion directe à Neon PostgreSQL."""
+    if not NEON_DATABASE_URL:
+        logger.warning("DATABASE_URL / NEON_DATABASE_URL non configuré.")
+        return None
+
+    try:
+        import psycopg2
+    except ImportError:
+        logger.error("psycopg2 non installé.")
+        return None
+
+    try:
+        connection = psycopg2.connect(
+            NEON_DATABASE_URL,
+            connect_timeout=DATABASE_CONNECT_TIMEOUT_SECONDS,
+        )
+        return connection
+    except Exception as exc:
+        logger.error("Erreur connexion Neon DB: %s", exc)
+        return None
+
+
+def init_sync_log_table() -> None:
+    """Initialise la table de compensation des synchronisations vectorielles."""
+    conn = get_db_connection()
+    if not conn:
+        return
+    cur = None
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS sync_log (
+                id VARCHAR(64) PRIMARY KEY,
+                content TEXT NOT NULL,
+                vector_dim INT DEFAULT 1024,
+                status VARCHAR(32) NOT NULL,
+                retry_count INT DEFAULT 0,
+                last_error TEXT,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+        )
+        conn.commit()
+    except Exception as exc:
+        logger.warning("Initialisation de sync_log échouée : %s", exc)
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
+    finally:
+        if cur:
+            try:
+                cur.close()
+            except Exception:
+                pass
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+
+def record_pending_sync(record_id: str, content: str, error_msg: str = "") -> None:
+    """Enregistre un vecteur en attente de synchronisation cloud dans Neon DB."""
+    conn = get_db_connection()
+    if not conn:
+        return
+    cur = None
+    try:
+        init_sync_log_table()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO sync_log (id, content, status, retry_count, last_error, updated_at)
+            VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+            ON CONFLICT (id) DO UPDATE 
+            SET retry_count = sync_log.retry_count + 1,
+                last_error = EXCLUDED.last_error,
+                updated_at = CURRENT_TIMESTAMP;
+            """,
+            (record_id, content, "PENDING_PINECONE", 0, clean_string(error_msg)[:500]),
+        )
+        conn.commit()
+    except Exception as exc:
+        logger.error("Impossible d'enregistrer la compensation dans sync_log : %s", exc)
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
+    finally:
+        if cur:
+            try:
+                cur.close()
+            except Exception:
+                pass
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+
+def replay_pending_syncs(limit: int = 20) -> int:
+    """Rejoue les synchronisations vectorielles Pinecone en attente (appelé par le Guardian)."""
+    index = get_pinecone_index()
+    if index is None:
+        return 0
+
+    conn = get_db_connection()
+    if not conn:
+        return 0
+
+    cur = None
+    replayed_count = 0
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT id, content, retry_count 
+            FROM sync_log 
+            WHERE status = 'PENDING_PINECONE' AND retry_count < 5
+            ORDER BY created_at ASC 
+            LIMIT %s;
+            """,
+            (limit,),
+        )
+        rows = cur.fetchall()
+        for record_id, content, retries in rows:
+            clean_txt = clean_string(content)
+            vector = get_embedding(clean_txt, input_type="passage")
+            if not vector:
+                continue
+
+            try:
+                now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+                index.upsert(
+                    vectors=[{
+                        "id": record_id,
+                        "values": vector,
+                        "metadata": {"text": clean_txt, "date": now_iso, "type": "conversation"}
+                    }]
+                )
+                cur.execute(
+                    "UPDATE sync_log SET status = 'SYNCED', updated_at = CURRENT_TIMESTAMP WHERE id = %s;",
+                    (record_id,),
+                )
+                conn.commit()
+                replayed_count += 1
+                logger.info("Compensation réussie pour le vecteur %s", record_id)
+            except Exception as sync_err:
+                cur.execute(
+                    """
+                    UPDATE sync_log 
+                    SET retry_count = retry_count + 1, last_error = %s, updated_at = CURRENT_TIMESTAMP 
+                    WHERE id = %s;
+                    """,
+                    (clean_string(str(sync_err))[:500], record_id),
+                )
+                conn.commit()
+    except Exception as exc:
+        logger.error("Erreur lors du rejeu de synchronisation : %s", exc)
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
+    finally:
+        if cur:
+            try:
+                cur.close()
+            except Exception:
+                pass
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+    return replayed_count
+
+
+# ==========================================
+# MEMORY SEARCH (HYBRIDE DUAL)
+# ==========================================
+
 def search_memory(
-    query: str,
+    query: str = "",
     top_k: int = DEFAULT_TOP_K,
 ) -> str:
     """Recherche duale : Pinecone (Cloud) avec fallback automatique ChromaDB (Local)."""
@@ -383,22 +576,26 @@ def search_memory(
     return ""
 
 
-# ============================================================
-# MEMORY SAVE (HYBRIDE DUAL)
-# ============================================================
+# ==========================================
+# MEMORY SAVE (HYBRIDE AVEC COMPENSATION)
+# ==========================================
 
 def save_to_memory(
     user_query: str,
-    agent_response: str,
+    agent_response: str = "",
 ) -> bool:
-    """Sauvegarde simultanée dans Pinecone (Cloud) et ChromaDB (Local)."""
+    """Sauvegarde simultanée dans Pinecone (Cloud) et ChromaDB (Local) avec compensation d'échec."""
     user_query = clean_string(user_query)
     agent_response = clean_string(agent_response)
 
     if not user_query and not agent_response:
         return False
 
-    combined_text = clean_string(f"Requête: {user_query}\nRéponse: {agent_response[:1000]}")
+    if agent_response:
+        combined_text = clean_string(f"Requête: {user_query}\nRéponse: {agent_response[:1000]}")
+    else:
+        combined_text = clean_string(user_query)
+
     vector = get_embedding(combined_text, input_type="passage")
     if not vector:
         return False
@@ -412,6 +609,7 @@ def save_to_memory(
     }
 
     saved = False
+    pinecone_success = False
 
     # 1. Upsert Pinecone Cloud
     index = get_pinecone_index()
@@ -421,11 +619,16 @@ def save_to_memory(
                 vectors=[{"id": record_id, "values": vector, "metadata": metadata}]
             )
             saved = True
+            pinecone_success = True
             logger.info("Interaction enregistrée dans Pinecone | id=%s", record_id)
         except Exception as exc:
-            logger.warning("Échec sauvegarde Pinecone: %s", exc)
+            logger.warning("Échec sauvegarde Pinecone : %s. Inscription en table de compensation.", exc)
+            record_pending_sync(record_id, combined_text, str(exc))
+    else:
+        # Index distant indisponible au moment de l'écriture
+        record_pending_sync(record_id, combined_text, "Pinecone index indisponible lors de l'appel.")
 
-    # 2. Upsert ChromaDB Local
+    # 2. Upsert ChromaDB Local (Sauvegarde immédiate hors-ligne)
     chroma_coll = get_chroma_collection()
     if chroma_coll is not None:
         try:
@@ -441,30 +644,3 @@ def save_to_memory(
             logger.warning("Échec sauvegarde ChromaDB: %s", exc)
 
     return saved
-
-
-# ============================================================
-# DATABASE / NEON
-# ============================================================
-
-def get_db_connection() -> Optional[Any]:
-    """Connexion directe à Neon PostgreSQL."""
-    if not NEON_DATABASE_URL:
-        logger.warning("DATABASE_URL / NEON_DATABASE_URL non configuré.")
-        return None
-
-    try:
-        import psycopg2
-    except ImportError:
-        logger.error("psycopg2 non installé.")
-        return None
-
-    try:
-        connection = psycopg2.connect(
-            NEON_DATABASE_URL,
-            connect_timeout=DATABASE_CONNECT_TIMEOUT_SECONDS,
-        )
-        return connection
-    except Exception as exc:
-        logger.error("Erreur connexion Neon DB: %s", exc)
-        return None

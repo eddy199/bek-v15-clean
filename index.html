@@ -195,7 +195,7 @@
       <div class="content-area">
         <div class="messages" id="chat-box"></div>
         <div class="input-area">
-          <div id="filePreviewBar" style="display:none; flex-wrap:wrap; gap:8px; padding-bottom:8px;"></div>
+          <div id="filePreviewBar" style="display:none; flex-wrap:wrap; gap:12px; padding-bottom:12px;"></div>
           <div class="input-wrap" style="position: relative;">
             <button class="icon-btn" id="uploadBtn" style="margin-right:4px;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
@@ -288,5 +288,160 @@
 </div>
 
 <script src="agent-ui.js"></script>
+
+<!-- ========================================================================= -->
+<!-- AJOUT: LOGIQUE VISUELLE DE MINIATURE GEMINI (FORCÉE ET ISOLÉE) -->
+<!-- ========================================================================= -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const imageInput = document.getElementById('hiddenImageInput');
+    const fileInput = document.getElementById('hiddenFileInput');
+    const previewBar = document.getElementById('filePreviewBar');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadMenu = document.getElementById('uploadMenu');
+    
+    let attachedFiles = [];
+
+    if(uploadBtn) {
+        uploadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            uploadMenu.style.display = (uploadMenu.style.display === 'none' || uploadMenu.style.display === '') ? 'block' : 'none';
+        });
+    }
+
+    // Fonction pour afficher la jolie miniature style Gemini
+    async function handleFilesUploadAndPreview(files) {
+        if (!files || files.length === 0) return;
+        
+        // On s'assure que la barre de prévisualisation s'affiche bien au-dessus du texte
+        previewBar.style.display = 'flex';
+        previewBar.style.padding = '10px 0';
+        previewBar.style.gap = '15px';
+        
+        for (let file of files) {
+            // Création de la carte miniature Gemini-style
+            const thumbDiv = document.createElement('div');
+            thumbDiv.style.position = 'relative';
+            thumbDiv.style.width = '120px';
+            thumbDiv.style.height = '120px';
+            thumbDiv.style.borderRadius = '16px';
+            thumbDiv.style.border = '1px solid #3e3e42';
+            thumbDiv.style.overflow = 'hidden';
+            thumbDiv.style.background = '#1a1a1d';
+            thumbDiv.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = '✕';
+            removeBtn.style.position = 'absolute';
+            removeBtn.style.top = '6px';
+            removeBtn.style.right = '6px';
+            removeBtn.style.background = 'rgba(0,0,0,0.7)';
+            removeBtn.style.color = '#fff';
+            removeBtn.style.border = 'none';
+            removeBtn.style.borderRadius = '50%';
+            removeBtn.style.width = '24px';
+            removeBtn.style.height = '24px';
+            removeBtn.style.cursor = 'pointer';
+            removeBtn.style.fontSize = '12px';
+            removeBtn.style.display = 'flex';
+            removeBtn.style.alignItems = 'center';
+            removeBtn.style.justifyContent = 'center';
+            removeBtn.style.zIndex = '10';
+            
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    thumbDiv.appendChild(img);
+                    thumbDiv.appendChild(removeBtn);
+                    previewBar.appendChild(thumbDiv);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                thumbDiv.innerHTML = `<span style="font-size:11px; color:#a0a0a5; word-break:break-word; text-align:center; padding:8px; display:block;">${file.name.substring(0,15)}...</span>`;
+                thumbDiv.appendChild(removeBtn);
+                previewBar.appendChild(thumbDiv);
+            }
+
+            // Upload backend
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    attachedFiles.push({ name: data.filename, type: file.type });
+                    removeBtn.onclick = () => {
+                        thumbDiv.remove();
+                        attachedFiles = attachedFiles.filter(f => f.name !== data.filename);
+                        if (previewBar.children.length === 0) previewBar.style.display = 'none';
+                    };
+                }
+            } catch (err) {
+                console.error("Upload échoué", err);
+            }
+        }
+    }
+
+    if(imageInput) imageInput.addEventListener('change', (e) => handleFilesUploadAndPreview(e.target.files));
+    if(fileInput) fileInput.addEventListener('change', (e) => handleFilesUploadAndPreview(e.target.files));
+
+    // Interception agressive du Ctrl+V pour bloquer agent-ui.js
+    userInput.addEventListener('paste', (e) => {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        const files = [];
+        for (let index in items) {
+            const item = items[index];
+            if (item.kind === 'file') files.push(item.getAsFile());
+        }
+        if (files.length > 0) {
+            e.preventDefault(); 
+            e.stopImmediatePropagation(); // STOPE LE SCRIPT EXTERNE !
+            
+            // Supprimer l'éventuelle "pilule bleue" générée par agent-ui.js
+            const oldPills = document.querySelectorAll('.attachment-pill, .file-tag'); 
+            oldPills.forEach(p => p.remove());
+
+            handleFilesUploadAndPreview(files);
+        }
+    }, true); // "true" permet d'exécuter cet event AVANT les autres
+
+    function injectAttachmentToAgent() {
+        if (attachedFiles.length > 0) {
+            const imageFiles = attachedFiles.filter(f => f.type.startsWith('image/')).map(f => f.name);
+            const zipFiles = attachedFiles.filter(f => f.name.endsWith('.zip')).map(f => f.name);
+            
+            let injection = "\n\n";
+            if (imageFiles.length > 0) {
+                injection += `[Fichiers joints : ${imageFiles.join(', ')}]\n(INSTRUCTION SYSTEME : L'utilisateur a attaché ces images. Tu DOIS utiliser l'action [ACTION:analyze_image]{"image_path": "uploads/${imageFiles[0]}", "prompt": "Décris cette image en détail"}[/ACTION] pour les lire).`;
+            }
+            if (zipFiles.length > 0) {
+                injection += `[Archives jointes : ${zipFiles.join(', ')}]\n(INSTRUCTION SYSTEME : Utilise [ACTION:analyze_zip_content]{"zip_path": "uploads/${zipFiles[0]}"}[/ACTION]).`;
+            }
+            
+            userInput.value = userInput.value + injection;
+            
+            setTimeout(() => {
+                previewBar.innerHTML = '';
+                previewBar.style.display = 'none';
+                attachedFiles = [];
+            }, 100);
+        }
+    }
+
+    userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) injectAttachmentToAgent();
+    }, true);
+
+    if(sendBtn) sendBtn.addEventListener('click', () => injectAttachmentToAgent(), true);
+});
+</script>
 </body>
 </html>
