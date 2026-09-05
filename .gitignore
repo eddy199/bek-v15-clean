@@ -1,10 +1,15 @@
-node_modules/
+# Back‑ups & temporaires
+*.BACKUP
+*.log
+*.txt
+archive/
+# Environnements virtuels & dépendances
 venv/
-.env*
-*.env
+node_modules/
 __pycache__/
-env.txt
-.env
+# Uploads & artefacts
 uploads/
-env.txt
+*.zip
+# Fichiers de configuration locaux (à garder hors du repo si besoin)
 .env
+.env.save

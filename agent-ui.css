@@ -258,6 +258,24 @@ input, textarea, select { font: inherit; color: inherit; }
   border: 1px solid var(--border);
 }
 
+/* ─── IMAGES GÉNÉRÉES DANS LE CHAT (STYLE GEMINI) ─── */
+.msg-bubble img {
+  max-width: 380px !important;
+  max-height: 380px !important;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 16px 0 !important;
+  cursor: zoom-in;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: block;
+}
+.msg-bubble img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
 /* ─── BLOCS DE CODE ÉPURÉS STYLE GEMINI (FOND ANTHRACITE + SYNTAXE) ─── */
 .code-container {
   position: relative;
@@ -536,3 +554,37 @@ input, textarea, select { font: inherit; color: inherit; }
 }
 .toast.ok { border-color: rgba(74,222,128,.5); color: var(--green); }
 .toast.err { border-color: rgba(239,68,68,.5); color: var(--red); }
+
+/* ─── LIGHTBOX POUR AGRANDIR LES IMAGES ────────────────────────── */
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  padding: 20px;
+}
+.image-lightbox.active {
+  display: flex;
+}
+.image-lightbox img {
+  max-width: 95%;
+  max-height: 95%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Masquer les balises de réflexion internes des modèles Reasoning (ex: DeepSeek-R1) - Sécurité supplémentaire */
+think {
+  display: none !important;
+}

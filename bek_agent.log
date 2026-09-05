@@ -4360,3 +4360,169 @@ moh@moh-Aspire-ES1-571:/media/moh/84B00E0BB00E0500/workspacekimi$
 LINE 3:             FROM sync_log 
                          ^
 
+2026-09-04 19:51:44,313 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 19:51:45,424 - INFO - Recherche mémoire Pinecone | query_len=3 | top_k=3
+2026-09-04 19:52:03,937 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 19:52:05,107 - INFO - Recherche mémoire Pinecone | query_len=48 | top_k=3
+2026-09-04 19:55:10,023 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 19:55:12,194 - INFO - Recherche mémoire Pinecone | query_len=131 | top_k=3
+2026-09-04 19:55:25,055 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 19:55:25,985 - INFO - Recherche mémoire Pinecone | query_len=72 | top_k=3
+2026-09-04 19:56:03,756 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 19:56:04,771 - INFO - Recherche mémoire Pinecone | query_len=47 | top_k=3
+2026-09-04 19:56:24,210 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 19:56:25,055 - INFO - Recherche mémoire Pinecone | query_len=81 | top_k=3
+2026-09-04 20:06:26,698 - WARNING - Embedding NVIDIA indisponible : HTTPSConnectionPool(host='integrate.api.nvidia.com', port=443): Max retries exceeded with url: /v1/embeddings (Caused by NameResolutionError("HTTPSConnection(host='integrate.api.nvidia.com', port=443): Failed to resolve 'integrate.api.nvidia.com' ([Errno 11001] getaddrinfo failed)")). Bascule sur fallback local.
+2026-09-04 20:06:27,507 - INFO - Recherche mémoire Pinecone | query_len=72 | top_k=3
+2026-09-04 20:07:17,821 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:07:18,574 - INFO - Recherche mémoire Pinecone | query_len=72 | top_k=3
+2026-09-04 20:08:03,701 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:08:04,795 - INFO - Recherche mémoire Pinecone | query_len=72 | top_k=3
+2026-09-04 20:08:48,401 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:08:49,208 - INFO - Recherche mémoire Pinecone | query_len=83 | top_k=3
+2026-09-04 20:09:04,313 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:09:05,107 - INFO - Recherche mémoire Pinecone | query_len=83 | top_k=3
+2026-09-04 20:09:15,816 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:09:16,607 - INFO - Recherche mémoire Pinecone | query_len=83 | top_k=3
+2026-09-04 20:09:36,461 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:09:37,175 - INFO - Recherche mémoire Pinecone | query_len=83 | top_k=3
+2026-09-04 20:09:46,443 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:09:47,233 - INFO - Recherche mémoire Pinecone | query_len=83 | top_k=3
+2026-09-04 20:10:00,227 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:10:00,894 - INFO - Recherche mémoire Pinecone | query_len=83 | top_k=3
+2026-09-04 20:10:09,074 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:10:09,699 - INFO - Recherche mémoire Pinecone | query_len=83 | top_k=3
+2026-09-04 20:10:18,569 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:10:19,116 - INFO - Recherche mémoire Pinecone | query_len=83 | top_k=3
+2026-09-04 20:10:33,531 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:10:34,525 - INFO - Recherche mémoire Pinecone | query_len=83 | top_k=3
+2026-09-04 20:24:50,397 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:24:51,171 - INFO - Recherche mémoire Pinecone | query_len=3 | top_k=3
+2026-09-04 20:30:07,338 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:30:08,514 - INFO - Recherche mémoire Pinecone | query_len=103 | top_k=3
+2026-09-04 20:30:36,001 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:30:36,744 - INFO - Recherche mémoire Pinecone | query_len=55 | top_k=3
+2026-09-04 20:32:18,708 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:32:19,399 - INFO - Recherche mémoire Pinecone | query_len=124 | top_k=3
+2026-09-04 20:32:39,216 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:32:40,184 - INFO - Recherche mémoire Pinecone | query_len=134 | top_k=3
+2026-09-04 20:36:43,506 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:36:44,246 - INFO - Recherche mémoire Pinecone | query_len=88 | top_k=3
+2026-09-04 20:43:35,967 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-04 20:43:37,055 - INFO - Recherche mémoire Pinecone | query_len=24 | top_k=3
+2026-09-05 09:16:34,653 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:16:35,510 - INFO - Recherche mémoire Pinecone | query_len=3 | top_k=3
+2026-09-05 09:17:33,287 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:17:34,214 - INFO - Recherche mémoire Pinecone | query_len=242 | top_k=3
+2026-09-05 09:20:05,274 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:20:06,267 - INFO - Recherche mémoire Pinecone | query_len=829 | top_k=3
+2026-09-05 09:24:07,007 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:24:07,673 - INFO - Recherche mémoire Pinecone | query_len=1407 | top_k=3
+2026-09-05 09:27:29,004 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:27:29,765 - INFO - Recherche mémoire Pinecone | query_len=1456 | top_k=3
+2026-09-05 09:28:57,454 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:28:58,363 - INFO - Recherche mémoire Pinecone | query_len=1710 | top_k=3
+2026-09-05 09:29:39,665 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:29:40,486 - INFO - Recherche mémoire Pinecone | query_len=67 | top_k=3
+2026-09-05 09:30:41,928 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:30:42,667 - INFO - Recherche mémoire Pinecone | query_len=179 | top_k=3
+2026-09-05 09:31:28,078 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:31:28,725 - INFO - Recherche mémoire Pinecone | query_len=91 | top_k=3
+2026-09-05 09:32:47,020 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:32:47,819 - INFO - Recherche mémoire Pinecone | query_len=110 | top_k=3
+2026-09-05 09:33:44,314 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:33:45,102 - INFO - Recherche mémoire Pinecone | query_len=112 | top_k=3
+2026-09-05 09:37:34,065 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:37:34,773 - INFO - Recherche mémoire Pinecone | query_len=93 | top_k=3
+2026-09-05 09:38:27,010 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 09:38:27,842 - INFO - Recherche mémoire Pinecone | query_len=60 | top_k=3
+2026-09-05 10:16:09,062 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:16:09,732 - INFO - Recherche mémoire Pinecone | query_len=133 | top_k=3
+2026-09-05 10:17:47,301 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:17:48,159 - INFO - Recherche mémoire Pinecone | query_len=59 | top_k=3
+2026-09-05 10:21:00,987 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:21:01,748 - INFO - Recherche mémoire Pinecone | query_len=46 | top_k=3
+2026-09-05 10:22:53,169 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:22:53,987 - INFO - Recherche mémoire Pinecone | query_len=414 | top_k=3
+2026-09-05 10:27:19,104 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:27:19,887 - INFO - Recherche mémoire Pinecone | query_len=116 | top_k=3
+2026-09-05 10:33:03,953 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:33:04,787 - INFO - Recherche mémoire Pinecone | query_len=185 | top_k=3
+2026-09-05 10:37:26,529 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:37:27,212 - INFO - Recherche mémoire Pinecone | query_len=113 | top_k=3
+2026-09-05 10:41:28,022 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:41:28,724 - INFO - Recherche mémoire Pinecone | query_len=300 | top_k=3
+2026-09-05 10:43:37,175 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:43:37,846 - INFO - Recherche mémoire Pinecone | query_len=238 | top_k=3
+2026-09-05 10:47:43,852 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:47:44,780 - INFO - Recherche mémoire Pinecone | query_len=319 | top_k=3
+2026-09-05 10:48:49,751 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:48:50,492 - INFO - Recherche mémoire Pinecone | query_len=1236 | top_k=3
+2026-09-05 10:49:49,980 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:49:50,724 - INFO - Recherche mémoire Pinecone | query_len=813 | top_k=3
+2026-09-05 10:50:16,940 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:50:17,750 - INFO - Recherche mémoire Pinecone | query_len=813 | top_k=3
+2026-09-05 10:51:07,332 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:51:08,026 - INFO - Recherche mémoire Pinecone | query_len=813 | top_k=3
+2026-09-05 10:51:47,232 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:51:47,991 - INFO - Recherche mémoire Pinecone | query_len=813 | top_k=3
+2026-09-05 10:51:57,933 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:51:58,726 - INFO - Recherche mémoire Pinecone | query_len=813 | top_k=3
+2026-09-05 10:54:52,363 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:54:53,273 - INFO - Recherche mémoire Pinecone | query_len=813 | top_k=3
+2026-09-05 10:55:41,047 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 10:55:41,778 - INFO - Recherche mémoire Pinecone | query_len=319 | top_k=3
+2026-09-05 14:04:58,079 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:04:58,878 - INFO - Recherche mémoire Pinecone | query_len=342 | top_k=3
+2026-09-05 14:05:41,602 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:05:42,434 - INFO - Recherche mémoire Pinecone | query_len=140 | top_k=3
+2026-09-05 14:08:44,664 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:08:45,438 - INFO - Recherche mémoire Pinecone | query_len=185 | top_k=3
+2026-09-05 14:11:19,868 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:11:20,663 - INFO - Recherche mémoire Pinecone | query_len=185 | top_k=3
+2026-09-05 14:12:19,440 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:12:20,655 - INFO - Recherche mémoire Pinecone | query_len=126 | top_k=3
+2026-09-05 14:12:57,452 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:12:58,078 - INFO - Recherche mémoire Pinecone | query_len=140 | top_k=3
+2026-09-05 14:14:50,127 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:14:50,880 - INFO - Recherche mémoire Pinecone | query_len=425 | top_k=3
+2026-09-05 14:16:11,511 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:16:12,175 - INFO - Recherche mémoire Pinecone | query_len=425 | top_k=3
+2026-09-05 14:17:29,482 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:17:30,407 - INFO - Recherche mémoire Pinecone | query_len=157 | top_k=3
+2026-09-05 14:18:03,494 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:18:04,235 - INFO - Recherche mémoire Pinecone | query_len=163 | top_k=3
+2026-09-05 14:18:34,800 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:18:35,518 - INFO - Recherche mémoire Pinecone | query_len=137 | top_k=3
+2026-09-05 14:20:01,700 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:20:02,397 - INFO - Recherche mémoire Pinecone | query_len=509 | top_k=3
+2026-09-05 14:22:04,929 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:22:05,979 - INFO - Recherche mémoire Pinecone | query_len=428 | top_k=3
+2026-09-05 14:22:39,107 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:22:39,984 - INFO - Recherche mémoire Pinecone | query_len=140 | top_k=3
+2026-09-05 14:24:00,005 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:24:00,829 - INFO - Recherche mémoire Pinecone | query_len=416 | top_k=3
+2026-09-05 14:25:45,761 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:25:46,613 - INFO - Recherche mémoire Pinecone | query_len=436 | top_k=3
+2026-09-05 14:26:02,623 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:26:03,461 - INFO - Recherche mémoire Pinecone | query_len=140 | top_k=3
+2026-09-05 14:28:02,889 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:28:03,716 - INFO - Recherche mémoire Pinecone | query_len=178 | top_k=3
+2026-09-05 14:29:13,398 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:29:14,641 - INFO - Recherche mémoire Pinecone | query_len=167 | top_k=3
+2026-09-05 14:30:00,617 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:30:01,881 - INFO - Recherche mémoire Pinecone | query_len=144 | top_k=3
+2026-09-05 14:37:19,986 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:37:20,768 - INFO - Recherche mémoire Pinecone | query_len=124 | top_k=3
+2026-09-05 14:43:39,666 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:43:40,553 - INFO - Recherche mémoire Pinecone | query_len=815 | top_k=3
+2026-09-05 14:45:05,427 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:45:06,110 - INFO - Recherche mémoire Pinecone | query_len=309 | top_k=3
+2026-09-05 14:48:07,303 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:48:08,009 - INFO - Recherche mémoire Pinecone | query_len=240 | top_k=3
+2026-09-05 14:49:29,938 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 14:49:30,660 - INFO - Recherche mémoire Pinecone | query_len=240 | top_k=3
+2026-09-05 18:08:36,000 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 18:08:37,267 - INFO - Recherche mémoire Pinecone | query_len=272 | top_k=3
+2026-09-05 18:52:06,793 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-05 18:52:07,549 - INFO - Recherche mémoire Pinecone | query_len=3 | top_k=3

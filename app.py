@@ -43,7 +43,7 @@ from memory import (
     search_memory,
     save_to_memory,
     get_db_connection,
-    init_sync_log_table,  # Ajout de l'initialisation automatique sync_log
+    init_sync_log_table,
 )
 
 # Importation des listes de modèles depuis ai_service
@@ -158,7 +158,6 @@ if not logger.handlers:
 # INITIALISATION GLOBALE & CHARGEMENT MÉMOIRE
 # ==========================================
 
-# Initialisation préventive de la table de compensation sync_log
 try:
     init_sync_log_table()
     logger.info("Table de compensation sync_log initialisée avec succès.")
@@ -222,7 +221,7 @@ hermes.register_tool(
 )
 
 # ==========================================
-# PROMPT SYSTÈME GLOBAL & CADRE COGNITIF STRICT
+# PROMPT SYSTÈME GLOBAL & ANTI-HALLUCINATION
 # ==========================================
 
 BEK_GOLDEN_RULES = """
@@ -232,34 +231,35 @@ RÈGLES D'OR & COMPORTEMENT SYSTÈME (NON NÉGOCIABLES) :
 
 1. CONTRAINTE DÉVELOPPEUR UNIQUE & PRINCIPE KISS :
    - Le système est maintenu par UN SEUL développeur sur un VPS standard.
-   - INTERDICTION FORMELLE de proposer des architectures d'entreprise lourdes ou du sur-engineering (bannis : Kubernetes, Helm, Celery, RabbitMQ, Kafka, ELK, OpenTelemetry, Keycloak, Istio, SPIFFE).
-   - Privilégie exclusivement les solutions directes, sobres et natives (Python standard, Flask, Redis léger, scripts systemd, Neon DB, Pinecone).
+   - Privilégie exclusivement les solutions directes, sobres et natives.
 
-2. GESTION STRICTE DES ACTIONS ([ACTION:...]) :
-   - N'exécute JAMAIS d'action shell ou fichier ([ACTION:execute_command], [ACTION:read_file]) pour répondre à une question théorique, une demande d'analyse, un schéma ou une explication conceptuelle.
-   - Les balises [ACTION:...] sont STRICTEMENT réservées aux demandes explicites de création, modification ou exécution demandées par l'utilisateur.
+2. INTERDICTION ABSOLUE D'HALLUCINATION :
+   - Ne devine jamais, n'invente jamais de code, de fonction ou de fait non vérifié.
+   - Si un fichier est introuvable, si une information manque ou si un résultat système est vide, réponds factuellement : "Je ne trouve pas l'information ou le fichier demandé."
 
-3. BOUCLE COGNITIVE EN 4 TEMPS & ANTI-COMPLAISANCE :
-   - Étape 1 (Ancrage) : Synchronisation Pinecone / Neon DB. N'invente jamais de structure sans code source fourni.
-   - Étape 2 (Crible Critique) : Diagnostic direct, sans flatterie, orienté rentabilité et robustesse.
-   - Étape 3 (Méthode Chirurgicale) : Fourniture systématique du code COMPLET (ligne 1 à la fin), interdiction absolue des raccourcis ('// reste identique', '# suite').
-   - Étape 4 (Persistance & Sécurité) : Sandboxing strict, contrôle d'erreur défensif et intégrité opérationnelle.
+3. GESTION STRICTE DES ACTIONS ([ACTION:...]) :
+   - Tu es AVEUGLE sur le système de fichiers. Pour lister un répertoire ou lire un fichier, tu DOIS obligatoirement utiliser l'action [ACTION:execute_command]. Ne simule jamais un résultat de terminal.
+   - Les balises [ACTION:...] sont le SEUL moyen d'interagir avec le serveur. N'exécute JAMAIS d'action shell pour répondre à une question théorique.
 
-POSTURE : Réponds naturellement, directement et avec rigueur technique.
+4. INSTRUCTIONS SPÉCIALES IMAGE & ZIP :
+   - Analyse rigoureusement les retours système injectés suite aux uploads avant de rédiger ta réponse.
 
-ACTIONS DISPONIBLES (SUR DEMANDE EXPLICITE UNIQUEMENT) :
+ACTIONS DISPONIBLES :
    - [ACTION:write_file]{"filename": "...", "content": "..."}[/ACTION]
    - [ACTION:delete_file]{"filename": "..."}[/ACTION]
    - [ACTION:read_file]{"filename": "..."}[/ACTION]
    - [ACTION:execute_command]{"command": "..."}[/ACTION]
+   - [ACTION:execute_tmux_headless]{"session_name": "...", "command": "..."}[/ACTION]
    - [ACTION:extract_zip]{"zip_path": "...", "extract_to": "..."}[/ACTION]
    - [ACTION:create_zip]{"folder_path": "...", "output_zip": "..."}[/ACTION]
    - [ACTION:analyze_zip_content]{"zip_path": "..."}[/ACTION]
    - [ACTION:analyze_image]{"image_path": "...", "prompt": "...", "provider": "...", "model": "..."}[/ACTION]
+   - [ACTION:generate_image]{"prompt": "...", "filename": "...", "provider": "...", "model": "..."}[/ACTION]
+   - [ACTION:merge_and_edit_images]{"image_paths": ["img1", "img2"], "prompt": "..."}[/ACTION]
 """
 
 # ==========================================
-# UTILITAIRES & VISION MULTI-PROVIDER SÉCURISÉE
+# UTILITAIRES & VISION / GÉNÉRATION D'IMAGES
 # ==========================================
 
 def json_safe(value):
@@ -307,7 +307,6 @@ def get_api_key(key_name: str) -> str:
     return ""
 
 def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gemini", model: str = "") -> str:
-    """Analyse visuelle avec isolation stricte des providers."""
     target_path = os.path.abspath(os.path.join(WORKSPACE_DIR, image_path))
     if not os.path.exists(target_path):
         for d in [FILES_DIR, GENERATED_DIR]:
@@ -326,14 +325,11 @@ def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gem
         ext = image_path.split('.')[-1].lower()
         mime_map = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "webp": "image/webp", "gif": "image/gif"}
         mime_type = mime_map.get(ext, "image/png")
-
         provider = provider.lower() if provider else "gemini"
 
-        # 1. GOOGLE GEMINI STRICT
         if provider == "gemini":
             api_key = get_api_key("GEMINI_API_KEY")
             if not api_key: return "Erreur : GEMINI_API_KEY non configurée."
-            
             clean_model = model if model and "gemini" in model else "gemini-1.5-flash"
             url = f"https://generativelanguage.googleapis.com/v1/models/{clean_model}:generateContent?key={api_key}"
             payload = {
@@ -348,11 +344,9 @@ def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gem
             else:
                 return f"Erreur API Gemini Vision ({res.status_code}): {res.text}"
         
-        # 2. NVIDIA NIM STRICT
         elif provider == "nvidia":
             api_key = get_api_key("NVIDIA_API_KEY")
             if not api_key: return "Erreur : NVIDIA_API_KEY non configurée."
-            
             url = "https://integrate.api.nvidia.com/v1/chat/completions"
             active_model = model if model and "vision" in model else "meta/llama-3.2-90b-vision-instruct"
             headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
@@ -370,11 +364,9 @@ def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gem
             else:
                 return f"Erreur NVIDIA Vision ({res.status_code}): {res.text}"
 
-        # 3. GROQ STRICT
         elif provider == "groq":
             api_key = get_api_key("GROQ_API_KEY")
             if not api_key: return "Erreur : GROQ_API_KEY non configurée."
-            
             url = "https://api.groq.com/openai/v1/chat/completions"
             active_model = model if model and "vision" in model else "llama-3.2-11b-vision-preview"
             headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
@@ -391,16 +383,68 @@ def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gem
                 return res.json()["choices"][0]["message"]["content"]
             else:
                 return f"Erreur Groq Vision ({res.status_code}): {res.text}"
-        
         else:
             return f"Provider '{provider}' non supporté pour la vision."
-            
     except Exception as e:
         return f"Erreur lors du traitement de l'image : {str(e)}"
 
-# ==========================================
-# SYNCHRONISATION & SQL
-# ==========================================
+def generate_image_with_provider(prompt: str, provider: str = "gemini", model: str = "gemini-3.1-flash-image", output_filename: str = "") -> dict:
+    import urllib.parse
+    if not output_filename:
+        output_filename = f"gen_image_{uuid.uuid4().hex[:8]}.png"
+    save_path = os.path.abspath(os.path.join(GENERATED_DIR, secure_filename(output_filename)))
+
+    try:
+        if "gemini" in model.lower() or "image" in model.lower() or "banana" in model.lower():
+            provider = "gemini"
+        provider = provider.lower()
+        
+        if provider == "gemini":
+            api_key = get_api_key("GEMINI_API_KEY")
+            if not api_key: return {"status": "error", "message": "GEMINI_API_KEY non configurée."}
+
+            actual_api_model = "imagen-3.0-generate-002"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{actual_api_model}:predict?key={api_key}"
+            payload = {"instances": [{"prompt": prompt}], "parameters": {"sampleCount": 1}}
+            
+            res = requests.post(url, json=payload, timeout=60)
+            if res.status_code == 200:
+                data = res.json()
+                try:
+                    b64_data = data["predictions"][0]["bytesBase64Encoded"]
+                    image_bytes = base64.b64decode(b64_data)
+                    with open(save_path, "wb") as f:
+                        f.write(image_bytes)
+                    return {"status": "success", "filepath": save_path, "filename": output_filename}
+                except Exception:
+                    pass
+
+            fallback_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(prompt)}?nologo=true"
+            fallback_res = requests.get(fallback_url, timeout=30)
+            if fallback_res.status_code == 200:
+                with open(save_path, "wb") as f:
+                    f.write(fallback_res.content)
+                return {"status": "success", "filepath": save_path, "filename": output_filename, "message": "🎨 Image générée (via Fallback d'urgence)"}
+            else:
+                return {"status": "error", "message": f"Tous les moteurs ont échoué. Erreur de base : {res.text}"}
+        else:
+            return {"status": "error", "message": f"Provider '{provider}' non supporté."}
+    except Exception as e:
+        return {"status": "error", "message": f"Erreur technique génération : {str(e)}"}
+
+def merge_and_edit_images(image_paths: list, user_prompt: str, provider: str = "gemini", model: str = "gemini-3.1-flash-image") -> dict:
+    try:
+        analysis_results = []
+        for path in image_paths:
+            analysis = analyze_image_with_vision(path, "Décris cette image avec un niveau de détail extrême.", provider="gemini")
+            analysis_results.append(f"- Éléments de '{os.path.basename(path)}' : {analysis}")
+        super_prompt = (
+            f"Génère une image photoréaliste parfaite basée sur :\n{chr(10).join(analysis_results)}\n\n"
+            f"DIRECTIVE : {user_prompt}"
+        )
+        return generate_image_with_provider(super_prompt, provider=provider, model=model)
+    except Exception as e:
+        return {"status": "error", "message": f"Erreur fusion visuelle : {str(e)}"}
 
 def execute_database_sql(sql_query: str) -> dict:
     conn = get_db_connection()
@@ -419,29 +463,18 @@ def execute_database_sql(sql_query: str) -> dict:
         return {"status": "success", "type": "mutation", "affected_rows": cur.rowcount}
     except Exception as exc:
         if conn:
-            try:
-                conn.rollback()
-            except Exception:
-                pass
+            try: conn.rollback()
+            except Exception: pass
         return {"status": "error", "message": str(exc)}
     finally:
         if cur:
-            try:
-                cur.close()
-            except Exception:
-                pass
+            try: cur.close()
+            except Exception: pass
         if conn:
-            try:
-                conn.close()
-            except Exception:
-                pass
-
-# ==========================================
-# GESTION AVANCÉE DES OUTILS & EXÉCUTION
-# ==========================================
+            try: conn.close()
+            except Exception: pass
 
 def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
-    # ACTIONS FICHIERS SUR LE DISQUE
     if action_name in ("write_file", "save_file", "create_file"):
         filename = parameters.get("filename", "generated/agent_output.txt")
         filepath = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
@@ -450,7 +483,7 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             content = parameters.get("content", "")
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(content)
-            return {"status": "success", "message": f"Fichier enregistré avec succès : {filepath}"}
+            return {"status": "success", "message": f"Fichier enregistré : {filepath}"}
         except Exception as e:
             return {"status": "error", "message": f"Erreur écriture : {str(e)}"}
             
@@ -466,8 +499,8 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 except Exception as e:
                     return {"status": "error", "message": f"Erreur suppression : {str(e)}"}
         if found:
-            return {"status": "success", "message": f"Fichier {filename} supprimé avec succès."}
-        return {"status": "error", "message": "Fichier introuvable sur le disque."}
+            return {"status": "success", "message": f"Fichier {filename} supprimé."}
+        return {"status": "error", "message": "Fichier introuvable."}
             
     elif action_name == "read_file":
         filename = parameters.get("filename", "")
@@ -483,17 +516,13 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 with open(target_path, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()[-3000:]
                 return {"status": "success", "message": f"Contenu de {target_path} :\n{content}"}
-            return {"status": "error", "message": "Fichier introuvable sur le disque."}
+            return {"status": "error", "message": "Fichier introuvable."}
         except Exception as e:
             return {"status": "error", "message": f"Erreur lecture : {str(e)}"}
 
-    # ==========================================
-    # GESTION DES ZIP
-    # ==========================================
     elif action_name == "extract_zip":
         zip_filename = parameters.get("zip_path", "")
         extract_to_folder = parameters.get("extract_to", "generated/extracted_project")
-        
         zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
         if not os.path.exists(zip_path):
             for d in [FILES_DIR, GENERATED_DIR]:
@@ -501,42 +530,28 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 if os.path.exists(alt):
                     zip_path = alt
                     break
-        
         target_dir = os.path.abspath(os.path.join(WORKSPACE_DIR, extract_to_folder))
         try:
             if not os.path.exists(zip_path):
                 return {"status": "error", "message": f"Archive ZIP introuvable : {zip_filename}"}
-            
             os.makedirs(target_dir, exist_ok=True)
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(target_dir)
-            
-            extracted_files = []
-            for root, dirs, files in os.walk(target_dir):
-                for file in files:
-                    extracted_files.append(os.path.relpath(os.path.join(root, file), target_dir))
-            
-            return {
-                "status": "success", 
-                "message": f"Archive ZIP extraite avec succès dans `{extract_to_folder}`. Fichiers découverts ({len(extracted_files)}) : {extracted_files[:15]}"
-            }
+            return {"status": "success", "message": f"Archive extraite dans `{extract_to_folder}`."}
         except Exception as e:
             return {"status": "error", "message": f"Erreur extraction ZIP : {str(e)}"}
 
     elif action_name == "create_zip":
         folder_name = parameters.get("folder_path", "generated/ia_project")
         output_zip_name = parameters.get("output_zip", "generated/export_projet.zip")
-        
         folder_path = os.path.abspath(os.path.join(WORKSPACE_DIR, folder_name))
         output_path = os.path.abspath(os.path.join(WORKSPACE_DIR, output_zip_name))
-        
         try:
             if not os.path.exists(folder_path):
                 return {"status": "error", "message": f"Dossier introuvable : {folder_name}"}
-            
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
             shutil.make_archive(output_path.replace('.zip', ''), 'zip', folder_path)
-            return {"status": "success", "message": f"Archive ZIP créée avec succès : {output_zip_name}"}
+            return {"status": "success", "message": f"Archive créée : {output_zip_name}"}
         except Exception as e:
             return {"status": "error", "message": f"Erreur création ZIP : {str(e)}"}
 
@@ -552,7 +567,6 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         try:
             if not os.path.exists(zip_path):
                 return {"status": "error", "message": f"Archive introuvable : {zip_filename}"}
-            
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 namelist = zip_ref.namelist()
                 file_summaries = {}
@@ -561,52 +575,80 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                         with zip_ref.open(name) as f:
                             content = f.read(1500).decode('utf-8', errors='ignore')
                             file_summaries[name] = content[:300] + "..."
-                            
-            return {
-                "status": "success", 
-                "message": f"Analyse structurelle de l'archive ZIP réussie. Fichiers inclus : {namelist[:20]}\nAperçu du contenu : {json_safe(file_summaries)}"
-            }
+            return {"status": "success", "message": f"Analyse ZIP réussie. Fichiers : {namelist[:20]}\nAperçu : {json_safe(file_summaries)}"}
         except Exception as e:
             return {"status": "error", "message": f"Erreur analyse ZIP : {str(e)}"}
 
-    # ==========================================
-    # ANALYSE VISION MULTI-FOURNISSEUR
-    # ==========================================
     elif action_name == "analyze_image":
         image_path = parameters.get("image_path", "")
-        prompt = parameters.get("prompt", "Analyse cette image et décris précisément tout ce qu'elle contient.")
+        prompt = parameters.get("prompt", "Analyse cette image.")
         provider = parameters.get("provider", "gemini")
         model = parameters.get("model", "gemini-1.5-flash")
-        
         vision_result = analyze_image_with_vision(image_path, prompt, provider=provider, model=model)
-        
         if "Erreur" in vision_result or "Error" in vision_result:
-            return {
-                "status": "error", 
-                "message": f"ÉCHEC TECHNIQUE DE LA VISION: {vision_result}\n[ALERTE SYSTEME]: Tu es aveugle à cause de cette erreur. TU NE DOIS SOUS AUCUN PRÉTEXTE INVENTER UNE DESCRIPTION. Dis immédiatement à l'utilisateur que l'erreur technique t'empêche de voir l'image."
-            }
-            
-        return {"status": "success", "message": f"Analyse Vision de l'image `{image_path}` réussie :\n{vision_result}"}
+            return {"status": "error", "message": f"ÉCHEC VISION: {vision_result}\n[ALERTE SYSTEME]: Tu es aveugle à cause de cette erreur. NE PAS INVENTER DE DESCRIPTION."}
+        return {"status": "success", "message": f"Analyse Vision réussie :\n{vision_result}"}
 
-    # EXÉCUTION DE COMMANDES & TESTS EN ARRIÈRE-PLAN
+    elif action_name == "generate_image":
+        prompt = parameters.get("prompt", "")
+        filename = parameters.get("filename", f"generated_{uuid.uuid4().hex[:6]}.png")
+        provider = parameters.get("provider", "gemini")
+        model = parameters.get("model", "gemini-3.1-flash-image")
+        if not prompt: return {"status": "error", "message": "Le prompt est obligatoire."}
+        gen_result = generate_image_with_provider(prompt, provider=provider, model=model, output_filename=filename)
+        if gen_result.get("status") == "error":
+            return {"status": "error", "message": f"ÉCHEC GÉNÉRATION: {gen_result.get('message')}"}
+        final_filename = gen_result.get('filename')
+        return {"status": "success", "message": f"🎨 **Image générée !**\n\n![{final_filename}](/api/download/{final_filename})"}
+
+    elif action_name == "merge_and_edit_images":
+        image_paths = parameters.get("image_paths", [])
+        prompt = parameters.get("prompt", "")
+        provider = parameters.get("provider", "gemini")
+        model = parameters.get("model", "gemini-3.1-flash-image")
+        if not image_paths or not prompt:
+            return {"status": "error", "message": "Fournis des images et un prompt."}
+        gen_result = merge_and_edit_images(image_paths, prompt, provider=provider, model=model)
+        if gen_result.get("status") == "error":
+            return {"status": "error", "message": f"ÉCHEC FUSION: {gen_result.get('message')}"}
+        final_filename = gen_result.get('filename')
+        return {"status": "success", "message": f"🪄 **Fusion réussie !**\n\n![{final_filename}](/api/download/{final_filename})"}
+
+    # ==========================================
+    # EXÉCUTION DE COMMANDES RAPIDES (BLOQUANT)
+    # ==========================================
     elif action_name in ("execute_command", "run_script", "run_tests"):
-        command = parameters.get("command", "python3 -m unittest")
+        command = parameters.get("command", "ls -la")
         try:
-            res = subprocess.run(
-                command,
-                shell=True,
-                cwd=WORKSPACE_DIR,
-                capture_output=True,
-                text=True,
-                timeout=45
-            )
+            res = subprocess.run(command, shell=True, cwd=WORKSPACE_DIR, capture_output=True, text=True, timeout=15)
             output = (res.stdout + "\n" + res.stderr).strip()
+            return {"status": "success" if res.returncode == 0 else "error", "message": f"Commande exécutée :\n{output[-2500:]}"}
+        except Exception as e:
+            return {"status": "error", "message": f"Erreur exécution rapide : {str(e)}"}
+            
+    # ==========================================
+    # EXÉCUTION TMUX HEADLESS (TÂCHES LOURDES)
+    # ==========================================
+    elif action_name == "execute_tmux_headless":
+        session_name = parameters.get("session_name", f"job_{uuid.uuid4().hex[:6]}")
+        command = parameters.get("command", "")
+        
+        if not command:
+            return {"status": "error", "message": "La commande ne peut pas être vide."}
+            
+        # On enveloppe la commande dans Tmux pour la détacher totalement du serveur Flask
+        # Les logs de la commande seront sauvegardés dans un fichier texte pour que l'agent puisse les lire plus tard
+        log_file = os.path.join(GENERATED_DIR, f"{session_name}_logs.txt")
+        tmux_cmd = f"tmux new-session -d -s {session_name} '{command} > {log_file} 2>&1'"
+        
+        try:
+            subprocess.run(tmux_cmd, shell=True, cwd=WORKSPACE_DIR, check=True)
             return {
-                "status": "success" if res.returncode == 0 else "error",
-                "message": f"Commande exécutée (Code {res.returncode}) :\n{output[-2500:]}"
+                "status": "success", 
+                "message": f"🚀 Tâche lourde lancée en arrière-plan avec succès !\n- Session Tmux : `{session_name}`\n- Fichier de logs (à lire plus tard si besoin) : `{log_file}`\nLe système n'est pas bloqué."
             }
         except Exception as e:
-            return {"status": "error", "message": f"Erreur exécution arrière-plan : {str(e)}"}
+            return {"status": "error", "message": f"Erreur critique Tmux Headless : {str(e)}"}
             
     return {"status": "success", "message": "Action traitée."}
 
@@ -647,7 +689,6 @@ def get_config():
         "skills": _build_skills_index(),
     })
 
-# --- GESTION ROBUSTE DE LA MÉMOIRE VECTORIELLE ---
 @app.route("/api/memory", methods=["GET", "POST"])
 def api_memory():
     try:
@@ -657,49 +698,31 @@ def api_memory():
             query = data.get("query", data.get("q", ""))
             content = data.get("content", data.get("text", ""))
             if content:
-                try:
-                    save_to_memory(content)
-                except Exception as ex:
-                    logger.warning("save_to_memory failed: %s", ex)
+                try: save_to_memory(content)
+                except Exception as ex: logger.warning("save_to_memory failed: %s", ex)
             try:
                 if callable(search_memory):
-                    try:
-                        results = search_memory(query) if query else search_memory("")
-                    except TypeError:
-                        results = search_memory()
-            except Exception as ex:
-                logger.warning("search_memory failed on POST: %s", ex)
+                    results = search_memory(query) if query else search_memory("")
+            except Exception as ex: logger.warning("search_memory failed: %s", ex)
         else:
             try:
                 if callable(search_memory):
-                    try:
-                        results = search_memory("")
-                    except TypeError:
-                        results = search_memory()
-            except Exception as ex:
-                logger.warning("search_memory failed on GET: %s", ex)
+                    results = search_memory("")
+            except Exception as ex: logger.warning("search_memory failed: %s", ex)
 
-        if results is None:
-            results = []
-        if not isinstance(results, list):
-            results = [results]
+        if results is None: results = []
+        if not isinstance(results, list): results = [results]
 
         formatted_memories = []
         for item in results:
             if isinstance(item, dict):
                 c_val = item.get("content", item.get("text", ""))
                 if c_val and str(c_val).strip():
-                    formatted_memories.append({
-                        "content": str(c_val),
-                        "timestamp": item.get("timestamp", datetime.now().isoformat())
-                    })
+                    formatted_memories.append({"content": str(c_val), "timestamp": item.get("timestamp", datetime.now().isoformat())})
             elif item is not None:
                 val_str = str(item).strip()
                 if val_str:
-                    formatted_memories.append({
-                        "content": val_str,
-                        "timestamp": datetime.now().isoformat()
-                    })
+                    formatted_memories.append({"content": val_str, "timestamp": datetime.now().isoformat()})
 
         safe_results = json_safe(formatted_memories)
         total_count = len(safe_results) if safe_results else 5
@@ -709,32 +732,13 @@ def api_memory():
             "pinecone_status": "Connecté & Opérationnel",
             "neon_state_entries": total_count,
             "system_rules_synced": True,
-            "details_crm": "Tables connectées (Actif)",
-            "details_opps": "Synchronisées",
-            "neon_db_totals": total_count,
             "memory": safe_results,
-            "memories": safe_results,
-            "items": safe_results,
-            "data": safe_results
+            "memories": safe_results
         })
     except Exception as e:
         logger.error("Erreur API Memory : %s", e)
-        return jsonify({
-            "status": "success",
-            "pinecone_status": "Erreur",
-            "neon_state_entries": 0,
-            "system_rules_synced": False,
-            "details_crm": "Erreur",
-            "details_opps": "Erreur",
-            "neon_db_totals": 0,
-            "memory": [],
-            "memories": [],
-            "items": [],
-            "data": [],
-            "message": str(e)
-        }), 200
+        return jsonify({"status": "success", "pinecone_status": "Erreur", "memory": []}), 200
 
-# --- GESTION DES FICHIERS ---
 @app.route("/api/files", methods=["GET"])
 def list_files():
     files = []
@@ -744,11 +748,7 @@ def list_files():
                 if not filename.startswith("."):
                     filepath = os.path.join(directory, filename)
                     if os.path.isfile(filepath):
-                        files.append({
-                            "name": filename,
-                            "size": os.path.getsize(filepath),
-                            "folder": os.path.basename(directory)
-                        })
+                        files.append({"name": filename, "size": os.path.getsize(filepath), "folder": os.path.basename(directory)})
     return jsonify({"files": files})
 
 @app.route("/api/download/<filename>", methods=["GET"])
@@ -773,10 +773,29 @@ def delete_single_file(filename):
             except Exception as e:
                 return jsonify({"error": str(e)}), 500
     if deleted:
-        return jsonify({"status": "success", "message": f"{filename} supprimé avec succès."})
+        return jsonify({"status": "success", "message": f"{filename} supprimé."})
     return jsonify({"error": "Fichier introuvable"}), 404
 
-# --- UPLOAD SÉCURISÉ STREAMING DIRECT VERS DISQUE (64 KiB CHUNKS) ---
+# ==========================================
+# FIX: ROUTE POUR TOUT SUPPRIMER (DELETE-ALL)
+# ==========================================
+@app.route("/api/files/delete-all", methods=["POST"])
+def delete_all_files():
+    deleted_count = 0
+    for directory in [FILES_DIR, GENERATED_DIR]:
+        if os.path.exists(directory):
+            for filename in os.listdir(directory):
+                if not filename.startswith("."):
+                    target = os.path.join(directory, filename)
+                    if os.path.isfile(target):
+                        try:
+                            os.remove(target)
+                            deleted_count += 1
+                        except Exception as e:
+                            logger.warning(f"Impossible de supprimer {target}: {e}")
+    return jsonify({"status": "success", "message": f"{deleted_count} fichiers supprimés avec succès."})
+
+
 @app.route("/api/upload", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
@@ -784,32 +803,25 @@ def upload_file():
     file = request.files["file"]
     if not file or file.filename == "":
         return jsonify({"error": "Nom de fichier vide"}), 400
-    
     raw_filename = file.filename
     if "/" in raw_filename or "\\" in raw_filename:
         raw_filename = os.path.basename(raw_filename)
-        
     filename = secure_filename(raw_filename)
     if not filename:
         ext = os.path.splitext(raw_filename)[1]
         filename = f"upload_{uuid.uuid4().hex[:8]}{ext}"
-        
     save_path = os.path.join(FILES_DIR, filename)
-    
-    # Streaming direct par blocs de 64 Ko : protège la RAM de tout OOM kill[cite: 1]
     try:
         with open(save_path, "wb") as dst:
             for chunk in iter(lambda: file.stream.read(64 * 1024), b""):
                 dst.write(chunk)
         return jsonify({"status": "success", "filename": filename, "folder": "uploads"})
     except Exception as e:
-        logger.error("Erreur lors du streaming upload : %s", e)
+        logger.error("Erreur upload : %s", e)
         if os.path.exists(save_path):
-            try:
-                os.remove(save_path)
-            except Exception:
-                pass
-        return jsonify({"error": f"Erreur enregistrement disque : {str(e)}"}), 500
+            try: os.remove(save_path)
+            except Exception: pass
+        return jsonify({"error": f"Erreur enregistrement : {str(e)}"}), 500
 
 @app.route("/api/connectors", methods=["GET"])
 def get_connectors():
@@ -818,25 +830,21 @@ def get_connectors():
         db_conn = get_db_connection()
         db_status = "Actif" if db_conn else "Erreur de connexion"
         if db_conn:
-            try:
-                db_conn.close()
-            except Exception:
-                pass
+            try: db_conn.close()
+            except Exception: pass
         connectors.append({"name": "Neon DB (PostgreSQL)", "type": "Database Principale", "latency_ms": 12, "status": db_status})
         connectors.append({"name": "Vision Multimodal Engine", "type": "Analyse d'Images", "latency_ms": 15, "status": "Actif"})
         connectors.append({"name": "ZIP Archive Manager", "type": "Extraction / Compression", "latency_ms": 4, "status": "Actif"})
-        
         for env_key, name in [("GROQ_API_KEY", "Groq Cloud"), ("NVIDIA_API_KEY", "NVIDIA NIM"), ("GEMINI_API_KEY", "Google Gemini"), ("OPENROUTER_API_KEY", "OpenRouter")]:
             is_active = bool(get_api_key(env_key))
             connectors.append({"name": name, "type": "Fournisseur LLM", "latency_ms": 120 if is_active else 0, "status": "Actif" if is_active else "Non Configuré"})
-
         return jsonify({"connectors": connectors})
     except Exception as e:
-        logger.error("Erreur API Connectors : %s", e)
+        logger.error("Erreur Connectors : %s", e)
         return jsonify({"connectors": []}), 200
 
 # ==========================================
-# CHAT STREAMING OPTIMISÉ (AVEC HEADROOM)
+# CHAT STREAMING OPTIMISÉ (HISTORIQUE ÉLARGI & ANTI-HALLUCINATION)
 # ==========================================
 
 @app.route("/api/chat", methods=["POST"])
@@ -846,20 +854,74 @@ def chat():
     provider = data.get("provider", "groq")
     model = data.get("model", "openai/gpt-oss-120b")
 
-    trimmed_messages = [m for m in messages[-2:] if isinstance(m, dict)]
+    # 1. Historique étendu (Anti-Amnésie)
+    trimmed_messages = [m for m in messages[-6:] if isinstance(m, dict)]
+
+    last_user_query = ""
+
+    # 2. Pré-traitement Actions Frontend (Vision / ZIP)
+    if trimmed_messages:
+        last_msg = trimmed_messages[-1]
+        if last_msg.get("role") == "user":
+            last_user_query = last_msg.get("content", "")
+            if "[ACTION:" in last_user_query:
+                content = last_user_query
+                
+                def process_frontend_action(match):
+                    act_name = match.group(1)
+                    raw_payload = match.group(2).strip()
+                    try:
+                        params = json.loads(raw_payload)
+                    except Exception:
+                        try: params = ast.literal_eval(raw_payload)
+                        except Exception: params = {}
+                    params["provider"] = provider
+                    params["model"] = model
+                    exec_res = execute_agent_crm_tool(act_name, params)
+                    return f"\n\n[SYSTÈME - RÉSULTAT DU FICHIER JOINT ({act_name})] :\n{exec_res.get('message', 'Fichier lu avec succès.')}\n"
+                
+                new_content = re.sub(r"\[ACTION:(\w+)\](.*?)\[/ACTION\]", process_frontend_action, content, flags=re.DOTALL)
+                new_content = re.sub(r"\(INSTRUCTION SYSTEME : L'utilisateur a attaché.*?\)", "", new_content, flags=re.DOTALL)
+                new_content = re.sub(r"\(INSTRUCTION SYSTEME : Utilise .*?\)", "", new_content, flags=re.DOTALL)
+                last_msg["content"] = new_content.strip()
+
+    # =========================================================================
+    # 🧱 BRIQUE DE LIAISON DÉFINITIVE (MÉMOIRE + INTELLIGENCE) - NE PLUS MODIFIER
+    # =========================================================================
+    dynamic_system_prompt = BEK_GOLDEN_RULES.strip()
+
+    if last_user_query:
+        # A. Injection Pinecone (Cerveau Long Terme)
+        try:
+            logger.info("Interrogation Pinecone...")
+            memory_context = search_memory(last_user_query, top_k=3)
+            if memory_context:
+                dynamic_system_prompt += f"\n\n[MÉMOIRE PINECONE RÉCUPÉRÉE - UTILISE CES FAITS STRICTEMENT] :\n{memory_context}"
+        except Exception as e:
+            logger.warning(f"Erreur d'injection mémoire : {e}")
+
+        # B. Injection Hermes GOAP (Planification & Logique)
+        try:
+            logger.info("Appel Hermes GOAP...")
+            plan = hermes.goap_planner(last_user_query)
+            if plan:
+                filtered_plan = [t for t in plan if t.get("tool") != "default_llm"]
+                if filtered_plan:
+                    dynamic_system_prompt += f"\n\n[PLAN D'ACTION HERMES (SKILLS DISPONIBLES)] :\nL'orchestrateur recommande ces actions. Si tu as besoin d'utiliser un outil, génère la balise correspondante.\n{json.dumps(filtered_plan, ensure_ascii=False, indent=2)}"
+        except Exception as e:
+            logger.warning(f"Erreur d'injection Hermes : {e}")
+    # =========================================================================
 
     exec_messages = [
-        {"role": "system", "content": BEK_GOLDEN_RULES.strip()}
+        {"role": "system", "content": dynamic_system_prompt}
     ] + trimmed_messages
 
-    # --- INJECTION HEADROOM ---
     if headroom_compress:
         try:
             compressed_res = headroom_compress(exec_messages)
             exec_messages = compressed_res.messages
         except Exception as e:
             logger.warning("Erreur Headroom compression : %s", e)
-    # --------------------------
 
     def generate_proxy():
         full_text_accumulated = []
@@ -868,7 +930,7 @@ def chat():
                 messages=exec_messages,
                 provider=provider,
                 model=model,
-                temperature=0.2,
+                temperature=0.0,  # RIGUEUR EXTRÊME : 0.0
                 max_tokens=2048,
             ):
                 if "chunk" in item:
@@ -882,11 +944,9 @@ def chat():
                         act_name = match.group(1)
                         raw_payload = match.group(2).strip()
                         params = {}
-                        try:
-                            params = json.loads(raw_payload)
+                        try: params = json.loads(raw_payload)
                         except Exception:
-                            try:
-                                params = ast.literal_eval(raw_payload)
+                            try: params = ast.literal_eval(raw_payload)
                             except Exception:
                                 fn_match = re.search(r'["\']filename["\']\s*:\s*["\']([^"\']+)["\']', raw_payload)
                                 ct_match = re.search(r'["\']content["\']\s*:\s*["\'](.*)["\']\s*}?$', raw_payload, re.DOTALL)
@@ -894,10 +954,10 @@ def chat():
                                     "filename": fn_match.group(1) if fn_match else "generated/output.py",
                                     "content": ct_match.group(1) if ct_match else raw_payload
                                 }
-
                         params["provider"] = provider
                         params["model"] = model
-
+                        
+                        # Exécution des outils via le CRM local
                         exec_res = execute_agent_crm_tool(act_name, params)
                         notice = f"\n\n⚡ **[Action Exécutée]** `{act_name}` : {exec_res.get('message', 'Opération réussie')}"
                         yield f"data: {json.dumps({'chunk': notice}, ensure_ascii=False)}\n\n"

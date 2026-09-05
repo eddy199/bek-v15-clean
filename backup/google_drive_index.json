@@ -1,0 +1,82 @@
+[
+  {
+    "id": "drv_1",
+    "name": "Q4OS pour PC anciens Acer Aspire",
+    "type": "doc",
+    "owner": "moi",
+    "modified": "00:13",
+    "size": "83 Ko",
+    "tab": "recent",
+    "content": "Guide d'optimisation Q4OS pour PC Acer Aspire sous Debian 64-bit avec environnement ultra-léger."
+  },
+  {
+    "id": "drv_2",
+    "name": "Guide de réplication pour agents IA",
+    "type": "doc",
+    "owner": "moi",
+    "modified": "10 juil. 2026",
+    "size": "3 Ko",
+    "tab": "mydrive",
+    "content": "Protocole de réplication et persistance des agents IA multi-providers."
+  },
+  {
+    "id": "drv_3",
+    "name": "guide-unlimited-claude",
+    "type": "doc",
+    "owner": "moi",
+    "modified": "1 juil. 2026",
+    "size": "3 Ko",
+    "tab": "mydrive",
+    "content": "Documentation d'optimisation d'API et tokens d'inférence."
+  },
+  {
+    "id": "drv_4",
+    "name": "LE CERVEAU ATYPIQUE - Manuscrit",
+    "type": "doc",
+    "owner": "moi",
+    "modified": "29 juin 2026",
+    "size": "4 Ko",
+    "tab": "mydrive",
+    "content": "Manuscrit et notes de recherche sur l'architecture cognitive."
+  },
+  {
+    "id": "drv_5",
+    "name": "Le Cerveau Atypique - Pack Éditeur",
+    "type": "doc",
+    "owner": "moi",
+    "modified": "29 juin 2026",
+    "size": "5 Ko",
+    "tab": "mydrive",
+    "content": "Éléments et annexes éditeur pour publication."
+  },
+  {
+    "id": "drv_6",
+    "name": "Les 250 Thématiques Secrètes",
+    "type": "sheet",
+    "owner": "moi",
+    "modified": "26 juin 2026",
+    "size": "14 Ko",
+    "tab": "mydrive",
+    "content": "Tableau récapitulatif des 250 thématiques clés d'automatisation."
+  },
+  {
+    "id": "drv_7",
+    "name": "CRM Architecture & Database Schema",
+    "type": "code",
+    "owner": "partage",
+    "modified": "15 août 2026",
+    "size": "45 Ko",
+    "tab": "shared",
+    "content": "Schéma relationnel PostgreSQL / Prisma pour CRM persistants."
+  },
+  {
+    "id": "drv_8",
+    "name": "Suivi des automatisations et tâches",
+    "type": "sheet",
+    "owner": "moi",
+    "modified": "Hier",
+    "size": "12 Ko",
+    "tab": "starred",
+    "content": "Journal d'exécution des tâches d'arrière-plan."
+  }
+]

@@ -20,12 +20,17 @@
         dropdownMenu: document.getElementById('dropdownMenu'),
         uploadBtn: document.getElementById('uploadBtn'),
         uploadMenu: document.getElementById('uploadMenu'),
+        btnImportFile: document.getElementById('btnImportFile'),
+        btnImportImage: document.getElementById('btnImportImage'),
         hiddenFileInput: document.getElementById('hiddenFileInput'),
         hiddenImageInput: document.getElementById('hiddenImageInput'),
+        micBtn: document.getElementById('micBtn'),
         filePreviewBar: document.getElementById('filePreviewBar'),
         convList: document.getElementById('convList'),
         newChatBtn: document.getElementById('newChatBtn'),
-        modelBadge: document.getElementById('modelBadge')
+        modelBadge: document.getElementById('modelBadge'),
+        lightbox: document.getElementById('imageLightbox'),
+        lightboxImg: document.getElementById('lightboxImg')
     };
 
     let currentProvider = 'groq';
@@ -38,11 +43,9 @@
     let attachedFiles = [];
     let activeController = null;
     let globalSkills = [];
-    let loadedSubCRMData = null;
 
     window.__codeSnippetsRegistry = window.__codeSnippetsRegistry || {};
 
-    // --- CHARGEMENT DU MOTEUR DE COLORATION SYNTAXIQUE (HIGHLIGHT.JS) ---
     function loadSyntaxHighlighter() {
         if (!document.getElementById('hljs-style')) {
             const link = document.createElement('link');
@@ -67,14 +70,12 @@
         }
     }
 
-    // --- FONCTIONS CLOUD / CLIPBOARD COPIE STYLE GEMINI ---
     window.copyWholeMessage = async function(btn) {
         if (!btn) return;
         const msgEl = btn.closest('.message');
         if (!msgEl) return;
         const bubble = msgEl.querySelector('.msg-bubble');
         if (!bubble) return;
-
         const textToCopy = bubble.innerText.trim();
         try {
             await navigator.clipboard.writeText(textToCopy);
@@ -86,7 +87,7 @@
                 btn.style.borderColor = '';
             }, 2000);
         } catch (err) {
-            console.error('Erreur lors de la copie du message :', err);
+            console.error('Erreur :', err);
         }
     };
 
@@ -152,6 +153,17 @@
                 0%, 100% { opacity: 1; }
                 50% { opacity: 0.2; }
             }
+            @keyframes pulse-mic {
+                0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+                70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            }
+            .recording-active {
+                color: #ef4444 !important;
+                background: rgba(239, 68, 68, 0.2) !important;
+                border-color: #ef4444 !important;
+                animation: pulse-mic 1.5s infinite !important;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -170,7 +182,7 @@
         } else {
             createNewConversation();
         }
-        appendSystemMessage('🟢 BEK-v15.2 HYBRID opérationnel avec toutes les briques actives (Uploads 300Mo, Pinecone, Neon & Actions).');
+        appendSystemMessage('🟢 BEK-v15.3 HYBRID opérationnel avec toutes les briques actives (Uploads 300Mo, Pinecone, Neon, Audio & Actions).');
     }
 
     async function loadConfig() {
@@ -201,7 +213,6 @@
         }
     }
 
-    // --- RECHARGEMENT DYNAMIQUE DES FICHIERS ---
     window.loadFilesList = async function() {
         try {
             const res = await fetch(`${API_BASE}/api/files?t=${Date.now()}`);
@@ -243,45 +254,49 @@
         if (!confirm(`Confirmer la suppression définitive de : ${filename} ?`)) return;
         try {
             const res = await fetch(`${API_BASE}/api/files/${encodeURIComponent(filename)}`, { method: 'DELETE' });
-            const json = await res.json();
-            if (res.ok) {
-                await loadFilesList();
-            } else {
-                alert(json.error || "Erreur lors de la suppression");
-            }
+            if (res.ok) await loadFilesList();
         } catch (e) {
-            alert("Erreur réseau lors de la suppression");
+            alert("Erreur réseau");
         }
     };
 
+    // FIX: La fonction appelle maintenant correctement la nouvelle route Backend
     window.deleteAllProjectFiles = async function() {
-        if (!confirm("Voulez-vous vraiment TOUT supprimer dans uploads et generated ?")) return;
+        if (!confirm("Voulez-vous vraiment TOUT supprimer dans la session (uploads et fichiers générés) ?")) return;
         try {
             const res = await fetch(`${API_BASE}/api/files/delete-all`, { method: 'POST' });
-            const json = await res.json();
             if (res.ok) {
                 await loadFilesList();
             } else {
-                alert(json.error || "Erreur de purge");
+                alert("Erreur serveur lors de la suppression des fichiers.");
             }
         } catch (e) {
             alert("Erreur réseau");
         }
     };
 
+    // FIX: UI en Français et note explicative pour les descriptions anglaises
     function populateSkillsView(skills) {
         const view = document.getElementById('viewSkills');
         if (!view) return;
-        view.innerHTML = `<h2>Compétences Actives (${skills.length})</h2><div style="margin-top:16px; display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px;">` +
+        view.innerHTML = `
+            <h2>Compétences Actives (${skills.length})</h2>
+            <p style="color:var(--text-dim); font-size:12.5px; margin-bottom:18px; background:rgba(255,255,255,0.05); padding:10px 14px; border-radius:8px;">
+                💡 <strong>Note :</strong> Les noms et descriptions des modules proviennent de la base de données open-source mondiale. Ils sont affichés dans leur langue d'origine (Anglais).
+            </p>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px;">` +
             skills.map(s => `
                 <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:14px; border-radius:8px; display:flex; flex-direction:column; justify-content:space-between;">
                     <div>
                         <strong style="color:var(--text-main); font-size:14px;">${escapeHtml(s.name)}</strong>
-                        <p style="color:var(--text-dim); font-size:12px; margin: 6px 0 10px;">${escapeHtml(s.description || 'Skill autonome')}</p>
+                        <p style="color:var(--text-dim); font-size:12px; margin: 6px 0 10px;">
+                            <span style="background:rgba(255,255,255,0.1); padding:2px 4px; border-radius:4px; font-size:9px; margin-right:4px;">EN</span>
+                            ${escapeHtml(s.description || 'Module externe (Description non disponible)')}
+                        </p>
                     </div>
                     <div style="margin-top: 6px;">
-                        <button onclick="insertPromptToChat('${s.command.startsWith('/') ? s.command : '/' + s.command}')" style="cursor:pointer; background:rgba(92,156,230,0.15); border:1px solid rgba(92,156,230,0.4); color:var(--accent-blue); padding:4px 10px; border-radius:6px; font-family:'Ubuntu Mono', monospace; font-size:12px; font-weight:bold; width:100%; text-align:left;">
-                            ${s.command.startsWith('/') ? s.command : '/' + s.command} ➜
+                        <button onclick="insertPromptToChat('${s.command.startsWith('/') ? s.command : '/' + s.command}')" style="cursor:pointer; background:rgba(92,156,230,0.15); border:1px solid rgba(92,156,230,0.4); color:var(--accent-blue); padding:6px 10px; border-radius:6px; font-family:'Ubuntu Mono', monospace; font-size:12px; font-weight:bold; width:100%; text-align:left; transition:0.2s;">
+                            Exécuter : ${s.command.startsWith('/') ? s.command : '/' + s.command} ➜
                         </button>
                     </div>
                 </div>
@@ -314,8 +329,6 @@
                         <p style="color:var(--text-dim); font-size:13px; margin-top:8px;">Indexation vectorielle des conversations et règles d'or synchronisée en temps réel.</p>
                         <div style="margin-top:12px; font-family:monospace; font-size:12px; color:var(--accent-blue);">
                             - Entités Neon DB totales : ${data.neon_state_entries}<br>
-                            &nbsp;&nbsp;↳ <em>${data.details_crm}</em><br>
-                            &nbsp;&nbsp;↳ <em>${data.details_opps}</em><br>
                             - Règles BEK synchronisées : ${data.system_rules_synced ? 'OUI' : 'NON'}
                         </div>
                     </div>
@@ -395,8 +408,8 @@
                     const view = document.getElementById('viewMatrixBek');
                     view.classList.add('active');
                     view.style.display = 'block';
-                    loadSubCRMsUI();
-                    loadOpportunitiesUI();
+                    if(window.loadSubCRMsUI) window.loadSubCRMsUI();
+                    if(window.loadOpportunitiesUI) window.loadOpportunitiesUI();
                 } else {
                     const viewEl = document.getElementById(`view${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
                     if (viewEl) {
@@ -418,7 +431,6 @@
             if (DOM.modelBadge) DOM.modelBadge.innerText = `● ${currentProvider.toUpperCase()} / ${currentModel.split('/').pop()}`;
         });
 
-        // --- GESTION DU REDIMENSIONNEMENT DYNAMIQUE DU TEXTAREA (AUTO-EXPAND STYLE GEMINI) ---
         if (DOM.userInput) {
             DOM.userInput.addEventListener('input', function() {
                 this.style.height = '24px';
@@ -426,10 +438,6 @@
                 this.style.height = newHeight + 'px';
                 this.style.overflowY = this.scrollHeight > 180 ? 'auto' : 'hidden';
             });
-        }
-
-        if (DOM.sendBtn && DOM.userInput) {
-            DOM.sendBtn.addEventListener('click', handleSendOrStop);
             DOM.userInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -438,6 +446,7 @@
             });
         }
 
+        if (DOM.sendBtn) DOM.sendBtn.addEventListener('click', handleSendOrStop);
         if (DOM.newChatBtn) DOM.newChatBtn.addEventListener('click', createNewConversation);
 
         if (DOM.menuOptionsBtn && DOM.dropdownMenu) {
@@ -447,56 +456,138 @@
             });
         }
 
-        document.getElementById('menuClear')?.addEventListener('click', () => {
-            if (DOM.chatBox) DOM.chatBox.innerHTML = '';
-            messageHistory = [];
-            saveCurrentConversation();
-            DOM.dropdownMenu.style.display = 'none';
-        });
-
-        document.getElementById('menuExportPdf')?.addEventListener('click', () => {
-            DOM.dropdownMenu.style.display = 'none';
-            window.print();
-        });
-
-        document.getElementById('menuShare')?.addEventListener('click', () => {
-            DOM.dropdownMenu.style.display = 'none';
-            navigator.clipboard.writeText(JSON.stringify(messageHistory, null, 2));
-            alert("Historique copié !");
-        });
-
         if (DOM.uploadBtn && DOM.uploadMenu) {
             DOM.uploadBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                DOM.uploadMenu.style.display = DOM.uploadMenu.style.display === 'block' ? 'none' : 'block';
+                DOM.uploadMenu.style.display = (DOM.uploadMenu.style.display === 'block') ? 'none' : 'block';
             });
         }
 
-        document.getElementById('btnImportFile')?.addEventListener('click', () => {
-            if (DOM.hiddenFileInput) DOM.hiddenFileInput.click();
-            if (DOM.uploadMenu) DOM.uploadMenu.style.display = 'none';
-        });
+        if (DOM.btnImportFile) {
+            DOM.btnImportFile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (DOM.hiddenFileInput) DOM.hiddenFileInput.click();
+                if (DOM.uploadMenu) DOM.uploadMenu.style.display = 'none';
+            });
+        }
 
-        document.getElementById('btnImportImage')?.addEventListener('click', () => {
-            if (DOM.hiddenImageInput) DOM.hiddenImageInput.click();
-            if (DOM.uploadMenu) DOM.uploadMenu.style.display = 'none';
-        });
+        if (DOM.btnImportImage) {
+            DOM.btnImportImage.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (DOM.hiddenImageInput) DOM.hiddenImageInput.click();
+                if (DOM.uploadMenu) DOM.uploadMenu.style.display = 'none';
+            });
+        }
 
         DOM.hiddenFileInput?.addEventListener('change', async (e) => {
-            for (const file of Array.from(e.target.files)) {
-                await uploadFileToServer(file);
-            }
+            for (const file of Array.from(e.target.files)) await uploadFileToServer(file);
         });
 
         DOM.hiddenImageInput?.addEventListener('change', async (e) => {
-            for (const file of Array.from(e.target.files)) {
-                await uploadFileToServer(file);
-            }
+            for (const file of Array.from(e.target.files)) await uploadFileToServer(file);
         });
+
+        if (DOM.micBtn && DOM.userInput) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (SpeechRecognition) {
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'fr-FR';
+                recognition.interimResults = true; 
+                recognition.continuous = false; 
+                
+                let isRecording = false;
+
+                const resetMicUI = () => {
+                    isRecording = false;
+                    DOM.micBtn.classList.remove('recording-active');
+                    DOM.micBtn.style.color = '';
+                    DOM.micBtn.style.backgroundColor = '';
+                    DOM.micBtn.style.border = '';
+                    DOM.userInput.placeholder = "Écrivez votre message, parlez au micro, ou joignez un fichier/ZIP jusqu'à 300 Mo...";
+                };
+
+                DOM.micBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+                        console.warn("L'API Web Speech nécessite souvent HTTPS.");
+                    }
+                    if (isRecording) {
+                        recognition.stop();
+                        return;
+                    }
+                    try { recognition.start(); } catch (err) { resetMicUI(); }
+                });
+
+                recognition.onstart = () => {
+                    isRecording = true;
+                    DOM.micBtn.classList.add('recording-active');
+                    DOM.micBtn.style.color = '#ef4444';
+                    DOM.micBtn.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+                    DOM.micBtn.style.border = '1px solid #ef4444';
+                    DOM.userInput.placeholder = "🎤 Écoute en cours... Parlez maintenant";
+                };
+
+                recognition.onresult = (event) => {
+                    let finalTranscript = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript;
+                    }
+                    if (finalTranscript) {
+                        const currentVal = DOM.userInput.value;
+                        DOM.userInput.value = currentVal + (currentVal && !currentVal.endsWith(' ') ? ' ' : '') + finalTranscript + ' ';
+                        DOM.userInput.style.height = 'auto';
+                        DOM.userInput.style.height = Math.min(DOM.userInput.scrollHeight, 180) + 'px';
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    resetMicUI();
+                    if (event.error === 'not-allowed' || event.error === 'network') {
+                        alert("Le navigateur a bloqué l'accès au microphone.");
+                    }
+                };
+                recognition.onend = () => { resetMicUI(); };
+            } else {
+                DOM.micBtn.style.display = 'none';
+            }
+        }
+
+        if (DOM.chatBox && DOM.lightbox && DOM.lightboxImg) {
+            DOM.chatBox.addEventListener('click', (e) => {
+                if (e.target.tagName === 'IMG' && e.target.closest('.msg-bubble')) {
+                    DOM.lightboxImg.src = e.target.src;
+                    DOM.lightbox.classList.add('active');
+                }
+            });
+            DOM.lightbox.addEventListener('click', () => {
+                DOM.lightbox.classList.remove('active');
+                setTimeout(() => { DOM.lightboxImg.src = ''; }, 300);
+            });
+        }
 
         document.addEventListener('click', () => {
             if (DOM.dropdownMenu) DOM.dropdownMenu.style.display = 'none';
             if (DOM.uploadMenu) DOM.uploadMenu.style.display = 'none';
+        });
+
+        document.getElementById('menuClear')?.addEventListener('click', () => {
+            if (DOM.chatBox) DOM.chatBox.innerHTML = '';
+            messageHistory = [];
+            saveCurrentConversation();
+            if (DOM.dropdownMenu) DOM.dropdownMenu.style.display = 'none';
+        });
+
+        document.getElementById('menuExportPdf')?.addEventListener('click', () => {
+            if (DOM.dropdownMenu) DOM.dropdownMenu.style.display = 'none';
+            window.print();
+        });
+
+        document.getElementById('menuShare')?.addEventListener('click', () => {
+            if (DOM.dropdownMenu) DOM.dropdownMenu.style.display = 'none';
+            navigator.clipboard.writeText(JSON.stringify(messageHistory, null, 2));
+            alert("Historique copié !");
         });
     }
 
@@ -524,7 +615,7 @@
             if (resp.ok) {
                 attachedFiles.push(data.filename);
                 renderAttachedFilesPreview();
-                await loadFilesList();
+                if (window.loadFilesList) await window.loadFilesList();
             } else {
                 alert(`Erreur upload : ${data.error}`);
             }
@@ -541,11 +632,24 @@
             return;
         }
         DOM.filePreviewBar.style.display = 'flex';
-        DOM.filePreviewBar.innerHTML = attachedFiles.map((f, i) => `
-            <span style="background:rgba(92,156,230,0.2); color:var(--accent-blue); padding:4px 8px; border-radius:6px; font-size:11px; display:flex; align-items:center; gap:6px;">
-                📎 ${escapeHtml(f)} <button onclick="removeAttachedFile(${i})" style="color:#ff4a4a; font-weight:bold;">&times;</button>
-            </span>
-        `).join('');
+        DOM.filePreviewBar.style.gap = '10px';
+        DOM.filePreviewBar.style.padding = '10px 0';
+        
+        DOM.filePreviewBar.innerHTML = attachedFiles.map((f, i) => {
+            const isImg = f.match(/\.(png|jpe?g|gif|webp)$/i);
+            if (isImg) {
+                return `
+                <div style="position:relative; width:80px; height:80px; border-radius:12px; border:1px solid var(--border-color); overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
+                    <img src="${API_BASE}/api/download/${encodeURIComponent(f)}" style="width:100%; height:100%; object-fit:cover;">
+                    <button onclick="removeAttachedFile(${i})" style="position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.7); color:#fff; border:none; border-radius:50%; width:20px; height:20px; font-size:10px; cursor:pointer;">✕</button>
+                </div>`;
+            } else {
+                return `
+                <span style="background:rgba(92,156,230,0.2); color:var(--accent-blue); padding:6px 10px; border-radius:8px; font-size:12px; display:flex; align-items:center; gap:8px; border:1px solid rgba(92,156,230,0.4);">
+                    📎 ${escapeHtml(f)} <button onclick="removeAttachedFile(${i})" style="color:#ff4a4a; font-weight:bold; background:none; border:none; cursor:pointer; font-size:14px;">&times;</button>
+                </span>`;
+            }
+        }).join('');
     }
 
     window.removeAttachedFile = function(index) {
@@ -578,11 +682,20 @@
         let fullTextContent = text;
         if (attachedFiles.length > 0) {
             fullTextContent += `\n[Fichiers joints : ${attachedFiles.join(', ')}]`;
+            
+            const imageFiles = attachedFiles.filter(f => f.match(/\.(png|jpe?g|gif|webp)$/i));
+            const zipFiles = attachedFiles.filter(f => f.match(/\.zip$/i));
+            
+            if (imageFiles.length > 0) {
+                fullTextContent += `\n(INSTRUCTION SYSTEME : L'utilisateur a attaché ces images. Tu DOIS utiliser l'action [ACTION:analyze_image]{"image_path": "uploads/${imageFiles[0]}", "prompt": "Décris cette image en détail"}[/ACTION] pour les lire).`;
+            }
+            if (zipFiles.length > 0) {
+                fullTextContent += `\n(INSTRUCTION SYSTEME : Utilise [ACTION:analyze_zip_content]{"zip_path": "uploads/${zipFiles[0]}"}[/ACTION]).`;
+            }
         }
 
         appendUserMessage(fullTextContent);
         
-        // Réinitialisation de la hauteur de la boîte de saisie à sa taille compacte initiale
         DOM.userInput.value = '';
         DOM.userInput.style.height = '24px';
         DOM.userInput.style.overflowY = 'hidden';
@@ -645,9 +758,9 @@
                 messageHistory.push({ role: 'assistant', content: fullResponse });
                 saveCurrentConversation();
                 if (fullResponse.includes('[Action Exécutée')) {
-                    await loadFilesList();
-                    loadSubCRMsUI();
-                    loadOpportunitiesUI();
+                    if (window.loadFilesList) await window.loadFilesList();
+                    if (window.loadSubCRMsUI) window.loadSubCRMsUI();
+                    if (window.loadOpportunitiesUI) window.loadOpportunitiesUI();
                 }
             }
         } catch (err) {
@@ -709,7 +822,11 @@
         DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
     }
 
+    // FIX: NETTOYAGE ABSOLU DES BALISES DE REFLEXION (ANTI-HALLUCINATION UI)
     function formatMarkdown(text) {
+        // Cette ligne retire purement et simplement toute la pensée interne du modèle avant de l'afficher
+        let cleanText = text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '');
+
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
             renderer.code = function(codeObj, language) {
@@ -751,12 +868,12 @@
                 </div>`;
             };
             try {
-                return marked.parse(text, { renderer: renderer, gfm: true, breaks: true });
+                return marked.parse(cleanText, { renderer: renderer, gfm: true, breaks: true });
             } catch (e) {
-                return escapeHtml(text).replace(/\n/g, '<br>');
+                return escapeHtml(cleanText).replace(/\n/g, '<br>');
             }
         }
-        return escapeHtml(text).replace(/\n/g, '<br>');
+        return escapeHtml(cleanText).replace(/\n/g, '<br>');
     }
 
     function escapeHtml(text) {
@@ -782,7 +899,7 @@
         DOM.convList.innerHTML = conversations.map(c => `
             <div class="conv-item ${c.id === currentConvId ? 'active' : ''}" onclick="loadConversation('${c.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:12.5px; margin-bottom:2px;">
                 <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;">${escapeHtml(c.title)}</span>
-                <button onclick="event.stopPropagation(); deleteConversation('${c.id}')" style="color:var(--text-dim);">&times;</button>
+                <button onclick="event.stopPropagation(); deleteConversation('${c.id}')" style="color:var(--text-dim); background:none; border:none; cursor:pointer;">&times;</button>
             </div>
         `).join('');
     }
@@ -812,7 +929,7 @@
         saveConversationsToStorage();
         if (conversations.length > 0) loadConversation(conversations[0].id);
         else createNewConversation();
-    };
+    }
 
     function saveCurrentConversation() {
         const conv = conversations.find(c => c.id === currentConvId);
@@ -837,7 +954,7 @@
                         <div style="font-weight:600; color:#fff; font-size:13.5px;">${escapeHtml(item.niche_name)}</div>
                         <div style="font-size:11px; color:var(--text-dim); font-family:monospace;">ID: ${escapeHtml(item.id)}</div>
                     </div>
-                    <button onclick="openSubCRMModal('${item.id}', '${escapeHtml(item.niche_name)}')" style="background:rgba(92,156,230,0.2); color:var(--accent-blue); padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Ouvrir ➜</button>
+                    <button onclick="openSubCRMModal('${item.id}', '${escapeHtml(item.niche_name)}')" style="background:rgba(92,156,230,0.2); color:var(--accent-blue); padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer; border:none;">Ouvrir ➜</button>
                 </div>
             `).join('') || '<div style="color:var(--text-dim); text-align:center; padding:10px;">Aucun sous-CRM instancié.</div>';
         } catch (e) {}
@@ -857,7 +974,7 @@
                     </div>
                     <div style="display:flex; align-items:center; gap:8px;">
                         <div style="font-weight:bold; color:#4ade80; font-size:13px;">${Number(opp.amount).toLocaleString('fr-FR')} ${escapeHtml(opp.currency)}</div>
-                        <button onclick="deleteOpportunityRecord('${opp.id}')" style="color:#ef4444; padding:2px 6px; font-size:11px; cursor:pointer;">&times;</button>
+                        <button onclick="deleteOpportunityRecord('${opp.id}')" style="color:#ef4444; padding:2px 6px; font-size:11px; cursor:pointer; background:none; border:none;">&times;</button>
                     </div>
                 </div>
             `).join('') || '<div style="color:var(--text-dim); text-align:center; padding:10px;">Aucune opportunité.</div>';
@@ -871,7 +988,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sql: `DELETE FROM opportunities WHERE id = ${id};` })
         });
-        loadOpportunitiesUI();
+        if (window.loadOpportunitiesUI) window.loadOpportunitiesUI();
     };
 
     document.addEventListener('DOMContentLoaded', init);
