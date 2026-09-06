@@ -1,15 +1,22 @@
-# Back‑ups & temporaires
-*.BACKUP
-*.log
-*.txt
-archive/
-# Environnements virtuels & dépendances
+# Fichiers de clés et secrets (CRITIQUE)
+.env
+.env.txt
+env.txt
+.env.save
+*.env
+google_accounts.json
+google_drive_index.json
+
+# Dossiers lourds / environnement local
 venv/
 node_modules/
+node_portable/
 __pycache__/
-# Uploads & artefacts
-uploads/
-*.zip
-# Fichiers de configuration locaux (à garder hors du repo si besoin)
-.env
-.env.save
+*.pyc
+chroma_db/
+sessions/
+logs/
+*.log
+%TEMP_PATH%/
+backup/
+archive_old/

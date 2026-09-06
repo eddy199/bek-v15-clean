@@ -4,6 +4,8 @@ module.exports = {
       name: "bek-api",
       script: "app.py",
       interpreter: "./venv/Scripts/pythonw.exe",
+      watch: true,
+      ignore_watch: ["uploads", "generated", "logs", "*.log", ".git"],
       max_memory_restart: "1G",
       error_file: "./logs/api-error.log",
       out_file: "./logs/api-out.log",
