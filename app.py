@@ -221,30 +221,36 @@ hermes.register_tool(
 )
 
 # ==========================================
-# PROMPT SYSTÈME GLOBAL & ANTI-HALLUCINATION
+# PROMPT SYSTÈME GLOBAL — CO-PILOTE HUMAIN & NATUREL
 # ==========================================
 
 BEK_GOLDEN_RULES = """
-🛡️ RÔLE : Tech Lead Senior & Architecte Principal BEK-v15.3 Hybrid.
+# RÔLE & PERSONNALITÉ
+Tu es BEK, un co-pilote technique expérimenté, pragmatique et humain. Tu travailles en binôme avec l'utilisateur comme un collègue développeur accessible.
 
-RÈGLES D'OR & COMPORTEMENT SYSTÈME (NON NÉGOCIABLES) :
+# DIRECTIVES CONVERSATIONNELLES
+- Parle naturellement : adapte la longueur de ta réponse au besoin (très court pour un bonjour, détaillé pour un problème technique complexe).
+- Salutations simples : si l'utilisateur dit simplement "bonjour", "salut", "bsr" ou "ça va", réponds en une seule phrase amicale sans proposer de liste ni de menu d'options.
+- Proposer des options : ne propose des alternatives (ex: "Option 1 / Option 2") QUE si l'utilisateur décrit un problème technique réel nécessitant un arbitrage.
+- Poser des questions : si une consigne est vague ou incomplète, demande une clarification ciblée avant de proposer du code ou une action.
+- Formatage libre : utilise des listes à puces ou des blocs de code uniquement quand cela aide réellement à la lisibilité technique.
 
-1. CONTRAINTE DÉVELOPPEUR UNIQUE & PRINCIPE KISS :
-   - Le système est maintenu par UN SEUL développeur sur un VPS standard.
-   - Privilégie exclusivement les solutions directes, sobres et natives.
+# EXÉCUTION D'OUTILS & ACTIONS
+- Ne lance JAMAIS d'action lourde en tâche de fond sans validation.
+- Si une intervention est nécessaire (création/suppression de fichier, commande shell, analyse d'image), explique brièvement pourquoi, écris ta balise [ACTION:...]{...}[/ACTION] et demande explicitement : "Veux-tu que j'exécute cette action ?".
+- Après retour du résultat système, résume l'impact clairement.
 
-2. INTERDICTION ABSOLUE D'HALLUCINATION :
-   - Ne devine jamais, n'invente jamais de code, de fonction ou de fait non vérifié.
-   - Si un fichier est introuvable, si une information manque ou si un résultat système est vide, réponds factuellement : "Je ne trouve pas l'information ou le fichier demandé."
+# EXEMPLES DE COMPORTEMENT ATTENDU
+User: bsr
+BEK: Bonsoir ! Qu'est-ce qu'on regarde ensemble aujourd'hui ?
 
-3. GESTION STRICTE DES ACTIONS ([ACTION:...]) :
-   - Tu es AVEUGLE sur le système de fichiers. Pour lister un répertoire ou lire un fichier, tu DOIS obligatoirement utiliser l'action [ACTION:execute_command]. Ne simule jamais un résultat de terminal.
-   - Les balises [ACTION:...] sont le SEUL moyen d'interagir avec le serveur. N'exécute JAMAIS d'action shell pour répondre à une question théorique.
+User: ca va ?
+BEK: Impeccable, merci ! Prêt à t'aider. Sur quoi tu bosses en ce moment ?
 
-4. INSTRUCTIONS SPÉCIALES IMAGE & ZIP :
-   - Analyse rigoureusement les retours système injectés suite aux uploads avant de rédiger ta réponse.
+User: Sauvegarde le projet sur github
+BEK: Je peux pousser le repo actuel. Peux-tu me confirmer le chemin du projet et si la branche cible est bien 'main' avant que je prépare la commande ?
 
-ACTIONS DISPONIBLES :
+# ACTIONS DISPONIBLES :
    - [ACTION:write_file]{"filename": "...", "content": "..."}[/ACTION]
    - [ACTION:delete_file]{"filename": "..."}[/ACTION]
    - [ACTION:read_file]{"filename": "..."}[/ACTION]
@@ -424,7 +430,7 @@ def generate_image_with_provider(prompt: str, provider: str = "gemini", model: s
             if fallback_res.status_code == 200:
                 with open(save_path, "wb") as f:
                     f.write(fallback_res.content)
-                return {"status": "success", "filepath": save_path, "filename": output_filename, "message": "🎨 Image générée (via Fallback d'urgence)"}
+                return {"status": "success", "filepath": save_path, "filename": output_filename, "message": "Image générée (via Fallback d'urgence)"}
             else:
                 return {"status": "error", "message": f"Tous les moteurs ont échoué. Erreur de base : {res.text}"}
         else:
@@ -614,9 +620,6 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         final_filename = gen_result.get('filename')
         return {"status": "success", "message": f"🪄 **Fusion réussie !**\n\n![{final_filename}](/api/download/{final_filename})"}
 
-    # ==========================================
-    # EXÉCUTION DE COMMANDES RAPIDES (BLOQUANT)
-    # ==========================================
     elif action_name in ("execute_command", "run_script", "run_tests"):
         command = parameters.get("command", "ls -la")
         try:
@@ -626,9 +629,6 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         except Exception as e:
             return {"status": "error", "message": f"Erreur exécution rapide : {str(e)}"}
             
-    # ==========================================
-    # EXÉCUTION TMUX HEADLESS (TÂCHES LOURDES)
-    # ==========================================
     elif action_name == "execute_tmux_headless":
         session_name = parameters.get("session_name", f"job_{uuid.uuid4().hex[:6]}")
         command = parameters.get("command", "")
@@ -636,8 +636,6 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         if not command:
             return {"status": "error", "message": "La commande ne peut pas être vide."}
             
-        # On enveloppe la commande dans Tmux pour la détacher totalement du serveur Flask
-        # Les logs de la commande seront sauvegardés dans un fichier texte pour que l'agent puisse les lire plus tard
         log_file = os.path.join(GENERATED_DIR, f"{session_name}_logs.txt")
         tmux_cmd = f"tmux new-session -d -s {session_name} '{command} > {log_file} 2>&1'"
         
@@ -645,7 +643,7 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             subprocess.run(tmux_cmd, shell=True, cwd=WORKSPACE_DIR, check=True)
             return {
                 "status": "success", 
-                "message": f"🚀 Tâche lourde lancée en arrière-plan avec succès !\n- Session Tmux : `{session_name}`\n- Fichier de logs (à lire plus tard si besoin) : `{log_file}`\nLe système n'est pas bloqué."
+                "message": f"🚀 Tâche lourde lancée en arrière-plan avec succès !\n- Session Tmux : `{session_name}`\n- Fichier de logs : `{log_file}`"
             }
         except Exception as e:
             return {"status": "error", "message": f"Erreur critique Tmux Headless : {str(e)}"}
@@ -654,6 +652,34 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
 
 def _build_skills_index():
     return skill_registry.list_all_skills()
+
+# ==========================================
+# ANALYSE DE LA RÉPONSE UTILISATEUR
+# ==========================================
+
+def _detect_user_response(query: str) -> str:
+    """Détecte l'accord, le refus ou une réponse neutre."""
+    if not query:
+        return "neutral"
+    
+    q = query.lower().strip()
+    
+    agreed_words = {
+        "oui", "yes", "ok", "okay", "vasy", "vas-y", "go",
+        "d'accord", "ouais", "y", "o", "fine", "fais-le", "lance", "exécute"
+    }
+    refused_words = {
+        "non", "no", "stop", "annule", "cancel", "pas maintenant", "jamais"
+    }
+    
+    words = set(re.findall(r"\b\w+\b", q))
+    if words & agreed_words and not (words & refused_words):
+        return "agreed"
+    if words & refused_words:
+        return "refused"
+    
+    return "neutral"
+
 
 # ==========================================
 # ROUTES API
@@ -776,9 +802,6 @@ def delete_single_file(filename):
         return jsonify({"status": "success", "message": f"{filename} supprimé."})
     return jsonify({"error": "Fichier introuvable"}), 404
 
-# ==========================================
-# FIX: ROUTE POUR TOUT SUPPRIMER (DELETE-ALL)
-# ==========================================
 @app.route("/api/files/delete-all", methods=["POST"])
 def delete_all_files():
     deleted_count = 0
@@ -794,7 +817,6 @@ def delete_all_files():
                         except Exception as e:
                             logger.warning(f"Impossible de supprimer {target}: {e}")
     return jsonify({"status": "success", "message": f"{deleted_count} fichiers supprimés avec succès."})
-
 
 @app.route("/api/upload", methods=["POST"])
 def upload_file():
@@ -844,7 +866,7 @@ def get_connectors():
         return jsonify({"connectors": []}), 200
 
 # ==========================================
-# CHAT STREAMING OPTIMISÉ (HISTORIQUE ÉLARGI & ANTI-HALLUCINATION)
+# CHAT STREAMING NATUREL & VALIDATION HUMAINE
 # ==========================================
 
 @app.route("/api/chat", methods=["POST"])
@@ -854,63 +876,85 @@ def chat():
     provider = data.get("provider", "groq")
     model = data.get("model", "openai/gpt-oss-120b")
 
-    # 1. Historique étendu (Anti-Amnésie)
     trimmed_messages = [m for m in messages[-6:] if isinstance(m, dict)]
-
     last_user_query = ""
+    user_status = "neutral"
 
-    # 2. Pré-traitement Actions Frontend (Vision / ZIP)
     if trimmed_messages:
         last_msg = trimmed_messages[-1]
         if last_msg.get("role") == "user":
-            last_user_query = last_msg.get("content", "")
-            if "[ACTION:" in last_user_query:
-                content = last_user_query
-                
-                def process_frontend_action(match):
+            last_user_query = last_msg.get("content", "").strip()
+            user_status = _detect_user_response(last_user_query)
+
+    # --- GESTION DU HUMAN-IN-THE-LOOP ---
+    if len(trimmed_messages) >= 2:
+        prev_msg = trimmed_messages[-2]
+        if prev_msg.get("role") == "assistant" and "[ACTION:" in prev_msg.get("content", ""):
+            
+            # Cas 1 : L'utilisateur a validé l'action
+            if user_status == "agreed":
+                action_matches = list(re.finditer(r"\[ACTION:(\w+)\](.*?)\[/ACTION\]", prev_msg.get("content", ""), re.DOTALL))
+                if action_matches:
+                    match = action_matches[-1]
                     act_name = match.group(1)
                     raw_payload = match.group(2).strip()
+                    
+                    params = {}
                     try:
-                        params = json.loads(raw_payload)
+                        parsed = json.loads(raw_payload)
+                        if isinstance(parsed, dict): params = parsed
                     except Exception:
-                        try: params = ast.literal_eval(raw_payload)
-                        except Exception: params = {}
+                        try:
+                            parsed = ast.literal_eval(raw_payload)
+                            if isinstance(parsed, dict): params = parsed
+                        except Exception:
+                            pass
+                            
                     params["provider"] = provider
                     params["model"] = model
+                    
                     exec_res = execute_agent_crm_tool(act_name, params)
-                    return f"\n\n[SYSTÈME - RÉSULTAT DU FICHIER JOINT ({act_name})] :\n{exec_res.get('message', 'Fichier lu avec succès.')}\n"
-                
-                new_content = re.sub(r"\[ACTION:(\w+)\](.*?)\[/ACTION\]", process_frontend_action, content, flags=re.DOTALL)
-                new_content = re.sub(r"\(INSTRUCTION SYSTEME : L'utilisateur a attaché.*?\)", "", new_content, flags=re.DOTALL)
-                new_content = re.sub(r"\(INSTRUCTION SYSTEME : Utilise .*?\)", "", new_content, flags=re.DOTALL)
-                last_msg["content"] = new_content.strip()
+                    res_msg = exec_res.get('message', 'Opération réussie')
+                    if len(res_msg) > 1500:
+                        res_msg = res_msg[:1500] + "\n... [contenu tronqué à 1500 caractères]"
+                    
+                    injection = f"\n\n[SYSTÈME - L'UTILISATEUR A VALIDÉ L'ACTION '{act_name}'. RÉSULTAT :] \n{res_msg}\n\n-> Analyse ce résultat et donne ton retour à l'utilisateur de manière fluide."
+                    trimmed_messages[-1]["content"] += injection
+                    trimmed_messages[-2]["content"] = trimmed_messages[-2]["content"].replace("[ACTION:", "[EXECUTED_ACTION:")
 
-    # =========================================================================
-    # 🧱 BRIQUE DE LIAISON DÉFINITIVE (MÉMOIRE + INTELLIGENCE) - NE PLUS MODIFIER
-    # =========================================================================
+            # Cas 2 : L'utilisateur a refusé explicitement
+            elif user_status == "refused":
+                trimmed_messages[-2]["content"] = trimmed_messages[-2]["content"].replace("[ACTION:", "[REFUSED_ACTION:")
+                injection = (
+                    "\n\n[SYSTÈME - L'UTILISATEUR A REFUSÉ L'ACTION. "
+                    "Ne réessaie pas cette action. Propose une alternative ou demande comment poursuivre.]"
+                )
+                trimmed_messages[-1]["content"] += injection
+
+            # Cas 3 : L'utilisateur a dit autre chose
+            else:
+                trimmed_messages[-2]["content"] = trimmed_messages[-2]["content"].replace("[ACTION:", "[CANCELED_ACTION:")
+
     dynamic_system_prompt = BEK_GOLDEN_RULES.strip()
 
     if last_user_query:
-        # A. Injection Pinecone (Cerveau Long Terme)
         try:
             logger.info("Interrogation Pinecone...")
             memory_context = search_memory(last_user_query, top_k=3)
             if memory_context:
-                dynamic_system_prompt += f"\n\n[MÉMOIRE PINECONE RÉCUPÉRÉE - UTILISE CES FAITS STRICTEMENT] :\n{memory_context}"
+                dynamic_system_prompt += f"\n\n[CONTEXTE EN MÉMOIRE (POUR INFO)] :\n{memory_context}"
         except Exception as e:
             logger.warning(f"Erreur d'injection mémoire : {e}")
 
-        # B. Injection Hermes GOAP (Planification & Logique)
         try:
             logger.info("Appel Hermes GOAP...")
             plan = hermes.goap_planner(last_user_query)
             if plan:
                 filtered_plan = [t for t in plan if t.get("tool") != "default_llm"]
                 if filtered_plan:
-                    dynamic_system_prompt += f"\n\n[PLAN D'ACTION HERMES (SKILLS DISPONIBLES)] :\nL'orchestrateur recommande ces actions. Si tu as besoin d'utiliser un outil, génère la balise correspondante.\n{json.dumps(filtered_plan, ensure_ascii=False, indent=2)}"
+                    dynamic_system_prompt += f"\n\n[PLAN D'ACTION HERMES (SKILLS DISPONIBLES)] :\n{json.dumps(filtered_plan, ensure_ascii=False, indent=2)}"
         except Exception as e:
-            logger.warning(f"Erreur d'injection Hermes : {e}")
-    # =========================================================================
+            logger.error(f"[HERMES] Échec du planificateur GOAP : {e}")
 
     exec_messages = [
         {"role": "system", "content": dynamic_system_prompt}
@@ -925,44 +969,33 @@ def chat():
 
     def generate_proxy():
         full_text_accumulated = []
+        action_detected = False
+        
         try:
             for item in provider_manager.execute_chat_stream(
                 messages=exec_messages,
                 provider=provider,
                 model=model,
-                temperature=0.0,  # RIGUEUR EXTRÊME : 0.0
-                max_tokens=2048,
+                temperature=0.7,
+                max_tokens=1500,
             ):
                 if "chunk" in item:
                     chunk = item["chunk"]
                     full_text_accumulated.append(chunk)
+                    current_text = "".join(full_text_accumulated)
+                    
+                    if "[ACTION:" in current_text:
+                        action_detected = True
+                    
                     yield f"data: {json.dumps({'chunk': chunk}, ensure_ascii=False)}\n\n"
-                elif "done" in item:
-                    full_response = "".join(full_text_accumulated)
-                    action_matches = re.finditer(r"\[ACTION:(\w+)\](.*?)\[/ACTION\]", full_response, re.DOTALL)
-                    for match in action_matches:
-                        act_name = match.group(1)
-                        raw_payload = match.group(2).strip()
-                        params = {}
-                        try: params = json.loads(raw_payload)
-                        except Exception:
-                            try: params = ast.literal_eval(raw_payload)
-                            except Exception:
-                                fn_match = re.search(r'["\']filename["\']\s*:\s*["\']([^"\']+)["\']', raw_payload)
-                                ct_match = re.search(r'["\']content["\']\s*:\s*["\'](.*)["\']\s*}?$', raw_payload, re.DOTALL)
-                                params = {
-                                    "filename": fn_match.group(1) if fn_match else "generated/output.py",
-                                    "content": ct_match.group(1) if ct_match else raw_payload
-                                }
-                        params["provider"] = provider
-                        params["model"] = model
-                        
-                        # Exécution des outils via le CRM local
-                        exec_res = execute_agent_crm_tool(act_name, params)
-                        notice = f"\n\n⚡ **[Action Exécutée]** `{act_name}` : {exec_res.get('message', 'Opération réussie')}"
+                    
+                    if action_detected and "[/ACTION]" in current_text:
+                        notice = "\n\n👉 *Une action technique est prête à être exécutée. Réponds 'oui' ou 'non'.*"
                         yield f"data: {json.dumps({'chunk': notice}, ensure_ascii=False)}\n\n"
-
-                    yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
+                        break
+                        
+            yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
+                
         except Exception as stream_err:
             logger.error("[Stream Error] %s", stream_err)
             yield f"data: {json.dumps({'chunk': f'\n\n⚠️ **[Avertissement Flux]** {stream_err}'}, ensure_ascii=False)}\n\n"
