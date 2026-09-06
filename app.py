@@ -226,29 +226,17 @@ hermes.register_tool(
 
 BEK_GOLDEN_RULES = """
 # RÔLE & PERSONNALITÉ
-Tu es BEK, un co-pilote technique expérimenté, pragmatique et humain. Tu travailles en binôme avec l'utilisateur comme un collègue développeur accessible.
+Tu es BEK, un agent technique d'exécution direct et précis.
 
 # DIRECTIVES CONVERSATIONNELLES
-- Parle naturellement : adapte la longueur de ta réponse au besoin (très court pour un bonjour, détaillé pour un problème technique complexe).
-- Salutations simples : si l'utilisateur dit simplement "bonjour", "salut", "bsr" ou "ça va", réponds en une seule phrase amicale sans proposer de liste ni de menu d'options.
-- Proposer des options : ne propose des alternatives (ex: "Option 1 / Option 2") QUE si l'utilisateur décrit un problème technique réel nécessitant un arbitrage.
-- Poser des questions : si une consigne est vague ou incomplète, demande une clarification ciblée avant de proposer du code ou une action.
-- Formatage libre : utilise des listes à puces ou des blocs de code uniquement quand cela aide réellement à la lisibilité technique.
+- Parle naturellement et brièvement. Pas de bavardage.
+- Salutations : réponds en une seule phrase courte.
 
-# EXÉCUTION D'OUTILS & ACTIONS
-- Ne lance JAMAIS d'action lourde en tâche de fond sans validation.
-- Si une intervention est nécessaire (création/suppression de fichier, commande shell, analyse d'image), explique brièvement pourquoi, écris ta balise [ACTION:...]{...}[/ACTION] et demande explicitement : "Veux-tu que j'exécute cette action ?".
-- Après retour du résultat système, résume l'impact clairement.
-
-# EXEMPLES DE COMPORTEMENT ATTENDU
-User: bsr
-BEK: Bonsoir ! Qu'est-ce qu'on regarde ensemble aujourd'hui ?
-
-User: ca va ?
-BEK: Impeccable, merci ! Prêt à t'aider. Sur quoi tu bosses en ce moment ?
-
-User: Sauvegarde le projet sur github
-BEK: Je peux pousser le repo actuel. Peux-tu me confirmer le chemin du projet et si la branche cible est bien 'main' avant que je prépare la commande ?
+# EXÉCUTION D'OUTILS & ACTIONS (RÈGLE STRICTE)
+- DÈS QUE l'utilisateur demande une action (générer image, lire fichier, exécuter), TU NE POSES AUCUNE QUESTION.
+- INTERDICTION de demander la permission ("Veux-tu que je...").
+- INTERDICTION de décrire ce que tu vas faire ou de faire une phrase d'introduction.
+- Renvoie UNIQUEMENT la balise [ACTION:nom_action]{"param":"valeur"}[/ACTION]. Aucun autre texte n'est toléré avant ou après.
 
 # ACTIONS DISPONIBLES :
    - [ACTION:write_file]{"filename": "...", "content": "..."}[/ACTION]
@@ -960,12 +948,12 @@ def chat():
         {"role": "system", "content": dynamic_system_prompt}
     ] + trimmed_messages
 
-    if headroom_compress:
-        try:
-            compressed_res = headroom_compress(exec_messages)
-            exec_messages = compressed_res.messages
-        except Exception as e:
-            logger.warning("Erreur Headroom compression : %s", e)
+    # if headroom_compress:
+    #     try:
+    #         compressed_res = headroom_compress(exec_messages)
+    #         exec_messages = compressed_res.messages
+    #     except Exception as e:
+    #         logger.warning("Erreur Headroom compression : %s", e)
 
     def generate_proxy():
         full_text_accumulated = []
@@ -989,9 +977,37 @@ def chat():
                     
                     yield f"data: {json.dumps({'chunk': chunk}, ensure_ascii=False)}\n\n"
                     
+                    # Interception et exécution automatique dans le même flux (BYPASS de la confirmation manuelle)
                     if action_detected and "[/ACTION]" in current_text:
-                        notice = "\n\n👉 *Une action technique est prête à être exécutée. Réponds 'oui' ou 'non'.*"
-                        yield f"data: {json.dumps({'chunk': notice}, ensure_ascii=False)}\n\n"
+                        try:
+                            action_matches = list(re.finditer(r"\[ACTION:(\w+)\](.*?)\[/ACTION\]", current_text, re.DOTALL))
+                            if action_matches:
+                                match = action_matches[-1]
+                                act_name = match.group(1)
+                                raw_payload = match.group(2).strip()
+                                params = {}
+                                try:
+                                    parsed = json.loads(raw_payload)
+                                    if isinstance(parsed, dict): params = parsed
+                                except Exception:
+                                    try:
+                                        parsed = ast.literal_eval(raw_payload)
+                                        if isinstance(parsed, dict): params = parsed
+                                    except Exception: pass
+                                
+                                params["provider"] = provider
+                                params["model"] = model
+                                
+                                yield f"data: {json.dumps({'chunk': '\n\n⚙️ *Exécution immédiate...*\n'}, ensure_ascii=False)}\n\n"
+                                
+                                exec_res = execute_agent_crm_tool(act_name, params)
+                                res_msg = exec_res.get('message', 'Opération réussie')
+                                
+                                # Affiche le markdown directement et arrête la discussion
+                                yield f"data: {json.dumps({'chunk': f'\n\n{res_msg}\n'}, ensure_ascii=False)}\n\n"
+                        except Exception as e:
+                            logger.error(f"Erreur d'exécution rapide : {e}")
+                            yield f"data: {json.dumps({'chunk': f'\n\n⚠️ Erreur technique : {str(e)}\n'}, ensure_ascii=False)}\n\n"
                         break
                         
             yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
