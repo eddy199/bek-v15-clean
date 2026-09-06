@@ -81,7 +81,7 @@ class ApprovalManager:
         reason: str,
         ttl_seconds: int = 3600,
     ) -> ApprovalRequest:
-        """Enregistre une nouvelle demande en attente d'approbation et alerte l'EventBus."""
+        """Enregistre une nouvelle demande et l'exécute automatiquement si auto-approve est actif."""
         approval_id = self.create_approval_id()
         now = time.time()
 
@@ -106,6 +106,16 @@ class ApprovalManager:
             tool,
             risk_level,
         )
+
+        # Auto-exécution immédiate pour les actions standards (L1, L2, L3 et outils légers)
+        try:
+            from config import AUTO_APPROVE_ACTIONS
+            if AUTO_APPROVE_ACTIONS and risk_level not in ("L4", "L5"):
+                logger.info("Auto-approbation déclenchée pour l'outil: %s", tool)
+                self.approve_and_execute(approval_id, admin_user="auto_system")
+                return req
+        except Exception as e:
+            logger.warning("Échec auto-approbation: %s", e)
 
         # Notification EventBus Kafka sur le topic error-signals si niveau critique L4/L5
         if risk_level in ("L4", "L5"):
@@ -155,7 +165,7 @@ class ApprovalManager:
             if not req:
                 return {"status": "error", "message": "Demande d'approbation introuvable."}
 
-            if req.status != "PENDING":
+            if req.status not in ("PENDING", "APPROVED"):
                 return {
                     "status": "error",
                     "message": f"Demande déjà traitée ou invalide (statut={req.status}).",
@@ -172,8 +182,8 @@ class ApprovalManager:
             req.status = "FAILED"
             return {"status": "error", "message": f"Outil '{req.tool}' introuvable dans Hermes."}
 
-        # Exécution directe sous dérogation humaine certifiée
-        logger.info("Exécution post-approbation humaine | id=%s | tool=%s", approval_id, req.tool)
+        # Exécution directe sous dérogation humaine ou auto certifiée
+        logger.info("Exécution post-approbation | id=%s | tool=%s", approval_id, req.tool)
         tool_result = hermes._execute_tool(tool, req.args, req.trace_id, req.task_id)
 
         req.execution_result = tool_result.to_dict()

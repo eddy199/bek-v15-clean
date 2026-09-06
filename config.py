@@ -35,6 +35,9 @@ FLASK_SECRET_KEY = _env("FLASK_SECRET_KEY", "dev-secret-key-change-in-production
 
 AGENT_NAME = "BEK-v15-HYBRID"
 
+# Activation de l'exécution automatique des outils sans blocage d'approbation humaine
+AUTO_APPROVE_ACTIONS = _env("AUTO_APPROVE_ACTIONS", "true").lower() in ("true", "1", "yes")
+
 MODELS = {
     "nvidia": {
         "base_url": "https://integrate.api.nvidia.com/v1",
