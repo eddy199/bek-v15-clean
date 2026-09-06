@@ -116,7 +116,7 @@ def add_header(response):
 # ==========================================
 
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
-SKILLS_DIR = os.path.join(WORKSPACE_DIR, "awesome-openclaw-skills")
+SKILLS_DIR = os.path.join(WORKSPACE_DIR, "skills")
 FILES_DIR = os.path.join(WORKSPACE_DIR, "uploads")
 GENERATED_DIR = os.path.join(WORKSPACE_DIR, "generated")
 PLUGINS_DIR = os.path.join(WORKSPACE_DIR, "plugins")
