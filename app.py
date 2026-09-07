@@ -1,6 +1,6 @@
 # ==========================================
-# BEK-v15.3 HYBRID - SERVEUR PRINCIPAL
-# FLASK / HERMES / CRM / MATRIX / PINECONE / FUTURE AGI
+# BEK-v15.3 HYBRID - SERVEUR PRINCIPAL UNIFIÉ
+# FLASK / HERMES / ORCHESTRATEUR A2A / CRM / PINECONE
 # COMPATIBILITÉ UNIVERSELLE WINDOWS & LINUX
 # ==========================================
 
@@ -65,11 +65,21 @@ from provider_manager import provider_manager
 from approval_manager import approval_manager
 
 # ==========================================
-# META-CORTEX
+# META-CORTEX & ORCHESTRATEUR HYBRIDE A2A
 # ==========================================
 
 from meta_cortex_grounding import GroundingValidator
 from meta_cortex_swarm import ReflexionSwarm
+
+try:
+    from bek_orchestrator import bek_orchestrator
+except ImportError:
+    bek_orchestrator = None
+
+try:
+    from skill_generator import create_and_register_skill
+except ImportError:
+    create_and_register_skill = None
 
 # ==========================================
 # WEB AGENT
@@ -219,6 +229,12 @@ hermes.register_tool(
 )
 
 hermes.register_tool(
+    "orchestrate",
+    lambda goal: bek_orchestrator.run(goal) if bek_orchestrator else "Orchestrateur indisponible",
+    risk_level="L2",
+)
+
+hermes.register_tool(
     "neon_audit",
     lambda: {
         "status": "Neon DB audit demandé",
@@ -324,12 +340,14 @@ Tu es BEK, un agent superviseur technique d'exécution directe et précis, opér
 - Salutations : réponds en une seule phrase courte.
 
 # EXÉCUTION D'OUTILS & ACTIONS (RÈGLE STRICTE)
-- DÈS QUE l'utilisateur demande une action (recherche web_sync, sauvegarder mémoire, chercher mémoire, générer image, lire fichier, exécuter commande, sauvegarder git, lancer/stopper tâche de fond), TU NE POSES AUCUNE QUESTION.
+- DÈS QUE l'utilisateur demande une action (création de skill dynamique, orchestration multi-agents, recherche web_sync, sauvegarder mémoire, chercher mémoire, générer image, lire fichier, exécuter commande, sauvegarder git, lancer/stopper tâche de fond), TU NE POSES AUCUNE QUESTION.
 - INTERDICTION de demander la permission ("Veux-tu que je...").
 - INTERDICTION de décrire ce que tu vas faire ou de faire une phrase d'introduction.
 - Renvoie UNIQUEMENT la balise [ACTION:nom_action]{{"param":"valeur"}}[/ACTION]. Aucun autre texte n'est toléré avant ou après.
 
 # ACTIONS DISPONIBLES :
+   - [ACTION:create_dynamic_skill]{{"skill_name": "...", "code_content": "...", "description": "..."}}[/ACTION]
+   - [ACTION:orchestrate]{{"goal": "..."}}[/ACTION]
    - [ACTION:web_sync]{{"query": "..."}}[/ACTION]
    - [ACTION:execute_command]{{"command": "..."}}[/ACTION]
    - [ACTION:execute_tmux_headless]{{"session_name": "...", "command": "..."}}[/ACTION]
@@ -563,13 +581,38 @@ def execute_database_sql(sql_query: str) -> dict:
             except Exception: pass
 
 def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
-    if action_name in ("web_sync", "web_search", "web_pipeline"):
+    if action_name == "create_dynamic_skill":
+        skill_name = parameters.get("skill_name", "")
+        code_content = parameters.get("code_content", "")
+        description = parameters.get("description", "Skill auto-généré par l'orchestrateur BEK")
+        if not skill_name or not code_content:
+            return {"status": "error", "message": "Nom du skill ou contenu manquant."}
+        try:
+            if create_and_register_skill:
+                return create_and_register_skill(skill_name, code_content, description)
+            return {"status": "error", "message": "Module skill_generator indisponible."}
+        except Exception as e:
+            return {"status": "error", "message": f"Erreur intégration skill : {str(e)}"}
+
+    elif action_name in ("orchestrate", "run_swarm_task", "multi_agent_workflow"):
+        goal = parameters.get("goal", parameters.get("objective", parameters.get("query", "")))
+        if not goal:
+            return {"status": "error", "message": "L'objectif d'orchestration ne peut pas être vide."}
+        try:
+            if bek_orchestrator:
+                orch_report = bek_orchestrator.run(goal)
+                return {"status": "success", "message": orch_report}
+            return {"status": "error", "message": "Module bek_orchestrator indisponible sur l'hôte."}
+        except Exception as e:
+            return {"status": "error", "message": f"Erreur Orchestrateur : {str(e)}"}
+
+    elif action_name in ("web_sync", "web_search", "web_pipeline"):
         query = parameters.get("query", "")
         if not query:
             return {"status": "error", "message": "La requête web_sync est vide."}
         try:
             res = web_agent_instance.run_pipeline(query)
-            return {"status": "success", "message": f"🌐 Synchronisation Web réussie pour '{query}' :\n{str(res)[:1500]}"}
+            return {"status": "success", "message": f"🌐 Synchronisation Web réussie pour '{query}' :\n{str(res)[:2500]}"}
         except Exception as e:
             return {"status": "error", "message": f"Erreur web_sync : {str(e)}"}
 
