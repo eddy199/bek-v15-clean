@@ -1,16 +1,11 @@
- 
-cat << 'EOF' > test_neon.py
 import psycopg2
 import sys
 
-# Collez votre DATABASE_URL exacte ci-dessous si différente
-DATABASE_URL = "VOTRE_DATABASE_URL_ICI"
+DATABASE_URL = "postgresql://neondb_owner:npg_FqRIu3UOyPJ8@ep-misty-dream-ay7lX9lc.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
 try:
     print("Connexion à Neon en cours...")
-    conn = psycopg2.connect(DATABASE_URL=postgresql://neondb_owner:npg_FqRIu3UOyPJ8@ep-misty-dream-ay7lX9lc.
-c-5.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
-)
+    conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
     
     # 1. Vérifier la connexion
@@ -18,7 +13,7 @@ c-5.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
     db_name, version = cur.fetchone()
     print(f" Connecté à la base : {db_name}")
     
-    # 2. Lister les tables créées par Prisma
+    # 2. Lister les tables créées
     cur.execute("""
         SELECT table_name 
         FROM information_schema.tables 
@@ -38,4 +33,3 @@ c-5.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 except Exception as e:
     print(f" Erreur : {e}")
     sys.exit(1)
-EOF

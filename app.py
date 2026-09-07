@@ -85,6 +85,11 @@ from hermes_core import (
 )
 
 # ==========================================
+# BEK EVAL GUARD (Intégration Future AGI / Garde-fou)
+# ==========================================
+from bek_eval_guard import evaluate_response_quality
+
+# ==========================================
 # APPLICATION
 # ==========================================
 
@@ -948,13 +953,6 @@ def chat():
         {"role": "system", "content": dynamic_system_prompt}
     ] + trimmed_messages
 
-    # if headroom_compress:
-    #     try:
-    #         compressed_res = headroom_compress(exec_messages)
-    #         exec_messages = compressed_res.messages
-    #     except Exception as e:
-    #         logger.warning("Erreur Headroom compression : %s", e)
-
     def generate_proxy():
         full_text_accumulated = []
         action_detected = False
@@ -977,7 +975,7 @@ def chat():
                     
                     yield f"data: {json.dumps({'chunk': chunk}, ensure_ascii=False)}\n\n"
                     
-                    # Interception et exécution automatique dans le même flux (BYPASS de la confirmation manuelle)
+                    # Interception et exécution automatique dans le même flux
                     if action_detected and "[/ACTION]" in current_text:
                         try:
                             action_matches = list(re.finditer(r"\[ACTION:(\w+)\](.*?)\[/ACTION\]", current_text, re.DOTALL))
@@ -1002,6 +1000,11 @@ def chat():
                                 
                                 exec_res = execute_agent_crm_tool(act_name, params)
                                 res_msg = exec_res.get('message', 'Opération réussie')
+                                
+                                # --- VALIDATION DU GARDE-FOU (BEK-EvalGuard) ---
+                                eval_result = evaluate_response_quality(last_user_query, res_msg)
+                                if not eval_result["passed"]:
+                                    res_msg = "⚠️ [BEK Guard] Résultat d'action filtré pour non-conformité de qualité ou présence d'erreur."
                                 
                                 # Affiche le markdown directement et arrête la discussion
                                 yield f"data: {json.dumps({'chunk': f'\n\n{res_msg}\n'}, ensure_ascii=False)}\n\n"
