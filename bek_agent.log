@@ -4744,3 +4744,18 @@ LINE 3:             FROM sync_log
 2026-09-07 12:12:05,164 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
 2026-09-07 12:12:05,842 - INFO - Recherche mémoire Pinecone | query_len=158 | top_k=3
 2026-09-07 12:12:06,450 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 12:24:53,854 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 12:24:54,532 - INFO - Recherche mémoire Pinecone | query_len=3 | top_k=3
+2026-09-07 12:24:58,519 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 12:25:04,987 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 12:25:05,858 - INFO - Recherche mémoire Pinecone | query_len=134 | top_k=3
+2026-09-07 12:25:06,409 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 12:26:50,096 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 12:26:51,022 - INFO - Recherche mémoire Pinecone | query_len=81 | top_k=3
+2026-09-07 12:26:51,613 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 12:32:21,777 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 12:32:22,635 - INFO - Recherche mémoire Pinecone | query_len=64 | top_k=3
+2026-09-07 12:32:23,223 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 12:40:43,018 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 12:40:43,845 - INFO - Recherche mémoire Pinecone | query_len=209 | top_k=3
+2026-09-07 12:40:47,910 - INFO - Recherche mémoire ChromaDB local | top_k=3
