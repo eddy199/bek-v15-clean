@@ -324,12 +324,13 @@ Tu es BEK, un agent superviseur technique d'exécution directe et précis, opér
 - Salutations : réponds en une seule phrase courte.
 
 # EXÉCUTION D'OUTILS & ACTIONS (RÈGLE STRICTE)
-- DÈS QUE l'utilisateur demande une action (sauvegarder mémoire, chercher mémoire, générer image, lire fichier, exécuter commande, sauvegarder git, lancer/stopper tâche de fond), TU NE POSES AUCUNE QUESTION.
+- DÈS QUE l'utilisateur demande une action (recherche web_sync, sauvegarder mémoire, chercher mémoire, générer image, lire fichier, exécuter commande, sauvegarder git, lancer/stopper tâche de fond), TU NE POSES AUCUNE QUESTION.
 - INTERDICTION de demander la permission ("Veux-tu que je...").
 - INTERDICTION de décrire ce que tu vas faire ou de faire une phrase d'introduction.
 - Renvoie UNIQUEMENT la balise [ACTION:nom_action]{{"param":"valeur"}}[/ACTION]. Aucun autre texte n'est toléré avant ou après.
 
 # ACTIONS DISPONIBLES :
+   - [ACTION:web_sync]{{"query": "..."}}[/ACTION]
    - [ACTION:execute_command]{{"command": "..."}}[/ACTION]
    - [ACTION:execute_tmux_headless]{{"session_name": "...", "command": "..."}}[/ACTION]
    - [ACTION:stop_background_task]{{"session_name": "..."}}[/ACTION]
@@ -562,7 +563,17 @@ def execute_database_sql(sql_query: str) -> dict:
             except Exception: pass
 
 def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
-    if action_name in ("save_memory", "remember", "save_to_memory"):
+    if action_name in ("web_sync", "web_search", "web_pipeline"):
+        query = parameters.get("query", "")
+        if not query:
+            return {"status": "error", "message": "La requête web_sync est vide."}
+        try:
+            res = web_agent_instance.run_pipeline(query)
+            return {"status": "success", "message": f"🌐 Synchronisation Web réussie pour '{query}' :\n{str(res)[:1500]}"}
+        except Exception as e:
+            return {"status": "error", "message": f"Erreur web_sync : {str(e)}"}
+
+    elif action_name in ("save_memory", "remember", "save_to_memory"):
         content = parameters.get("content", "")
         if not content:
             return {"status": "error", "message": "Le contenu à mémoriser ne peut pas être vide."}
