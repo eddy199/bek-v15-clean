@@ -1,6 +1,7 @@
 # ==========================================
 # BEK-v15.3 HYBRID - SERVEUR PRINCIPAL
-# FLASK / HERMES / CRM / MATRIX / PINECONE
+# FLASK / HERMES / CRM / MATRIX / PINECONE / FUTURE AGI
+# COMPATIBILITÉ UNIVERSELLE WINDOWS & LINUX
 # ==========================================
 
 from __future__ import annotations
@@ -85,7 +86,7 @@ from hermes_core import (
 )
 
 # ==========================================
-# BEK EVAL GUARD (Intégration Future AGI / Garde-fou)
+# BEK EVAL GUARD (Garde-fou Future AGI)
 # ==========================================
 from bek_eval_guard import evaluate_response_quality
 
@@ -117,7 +118,7 @@ def add_header(response):
     return response
 
 # ==========================================
-# DIRECTOIRES
+# DIRECTOIRES UNIVERSELS
 # ==========================================
 
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -226,35 +227,42 @@ hermes.register_tool(
 )
 
 # ==========================================
-# PROMPT SYSTÈME GLOBAL — CO-PILOTE HUMAIN & NATUREL
+# PROMPT SYSTÈME GLOBAL — MULTI-OS & AUTONOME
 # ==========================================
 
-BEK_GOLDEN_RULES = """
+CURRENT_OS_NAME = "Windows" if os.name == "nt" else "Linux"
+
+BEK_GOLDEN_RULES = f"""
 # RÔLE & PERSONNALITÉ
-Tu es BEK, un agent technique d'exécution direct et précis.
+Tu es BEK, un agent superviseur technique d'exécution directe et précis, opérant sur un environnement hôte {CURRENT_OS_NAME}.
+
+# POUVOIRS SYSTÈME ET ACCÈS TERMINAL
+- Tu disposes d'un accès TOTAL au système de fichiers local, au terminal ({CURRENT_OS_NAME}), à Git, aux bases Neon DB et Pinecone, et aux sous-agents.
+- INTERDICTION FORMELLE d'affirmer "Je n'ai pas accès à Internet", "Je ne peux pas accéder à GitHub" ou "Cet environnement est isolé".
+- Dès que l'utilisateur demande une opération Git (sauvegarde, commit, push), un script, ou une action fichier, TU L'EXÉCUTES DIRECTEMENT via les outils dédiés.
 
 # DIRECTIVES CONVERSATIONNELLES
 - Parle naturellement et brièvement. Pas de bavardage.
 - Salutations : réponds en une seule phrase courte.
 
 # EXÉCUTION D'OUTILS & ACTIONS (RÈGLE STRICTE)
-- DÈS QUE l'utilisateur demande une action (générer image, lire fichier, exécuter), TU NE POSES AUCUNE QUESTION.
+- DÈS QUE l'utilisateur demande une action (générer image, lire fichier, exécuter commande, sauvegarder git), TU NE POSES AUCUNE QUESTION.
 - INTERDICTION de demander la permission ("Veux-tu que je...").
 - INTERDICTION de décrire ce que tu vas faire ou de faire une phrase d'introduction.
-- Renvoie UNIQUEMENT la balise [ACTION:nom_action]{"param":"valeur"}[/ACTION]. Aucun autre texte n'est toléré avant ou après.
+- Renvoie UNIQUEMENT la balise [ACTION:nom_action]{{"param":"valeur"}}[/ACTION]. Aucun autre texte n'est toléré avant ou après.
 
 # ACTIONS DISPONIBLES :
-   - [ACTION:write_file]{"filename": "...", "content": "..."}[/ACTION]
-   - [ACTION:delete_file]{"filename": "..."}[/ACTION]
-   - [ACTION:read_file]{"filename": "..."}[/ACTION]
-   - [ACTION:execute_command]{"command": "..."}[/ACTION]
-   - [ACTION:execute_tmux_headless]{"session_name": "...", "command": "..."}[/ACTION]
-   - [ACTION:extract_zip]{"zip_path": "...", "extract_to": "..."}[/ACTION]
-   - [ACTION:create_zip]{"folder_path": "...", "output_zip": "..."}[/ACTION]
-   - [ACTION:analyze_zip_content]{"zip_path": "..."}[/ACTION]
-   - [ACTION:analyze_image]{"image_path": "...", "prompt": "...", "provider": "...", "model": "..."}[/ACTION]
-   - [ACTION:generate_image]{"prompt": "...", "filename": "...", "provider": "...", "model": "..."}[/ACTION]
-   - [ACTION:merge_and_edit_images]{"image_paths": ["img1", "img2"], "prompt": "..."}[/ACTION]
+   - [ACTION:execute_command]{{"command": "..."}}[/ACTION]
+   - [ACTION:execute_tmux_headless]{{"session_name": "...", "command": "..."}}[/ACTION]
+   - [ACTION:write_file]{{"filename": "...", "content": "..."}}[/ACTION]
+   - [ACTION:delete_file]{{"filename": "..."}}[/ACTION]
+   - [ACTION:read_file]{{"filename": "..."}}[/ACTION]
+   - [ACTION:extract_zip]{{"zip_path": "...", "extract_to": "..."}}[/ACTION]
+   - [ACTION:create_zip]{{"folder_path": "...", "output_zip": "..."}}[/ACTION]
+   - [ACTION:analyze_zip_content]{{"zip_path": "..."}}[/ACTION]
+   - [ACTION:analyze_image]{{"image_path": "...", "prompt": "...", "provider": "gemini", "model": "gemini-1.5-flash"}}[/ACTION]
+   - [ACTION:generate_image]{{"prompt": "...", "filename": "...", "provider": "gemini", "model": "gemini-3.1-flash-image"}}[/ACTION]
+   - [ACTION:merge_and_edit_images]{{"image_paths": ["img1", "img2"], "prompt": "..."}}[/ACTION]
 """
 
 # ==========================================
@@ -326,7 +334,7 @@ def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gem
         mime_type = mime_map.get(ext, "image/png")
         provider = provider.lower() if provider else "gemini"
 
-        if provider == "gemini":
+        if provider == "gemini" or not provider:
             api_key = get_api_key("GEMINI_API_KEY")
             if not api_key: return "Erreur : GEMINI_API_KEY non configurée."
             clean_model = model if model and "gemini" in model else "gemini-1.5-flash"
@@ -367,13 +375,12 @@ def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gem
             api_key = get_api_key("GROQ_API_KEY")
             if not api_key: return "Erreur : GROQ_API_KEY non configurée."
             url = "https://api.groq.com/openai/v1/chat/completions"
-            active_model = model if model and "vision" in model else "llama-3.2-11b-vision-preview"
+            active_model = model if model and "vision" in model else "llama-3.2-90b-text-preview"
             headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
             payload = {
                 "model": active_model,
                 "messages": [{"role": "user", "content": [
-                    {"type": "text", "text": prompt or "Analyse cette image."},
-                    {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{encoded_image}"}}
+                    {"type": "text", "text": prompt or "Analyse cette image."}
                 ]}],
                 "max_tokens": 1024
             }
@@ -614,32 +621,50 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         return {"status": "success", "message": f"🪄 **Fusion réussie !**\n\n![{final_filename}](/api/download/{final_filename})"}
 
     elif action_name in ("execute_command", "run_script", "run_tests"):
-        command = parameters.get("command", "ls -la")
+        command = parameters.get("command", "dir" if os.name == "nt" else "ls -la")
         try:
-            res = subprocess.run(command, shell=True, cwd=WORKSPACE_DIR, capture_output=True, text=True, timeout=15)
+            res = subprocess.run(command, shell=True, cwd=WORKSPACE_DIR, capture_output=True, text=True, timeout=30)
             output = (res.stdout + "\n" + res.stderr).strip()
             return {"status": "success" if res.returncode == 0 else "error", "message": f"Commande exécutée :\n{output[-2500:]}"}
         except Exception as e:
-            return {"status": "error", "message": f"Erreur exécution rapide : {str(e)}"}
+            return {"status": "error", "message": f"Erreur exécution : {str(e)}"}
             
-    elif action_name == "execute_tmux_headless":
+    elif action_name in ("execute_tmux_headless", "execute_background_task"):
         session_name = parameters.get("session_name", f"job_{uuid.uuid4().hex[:6]}")
         command = parameters.get("command", "")
         
         if not command:
             return {"status": "error", "message": "La commande ne peut pas être vide."}
             
-        log_file = os.path.join(GENERATED_DIR, f"{session_name}_logs.txt")
-        tmux_cmd = f"tmux new-session -d -s {session_name} '{command} > {log_file} 2>&1'"
+        log_file = os.path.abspath(os.path.join(GENERATED_DIR, f"{session_name}_logs.txt"))
         
         try:
-            subprocess.run(tmux_cmd, shell=True, cwd=WORKSPACE_DIR, check=True)
+            if os.name == "nt":
+                # Exécution asynchrone Windows Native
+                with open(log_file, "w", encoding="utf-8") as out:
+                    subprocess.Popen(
+                        command, 
+                        shell=True, 
+                        cwd=WORKSPACE_DIR, 
+                        stdout=out, 
+                        stderr=out,
+                        creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+                    )
+            else:
+                # Exécution Linux Native (Tmux si disponible, sinon fallback Popen)
+                if shutil.which("tmux"):
+                    tmux_cmd = f"tmux new-session -d -s {session_name} '{command} > \"{log_file}\" 2>&1'"
+                    subprocess.run(tmux_cmd, shell=True, cwd=WORKSPACE_DIR, check=True)
+                else:
+                    with open(log_file, "w", encoding="utf-8") as out:
+                        subprocess.Popen(command, shell=True, cwd=WORKSPACE_DIR, stdout=out, stderr=out)
+
             return {
                 "status": "success", 
-                "message": f"🚀 Tâche lourde lancée en arrière-plan avec succès !\n- Session Tmux : `{session_name}`\n- Fichier de logs : `{log_file}`"
+                "message": f"🚀 Tâche lancée en arrière-plan avec succès ({'Windows' if os.name == 'nt' else 'Linux'}) !\n- Session : `{session_name}`\n- Logs : `{log_file}`"
             }
         except Exception as e:
-            return {"status": "error", "message": f"Erreur critique Tmux Headless : {str(e)}"}
+            return {"status": "error", "message": f"Erreur exécution tâche de fond : {str(e)}"}
             
     return {"status": "success", "message": "Action traitée."}
 
@@ -688,7 +713,7 @@ def serve_static(filename):
 
 @app.route("/api/health", methods=["GET"])
 def health():
-    return jsonify({"status": "ok", "service": "BEK-v15.3 HYBRID"})
+    return jsonify({"status": "ok", "service": "BEK-v15.3 HYBRID", "os": CURRENT_OS_NAME})
 
 @app.route("/api/config", methods=["GET"])
 def get_config():
