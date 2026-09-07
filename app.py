@@ -241,7 +241,6 @@ def start_background_task(session_name: str, command: str) -> dict:
     try:
         log_file = open(log_file_path, "w", encoding="utf-8")
         if sys.platform == "win32":
-            # 0x08000000 (CREATE_NO_WINDOW) supprime totalement la fenêtre noire
             win_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
             proc = subprocess.Popen(
                 command,
@@ -325,7 +324,7 @@ Tu es BEK, un agent superviseur technique d'exécution directe et précis, opér
 - Salutations : réponds en une seule phrase courte.
 
 # EXÉCUTION D'OUTILS & ACTIONS (RÈGLE STRICTE)
-- DÈS QUE l'utilisateur demande une action (générer image, lire fichier, exécuter commande, sauvegarder git, lancer/stopper tâche de fond), TU NE POSES AUCUNE QUESTION.
+- DÈS QUE l'utilisateur demande une action (sauvegarder mémoire, chercher mémoire, générer image, lire fichier, exécuter commande, sauvegarder git, lancer/stopper tâche de fond), TU NE POSES AUCUNE QUESTION.
 - INTERDICTION de demander la permission ("Veux-tu que je...").
 - INTERDICTION de décrire ce que tu vas faire ou de faire une phrase d'introduction.
 - Renvoie UNIQUEMENT la balise [ACTION:nom_action]{{"param":"valeur"}}[/ACTION]. Aucun autre texte n'est toléré avant ou après.
@@ -334,6 +333,8 @@ Tu es BEK, un agent superviseur technique d'exécution directe et précis, opér
    - [ACTION:execute_command]{{"command": "..."}}[/ACTION]
    - [ACTION:execute_tmux_headless]{{"session_name": "...", "command": "..."}}[/ACTION]
    - [ACTION:stop_background_task]{{"session_name": "..."}}[/ACTION]
+   - [ACTION:save_memory]{{"content": "..."}}[/ACTION]
+   - [ACTION:search_memory]{{"query": "..."}}[/ACTION]
    - [ACTION:write_file]{{"filename": "...", "content": "..."}}[/ACTION]
    - [ACTION:delete_file]{{"filename": "..."}}[/ACTION]
    - [ACTION:read_file]{{"filename": "..."}}[/ACTION]
@@ -561,7 +562,25 @@ def execute_database_sql(sql_query: str) -> dict:
             except Exception: pass
 
 def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
-    if action_name in ("write_file", "save_file", "create_file"):
+    if action_name in ("save_memory", "remember", "save_to_memory"):
+        content = parameters.get("content", "")
+        if not content:
+            return {"status": "error", "message": "Le contenu à mémoriser ne peut pas être vide."}
+        try:
+            save_to_memory(content)
+            return {"status": "success", "message": f"🧠 Information ancrée dans la mémoire vectorielle :\n\"{content}\""}
+        except Exception as e:
+            return {"status": "error", "message": f"Erreur mémoire : {str(e)}"}
+
+    elif action_name in ("search_memory", "recall"):
+        query = parameters.get("query", "")
+        try:
+            mem_res = search_memory(query, top_k=3)
+            return {"status": "success", "message": f"🔍 Résultats mémoire pour '{query}' :\n{mem_res}"}
+        except Exception as e:
+            return {"status": "error", "message": f"Erreur recherche mémoire : {str(e)}"}
+
+    elif action_name in ("write_file", "save_file", "create_file"):
         filename = parameters.get("filename", "generated/agent_output.txt")
         filepath = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
         try:
