@@ -668,6 +668,7 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur recherche mémoire : {str(e)}"}
 
+        # ===== CORRECTION : AUTOMATISATION DU BOUTON DE TÉLÉCHARGEMENT =====
         elif action_name in ("write_file", "save_file", "create_file"):
             filename = parameters.get("filename", "generated/agent_output.txt")
             filepath = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
@@ -677,7 +678,9 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 with open(filepath, "w", encoding="utf-8") as f:
                     f.write(content)
                 update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier écrit: {filename}")
-                return {"status": "success", "message": f"Fichier enregistré : {filepath}"}
+                safe_name = os.path.basename(filename)
+                # Injection de la balise FILE dans la réponse
+                return {"status": "success", "message": f"Fichier `{safe_name}` enregistré avec succès.\n\n[FILE:{safe_name}](/api/download/{safe_name})"}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur écriture : {str(e)}"}
@@ -745,6 +748,7 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur extraction ZIP : {str(e)}"}
 
+        # ===== CORRECTION : AUTOMATISATION DU BOUTON DE TÉLÉCHARGEMENT POUR LES ARCHIVES ZIP =====
         elif action_name == "create_zip":
             folder_name = parameters.get("folder_path", "generated/ia_project")
             output_zip_name = parameters.get("output_zip", "generated/export_projet.zip")
@@ -757,7 +761,9 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 os.makedirs(os.path.dirname(output_path), exist_ok=True)
                 shutil.make_archive(output_path.replace('.zip', ''), 'zip', folder_path)
                 update_task_state(task_id, "COMPLETED", correlation_id, f"ZIP créé: {output_zip_name}")
-                return {"status": "success", "message": f"Archive créée : {output_zip_name}"}
+                safe_name = os.path.basename(output_zip_name)
+                # Injection de la balise FILE dans la réponse
+                return {"status": "success", "message": f"Archive `{safe_name}` créée avec succès.\n\n[FILE:{safe_name}](/api/download/{safe_name})"}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur création ZIP : {str(e)}"}

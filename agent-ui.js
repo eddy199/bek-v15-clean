@@ -191,10 +191,8 @@
             if (!res.ok) throw new Error("API Config non disponible");
             const data = await res.json();
             
-            // --- FIX : Injection forcée des modèles ---
             availableModels = data.models || {}; 
             
-            // On s'assure que les modèles de base sont là si l'API ne les renvoie pas tous
             if(!availableModels['b_ai']) availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
             if(!availableModels['mistral']) availableModels['mistral'] = ['mistral-medium-3.5', 'mistral-small-4', 'mistral-large-3', 'ministral-3-8b', 'codestral', 'ministral-3-3b', 'ministral-3-14b'];
             if(!availableModels['cohere']) availableModels['cohere'] = ['cohere-command-a-plus', 'cohere-command-a', 'cohere-command-r-plus', 'cohere-command-r', 'cohere-command-r7b', 'cohere-aya-expanse-32b'];
@@ -223,7 +221,6 @@
                 {id: 'llm7_anonymous', name: 'LLM7.io (Anonyme)', configured: true}
             ];
 
-            // Fusionner les providers
             requiredProviders.forEach(rp => {
                 if (!providersList.some(p => p.id === rp.id)) {
                     providersList.push(rp);
@@ -717,7 +714,6 @@
 
         let fullTextContent = text;
         if (attachedFiles.length > 0) {
-            // CORRECTION: Retour chariot normal plutôt qu'échappement problématique
             fullTextContent += "\n[Fichiers joints : " + attachedFiles.join(', ') + "]";
             
             const imageFiles = attachedFiles.filter(f => f.match(/\.(png|jpe?g|gif|webp)$/i));
@@ -773,7 +769,6 @@
                 const { done, value } = await reader.read();
                 if (done) break;
                 buffer += decoder.decode(value, { stream: true });
-                // CORRECTION: Split sur un vrai retour à la ligne
                 const lines = buffer.split('\n');
                 buffer = lines.pop();
 
@@ -860,10 +855,22 @@
         DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
     }
 
-    // FIX: NETTOYAGE ABSOLU DES BALISES DE REFLEXION (ANTI-HALLUCINATION UI)
+    // INTERCEPTE LA BALISE DE TÉLÉCHARGEMENT ET LA TRANSFORME EN WIDGET
     function formatMarkdown(text) {
-        // CORRECTION: Regex raw string
         let cleanText = text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '');
+
+        // INJECTION DU COMPOSANT DYNAMIQUE DE TÉLÉCHARGEMENT DE FICHIER 
+        cleanText = cleanText.replace(/\[FILE:(.*?)\]\((.*?)\)/g, (match, filename, url) => {
+            return `
+            <div class="file-attachment-card">
+                <div class="file-attachment-icon">📄</div>
+                <div class="file-attachment-info">
+                    <div class="file-attachment-name">${filename}</div>
+                    <div class="file-attachment-desc">Fichier généré prêt au téléchargement</div>
+                </div>
+                <a href="${url}" target="_blank" download class="file-attachment-btn">Télécharger</a>
+            </div>`;
+        });
 
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
