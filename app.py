@@ -44,6 +44,7 @@ except ImportError:
 from memory import (
     search_memory,
     save_to_memory,
+    delete_from_memory,
     get_db_connection,
     init_sync_log_table,
 )
@@ -351,7 +352,7 @@ Tu es BEK, un agent superviseur technique d'exécution directe et précis, opér
 - Salutations : réponds en une seule phrase courte.
 
 # EXÉCUTION D'OUTILS & ACTIONS (RÈGLE STRICTE)
-- DÈS QUE l'utilisateur demande une action (création de skill dynamique, orchestration multi-agents, recherche web_sync, sauvegarder mémoire, chercher mémoire, générer image, lire fichier, exécuter commande, sauvegarder git, lancer/stopper tâche de fond), TU NE POSES AUCUNE QUESTION.
+- DÈS QUE l'utilisateur demande une action (création de skill dynamique, orchestration multi-agents, recherche web_sync, sauvegarder mémoire, chercher mémoire, supprimer mémoire, générer image, lire fichier, exécuter commande, sauvegarder git, lancer/stopper tâche de fond), TU NE POSES AUCUNE QUESTION.
 - INTERDICTION de demander la permission ("Veux-tu que je...").
 - INTERDICTION de décrire ce que tu vas faire ou de faire une phrase d'introduction.
 - Renvoie UNIQUEMENT la balise [ACTION:nom_action]{{"param":"valeur"}}[/ACTION]. Aucun autre texte n'est toléré avant ou après.
@@ -365,6 +366,7 @@ Tu es BEK, un agent superviseur technique d'exécution directe et précis, opér
    - [ACTION:stop_background_task]{{"session_name": "..."}}[/ACTION]
    - [ACTION:save_memory]{{"content": "..."}}[/ACTION]
    - [ACTION:search_memory]{{"query": "..."}}[/ACTION]
+   - [ACTION:delete_memory]{{"record_id": "...", "keyword": "..."}}[/ACTION]
    - [ACTION:write_file]{{"filename": "...", "content": "..."}}[/ACTION]
    - [ACTION:delete_file]{{"filename": "..."}}[/ACTION]
    - [ACTION:read_file]{{"filename": "..."}}[/ACTION]
@@ -668,7 +670,23 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur recherche mémoire : {str(e)}"}
 
-        # ===== CORRECTION : AUTOMATISATION DU BOUTON DE TÉLÉCHARGEMENT =====
+        elif action_name in ("delete_memory", "forget", "delete_from_memory"):
+            record_id = parameters.get("record_id", "")
+            keyword = parameters.get("keyword", "")
+            if not record_id and not keyword:
+                update_task_state(task_id, "FAILED", correlation_id, "Paramètres de suppression vides")
+                return {"status": "error", "message": "Fournis un 'record_id' ou un 'keyword' à supprimer de la mémoire."}
+            try:
+                del_res = delete_from_memory(record_id=record_id, keyword=keyword)
+                update_task_state(task_id, "COMPLETED", correlation_id, f"Suppression mémoire (ID: {record_id}, Mot-clé: {keyword})")
+                return {
+                    "status": "success",
+                    "message": f"🗑️ **Suppression de la mémoire effectuée :**\n- Pinecone Cloud : `{del_res.get('pinecone')}`\n- ChromaDB Local : `{del_res.get('chroma')}`\n- Table Neon (sync_log) : `{del_res.get('neon_sync')}`"
+                }
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur lors de la suppression mémoire : {str(e)}"}
+
         elif action_name in ("write_file", "save_file", "create_file"):
             filename = parameters.get("filename", "generated/agent_output.txt")
             filepath = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
@@ -679,7 +697,6 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                     f.write(content)
                 update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier écrit: {filename}")
                 safe_name = os.path.basename(filename)
-                # Injection de la balise FILE dans la réponse
                 return {"status": "success", "message": f"Fichier `{safe_name}` enregistré avec succès.\n\n[FILE:{safe_name}](/api/download/{safe_name})"}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
@@ -748,7 +765,6 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur extraction ZIP : {str(e)}"}
 
-        # ===== CORRECTION : AUTOMATISATION DU BOUTON DE TÉLÉCHARGEMENT POUR LES ARCHIVES ZIP =====
         elif action_name == "create_zip":
             folder_name = parameters.get("folder_path", "generated/ia_project")
             output_zip_name = parameters.get("output_zip", "generated/export_projet.zip")
@@ -762,7 +778,6 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 shutil.make_archive(output_path.replace('.zip', ''), 'zip', folder_path)
                 update_task_state(task_id, "COMPLETED", correlation_id, f"ZIP créé: {output_zip_name}")
                 safe_name = os.path.basename(output_zip_name)
-                # Injection de la balise FILE dans la réponse
                 return {"status": "success", "message": f"Archive `{safe_name}` créée avec succès.\n\n[FILE:{safe_name}](/api/download/{safe_name})"}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
@@ -842,7 +857,6 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         elif action_name in ("execute_command", "run_script", "run_tests"):
             command = parameters.get("command", "dir" if os.name == "nt" else "ls -la")
             
-            # --- CORRECTION: OPTIMISATION RECHERCHE WINDOWS ---
             if "dir /s /b" in command.lower() and os.name == "nt":
                 term = re.search(r'\*(.*?)\*', command)
                 search_term = term.group(1) if term else "bek|provider"
@@ -1242,12 +1256,10 @@ def chat():
                                 exec_res = execute_agent_crm_tool(act_name, params)
                                 res_msg = exec_res.get('message', 'Opération réussie')
                                 
-                                # --- VALIDATION DU GARDE-FOU (BEK-EvalGuard & AST) ---
                                 eval_result = evaluate_response_quality(last_user_query, res_msg)
                                 if not eval_result["passed"]:
                                     res_msg = f"⚠️ [BEK Guard] Résultat d'action filtré : {eval_result['reason']}"
                                 
-                                # Affiche le markdown directement et arrête la discussion
                                 res_chunk_json = json.dumps({'chunk': f'\n\n{res_msg}\n'}, ensure_ascii=False)
                                 yield f"data: {res_chunk_json}\n\n"
                         except Exception as e:
