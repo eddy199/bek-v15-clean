@@ -859,17 +859,9 @@
     function formatMarkdown(text) {
         let cleanText = text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '');
 
-        // INJECTION DU COMPOSANT DYNAMIQUE DE TÉLÉCHARGEMENT DE FICHIER 
+        // INJECTION SANS ESPACES POUR ÉVITER LE BUG DU BLOC DE CODE MARKDOWN
         cleanText = cleanText.replace(/\[FILE:(.*?)\]\((.*?)\)/g, (match, filename, url) => {
-            return `
-            <div class="file-attachment-card">
-                <div class="file-attachment-icon">📄</div>
-                <div class="file-attachment-info">
-                    <div class="file-attachment-name">${filename}</div>
-                    <div class="file-attachment-desc">Fichier généré prêt au téléchargement</div>
-                </div>
-                <a href="${url}" target="_blank" download class="file-attachment-btn">Télécharger</a>
-            </div>`;
+            return `<div class="file-attachment-card"><div class="file-attachment-icon">📄</div><div class="file-attachment-info"><div class="file-attachment-name">${filename}</div><div class="file-attachment-desc">Fichier généré prêt au téléchargement</div></div><a href="${url}" target="_blank" download class="file-attachment-btn">Télécharger</a></div>`;
         });
 
         if (typeof marked !== 'undefined') {
