@@ -55,17 +55,90 @@ class ProviderManager:
             "google/gemma-4-31b-it",
         ],
         "gemini": [
+            "gemini-3.7-flash",
             "gemini-3.6-flash",
-            "gemini-1.5-pro-preview",
+            "gemini-3.5-flash",
+            "gemini-3.5-flash-lite",
+            "gemini-3.1-flash-lite",
+            "gemini-2.5-flash",
+            "gemini-2.5-flash-lite",
+            "gemini-2.5-pro",
+            "gemma-4-31b",
+            "gemma-4-26b-a4b",
         ],
         "openrouter": [
             "openrouter/auto",
             "openai/gpt-oss-120b",
             "anthropic/claude-4-sonnet",
+            "openrouter-free-router",
+            "poolside/laguna-s-2.1:free",
         ],
+        "mistral": [
+            "mistral-medium-3.5",
+            "mistral-small-4",
+            "mistral-large-3",
+            "ministral-3-8b",
+            "codestral",
+            "ministral-3-3b",
+            "ministral-3-14b",
+        ],
+        "cohere": [
+            "cohere-command-a-plus",
+            "cohere-command-a",
+            "cohere-command-r-plus",
+            "cohere-command-r",
+            "cohere-command-r7b",
+            "cohere-aya-expanse-32b",
+        ],
+        "aionlabs": [
+            "aion-2.0",
+            "aion-rp-llama-3.1-8b",
+            "aion-3.0",
+            "aion-3.0-mini",
+        ],
+        "zhipu": [
+            "glm-4.7-flash",
+            "glm-4.5-flash",
+            "glm-4.6v-flash",
+        ],
+        "siliconflow": [
+            "siliconflow-qwen3-8b",
+        ],
+        "ovh_anonymous": [
+            "ovh-qwen-3.5-397b",
+            "ovh-gpt-oss-120b",
+            "ovh-gpt-oss-20b",
+            "ovh-llama-3.3-70b",
+            "ovh-qwen-3.6-27b",
+            "ovh-qwen-3.5-9b",
+            "ovh-qwen-3-32b",
+            "ovh-qwen-coder-30b",
+            "ovh-qwen-vl-72b",
+            "ovh-mistral-small-3.2",
+            "ovh-mistral-nemo",
+            "ovh-mistral-7b",
+        ],
+        "kilo_anonymous": [
+            "kilo-nemotron-3-ultra-550b",
+            "kilo-step-3.7-flash",
+            "kilo-nemotron-3-super-120b",
+            "kilo-nemotron-3-nano-omni",
+            "kilo-laguna-s",
+            "kilo-laguna-xs",
+            "kilo-north-mini-code",
+            "kilo-openrouter-free",
+            "kilo-hy3",
+            "kilo-nemotron-lightning",
+            "kilo-lfm-2.5",
+        ],
+        "llm7_anonymous": [
+            "llm7-gpt-oss-20b",
+            "llm7-mistral-nemo",
+            "llm7-minimax-m2.7",
+        ]
     }
 
-    FALLBACK_ORDER = ["b_ai", "groq", "nvidia", "openrouter", "gemini"]
+    FALLBACK_ORDER = ["b_ai", "groq", "nvidia", "openrouter", "gemini", "mistral", "cohere", "aionlabs", "zhipu", "siliconflow", "ovh_anonymous", "kilo_anonymous", "llm7_anonymous"]
 
     def __init__(self) -> None:
         self.env_cache: Dict[str, str] = {}
@@ -106,7 +179,7 @@ class ProviderManager:
         if p in ["b.ai", "b_ai", "bai"]:
             key = self.get_api_key("B_AI_API_KEY")
             return "b_ai", key, "https://api.b.ai/v1/chat/completions"
-
+            
         use_headroom = (
             os.environ.get("USE_HEADROOM", self.env_cache.get("USE_HEADROOM", "false"))
             .lower()
@@ -143,9 +216,34 @@ class ProviderManager:
             key = self.get_api_key("OPENROUTER_API_KEY")
             return "openrouter", key, "https://openrouter.ai/api/v1/chat/completions"
 
-        elif p in ["b.ai", "b_ai", "bai"]:
-            key = self.get_api_key("B_AI_API_KEY")
-            return "b_ai", key, "https://api.b.ai/v1/chat/completions"
+        elif p == "mistral":
+            key = self.get_api_key("MISTRAL_API_KEY")
+            return "mistral", key, "https://api.mistral.ai/v1/chat/completions"
+
+        elif p == "cohere":
+            key = self.get_api_key("COHERE_API_KEY")
+            return "cohere", key, "https://api.cohere.com/v2/chat/completions"
+
+        elif p == "aionlabs":
+            key = self.get_api_key("AIONLABS_API_KEY")
+            return "aionlabs", key, "https://api.aionlabs.ai/v1/chat/completions"
+
+        elif p == "zhipu":
+            key = self.get_api_key("ZHIPU_API_KEY")
+            return "zhipu", key, "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+
+        elif p == "siliconflow":
+            key = self.get_api_key("SILICONFLOW_API_KEY")
+            return "siliconflow", key, "https://api.siliconflow.cn/v1/chat/completions"
+
+        elif p == "ovh_anonymous":
+            return "ovh_anonymous", "none", "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions"
+
+        elif p == "kilo_anonymous":
+            return "kilo_anonymous", "none", "https://api.kilo.ai/api/gateway/chat/completions"
+
+        elif p == "llm7_anonymous":
+            return "llm7_anonymous", "none", "https://api.llm7.io/v1/chat/completions"
 
         else:
             key = self.get_api_key("GROQ_API_KEY")
@@ -190,16 +288,18 @@ class ProviderManager:
             current_model = model if (current_prov == provider or model in available_models) else (available_models[0] if available_models else model)
             resolved_p, api_key, api_url = self.resolve_provider_endpoint(current_prov, current_model)
 
-            if not api_key:
+            # Ignorer les providers non anonymes dont la clé API est vide
+            if not api_key and "anonymous" not in resolved_p:
                 logger.debug("Provider %s ignoré : clé API absente.", resolved_p)
                 continue
 
             headers = {
-                "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json; charset=utf-8",
                 "Accept": "text/event-stream; charset=utf-8",
                 "User-Agent": "BEK-v15.2-Agent",
             }
+            if api_key != "none":
+                 headers["Authorization"] = f"Bearer {api_key}"
 
             payload = {
                 "model": current_model,

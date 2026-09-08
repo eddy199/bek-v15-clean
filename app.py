@@ -835,12 +835,24 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
 
         elif action_name in ("execute_command", "run_script", "run_tests"):
             command = parameters.get("command", "dir" if os.name == "nt" else "ls -la")
+            
+            # --- CORRECTION: OPTIMISATION RECHERCHE WINDOWS ---
+            if "dir /s /b" in command.lower() and os.name == "nt":
+                # Remplacement automatique du 'dir /s' par un appel PowerShell sécurisé et rapide
+                term = re.search(r'\*(.*?)\*', command)
+                search_term = term.group(1) if term else "bek|provider"
+                command = f'powershell -NoProfile -Command "Get-ChildItem -Path . -Recurse -File -Exclude \'node_modules\',\'.venv\',\'.git\',\'__pycache__\' | Where-Object {{ $_.Name -match \'{search_term}\' }} | Select-Object -ExpandProperty FullName"'
+                
             try:
-                res = subprocess.run(command, shell=True, cwd=WORKSPACE_DIR, capture_output=True, text=True, timeout=30)
+                # Timeout augmenté à 60 secondes pour laisser le temps aux analyses lourdes
+                res = subprocess.run(command, shell=True, cwd=WORKSPACE_DIR, capture_output=True, text=True, timeout=60)
                 output = (res.stdout + "\n" + res.stderr).strip()
                 status_str = "success" if res.returncode == 0 else "error"
                 update_task_state(task_id, "COMPLETED" if res.returncode == 0 else "FAILED", correlation_id, command)
                 return {"status": status_str, "message": f"Commande exécutée :\n{output[-2500:]}"}
+            except subprocess.TimeoutExpired:
+                update_task_state(task_id, "FAILED", correlation_id, "Timeout d'exécution (60s)")
+                return {"status": "error", "message": "Erreur : L'exécution de la commande a pris trop de temps (> 60s) et a été interrompue."}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur exécution : {str(e)}"}

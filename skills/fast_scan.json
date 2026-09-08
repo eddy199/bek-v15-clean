@@ -1,0 +1,5 @@
+{
+    "name": "fast_scan",
+    "description": "Scan natif Python du syst\u00e8me de fichiers (remplace dir /s). Rapide, sans timeout, filtres par extension/nom/profondeur.",
+    "entrypoint": "fast_scan.py"
+}

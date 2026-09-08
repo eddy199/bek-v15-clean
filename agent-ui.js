@@ -1,4 +1,4 @@
-﻿/**
+/**
  * BEK-v15-HYBRID — Agent UI Controller (Gestion Fichiers Dynamique, Anti-Cache & Auto-Expand Gemini)
  */
 (function() {
@@ -191,14 +191,45 @@
             if (!res.ok) throw new Error("API Config non disponible");
             const data = await res.json();
             
-            // --- FIX B.AI : Injection forcée des modèles ---
-            availableModels = data.models || {}; availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
-            availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
+            // --- FIX : Injection forcée des modèles ---
+            availableModels = data.models || {}; 
+            
+            // On s'assure que les modèles de base sont là si l'API ne les renvoie pas tous
+            if(!availableModels['b_ai']) availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
+            if(!availableModels['mistral']) availableModels['mistral'] = ['mistral-medium-3.5', 'mistral-small-4', 'mistral-large-3', 'ministral-3-8b', 'codestral', 'ministral-3-3b', 'ministral-3-14b'];
+            if(!availableModels['cohere']) availableModels['cohere'] = ['cohere-command-a-plus', 'cohere-command-a', 'cohere-command-r-plus', 'cohere-command-r', 'cohere-command-r7b', 'cohere-aya-expanse-32b'];
+            if(!availableModels['aionlabs']) availableModels['aionlabs'] = ['aion-2.0', 'aion-rp-llama-3.1-8b', 'aion-3.0', 'aion-3.0-mini'];
+            if(!availableModels['zhipu']) availableModels['zhipu'] = ['glm-4.7-flash', 'glm-4.5-flash', 'glm-4.6v-flash'];
+            if(!availableModels['siliconflow']) availableModels['siliconflow'] = ['siliconflow-qwen3-8b'];
+            if(!availableModels['ovh_anonymous']) availableModels['ovh_anonymous'] = ["ovh-qwen-3.5-397b", "ovh-gpt-oss-120b", "ovh-gpt-oss-20b", "ovh-llama-3.3-70b", "ovh-qwen-3.6-27b", "ovh-qwen-3.5-9b", "ovh-qwen-3-32b", "ovh-qwen-coder-30b", "ovh-qwen-vl-72b", "ovh-mistral-small-3.2", "ovh-mistral-nemo", "ovh-mistral-7b"];
+            if(!availableModels['kilo_anonymous']) availableModels['kilo_anonymous'] = ["kilo-nemotron-3-ultra-550b", "kilo-step-3.7-flash", "kilo-nemotron-3-super-120b", "kilo-nemotron-3-nano-omni", "kilo-laguna-s", "kilo-laguna-xs", "kilo-north-mini-code", "kilo-openrouter-free", "kilo-hy3", "kilo-nemotron-lightning", "kilo-lfm-2.5"];
+            if(!availableModels['llm7_anonymous']) availableModels['llm7_anonymous'] = ["llm7-gpt-oss-20b", "llm7-mistral-nemo", "llm7-minimax-m2.7"];
             
             let providersList = data.providers || [];
-            if (!providersList.some(p => p.id === 'b_ai')) {
-                providersList.unshift({id: 'b_ai', name: 'B.ai', configured: true});
-            }
+            
+            const requiredProviders = [
+                {id: 'b_ai', name: 'B.ai', configured: true},
+                {id: 'groq', name: 'Groq', configured: true},
+                {id: 'nvidia', name: 'NVIDIA NIM', configured: true},
+                {id: 'gemini', name: 'Google Gemini', configured: true},
+                {id: 'openrouter', name: 'OpenRouter', configured: true},
+                {id: 'mistral', name: 'Mistral AI', configured: true},
+                {id: 'cohere', name: 'Cohere', configured: true},
+                {id: 'aionlabs', name: 'Aion Labs', configured: true},
+                {id: 'zhipu', name: 'Zhipu AI', configured: true},
+                {id: 'siliconflow', name: 'SiliconFlow', configured: true},
+                {id: 'ovh_anonymous', name: 'OVHcloud (Anonyme)', configured: true},
+                {id: 'kilo_anonymous', name: 'Kilo Code (Anonyme)', configured: true},
+                {id: 'llm7_anonymous', name: 'LLM7.io (Anonyme)', configured: true}
+            ];
+
+            // Fusionner les providers
+            requiredProviders.forEach(rp => {
+                if (!providersList.some(p => p.id === rp.id)) {
+                    providersList.push(rp);
+                }
+            });
+
             globalSkills = data.skills || [];
 
             if (DOM.providerSelect) {
@@ -686,16 +717,17 @@
 
         let fullTextContent = text;
         if (attachedFiles.length > 0) {
-            fullTextContent += `\n[Fichiers joints : ${attachedFiles.join(', ')}]`;
+            // CORRECTION: Retour chariot normal plutôt qu'échappement problématique
+            fullTextContent += "\n[Fichiers joints : " + attachedFiles.join(', ') + "]";
             
             const imageFiles = attachedFiles.filter(f => f.match(/\.(png|jpe?g|gif|webp)$/i));
             const zipFiles = attachedFiles.filter(f => f.match(/\.zip$/i));
             
             if (imageFiles.length > 0) {
-                fullTextContent += `\n(INSTRUCTION SYSTEME : L'utilisateur a attaché ces images. Tu DOIS utiliser l'action [ACTION:analyze_image]{"image_path": "uploads/${imageFiles[0]}", "prompt": "Décris cette image en détail"}[/ACTION] pour les lire).`;
+                fullTextContent += "\n(INSTRUCTION SYSTEME : L'utilisateur a attaché ces images. Tu DOIS utiliser l'action [ACTION:analyze_image]{\"image_path\": \"uploads/" + imageFiles[0] + "\", \"prompt\": \"Décris cette image en détail\"}[/ACTION] pour les lire).";
             }
             if (zipFiles.length > 0) {
-                fullTextContent += `\n(INSTRUCTION SYSTEME : Utilise [ACTION:analyze_zip_content]{"zip_path": "uploads/${zipFiles[0]}"}[/ACTION]).`;
+                fullTextContent += "\n(INSTRUCTION SYSTEME : Utilise [ACTION:analyze_zip_content]{\"zip_path\": \"uploads/" + zipFiles[0] + "\"}[/ACTION]).";
             }
         }
 
@@ -741,6 +773,7 @@
                 const { done, value } = await reader.read();
                 if (done) break;
                 buffer += decoder.decode(value, { stream: true });
+                // CORRECTION: Split sur un vrai retour à la ligne
                 const lines = buffer.split('\n');
                 buffer = lines.pop();
 
@@ -829,7 +862,7 @@
 
     // FIX: NETTOYAGE ABSOLU DES BALISES DE REFLEXION (ANTI-HALLUCINATION UI)
     function formatMarkdown(text) {
-        // Cette ligne retire purement et simplement toute la pensée interne du modèle avant de l'afficher
+        // CORRECTION: Regex raw string
         let cleanText = text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '');
 
         if (typeof marked !== 'undefined') {
