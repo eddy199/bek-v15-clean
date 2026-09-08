@@ -101,11 +101,11 @@ msgspec==0.21.1
 multidict==6.7.1
 multiprocess==0.70.19
 narwhals==2.25.0
-networkx==3.6.1
-numpy==2.5.2
+networkx
+numpy
 oauthlib==3.3.1
 omegaconf==2.3.1
-onnxruntime==1.29.0
+onnxruntime
 openai==3.7.0
 opencv-python==5.0.0.93
 openpyxl==3.1.5
@@ -121,7 +121,7 @@ orm==0.2.0.dev1
 ormsgpack==1.12.2
 overrides==7.7.0
 packaging==26.3
-pandas==3.0.5
+pandas
 pillow==12.3.0
 pinecone==10.0.0
 playwright==1.62.0
