@@ -102,7 +102,7 @@ multidict==6.7.1
 multiprocess==0.70.19
 narwhals==2.25.0
 networkx
-numpy==2.5.2
+numpy
 oauthlib==3.3.1
 omegaconf==2.3.1
 onnxruntime==1.29.0
