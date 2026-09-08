@@ -1,0 +1,5 @@
+{
+    "name": "test_ping",
+    "description": "Skill that returns 'pong' when executed.",
+    "entrypoint": "test_ping.py"
+}

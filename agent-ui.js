@@ -190,8 +190,15 @@
             const res = await fetch(`${API_BASE}/api/config?t=${Date.now()}`);
             if (!res.ok) throw new Error("API Config non disponible");
             const data = await res.json();
+            
+            // --- FIX B.AI : Injection forcée des modèles ---
             availableModels = data.models || {};
-            const providersList = data.providers || [];
+            availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
+            
+            let providersList = data.providers || [];
+            if (!providersList.some(p => p.id === 'b_ai')) {
+                providersList.unshift({id: 'b_ai', name: 'B.ai', configured: true});
+            }
             globalSkills = data.skills || [];
 
             if (DOM.providerSelect) {
@@ -260,7 +267,6 @@
         }
     };
 
-    // FIX: La fonction appelle maintenant correctement la nouvelle route Backend
     window.deleteAllProjectFiles = async function() {
         if (!confirm("Voulez-vous vraiment TOUT supprimer dans la session (uploads et fichiers générés) ?")) return;
         try {
@@ -275,7 +281,6 @@
         }
     };
 
-    // FIX: UI en Français et note explicative pour les descriptions anglaises
     function populateSkillsView(skills) {
         const view = document.getElementById('viewSkills');
         if (!view) return;

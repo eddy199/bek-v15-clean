@@ -4990,3 +4990,86 @@ LINE 3:             FROM sync_log
 2026-09-07 15:41:52,273 - INFO - Recherche mémoire Pinecone | query_len=94 | top_k=3
 2026-09-07 15:42:20,261 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
 2026-09-07 15:42:21,112 - INFO - Recherche mémoire Pinecone | query_len=71 | top_k=3
+2026-09-07 16:03:24,969 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 16:03:25,645 - INFO - Recherche mémoire Pinecone | query_len=2 | top_k=3
+2026-09-07 16:04:42,121 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 16:04:43,071 - INFO - Recherche mémoire Pinecone | query_len=150 | top_k=3
+2026-09-07 19:33:36,864 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-09-07 19:35:11,663 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 19:35:11,669 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-09-07 19:35:22,325 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 19:36:06,076 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 19:36:06,085 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-09-07 19:36:06,093 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 19:36:44,716 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 19:36:44,728 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-09-07 19:36:44,733 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 19:37:38,725 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 19:37:38,737 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-09-07 19:37:38,741 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 19:48:52,961 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-09-07 19:51:44,005 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 19:51:44,011 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-09-07 19:51:47,556 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 19:52:45,077 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 19:52:45,090 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-09-07 19:52:45,095 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 19:54:00,287 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-09-07 19:56:38,092 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 19:56:38,105 - ERROR - Erreur d'initialisation Pinecone: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+2026-09-07 19:56:41,576 - INFO - Recherche mémoire ChromaDB local | top_k=3
+2026-09-07 19:59:47,415 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 19:59:48,231 - INFO - Recherche mémoire Pinecone | query_len=2480 | top_k=3
+2026-09-07 20:00:32,466 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:00:33,185 - INFO - Recherche mémoire Pinecone | query_len=3 | top_k=3
+2026-09-07 20:01:08,891 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:01:09,689 - INFO - Recherche mémoire Pinecone | query_len=116 | top_k=3
+2026-09-07 20:01:47,229 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:01:48,028 - INFO - Recherche mémoire Pinecone | query_len=116 | top_k=3
+2026-09-07 20:02:48,575 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:02:49,364 - INFO - Recherche mémoire Pinecone | query_len=117 | top_k=3
+2026-09-07 20:02:52,683 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:02:54,008 - INFO - Interaction enregistrée dans Pinecone | id=07edcf2c-c260-4fab-8fc9-dad0ee4b4cdf
+2026-09-07 20:02:58,145 - INFO - Interaction enregistrée dans ChromaDB local | id=07edcf2c-c260-4fab-8fc9-dad0ee4b4cdf
+2026-09-07 20:03:26,876 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:03:27,626 - INFO - Recherche mémoire Pinecone | query_len=111 | top_k=3
+2026-09-07 20:03:32,824 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:03:34,155 - INFO - Interaction enregistrée dans Pinecone | id=c21aebf3-244a-43de-90be-8661bea913ca
+2026-09-07 20:03:34,595 - INFO - Interaction enregistrée dans ChromaDB local | id=c21aebf3-244a-43de-90be-8661bea913ca
+2026-09-07 20:03:34,829 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:03:36,370 - INFO - Interaction enregistrée dans Pinecone | id=ee789061-989b-49fc-83dd-4e58c1605b72
+2026-09-07 20:03:36,756 - INFO - Interaction enregistrée dans ChromaDB local | id=ee789061-989b-49fc-83dd-4e58c1605b72
+2026-09-07 20:03:36,977 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:03:37,960 - INFO - Interaction enregistrée dans Pinecone | id=32750518-55c7-428e-85d6-e182c82a20a3
+2026-09-07 20:03:38,259 - INFO - Interaction enregistrée dans ChromaDB local | id=32750518-55c7-428e-85d6-e182c82a20a3
+2026-09-07 20:03:44,274 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:03:44,935 - INFO - Recherche mémoire Pinecone | query_len=84 | top_k=3
+2026-09-07 20:03:45,703 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:03:46,054 - INFO - Recherche mémoire Pinecone | query_len=103 | top_k=3
+2026-09-07 20:05:52,953 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:05:53,797 - INFO - Recherche mémoire Pinecone | query_len=136 | top_k=3
+2026-09-07 20:05:58,820 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:05:59,514 - INFO - Recherche mémoire Pinecone | query_len=84 | top_k=3
+2026-09-07 20:06:00,327 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:06:00,647 - INFO - Recherche mémoire Pinecone | query_len=103 | top_k=3
+2026-09-07 20:07:04,207 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:07:05,030 - INFO - Recherche mémoire Pinecone | query_len=188 | top_k=3
+2026-09-07 20:07:09,227 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:07:09,597 - INFO - Recherche mémoire Pinecone | query_len=84 | top_k=3
+2026-09-07 20:07:10,397 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:07:11,207 - INFO - Recherche mémoire Pinecone | query_len=103 | top_k=3
+2026-09-07 20:07:39,559 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:07:40,277 - INFO - Recherche mémoire Pinecone | query_len=84 | top_k=3
+2026-09-07 20:07:41,102 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:07:41,496 - INFO - Recherche mémoire Pinecone | query_len=103 | top_k=3
+2026-09-07 20:07:43,688 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:07:44,441 - INFO - Recherche mémoire Pinecone | query_len=57 | top_k=3
+2026-09-07 20:20:18,788 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:20:18,795 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-07 20:20:18,813 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-08 15:55:40,669 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-08 15:55:41,439 - INFO - Recherche mémoire Pinecone | query_len=3 | top_k=3
+2026-09-08 16:01:07,692 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-08 16:01:08,540 - INFO - Recherche mémoire Pinecone | query_len=7 | top_k=3
+2026-09-08 16:01:13,592 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-08 16:01:14,289 - INFO - Recherche mémoire Pinecone | query_len=5 | top_k=3

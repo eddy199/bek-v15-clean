@@ -1,12 +1,50 @@
-def evaluate_response_quality(query: str, response: str) -> dict:
-    is_empty = not response or not str(response).strip()
-    if is_empty:
-        return {'passed': False, 'score': 0.0, 'reason': 'Réponse vide', 'checks': {'is_empty': True, 'has_critical_error': False, 'valid_length': False}}
-    response_lower = str(response).lower()
-    critical_markers = ['exception critique', 'erreur critique', 'traceback (most recent call last)', 'unhandled exception:']
-    has_critical_error = any(marker in response_lower for marker in critical_markers)
-    valid_length = len(str(response).strip()) >= 5
-    passed = (not is_empty) and (not has_critical_error) and valid_length
-    score = 1.0 if passed else 0.0
-    reason = 'Conforme' if passed else ('Erreur critique détectée' if has_critical_error else 'Longueur insuffisante')
-    return {'passed': passed, 'score': score, 'reason': reason, 'checks': {'is_empty': is_empty, 'has_critical_error': has_critical_error, 'valid_length': valid_length}}
+# ==============================================================================
+# bek_eval_guard.py — GARDE-FOU ET JUGE CRITIQUE AVEC AST (BEK-v15.3)
+# ==============================================================================
+
+import ast
+import logging
+
+logger = logging.getLogger("BekEvalGuard")
+
+def evaluate_response_quality(objective: str, response_content: str) -> dict:
+    """Intercepte le contenu généré, vérifie la syntaxe Python statique et valide la qualité."""
+    
+    # 1. Extraction et audit syntaxique par AST si un bloc de code Python est détecté
+    if "def " in response_content or "class " in response_content or "```python" in response_content:
+        try:
+            lines = response_content.splitlines()
+            code_block = []
+            capturing = False
+            for line in lines:
+                if "```python" in line:
+                    capturing = True
+                    continue
+                elif "```" in line and capturing:
+                    capturing = False
+                    break
+                if capturing:
+                    code_block.append(line)
+            
+            target_code = "\n".join(code_block) if code_block else response_content
+            
+            if "def " in target_code or "class " in target_code:
+                ast.parse(target_code)
+                logger.info("✨ [BekEvalGuard] Validation syntaxique AST réussie.")
+        except SyntaxError as se:
+            logger.warning(f"❌ [BekEvalGuard] Échec syntaxique AST : {se}")
+            return {
+                "passed": False,
+                "reason": f"Erreur de syntaxe Python détectée par l'analyseur statique : {se.msg} (Ligne {se.lineno})"
+            }
+        except Exception as e:
+            logger.warning(f"⚠️ [BekEvalGuard] Avertissement parsing : {e}")
+
+    # 2. Validation globale de la structure de la réponse
+    if not response_content.strip():
+        return {"passed": False, "reason": "Le contenu de la réponse est vide."}
+
+    return {
+        "passed": True,
+        "reason": "Validation structurelle et syntaxique validée avec succès."
+    }

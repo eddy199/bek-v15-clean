@@ -176,8 +176,19 @@
       <header class="header">
         <h2 id="chatTitle">Chat</h2>
         <div class="header-center">
-          <select id="providerSelect" class="select"></select>
-          <select id="modelSelect" class="select model-select"></select>
+          <select id="providerSelect" class="select">
+            <option value="b_ai">B.ai ✅</option>
+            <option value="groq">Groq ✅</option>
+            <option value="nvidia">NVIDIA NIM ✅</option>
+            <option value="gemini">Google Gemini ✅</option>
+            <option value="openrouter">OpenRouter ✅</option>
+          </select>
+          <select id="modelSelect" class="select model-select">
+            <option value="glm-5.3-flash">glm-5.3-flash</option>
+            <option value="qwen3.8-flash">qwen3.8-flash</option>
+            <option value="mimo-v2.5">mimo-v2.5</option>
+            <option value="hy3">hy3</option>
+          </select>
         </div>
         <div class="header-right" style="position: relative;">
           <button class="icon-btn" id="menuOptionsBtn">

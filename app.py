@@ -97,9 +97,11 @@ from hermes_core import (
 )
 
 # ==========================================
-# BEK EVAL GUARD (Garde-fou Future AGI)
+# BEK EVAL GUARD, STATE SYNCHRONIZER & MCP
 # ==========================================
 from bek_eval_guard import evaluate_response_quality
+from state_synchronizer import init_state_tables, update_task_state, get_pending_or_running_tasks
+from mcp_gateway import mcp_gateway
 
 # ==========================================
 # APPLICATION
@@ -177,9 +179,10 @@ if not logger.handlers:
 
 try:
     init_sync_log_table()
-    logger.info("Table de compensation sync_log initialisée avec succès.")
+    init_state_tables()
+    logger.info("Tables de compensation sync_log et états Neon DB initialisées.")
 except Exception as exc:
-    logger.warning("Impossible d'initialiser sync_log au démarrage : %s", exc)
+    logger.warning("Impossible d'initialiser les tables DB au démarrage : %s", exc)
 
 from generate_architecture_doc import update_documentation_file
 try:
@@ -201,6 +204,14 @@ except Exception as exc:
 
 minhash_engine = MinHashSimilarity()
 hll_counter = HyperLogLog()
+
+# Enregistrement des outils initiaux dans la passerelle MCP
+mcp_gateway.register_mcp_tool(
+    name="neon_audit",
+    description="Audit des tables relationnelles Neon DB",
+    parameters_schema={},
+    handler=lambda: {"tables": ["companies", "contacts", "opportunities", "bek_task_states", "sync_log"]}
+)
 
 # ==========================================
 # WORKERS HERMES & INITIALISATION DES HOOKS
@@ -581,219 +592,278 @@ def execute_database_sql(sql_query: str) -> dict:
             except Exception: pass
 
 def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
-    if action_name == "create_dynamic_skill":
-        skill_name = parameters.get("skill_name", "")
-        code_content = parameters.get("code_content", "")
-        description = parameters.get("description", "Skill auto-généré par l'orchestrateur BEK")
-        if not skill_name or not code_content:
-            return {"status": "error", "message": "Nom du skill ou contenu manquant."}
-        try:
-            if create_and_register_skill:
-                return create_and_register_skill(skill_name, code_content, description)
-            return {"status": "error", "message": "Module skill_generator indisponible."}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur intégration skill : {str(e)}"}
+    # Suivi d'état FSM via le State Synchronizer de Neon DB
+    correlation_id = f"corr_{uuid.uuid4().hex[:12]}"
+    task_id = f"task_{uuid.uuid4().hex[:8]}"
+    update_task_state(task_id, "RUNNING", correlation_id, f"Action: {action_name}")
 
-    elif action_name in ("orchestrate", "run_swarm_task", "multi_agent_workflow"):
-        goal = parameters.get("goal", parameters.get("objective", parameters.get("query", "")))
-        if not goal:
-            return {"status": "error", "message": "L'objectif d'orchestration ne peut pas être vide."}
-        try:
-            if bek_orchestrator:
-                orch_report = bek_orchestrator.run(goal)
-                return {"status": "success", "message": orch_report}
-            return {"status": "error", "message": "Module bek_orchestrator indisponible sur l'hôte."}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur Orchestrateur : {str(e)}"}
+    try:
+        if action_name == "create_dynamic_skill":
+            skill_name = parameters.get("skill_name", "")
+            code_content = parameters.get("code_content", "")
+            description = parameters.get("description", "Skill auto-généré par l'orchestrateur BEK")
+            if not skill_name or not code_content:
+                update_task_state(task_id, "FAILED", correlation_id, "Nom du skill ou contenu manquant.")
+                return {"status": "error", "message": "Nom du skill ou contenu manquant."}
+            try:
+                if create_and_register_skill:
+                    res = create_and_register_skill(skill_name, code_content, description)
+                    update_task_state(task_id, "COMPLETED", correlation_id, f"Skill créé: {skill_name}")
+                    return res
+                update_task_state(task_id, "FAILED", correlation_id, "Module skill_generator indisponible.")
+                return {"status": "error", "message": "Module skill_generator indisponible."}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur intégration skill : {str(e)}"}
 
-    elif action_name in ("web_sync", "web_search", "web_pipeline"):
-        query = parameters.get("query", "")
-        if not query:
-            return {"status": "error", "message": "La requête web_sync est vide."}
-        try:
-            res = web_agent_instance.run_pipeline(query)
-            return {"status": "success", "message": f"🌐 Synchronisation Web réussie pour '{query}' :\n{str(res)[:2500]}"}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur web_sync : {str(e)}"}
+        elif action_name in ("orchestrate", "run_swarm_task", "multi_agent_workflow"):
+            goal = parameters.get("goal", parameters.get("objective", parameters.get("query", "")))
+            if not goal:
+                update_task_state(task_id, "FAILED", correlation_id, "Objectif vide.")
+                return {"status": "error", "message": "L'objectif d'orchestration ne peut pas être vide."}
+            try:
+                if bek_orchestrator:
+                    orch_report = bek_orchestrator.run(goal)
+                    update_task_state(task_id, "COMPLETED", correlation_id, "Orchestration réussie")
+                    return {"status": "success", "message": orch_report}
+                update_task_state(task_id, "FAILED", correlation_id, "bek_orchestrator indisponible")
+                return {"status": "error", "message": "Module bek_orchestrator indisponible sur l'hôte."}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur Orchestrateur : {str(e)}"}
 
-    elif action_name in ("save_memory", "remember", "save_to_memory"):
-        content = parameters.get("content", "")
-        if not content:
-            return {"status": "error", "message": "Le contenu à mémoriser ne peut pas être vide."}
-        try:
-            save_to_memory(content)
-            return {"status": "success", "message": f"🧠 Information ancrée dans la mémoire vectorielle :\n\"{content}\""}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur mémoire : {str(e)}"}
+        elif action_name in ("web_sync", "web_search", "web_pipeline"):
+            query = parameters.get("query", "")
+            if not query:
+                update_task_state(task_id, "FAILED", correlation_id, "Requête web_sync vide")
+                return {"status": "error", "message": "La requête web_sync est vide."}
+            try:
+                res = web_agent_instance.run_pipeline(query)
+                update_task_state(task_id, "COMPLETED", correlation_id, f"Web sync: {query}")
+                return {"status": "success", "message": f"🌐 Synchronisation Web réussie pour '{query}' :\n{str(res)[:2500]}"}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur web_sync : {str(e)}"}
 
-    elif action_name in ("search_memory", "recall"):
-        query = parameters.get("query", "")
-        try:
-            mem_res = search_memory(query, top_k=3)
-            return {"status": "success", "message": f"🔍 Résultats mémoire pour '{query}' :\n{mem_res}"}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur recherche mémoire : {str(e)}"}
-
-    elif action_name in ("write_file", "save_file", "create_file"):
-        filename = parameters.get("filename", "generated/agent_output.txt")
-        filepath = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
-        try:
-            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        elif action_name in ("save_memory", "remember", "save_to_memory"):
             content = parameters.get("content", "")
-            with open(filepath, "w", encoding="utf-8") as f:
-                f.write(content)
-            return {"status": "success", "message": f"Fichier enregistré : {filepath}"}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur écriture : {str(e)}"}
-            
-    elif action_name == "delete_file":
-        filename = parameters.get("filename", "")
-        found = False
-        for directory in [WORKSPACE_DIR, FILES_DIR, GENERATED_DIR]:
-            target = os.path.abspath(os.path.join(directory, os.path.basename(filename)))
-            if os.path.exists(target) and os.path.isfile(target):
-                try:
-                    os.remove(target)
-                    found = True
-                except Exception as e:
-                    return {"status": "error", "message": f"Erreur suppression : {str(e)}"}
-        if found:
-            return {"status": "success", "message": f"Fichier {filename} supprimé."}
-        return {"status": "error", "message": "Fichier introuvable."}
-            
-    elif action_name == "read_file":
-        filename = parameters.get("filename", "")
-        target_path = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
-        if not os.path.exists(target_path):
-            for d in [FILES_DIR, GENERATED_DIR]:
-                alt = os.path.join(d, filename)
-                if os.path.exists(alt):
-                    target_path = alt
-                    break
-        try:
-            if os.path.exists(target_path):
-                with open(target_path, "r", encoding="utf-8", errors="ignore") as f:
-                    content = f.read()[-3000:]
-                return {"status": "success", "message": f"Contenu de {target_path} :\n{content}"}
+            if not content:
+                update_task_state(task_id, "FAILED", correlation_id, "Contenu mémoire vide")
+                return {"status": "error", "message": "Le contenu à mémoriser ne peut pas être vide."}
+            try:
+                save_to_memory(content)
+                update_task_state(task_id, "COMPLETED", correlation_id, "Mémoire sauvée")
+                return {"status": "success", "message": f"🧠 Information ancrée dans la mémoire vectorielle :\n\"{content}\""}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur mémoire : {str(e)}"}
+
+        elif action_name in ("search_memory", "recall"):
+            query = parameters.get("query", "")
+            try:
+                mem_res = search_memory(query, top_k=3)
+                update_task_state(task_id, "COMPLETED", correlation_id, f"Recherche mémoire: {query}")
+                return {"status": "success", "message": f"🔍 Résultats mémoire pour '{query}' :\n{mem_res}"}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur recherche mémoire : {str(e)}"}
+
+        elif action_name in ("write_file", "save_file", "create_file"):
+            filename = parameters.get("filename", "generated/agent_output.txt")
+            filepath = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
+            try:
+                os.makedirs(os.path.dirname(filepath), exist_ok=True)
+                content = parameters.get("content", "")
+                with open(filepath, "w", encoding="utf-8") as f:
+                    f.write(content)
+                update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier écrit: {filename}")
+                return {"status": "success", "message": f"Fichier enregistré : {filepath}"}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur écriture : {str(e)}"}
+                
+        elif action_name == "delete_file":
+            filename = parameters.get("filename", "")
+            found = False
+            for directory in [WORKSPACE_DIR, FILES_DIR, GENERATED_DIR]:
+                target = os.path.abspath(os.path.join(directory, os.path.basename(filename)))
+                if os.path.exists(target) and os.path.isfile(target):
+                    try:
+                        os.remove(target)
+                        found = True
+                    except Exception as e:
+                        update_task_state(task_id, "FAILED", correlation_id, str(e))
+                        return {"status": "error", "message": f"Erreur suppression : {str(e)}"}
+            if found:
+                update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier supprimé: {filename}")
+                return {"status": "success", "message": f"Fichier {filename} supprimé."}
+            update_task_state(task_id, "FAILED", correlation_id, "Fichier introuvable")
             return {"status": "error", "message": "Fichier introuvable."}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur lecture : {str(e)}"}
+                
+        elif action_name == "read_file":
+            filename = parameters.get("filename", "")
+            target_path = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
+            if not os.path.exists(target_path):
+                for d in [FILES_DIR, GENERATED_DIR]:
+                    alt = os.path.join(d, filename)
+                    if os.path.exists(alt):
+                        target_path = alt
+                        break
+            try:
+                if os.path.exists(target_path):
+                    with open(target_path, "r", encoding="utf-8", errors="ignore") as f:
+                        content = f.read()[-3000:]
+                    update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier lu: {filename}")
+                    return {"status": "success", "message": f"Contenu de {target_path} :\n{content}"}
+                update_task_state(task_id, "FAILED", correlation_id, "Fichier introuvable")
+                return {"status": "error", "message": "Fichier introuvable."}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur lecture : {str(e)}"}
 
-    elif action_name == "extract_zip":
-        zip_filename = parameters.get("zip_path", "")
-        extract_to_folder = parameters.get("extract_to", "generated/extracted_project")
-        zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
-        if not os.path.exists(zip_path):
-            for d in [FILES_DIR, GENERATED_DIR]:
-                alt = os.path.join(d, zip_filename)
-                if os.path.exists(alt):
-                    zip_path = alt
-                    break
-        target_dir = os.path.abspath(os.path.join(WORKSPACE_DIR, extract_to_folder))
-        try:
+        elif action_name == "extract_zip":
+            zip_filename = parameters.get("zip_path", "")
+            extract_to_folder = parameters.get("extract_to", "generated/extracted_project")
+            zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
             if not os.path.exists(zip_path):
-                return {"status": "error", "message": f"Archive ZIP introuvable : {zip_filename}"}
-            os.makedirs(target_dir, exist_ok=True)
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(target_dir)
-            return {"status": "success", "message": f"Archive extraite dans `{extract_to_folder}`."}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur extraction ZIP : {str(e)}"}
+                for d in [FILES_DIR, GENERATED_DIR]:
+                    alt = os.path.join(d, zip_filename)
+                    if os.path.exists(alt):
+                        zip_path = alt
+                        break
+            target_dir = os.path.abspath(os.path.join(WORKSPACE_DIR, extract_to_folder))
+            try:
+                if not os.path.exists(zip_path):
+                    update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
+                    return {"status": "error", "message": f"Archive ZIP introuvable : {zip_filename}"}
+                os.makedirs(target_dir, exist_ok=True)
+                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                    zip_ref.extractall(target_dir)
+                update_task_state(task_id, "COMPLETED", correlation_id, f"ZIP extrait: {zip_filename}")
+                return {"status": "success", "message": f"Archive extraite dans `{extract_to_folder}`."}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur extraction ZIP : {str(e)}"}
 
-    elif action_name == "create_zip":
-        folder_name = parameters.get("folder_path", "generated/ia_project")
-        output_zip_name = parameters.get("output_zip", "generated/export_projet.zip")
-        folder_path = os.path.abspath(os.path.join(WORKSPACE_DIR, folder_name))
-        output_path = os.path.abspath(os.path.join(WORKSPACE_DIR, output_zip_name))
-        try:
-            if not os.path.exists(folder_path):
-                return {"status": "error", "message": f"Dossier introuvable : {folder_name}"}
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
-            shutil.make_archive(output_path.replace('.zip', ''), 'zip', folder_path)
-            return {"status": "success", "message": f"Archive créée : {output_zip_name}"}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur création ZIP : {str(e)}"}
+        elif action_name == "create_zip":
+            folder_name = parameters.get("folder_path", "generated/ia_project")
+            output_zip_name = parameters.get("output_zip", "generated/export_projet.zip")
+            folder_path = os.path.abspath(os.path.join(WORKSPACE_DIR, folder_name))
+            output_path = os.path.abspath(os.path.join(WORKSPACE_DIR, output_zip_name))
+            try:
+                if not os.path.exists(folder_path):
+                    update_task_state(task_id, "FAILED", correlation_id, "Dossier introuvable")
+                    return {"status": "error", "message": f"Dossier introuvable : {folder_name}"}
+                os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                shutil.make_archive(output_path.replace('.zip', ''), 'zip', folder_path)
+                update_task_state(task_id, "COMPLETED", correlation_id, f"ZIP créé: {output_zip_name}")
+                return {"status": "success", "message": f"Archive créée : {output_zip_name}"}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur création ZIP : {str(e)}"}
 
-    elif action_name == "analyze_zip_content":
-        zip_filename = parameters.get("zip_path", "")
-        zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
-        if not os.path.exists(zip_path):
-            for d in [FILES_DIR, GENERATED_DIR]:
-                alt = os.path.join(d, zip_filename)
-                if os.path.exists(alt):
-                    zip_path = alt
-                    break
-        try:
+        elif action_name == "analyze_zip_content":
+            zip_filename = parameters.get("zip_path", "")
+            zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
             if not os.path.exists(zip_path):
-                return {"status": "error", "message": f"Archive introuvable : {zip_filename}"}
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                namelist = zip_ref.namelist()
-                file_summaries = {}
-                for name in namelist[:10]:
-                    if any(name.endswith(ext) for ext in ['.py', '.json', '.txt', '.md', '.js', '.html', '.css']):
-                        with zip_ref.open(name) as f:
-                            content = f.read(1500).decode('utf-8', errors='ignore')
-                            file_summaries[name] = content[:300] + "..."
-            return {"status": "success", "message": f"Analyse ZIP réussie. Fichiers : {namelist[:20]}\nAperçu : {json_safe(file_summaries)}"}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur analyse ZIP : {str(e)}"}
+                for d in [FILES_DIR, GENERATED_DIR]:
+                    alt = os.path.join(d, zip_filename)
+                    if os.path.exists(alt):
+                        zip_path = alt
+                        break
+            try:
+                if not os.path.exists(zip_path):
+                    update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
+                    return {"status": "error", "message": f"Archive introuvable : {zip_filename}"}
+                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                    namelist = zip_ref.namelist()
+                    file_summaries = {}
+                    for name in namelist[:10]:
+                        if any(name.endswith(ext) for ext in ['.py', '.json', '.txt', '.md', '.js', '.html', '.css']):
+                            with zip_ref.open(name) as f:
+                                content = f.read(1500).decode('utf-8', errors='ignore')
+                                file_summaries[name] = content[:300] + "..."
+                update_task_state(task_id, "COMPLETED", correlation_id, "ZIP analysé")
+                return {"status": "success", "message": f"Analyse ZIP réussie. Fichiers : {namelist[:20]}\nAperçu : {json_safe(file_summaries)}"}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur analyse ZIP : {str(e)}"}
 
-    elif action_name == "analyze_image":
-        image_path = parameters.get("image_path", "")
-        prompt = parameters.get("prompt", "Analyse cette image.")
-        provider = parameters.get("provider", "gemini")
-        model = parameters.get("model", "gemini-1.5-flash")
-        vision_result = analyze_image_with_vision(image_path, prompt, provider=provider, model=model)
-        if "Erreur" in vision_result or "Error" in vision_result:
-            return {"status": "error", "message": f"ÉCHEC VISION: {vision_result}\n[ALERTE SYSTEME]: Tu es aveugle à cause de cette erreur. NE PAS INVENTER DE DESCRIPTION."}
-        return {"status": "success", "message": f"Analyse Vision réussie :\n{vision_result}"}
+        elif action_name == "analyze_image":
+            image_path = parameters.get("image_path", "")
+            prompt = parameters.get("prompt", "Analyse cette image.")
+            provider = parameters.get("provider", "gemini")
+            model = parameters.get("model", "gemini-1.5-flash")
+            vision_result = analyze_image_with_vision(image_path, prompt, provider=provider, model=model)
+            if "Erreur" in vision_result or "Error" in vision_result:
+                update_task_state(task_id, "FAILED", correlation_id, "Échec vision")
+                return {"status": "error", "message": f"ÉCHEC VISION: {vision_result}\n[ALERTE SYSTEME]: Tu es aveugle à cause de cette erreur. NE PAS INVENTER DE DESCRIPTION."}
+            update_task_state(task_id, "COMPLETED", correlation_id, "Vision réussie")
+            return {"status": "success", "message": f"Analyse Vision réussie :\n{vision_result}"}
 
-    elif action_name == "generate_image":
-        prompt = parameters.get("prompt", "")
-        filename = parameters.get("filename", f"generated_{uuid.uuid4().hex[:6]}.png")
-        provider = parameters.get("provider", "gemini")
-        model = parameters.get("model", "gemini-3.1-flash-image")
-        if not prompt: return {"status": "error", "message": "Le prompt est obligatoire."}
-        gen_result = generate_image_with_provider(prompt, provider=provider, model=model, output_filename=filename)
-        if gen_result.get("status") == "error":
-            return {"status": "error", "message": f"ÉCHEC GÉNÉRATION: {gen_result.get('message')}"}
-        final_filename = gen_result.get('filename')
-        return {"status": "success", "message": f"🎨 **Image générée !**\n\n![{final_filename}](/api/download/{final_filename})"}
+        elif action_name == "generate_image":
+            prompt = parameters.get("prompt", "")
+            filename = parameters.get("filename", f"generated_{uuid.uuid4().hex[:6]}.png")
+            provider = parameters.get("provider", "gemini")
+            model = parameters.get("model", "gemini-3.1-flash-image")
+            if not prompt: 
+                update_task_state(task_id, "FAILED", correlation_id, "Prompt vide")
+                return {"status": "error", "message": "Le prompt est obligatoire."}
+            gen_result = generate_image_with_provider(prompt, provider=provider, model=model, output_filename=filename)
+            if gen_result.get("status") == "error":
+                update_task_state(task_id, "FAILED", correlation_id, gen_result.get('message'))
+                return {"status": "error", "message": f"ÉCHEC GÉNÉRATION: {gen_result.get('message')}"}
+            final_filename = gen_result.get('filename')
+            update_task_state(task_id, "COMPLETED", correlation_id, f"Image générée: {final_filename}")
+            return {"status": "success", "message": f"🎨 **Image générée !**\n\n![{final_filename}](/api/download/{final_filename})"}
 
-    elif action_name == "merge_and_edit_images":
-        image_paths = parameters.get("image_paths", [])
-        prompt = parameters.get("prompt", "")
-        provider = parameters.get("provider", "gemini")
-        model = parameters.get("model", "gemini-3.1-flash-image")
-        if not image_paths or not prompt:
-            return {"status": "error", "message": "Fournis des images et un prompt."}
-        gen_result = merge_and_edit_images(image_paths, prompt, provider=provider, model=model)
-        if gen_result.get("status") == "error":
-            return {"status": "error", "message": f"ÉCHEC FUSION: {gen_result.get('message')}"}
-        final_filename = gen_result.get('filename')
-        return {"status": "success", "message": f"🪄 **Fusion réussie !**\n\n![{final_filename}](/api/download/{final_filename})"}
+        elif action_name == "merge_and_edit_images":
+            image_paths = parameters.get("image_paths", [])
+            prompt = parameters.get("prompt", "")
+            provider = parameters.get("provider", "gemini")
+            model = parameters.get("model", "gemini-3.1-flash-image")
+            if not image_paths or not prompt:
+                update_task_state(task_id, "FAILED", correlation_id, "Paramètres fusion manquants")
+                return {"status": "error", "message": "Fournis des images et un prompt."}
+            gen_result = merge_and_edit_images(image_paths, prompt, provider=provider, model=model)
+            if gen_result.get("status") == "error":
+                update_task_state(task_id, "FAILED", correlation_id, gen_result.get('message'))
+                return {"status": "error", "message": f"ÉCHEC FUSION: {gen_result.get('message')}"}
+            final_filename = gen_result.get('filename')
+            update_task_state(task_id, "COMPLETED", correlation_id, f"Fusion réussie: {final_filename}")
+            return {"status": "success", "message": f"🪄 **Fusion réussie !**\n\n![{final_filename}](/api/download/{final_filename})"}
 
-    elif action_name in ("execute_command", "run_script", "run_tests"):
-        command = parameters.get("command", "dir" if os.name == "nt" else "ls -la")
-        try:
-            res = subprocess.run(command, shell=True, cwd=WORKSPACE_DIR, capture_output=True, text=True, timeout=30)
-            output = (res.stdout + "\n" + res.stderr).strip()
-            return {"status": "success" if res.returncode == 0 else "error", "message": f"Commande exécutée :\n{output[-2500:]}"}
-        except Exception as e:
-            return {"status": "error", "message": f"Erreur exécution : {str(e)}"}
-            
-    elif action_name in ("execute_tmux_headless", "execute_background_task", "start_background_task"):
-        session_name = parameters.get("session_name", f"job_{uuid.uuid4().hex[:6]}")
-        command = parameters.get("command", "")
-        if not command:
-            return {"status": "error", "message": "La commande ne peut pas être vide."}
-        return start_background_task(session_name, command)
+        elif action_name in ("execute_command", "run_script", "run_tests"):
+            command = parameters.get("command", "dir" if os.name == "nt" else "ls -la")
+            try:
+                res = subprocess.run(command, shell=True, cwd=WORKSPACE_DIR, capture_output=True, text=True, timeout=30)
+                output = (res.stdout + "\n" + res.stderr).strip()
+                status_str = "success" if res.returncode == 0 else "error"
+                update_task_state(task_id, "COMPLETED" if res.returncode == 0 else "FAILED", correlation_id, command)
+                return {"status": status_str, "message": f"Commande exécutée :\n{output[-2500:]}"}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur exécution : {str(e)}"}
+                
+        elif action_name in ("execute_tmux_headless", "execute_background_task", "start_background_task"):
+            session_name = parameters.get("session_name", f"job_{uuid.uuid4().hex[:6]}")
+            command = parameters.get("command", "")
+            if not command:
+                update_task_state(task_id, "FAILED", correlation_id, "Commande vide")
+                return {"status": "error", "message": "La commande ne peut pas être vide."}
+            update_task_state(task_id, "RUNNING", correlation_id, f"Tâche de fond: {session_name}")
+            return start_background_task(session_name, command)
 
-    elif action_name in ("stop_background_task", "stop_tmux_headless", "kill_session", "stop_session"):
-        session_name = parameters.get("session_name", "monitor_task")
-        return stop_background_task(session_name)
-            
-    return {"status": "success", "message": "Action traitée."}
+        elif action_name in ("stop_background_task", "stop_tmux_headless", "kill_session", "stop_session"):
+            session_name = parameters.get("session_name", "monitor_task")
+            update_task_state(task_id, "COMPLETED", correlation_id, f"Arrêt tâche: {session_name}")
+            return stop_background_task(session_name)
+                
+        update_task_state(task_id, "COMPLETED", correlation_id, "Action traitée")
+        return {"status": "success", "message": "Action traitée."}
+    except Exception as e:
+        update_task_state(task_id, "FAILED", correlation_id, str(e))
+        return {"status": "error", "message": f"Erreur critique outil : {str(e)}"}
 
 def _build_skills_index():
     return skill_registry.list_all_skills()
@@ -857,6 +927,8 @@ def get_config():
             "openrouter": OPENROUTER_MODELS,
         },
         "skills": _build_skills_index(),
+        "mcp_tools": mcp_gateway.get_mcp_manifests(),
+        "pending_tasks": get_pending_or_running_tasks(),
     })
 
 @app.route("/api/memory", methods=["GET", "POST"])
@@ -1001,6 +1073,7 @@ def get_connectors():
         connectors.append({"name": "Neon DB (PostgreSQL)", "type": "Database Principale", "latency_ms": 12, "status": db_status})
         connectors.append({"name": "Vision Multimodal Engine", "type": "Analyse d'Images", "latency_ms": 15, "status": "Actif"})
         connectors.append({"name": "ZIP Archive Manager", "type": "Extraction / Compression", "latency_ms": 4, "status": "Actif"})
+        connectors.append({"name": "Model Context Protocol (MCP)", "type": "Passerelle Interopérabilité", "latency_ms": 2, "status": "Actif"})
         for env_key, name in [("GROQ_API_KEY", "Groq Cloud"), ("NVIDIA_API_KEY", "NVIDIA NIM"), ("GEMINI_API_KEY", "Google Gemini"), ("OPENROUTER_API_KEY", "OpenRouter")]:
             is_active = bool(get_api_key(env_key))
             connectors.append({"name": name, "type": "Fournisseur LLM", "latency_ms": 120 if is_active else 0, "status": "Actif" if is_active else "Non Configuré"})
@@ -1152,10 +1225,10 @@ def chat():
                                 exec_res = execute_agent_crm_tool(act_name, params)
                                 res_msg = exec_res.get('message', 'Opération réussie')
                                 
-                                # --- VALIDATION DU GARDE-FOU (BEK-EvalGuard) ---
+                                # --- VALIDATION DU GARDE-FOU (BEK-EvalGuard & AST) ---
                                 eval_result = evaluate_response_quality(last_user_query, res_msg)
                                 if not eval_result["passed"]:
-                                    res_msg = "⚠️ [BEK Guard] Résultat d'action filtré pour non-conformité de qualité ou présence d'erreur."
+                                    res_msg = f"⚠️ [BEK Guard] Résultat d'action filtré : {eval_result['reason']}"
                                 
                                 # Affiche le markdown directement et arrête la discussion
                                 yield f"data: {json.dumps({'chunk': f'\n\n{res_msg}\n'}, ensure_ascii=False)}\n\n"
