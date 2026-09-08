@@ -101,11 +101,11 @@ msgspec==0.21.1
 multidict==6.7.1
 multiprocess==0.70.19
 narwhals==2.25.0
-networkx
-numpy
+networkx==3.6.1
+numpy==2.5.2
 oauthlib==3.3.1
 omegaconf==2.3.1
-onnxruntime
+onnxruntime==1.29.0
 openai==3.7.0
 opencv-python==5.0.0.93
 openpyxl==3.1.5
@@ -150,6 +150,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.2.3
 python-multipart==0.0.32
 pytz==2026.3.post1
+pywin32==312
 PyYAML==6.0.3
 rapidocr==3.9.2
 referencing==0.37.0
@@ -205,6 +206,7 @@ watchfiles==1.2.0
 websocket-client==1.9.2
 websockets==16.1.1
 Werkzeug==3.1.8
+win32_setctime==1.2.0
 xlrd==2.0.2
 xxhash==4.0.1
 yarl==1.24.5
