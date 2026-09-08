@@ -838,13 +838,11 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             
             # --- CORRECTION: OPTIMISATION RECHERCHE WINDOWS ---
             if "dir /s /b" in command.lower() and os.name == "nt":
-                # Remplacement automatique du 'dir /s' par un appel PowerShell sécurisé et rapide
                 term = re.search(r'\*(.*?)\*', command)
                 search_term = term.group(1) if term else "bek|provider"
                 command = f'powershell -NoProfile -Command "Get-ChildItem -Path . -Recurse -File -Exclude \'node_modules\',\'.venv\',\'.git\',\'__pycache__\' | Where-Object {{ $_.Name -match \'{search_term}\' }} | Select-Object -ExpandProperty FullName"'
                 
             try:
-                # Timeout augmenté à 60 secondes pour laisser le temps aux analyses lourdes
                 res = subprocess.run(command, shell=True, cwd=WORKSPACE_DIR, capture_output=True, text=True, timeout=60)
                 output = (res.stdout + "\n" + res.stderr).strip()
                 status_str = "success" if res.returncode == 0 else "error"
@@ -1232,7 +1230,8 @@ def chat():
                                 params["provider"] = provider
                                 params["model"] = model
                                 
-                                yield f"data: {json.dumps({'chunk': '\n\n⚙️ *Exécution immédiate...*\n'}, ensure_ascii=False)}\n\n"
+                                immediate_msg_json = json.dumps({'chunk': '\n\n⚙️ *Exécution immédiate...*\n'}, ensure_ascii=False)
+                                yield f"data: {immediate_msg_json}\n\n"
                                 
                                 exec_res = execute_agent_crm_tool(act_name, params)
                                 res_msg = exec_res.get('message', 'Opération réussie')
@@ -1243,17 +1242,20 @@ def chat():
                                     res_msg = f"⚠️ [BEK Guard] Résultat d'action filtré : {eval_result['reason']}"
                                 
                                 # Affiche le markdown directement et arrête la discussion
-                                yield f"data: {json.dumps({'chunk': f'\n\n{res_msg}\n'}, ensure_ascii=False)}\n\n"
+                                res_chunk_json = json.dumps({'chunk': f'\n\n{res_msg}\n'}, ensure_ascii=False)
+                                yield f"data: {res_chunk_json}\n\n"
                         except Exception as e:
                             logger.error(f"Erreur d'exécution rapide : {e}")
-                            yield f"data: {json.dumps({'chunk': f'\n\n⚠️ Erreur technique : {str(e)}\n'}, ensure_ascii=False)}\n\n"
+                            err_chunk_json = json.dumps({'chunk': f'\n\n⚠️ Erreur technique : {str(e)}\n'}, ensure_ascii=False)
+                            yield f"data: {err_chunk_json}\n\n"
                         break
                         
             yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
                 
         except Exception as stream_err:
             logger.error("[Stream Error] %s", stream_err)
-            yield f"data: {json.dumps({'chunk': f'\n\n⚠️ **[Avertissement Flux]** {stream_err}'}, ensure_ascii=False)}\n\n"
+            err_stream_json = json.dumps({'chunk': f'\n\n⚠️ **[Avertissement Flux]** {stream_err}'}, ensure_ascii=False)
+            yield f"data: {err_stream_json}\n\n"
             yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
 
     return Response(
