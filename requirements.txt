@@ -105,7 +105,7 @@ networkx
 numpy
 oauthlib==3.3.1
 omegaconf==2.3.1
-onnxruntime==1.29.0
+onnxruntime
 openai==3.7.0
 opencv-python==5.0.0.93
 openpyxl==3.1.5
