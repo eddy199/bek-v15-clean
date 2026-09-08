@@ -101,7 +101,7 @@ msgspec==0.21.1
 multidict==6.7.1
 multiprocess==0.70.19
 narwhals==2.25.0
-networkx==3.6.1
+networkx
 numpy==2.5.2
 oauthlib==3.3.1
 omegaconf==2.3.1
