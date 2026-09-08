@@ -76,3 +76,4 @@ websockets
 Werkzeug
 yarl
 zstandard
+beautifulsoup4==4.15.0
