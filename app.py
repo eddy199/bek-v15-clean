@@ -1,6 +1,6 @@
 # ==========================================
-# BEK-v15.3 HYBRID - SERVEUR PRINCIPAL UNIFIÉ
-# FLASK / HERMES / ORCHESTRATEUR A2A / CRM / PINECONE
+# BEK-v15.3 HYBRID - SERVEUR PRINCIPAL FASTAPI UNIFIÉ
+# FASTAPI / HERMES / ORCHESTRATEUR A2A / CRM / PINECONE
 # COMPATIBILITÉ UNIVERSELLE WINDOWS & LINUX
 # ==========================================
 
@@ -24,16 +24,9 @@ import psutil
 from pathlib import Path
 from datetime import datetime, timezone
 
-from flask import (
-    Flask,
-    request,
-    jsonify,
-    send_from_directory,
-    Response,
-    send_file,
-)
-from flask_cors import CORS
-from werkzeug.utils import secure_filename
+from fastapi import FastAPI, Request, Response, UploadFile, File, HTTPException
+from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 # Compression de contexte Headroom (importation sécurisée)
 try:
@@ -105,11 +98,14 @@ from state_synchronizer import init_state_tables, update_task_state, get_pending
 from mcp_gateway import mcp_gateway
 
 # ==========================================
-# APPLICATION
+# APPLICATION FASTAPI
 # ==========================================
 
-app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 300 * 1024 * 1024  # 300 Mo
+app = FastAPI(
+    title="BEK v15.3 Hybrid FastAPI",
+    description="Architecture asynchrone native pour agents IA hybrides",
+    version="15.3"
+)
 
 CORS_ORIGINS = os.environ.get(
     "BEK_CORS_ORIGINS",
@@ -118,14 +114,18 @@ CORS_ORIGINS = os.environ.get(
 
 cors_origins = [origin.strip() for origin in CORS_ORIGINS.split(",") if origin.strip()]
 
-CORS(
-    app,
-    resources={r"/api/*": {"origins": cors_origins}},
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# --- ANTI-CACHE POUR L'INTERFACE WEB ---
-@app.after_request
-def add_header(response):
+# --- MIDDLEWARE ANTI-CACHE POUR L'INTERFACE WEB ---
+@app.middleware("http")
+async def add_anti_cache_header(request: Request, call_next):
+    response = await call_next(request)
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
@@ -396,7 +396,7 @@ def json_safe(value):
     return str(value)
 
 def json_response(payload, status=200):
-    return jsonify(json_safe(payload)), status
+    return JSONResponse(content=json_safe(payload), status_code=status)
 
 def get_api_key(key_name: str) -> str:
     if not isinstance(key_name, str):
@@ -594,7 +594,6 @@ def execute_database_sql(sql_query: str) -> dict:
             except Exception: pass
 
 def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
-    # Suivi d'état FSM via le State Synchronizer de Neon DB
     correlation_id = f"corr_{uuid.uuid4().hex[:12]}"
     task_id = f"task_{uuid.uuid4().hex[:8]}"
     update_task_state(task_id, "RUNNING", correlation_id, f"Action: {action_name}")
@@ -926,24 +925,27 @@ def _detect_user_response(query: str) -> str:
     return "neutral"
 
 # ==========================================
-# ROUTES API
+# ROUTES FASTAPI
 # ==========================================
 
-@app.route("/")
-def index():
-    return send_from_directory(WORKSPACE_DIR, "index.html")
+@app.get("/")
+async def index():
+    return FileResponse(os.path.join(WORKSPACE_DIR, "index.html"))
 
-@app.route("/<path:filename>")
-def serve_static(filename):
-    return send_from_directory(WORKSPACE_DIR, filename)
+@app.get("/{filename:path}")
+async def serve_static(filename: str):
+    target = os.path.join(WORKSPACE_DIR, filename)
+    if os.path.exists(target) and os.path.isfile(target):
+        return FileResponse(target)
+    raise HTTPException(status_code=404, detail="Fichier introuvable")
 
-@app.route("/api/health", methods=["GET"])
-def health():
-    return jsonify({"status": "ok", "service": "BEK-v15.3 HYBRID", "os": CURRENT_OS_NAME})
+@app.get("/api/health")
+async def health():
+    return {"status": "ok", "service": "BEK-v15.3 HYBRID FastAPI", "os": CURRENT_OS_NAME}
 
-@app.route("/api/config", methods=["GET"])
-def get_config():
-    return jsonify({
+@app.get("/api/config")
+async def get_config():
+    return {
         "providers": [
             {"id": "groq", "name": "Groq", "configured": bool(get_api_key("GROQ_API_KEY"))},
             {"id": "nvidia", "name": "NVIDIA NIM", "configured": bool(get_api_key("NVIDIA_API_KEY"))},
@@ -959,14 +961,14 @@ def get_config():
         "skills": _build_skills_index(),
         "mcp_tools": mcp_gateway.get_mcp_manifests(),
         "pending_tasks": get_pending_or_running_tasks(),
-    })
+    }
 
-@app.route("/api/memory", methods=["GET", "POST"])
-def api_memory():
+@app.api_route("/api/memory", methods=["GET", "POST"])
+async def api_memory(request: Request):
     try:
         results = []
         if request.method == "POST":
-            data = request.get_json(silent=True) or {}
+            data = await request.json() or {}
             query = data.get("query", data.get("q", ""))
             content = data.get("content", data.get("text", ""))
             if content:
@@ -999,20 +1001,20 @@ def api_memory():
         safe_results = json_safe(formatted_memories)
         total_count = len(safe_results) if safe_results else 5
 
-        return jsonify({
+        return {
             "status": "success",
             "pinecone_status": "Connecté & Opérationnel",
             "neon_state_entries": total_count,
             "system_rules_synced": True,
             "memory": safe_results,
             "memories": safe_results
-        })
+        }
     except Exception as e:
         logger.error("Erreur API Memory : %s", e)
-        return jsonify({"status": "success", "pinecone_status": "Erreur", "memory": []}), 200
+        return {"status": "success", "pinecone_status": "Erreur", "memory": []}
 
-@app.route("/api/files", methods=["GET"])
-def list_files():
+@app.get("/api/files")
+async def list_files():
     files = []
     for directory in [FILES_DIR, GENERATED_DIR]:
         if os.path.exists(directory):
@@ -1021,19 +1023,19 @@ def list_files():
                     filepath = os.path.join(directory, filename)
                     if os.path.isfile(filepath):
                         files.append({"name": filename, "size": os.path.getsize(filepath), "folder": os.path.basename(directory)})
-    return jsonify({"files": files})
+    return {"files": files}
 
-@app.route("/api/download/<filename>", methods=["GET"])
-def download_file(filename):
+@app.get("/api/download/{filename}")
+async def download_file(filename: str):
     filename = secure_filename(filename)
     for directory in [GENERATED_DIR, FILES_DIR]:
         target = os.path.join(directory, filename)
         if os.path.exists(target):
-            return send_file(target, as_attachment=True)
-    return jsonify({"error": "Fichier introuvable"}), 404
+            return FileResponse(target, filename=filename, media_type="application/octet-stream")
+    raise HTTPException(status_code=404, detail="Fichier introuvable")
 
-@app.route("/api/files/<filename>", methods=["DELETE"])
-def delete_single_file(filename):
+@app.delete("/api/files/{filename}")
+async def delete_single_file(filename: str):
     filename = secure_filename(filename)
     deleted = False
     for directory in [FILES_DIR, GENERATED_DIR]:
@@ -1043,13 +1045,13 @@ def delete_single_file(filename):
                 os.remove(target)
                 deleted = True
             except Exception as e:
-                return jsonify({"error": str(e)}), 500
+                raise HTTPException(status_code=500, detail=str(e))
     if deleted:
-        return jsonify({"status": "success", "message": f"{filename} supprimé."})
-    return jsonify({"error": "Fichier introuvable"}), 404
+        return {"status": "success", "message": f"{filename} supprimé."}
+    raise HTTPException(status_code=404, detail="Fichier introuvable")
 
-@app.route("/api/files/delete-all", methods=["POST"])
-def delete_all_files():
+@app.post("/api/files/delete-all")
+async def delete_all_files():
     deleted_count = 0
     for directory in [FILES_DIR, GENERATED_DIR]:
         if os.path.exists(directory):
@@ -1062,15 +1064,12 @@ def delete_all_files():
                             deleted_count += 1
                         except Exception as e:
                             logger.warning(f"Impossible de supprimer {target}: {e}")
-    return jsonify({"status": "success", "message": f"{deleted_count} fichiers supprimés avec succès."})
+    return {"status": "success", "message": f"{deleted_count} fichiers supprimés avec succès."}
 
-@app.route("/api/upload", methods=["POST"])
-def upload_file():
-    if "file" not in request.files:
-        return jsonify({"error": "Aucun fichier reçu"}), 400
-    file = request.files["file"]
-    if not file or file.filename == "":
-        return jsonify({"error": "Nom de fichier vide"}), 400
+@app.post("/api/upload")
+async def upload_file(file: UploadFile = File(...)):
+    if not file or not file.filename:
+        raise HTTPException(status_code=400, detail="Aucun fichier reçu")
     raw_filename = file.filename
     if "/" in raw_filename or "\\" in raw_filename:
         raw_filename = os.path.basename(raw_filename)
@@ -1080,19 +1079,19 @@ def upload_file():
         filename = f"upload_{uuid.uuid4().hex[:8]}{ext}"
     save_path = os.path.join(FILES_DIR, filename)
     try:
+        content = await file.read()
         with open(save_path, "wb") as dst:
-            for chunk in iter(lambda: file.stream.read(64 * 1024), b""):
-                dst.write(chunk)
-        return jsonify({"status": "success", "filename": filename, "folder": "uploads"})
+            dst.write(content)
+        return {"status": "success", "filename": filename, "folder": "uploads"}
     except Exception as e:
         logger.error("Erreur upload : %s", e)
         if os.path.exists(save_path):
             try: os.remove(save_path)
             except Exception: pass
-        return jsonify({"error": f"Erreur enregistrement : {str(e)}"}), 500
+        raise HTTPException(status_code=500, detail=f"Erreur enregistrement : {str(e)}")
 
-@app.route("/api/connectors", methods=["GET"])
-def get_connectors():
+@app.get("/api/connectors")
+async def get_connectors():
     try:
         connectors = []
         db_conn = get_db_connection()
@@ -1107,18 +1106,18 @@ def get_connectors():
         for env_key, name in [("GROQ_API_KEY", "Groq Cloud"), ("NVIDIA_API_KEY", "NVIDIA NIM"), ("GEMINI_API_KEY", "Google Gemini"), ("OPENROUTER_API_KEY", "OpenRouter")]:
             is_active = bool(get_api_key(env_key))
             connectors.append({"name": name, "type": "Fournisseur LLM", "latency_ms": 120 if is_active else 0, "status": "Actif" if is_active else "Non Configuré"})
-        return jsonify({"connectors": connectors})
+        return {"connectors": connectors}
     except Exception as e:
         logger.error("Erreur Connectors : %s", e)
-        return jsonify({"connectors": []}), 200
+        return {"connectors": []}
 
 # ==========================================
 # CHAT STREAMING NATUREL & VALIDATION HUMAINE
 # ==========================================
 
-@app.route("/api/chat", methods=["POST"])
-def chat():
-    data = request.get_json(silent=True) or {}
+@app.post("/api/chat")
+async def chat(request: Request):
+    data = await request.json() or {}
     messages = data.get("messages", [])
     provider = data.get("provider", "groq")
     model = data.get("model", "openai/gpt-oss-120b")
@@ -1138,7 +1137,6 @@ def chat():
         prev_msg = trimmed_messages[-2]
         if prev_msg.get("role") == "assistant" and "[ACTION:" in prev_msg.get("content", ""):
             
-            # Cas 1 : L'utilisateur a validé l'action
             if user_status == "agreed":
                 action_matches = list(re.finditer(r"\[ACTION:(\w+)\](.*?)\[/ACTION\]", prev_msg.get("content", ""), re.DOTALL))
                 if action_matches:
@@ -1169,7 +1167,6 @@ def chat():
                     trimmed_messages[-1]["content"] += injection
                     trimmed_messages[-2]["content"] = trimmed_messages[-2]["content"].replace("[ACTION:", "[EXECUTED_ACTION:")
 
-            # Cas 2 : L'utilisateur a refusé explicitement
             elif user_status == "refused":
                 trimmed_messages[-2]["content"] = trimmed_messages[-2]["content"].replace("[ACTION:", "[REFUSED_ACTION:")
                 injection = (
@@ -1178,7 +1175,6 @@ def chat():
                 )
                 trimmed_messages[-1]["content"] += injection
 
-            # Cas 3 : L'utilisateur a dit autre chose
             else:
                 trimmed_messages[-2]["content"] = trimmed_messages[-2]["content"].replace("[ACTION:", "[CANCELED_ACTION:")
 
@@ -1207,7 +1203,7 @@ def chat():
         {"role": "system", "content": dynamic_system_prompt}
     ] + trimmed_messages
 
-    def generate_proxy():
+    async def generate_proxy():
         full_text_accumulated = []
         action_detected = False
         
@@ -1229,7 +1225,6 @@ def chat():
                     
                     yield f"data: {json.dumps({'chunk': chunk}, ensure_ascii=False)}\n\n"
                     
-                    # Interception et exécution automatique dans le même flux
                     if action_detected and "[/ACTION]" in current_text:
                         try:
                             action_matches = list(re.finditer(r"\[ACTION:(\w+)\](.*?)\[/ACTION\]", current_text, re.DOTALL))
@@ -1276,13 +1271,14 @@ def chat():
             yield f"data: {err_stream_json}\n\n"
             yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
 
-    return Response(
+    return StreamingResponse(
         generate_proxy(),
-        mimetype="text/event-stream; charset=utf-8",
-        headers={"Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache"},
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
     )
 
 if __name__ == "__main__":
+    import uvicorn
     port = int(os.environ.get("PORT", "8765"))
     host = os.environ.get("HOST", "0.0.0.0")
-    app.run(host=host, port=port, debug=False, threaded=True)
+    uvicorn.run("app:app", host=host, port=port, reload=False)
