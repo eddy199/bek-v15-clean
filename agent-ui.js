@@ -1,4 +1,4 @@
-/**
+﻿/**
  * BEK-v15-HYBRID — Agent UI Controller (Gestion Fichiers Dynamique, Anti-Cache & Auto-Expand Gemini)
  */
 (function() {
@@ -192,7 +192,7 @@
             const data = await res.json();
             
             // --- FIX B.AI : Injection forcée des modèles ---
-            availableModels = data.models || {};
+            availableModels = data.models || {}; availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
             availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
             
             let providersList = data.providers || [];
