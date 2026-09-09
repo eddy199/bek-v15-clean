@@ -1,5 +1,5 @@
 # 🧬 Architecture Réelle du Système BEK-v15.2 Hybrid
-> *Dernière synchronisation automatique : 2026-09-08 23:30:34 UTC*
+> *Dernière synchronisation automatique : 2026-09-09 17:52:53 UTC*
 
 ## 1. Organigramme des Flux d'Exécution
 ```text
@@ -80,15 +80,50 @@
 ## 3. Politiques de Sécurité (SecurityGuard)
 - **Chiffrement & Signature :** HMAC-SHA256 obligatoire via `BEK_HSM_SECRET`
 - **Actions autorisées en liste blanche (*Allowlist*) :**
+  * `analyze_image`
+  * `analyze_zip_content`
   * `create_contact`
   * `create_deal`
+  * `create_dynamic_skill`
+  * `create_file`
   * `create_task`
+  * `create_zip`
   * `default_llm`
+  * `delete_file`
+  * `delete_from_memory`
+  * `delete_memory`
+  * `execute_background_task`
+  * `execute_command`
+  * `execute_tmux_headless`
+  * `extract_zip`
+  * `forget`
+  * `generate_image`
   * `get_stats`
+  * `kill_session`
+  * `merge_and_edit_images`
+  * `multi_agent_workflow`
   * `neon_audit`
+  * `orchestrate`
+  * `read_file`
+  * `recall`
+  * `remember`
+  * `run_script`
+  * `run_swarm_task`
+  * `run_tests`
+  * `save_file`
+  * `save_memory`
+  * `save_to_memory`
   * `search_contact`
+  * `search_memory`
+  * `start_background_task`
+  * `stop_background_task`
+  * `stop_session`
+  * `stop_tmux_headless`
   * `update_contact`
+  * `web_pipeline`
+  * `web_search`
   * `web_sync`
+  * `write_file`
 
 ## 4. Modèles NVIDIA NIM Intégrés
 

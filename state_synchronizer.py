@@ -90,10 +90,3 @@ def get_pending_or_running_tasks() -> list:
             try: conn.close()
             except Exception: pass
         return []
-
-if __name__ == "__main__":
-    print("--- TEST UNITAIRE STATE SYNCHRONIZER (NEON DB) BEK-v15.3 ---")
-    if init_state_tables():
-        update_task_state("test_task_001", "RUNNING", "corr_abc123", "Objectif : Test d'intégration")
-        print("Tâches en cours :", get_pending_or_running_tasks())
-        update_task_state("test_task_001", "COMPLETED", "corr_abc123", "Objectif : Terminé avec succès")

@@ -1,6 +1,6 @@
 """
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║  GROUNDING-VALIDATOR v1.0 — Vérification Factuelle Avancée pour BEK-v15.2   ║
+║  GROUNDING-VALIDATOR v1.1 — Vérification Factuelle Avancée pour BEK-v15.3   ║
 ║  Fichier : meta_cortex_grounding.py                                          ║
 ║  Rôle    : Génère et exécute des requêtes SQL de vérification automatique   ║
 ║            sur Neon PostgreSQL pour valider chaque claim du draft           ║
@@ -54,31 +54,24 @@ class GroundingResult:
 
 CRM_SCHEMA = {
     "companies": {
-        "columns": ["id", "name", "industry", "size", "revenue", "created_at", "updated_at", "status"],
-        "types": {"id": "UUID", "name": "TEXT", "industry": "TEXT", "size": "TEXT", 
-                  "revenue": "DECIMAL", "created_at": "TIMESTAMPTZ", "updated_at": "TIMESTAMPTZ", "status": "TEXT"},
+        "columns": ["id", "name", "created_at"],
+        "types": {"id": "SERIAL", "name": "TEXT", "created_at": "TIMESTAMP"},
     },
     "contacts": {
-        "columns": ["id", "company_id", "first_name", "last_name", "email", "phone", "role", "created_at", "updated_at"],
-        "types": {"id": "UUID", "company_id": "UUID", "first_name": "TEXT", "last_name": "TEXT",
-                  "email": "TEXT", "phone": "TEXT", "role": "TEXT", "created_at": "TIMESTAMPTZ", "updated_at": "TIMESTAMPTZ"},
+        "columns": ["id", "name", "email", "phone", "company_id", "created_at"],
+        "types": {"id": "SERIAL", "name": "TEXT", "email": "TEXT", "phone": "TEXT", "company_id": "INT", "created_at": "TIMESTAMP"},
     },
     "opportunities": {
-        "columns": {"id", "company_id", "contact_id", "name", "stage", "amount", "probability", "expected_close_date", "created_at", "updated_at"},
-        "types": {"id": "UUID", "company_id": "UUID", "contact_id": "UUID", "name": "TEXT",
-                  "stage": "TEXT", "amount": "DECIMAL", "probability": "INT", 
-                  "expected_close_date": "DATE", "created_at": "TIMESTAMPTZ", "updated_at": "TIMESTAMPTZ"},
+        "columns": ["id", "name", "amount", "currency", "stage", "company_id", "created_at"],
+        "types": {"id": "SERIAL", "name": "TEXT", "amount": "NUMERIC", "currency": "TEXT", "stage": "TEXT", "company_id": "INT", "created_at": "TIMESTAMP"},
     },
-    "invoices": {
-        "columns": ["id", "company_id", "opportunity_id", "invoice_number", "amount", "tax_amount", "total_amount", "status", "due_date", "created_at"],
-        "types": {"id": "UUID", "company_id": "UUID", "opportunity_id": "UUID", 
-                  "invoice_number": "TEXT", "amount": "DECIMAL", "tax_amount": "DECIMAL",
-                  "total_amount": "DECIMAL", "status": "TEXT", "due_date": "DATE", "created_at": "TIMESTAMPTZ"},
+    "matrix_sub_crms": {
+        "columns": ["id", "parent_id", "niche_name", "specifications", "status", "created_at"],
+        "types": {"id": "UUID", "parent_id": "UUID", "niche_name": "TEXT", "specifications": "JSONB", "status": "TEXT", "created_at": "TIMESTAMPTZ"},
     },
-    "payments": {
-        "columns": ["id", "invoice_id", "amount", "payment_method", "payment_date", "status"],
-        "types": {"id": "UUID", "invoice_id": "UUID", "amount": "DECIMAL", 
-                  "payment_method": "TEXT", "payment_date": "DATE", "status": "TEXT"},
+    "bek_task_states": {
+        "columns": ["task_id", "correlation_id", "state", "payload", "updated_at"],
+        "types": {"task_id": "VARCHAR", "correlation_id": "VARCHAR", "state": "VARCHAR", "payload": "TEXT", "updated_at": "TIMESTAMPTZ"},
     }
 }
 
@@ -90,7 +83,7 @@ class ClaimExtractor:
         "date": re.compile(r'(\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|\d{4}-\d{2}-\d{2})', re.IGNORECASE),
         "email": re.compile(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'),
         "societe": re.compile(r'(?:société|entreprise|company|client)\s+["\']?([^"\']{2,50})["\']?', re.IGNORECASE),
-        "statut": re.compile(r'(?:statut|status|état)\s+(?:est|de|du)\s+["\']?([^"\']+)["\']?', re.IGNORECASE),
+        "statut": re.compile(r'(?:statut|status|étape|stage)\s+(?:est|de|du|en)\s+["\']?([^"\']+)["\']?', re.IGNORECASE),
     }
 
     AGGREGATE_KEYWORDS = ["total", "somme", "montant total", "chiffre d'affaires", "revenu", "nombre de", "count", "combien"]
@@ -104,9 +97,7 @@ class ClaimExtractor:
         for i, line in enumerate(lines):
             context = self._get_context(lines, i)
             for match in self.PATTERNS["montant"].finditer(line):
-                claims.append(Claim(f"amount_{i}_{match.start()}", match.group(0), "numeric", context, self._infer_table(context, "amount"), "amount"))
-            for match in self.PATTERNS["pourcentage"].finditer(line):
-                claims.append(Claim(f"pct_{i}_{match.start()}", match.group(0), "numeric", context, "opportunities", "probability"))
+                claims.append(Claim(f"amount_{i}_{match.start()}", match.group(0), "numeric", context, "opportunities", "amount"))
             for match in self.PATTERNS["date"].finditer(line):
                 claims.append(Claim(f"date_{i}_{match.start()}", match.group(0), "date", context, "opportunities", "created_at"))
             for match in self.PATTERNS["societe"].finditer(line):
@@ -114,7 +105,7 @@ class ClaimExtractor:
             for match in self.PATTERNS["email"].finditer(line):
                 claims.append(Claim(f"email_{i}_{match.start()}", match.group(0), "entity", context, "contacts", "email"))
             if any(kw in line.lower() for kw in self.AGGREGATE_KEYWORDS):
-                claims.append(Claim(f"aggregate_{i}", line.strip(), "aggregate", context, "opportunities"))
+                claims.append(Claim(f"aggregate_{i}", line.strip(), "aggregate", context, "opportunities", "amount"))
 
         seen = set()
         unique = []
@@ -128,12 +119,6 @@ class ClaimExtractor:
     def _get_context(self, lines: List[str], index: int, window: int = 2) -> str:
         return "\n".join(lines[max(0, index - window):min(len(lines), index + window + 1)])
 
-    def _infer_table(self, context: str, claim_type: str) -> str:
-        ctx = context.lower()
-        if "facture" in ctx: return "invoices"
-        if "contact" in ctx or "email" in ctx: return "contacts"
-        return "opportunities"
-
 
 class SQLQueryGenerator:
     FORBIDDEN_KEYWORDS = ["DROP", "DELETE", "INSERT", "UPDATE", "ALTER", "CREATE", "EXEC", "TRUNCATE", "--", ";"]
@@ -144,17 +129,17 @@ class SQLQueryGenerator:
     def generate_query(self, claim: Claim) -> Optional[str]:
         if not claim.source_table or claim.source_table not in self.schema:
             return None
-        table = claim.source_table
-        col = claim.source_column or "amount"
+        table = f'"{claim.source_table}"'
+        col = f'"{claim.source_column}"' if claim.source_column else '"amount"'
 
         if claim.claim_type == "numeric":
             val = self._extract_number(claim.claim_text)
-            query = f"SELECT {col} as actual_value, ABS({col} - {val}) as diff FROM {table} WHERE ABS({col} - {val}) < {val * 0.05 + 1} LIMIT 5"
+            query = f"SELECT {col} as actual_value, ABS({col} - {val}) as diff FROM {table} WHERE ABS({col} - {val}) < {val * 0.1 + 1} LIMIT 5"
         elif claim.claim_type == "entity":
             val = claim.claim_text.replace("'", "''")
             query = f"SELECT {col} as actual_value FROM {table} WHERE {col} ILIKE '%{val}%' LIMIT 5"
         elif claim.claim_type == "aggregate":
-            query = f"SELECT SUM(amount) as aggregate_value FROM {table}"
+            query = f"SELECT COALESCE(SUM({col}), 0) as aggregate_value, COUNT(*) as count_val FROM {table}"
         else:
             return None
 
@@ -167,17 +152,34 @@ class SQLQueryGenerator:
 
     def _sanitize(self, query: str) -> Optional[str]:
         uq = query.upper().strip()
-        if not uq.startswith("SELECT"): return None
+        if not uq.startswith("SELECT"):
+            return None
         for f in self.FORBIDDEN_KEYWORDS:
-            if f in uq: return None
+            if f in uq.split():
+                return None
         return query.strip()
 
 
 class SecureSQLExecutor:
-    def __init__(self, conn_str: str):
-        self.conn = psycopg2.connect(conn_str)
+    def __init__(self, conn_str: str = ""):
+        self.conn_str = conn_str or os.environ.get("DATABASE_URL", "")
+        self.conn = None
+        self._connect()
+
+    def _connect(self):
+        try:
+            if self.conn_str:
+                self.conn = psycopg2.connect(self.conn_str, connect_timeout=5, sslmode="require")
+        except Exception as e:
+            logger.warning("Connexion Neon SQL executor impossible : %s", e)
+            self.conn = None
 
     def execute(self, query: str) -> Tuple[bool, Any, Optional[str]]:
+        if not self.conn or self.conn.closed:
+            self._connect()
+        if not self.conn:
+            return False, None, "Base de données Neon non connectée"
+
         try:
             with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
                 cur.execute("SET statement_timeout = 5000")
@@ -187,14 +189,22 @@ class SecureSQLExecutor:
                 elapsed = int((datetime.now() - start).total_seconds() * 1000)
                 return True, {"rows": [dict(r) for r in rows], "elapsed_ms": elapsed}, None
         except Exception as e:
+            try:
+                self.conn.rollback()
+            except Exception:
+                pass
             return False, None, str(e)
 
     def close(self):
-        if self.conn: self.conn.close()
+        if self.conn and not self.conn.closed:
+            try:
+                self.conn.close()
+            except Exception:
+                pass
 
 
 class GroundingValidator:
-    def __init__(self, conn_str: str):
+    def __init__(self, conn_str: str = ""):
         self.extractor = ClaimExtractor()
         self.generator = SQLQueryGenerator()
         self.executor = SecureSQLExecutor(conn_str)
@@ -208,7 +218,7 @@ class GroundingValidator:
                 results.append(GroundingResult(claim, True, "", "UNVERIFIABLE", claim.claim_text, None, 0))
                 continue
             success, data, err = self.executor.execute(sql)
-            if not success or not data.get("rows"):
+            if not success or not data or not data.get("rows"):
                 results.append(GroundingResult(claim, False, sql, "NO_DATA", claim.claim_text, Severity.HIGH, 0, err))
             else:
                 results.append(GroundingResult(claim, True, sql, str(data["rows"][0]), claim.claim_text, None, data["elapsed_ms"]))

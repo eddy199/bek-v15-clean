@@ -1,0 +1,18 @@
+Collecting pinecone
+  Downloading pinecone-10.0.0-cp310-abi3-win_amd64.whl.metadata (7.1 kB)
+Requirement already satisfied: httpx<1.0,>=0.27 in .\venv\Lib\site-packages (from httpx[http2]<1.0,>=0.27->pinecone) (0.28.1)
+Requirement already satisfied: msgspec<0.22,>=0.19 in .\venv\Lib\site-packages (from pinecone) (0.21.1)
+Requirement already satisfied: orjson<4,>=3.11 in .\venv\Lib\site-packages (from pinecone) (3.12.0)
+Requirement already satisfied: anyio>=4.0 in .\venv\Lib\site-packages (from pinecone) (4.15.0)
+Requirement already satisfied: certifi in .\venv\Lib\site-packages (from httpx<1.0,>=0.27->httpx[http2]<1.0,>=0.27->pinecone) (2026.7.22)
+Requirement already satisfied: httpcore==1.* in .\venv\Lib\site-packages (from httpx<1.0,>=0.27->httpx[http2]<1.0,>=0.27->pinecone) (1.0.9)
+Requirement already satisfied: idna in .\venv\Lib\site-packages (from httpx<1.0,>=0.27->httpx[http2]<1.0,>=0.27->pinecone) (3.19)
+Requirement already satisfied: h11>=0.16 in .\venv\Lib\site-packages (from httpcore==1.*->httpx<1.0,>=0.27->httpx[http2]<1.0,>=0.27->pinecone) (0.16.0)
+Requirement already satisfied: h2<5,>=3 in .\venv\Lib\site-packages (from httpx[http2]<1.0,>=0.27->pinecone) (4.4.1)
+Requirement already satisfied: hyperframe<7,>=6.1 in .\venv\Lib\site-packages (from h2<5,>=3->httpx[http2]<1.0,>=0.27->pinecone) (6.1.0)
+Requirement already satisfied: hpack<5,>=4.2 in .\venv\Lib\site-packages (from h2<5,>=3->httpx[http2]<1.0,>=0.27->pinecone) (4.2.0)
+Requirement already satisfied: typing_extensions>=4.16.0 in .\venv\Lib\site-packages (from anyio>=4.0->pinecone) (4.16.0)
+Downloading pinecone-10.0.0-cp310-abi3-win_amd64.whl (2.9 MB)
+   ---------------------------------------- 2.9/2.9 MB 2.0 MB/s  0:00:01
+Installing collected packages: pinecone
+Successfully installed pinecone-10.0.0
