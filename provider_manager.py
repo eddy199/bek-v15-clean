@@ -4,7 +4,8 @@ BEK-v15.3 HYBRID - Provider Manager Multi-LLM & Fallback Engine
 Gestionnaire universel des 13 fournisseurs d'intelligence artificielle :
 - B.ai, Kilo Code, OVHcloud, LLM7.io, Groq, NVIDIA NIM, Google Gemini,
   OpenRouter, Mistral, Cohere, Aion Labs, Zhipu AI, SiliconFlow.
-- Protection anti-dépassement TPM (8 000 tokens) sur Groq.
+- Support des clés NVIDIA dédiées par modèle depuis env.txt / .env.
+- Fallback automatique vers les fournisseurs gratuits en cas de panne de quota.
 """
 
 from __future__ import annotations
@@ -23,13 +24,16 @@ WORKSPACE_DIR = Path(__file__).resolve().parent
 
 
 class ProviderManager:
-    PROVIDER_MODELS = {
+    # ─── MODÈLES PAR FOURNISSEUR ─────────────────────────────────────────────
+    PROVIDER_MODELS: Dict[str, List[str]] = {
+        # 1. B.ai (Clé API)
         "b_ai": [
             "glm-5.3-flash",
             "qwen3.8-flash",
             "mimo-v2.5",
             "hy3",
         ],
+        # 2. Kilo Code (Gratuit / Anonyme)
         "kilo_anonymous": [
             "kilo-nemotron-3-ultra-550b",
             "kilo-step-3.7-flash",
@@ -43,6 +47,7 @@ class ProviderManager:
             "kilo-nemotron-lightning",
             "kilo-lfm-2.5",
         ],
+        # 3. OVHcloud (Gratuit / Anonyme)
         "ovh_anonymous": [
             "ovh-qwen-3.5-397b",
             "ovh-gpt-oss-120b",
@@ -57,16 +62,21 @@ class ProviderManager:
             "ovh-mistral-nemo",
             "ovh-mistral-7b",
         ],
+        # 4. LLM7.io (Gratuit / Anonyme)
         "llm7_anonymous": [
             "llm7-gpt-oss-20b",
             "llm7-mistral-nemo",
             "llm7-minimax-m2.7",
         ],
+        # 5. Groq (Clé API)
         "groq": [
             "openai/gpt-oss-120b",
             "openai/gpt-oss-20b",
             "qwen/qwen3.6-27b",
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
         ],
+        # 6. NVIDIA NIM (Clés spécifiques par modèle ou clé générale)
         "nvidia": [
             "meta/llama-3.3-70b-instruct",
             "meta/llama-3.1-70b-instruct",
@@ -79,27 +89,48 @@ class ProviderManager:
             "nvidia/nemotron-nano-12b-v2-vl",
             "nvidia/nvidia-nemotron-nano-9b-v2",
             "openai/gpt-oss-120b",
+            "openai/gpt-oss-20b",
+            "mistralai/mistral-nemotron",
+            "mistralai/mistral-medium-3.5-128b",
             "google/gemma-4-31b-it",
+            "nvidia/ising-calibration-1.5-31b",
         ],
+        # 7. Google Gemini (Mise à jour via capture d'écran)
         "gemini": [
-            "gemini-3.7-flash",
             "gemini-3.6-flash",
-            "gemini-3.5-flash",
-            "gemini-3.5-flash-lite",
+            "gemini-1.5-pro-preview",
+            "gemini-3-flash-preview",
             "gemini-3.1-flash-lite",
-            "gemini-2.5-flash",
-            "gemini-2.5-flash-lite",
-            "gemini-2.5-pro",
-            "gemma-4-31b",
-            "gemma-4-26b-a4b",
+            "gemini-3.1-flash-image",
+            "gemini-3.1-flash-lite-image",
+            "gemini-3-pro-image",
+            "gemini-3.5-live-translate-preview",
+            "gemini-3.1-flash-live-preview",
+            "gemini-3.1-flash-tts-preview",
+            "gemini-2.5-flash-image",
+            "gemini-2.5-flash-native-audio-preview-12-2025",
+            "gemini-2.5-flash-preview-tts",
+            "gemini-2.5-pro-preview-tts",
+            "veo-3.1-gene-prev",
+            "veo-3.1-lite-gene-prev",
+            "gemini-omni-flash",
+            "lyria-3-pro-preview",
+            "lyria-3-clip-preview",
+            "lyria-realtime-preview",
         ],
+        # 8. OpenRouter (Mise à jour via capture d'écran)
         "openrouter": [
-            "openrouter/auto",
-            "openai/gpt-oss-120b",
-            "anthropic/claude-4-sonnet",
-            "openrouter-free-router",
-            "poolside/laguna-s-2.1:free",
+            "auto",
+            "gpt-oss-120b",
+            "claude-4-sonnet",
+            "dots3-note-preview",
+            "lfm2.5-2.6b",
+            "nemotron-3.5-lightning",
+            "laguna-s-2.1",
+            "laguna-xs-2.1",
+            "free-models-router",
         ],
+        # 9. Mistral AI (Clé API)
         "mistral": [
             "mistral-medium-3.5",
             "mistral-small-4",
@@ -109,6 +140,7 @@ class ProviderManager:
             "ministral-3-3b",
             "ministral-3-14b",
         ],
+        # 10. Cohere (Clé API)
         "cohere": [
             "cohere-command-a-plus",
             "cohere-command-a",
@@ -117,32 +149,35 @@ class ProviderManager:
             "cohere-command-r7b",
             "cohere-aya-expanse-32b",
         ],
+        # 11. Aion Labs (Clé API)
         "aionlabs": [
             "aion-2.0",
             "aion-rp-llama-3.1-8b",
             "aion-3.0",
             "aion-3.0-mini",
         ],
+        # 12. Zhipu AI (Clé API)
         "zhipu": [
             "glm-4.7-flash",
             "glm-4.5-flash",
             "glm-4.6v-flash",
         ],
+        # 13. SiliconFlow (Clé API)
         "siliconflow": [
             "siliconflow-qwen3-8b",
         ],
     }
 
-    # Ordre de fallback avec priorité aux modèles gratuits et sans restriction de clé
-    FALLBACK_ORDER = [
+    # Ordre de fallback avec priorité aux fournisseurs actifs puis aux routes gratuites
+    FALLBACK_ORDER: List[str] = [
         "b_ai",
-        "kilo_anonymous",
-        "ovh_anonymous",
-        "llm7_anonymous",
         "groq",
         "nvidia",
         "gemini",
         "openrouter",
+        "kilo_anonymous",
+        "ovh_anonymous",
+        "llm7_anonymous",
         "mistral",
         "cohere",
         "aionlabs",
@@ -155,6 +190,7 @@ class ProviderManager:
         self._load_env_cache()
 
     def _load_env_cache(self) -> None:
+        """Charge toutes les variables depuis env.txt et .env avec nettoyage des guillemets."""
         for filename in ("env.txt", ".env"):
             path = WORKSPACE_DIR / filename
             if not path.exists():
@@ -167,11 +203,12 @@ class ProviderManager:
                             continue
                         if "=" in line:
                             k, v = line.split("=", 1)
-                            self.env_cache[k.strip()] = v.strip().strip("\"'")
+                            self.env_cache[k.strip()] = v.strip().strip("\"' \r\n")
             except Exception as exc:
                 logger.warning("Erreur lecture %s : %s", filename, exc)
 
     def get_api_key(self, key_name: str) -> str:
+        """Récupère une clé API depuis l'environnement système ou le cache local."""
         val = os.environ.get(key_name, "")
         if val:
             return val.strip("\"' \r\n")
@@ -181,9 +218,32 @@ class ProviderManager:
         self._load_env_cache()
         return self.env_cache.get(key_name, "").strip("\"' \r\n")
 
+    def is_provider_available(self, provider: str) -> bool:
+        """Indique si un provider est opérationnel (anonyme ou clé API valide présente)."""
+        p = provider.lower().strip()
+        if "anonymous" in p:
+            return True
+        key_map = {
+            "b_ai": "B_AI_API_KEY",
+            "groq": "GROQ_API_KEY",
+            "nvidia": "NVIDIA_API_KEY",
+            "gemini": "GEMINI_API_KEY",
+            "openrouter": "OPENROUTER_API_KEY",
+            "mistral": "MISTRAL_API_KEY",
+            "cohere": "COHERE_API_KEY",
+            "aionlabs": "AIONLABS_API_KEY",
+            "zhipu": "ZHIPU_API_KEY",
+            "siliconflow": "SILICONFLOW_API_KEY",
+        }
+        key_name = key_map.get(p)
+        if not key_name:
+            return False
+        return bool(self.get_api_key(key_name))
+
     def resolve_provider_endpoint(
         self, provider: str, model: str
     ) -> Tuple[str, str, str]:
+        """Résout l'identifiant normalisé, la clé API et l'URL de base."""
         p = provider.lower().strip()
 
         if p in ["b.ai", "b_ai", "bai"]:
@@ -204,6 +264,7 @@ class ProviderManager:
             return "groq", key, "https://api.groq.com/openai/v1/chat/completions"
 
         elif p == "nvidia":
+            # 1. Vérifie si une clé spécifique existe pour ce modèle exact dans env.txt
             model_key = self.get_api_key(model)
             key = model_key or self.get_api_key("NVIDIA_API_KEY")
             return "nvidia", key, "https://integrate.api.nvidia.com/v1/chat/completions"
@@ -241,6 +302,7 @@ class ProviderManager:
             return "groq", key, "https://api.groq.com/openai/v1/chat/completions"
 
     def format_messages(self, messages: List[Dict[str, Any]]) -> List[Dict[str, str]]:
+        """Nettoie et formate les messages au standard OpenAI."""
         formatted = []
         for m in messages:
             if not isinstance(m, dict):
@@ -252,6 +314,8 @@ class ProviderManager:
                 for item in content:
                     if isinstance(item, dict) and "text" in item:
                         parts.append(item["text"])
+                    elif isinstance(item, str):
+                        parts.append(item)
                 content = " ".join(parts)
             if isinstance(content, str) and content.strip():
                 formatted.append({"role": role, "content": content})
@@ -266,6 +330,7 @@ class ProviderManager:
         max_tokens: int = 4096,
         top_p: float = 0.9,
     ) -> Generator[Dict[str, Any], None, None]:
+        """Exécute un streaming SSE avec bascule automatique sur les alternatives si échec."""
         clean_msgs = self.format_messages(messages)
         if not clean_msgs:
             yield {"error": "Aucun message valide à envoyer."}
@@ -273,12 +338,13 @@ class ProviderManager:
 
         total_chars = sum(len(m.get("content", "")) for m in clean_msgs)
 
-        # Protection TPM Groq : déviation automatique si contexte trop lourd
+        # Protection TPM Groq : déviation vers B.ai si la charge textuelle dépasse le seuil
         selected_provider = provider
         if provider == "groq" and total_chars > 16000:
             logger.warning("[TPM Guard] Requête volumineuse (%d chars), routage vers B.ai.", total_chars)
             selected_provider = "b_ai"
 
+        # Construction de l'ordre d'essai en démarrant par le choix de l'utilisateur
         attempt_providers = [selected_provider] + [p for p in self.FALLBACK_ORDER if p != selected_provider]
         last_error_message = ""
 
@@ -287,6 +353,7 @@ class ProviderManager:
             current_model = model if (current_prov == selected_provider or model in available_models) else (available_models[0] if available_models else model)
             resolved_p, api_key, api_url = self.resolve_provider_endpoint(current_prov, current_model)
 
+            # Ignore les providers payants dont la clé API est vide
             if not api_key and "anonymous" not in resolved_p:
                 continue
 
@@ -313,12 +380,12 @@ class ProviderManager:
                     json=payload,
                     headers=headers,
                     stream=True,
-                    timeout=(12, 120),
+                    timeout=(10, 120),
                 ) as resp:
                     resp.encoding = "utf-8"
 
                     if resp.status_code != 200:
-                        err_text = resp.text[:400]
+                        err_text = resp.text[:300]
                         logger.warning("Échec provider %s (HTTP %s) : %s", resolved_p, resp.status_code, err_text)
                         last_error_message = f"HTTP {resp.status_code} ({resolved_p})"
                         continue
