@@ -77,3 +77,4 @@ Werkzeug
 yarl
 zstandard
 beautifulsoup4==4.15.0
+python-multipart>=0.0.9
