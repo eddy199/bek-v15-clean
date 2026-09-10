@@ -695,8 +695,9 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
 
         elif action_name in ("write_file", "save_file", "create_file"):
             filename = parameters.get("filename", "generated/agent_output.txt")
-            filepath = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
             try:
+                from core.security.path_guard import safe_path
+                filepath = str(safe_path(filename, Path(FILES_DIR), Path(GENERATED_DIR)))
                 os.makedirs(os.path.dirname(filepath), exist_ok=True)
                 content = parameters.get("content", "")
                 with open(filepath, "w", encoding="utf-8") as f:
@@ -710,32 +711,25 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 
         elif action_name == "delete_file":
             filename = parameters.get("filename", "")
-            found = False
-            for directory in [WORKSPACE_DIR, FILES_DIR, GENERATED_DIR]:
-                target = os.path.abspath(os.path.join(directory, os.path.basename(filename)))
+            try:
+                from core.security.path_guard import safe_path
+                target = str(safe_path(filename, Path(FILES_DIR), Path(GENERATED_DIR), Path(WORKSPACE_DIR)))
                 if os.path.exists(target) and os.path.isfile(target):
-                    try:
-                        os.remove(target)
-                        found = True
-                    except Exception as e:
-                        update_task_state(task_id, "FAILED", correlation_id, str(e))
-                        return {"status": "error", "message": f"Erreur suppression : {str(e)}"}
-            if found:
-                update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier supprimé: {filename}")
-                return {"status": "success", "message": f"Fichier {filename} supprimé."}
-            update_task_state(task_id, "FAILED", correlation_id, "Fichier introuvable")
-            return {"status": "error", "message": "Fichier introuvable."}
+                    os.remove(target)
+                    update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier supprimé: {filename}")
+                    return {"status": "success", "message": f"Fichier {filename} supprimé."}
+                else:
+                    update_task_state(task_id, "FAILED", correlation_id, "Fichier introuvable")
+                    return {"status": "error", "message": "Fichier introuvable."}
+            except Exception as e:
+                update_task_state(task_id, "FAILED", correlation_id, str(e))
+                return {"status": "error", "message": f"Erreur suppression : {str(e)}"}
                 
         elif action_name == "read_file":
             filename = parameters.get("filename", "")
-            target_path = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
-            if not os.path.exists(target_path):
-                for d in [FILES_DIR, GENERATED_DIR]:
-                    alt = os.path.join(d, filename)
-                    if os.path.exists(alt):
-                        target_path = alt
-                        break
             try:
+                from core.security.path_guard import safe_path
+                target_path = str(safe_path(filename, Path(FILES_DIR), Path(GENERATED_DIR), Path(WORKSPACE_DIR)))
                 if os.path.exists(target_path):
                     with open(target_path, "r", encoding="utf-8", errors="ignore") as f:
                         content = f.read()[-3000:]
@@ -750,15 +744,11 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         elif action_name == "extract_zip":
             zip_filename = parameters.get("zip_path", "")
             extract_to_folder = parameters.get("extract_to", "generated/extracted_project")
-            zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
-            if not os.path.exists(zip_path):
-                for d in [FILES_DIR, GENERATED_DIR]:
-                    alt = os.path.join(d, zip_filename)
-                    if os.path.exists(alt):
-                        zip_path = alt
-                        break
-            target_dir = os.path.abspath(os.path.join(WORKSPACE_DIR, extract_to_folder))
             try:
+                from core.security.path_guard import safe_path
+                zip_path = str(safe_path(zip_filename, Path(FILES_DIR), Path(GENERATED_DIR), Path(WORKSPACE_DIR)))
+                target_dir = str(safe_path(extract_to_folder, Path(GENERATED_DIR), Path(WORKSPACE_DIR)))
+                
                 if not os.path.exists(zip_path):
                     update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
                     return {"status": "error", "message": f"Archive ZIP introuvable : {zip_filename}"}
@@ -791,14 +781,10 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
 
         elif action_name == "analyze_zip_content":
             zip_filename = parameters.get("zip_path", "")
-            zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
-            if not os.path.exists(zip_path):
-                for d in [FILES_DIR, GENERATED_DIR]:
-                    alt = os.path.join(d, zip_filename)
-                    if os.path.exists(alt):
-                        zip_path = alt
-                        break
             try:
+                from core.security.path_guard import safe_path
+                zip_path = str(safe_path(zip_filename, Path(FILES_DIR), Path(GENERATED_DIR), Path(WORKSPACE_DIR)))
+                
                 if not os.path.exists(zip_path):
                     update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
                     return {"status": "error", "message": f"Archive introuvable : {zip_filename}"}
@@ -862,6 +848,15 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
 
         elif action_name in ("execute_command", "run_script", "run_tests"):
             command = parameters.get("command", "dir" if os.name == "nt" else "ls -la")
+            
+            # --- BOUCLIER TERMINAL ---
+            # Bloque la navigation vers la racine et les autres disques
+            forbidden_patterns = ["..", "cd \\", "C:\\", "c:", "D:\\", "d:"]
+            if any(pattern in command.replace("/", "\\") for pattern in forbidden_patterns):
+                update_task_state(task_id, "FAILED", correlation_id, "Accès terminal hors zone bloqué")
+                return {"status": "error", "message": "🚨 [SÉCURITÉ] Commande système refusée. Tu n'as pas le droit de quitter le répertoire de travail."}
+            # -------------------------
+
             if "dir /s /b" in command.lower() and os.name == "nt":
                 term = re.search(r'\*(.*?)\*', command)
                 search_term = term.group(1) if term else "bek|provider"

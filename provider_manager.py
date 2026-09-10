@@ -391,7 +391,7 @@ class ProviderManager:
                         continue
 
                     received_chunks = False
-                    for raw_line in resp.iter_lines(decode_unicode=True):
+                    for raw_line in resp.iter_lines(decode_unicode=True, chunk_size=1):
                         if not raw_line:
                             continue
                         line = raw_line.strip()
