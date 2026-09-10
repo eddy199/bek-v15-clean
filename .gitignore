@@ -1,22 +1,93 @@
-# Fichiers de clés et secrets (CRITIQUE)
+# ==============================================================================
+# 1. FICHIERS SECRETS & CLÉS D'ACCÈS (CRITIQUE SÉCURITÉ)
+# ==============================================================================
 .env
+.env.*
+*.env
 .env.txt
 env.txt
 .env.save
-*.env
 google_accounts.json
 google_drive_index.json
+*.pem
+*.key
+*.cert
+*.pfx
 
-# Dossiers lourds / environnement local
+# ==============================================================================
+# 2. ENVIRONNEMENT PYTHON & CACHES
+# ==============================================================================
 venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# ==============================================================================
+# 3. NODE.JS, NEXT.JS & BUILDS JAVASCRIPT
+# ==============================================================================
 node_modules/
 node_portable/
-__pycache__/
-*.pyc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.next/
+.turbo/
+.output/
+out/
+.vercel/
+
+# ==============================================================================
+# 4. BASES DE DONNÉES LOCALES, VECTEURS & LOGS
+# ==============================================================================
 chroma_db/
 sessions/
 logs/
 *.log
+bek_app.log
+bek_agent.log
 %TEMP_PATH%/
+generated/*
+!generated/.gitkeep
+
+# ==============================================================================
+# 5. ARCHIVES, BACKUPS & DOUBLONS WINDOWS
+# ==============================================================================
 backup/
 archive_old/
+graft/
+*.zip
+*.tar.gz
+*.rar
+*.7z
+project_backup.zip
+
+# Fichiers de copie automatique Windows
+* - Copy*
+*- Copy*
+* - Copy.*
+*- Copy.*
+*.bak
+
+# ==============================================================================
+# 6. SYSTÈME, ÉDITEURS & TEMP
+# ==============================================================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+.fuse_hidden*
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

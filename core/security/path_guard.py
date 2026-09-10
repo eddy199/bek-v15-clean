@@ -1,42 +1,28 @@
-"""
-core/security/path_guard.py
-Phase 1 - Architecture v16 : Plomberie et Sécurité.
-Verrouille tous les accès fichiers au seul répertoire WORKSPACE_DIR.
-"""
-import os
+# ==============================================================================
+# BEK-v16 — PathGuard : anti path-traversal [NOUVEAU — Phase 1 plomberie]
+# ==============================================================================
 from pathlib import Path
 
+from core.paths import WORKSPACE_DIR, FILES_DIR, GENERATED_DIR
 
-class PathSecurityError(PermissionError):
-    """Levée lorsqu'un chemin tente de s'échapper du WORKSPACE_DIR."""
-    pass
+WORKSPACE = Path(WORKSPACE_DIR).resolve()
+ALLOWED_DIRS = [WORKSPACE, Path(FILES_DIR).resolve(), Path(GENERATED_DIR).resolve()]
 
 
-def safe_path(path: str, *allowed_dirs: Path) -> Path:
-    """
-    Valide et résout un chemin relatif au WORKSPACE_DIR.
+def safe_path(filename: str) -> Path:
+    """Renvoie un chemin garanti DANS le workspace. Lève ValueError sinon."""
+    candidate = (WORKSPACE / Path(filename).name).resolve()
+    if not any(candidate.is_relative_to(a) for a in ALLOWED_DIRS):
+        raise ValueError(f"Accès refusé hors workspace : {filename}")
+    return candidate
 
-    - Rejette les chemins vides, absolus, les lecteurs (ex: C:) et les traversées ('..').
-    - Retourne un Path absolu, normalisé, garanti contenu dans l'un des allowed_dirs ou WORKSPACE_DIR.
-    - Lève PathSecurityError en cas de tentative d'évasion.
-    """
-    if not path or not str(path).strip():
-        raise PathSecurityError("Chemin vide ou nul refusé.")
 
-    workspace = Path(os.environ.get("WORKSPACE_DIR", "F:\\workspacekimi")).resolve()
-    candidate = Path(str(path))
-
-    if candidate.is_absolute() or candidate.drive or candidate.root:
-        raise PathSecurityError(f"Chemin absolu interdit : {path}")
-
-    resolved = (workspace / candidate).resolve()
-
-    # Si aucun dossier spécifique n'est fourni, on autorise tout le workspace
-    allowed = [workspace]
-    if allowed_dirs:
-        allowed.extend([d.resolve() for d in allowed_dirs])
-
-    if not any(resolved.is_relative_to(a) for a in allowed):
-        raise PathSecurityError(f"Évasion de répertoire détectée ou dossier non autorisé : {path}")
-
-    return resolved
+def find_existing(filename: str) -> Path | None:
+    """Cherche un fichier existant dans WORKSPACE / uploads / generated.
+    Ne retourne JAMAIS un chemin hors des dossiers autorisés."""
+    base = Path(filename).name
+    for d in ALLOWED_DIRS:
+        p = (d / base).resolve()
+        if any(p.is_relative_to(a) for a in ALLOWED_DIRS) and p.is_file():
+            return p
+    return None

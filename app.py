@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK-v15.3 HYBRID - SERVEUR PRINCIPAL FASTAPI UNIFIÉ
+# BEK-v15.3 / v16 HYBRID - SERVEUR PRINCIPAL FASTAPI UNIFIÉ (BATCH 1)
 # FASTAPI / HERMES V3 / EVENT BUS A2A / MINHASH SPIDER / CRM & SUB-CRMS / PINECONE
 # COMPATIBILITÉ UNIVERSELLE WINDOWS & LINUX — ZÉRO RÉGRESSION
 # ==============================================================================
@@ -28,6 +28,23 @@ from werkzeug.utils import secure_filename
 from fastapi import FastAPI, Request, Response, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+
+# --- IMPORTS MODULAIRES (BATCH 1) ---
+from core.paths import WORKSPACE_DIR, SKILLS_DIR, FILES_DIR, GENERATED_DIR, PLUGINS_DIR, DOCS_DIR
+from core.utils import json_safe, json_response
+from services.vision import (
+    get_api_key,
+    analyze_image_with_vision,
+    generate_image_with_provider,
+    merge_and_edit_images,
+)
+from services.tasks import (
+    start_background_task,
+    stop_background_task,
+    RUNNING_BACKGROUND_TASKS,
+    CURRENT_OS_NAME,
+)
+from services.db import execute_database_sql
 
 # Compression de contexte Headroom
 try:
@@ -139,14 +156,14 @@ except ImportError:
 # ==========================================
 
 app = FastAPI(
-    title="BEK v15.3 Hybrid FastAPI",
+    title="BEK v15.3 / v16 Hybrid FastAPI",
     description="Architecture cognitive asynchrone haute performance",
-    version="15.3"
+    version="16.0-batch1"
 )
 
 CORS_ORIGINS = os.environ.get(
     "BEK_CORS_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:8765,http://127.0.0.1:8765,http://localhost:3001,http://127.0.0.1:3001",
+    "http://localhost:3000,[http://127.0.0.1:3000](http://127.0.0.1:3000),http://localhost:8765,[http://127.0.0.1:8765](http://127.0.0.1:8765),http://localhost:3001,[http://127.0.0.1:3001](http://127.0.0.1:3001)",
 )
 
 cors_origins = [origin.strip() for origin in CORS_ORIGINS.split(",") if origin.strip()]
@@ -168,25 +185,6 @@ async def add_anti_cache_header(request: Request, call_next):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
-
-# ==========================================
-# DIRECTOIRES UNIVERSELS
-# ==========================================
-
-WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
-SKILLS_DIR = os.path.join(WORKSPACE_DIR, "skills")
-FILES_DIR = os.path.join(WORKSPACE_DIR, "uploads")
-GENERATED_DIR = os.path.join(WORKSPACE_DIR, "generated")
-PLUGINS_DIR = os.path.join(WORKSPACE_DIR, "plugins")
-DOCS_DIR = os.path.join(WORKSPACE_DIR, "docs")
-
-for directory in [SKILLS_DIR, FILES_DIR, GENERATED_DIR, PLUGINS_DIR, DOCS_DIR]:
-    os.makedirs(directory, exist_ok=True)
-
-if WORKSPACE_DIR not in sys.path:
-    sys.path.insert(0, WORKSPACE_DIR)
-if PLUGINS_DIR not in sys.path:
-    sys.path.insert(0, PLUGINS_DIR)
 
 # ==========================================
 # LOGGING
@@ -292,85 +290,8 @@ hermes.register_tool(
 )
 
 # ==========================================
-# GESTIONNAIRE DES TÂCHES DE FOND (MULTI-OS)
-# ==========================================
-
-RUNNING_BACKGROUND_TASKS: dict[str, int] = {}
-
-def start_background_task(session_name: str, command: str) -> dict:
-    os.makedirs(GENERATED_DIR, exist_ok=True)
-    log_file_path = os.path.abspath(os.path.join(GENERATED_DIR, f"{session_name}_logs.txt"))
-    
-    try:
-        log_file = open(log_file_path, "w", encoding="utf-8")
-        if sys.platform == "win32":
-            win_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
-            proc = subprocess.Popen(
-                command,
-                shell=True,
-                cwd=WORKSPACE_DIR,
-                stdout=log_file,
-                stderr=subprocess.STDOUT,
-                creationflags=win_flags
-            )
-        else:
-            proc = subprocess.Popen(
-                command,
-                shell=True,
-                cwd=WORKSPACE_DIR,
-                stdout=log_file,
-                stderr=subprocess.STDOUT,
-                preexec_fn=os.setpgrp
-            )
-        
-        RUNNING_BACKGROUND_TASKS[session_name] = proc.pid
-        return {
-            "status": "success",
-            "message": f"🚀 Tâche lancée en arrière-plan avec succès ({CURRENT_OS_NAME}) !\n- Session : `{session_name}`\n- PID : `{proc.pid}`\n- Logs : `{log_file_path}`"
-        }
-    except Exception as e:
-        return {"status": "error", "message": f"Erreur démarrage tâche de fond : {str(e)}"}
-
-def stop_background_task(session_name: str) -> dict:
-    stopped_pids = []
-    target_pid = RUNNING_BACKGROUND_TASKS.pop(session_name, None)
-    
-    if target_pid and psutil.pid_exists(target_pid):
-        try:
-            parent = psutil.Process(target_pid)
-            for child in parent.children(recursive=True):
-                child.kill()
-            parent.kill()
-            stopped_pids.append(target_pid)
-        except Exception:
-            pass
-
-    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-        try:
-            cmdline = " ".join(proc.info.get('cmdline') or [])
-            pid = proc.info.get('pid')
-            if pid and pid != os.getpid():
-                if session_name in cmdline or (session_name == "monitor_task" and "system_monitor.py" in cmdline):
-                    proc.kill()
-                    stopped_pids.append(pid)
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            continue
-
-    if stopped_pids:
-        return {
-            "status": "success",
-            "message": f"🛑 Session `{session_name}` arrêtée avec succès (PIDs purgés: {list(set(stopped_pids))})."
-        }
-    return {
-        "status": "not_found",
-        "message": f"ℹ️ Aucun processus actif trouvé pour la session `{session_name}`."
-    }
-
-# ==========================================
 # PROMPT SYSTÈME GLOBAL
 # ==========================================
-
-CURRENT_OS_NAME = "Windows" if os.name == "nt" else "Linux"
 
 BEK_GOLDEN_RULES = f"""
 # RÔLE & PERSONNALITÉ
@@ -411,190 +332,6 @@ Tu es BEK, un agent superviseur technique d'exécution directe et précis, opér
    - [ACTION:generate_image]{{"prompt": "...", "filename": "...", "provider": "gemini", "model": "gemini-3.1-flash-image"}}[/ACTION]
    - [ACTION:merge_and_edit_images]{{"image_paths": ["img1", "img2"], "prompt": "..."}}[/ACTION]
 """
-
-# ==========================================
-# UTILITAIRES DE VISION & GÉNÉRATION D'IMAGES
-# ==========================================
-
-def json_safe(value):
-    if value is None:
-        return None
-    if isinstance(value, (str, int, float, bool)):
-        return value
-    if isinstance(value, datetime):
-        return value.isoformat()
-    if isinstance(value, dict):
-        return {str(k): json_safe(v) for k, v in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [json_safe(item) for item in value]
-    return str(value)
-
-def json_response(payload, status=200):
-    return JSONResponse(content=json_safe(payload), status_code=status)
-
-def get_api_key(key_name: str) -> str:
-    return provider_manager.get_api_key(key_name)
-
-def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gemini", model: str = "") -> str:
-    target_path = os.path.abspath(os.path.join(WORKSPACE_DIR, image_path))
-    if not os.path.exists(target_path):
-        for d in [FILES_DIR, GENERATED_DIR]:
-            alt = os.path.join(d, image_path)
-            if os.path.exists(alt):
-                target_path = alt
-                break
-    
-    if not os.path.exists(target_path):
-        return f"Erreur Vision : Image introuvable sur le disque ({image_path})."
-
-    try:
-        with open(target_path, "rb") as img_file:
-            encoded_image = base64.b64encode(img_file.read()).decode('utf-8')
-        
-        ext = image_path.split('.')[-1].lower()
-        mime_map = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "webp": "image/webp", "gif": "image/gif"}
-        mime_type = mime_map.get(ext, "image/png")
-        provider = provider.lower() if provider else "gemini"
-
-        if provider == "gemini" or not provider:
-            api_key = get_api_key("GEMINI_API_KEY")
-            if not api_key: return "Erreur : GEMINI_API_KEY non configurée."
-            clean_model = model if model and "gemini" in model else "gemini-1.5-flash"
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{clean_model}:generateContent?key={api_key}"
-            payload = {
-                "contents": [{"parts": [
-                    {"text": prompt or "Analyse cette image."},
-                    {"inline_data": {"mime_type": mime_type, "data": encoded_image}}
-                ]}]
-            }
-            res = requests.post(url, json=payload, timeout=60)
-            if res.status_code == 200:
-                return res.json()["candidates"][0]["content"]["parts"][0]["text"]
-            return f"Erreur API Gemini Vision ({res.status_code}): {res.text}"
-        
-        elif provider == "nvidia":
-            api_key = get_api_key("NVIDIA_API_KEY")
-            if not api_key: return "Erreur : NVIDIA_API_KEY non configurée."
-            url = "https://integrate.api.nvidia.com/v1/chat/completions"
-            active_model = model if model and "vision" in model else "meta/llama-3.2-90b-vision-instruct"
-            headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-            payload = {
-                "model": active_model,
-                "messages": [{"role": "user", "content": [
-                    {"type": "text", "text": prompt or "Analyse cette image."},
-                    {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{encoded_image}"}}
-                ]}],
-                "max_tokens": 1024
-            }
-            res = requests.post(url, json=payload, headers=headers, timeout=60)
-            if res.status_code == 200:
-                return res.json()["choices"][0]["message"]["content"]
-            return f"Erreur NVIDIA Vision ({res.status_code}): {res.text}"
-
-        elif provider == "groq":
-            api_key = get_api_key("GROQ_API_KEY")
-            if not api_key: return "Erreur : GROQ_API_KEY non configurée."
-            url = "https://api.groq.com/openai/v1/chat/completions"
-            active_model = model if model and "vision" in model else "llama-3.2-90b-text-preview"
-            headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-            payload = {
-                "model": active_model,
-                "messages": [{"role": "user", "content": [
-                    {"type": "text", "text": prompt or "Analyse cette image."}
-                ]}],
-                "max_tokens": 1024
-            }
-            res = requests.post(url, json=payload, headers=headers, timeout=60)
-            if res.status_code == 200:
-                return res.json()["choices"][0]["message"]["content"]
-            return f"Erreur Groq Vision ({res.status_code}): {res.text}"
-        return f"Provider '{provider}' non supporté pour la vision."
-    except Exception as e:
-        return f"Erreur lors du traitement de l'image : {str(e)}"
-
-def generate_image_with_provider(prompt: str, provider: str = "gemini", model: str = "gemini-3.1-flash-image", output_filename: str = "") -> dict:
-    import urllib.parse
-    if not output_filename:
-        output_filename = f"gen_image_{uuid.uuid4().hex[:8]}.png"
-    save_path = os.path.abspath(os.path.join(GENERATED_DIR, secure_filename(output_filename)))
-
-    try:
-        if "gemini" in model.lower() or "image" in model.lower() or "banana" in model.lower():
-            provider = "gemini"
-        provider = provider.lower()
-        
-        if provider == "gemini":
-            api_key = get_api_key("GEMINI_API_KEY")
-            if not api_key: return {"status": "error", "message": "GEMINI_API_KEY non configurée."}
-
-            actual_api_model = "imagen-3.0-generate-002"
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{actual_api_model}:predict?key={api_key}"
-            payload = {"instances": [{"prompt": prompt}], "parameters": {"sampleCount": 1}}
-            
-            res = requests.post(url, json=payload, timeout=60)
-            if res.status_code == 200:
-                data = res.json()
-                try:
-                    b64_data = data["predictions"][0]["bytesBase64Encoded"]
-                    image_bytes = base64.b64decode(b64_data)
-                    with open(save_path, "wb") as f:
-                        f.write(image_bytes)
-                    return {"status": "success", "filepath": save_path, "filename": output_filename}
-                except Exception:
-                    pass
-
-            fallback_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(prompt)}?nologo=true"
-            fallback_res = requests.get(fallback_url, timeout=30)
-            if fallback_res.status_code == 200:
-                with open(save_path, "wb") as f:
-                    f.write(fallback_res.content)
-                return {"status": "success", "filepath": save_path, "filename": output_filename, "message": "Image générée (via Fallback d'urgence)"}
-            return {"status": "error", "message": f"Tous les moteurs ont échoué. Erreur de base : {res.text}"}
-        return {"status": "error", "message": f"Provider '{provider}' non supporté."}
-    except Exception as e:
-        return {"status": "error", "message": f"Erreur technique génération : {str(e)}"}
-
-def merge_and_edit_images(image_paths: list, user_prompt: str, provider: str = "gemini", model: str = "gemini-3.1-flash-image") -> dict:
-    try:
-        analysis_results = []
-        for path in image_paths:
-            analysis = analyze_image_with_vision(path, "Décris cette image avec un niveau de détail extrême.", provider="gemini")
-            analysis_results.append(f"- Éléments de '{os.path.basename(path)}' : {analysis}")
-        super_prompt = (
-            f"Génère une image photoréaliste parfaite basée sur :\n{chr(10).join(analysis_results)}\n\n"
-            f"DIRECTIVE : {user_prompt}"
-        )
-        return generate_image_with_provider(super_prompt, provider=provider, model=model)
-    except Exception as e:
-        return {"status": "error", "message": f"Erreur fusion visuelle : {str(e)}"}
-
-def execute_database_sql(sql_query: str) -> dict:
-    conn = get_db_connection()
-    if not conn:
-        return {"status": "error", "message": "Connexion Neon DB indisponible."}
-    cur = None
-    try:
-        cur = conn.cursor()
-        cur.execute(sql_query)
-        if cur.description:
-            columns = [desc[0] for desc in cur.description]
-            rows = cur.fetchall()
-            results = [{column: json_safe(value) for column, value in zip(columns, row)} for row in rows]
-            return {"status": "success", "type": "select", "data": results, "count": len(results)}
-        conn.commit()
-        return {"status": "success", "type": "mutation", "affected_rows": cur.rowcount}
-    except Exception as exc:
-        if conn:
-            try: conn.rollback()
-            except Exception: pass
-        return {"status": "error", "message": str(exc)}
-    finally:
-        if cur:
-            try: cur.close()
-            except Exception: pass
-        if conn:
-            try: conn.close()
-            except Exception: pass
 
 # ==========================================
 # EXÉCUTION UNIFIÉE DES OUTILS & ACTIONS
@@ -695,9 +432,8 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
 
         elif action_name in ("write_file", "save_file", "create_file"):
             filename = parameters.get("filename", "generated/agent_output.txt")
+            filepath = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
             try:
-                from core.security.path_guard import safe_path
-                filepath = str(safe_path(filename, Path(FILES_DIR), Path(GENERATED_DIR)))
                 os.makedirs(os.path.dirname(filepath), exist_ok=True)
                 content = parameters.get("content", "")
                 with open(filepath, "w", encoding="utf-8") as f:
@@ -711,25 +447,32 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 
         elif action_name == "delete_file":
             filename = parameters.get("filename", "")
-            try:
-                from core.security.path_guard import safe_path
-                target = str(safe_path(filename, Path(FILES_DIR), Path(GENERATED_DIR), Path(WORKSPACE_DIR)))
+            found = False
+            for directory in [WORKSPACE_DIR, FILES_DIR, GENERATED_DIR]:
+                target = os.path.abspath(os.path.join(directory, os.path.basename(filename)))
                 if os.path.exists(target) and os.path.isfile(target):
-                    os.remove(target)
-                    update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier supprimé: {filename}")
-                    return {"status": "success", "message": f"Fichier {filename} supprimé."}
-                else:
-                    update_task_state(task_id, "FAILED", correlation_id, "Fichier introuvable")
-                    return {"status": "error", "message": "Fichier introuvable."}
-            except Exception as e:
-                update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur suppression : {str(e)}"}
+                    try:
+                        os.remove(target)
+                        found = True
+                    except Exception as e:
+                        update_task_state(task_id, "FAILED", correlation_id, str(e))
+                        return {"status": "error", "message": f"Erreur suppression : {str(e)}"}
+            if found:
+                update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier supprimé: {filename}")
+                return {"status": "success", "message": f"Fichier {filename} supprimé."}
+            update_task_state(task_id, "FAILED", correlation_id, "Fichier introuvable")
+            return {"status": "error", "message": "Fichier introuvable."}
                 
         elif action_name == "read_file":
             filename = parameters.get("filename", "")
+            target_path = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
+            if not os.path.exists(target_path):
+                for d in [FILES_DIR, GENERATED_DIR]:
+                    alt = os.path.join(d, filename)
+                    if os.path.exists(alt):
+                        target_path = alt
+                        break
             try:
-                from core.security.path_guard import safe_path
-                target_path = str(safe_path(filename, Path(FILES_DIR), Path(GENERATED_DIR), Path(WORKSPACE_DIR)))
                 if os.path.exists(target_path):
                     with open(target_path, "r", encoding="utf-8", errors="ignore") as f:
                         content = f.read()[-3000:]
@@ -744,11 +487,15 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         elif action_name == "extract_zip":
             zip_filename = parameters.get("zip_path", "")
             extract_to_folder = parameters.get("extract_to", "generated/extracted_project")
+            zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
+            if not os.path.exists(zip_path):
+                for d in [FILES_DIR, GENERATED_DIR]:
+                    alt = os.path.join(d, zip_filename)
+                    if os.path.exists(alt):
+                        zip_path = alt
+                        break
+            target_dir = os.path.abspath(os.path.join(WORKSPACE_DIR, extract_to_folder))
             try:
-                from core.security.path_guard import safe_path
-                zip_path = str(safe_path(zip_filename, Path(FILES_DIR), Path(GENERATED_DIR), Path(WORKSPACE_DIR)))
-                target_dir = str(safe_path(extract_to_folder, Path(GENERATED_DIR), Path(WORKSPACE_DIR)))
-                
                 if not os.path.exists(zip_path):
                     update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
                     return {"status": "error", "message": f"Archive ZIP introuvable : {zip_filename}"}
@@ -781,10 +528,14 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
 
         elif action_name == "analyze_zip_content":
             zip_filename = parameters.get("zip_path", "")
+            zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
+            if not os.path.exists(zip_path):
+                for d in [FILES_DIR, GENERATED_DIR]:
+                    alt = os.path.join(d, zip_filename)
+                    if os.path.exists(alt):
+                        zip_path = alt
+                        break
             try:
-                from core.security.path_guard import safe_path
-                zip_path = str(safe_path(zip_filename, Path(FILES_DIR), Path(GENERATED_DIR), Path(WORKSPACE_DIR)))
-                
                 if not os.path.exists(zip_path):
                     update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
                     return {"status": "error", "message": f"Archive introuvable : {zip_filename}"}
@@ -848,15 +599,6 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
 
         elif action_name in ("execute_command", "run_script", "run_tests"):
             command = parameters.get("command", "dir" if os.name == "nt" else "ls -la")
-            
-            # --- BOUCLIER TERMINAL ---
-            # Bloque la navigation vers la racine et les autres disques
-            forbidden_patterns = ["..", "cd \\", "C:\\", "c:", "D:\\", "d:"]
-            if any(pattern in command.replace("/", "\\") for pattern in forbidden_patterns):
-                update_task_state(task_id, "FAILED", correlation_id, "Accès terminal hors zone bloqué")
-                return {"status": "error", "message": "🚨 [SÉCURITÉ] Commande système refusée. Tu n'as pas le droit de quitter le répertoire de travail."}
-            # -------------------------
-
             if "dir /s /b" in command.lower() and os.name == "nt":
                 term = re.search(r'\*(.*?)\*', command)
                 search_term = term.group(1) if term else "bek|provider"
@@ -914,7 +656,7 @@ def _detect_user_response(query: str) -> str:
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "service": "BEK-v15.3 HYBRID FastAPI", "os": CURRENT_OS_NAME}
+    return {"status": "ok", "service": "BEK-v16 HYBRID FastAPI (Batch 1)", "os": CURRENT_OS_NAME}
 
 @app.get("/api/config")
 async def get_config():
