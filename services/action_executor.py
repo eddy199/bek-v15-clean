@@ -1,5 +1,6 @@
 # ==============================================================================
-# BEK-v16 — Exécuteur d'actions & outils (Extrait de app.py — BATCH 2)
+# BEK-v16 — Exécuteur d'actions & outils optimisé (services/action_executor.py)
+# COMPATIBILITÉ MULTI-OS / PATHGUARD / SCAN RAPIDE SANS GEL DU FLUX
 # ==============================================================================
 from __future__ import annotations
 
@@ -11,8 +12,10 @@ import uuid
 import zipfile
 import shutil
 import subprocess
+from pathlib import Path
 
 from core.paths import WORKSPACE_DIR, FILES_DIR, GENERATED_DIR
+from core.security.path_guard import find_existing, safe_path
 from core.utils import json_safe
 from services.vision import analyze_image_with_vision, generate_image_with_provider, merge_and_edit_images
 from services.tasks import start_background_task, stop_background_task
@@ -35,12 +38,41 @@ except ImportError:
     web_agent_instance = None
 
 
+def _fast_workspace_scan(pattern: str = "") -> list[str]:
+    """Scanne le workspace instantanément en ignorant les dossiers lourds."""
+    ignored_dirs = {
+        "node_modules", "node_portable", "venv", ".venv", "env", "ENV",
+        "__pycache__", ".turbo", ".output", ".next", ".git", ".pytest_cache",
+        "dist", "build", "backup", "archive_old", "graft"
+    }
+    results = []
+    reg = re.compile(pattern, re.IGNORECASE) if pattern else None
+
+    for root, dirs, files in os.walk(WORKSPACE_DIR):
+        dirs[:] = [d for d in dirs if d not in ignored_dirs and not d.startswith(".")]
+        for f in files:
+            rel_path = os.path.relpath(os.path.join(root, f), WORKSPACE_DIR)
+            if reg:
+                if reg.search(rel_path):
+                    results.append(rel_path)
+            else:
+                results.append(rel_path)
+            if len(results) >= 200:
+                break
+        if len(results) >= 200:
+            break
+    return results
+
+
 def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
     correlation_id = f"corr_{uuid.uuid4().hex[:12]}"
     task_id = f"task_{uuid.uuid4().hex[:8]}"
     update_task_state(task_id, "RUNNING", correlation_id, f"Action: {action_name}")
 
     try:
+        # ----------------------------------------------------------------------
+        # 1. CRÉATION DYNAMIQUE DE SKILLS
+        # ----------------------------------------------------------------------
         if action_name == "create_dynamic_skill":
             skill_name = parameters.get("skill_name", "")
             code_content = parameters.get("code_content", "")
@@ -59,6 +91,9 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur intégration skill : {str(e)}"}
 
+        # ----------------------------------------------------------------------
+        # 2. ORCHESTRATION & ESSAIM DE SOUS-AGENTS
+        # ----------------------------------------------------------------------
         elif action_name in ("orchestrate", "run_swarm_task", "multi_agent_workflow"):
             goal = parameters.get("goal", parameters.get("objective", parameters.get("query", "")))
             if not goal:
@@ -75,6 +110,9 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur Orchestrateur : {str(e)}"}
 
+        # ----------------------------------------------------------------------
+        # 3. NAVIGATION & SYNCHRONISATION WEB
+        # ----------------------------------------------------------------------
         elif action_name in ("web_sync", "web_search", "web_pipeline"):
             query = parameters.get("query", "")
             if not query:
@@ -88,6 +126,9 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur web_sync : {str(e)}"}
 
+        # ----------------------------------------------------------------------
+        # 4. GESTION DE LA MÉMOIRE VECTORIELLE & PERSISTANTE
+        # ----------------------------------------------------------------------
         elif action_name in ("save_memory", "remember", "save_to_memory"):
             content = parameters.get("content", "")
             if not content:
@@ -128,80 +169,70 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur lors de la suppression mémoire : {str(e)}"}
 
+        # ----------------------------------------------------------------------
+        # 5. OPÉRATIONS FICHIERS SÉCURISÉES (PATHGUARD)
+        # ----------------------------------------------------------------------
         elif action_name in ("write_file", "save_file", "create_file"):
-            filename = parameters.get("filename", "generated/agent_output.txt")
-            filepath = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
+            raw_filename = parameters.get("filename", "generated/agent_output.txt")
             try:
-                os.makedirs(os.path.dirname(filepath), exist_ok=True)
+                safe_target = safe_path(raw_filename)
+                safe_target.parent.mkdir(parents=True, exist_ok=True)
                 content = parameters.get("content", "")
-                with open(filepath, "w", encoding="utf-8") as f:
+                with open(safe_target, "w", encoding="utf-8") as f:
                     f.write(content)
-                update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier écrit: {filename}")
-                safe_name = os.path.basename(filename)
-                return {"status": "success", "message": f"Fichier `{safe_name}` enregistré avec succès.\n\n[FILE:{safe_name}](/api/download/{safe_name})"}
+                update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier écrit: {safe_target.name}")
+                return {"status": "success", "message": f"Fichier `{safe_target.name}` enregistré avec succès.\n\n[FILE:{safe_target.name}](/api/download/{safe_target.name})"}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur écriture : {str(e)}"}
 
         elif action_name == "delete_file":
             filename = parameters.get("filename", "")
-            found = False
-            for directory in [WORKSPACE_DIR, FILES_DIR, GENERATED_DIR]:
-                target = os.path.abspath(os.path.join(directory, os.path.basename(filename)))
-                if os.path.exists(target) and os.path.isfile(target):
-                    try:
-                        os.remove(target)
-                        found = True
-                    except Exception as e:
-                        update_task_state(task_id, "FAILED", correlation_id, str(e))
-                        return {"status": "error", "message": f"Erreur suppression : {str(e)}"}
-            if found:
-                update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier supprimé: {filename}")
-                return {"status": "success", "message": f"Fichier {filename} supprimé."}
+            target = find_existing(filename)
+            if target and target.is_file():
+                try:
+                    target.unlink()
+                    update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier supprimé: {target.name}")
+                    return {"status": "success", "message": f"Fichier {target.name} supprimé avec succès."}
+                except Exception as e:
+                    update_task_state(task_id, "FAILED", correlation_id, str(e))
+                    return {"status": "error", "message": f"Erreur suppression : {str(e)}"}
             update_task_state(task_id, "FAILED", correlation_id, "Fichier introuvable")
-            return {"status": "error", "message": "Fichier introuvable."}
+            return {"status": "error", "message": "Fichier introuvable ou accès refusé."}
 
         elif action_name == "read_file":
             filename = parameters.get("filename", "")
-            target_path = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
-            if not os.path.exists(target_path):
-                for d in [FILES_DIR, GENERATED_DIR]:
-                    alt = os.path.join(d, filename)
-                    if os.path.exists(alt):
-                        target_path = alt
-                        break
+            target_path = find_existing(filename)
             try:
-                if os.path.exists(target_path):
+                if target_path and target_path.is_file():
                     with open(target_path, "r", encoding="utf-8", errors="ignore") as f:
                         content = f.read()[-3000:]
-                    update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier lu: {filename}")
-                    return {"status": "success", "message": f"Contenu de {target_path} :\n{content}"}
+                    update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier lu: {target_path.name}")
+                    return {"status": "success", "message": f"Contenu de {target_path.name} :\n{content}"}
                 update_task_state(task_id, "FAILED", correlation_id, "Fichier introuvable")
-                return {"status": "error", "message": "Fichier introuvable."}
+                return {"status": "error", "message": "Fichier introuvable ou accès refusé."}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur lecture : {str(e)}"}
 
+        # ----------------------------------------------------------------------
+        # 6. GESTION DES ARCHIVES ZIP
+        # ----------------------------------------------------------------------
         elif action_name == "extract_zip":
             zip_filename = parameters.get("zip_path", "")
             extract_to_folder = parameters.get("extract_to", "generated/extracted_project")
-            zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
-            if not os.path.exists(zip_path):
-                for d in [FILES_DIR, GENERATED_DIR]:
-                    alt = os.path.join(d, zip_filename)
-                    if os.path.exists(alt):
-                        zip_path = alt
-                        break
-            target_dir = os.path.abspath(os.path.join(WORKSPACE_DIR, extract_to_folder))
+            zip_path = find_existing(zip_filename)
+            if not zip_path or not zip_path.is_file():
+                update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
+                return {"status": "error", "message": f"Archive ZIP introuvable : {zip_filename}"}
+            
+            target_dir = safe_path(extract_to_folder)
             try:
-                if not os.path.exists(zip_path):
-                    update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
-                    return {"status": "error", "message": f"Archive ZIP introuvable : {zip_filename}"}
-                os.makedirs(target_dir, exist_ok=True)
-                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                target_dir.mkdir(parents=True, exist_ok=True)
+                with zipfile.ZipFile(zip_path, "r") as zip_ref:
                     zip_ref.extractall(target_dir)
-                update_task_state(task_id, "COMPLETED", correlation_id, f"ZIP extrait: {zip_filename}")
-                return {"status": "success", "message": f"Archive extraite dans `{extract_to_folder}`."}
+                update_task_state(task_id, "COMPLETED", correlation_id, f"ZIP extrait: {zip_path.name}")
+                return {"status": "success", "message": f"Archive `{zip_path.name}` extraite dans `{target_dir.name}`."}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur extraction ZIP : {str(e)}"}
@@ -209,48 +240,45 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         elif action_name == "create_zip":
             folder_name = parameters.get("folder_path", "generated/ia_project")
             output_zip_name = parameters.get("output_zip", "generated/export_projet.zip")
-            folder_path = os.path.abspath(os.path.join(WORKSPACE_DIR, folder_name))
-            output_path = os.path.abspath(os.path.join(WORKSPACE_DIR, output_zip_name))
+            folder_path = safe_path(folder_name)
+            output_path = safe_path(output_zip_name)
             try:
-                if not os.path.exists(folder_path):
+                if not folder_path.exists():
                     update_task_state(task_id, "FAILED", correlation_id, "Dossier introuvable")
-                    return {"status": "error", "message": f"Dossier introuvable : {folder_name}"}
-                os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                shutil.make_archive(output_path.replace('.zip', ''), 'zip', folder_path)
-                update_task_state(task_id, "COMPLETED", correlation_id, f"ZIP créé: {output_zip_name}")
-                safe_name = os.path.basename(output_zip_name)
-                return {"status": "success", "message": f"Archive `{safe_name}` créée avec succès.\n\n[FILE:{safe_name}](/api/download/{safe_name})"}
+                    return {"status": "error", "message": f"Dossier source introuvable : {folder_name}"}
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                base_name = str(output_path).replace(".zip", "")
+                shutil.make_archive(base_name, "zip", str(folder_path))
+                update_task_state(task_id, "COMPLETED", correlation_id, f"ZIP créé: {output_path.name}")
+                return {"status": "success", "message": f"Archive `{output_path.name}` créée avec succès.\n\n[FILE:{output_path.name}](/api/download/{output_path.name})"}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur création ZIP : {str(e)}"}
 
         elif action_name == "analyze_zip_content":
             zip_filename = parameters.get("zip_path", "")
-            zip_path = os.path.abspath(os.path.join(WORKSPACE_DIR, zip_filename))
-            if not os.path.exists(zip_path):
-                for d in [FILES_DIR, GENERATED_DIR]:
-                    alt = os.path.join(d, zip_filename)
-                    if os.path.exists(alt):
-                        zip_path = alt
-                        break
+            zip_path = find_existing(zip_filename)
             try:
-                if not os.path.exists(zip_path):
+                if not zip_path or not zip_path.is_file():
                     update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
                     return {"status": "error", "message": f"Archive introuvable : {zip_filename}"}
-                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                with zipfile.ZipFile(zip_path, "r") as zip_ref:
                     namelist = zip_ref.namelist()
                     file_summaries = {}
-                    for name in namelist[:10]:
-                        if any(name.endswith(ext) for ext in ['.py', '.json', '.txt', '.md', '.js', '.html', '.css']):
+                    for name in namelist[:15]:
+                        if any(name.endswith(ext) for ext in [".py", ".json", ".txt", ".md", ".js", ".html", ".css", ".ts", ".tsx"]):
                             with zip_ref.open(name) as f:
-                                content = f.read(1500).decode('utf-8', errors='ignore')
-                                file_summaries[name] = content[:300] + "..."
+                                content = f.read(1500).decode("utf-8", errors="ignore")
+                                file_summaries[name] = content[:250] + "..."
                 update_task_state(task_id, "COMPLETED", correlation_id, "ZIP analysé")
-                return {"status": "success", "message": f"Analyse ZIP réussie. Fichiers : {namelist[:20]}\nAperçu : {json_safe(file_summaries)}"}
+                return {"status": "success", "message": f"Analyse ZIP réussie. Total fichiers : {len(namelist)}\nAperçu des fichiers :\n{json_safe(file_summaries)}"}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur analyse ZIP : {str(e)}"}
 
+        # ----------------------------------------------------------------------
+        # 7. VISION MULTIMODALE & IMAGES
+        # ----------------------------------------------------------------------
         elif action_name == "analyze_image":
             image_path = parameters.get("image_path", "")
             prompt = parameters.get("prompt", "Analyse cette image.")
@@ -259,7 +287,7 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             vision_result = analyze_image_with_vision(image_path, prompt, provider=provider, model=model)
             if "Erreur" in vision_result or "Error" in vision_result:
                 update_task_state(task_id, "FAILED", correlation_id, "Échec vision")
-                return {"status": "error", "message": f"ÉCHEC VISION: {vision_result}\n[ALERTE SYSTEME]: Erreur lors de la capture visuelle."}
+                return {"status": "error", "message": f"ÉCHEC VISION: {vision_result}"}
             update_task_state(task_id, "COMPLETED", correlation_id, "Vision réussie")
             return {"status": "success", "message": f"Analyse Vision réussie :\n{vision_result}"}
 
@@ -273,9 +301,9 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 return {"status": "error", "message": "Le prompt est obligatoire."}
             gen_result = generate_image_with_provider(prompt, provider=provider, model=model, output_filename=filename)
             if gen_result.get("status") == "error":
-                update_task_state(task_id, "FAILED", correlation_id, gen_result.get('message'))
+                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
                 return {"status": "error", "message": f"ÉCHEC GÉNÉRATION: {gen_result.get('message')}"}
-            final_filename = gen_result.get('filename')
+            final_filename = gen_result.get("filename")
             update_task_state(task_id, "COMPLETED", correlation_id, f"Image générée: {final_filename}")
             return {"status": "success", "message": f"🎨 **Image générée !**\n\n![{final_filename}](/api/download/{final_filename})"}
 
@@ -289,32 +317,58 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                 return {"status": "error", "message": "Fournis des images et un prompt."}
             gen_result = merge_and_edit_images(image_paths, prompt, provider=provider, model=model)
             if gen_result.get("status") == "error":
-                update_task_state(task_id, "FAILED", correlation_id, gen_result.get('message'))
+                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
                 return {"status": "error", "message": f"ÉCHEC FUSION: {gen_result.get('message')}"}
-            final_filename = gen_result.get('filename')
+            final_filename = gen_result.get("filename")
             update_task_state(task_id, "COMPLETED", correlation_id, f"Fusion réussie: {final_filename}")
             return {"status": "success", "message": f"🪄 **Fusion réussie !**\n\n![{final_filename}](/api/download/{final_filename})"}
 
+        # ----------------------------------------------------------------------
+        # 8. EXÉCUTION SYSTÈME & SCAN RAPIDE SANS GEL DU TERMINAL
+        # ----------------------------------------------------------------------
         elif action_name in ("execute_command", "run_script", "run_tests"):
-            command = parameters.get("command", "dir" if os.name == "nt" else "ls -la")
-            if "dir /s /b" in command.lower() and os.name == "nt":
-                term = re.search(r'\*(.*?)\*', command)
-                search_term = term.group(1) if term else "bek|provider"
-                command = f'powershell -NoProfile -Command "Get-ChildItem -Path . -Recurse -File -Exclude \'node_modules\',\'.venv\',\'.git\',\'__pycache__\' | Where-Object {{ $_.Name -match \'{search_term}\' }} | Select-Object -ExpandProperty FullName"'
+            command = parameters.get("command", "dir" if os.name == "nt" else "ls -la").strip()
+            cmd_lower = command.lower()
+
+            # Interception intelligente des scans récursifs lourds pour réponse immédiate (<0.05s)
+            if any(k in cmd_lower for k in ["dir /s", "get-childitem", "find .", "ls -r", "tree"]):
+                pattern = ""
+                match = re.search(r"[*'\"\\]([a-zA-Z0-9_\-\.]+[*'\"\\]|[a-zA-Z0-9_\-\.]+)", command)
+                if match:
+                    raw = match.group(1).replace("*", "").replace("'", "").replace('"', "")
+                    if raw and raw not in ("s", "b", "f", "r", "w", "v"):
+                        pattern = raw
+
+                matched = _fast_workspace_scan(pattern)
+                output = f"Scan instantané ({len(matched)} fichiers trouvés) :\n" + "\n".join(matched[:100])
+                if len(matched) > 100:
+                    output += f"\n... et {len(matched) - 100} autres fichiers."
+                update_task_state(task_id, "COMPLETED", correlation_id, f"Scan workspace ({pattern or 'global'})")
+                return {"status": "success", "message": output}
 
             try:
-                res = subprocess.run(command, shell=True, cwd=WORKSPACE_DIR, capture_output=True, text=True, timeout=60)
+                res = subprocess.run(
+                    command,
+                    shell=True,
+                    cwd=WORKSPACE_DIR,
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
                 output = (res.stdout + "\n" + res.stderr).strip()
                 status_str = "success" if res.returncode == 0 else "error"
-                update_task_state(task_id, "COMPLETED" if res.returncode == 0 else "FAILED", correlation_id, command)
+                update_task_state(task_id, "COMPLETED" if res.returncode == 0 else "FAILED", correlation_id, command[:100])
                 return {"status": status_str, "message": f"Commande exécutée :\n{output[-2500:]}"}
             except subprocess.TimeoutExpired:
-                update_task_state(task_id, "FAILED", correlation_id, "Timeout (60s)")
-                return {"status": "error", "message": "Erreur : Commande interrompue après timeout (60s)."}
+                update_task_state(task_id, "FAILED", correlation_id, "Timeout (30s)")
+                return {"status": "error", "message": "⚠️ Commande interrompue : l'exécution a dépassé 30s."}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
                 return {"status": "error", "message": f"Erreur exécution : {str(e)}"}
 
+        # ----------------------------------------------------------------------
+        # 9. TÂCHES D'ARRIÈRE-PLAN (HEADLESS / TMUX / WORKERS)
+        # ----------------------------------------------------------------------
         elif action_name in ("execute_tmux_headless", "execute_background_task", "start_background_task"):
             session_name = parameters.get("session_name", f"job_{uuid.uuid4().hex[:6]}")
             command = parameters.get("command", "")
@@ -330,7 +384,8 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             return stop_background_task(session_name)
 
         update_task_state(task_id, "COMPLETED", correlation_id, "Action traitée")
-        return {"status": "success", "message": "Action traitée."}
+        return {"status": "success", "message": "Action traitée avec succès."}
+
     except Exception as e:
         update_task_state(task_id, "FAILED", correlation_id, str(e))
         return {"status": "error", "message": f"Erreur critique outil : {str(e)}"}
