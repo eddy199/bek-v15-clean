@@ -1,133 +1,35 @@
-# 🧬 Architecture Réelle du Système BEK-v15.2 Hybrid
-> *Dernière synchronisation automatique : 2026-09-10 17:43:50 UTC*
+# ARCHITECTURE COMPLÈTE & CARTOGRAPHIE DES MODULES BEK-v16
 
-## 1. Organigramme des Flux d'Exécution
-```text
-                         ┌──────────────────────────┐
-                         │      WEB / MOBILE UI     │
-                         │   Dashboard / Chat / CRM │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │        app.py / API      │
-                         │   FastAPI / Flask Layer  │
-                         │ • Auth & Rate Limiting   │
-                         │ • Upload Security (ZIP)  │
-                         │ • SQL Security Gate      │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                    ┌────────────────────────────────────┐
-                    │          🧠 BEK ORCHESTRATOR        │
-                    │  Intent → Planning → Execution     │
-                    └────────────────┬───────────────────┘
-                                     │
-                                      ▼
-                    ┌────────────────────────────────────┐
-                    │          HERMES CORE V2             │
-                    │ • Parallel Dispatcher (Threads)    │
-                    │ • GOAP Planner                     │
-                    │ • Risk Engine (L1 -> L5)           │
-                    │ • Task & Trace ID Management       │
-                    └───────────────┬────────────────────┘
-                                    │
-                     ┌──────────────┴──────────────┐
-                     ▼                             ▼
-            ┌─────────────────┐          ┌─────────────────┐
-            │ 🛡️ SecurityGuard │          │ 🧬 GOAP / Skills │
-            │ • HMAC-SHA256   │          │ • Registry      │
-            │ • Strict Allow  │          │ • Performance   │
-            │ • Risk L1 -> L5 │          │   Metrics (Neon)│
-            └────────┬────────┘          └────────┬────────┘
-                     │                            │
-                     └────────────┬───────────────┘
-                                  ▼
-                    ┌──────────────────────────────┐
-                    │       🔧 TOOL BUS / MCP       │
-                    │ • web_sync                   │
-                    │ • neon_audit                 │
-                    │ • default_llm                │
-                    │ • CRM tools / DB Mutations   │
-                    └──────────────┬───────────────┘
-                                   │
-             ┌─────────────────────┼─────────────────────┐
-             ▼                     ▼                     ▼
-      ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
-      │ NVIDIA NIM   │      │ Groq         │      │ Gemini /     │
-      │ (LLM Engine) │      │ AI Provider  │      │ OpenRouter   │
-      └──────────────┘      └──────────────┘      └──────────────┘
-             │
-             ▼
-      ┌─────────────────────────────────────────┐
-      │              💾 DATA LAYER               │
-      │ PostgreSQL / Neon (CRM & Traces)        │
-      │ Pinecone Vector Memory (Fallback SHA)   │
-      └─────────────────────────────────────────┘
-```
+Ce document recense l'ensemble des modules sources, moteurs d'exécution et briques cognitives actifs dans le projet.
 
-## 2. État du Noyau Hermes & Outils Actifs
-- **Statut d'exécution :** `operational`
-- **SecurityGuard actif :** `True`
-- **Nombre d'outils enregistrés :** `3`
+## 1. Moteurs d'Exécution Asynchrones & Headless
+- **`worker_headless.py` / `services/tasks.py` (Tmux & Headless Workers)** : Gestion des processus d'arrière-plan, exécution de tâches asynchrones, compatibilité Windows/Linux multi-OS via `psutil`.
+- **`hermes_core.py` (Hermes V3 Engine)** : Moteur de planification GOAP (Goal-Oriented Action Planning), dispatcher d'outils, gestionnaire des niveaux de risque (L1 à L5) et hooks de pré-planification.
 
-| Outil Hermes | Niveau de Risque | Description / Statut |
-| :--- | :---: | :--- |
-| `default_llm` | **L1** | Exécution Automatique |
-| `neon_audit` | **L1** | Exécution Automatique |
-| `web_sync` | **L3** | Validation Humaine Requise |
+## 2. Protocoles d'Interopérabilité & Communication Inter-Agents
+- **`event_bus.py` (A2A EventBus Kafka Mock)** : Pipeline d'ingestion et d'échange de messages asynchrones Agent-to-Agent (A2A).
+- **`mcp_gateway.py` (Model Context Protocol Gateway)** : Passerelle d'outils standardisés MCP pour l'interopérabilité (Neon DB audit, etc.).
+- **`meta_cortex_swarm.py` & `meta_cortex_sse_ui.py`** : Moteur de réflexion en essaim (Reflexion Swarm) et streaming SSE des étapes de réflexion.
+- **`meta_cortex_grounding.py`** : Validation de l'ancrage factuel et contrôle qualité des sorties LLM.
 
-## 3. Politiques de Sécurité (SecurityGuard)
-- **Chiffrement & Signature :** HMAC-SHA256 obligatoire via `BEK_HSM_SECRET`
-- **Actions autorisées en liste blanche (*Allowlist*) :**
-  * `analyze_image`
-  * `analyze_zip_content`
-  * `create_contact`
-  * `create_deal`
-  * `create_dynamic_skill`
-  * `create_file`
-  * `create_task`
-  * `create_zip`
-  * `default_llm`
-  * `delete_file`
-  * `delete_from_memory`
-  * `delete_memory`
-  * `execute_background_task`
-  * `execute_command`
-  * `execute_tmux_headless`
-  * `extract_zip`
-  * `forget`
-  * `generate_image`
-  * `get_stats`
-  * `kill_session`
-  * `merge_and_edit_images`
-  * `multi_agent_workflow`
-  * `neon_audit`
-  * `orchestrate`
-  * `read_file`
-  * `recall`
-  * `remember`
-  * `run_script`
-  * `run_swarm_task`
-  * `run_tests`
-  * `save_file`
-  * `save_memory`
-  * `save_to_memory`
-  * `search_contact`
-  * `search_memory`
-  * `start_background_task`
-  * `stop_background_task`
-  * `stop_session`
-  * `stop_tmux_headless`
-  * `update_contact`
-  * `web_pipeline`
-  * `web_search`
-  * `web_sync`
-  * `write_file`
+## 3. Données, Mémoire & Matrice CRM
+- **`memory.py`** : Triple ancrage vectoriel et persistant (Pinecone Cloud, ChromaDB local, compensation SQL `sync_log` sur Neon DB).
+- **`sub_crm_engine.py` / `plugin_crm.py`** : Moteur de synchronisation multi-CRM et schéma Matrix Neon DB.
+- **`services/db.py`** : Exécuteur SQL direct et sécurisé pour Neon DB.
 
-## 4. Modèles NVIDIA NIM Intégrés
+## 4. Sécurité & Contrôle des Chemins
+- **`core/security/path_guard.py` (`PathGuard`)** : Protection anti-traversal stricte confinant les accès aux répertoires autorisés (`uploads/`, `generated/`, racine).
+- **`security_guard.py`** : Signature HMAC et vérification d'intégrité des payloads.
+- **`bek_eval_guard.py`** : Garde d'évaluation des réponses et détection d'hallucinations.
 
-## 5. Règles Opérationnelles Strictes
-1. **Zero Régression :** Tout nouveau composant doit s'interfacer avec le `SecurityGuard`.
-2. **Gestion des Risques :** Les actions de niveau L3, L4 et L5 sont bloquées par défaut (`REQUIRE_HUMAN`) tant qu'un manager d'approbation n'a pas validé la signature.
-3. **Isolation :** Aucun script direct `os.system` ou `eval` n'est autorisé en dehors du cadre sécurisé.
+## 5. Hub de Modèles & Compétences
+- **`provider_manager.py`** : Hub universel multi-fournisseurs (Groq, Gemini, NVIDIA, Mistral, B.ai, etc.) avec cascade de fallback automatique.
+- **`skill_generator.py` & `skill_registry.py`** : Registre dynamique et auto-génération de compétences Python à la volée.
+- **`web_agent.py`** : Navigation, scraping et recherche web autonome.
+- **`services/vision.py`** : Moteur multimodal de génération et analyse d'images.
+
+## 6. Architecture Modulaire FastAPI (Batch 1-3)
+- **`app.py`** : Point d'entrée bootstrap épuré (~100 lignes).
+- **`routers/`** : `admin.py`, `chat.py`, `crm.py`, `files.py`, `memory.py`.
+- **`services/`** : `action_executor.py`, `vision.py`, `tasks.py`, `db.py`.
+- **`core/`** : `paths.py`, `utils.py`, `security/`.
