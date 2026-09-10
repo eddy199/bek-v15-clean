@@ -5318,3 +5318,9 @@ connection to server at "ep-misty-dream-ay7lX9lc.c-5.us-east-2.aws.neon.tech" (1
 2026-09-09 22:05:37,966 - INFO - Recherche mémoire Pinecone | query_len=9 | top_k=3
 2026-09-09 22:06:32,124 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
 2026-09-09 22:06:32,916 - INFO - Recherche mémoire Pinecone | query_len=64 | top_k=3
+2026-09-10 00:01:56,982 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-10 00:01:57,732 - INFO - Recherche mémoire Pinecone | query_len=54 | top_k=3
+2026-09-10 00:02:25,268 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-10 00:02:26,082 - INFO - Recherche mémoire Pinecone | query_len=31 | top_k=3
+2026-09-10 00:04:06,354 - WARNING - Embedding NVIDIA indisponible : 404 Client Error: Not Found for url: https://integrate.api.nvidia.com/v1/embeddings. Bascule sur fallback local.
+2026-09-10 00:04:07,111 - INFO - Recherche mémoire Pinecone | query_len=51 | top_k=3
