@@ -1,8 +1,8 @@
 """
 BEK-v15.3 HYBRID - Provider Manager Multi-LLM & Fallback Engine
 --------------------------------------------------------------
-Gestionnaire universel des 13 fournisseurs d'intelligence artificielle :
-- B.ai, Kilo Code, OVHcloud, LLM7.io, Groq, NVIDIA NIM, Google Gemini,
+Gestionnaire universel des 14 fournisseurs d'intelligence artificielle :
+- Moonshot Kimi AI (K2.6 → K3, Swarm, Instant, Code), B.ai, Kilo Code, OVHcloud, LLM7.io, Groq, NVIDIA NIM, Google Gemini,
   OpenRouter, Mistral, Cohere, Aion Labs, Zhipu AI, SiliconFlow.
 - Support des clés NVIDIA dédiées par modèle depuis env.txt / .env.
 - Fallback automatique vers les fournisseurs gratuits en cas de panne de quota.
@@ -26,7 +26,19 @@ WORKSPACE_DIR = Path(__file__).resolve().parent
 class ProviderManager:
     # ─── MODÈLES PAR FOURNISSEUR ─────────────────────────────────────────────
     PROVIDER_MODELS: Dict[str, List[str]] = {
-        # 1. B.ai (Clé API)
+        # 1. Moonshot Kimi AI (Clé API) — K2.6 → K3, Swarm, Instant, Code
+        "kimi": [
+            "kimi-k3",
+            "kimi-k3-swarm",
+            "kimi-k3-instant",
+            "kimi-k2.7-code",
+            "kimi-k2.6",
+            "kimi-k2-0905",
+            "moonshot-v1-128k",
+            "moonshot-v1-32k",
+            "moonshot-v1-8k",
+        ],
+        # 2. B.ai (Clé API)
         "b_ai": [
             "glm-5.3-flash",
             "qwen3.8-flash",
@@ -174,6 +186,7 @@ class ProviderManager:
         "groq",
         "nvidia",
         "gemini",
+        "kimi",
         "openrouter",
         "kilo_anonymous",
         "ovh_anonymous",
@@ -224,6 +237,7 @@ class ProviderManager:
         if "anonymous" in p:
             return True
         key_map = {
+            "kimi": "MOONSHOT_API_KEY",
             "b_ai": "B_AI_API_KEY",
             "groq": "GROQ_API_KEY",
             "nvidia": "NVIDIA_API_KEY",
@@ -238,7 +252,12 @@ class ProviderManager:
         key_name = key_map.get(p)
         if not key_name:
             return False
-        return bool(self.get_api_key(key_name))
+        if self.get_api_key(key_name):
+            return True
+        # Kimi accepte aussi KIMI_API_KEY en secours
+        if p == "kimi":
+            return bool(self.get_api_key("KIMI_API_KEY"))
+        return False
 
     def resolve_provider_endpoint(
         self, provider: str, model: str
@@ -249,6 +268,11 @@ class ProviderManager:
         if p in ["b.ai", "b_ai", "bai"]:
             key = self.get_api_key("B_AI_API_KEY")
             return "b_ai", key, "https://api.b.ai/v1/chat/completions"
+
+        elif p in ["kimi", "moonshot", "moonshot_ai"]:
+            key = self.get_api_key("MOONSHOT_API_KEY") or self.get_api_key("KIMI_API_KEY")
+            base_url = self.get_api_key("MOONSHOT_BASE_URL") or "https://api.moonshot.cn/v1"
+            return "kimi", key, base_url.rstrip("/") + "/chat/completions"
 
         elif p == "kilo_anonymous":
             return "kilo_anonymous", "none", "https://api.kilo.ai/api/gateway/chat/completions"

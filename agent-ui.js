@@ -1,5 +1,6 @@
 /**
  * BEK-v15-HYBRID — Agent UI Controller (Gestion Fichiers Dynamique, Anti-Cache & Auto-Expand Gemini)
+ * Intégration : Moonshot Kimi AI (K3, K3 Swarm, K3 Instant, K2.7 Code, K2.6, Moonshot v1)
  */
 (function() {
     'use strict';
@@ -33,8 +34,8 @@
         lightboxImg: document.getElementById('lightboxImg')
     };
 
-    let currentProvider = 'groq';
-    let currentModel = 'openai/gpt-oss-120b';
+    let currentProvider = 'kimi';
+    let currentModel = 'kimi-k3';
     let availableModels = {};
     let messageHistory = [];
     let conversations = [];
@@ -192,7 +193,9 @@
             const data = await res.json();
             
             availableModels = data.models || {}; 
-            
+
+            // Support exhaustif des modèles Moonshot Kimi AI (K2.6 → K3, Swarm, Instant, Code)
+            if(!availableModels['kimi']) availableModels['kimi'] = ['kimi-k3', 'kimi-k3-swarm', 'kimi-k3-instant', 'kimi-k2.7-code', 'kimi-k2.6', 'kimi-k2-0905', 'moonshot-v1-128k', 'moonshot-v1-32k', 'moonshot-v1-8k'];
             if(!availableModels['b_ai']) availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
             if(!availableModels['mistral']) availableModels['mistral'] = ['mistral-medium-3.5', 'mistral-small-4', 'mistral-large-3', 'ministral-3-8b', 'codestral', 'ministral-3-3b', 'ministral-3-14b'];
             if(!availableModels['cohere']) availableModels['cohere'] = ['cohere-command-a-plus', 'cohere-command-a', 'cohere-command-r-plus', 'cohere-command-r', 'cohere-command-r7b', 'cohere-aya-expanse-32b'];
@@ -206,6 +209,7 @@
             let providersList = data.providers || [];
             
             const requiredProviders = [
+                {id: 'kimi', name: 'Moonshot Kimi AI', configured: true},
                 {id: 'b_ai', name: 'B.ai', configured: true},
                 {id: 'groq', name: 'Groq', configured: true},
                 {id: 'nvidia', name: 'NVIDIA NIM', configured: true},
