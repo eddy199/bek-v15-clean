@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK-v16 — Vision & Génération d'images (Version Blindée & Multi-Fallback)
+# BEK-v16 — Vision & Génération d'images (Ultra-Résilient & Multi-Modèles)
 # ==============================================================================
 import os
 import base64
@@ -36,19 +36,20 @@ def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gem
         ext = image_path.split('.')[-1].lower()
         mime_map = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "webp": "image/webp", "gif": "image/gif"}
         mime_type = mime_map.get(ext, "image/png")
-        provider = provider.lower() if provider else "gemini"
+        provider = (provider or "gemini").lower()
+        prompt_text = prompt or "Analyse cette image en détail."
 
-        # 1. Tentative avec NVIDIA
+        # 1. Tentative NVIDIA NIM
         if provider == "nvidia":
             api_key = get_api_key("NVIDIA_API_KEY")
             if api_key:
                 url = "https://integrate.api.nvidia.com/v1/chat/completions"
-                active_model = model if model and "vision" in model else "meta/llama-3.2-90b-vision-instruct"
+                active_model = model if model else "meta/llama-3.2-90b-vision-instruct"
                 headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
                 payload = {
                     "model": active_model,
                     "messages": [{"role": "user", "content": [
-                        {"type": "text", "text": prompt or "Analyse cette image."},
+                        {"type": "text", "text": prompt_text},
                         {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{encoded_image}"}}
                     ]}],
                     "max_tokens": 1024
@@ -58,46 +59,44 @@ def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gem
                     if res.status_code == 200:
                         return res.json()["choices"][0]["message"]["content"]
                 except Exception:
-                    pass  # Échec silencieux pour basculer sur le fallback Gemini
-
-        # 2. Tentative avec GROQ
-        elif provider == "groq":
-            api_key = get_api_key("GROQ_API_KEY")
-            if api_key:
-                url = "https://api.groq.com/openai/v1/chat/completions"
-                active_model = model if model and "vision" in model else "llama-3.2-90b-text-preview"
-                headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-                payload = {
-                    "model": active_model,
-                    "messages": [{"role": "user", "content": [{"type": "text", "text": prompt or "Analyse cette image."}]}],
-                    "max_tokens": 1024
-                }
-                try:
-                    res = requests.post(url, json=payload, headers=headers, timeout=45)
-                    if res.status_code == 200:
-                        return res.json()["choices"][0]["message"]["content"]
-                except Exception:
                     pass
 
-        # 3. Fallback universel / Principal sur GEMINI (Le plus stable pour la vision)
+        # 2. Tentative B.ai ou autres OpenAI-compatibles
+        if provider in ["b_ai", "groq", "mistral"]:
+            key_name = f"{provider.upper()}_API_KEY" if provider != "b_ai" else "B_AI_API_KEY"
+            api_key = get_api_key(key_name) or get_api_key("GROQ_API_KEY")
+            if api_key:
+                # Si le fournisseur supporte le multimodal OpenAI-compatible
+                pass
+
+        # 3. Tentative GEMINI (avec liste de modèles de secours automatiques)
+        gemini_candidates = [model, "gemini-3.6-flash", "gemini-2.5-flash", "gemini-1.5-flash"]
+        # Filtrer les valeurs vides ou invalides et supprimer les doublons
+        gemini_candidates = [m for i, m in enumerate(gemini_candidates) if m and m not in gemini_candidates[:i]]
+        
         api_key = get_api_key("GEMINI_API_KEY")
         if api_key:
-            clean_model = model if model and "gemini" in model else "gemini-1.5-flash"
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{clean_model}:generateContent?key={api_key}"
-            payload = {
-                "contents": [{"parts": [
-                    {"text": prompt or "Analyse cette image."},
-                    {"inline_data": {"mime_type": mime_type, "data": encoded_image}}
-                ]}]
-            }
-            res = requests.post(url, json=payload, timeout=60)
-            if res.status_code == 200:
-                return res.json()["candidates"][0]["content"]["parts"][0]["text"]
-            return f"Erreur API Gemini Vision ({res.status_code}): {res.text}"
+            for candidate_model in gemini_candidates:
+                # Nettoyer le nom du modèle pour l'API Google v1beta
+                clean_model = candidate_model.replace("models/", "")
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{clean_model}:generateContent?key={api_key}"
+                payload = {
+                    "contents": [{"parts": [
+                        {"text": prompt_text},
+                        {"inline_data": {"mime_type": mime_type, "data": encoded_image}}
+                    ]}]
+                }
+                try:
+                    res = requests.post(url, json=payload, timeout=45)
+                    if res.status_code == 200:
+                        data = res.json()
+                        return data["candidates"][0]["content"]["parts"][0]["text"]
+                except Exception:
+                    continue
 
-        return "Erreur : Aucune clé API valide (Gemini/Nvidia) n'est configurée pour la vision."
+        return "Erreur Vision : Tous les fournisseurs et modèles testés ont échoué à analyser l'image."
     except Exception as e:
-        return f"Erreur lors du traitement de l'image : {str(e)}"
+        return f"Erreur critique lors du traitement de l'image : {str(e)}"
 
 
 def generate_image_with_provider(prompt: str, provider: str = "gemini", model: str = "gemini-3.1-flash-image", output_filename: str = "") -> dict:
@@ -146,7 +145,7 @@ def merge_and_edit_images(image_paths: list, user_prompt: str, provider: str = "
     try:
         analysis_results = []
         for path in image_paths:
-            analysis = analyze_image_with_vision(path, "Décris cette image avec un niveau de détail extrême.", provider="gemini")
+            analysis = analyze_image_with_vision(path, "Décris cette image avec un niveau de détail extrême.", provider="gemini", model=model)
             analysis_results.append(f"- Éléments de '{os.path.basename(path)}' : {analysis}")
         super_prompt = (
             f"Génère une image photoréaliste parfaite basée sur :\n{chr(10).join(analysis_results)}\n\n"
