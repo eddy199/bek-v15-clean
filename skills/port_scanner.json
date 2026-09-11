@@ -1,0 +1,5 @@
+{
+    "name": "port_scanner",
+    "description": "Scanne une liste de ports TCP sur une IP cible avec un timeout de 1 seconde par port et retourne un JSON contenant la liste des ports ouverts.",
+    "entrypoint": "port_scanner.py"
+}

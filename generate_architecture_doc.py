@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK-v16 — Générateur de documentation d'architecture unifiée
+# BEK-v16 — Générateur de documentation d'architecture unifiée (Mis à jour)
 # ==============================================================================
 import os
 
@@ -30,6 +30,7 @@ Ce document recense l'ensemble des modules sources, moteurs d'exécution et briq
 - **`core/security/path_guard.py` (`PathGuard`)** : Protection anti-traversal stricte confinant les accès aux répertoires autorisés (`uploads/`, `generated/`, racine).
 - **`security_guard.py`** : Signature HMAC et vérification d'intégrité des payloads.
 - **`bek_eval_guard.py`** : Garde d'évaluation des réponses et détection d'hallucinations.
+- **`core/security/skill_sandbox.py`** : Analyseur de syntaxe abstraite (AST) pour valider et sécuriser le code des compétences générées dynamiquement avant leur injection.
 
 ## 5. Hub de Modèles & Compétences
 - **`provider_manager.py`** : Hub universel multi-fournisseurs (Groq, Gemini, NVIDIA, Mistral, B.ai, etc.) avec cascade de fallback automatique.
@@ -37,7 +38,10 @@ Ce document recense l'ensemble des modules sources, moteurs d'exécution et briq
 - **`web_agent.py`** : Navigation, scraping et recherche web autonome.
 - **`services/vision.py`** : Moteur multimodal de génération et analyse d'images.
 
-## 6. Architecture Modulaire FastAPI (Batch 1-3)
+## 6. Couche d'Intelligence Additive (BEK-Intelligence)
+- **`bek_intelligence.py`** : Module intégrant un `SmartRouter` (routage sémantique dynamique), un `AutoCorrectEngine` (garde qualité et auto-correction), et `SkillForge` (génération de skills avec réinjection des erreurs au LLM).
+
+## 7. Architecture Modulaire FastAPI (Batch 1-3)
 - **`app.py`** : Point d'entrée bootstrap épuré (~100 lignes).
 - **`routers/`** : `admin.py`, `chat.py`, `crm.py`, `files.py`, `memory.py`.
 - **`services/`** : `action_executor.py`, `vision.py`, `tasks.py`, `db.py`.
