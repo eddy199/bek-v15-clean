@@ -1,6 +1,5 @@
 # ==============================================================================
-# BEK-v16 — Vision & Génération d'images (extrait de app.py v15.3)
-# Fonctions DÉPLACÉES à l'identique : aucune logique modifiée.
+# BEK-v16 — Vision & Génération d'images (Version Blindée & Multi-Fallback)
 # ==============================================================================
 import os
 import base64
@@ -39,9 +38,50 @@ def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gem
         mime_type = mime_map.get(ext, "image/png")
         provider = provider.lower() if provider else "gemini"
 
-        if provider == "gemini" or not provider:
-            api_key = get_api_key("GEMINI_API_KEY")
-            if not api_key: return "Erreur : GEMINI_API_KEY non configurée."
+        # 1. Tentative avec NVIDIA
+        if provider == "nvidia":
+            api_key = get_api_key("NVIDIA_API_KEY")
+            if api_key:
+                url = "https://integrate.api.nvidia.com/v1/chat/completions"
+                active_model = model if model and "vision" in model else "meta/llama-3.2-90b-vision-instruct"
+                headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+                payload = {
+                    "model": active_model,
+                    "messages": [{"role": "user", "content": [
+                        {"type": "text", "text": prompt or "Analyse cette image."},
+                        {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{encoded_image}"}}
+                    ]}],
+                    "max_tokens": 1024
+                }
+                try:
+                    res = requests.post(url, json=payload, headers=headers, timeout=45)
+                    if res.status_code == 200:
+                        return res.json()["choices"][0]["message"]["content"]
+                except Exception:
+                    pass  # Échec silencieux pour basculer sur le fallback Gemini
+
+        # 2. Tentative avec GROQ
+        elif provider == "groq":
+            api_key = get_api_key("GROQ_API_KEY")
+            if api_key:
+                url = "https://api.groq.com/openai/v1/chat/completions"
+                active_model = model if model and "vision" in model else "llama-3.2-90b-text-preview"
+                headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+                payload = {
+                    "model": active_model,
+                    "messages": [{"role": "user", "content": [{"type": "text", "text": prompt or "Analyse cette image."}]}],
+                    "max_tokens": 1024
+                }
+                try:
+                    res = requests.post(url, json=payload, headers=headers, timeout=45)
+                    if res.status_code == 200:
+                        return res.json()["choices"][0]["message"]["content"]
+                except Exception:
+                    pass
+
+        # 3. Fallback universel / Principal sur GEMINI (Le plus stable pour la vision)
+        api_key = get_api_key("GEMINI_API_KEY")
+        if api_key:
             clean_model = model if model and "gemini" in model else "gemini-1.5-flash"
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{clean_model}:generateContent?key={api_key}"
             payload = {
@@ -55,43 +95,7 @@ def analyze_image_with_vision(image_path: str, prompt: str, provider: str = "gem
                 return res.json()["candidates"][0]["content"]["parts"][0]["text"]
             return f"Erreur API Gemini Vision ({res.status_code}): {res.text}"
 
-        elif provider == "nvidia":
-            api_key = get_api_key("NVIDIA_API_KEY")
-            if not api_key: return "Erreur : NVIDIA_API_KEY non configurée."
-            url = "https://integrate.api.nvidia.com/v1/chat/completions"
-            active_model = model if model and "vision" in model else "meta/llama-3.2-90b-vision-instruct"
-            headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-            payload = {
-                "model": active_model,
-                "messages": [{"role": "user", "content": [
-                    {"type": "text", "text": prompt or "Analyse cette image."},
-                    {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{encoded_image}"}}
-                ]}],
-                "max_tokens": 1024
-            }
-            res = requests.post(url, json=payload, headers=headers, timeout=60)
-            if res.status_code == 200:
-                return res.json()["choices"][0]["message"]["content"]
-            return f"Erreur NVIDIA Vision ({res.status_code}): {res.text}"
-
-        elif provider == "groq":
-            api_key = get_api_key("GROQ_API_KEY")
-            if not api_key: return "Erreur : GROQ_API_KEY non configurée."
-            url = "https://api.groq.com/openai/v1/chat/completions"
-            active_model = model if model and "vision" in model else "llama-3.2-90b-text-preview"
-            headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-            payload = {
-                "model": active_model,
-                "messages": [{"role": "user", "content": [
-                    {"type": "text", "text": prompt or "Analyse cette image."}
-                ]}],
-                "max_tokens": 1024
-            }
-            res = requests.post(url, json=payload, headers=headers, timeout=60)
-            if res.status_code == 200:
-                return res.json()["choices"][0]["message"]["content"]
-            return f"Erreur Groq Vision ({res.status_code}): {res.text}"
-        return f"Provider '{provider}' non supporté pour la vision."
+        return "Erreur : Aucune clé API valide (Gemini/Nvidia) n'est configurée pour la vision."
     except Exception as e:
         return f"Erreur lors du traitement de l'image : {str(e)}"
 
