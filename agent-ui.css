@@ -616,3 +616,110 @@ think {
   transition: background 0.2s; white-space: nowrap; border: none; cursor: pointer;
 }
 .file-attachment-btn:hover { background: #3f7ce0; }
+
+/* ═══════════════════════════════════════════════════════════════
+   ADAPTATION MOBILE RESPONSIVE (ÉCRANS <= 768px)
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  #app {
+    position: relative;
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
+  /* Sidebar tiroir masquée par défaut */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 82%;
+    max-width: 310px;
+    height: 100dvh;
+    z-index: 1000;
+    background: var(--bg-soft);
+    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.6);
+    transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar.open,
+  .sidebar.active {
+    left: 0 !important;
+  }
+
+  /* Zone principale et Chat en 100% largeur */
+  .main {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh;
+    flex: 1;
+  }
+
+  .content-area {
+    width: 100% !important;
+  }
+
+  .header {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  .header h2 {
+    font-size: 14px;
+  }
+
+  .select,
+  .model-select {
+    max-width: 140px;
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .messages {
+    padding: 14px 12px 8px !important;
+    gap: 14px;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .msg-bubble {
+    padding: 14px 16px !important;
+    font-size: 15px !important;
+    line-height: 1.65 !important;
+  }
+
+  .message.user .msg-bubble {
+    max-width: 88% !important;
+  }
+
+  /* Zone d'écriture mobile */
+  .input-area {
+    padding: 6px 12px 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .input-wrap {
+    padding: 6px 10px 6px 14px;
+    border-radius: 18px;
+    gap: 8px;
+  }
+
+  .input-wrap textarea {
+    font-size: 16px !important; /* Empêche le zoom auto sur smartphone */
+  }
+
+  .send-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .input-hint {
+    display: none; /* Allège l'interface sous la barre de saisie */
+  }
+
+  .view-body {
+    padding: 14px 16px;
+  }
+}
