@@ -1,0 +1,32 @@
+{
+  "name": "web_research",
+  "version": "1.0.0",
+  "risk_level": "L3",
+  "description": "Navigation headless et extraction textuelle sécurisée via Playwright Chromium.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "url": {
+        "type": "string",
+        "format": "uri",
+        "description": "URL cible à explorer et analyser."
+      },
+      "wait_timeout": {
+        "type": "integer",
+        "default": 15000,
+        "description": "Délai d'attente maximum en millisecondes."
+      },
+      "extract_mode": {
+        "type": "string",
+        "enum": ["text", "markdown", "raw_html"],
+        "default": "text",
+        "description": "Format de sortie de l'extraction."
+      }
+    },
+    "required": ["url"]
+  },
+  "events": {
+    "on_success": "skill.web_research.completed",
+    "on_failure": "skill.web_research.failed"
+  }
+}

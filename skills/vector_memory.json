@@ -1,0 +1,37 @@
+{
+  "name": "vector_memory",
+  "version": "1.0.0",
+  "risk_level": "L1",
+  "description": "Interrogation en lecture seule de la mémoire vectorielle pour extraction de contexte.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Requête sémantique ou phrase clé."
+      },
+      "top_k": {
+        "type": "integer",
+        "default": 5,
+        "minimum": 1,
+        "maximum": 20,
+        "description": "Nombre de fragments pertinents à retourner."
+      },
+      "score_threshold": {
+        "type": "number",
+        "default": 0.75,
+        "description": "Seuil minimal de similarité cosinus."
+      },
+      "namespace": {
+        "type": "string",
+        "default": "default",
+        "description": "Espace de nommage de la mémoire."
+      }
+    },
+    "required": ["query"]
+  },
+  "events": {
+    "on_success": "skill.vector_memory.retrieved",
+    "on_failure": "skill.vector_memory.failed"
+  }
+}
