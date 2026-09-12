@@ -32,19 +32,28 @@ class Task:
         "chat", "code", "reasoning", "vision", "long_doc", "creative"
     )
 
-# Échelles d'escalade : du plus rapide/gratuit vers le plus puissant.
+# Échelles d'escalade mises à jour avec Kimi K3, Kimi K3 Swarm, GLM 5.3 Flash et Qwen 3.8 Flash
 ROUTE_LADDERS: Dict[str, List[Tuple[str, str]]] = {
     Task.CHAT: [
+        ("kimi", "kimi-k3"),
+        ("kimi", "kimi-k3-swarm"),
         ("b_ai", "glm-5.3-flash"),
-        ("groq", "llama-3.1-8b-instant"),
+        ("b_ai", "qwen3.8-flash"),
+        ("groq", "llama-3.3-70b-versatile"),
+        ("gemini", "gemini-3.8-flash"),
         ("mistral", "mistral-small-4"),
     ],
     Task.CODE: [
-        ("ovh_anonymous", "ovh-qwen-coder-30b"),
+        ("kimi", "kimi-k3"),
+        ("b_ai", "qwen3.8-flash"),
         ("groq", "openai/gpt-oss-120b"),
+        ("gemini", "gemini-3.8-flash"),
+        ("ovh_anonymous", "ovh-qwen-3.5-397b"),
         ("nvidia", "openai/gpt-oss-120b"),
     ],
     Task.REASONING: [
+        ("b_ai", "glm-5.3-flash"),
+        ("kimi", "kimi-k3-swarm"),
         ("nvidia", "nvidia/nemotron-3-super-120b-a12b"),
         ("groq", "openai/gpt-oss-120b"),
         ("gemini", "gemini-3.6-flash"),
@@ -59,6 +68,7 @@ ROUTE_LADDERS: Dict[str, List[Tuple[str, str]]] = {
         ("nvidia", "nvidia/nemotron-3-super-120b-a12b"),
     ],
     Task.CREATIVE: [
+        ("kimi", "kimi-k3"),
         ("mistral", "mistral-medium-3.5"),
         ("gemini", "gemini-3.6-flash"),
         ("cohere", "cohere-command-a"),
@@ -188,7 +198,6 @@ class AutoCorrectEngine:
             model=model,
             max_tokens=max_tokens,
             temperature=0.6,
-            timeout=self.timeout,
         ):
             if ev.get("chunk"):
                 text += ev["chunk"]
@@ -381,5 +390,5 @@ class BekIntelligence:
 bek_intelligence = BekIntelligence()
 smart_router = bek_intelligence.router
 auto_correct_engine = bek_intelligence.engine
-auto_engine = bek_intelligence.engine      # <-- LA LIGNE MANQUANTE EST ICI
+auto_engine = bek_intelligence.engine
 skill_forge = bek_intelligence.forge
