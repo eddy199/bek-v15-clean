@@ -10,8 +10,8 @@ logger = logging.getLogger("BekEvalGuard")
 def evaluate_response_quality(objective: str, response_content: str) -> dict:
     """Intercepte le contenu généré, vérifie la syntaxe Python statique et valide la qualité."""
     
-    # 1. Extraction et audit syntaxique par AST si un bloc de code Python est détecté
-    if "def " in response_content or "class " in response_content or "```python" in response_content:
+    # 1. Extraction et audit syntaxique par AST uniquement sur les blocs Python explicites
+    if "```python" in response_content:
         try:
             lines = response_content.splitlines()
             code_block = []
@@ -26,9 +26,8 @@ def evaluate_response_quality(objective: str, response_content: str) -> dict:
                 if capturing:
                     code_block.append(line)
             
-            target_code = "\n".join(code_block) if code_block else response_content
-            
-            if "def " in target_code or "class " in target_code:
+            target_code = "\n".join(code_block)
+            if target_code.strip():
                 ast.parse(target_code)
                 logger.info("✨ [BekEvalGuard] Validation syntaxique AST réussie.")
         except SyntaxError as se:

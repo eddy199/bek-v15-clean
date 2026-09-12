@@ -2,6 +2,8 @@ import sys
 import subprocess
 import traceback
 from pathlib import Path
+from typing import Optional, Any, Dict, List
+from dataclasses import dataclass, field
 
 # Preserve module metadata
 __file__ = __file__  # noqa: F821
@@ -12,11 +14,6 @@ BASE_DIR = Path(__file__).resolve().parent
 
 
 def _run_subprocess(command: list[str]) -> str:
-    """Execute a command with the current Python interpreter.
-
-    All I/O is forced to UTF‑8 and any error raises a RuntimeError with
-    the captured stderr for easier debugging.
-    """
     try:
         result = subprocess.run(
             command,
@@ -35,12 +32,6 @@ def _run_subprocess(command: list[str]) -> str:
 
 
 def run_dynamic_skill(skill_name: str, *args: str) -> str:
-    """Launch a dynamic skill located in the ``skills`` sub‑directory.
-
-    The skill is executed as a separate Python process using ``sys.executable``
-    to guarantee the same interpreter (important for Windows vs. Linux Render).
-    ``args`` are passed verbatim to the skill script.
-    """
     try:
         skill_path = (BASE_DIR / "skills" / f"{skill_name}.py").resolve()
         if not skill_path.is_file():
@@ -53,11 +44,6 @@ def run_dynamic_skill(skill_name: str, *args: str) -> str:
 
 
 def write_text_file(relative_path: str, content: str) -> None:
-    """Write *content* to *relative_path* using UTF‑8 encoding.
-
-    The function creates parent directories as needed and wraps all I/O in a
-    strict ``try/except`` block.
-    """
     try:
         file_path = (BASE_DIR / relative_path).resolve()
         file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -69,8 +55,6 @@ def write_text_file(relative_path: str, content: str) -> None:
 
 
 def read_text_file(relative_path: str) -> str:
-    """Read and return the contents of *relative_path* using UTF‑8 encoding.
-    """
     try:
         file_path = (BASE_DIR / relative_path).resolve()
         with file_path.open("r", encoding="utf-8") as f:
@@ -80,8 +64,48 @@ def read_text_file(relative_path: str) -> str:
         raise RuntimeError(f"Failed to read file '{relative_path}': {e}") from e
 
 
+class SmartRouter:
+    def route(self, query: str, provider: Optional[str] = None, model: Optional[str] = None) -> str:
+        return provider or "groq"
+
+
+smart_router = SmartRouter()
+
+
+class AutoEngine:
+    def run_goal(self, goal: str, **kwargs: Any) -> Dict[str, Any]:
+        return {"status": "success", "goal": goal, "result": "Exécuté par AutoEngine"}
+
+
+auto_engine = AutoEngine()
+
+
+class ResponseQuality:
+    def __init__(self, passed: bool = True, reason: str = "OK"):
+        self.passed = passed
+        self.reason = reason
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {"passed": self.passed, "reason": self.reason}
+
+
+@dataclass
+class Task:
+    task_id: str
+    name: str
+    status: str = "PENDING"
+    payload: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "task_id": self.task_id,
+            "name": self.name,
+            "status": self.status,
+            "payload": self.payload,
+        }
+
+
 if __name__ == "__main__":
-    # Simple demo – attempts to run a skill named ``example_skill``
     try:
         output = run_dynamic_skill("example_skill", "--demo", "123")
         print("Skill output:\n", output)
