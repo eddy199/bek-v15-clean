@@ -32,9 +32,7 @@ class Task:
         "chat", "code", "reasoning", "vision", "long_doc", "creative"
     )
 
-
 # Échelles d'escalade : du plus rapide/gratuit vers le plus puissant.
-# (Provider, modèle) — tous issus du catalogue BEK existant.
 ROUTE_LADDERS: Dict[str, List[Tuple[str, str]]] = {
     Task.CHAT: [
         ("b_ai", "glm-5.3-flash"),
@@ -56,7 +54,7 @@ ROUTE_LADDERS: Dict[str, List[Tuple[str, str]]] = {
         ("gemini", "gemini-3.6-flash"),
     ],
     Task.LONG_DOC: [
-        ("gemini", "gemini-3.6-flash"),       # long contexte natif
+        ("gemini", "gemini-3.6-flash"),
         ("b_ai", "glm-5.3-flash"),
         ("nvidia", "nvidia/nemotron-3-super-120b-a12b"),
     ],
@@ -67,28 +65,16 @@ ROUTE_LADDERS: Dict[str, List[Tuple[str, str]]] = {
     ],
 }
 
-# Hook optionnel : GPT-6 Astra en sommet d'escalade si clé présente.
 _ASTRA_LADDER: List[Tuple[str, str]] = [("openai", "gpt-6-astra")]
 
 
 class SmartRouter:
-    """Classifie la requête (heuristiques rapides, 0 token) et retourne
-    l'échelle de providers à essayer, du plus économique au plus puissant."""
+    """Classifie la requête et retourne l'échelle de providers à essayer."""
 
-    _CODE_RE = re.compile(
-        r"\b(def |class |import |function|=>|\{\}|</|SELECT |CREATE |"
-        r"docker|regex|bug|erreur python|traceback)\b", re.I
-    )
-    _VISION_RE = re.compile(
-        r"\b(image|photo|capture|screenshot|vision|ocr|analyse.*visuel)\b", re.I
-    )
-    _REASON_RE = re.compile(
-        r"\b(raisonne|étape par étape|step by step|prouve|démontre|"
-        r"analyse profonde|optimise|architecture|planifie)\b", re.I
-    )
-    _CREATIVE_RE = re.compile(
-        r"\b(rédige|écrit|poème|storytelling|script|article|accroche)\b", re.I
-    )
+    _CODE_RE = re.compile(r"\b(def |class |import |function|bug|erreur)\b", re.I)
+    _VISION_RE = re.compile(r"\b(image|photo|capture|screenshot|vision)\b", re.I)
+    _REASON_RE = re.compile(r"\b(raisonne|étape par étape|prouve|optimise)\b", re.I)
+    _CREATIVE_RE = re.compile(r"\b(rédige|écrit|poème|script|article)\b", re.I)
 
     def classify(self, messages: List[Dict[str, Any]]) -> str:
         text = " ".join(
@@ -97,11 +83,7 @@ class SmartRouter:
         )
         total_chars = len(text)
 
-        # Multimédia (listes d'images, etc.) → VISION
-        if any(
-            m.get("role") == "user" and isinstance(m.get("content"), list)
-            for m in messages
-        ):
+        if any(m.get("role") == "user" and isinstance(m.get("content"), list) for m in messages):
             return Task.VISION
         if self._VISION_RE.search(text):
             return Task.VISION
@@ -125,7 +107,6 @@ class SmartRouter:
             ROUTE_LADDERS.get(force or self.classify(messages),
                               ROUTE_LADDERS[Task.CHAT])
         )
-        # Astra en sommet d'escalade si la clé OpenAI existe (optionnel).
         if provider_manager.get_api_key("OPENAI_API_KEY"):
             ladder = ladder + _ASTRA_LADDER
 
@@ -164,15 +145,12 @@ class ResponseQuality:
         if rep > 0.45:
             issues.append(f"repetition_boucle({rep:.0%})")
             score -= 45
-        # Le caractère de fin doit être dans la liste suivante.
         if t and t[-1] not in ".!?)}]`\"'" and len(t) > max_tokens * 3.5:
             issues.append("reponse_tronquee")
             score -= 35
-        if re.search(r"\b(as an ai|je suis désolé, je ne peux pas)\b", t, re.I) \
-                and len(t) < 120:
+        if re.search(r"\b(as an ai|je suis désolé, je ne peux pas)\b", t, re.I) and len(t) < 120:
             issues.append("refus_injustifie")
             score -= 50
-        # On ne pénalise que les vraies traces d'exception.
         if re.search(r"Traceback \(most recent call last\)", t):
             issues.append("contient_traceback")
             score -= 25
@@ -180,7 +158,7 @@ class ResponseQuality:
 
 
 class AutoCorrectEngine:
-    """Exécute une requête avec auto‑correction : évalue la sortie,
+    """Exécute une requête avec auto‑correction : évalue la sortie,
     injecte un steering correctif et escalade le modèle si nécessaire."""
 
     def __init__(
@@ -188,7 +166,7 @@ class AutoCorrectEngine:
         router: Optional[SmartRouter] = None,
         min_score: int = 70,
         max_rounds: int = 3,
-        timeout: int = 30,               # secondes max par appel LLM
+        timeout: int = 30,
     ):
         self.router = router or SmartRouter()
         self.min_score = min_score
@@ -202,7 +180,6 @@ class AutoCorrectEngine:
         model: str,
         max_tokens: int,
     ) -> Tuple[str, str, str]:
-        """Appel LLM avec timeout. Retourne (texte, provider, model)."""
         text, prov, mod = "", provider, model
         start = time.time()
         for ev in provider_manager.execute_chat_stream(
@@ -211,7 +188,7 @@ class AutoCorrectEngine:
             model=model,
             max_tokens=max_tokens,
             temperature=0.6,
-            timeout=self.timeout,          # <-- nouvelle option
+            timeout=self.timeout,
         ):
             if ev.get("chunk"):
                 text += ev["chunk"]
@@ -220,7 +197,6 @@ class AutoCorrectEngine:
             elif ev.get("error"):
                 raise RuntimeError(ev["error"])
 
-        # Protection contre les boucles infinies (timeout manuel)
         if time.time() - start > self.timeout:
             raise TimeoutError(f"Appel {provider}/{model} dépassé {self.timeout}s")
         return text, prov, mod
@@ -232,13 +208,11 @@ class AutoCorrectEngine:
         max_tokens: int = 4096,
         on_event: Optional[Callable[[Dict[str, Any]], None]] = None,
     ) -> Dict[str, Any]:
-        """Point d'entrée unique. Retourne la meilleure réponse trouvée."""
         def emit(ev: Dict[str, Any]) -> None:
             if on_event:
                 on_event(ev)
 
         ladder = self.router.route(messages, force=task_type)
-        # Historique complet, incluant les steering précédents.
         history: List[Dict[str, Any]] = list(messages)
         best, best_score, last_issues = "", -1, []
 
@@ -277,10 +251,8 @@ class AutoCorrectEngine:
                     "latency": latency,
                 }
 
-            # ── Steering correctif ──
             last_issues = issues
             diagnosis = "; ".join(issues) or "qualité insuffisante"
-            # On conserve tout l’historique : le steering s’ajoute à la suite.
             history = history + [
                 {"role": "assistant", "content": text},
                 {
@@ -294,7 +266,6 @@ class AutoCorrectEngine:
                 },
             ]
 
-        # Si aucun round n’atteint le seuil, on renvoie la meilleure réponse.
         return {
             "status": "corrected" if best else "failed",
             "text": best or "Désolé, échec après auto‑correction.",
@@ -328,17 +299,9 @@ class SkillForge:
     )
 
     def _clean_code(self, raw: str) -> str:
-        """
-        Nettoie le texte retourné par le LLM :
-        - supprime les blocs markdown éventuels,
-        - retire les espaces de fin,
-        - garantit que le code commence bien par `def run`.
-        """
-        # 1. Enlever les fences Markdown éventuels.
         cleaned = re.sub(r"^```(?:python)?\s*|```$", "", raw, flags=re.M).strip()
-        # 2. S’assurer qu’on a bien le code complet (on garde tout après le premier "def run").
         if "def run" in cleaned:
-            cleaned = cleaned[cleaned.find("def run") :]
+            cleaned = cleaned[cleaned.find("def run"):]
         return cleaned
 
     def forge(
@@ -362,6 +325,61 @@ class SkillForge:
             res = self.engine.ask(
                 [{"role": "user", "content": prompt}], task_type=Task.CODE
             )
-            if res["status"] == "failed":
+            if res.get("status") == "failed":
                 return {
-                    "status
+                    "status": "failed",
+                    "error": "Impossible de générer le code du skill (échec LLM).",
+                    "cycles": cycle,
+                }
+
+            code = self._clean_code(res.get("text", ""))
+
+            try:
+                result = create_and_register_skill(name, code, description)
+                if isinstance(result, dict) and (result.get("status") == "ok" or result.get("success")):
+                    return {
+                        "status": "ok",
+                        "skill_name": name,
+                        "code": code,
+                        "cycles": cycle,
+                        "result": result,
+                    }
+                feedback = result.get("error") if isinstance(result, dict) else str(result)
+            except Exception as exc:
+                feedback = str(exc)
+                logger.warning("[SkillForge] Erreur cycle %s pour %s : %s", cycle, name, exc)
+
+        return {
+            "status": "failed",
+            "error": f"Échec après {max_cycles} cycles. Dernière erreur : {feedback}",
+            "code": code,
+            "cycles": max_cycles,
+        }
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# 4. INSTANCIATION & FAÇADE EXPORTÉE
+# ════════════════════════════════════════════════════════════════════════════
+class BekIntelligence:
+    """Façade unifiée pour app.py et les routes de BEK."""
+    def __init__(self):
+        self.router = SmartRouter()
+        self.engine = AutoCorrectEngine(router=self.router)
+        self.forge = SkillForge(engine=self.engine)
+
+    def ask(self, *args, **kwargs):
+        return self.engine.ask(*args, **kwargs)
+
+    def route(self, *args, **kwargs):
+        return self.router.route(*args, **kwargs)
+
+    def create_skill(self, *args, **kwargs):
+        return self.forge.forge(*args, **kwargs)
+
+
+# Instances singleton disponibles à l'import
+bek_intelligence = BekIntelligence()
+smart_router = bek_intelligence.router
+auto_correct_engine = bek_intelligence.engine
+auto_engine = bek_intelligence.engine      # <-- LA LIGNE MANQUANTE EST ICI
+skill_forge = bek_intelligence.forge
