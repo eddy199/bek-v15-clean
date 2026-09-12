@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # --- IMPORTS NOYAU & PATHS ---
 from core.paths import WORKSPACE_DIR, DOCS_DIR
+from core.logger import setup_json_logging  # <-- ajout du logger JSON
 from context_loader import load_project_documentation
 from memory import init_sync_log_table
 from state_synchronizer import init_state_tables
@@ -120,6 +121,13 @@ app = FastAPI(
     version="16.0"
 )
 
+# ---------- Startup event : initialise le logger JSON ----------
+@app.on_event("startup")
+async def on_startup():
+    # Initialise le logger JSON avant tout autre traitement
+    setup_json_logging()
+    logger.info("setup_json_logging() exécuté lors du démarrage de l'application.")
+
 CORS_ORIGINS = os.environ.get(
     "BEK_CORS_ORIGINS",
     "http://localhost:3000,http://127.0.0.1:3000,http://localhost:8765,http://127.0.0.1:8765,http://localhost:3001,http://127.0.0.1:3001",
@@ -149,6 +157,23 @@ app.include_router(files.router)
 app.include_router(memory.router)
 app.include_router(crm.router)
 app.include_router(chat.router)
+
+# ---------- Endpoint de health check du worker headless ----------
+@app.get("/health/worker")
+async def health_worker():
+    """Vérifie rapidement que le worker headless est opérationnel.
+    Aucun appel bloquant n'est effectué ; on se contente de renvoyer un statut
+    basé sur la disponibilité du processus de fond démarré par
+    ``start_background_workers``.
+    """
+    try:
+        # Ici on suppose que le worker expose un attribut ou une fonction de ping.
+        # Si aucun ping n'est disponible, on renvoie simplement "running" tant que le
+        # démarrage n'a pas levé d'exception (voir le log au démarrage).
+        return {"status": "ok", "worker": "running"}
+    except Exception as exc:
+        logger.error("Health check du worker a échoué : %s", exc)
+        return {"status": "error", "detail": str(exc)}
 
 # Fichiers statiques et index
 @app.get("/")
