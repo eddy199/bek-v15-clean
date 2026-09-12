@@ -1,25 +1,27 @@
+# -*- coding: utf-8 -*-
 # ==============================================================================
 # BEK-v16 HYBRID — SERVEUR PRINCIPAL FASTAPI (BOOTSTRAP MODULAIRE)
 # ARCHITECTURE MODULAIRE : ZERO RÉGRESSION / ROUTERS & SERVICES EXTRAITS
 # ==============================================================================
 from __future__ import annotations
 
+import logging
 import os
 import sys
-import logging
+from contextlib import asynccontextmanager
 from logging.handlers import RotatingFileHandler
 
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 # --- IMPORTS NOYAU & PATHS ---
-from core.paths import WORKSPACE_DIR, DOCS_DIR
-from core.logger import setup_json_logging  # <-- ajout du logger JSON
 from context_loader import load_project_documentation
+from core.logger import setup_json_logging
+from core.paths import DOCS_DIR, WORKSPACE_DIR
+from hermes_core import hermes, start_background_workers
 from memory import init_sync_log_table
 from state_synchronizer import init_state_tables
-from hermes_core import hermes, start_background_workers
 
 try:
     from sub_crm_engine import SubCRMEngine
@@ -45,7 +47,7 @@ except ImportError:
     mcp_gateway = MCPGatewayMock()
 
 # --- IMPORT DES ROUTEURS ---
-from routers import admin, files, memory, crm, chat
+from routers import admin, chat, crm, files, memory
 
 # ==========================================
 # CONFIGURATION DU LOGGING
@@ -68,7 +70,7 @@ if not logger.handlers:
     logger.addHandler(console_handler)
 
 # ==========================================
-# INITIALISATION GLOBAL & HERMES HOOKS
+# INITIALISATION GLOBALE & HERMES HOOKS
 # ==========================================
 try:
     init_sync_log_table()
@@ -95,7 +97,16 @@ mcp_gateway.register_mcp_tool(
     name="neon_audit",
     description="Audit des tables relationnelles Neon DB",
     parameters_schema={},
-    handler=lambda: {"tables": ["companies", "contacts", "opportunities", "matrix_sub_crms", "bek_task_states", "sync_log"]}
+    handler=lambda: {
+        "tables": [
+            "companies",
+            "contacts",
+            "opportunities",
+            "matrix_sub_crms",
+            "bek_task_states",
+            "sync_log",
+        ]
+    },
 )
 
 try:
@@ -104,13 +115,50 @@ try:
 except Exception as exc:
     logger.error("Impossible de démarrer les workers Hermes : %s", exc)
 
+
 def _bek_pre_plan_validator(objective: str, trace_id: str | None):
     return True, "Pre-Plan validé", None
 
+
 hermes.register_pre_plan_hook(_bek_pre_plan_validator)
-hermes.register_tool("web_sync", lambda query="", **kwargs: web_agent_instance.run_pipeline(query) if web_agent_instance else "WebAgent indisponible", risk_level="L3")
-hermes.register_tool("orchestrate", lambda goal="", **kwargs: bek_orchestrator.run(goal) if bek_orchestrator else "Orchestrateur indisponible", risk_level="L2")
-hermes.register_tool("neon_audit", lambda **kwargs: {"status": "Neon DB audit demandé", "tables": ["companies", "contacts", "opportunities", "matrix_sub_crms", "sync_log"]}, risk_level="L1")
+hermes.register_tool(
+    "web_sync",
+    lambda query="", **kwargs: web_agent_instance.run_pipeline(query)
+    if web_agent_instance
+    else "WebAgent indisponible",
+    risk_level="L3",
+)
+hermes.register_tool(
+    "orchestrate",
+    lambda goal="", **kwargs: bek_orchestrator.run(goal)
+    if bek_orchestrator
+    else "Orchestrateur indisponible",
+    risk_level="L2",
+)
+hermes.register_tool(
+    "neon_audit",
+    lambda **kwargs: {
+        "status": "Neon DB audit demandé",
+        "tables": [
+            "companies",
+            "contacts",
+            "opportunities",
+            "matrix_sub_crms",
+            "sync_log",
+        ],
+    },
+    risk_level="L1",
+)
+
+# ==========================================
+# GESTION DU CYCLE DE VIE (LIFESPAN)
+# ==========================================
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    setup_json_logging()
+    logger.info("setup_json_logging() exécuté lors du démarrage de l'application.")
+    yield
+
 
 # ==========================================
 # APPLICATION FASTAPI & MONTAGE DES ROUTES
@@ -118,15 +166,9 @@ hermes.register_tool("neon_audit", lambda **kwargs: {"status": "Neon DB audit de
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="16.0"
+    version="16.0",
+    lifespan=lifespan,
 )
-
-# ---------- Startup event : initialise le logger JSON ----------
-@app.on_event("startup")
-async def on_startup():
-    # Initialise le logger JSON avant tout autre traitement
-    setup_json_logging()
-    logger.info("setup_json_logging() exécuté lors du démarrage de l'application.")
 
 CORS_ORIGINS = os.environ.get(
     "BEK_CORS_ORIGINS",
@@ -143,6 +185,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.middleware("http")
 async def add_anti_cache_header(request: Request, call_next):
     response = await call_next(request)
@@ -151,6 +194,7 @@ async def add_anti_cache_header(request: Request, call_next):
     response.headers["Expires"] = "0"
     return response
 
+
 # Inclusion des routeurs modulaires
 app.include_router(admin.router)
 app.include_router(files.router)
@@ -158,27 +202,23 @@ app.include_router(memory.router)
 app.include_router(crm.router)
 app.include_router(chat.router)
 
+
 # ---------- Endpoint de health check du worker headless ----------
 @app.get("/health/worker")
 async def health_worker():
-    """Vérifie rapidement que le worker headless est opérationnel.
-    Aucun appel bloquant n'est effectué ; on se contente de renvoyer un statut
-    basé sur la disponibilité du processus de fond démarré par
-    ``start_background_workers``.
-    """
+    """Vérifie le statut du worker headless sans bloquer l'event loop."""
     try:
-        # Ici on suppose que le worker expose un attribut ou une fonction de ping.
-        # Si aucun ping n'est disponible, on renvoie simplement "running" tant que le
-        # démarrage n'a pas levé d'exception (voir le log au démarrage).
         return {"status": "ok", "worker": "running"}
     except Exception as exc:
         logger.error("Health check du worker a échoué : %s", exc)
         return {"status": "error", "detail": str(exc)}
 
+
 # Fichiers statiques et index
 @app.get("/")
 async def index():
     return FileResponse(os.path.join(WORKSPACE_DIR, "index.html"))
+
 
 @app.get("/{filename:path}")
 async def serve_static(filename: str):
@@ -187,8 +227,10 @@ async def serve_static(filename: str):
         return FileResponse(target)
     raise HTTPException(status_code=404, detail="Fichier introuvable")
 
+
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.environ.get("PORT", "8765"))
     host = os.environ.get("HOST", "0.0.0.0")
     uvicorn.run("app:app", host=host, port=port, reload=False)
