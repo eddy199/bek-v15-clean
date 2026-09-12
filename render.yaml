@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: bek-v16-core
+    env: python
+    region: frankfurt
+    plan: standard
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt && playwright install --with-deps chromium"
+    startCommand: "uvicorn app:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.8
+      - key: USE_REAL_BUS
+        value: "false"
