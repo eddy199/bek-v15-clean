@@ -4,6 +4,9 @@
 # ARCHITECTURE MODULAIRE : ZERO RÉGRESSION / ROUTERS & SERVICES EXTRAITS
 # ==============================================================================
 from __future__ import annotations
+from typing import Any, Dict, Optional
+from pydantic import BaseModel
+import skill_runner
 
 import logging
 import os
@@ -227,6 +230,30 @@ async def serve_static(filename: str):
         return FileResponse(target)
     raise HTTPException(status_code=404, detail="Fichier introuvable")
 
+# --- Modèle de requête pour l'exécution des compétences ---
+class SkillExecutionRequest(BaseModel):
+    skill_name: str
+    payload: Optional[Dict[str, Any]] = {}
+    timeout: int = 30
+
+# --- Endpoint API d'exécution ---
+@app.post("/api/skills/execute")
+async def execute_skill_endpoint(request: SkillExecutionRequest):
+    """
+    Exécute une compétence de manière asynchrone via un sous-processus isolé.
+    """
+    result = await skill_runner.execute_skill_async(
+        skill_name=request.skill_name,
+        payload=request.payload,
+        timeout_seconds=request.timeout
+    )
+    
+    # On renvoie le code HTTP 500 si le statut interne indique une erreur critique ou un timeout
+    if result.get("status") in ["error", "timeout"]:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=result)
+        
+    return result
 
 if __name__ == "__main__":
     import uvicorn
@@ -234,3 +261,4 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8765"))
     host = os.environ.get("HOST", "0.0.0.0")
     uvicorn.run("app:app", host=host, port=port, reload=False)
+
