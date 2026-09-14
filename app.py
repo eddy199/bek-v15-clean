@@ -27,6 +27,19 @@ from memory import init_sync_log_table
 from state_synchronizer import init_state_tables
 
 try:
+    from services.vision import (
+        generate_image_with_provider,
+        merge_and_edit_images,
+        generate_video_with_provider,
+        merge_and_edit_videos
+    )
+except ImportError:
+    generate_image_with_provider = None
+    merge_and_edit_images = None
+    generate_video_with_provider = None
+    merge_and_edit_videos = None
+
+try:
     from sub_crm_engine import SubCRMEngine
 except ImportError:
     SubCRMEngine = None
@@ -75,83 +88,106 @@ if not logger.handlers:
 # ==========================================
 # INITIALISATION GLOBALE & HERMES HOOKS
 # ==========================================
-try:
-    init_sync_log_table()
-    init_state_tables()
-    if SubCRMEngine:
-        SubCRMEngine.initialize_matrix_schema()
-    logger.info("Tables Neon DB et schéma Matrix initialisés.")
-except Exception as exc:
-    logger.warning("Initialisation DB partielle : %s", exc)
+_BEK_ALREADY_BOOTSTRAPPED = os.environ.get("BEK_BOOTSTRAPPED") == "1"
 
-try:
-    from generate_architecture_doc import update_documentation_file
-    update_documentation_file()
-except Exception as exc:
-    logger.debug("Génération auto architecture Doc : %s", exc)
+if not _BEK_ALREADY_BOOTSTRAPPED:
+    try:
+        init_sync_log_table()
+        init_state_tables()
+        if SubCRMEngine:
+            SubCRMEngine.initialize_matrix_schema()
+        logger.info("Tables Neon DB et schéma Matrix initialisés.")
+    except Exception as exc:
+        logger.warning("Initialisation DB partielle : %s", exc)
 
-GLOBAL_SYSTEM_CONTEXT = load_project_documentation(DOCS_DIR)
+    try:
+        from generate_architecture_doc import update_documentation_file
+        update_documentation_file()
+    except Exception as exc:
+        logger.debug("Génération auto architecture Doc : %s", exc)
+
+    mcp_gateway.register_mcp_tool(
+        name="neon_audit",
+        description="Audit des tables relationnelles Neon DB",
+        parameters_schema={},
+        handler=lambda: {
+            "tables": [
+                "companies",
+                "contacts",
+                "opportunities",
+                "matrix_sub_crms",
+                "bek_task_states",
+                "sync_log",
+            ]
+        },
+    )
+
+    try:
+        start_background_workers()
+        logger.info("Workers Hermes démarrés avec succès.")
+    except Exception as exc:
+        logger.error("Impossible de démarrer les workers Hermes : %s", exc)
+
+
+    def _bek_pre_plan_validator(objective: str, trace_id: str | None):
+        return True, "Pre-Plan validé", None
+
+    hermes.register_pre_plan_hook(_bek_pre_plan_validator)
+    
+    # ----------------------------------------
+    # ENREGISTREMENT DES OUTILS DE L'AGENT
+    # ----------------------------------------
+    hermes.register_tool(
+        "web_sync",
+        lambda query="", **kwargs: web_agent_instance.run_pipeline(query) if web_agent_instance else "WebAgent indisponible",
+        risk_level="L3",
+    )
+    hermes.register_tool(
+        "orchestrate",
+        lambda goal="", **kwargs: bek_orchestrator.run(goal) if bek_orchestrator else "Orchestrateur indisponible",
+        risk_level="L2",
+    )
+    hermes.register_tool(
+        "neon_audit",
+        lambda **kwargs: {"status": "Neon DB audit demandé", "tables": ["companies", "contacts", "opportunities", "matrix_sub_crms", "sync_log"]},
+        risk_level="L1",
+    )
+
+    # --- OUTILS MULTIMÉDIA (IMAGES & VIDÉOS) ---
+    hermes.register_tool(
+        "generate_image",
+        lambda prompt="", query="", **kwargs: generate_image_with_provider(prompt=prompt or query) if generate_image_with_provider else {"status": "error", "message": "Module vision manquant"},
+        risk_level="L1",
+    )
+    hermes.register_tool(
+        "edit_image",
+        lambda image_paths=None, prompt="", user_prompt="", query="", **kwargs: merge_and_edit_images(
+            image_paths=image_paths,
+            user_prompt=user_prompt or prompt or query
+        ) if merge_and_edit_images else {"status": "error", "message": "Module vision manquant"},
+        risk_level="L1",
+    )
+    hermes.register_tool(
+        "generate_video",
+        lambda prompt="", query="", **kwargs: generate_video_with_provider(prompt=prompt or query) if generate_video_with_provider else {"status": "error", "message": "Module vidéo manquant"},
+        risk_level="L1",
+    )
+    hermes.register_tool(
+        "edit_video",
+        lambda video_paths=None, prompt="", user_prompt="", query="", **kwargs: merge_and_edit_videos(
+            video_paths=video_paths,
+            user_prompt=user_prompt or prompt or query
+        ) if merge_and_edit_videos else {"status": "error", "message": "Module vidéo manquant"},
+        risk_level="L1",
+    )
+
+    os.environ["BEK_BOOTSTRAPPED"] = "1"
 
 security_guard = hermes.security_guard
 if security_guard is None:
     raise RuntimeError("SecurityGuard Hermes indisponible. Vérifiez BEK_HSM_SECRET.")
 
-mcp_gateway.register_mcp_tool(
-    name="neon_audit",
-    description="Audit des tables relationnelles Neon DB",
-    parameters_schema={},
-    handler=lambda: {
-        "tables": [
-            "companies",
-            "contacts",
-            "opportunities",
-            "matrix_sub_crms",
-            "bek_task_states",
-            "sync_log",
-        ]
-    },
-)
-
-try:
-    start_background_workers()
-    logger.info("Workers Hermes démarrés avec succès.")
-except Exception as exc:
-    logger.error("Impossible de démarrer les workers Hermes : %s", exc)
-
-
-def _bek_pre_plan_validator(objective: str, trace_id: str | None):
-    return True, "Pre-Plan validé", None
-
-
-hermes.register_pre_plan_hook(_bek_pre_plan_validator)
-hermes.register_tool(
-    "web_sync",
-    lambda query="", **kwargs: web_agent_instance.run_pipeline(query)
-    if web_agent_instance
-    else "WebAgent indisponible",
-    risk_level="L3",
-)
-hermes.register_tool(
-    "orchestrate",
-    lambda goal="", **kwargs: bek_orchestrator.run(goal)
-    if bek_orchestrator
-    else "Orchestrateur indisponible",
-    risk_level="L2",
-)
-hermes.register_tool(
-    "neon_audit",
-    lambda **kwargs: {
-        "status": "Neon DB audit demandé",
-        "tables": [
-            "companies",
-            "contacts",
-            "opportunities",
-            "matrix_sub_crms",
-            "sync_log",
-        ],
-    },
-    risk_level="L1",
-)
+GLOBAL_SYSTEM_CONTEXT = load_project_documentation(DOCS_DIR)
 
 # ==========================================
 # GESTION DU CYCLE DE VIE (LIFESPAN)
@@ -248,9 +284,7 @@ async def execute_skill_endpoint(request: SkillExecutionRequest):
         timeout_seconds=request.timeout
     )
     
-    # On renvoie le code HTTP 500 si le statut interne indique une erreur critique ou un timeout
     if result.get("status") in ["error", "timeout"]:
-        from fastapi import HTTPException
         raise HTTPException(status_code=500, detail=result)
         
     return result
@@ -261,4 +295,3 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8765"))
     host = os.environ.get("HOST", "0.0.0.0")
     uvicorn.run("app:app", host=host, port=port, reload=False)
-

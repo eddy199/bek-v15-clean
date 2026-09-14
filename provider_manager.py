@@ -16,7 +16,7 @@ WORKSPACE_DIR = Path(__file__).resolve().parent
 class ProviderManager:
     # MODÈLES PAR FOURNISSEUR (16 Fournisseurs)
     PROVIDER_MODELS: Dict[str, List[str]] = {
-        # 1. Moonshot Kimi AI (Clé API)
+        # 1. Moonshot Kimi AI (Modèles exacts de l'interface)
         "kimi": [
             "kimi-k3",
             "kimi-k3-swarm",
@@ -217,23 +217,18 @@ class ProviderManager:
         ],
     }
 
+    # CHAÎNE DE FALLBACK
     FALLBACK_ORDER: List[str] = [
+        "kimi",
         "b_ai",
+        "gemini",
+        "kilo_anonymous",
         "groq",
         "nvidia",
-        "gemini",
-        "kimi",
         "huggingface",
-        "ollama_cloud",
         "openrouter",
-        "kilo_anonymous",
         "ovh_anonymous",
         "llm7_anonymous",
-        "mistral",
-        "cohere",
-        "aionlabs",
-        "zhipu",
-        "siliconflow",
     ]
 
     def __init__(self) -> None:
@@ -373,6 +368,10 @@ class ProviderManager:
             if not isinstance(m, dict):
                 continue
             role = m.get("role", "user")
+            
+            if role not in ["system", "user", "assistant"]:
+                role = "user"
+
             content = m.get("content", "")
             if isinstance(content, list):
                 parts = []
@@ -382,6 +381,7 @@ class ProviderManager:
                     elif isinstance(item, str):
                         parts.append(item)
                 content = " ".join(parts)
+            
             if isinstance(content, str) and content.strip():
                 formatted.append({"role": role, "content": content})
         return formatted
@@ -389,8 +389,8 @@ class ProviderManager:
     def execute_chat_stream(
         self,
         messages: List[Dict[str, Any]],
-        provider: str = "b_ai",
-        model: str = "glm-5.3-flash",
+        provider: str = "kimi",
+        model: str = "kimi-k3",
         temperature: float = 0.7,
         max_tokens: int = 4096,
         top_p: float = 0.9,
@@ -402,17 +402,33 @@ class ProviderManager:
 
         total_chars = sum(len(m.get("content", "")) for m in clean_msgs)
 
-        selected_provider = provider
-        if provider == "groq" and total_chars > 16000:
-            logger.warning("[TPM Guard] Requête volumineuse (%d chars), routage vers B.ai.", total_chars)
-            selected_provider = "b_ai"
+        if ":" in model:
+            parts = model.split(":", 1)
+            selected_provider = parts[0]
+            selected_model = parts[1]
+        else:
+            selected_provider = provider
+            selected_model = model
+
+        if selected_provider == "groq" and total_chars > 16000:
+            logger.warning("[TPM Guard] Requête volumineuse (%d chars), routage vers kimi.", total_chars)
+            selected_provider = "kimi"
 
         attempt_providers = [selected_provider] + [p for p in self.FALLBACK_ORDER if p != selected_provider]
         last_error_message = ""
 
         for current_prov in attempt_providers:
             available_models = self.PROVIDER_MODELS.get(current_prov, [])
-            current_model = model if (current_prov == selected_provider or model in available_models) else (available_models[0] if available_models else model)
+            
+            if current_prov == selected_provider:
+                current_model = selected_model
+            else:
+                if current_prov == "kimi": current_model = "kimi-k3"
+                elif current_prov == "b_ai": current_model = "glm-5.3-flash"
+                elif current_prov == "gemini": current_model = "gemini-3.8-flash"
+                elif current_prov == "kilo_anonymous": current_model = "kilo-nemotron-3-ultra-550b"
+                else: current_model = available_models[0] if available_models else "default"
+
             resolved_p, api_key, api_url = self.resolve_provider_endpoint(current_prov, current_model)
 
             if not api_key and "anonymous" not in resolved_p:

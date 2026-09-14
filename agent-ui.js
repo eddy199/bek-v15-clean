@@ -245,6 +245,7 @@
 
             if (DOM.skillsCounter) DOM.skillsCounter.textContent = data.skills_count || globalSkills.length;
             populateSkillsView(globalSkills);
+            DOM.providerSelect.value = 'kimi'; // Forcer Kimi par défaut au démarrage
             updateModelSelect();
             await loadFilesList();
         } catch (e) {

@@ -20,11 +20,9 @@ from services.action_executor import execute_agent_crm_tool
 from services.tasks import CURRENT_OS_NAME
 
 # ── EXPRESSION RÉGULIÈRE UNIQUE (Anti-Coupure Interface) ──
-# Utilisation des codes Hex (\x5b = crochet ouvert, \x5d = crochet fermé)
-# Cela empêche ton interface web de supprimer le code au copier-coller !
 ACTION_REGEX = re.compile(r"\x5bACTION:(\w+)\x5d(.*?)\x5b/ACTION\x5d", re.DOTALL)
 
-# ── AJOUT BEK-INTELLIGENCE : couche additive ──
+# ── COUCHE INTELLIGENCE ADDITIVE ──
 try:
     from bek_intelligence import (
         smart_router, auto_engine, ResponseQuality, Task
@@ -81,6 +79,10 @@ Tu es BEK, agent technique d'exécution sur {CURRENT_OS_NAME}.
 - Renvoie UNIQUEMENT la balise [ACTION:nom]{{"param":"v"}}[/ACTION].
 
 # ACTIONS DISPONIBLES :
+   - [ACTION:generate_image]{{"prompt": "detailed description in english"}}[/ACTION]
+   - [ACTION:edit_image]{{"image_paths": ["filename.png"], "prompt": "exact modification directive in english"}}[/ACTION]
+   - [ACTION:generate_video]{{"prompt": "detailed video description in english"}}[/ACTION]
+   - [ACTION:edit_video]{{"video_paths": ["filename.mp4"], "prompt": "exact modification directive in english"}}[/ACTION]
    - [ACTION:create_dynamic_skill]{{"skill_name": "x", "code_content": "y"}}[/ACTION]
    - [ACTION:orchestrate]{{"goal": "..."}}[/ACTION]
    - [ACTION:web_sync]{{"query": "..."}}[/ACTION]
@@ -91,6 +93,12 @@ Tu es BEK, agent technique d'exécution sur {CURRENT_OS_NAME}.
    - [ACTION:search_memory]{{"query": "..."}}[/ACTION]
    - [ACTION:write_file]{{"filename": "...", "content": "..."}}[/ACTION]
    - [ACTION:read_file]{{"filename": "..."}}[/ACTION]
+
+# DIRECTIVE MULTIMÉDIA ABSOLUE (PRIORITÉ MAXIMALE) :
+- Pour TOUTE demande de création, génération ou modification visuelle (photo, image, portrait, caricature, dessin, illustration, vidéo, animation) :
+- INTERDICTION ABSOLUE d'utiliser [ACTION:orchestrate] ou [ACTION:web_sync].
+- Ne fais AUCUNE recherche Web et ne rédige AUCUN rapport d'ingénierie.
+- Déclenche IMMÉDIATEMENT l'action directe correspondante : generate_image, edit_image, generate_video ou edit_video.
 """
 
 def _detect_user_response(query: str) -> str:
@@ -108,6 +116,61 @@ def _detect_user_response(query: str) -> str:
     if words & refused:
         return "refused"
     return "neutral"
+
+def _execute_action_unified(act_name: str, params: dict) -> dict:
+    """Exécute directement les outils multimédias en court-circuitant le CRM, avec fallback Hermes."""
+    try:
+        if act_name == "generate_image":
+            from services.vision import generate_image_with_provider
+            prompt = params.get("prompt") or params.get("query") or ""
+            return generate_image_with_provider(prompt=prompt)
+
+        elif act_name == "edit_image":
+            from services.vision import merge_and_edit_images
+            paths = params.get("image_paths") or params.get("image_path") or []
+            prompt = params.get("prompt") or params.get("user_prompt") or params.get("query") or ""
+            return merge_and_edit_images(image_paths=paths, user_prompt=prompt)
+
+        elif act_name == "generate_video":
+            from services.vision import generate_video_with_provider
+            prompt = params.get("prompt") or params.get("query") or ""
+            return generate_video_with_provider(prompt=prompt)
+
+        elif act_name == "edit_video":
+            from services.vision import merge_and_edit_videos
+            paths = params.get("video_paths") or params.get("video_path") or []
+            prompt = params.get("prompt") or params.get("user_prompt") or params.get("query") or ""
+            return merge_and_edit_videos(video_paths=paths, user_prompt=prompt)
+    except Exception as exc:
+        logger.error("Erreur directe Vision (%s) : %s", act_name, exc)
+        return {"status": "error", "message": f"Erreur multimédia : {exc}"}
+
+    # Fallback Hermes
+    if act_name in hermes.tools:
+        h_disp = hermes.dispatch(act_name, params)
+        if h_disp.get("status") == "SUCCESS" and h_disp.get("results"):
+            task_res = list(h_disp["results"].values())[0]
+            if task_res.get("success"):
+                data = task_res.get("data")
+                if isinstance(data, dict):
+                    return data
+                return {"status": "success", "message": str(data)}
+
+    # Fallback CRM standard
+    exec_res = execute_agent_crm_tool(act_name, params)
+    return exec_res or {"status": "error", "message": "Aucune réponse d'exécution"}
+
+def _format_execution_result(act_name: str, exec_res: dict) -> str:
+    """Formate le message de retour avec support Markdown riche (images & vidéos)."""
+    if isinstance(exec_res, dict):
+        fn = exec_res.get("filename", "")
+        if exec_res.get("status") == "success" and fn:
+            if any(fn.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"]):
+                return f"🎨 **Image générée !**\n\n![{fn}](/api/download/{fn})"
+            elif any(fn.lower().endswith(ext) for ext in [".mp4", ".webm", ".mov", ".avi"]):
+                return f"🎬 **Vidéo générée !**\n\n[Télécharger la vidéo](/api/download/{fn})\n\n"
+        return exec_res.get("message", "Opération OK")
+    return str(exec_res)
 
 @router.post("/api/chat")
 async def chat(request: Request):
@@ -158,7 +221,6 @@ async def chat(request: Request):
         
         if is_ast and has_act:
             if user_status == "agreed":
-                
                 act_content = prev_msg.get("content", "")
                 action_matches = list(ACTION_REGEX.finditer(act_content))
                 
@@ -180,8 +242,8 @@ async def chat(request: Request):
                     params["provider"] = provider
                     params["model"] = model
 
-                    exec_res = execute_agent_crm_tool(act_name, params)
-                    res_msg = exec_res.get('message', 'Opération OK')
+                    exec_res = _execute_action_unified(act_name, params)
+                    res_msg = _format_execution_result(act_name, exec_res)
                     if len(res_msg) > 1500:
                         res_msg = res_msg[:1500] + "\n... [tronqué]"
 
@@ -227,7 +289,7 @@ async def chat(request: Request):
                 f_plan = [t for t in plan if t.get("tool") != "default_llm"]
                 if f_plan:
                     p_json = json.dumps(f_plan, ensure_ascii=False)
-                    dynamic_system_prompt += f"\n\n[HERMES] :\n{p_json}"
+                    dynamic_system_prompt += f"\n\n[PLAN HERMES PRIORITAIRE À EXÉCUTER] :\n{p_json}"
         except Exception as e:
             logger.error("[HERMES] Échec planificateur : %s", e)
 
@@ -285,8 +347,8 @@ async def chat(request: Request):
                                 j_imm = json.dumps({'chunk': msg_imm})
                                 yield f"data: {j_imm}\n\n"
 
-                                exec_res = execute_agent_crm_tool(act_name, params)
-                                res_msg = exec_res.get('message', 'Opération OK')
+                                exec_res = _execute_action_unified(act_name, params)
+                                res_msg = _format_execution_result(act_name, exec_res)
 
                                 eval_r = evaluate_response_quality(last_user_query, res_msg)
                                 if not eval_r["passed"]:
