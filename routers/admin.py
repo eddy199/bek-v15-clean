@@ -1,6 +1,19 @@
 # ==============================================================================
 # BEK-v16 — Routeur Administration & Statut (routers/admin.py)
+# ------------------------------------------------------------------------------
+# AJOUT v16 (Chantier 8) :
+#   - /health/nerves          → résumé condensé du système nerveux (monitoring)
+#   - /health/nerves/detail   → rapport détaillé des 12 nerfs (debug)
+#
+# TOUS LES ENDPOINTS EXISTANTS SONT PRÉSERVÉS :
+#   - /api/health
+#   - /api/config
+#   - /api/connectors
+#   - /api/reflexion/stream
+#   - /api/sync/push
 # ==============================================================================
+import logging
+
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
@@ -13,6 +26,8 @@ from sync_manager import push_to_remotes
 from core.utils import json_response
 from meta_cortex_swarm import ReflexionSwarm
 from meta_cortex_sse_ui import MetaCortexSSEStreamer
+
+logger = logging.getLogger("BEKApp")
 
 try:
     from mcp_gateway import mcp_gateway
@@ -28,11 +43,28 @@ try:
 except Exception:
     event_bus = None
 
+# ── Health check du système nerveux (Nerf 3 + 12 modules nerves/) ──
+try:
+    from nerves._health import get_nerves_summary, get_all_nerves_status
+    _NERVES_HEALTH_OK = True
+except Exception as _nerves_health_err:
+    logger.debug("nerves._health non chargé : %s", _nerves_health_err)
+    _NERVES_HEALTH_OK = False
+    get_nerves_summary = None
+    get_all_nerves_status = None
+
+
 router = APIRouter(tags=["Admin"])
+
+
+# ══════════════════════════════════════════════════════════════════
+# ENDPOINTS EXISTANTS (préservés à l'identique)
+# ══════════════════════════════════════════════════════════════════
 
 @router.get("/api/health")
 async def health():
     return {"status": "ok", "service": "BEK-v16 HYBRID FastAPI", "os": CURRENT_OS_NAME}
+
 
 @router.get("/api/config")
 async def get_config():
@@ -61,14 +93,17 @@ async def get_config():
         "radar_status": event_bus.get_radar_status() if event_bus else {"mode": "NORMAL"}
     }
 
+
 @router.get("/api/connectors")
 async def get_connectors():
     connectors = []
     db_conn = get_db_connection()
     db_status = "Actif" if db_conn else "Erreur de connexion"
     if db_conn:
-        try: db_conn.close()
-        except Exception: pass
+        try:
+            db_conn.close()
+        except Exception:
+            pass
     connectors.append({"name": "Neon DB (PostgreSQL)", "type": "Database Principale", "latency_ms": 12, "status": db_status})
     connectors.append({"name": "Vision Multimodal Engine", "type": "Analyse d'Images", "latency_ms": 15, "status": "Actif"})
     connectors.append({"name": "ZIP Archive Manager", "type": "Extraction / Compression", "latency_ms": 4, "status": "Actif"})
@@ -85,6 +120,7 @@ async def get_connectors():
         })
     return {"connectors": connectors}
 
+
 @router.post("/api/reflexion/stream")
 async def reflexion_stream(request: Request):
     data = await request.json() or {}
@@ -100,9 +136,55 @@ async def reflexion_stream(request: Request):
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
     )
 
+
 @router.post("/api/sync/push")
 async def api_push_remotes(request: Request):
     data = await request.json() or {}
     msg = data.get("message", "Auto-sync BEK-v16 agent state")
     res = push_to_remotes(msg)
     return json_response(res)
+
+
+# ══════════════════════════════════════════════════════════════════
+# NOUVEAU (Chantier 8) : Health check du système nerveux
+# ══════════════════════════════════════════════════════════════════
+
+@router.get("/health/nerves")
+async def health_nerves():
+    """
+    Résumé condensé du système nerveux (12 nerfs + pont EventBus).
+
+    Format : {status, ok, disabled, error, inactive, unknown,
+              event_bus_bridge_active, duration_ms}
+
+    Utilisable par un monitoring externe (Render, UptimeRobot, etc.).
+    """
+    if not _NERVES_HEALTH_OK:
+        return {
+            "status": "unavailable",
+            "reason": "nerves._health non chargé (paquet nerves/ absent ?)",
+        }
+    try:
+        return get_nerves_summary()
+    except Exception as exc:
+        logger.error("[health/nerves] Échec : %s", exc)
+        return {"status": "error", "message": str(exc)[:300]}
+
+
+@router.get("/health/nerves/detail")
+async def health_nerves_detail():
+    """
+    Rapport détaillé du système nerveux (12 nerfs + pont EventBus + durées).
+
+    Utilisable pour du debug humain après un redéploiement.
+    """
+    if not _NERVES_HEALTH_OK:
+        return {
+            "status": "unavailable",
+            "reason": "nerves._health non chargé (paquet nerves/ absent ?)",
+        }
+    try:
+        return get_all_nerves_status()
+    except Exception as exc:
+        logger.error("[health/nerves/detail] Échec : %s", exc)
+        return {"status": "error", "message": str(exc)[:300]}

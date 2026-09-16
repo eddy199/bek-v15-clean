@@ -1,0 +1,8 @@
+{
+  "providers": [
+    {
+      "name": "huggingface_hub",
+      "api_key": "${HF_API_KEY}"
+    }
+  ]
+}

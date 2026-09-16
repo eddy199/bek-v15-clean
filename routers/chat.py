@@ -1,13 +1,30 @@
 # ==============================================================================
 # BEK-v16 — Routeur Chat Streaming & Human-in-the-Loop (routers/chat.py)
+# ------------------------------------------------------------------------------
+# COUCHE AGI INTÉGRÉE (Chantier 6) :
+#   - SmartRouter sémantique réel (Nerf 7) avec fallback legacy
+#   - EventBus unifié (Nerf 3) avec fallback legacy
+#   - Pipeline cognitif post-stream (Nerf 2) : Grounding + Swarm critique
+#   - TOUTES les fonctionnalités existantes préservées
+#
+# CORRECTIFS v2 (robustesse) :
+#   - logger défini EN TÊTE de fichier (fix NameError potentiel)
+#   - Bornage strict de la taille des messages (MAX_CHARS_PER_MESSAGE)
+#   - Bornage strict de la taille totale du contexte (MAX_TOTAL_CHARS)
+#   - _safe_str() : garantit des str propres (évite payloads binaires)
+#   - Constantes configurables via env.txt (BEK_CHAT_*)
+#   - Aucune brique supprimée : SmartRouter, EventBus, Cognitive, QualityGate
 # ==============================================================================
 from __future__ import annotations
 
 import ast
 import json
 import logging
+import os
 import re
 import uuid
+from typing import Any, Dict, List
+
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
@@ -19,17 +36,115 @@ from provider_manager import provider_manager
 from services.action_executor import execute_agent_crm_tool
 from services.tasks import CURRENT_OS_NAME
 
+# ── LOGGER GLOBAL (défini EN TÊTE — plus de NameError possible) ──
+logger = logging.getLogger("BEKApp")
+
 # ── EXPRESSION RÉGULIÈRE UNIQUE (Anti-Coupure Interface) ──
 ACTION_REGEX = re.compile(r"\x5bACTION:(\w+)\x5d(.*?)\x5b/ACTION\x5d", re.DOTALL)
 
-# ── COUCHE INTELLIGENCE ADDITIVE ──
+# ══════════════════════════════════════════════════════════════════
+# 🛡️ BORNES DE TAILLE — Évite d'envoyer 775 000 chars aux providers
+# ══════════════════════════════════════════════════════════════════
+# Ces bornes sont configurables via env.txt :
+#   BEK_CHAT_HISTORY_WINDOW      (défaut 6)
+#   BEK_CHAT_MAX_CHARS_PER_MSG   (défaut 8000)
+#   BEK_CHAT_MAX_TOTAL_CHARS     (défaut 32000)
+# ══════════════════════════════════════════════════════════════════
+
+
+def _env_int(name: str, default: int, minimum: int = 1) -> int:
+    """Lit un entier d'environnement avec fallback sûr."""
+    try:
+        val = int(os.getenv(name, str(default)))
+        return max(minimum, val)
+    except (TypeError, ValueError):
+        return default
+
+
+HISTORY_WINDOW = _env_int("BEK_CHAT_HISTORY_WINDOW", 6, minimum=1)
+MAX_CHARS_PER_MESSAGE = _env_int("BEK_CHAT_MAX_CHARS_PER_MSG", 8000, minimum=200)
+MAX_TOTAL_CHARS = _env_int("BEK_CHAT_MAX_TOTAL_CHARS", 32000, minimum=1000)
+
+
+def _safe_str(value: Any) -> str:
+    """
+    Convertit n'importe quelle valeur en str propre.
+    Évite les payloads binaires/dicts qui font exploser la taille.
+    """
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value
+    if isinstance(value, (bytes, bytearray)):
+        try:
+            return value.decode("utf-8", errors="ignore")
+        except Exception:
+            return ""
+    try:
+        return str(value)
+    except Exception:
+        return ""
+
+
+def _truncate_messages(
+    messages: List[Dict[str, Any]],
+    window: int = HISTORY_WINDOW,
+    max_per_msg: int = MAX_CHARS_PER_MESSAGE,
+    max_total: int = MAX_TOTAL_CHARS,
+) -> List[Dict[str, Any]]:
+    """
+    Borne la taille des messages avant envoi aux providers.
+
+    - Ne garde que les `window` derniers messages.
+    - Tronque chaque message à `max_per_msg` caractères.
+    - Borne la taille totale cumulée à `max_total` caractères
+      (les messages les plus anciens sont tronqués en premier).
+
+    Ne lève JAMAIS d'exception. Retourne toujours une liste de dicts valides.
+    """
+    if not messages or not isinstance(messages, list):
+        return []
+
+    # 1. Fenêtre glissante : on prend les N derniers valides
+    recent = [m for m in messages[-window:] if isinstance(m, dict)]
+
+    # 2. Normalisation + troncature par message
+    normalized: List[Dict[str, Any]] = []
+    for m in recent:
+        role = _safe_str(m.get("role", "user"))[:32] or "user"
+        content = _safe_str(m.get("content", ""))
+        if len(content) > max_per_msg:
+            content = content[:max_per_msg] + "\n…[tronqué]"
+        normalized.append({"role": role, "content": content})
+
+    # 3. Borne de taille totale cumulée (tronque les plus anciens en priorité)
+    total = sum(len(m["content"]) for m in normalized)
+    if total > max_total:
+        overflow = total - max_total
+        # On retire le surplus en partant du début (messages les plus anciens)
+        for m in normalized:
+            if overflow <= 0:
+                break
+            content_len = len(m["content"])
+            if content_len <= overflow:
+                overflow -= content_len
+                m["content"] = "[…contenu ancien tronqué…]"
+            else:
+                m["content"] = (
+                    "[…tronqué…] " + m["content"][overflow:]
+                )
+                overflow = 0
+
+    return normalized
+
+
+# ── COUCHE INTELLIGENCE ADDITIVE (legacy) ──
 try:
     from bek_intelligence import (
         smart_router, auto_engine, ResponseQuality, Task
     )
     _INTEL_OK = True
 except Exception as _intel_err:
-    logger = logging.getLogger("BEKApp")
     logger.warning("BekIntelligence non chargé : %s", _intel_err)
     _INTEL_OK = False
     smart_router = auto_engine = ResponseQuality = None
@@ -42,6 +157,31 @@ except Exception as _intel_err:
         LONG_DOC = "long_doc"
         CREATIVE = "creative"
 
+# ── COUCHE AGI (nouveaux nerfs du Chantier 6) ──
+try:
+    from nerves.router_nerves import route_semantic as _agi_route_semantic
+    _AGI_ROUTER_OK = True
+except Exception as _router_err:
+    logger.debug("Nerf 7 (SmartRouter AGI) non chargé : %s", _router_err)
+    _agi_route_semantic = None
+    _AGI_ROUTER_OK = False
+
+try:
+    from nerves.event_bus_nerves import publish_event_unified as _agi_publish_event
+    _AGI_EVENT_BUS_OK = True
+except Exception as _eb_err:
+    logger.debug("Nerf 3 (EventBus unifié) non chargé : %s", _eb_err)
+    _agi_publish_event = None
+    _AGI_EVENT_BUS_OK = False
+
+try:
+    from nerves.cognitive_nerves import run_cognitive_pipeline as _agi_cognitive_pipeline
+    _AGI_COGNITIVE_OK = True
+except Exception as _cog_err:
+    logger.debug("Nerf 2 (Pipeline cognitif) non chargé : %s", _cog_err)
+    _agi_cognitive_pipeline = None
+    _AGI_COGNITIVE_OK = False
+
 try:
     from skills import dispatch_command as dispatch_slash_command
 except ImportError:
@@ -53,7 +193,6 @@ try:
 except Exception:
     event_bus = None
 
-logger = logging.getLogger("BEKApp")
 router = APIRouter(tags=["Chat"])
 
 minhash_engine = MinHashSimilarity(num_perm=64)
@@ -101,6 +240,7 @@ Tu es BEK, agent technique d'exécution sur {CURRENT_OS_NAME}.
 - Déclenche IMMÉDIATEMENT l'action directe correspondante : generate_image, edit_image, generate_video ou edit_video.
 """
 
+
 def _detect_user_response(query: str) -> str:
     if not query:
         return "neutral"
@@ -116,6 +256,7 @@ def _detect_user_response(query: str) -> str:
     if words & refused:
         return "refused"
     return "neutral"
+
 
 def _execute_action_unified(act_name: str, params: dict) -> dict:
     """Exécute directement les outils multimédias en court-circuitant le CRM, avec fallback Hermes."""
@@ -160,6 +301,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
     exec_res = execute_agent_crm_tool(act_name, params)
     return exec_res or {"status": "error", "message": "Aucune réponse d'exécution"}
 
+
 def _format_execution_result(act_name: str, exec_res: dict) -> str:
     """Formate le message de retour avec support Markdown riche (images & vidéos)."""
     if isinstance(exec_res, dict):
@@ -172,6 +314,7 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
         return exec_res.get("message", "Opération OK")
     return str(exec_res)
 
+
 @router.post("/api/chat")
 async def chat(request: Request):
     data = await request.json() or {}
@@ -179,7 +322,13 @@ async def chat(request: Request):
     provider = data.get("provider", "b_ai")
     model = data.get("model", "glm-5.3-flash")
 
-    trimmed_messages = [m for m in messages[-6:] if isinstance(m, dict)]
+    # ══════════════════════════════════════════════════════════════════
+    # 🛡️ BORNAGE STRICT DE LA TAILLE DES MESSAGES (v2)
+    # ══════════════════════════════════════════════════════════════════
+    # Empêche d'envoyer 775 000 chars aux providers (cause des erreurs
+    # Groq "reduce length", b_ai "insufficient balance", etc.)
+    trimmed_messages = _truncate_messages(messages)
+
     last_user_query = ""
     user_status = "neutral"
 
@@ -189,19 +338,68 @@ async def chat(request: Request):
             last_user_query = last_msg.get("content", "").strip()
             user_status = _detect_user_response(last_user_query)
 
+    # ══════════════════════════════════════════════════════════════════
+    # 🧠 NERF 7 — SMARTROUTER SÉMANTIQUE RÉEL (avec fallback legacy)
+    # ══════════════════════════════════════════════════════════════════
     smart_mode = data.get("smart", True)
-    if _INTEL_OK and smart_mode:
+    routing_used = "legacy"
+
+    if smart_mode and _AGI_ROUTER_OK and last_user_query:
+        try:
+            routing = _agi_route_semantic(last_user_query)
+            routed_provider = routing.get("provider", "")
+            routed_model = routing.get("model", "")
+            if routed_provider:
+                provider = routed_provider
+                if routed_model:
+                    model = routed_model
+                routing_used = f"agi:{routing.get('task_type', 'chat')}"
+                logger.info(
+                    "[SmartRouter AGI] Route : %s/%s (type=%s, fallback=%s)",
+                    provider, model,
+                    routing.get("task_type", "?"),
+                    routing.get("fallback_used", False),
+                )
+        except Exception as e:
+            logger.warning("[SmartRouter AGI] Échec, fallback legacy : %s", e)
+
+    # Fallback legacy (ancien SmartRouter)
+    if routing_used == "legacy" and _INTEL_OK and smart_mode:
         try:
             chosen = smart_router.route(trimmed_messages)
             if chosen:
                 provider, model = chosen[0]
-                logger.info("[SmartRouter] Route : %s/%s", provider, model)
+                routing_used = "legacy"
+                logger.info("[SmartRouter legacy] Route : %s/%s", provider, model)
         except Exception as e:
-            logger.warning("[SmartRouter] Échec : %s", e)
+            logger.warning("[SmartRouter legacy] Échec : %s", e)
 
+    # ══════════════════════════════════════════════════════════════════
+    # 🌉 NERF 3 — EVENTBUS UNIFIÉ (avec fallback legacy)
+    # ══════════════════════════════════════════════════════════════════
     corr_id = f"corr_{uuid.uuid4().hex[:10]}"
-    if event_bus and last_user_query:
-        event_bus.publish("web-cleaned", {"query": last_user_query})
+    if last_user_query:
+        published = False
+        if _AGI_EVENT_BUS_OK:
+            try:
+                _agi_publish_event(
+                    "web-cleaned",
+                    {
+                        "query": last_user_query,
+                        "correlation_id": corr_id,
+                        "source": "chat",
+                        "routing": routing_used,
+                    },
+                )
+                published = True
+            except Exception as e:
+                logger.debug("[EventBus AGI] Échec, fallback legacy : %s", e)
+
+        if not published and event_bus:
+            try:
+                event_bus.publish("web-cleaned", {"query": last_user_query})
+            except Exception:
+                pass
 
     if last_user_query.startswith("/") and dispatch_slash_command:
         slash_res = dispatch_slash_command(last_user_query)
@@ -218,12 +416,12 @@ async def chat(request: Request):
         prev_msg = trimmed_messages[-2]
         is_ast = prev_msg.get("role") == "assistant"
         has_act = "[ACTION:" in prev_msg.get("content", "")
-        
+
         if is_ast and has_act:
             if user_status == "agreed":
                 act_content = prev_msg.get("content", "")
                 action_matches = list(ACTION_REGEX.finditer(act_content))
-                
+
                 if action_matches:
                     match = action_matches[-1]
                     act_name = match.group(1)
@@ -232,12 +430,15 @@ async def chat(request: Request):
                     params = {}
                     try:
                         p_json = json.loads(raw_payload)
-                        if isinstance(p_json, dict): params = p_json
+                        if isinstance(p_json, dict):
+                            params = p_json
                     except Exception:
                         try:
                             p_ast = ast.literal_eval(raw_payload)
-                            if isinstance(p_ast, dict): params = p_ast
-                        except Exception: pass
+                            if isinstance(p_ast, dict):
+                                params = p_ast
+                        except Exception:
+                            pass
 
                     params["provider"] = provider
                     params["model"] = model
@@ -251,7 +452,7 @@ async def chat(request: Request):
                            f"'{act_name}' :] \n{res_msg}\n\n-> "
                            f"Donne ton retour à l'utilisateur.")
                     trimmed_messages[-1]["content"] += inj
-                    
+
                     old_c = trimmed_messages[-2]["content"]
                     trimmed_messages[-2]["content"] = old_c.replace(
                         "[ACTION:", "[EXECUTED_ACTION:"
@@ -279,7 +480,11 @@ async def chat(request: Request):
         try:
             mem_ctx = search_memory(last_user_query, top_k=3)
             if mem_ctx:
-                dynamic_system_prompt += f"\n\n[MÉMOIRE] :\n{mem_ctx}"
+                # Borne aussi le contexte mémoire
+                mem_ctx_str = _safe_str(mem_ctx)
+                if len(mem_ctx_str) > MAX_CHARS_PER_MESSAGE:
+                    mem_ctx_str = mem_ctx_str[:MAX_CHARS_PER_MESSAGE] + "…[tronqué]"
+                dynamic_system_prompt += f"\n\n[MÉMOIRE] :\n{mem_ctx_str}"
         except Exception as e:
             logger.warning("Erreur mémoire : %s", e)
 
@@ -323,7 +528,7 @@ async def chat(request: Request):
                     if action_detected and "[/ACTION]" in current_text:
                         try:
                             action_matches = list(ACTION_REGEX.finditer(current_text))
-                            
+
                             if action_matches:
                                 match = action_matches[-1]
                                 act_name = match.group(1)
@@ -338,7 +543,8 @@ async def chat(request: Request):
                                         p_ast = ast.literal_eval(raw_payload)
                                         if isinstance(p_ast, dict):
                                             params = p_ast
-                                    except Exception: pass
+                                    except Exception:
+                                        pass
 
                                 params["provider"] = provider
                                 params["model"] = model
@@ -363,13 +569,49 @@ async def chat(request: Request):
                         break
 
             full_text = "".join(full_text_accumulated)
+
+            # ══════════════════════════════════════════════════════════════════
+            # 🧠 NERF 2 — PIPELINE COGNITIF POST-STREAM (Swarm + Grounding)
+            # ══════════════════════════════════════════════════════════════════
+            if (_AGI_COGNITIVE_OK
+                    and full_text.strip()
+                    and not action_detected
+                    and last_user_query):
+                try:
+                    cognitive = _agi_cognitive_pipeline(
+                        draft=full_text,
+                        original_query=last_user_query,
+                        provider=provider,
+                        model=model,
+                    )
+                    if cognitive.get("status") == "success":
+                        meta_cognitive = {
+                            "cognitive_verdict": cognitive.get("final_verdict", "GOOD"),
+                            "cognitive_needs_correction": cognitive.get("needs_correction", False),
+                            "cognitive_issues_count": len(cognitive.get("issues", [])),
+                            "routing_used": routing_used,
+                        }
+                        j_meta_cog = json.dumps({'meta': meta_cognitive})
+                        yield f"data: {j_meta_cog}\n\n"
+
+                        if cognitive.get("needs_correction"):
+                            warn_msg = (
+                                f"\n\n> ⚠️ **Vérification cognitive** : "
+                                f"verdict `{cognitive.get('final_verdict')}`, "
+                                f"{len(cognitive.get('issues', []))} point(s) à vérifier.\n"
+                            )
+                            yield f"data: {json.dumps({'chunk': warn_msg})}\n\n"
+                except Exception as cog_exc:
+                    logger.debug("[Chat] Cognitive pipeline échec silencieux : %s", cog_exc)
+
+            # ── EXISTANT : Quality gate ResponseQuality + auto-correction ──
             if (_INTEL_OK and full_text.strip() and not action_detected):
                 try:
                     score, issues = ResponseQuality.evaluate(full_text, 4096)
                     meta_data = {'quality_score': score, 'issues': issues}
                     j_meta = json.dumps({'meta': meta_data})
                     yield f"data: {j_meta}\n\n"
-                    
+
                     if score < 60:
                         corrective = list(exec_messages) + [
                             {"role": "assistant", "content": full_text},
@@ -384,9 +626,9 @@ async def chat(request: Request):
                             msg_corr = '\n\n--- ✨ Version corrigée ---\n\n'
                             j_msg = json.dumps({'chunk': msg_corr})
                             yield f"data: {j_msg}\n\n"
-                            
+
                             for i in range(0, len(corrected_text), 24):
-                                c_part = corrected_text[i:i+24]
+                                c_part = corrected_text[i:i + 24]
                                 yield f"data: {json.dumps({'chunk': c_part})}\n\n"
                 except Exception as qe:
                     logger.warning("[QualityGate] Échec : %s", qe)

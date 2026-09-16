@@ -181,6 +181,134 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         risk_level="L1",
     )
 
+    # ══════════════════════════════════════════════════════════════════
+    # 🧠 ACTIVATION DU SYSTÈME NERVEUX BEK
+    # ══════════════════════════════════════════════════════════════════
+    # Ce bloc relie les briques EXISTANTES entre elles via le paquet nerves/.
+    # Aucune brique n'est supprimée ni modifiée.
+    #
+    # ORDRE D'ACTIVATION (important pour les dépendances entre nerfs) :
+    #   1. Nerf 3  : Pont EventBus (fondation pour tous les nerfs tracés)
+    #   2. Nerf 1  : Outils Hermes réels (écrase les stubs)
+    #   3. Nerf 8  : Skills chargés au boot
+    #   4. Nerf 11 : Headless branché (Playwright)
+    #   5. Nerf 14 : Tmux branché (tâches de fond)
+    #   6. Nerf 4  : WebAgent tracé (utilise le pont EventBus)
+    #   7. Nerf 9  : Guardian tracé (utilise le pont EventBus + Tmux)
+    #   8. Nerf 5  : Approval Manager (interception automatique L3+)
+    #   9. Nerf 6  : MCP Gateway ↔ Hermes (sync bidirectionnelle)
+    #  10. Nerf 2  : Cortex cognitif (Swarm + Grounding)
+    #  11. Nerf 7  : SmartRouter sémantique réel
+    #  12. Nerf 10 : Sub-CRM Engine → Hermes
+    #
+    # Feature-flags dans env.txt :
+    #   - BEK_ENABLE_EVENT_BUS_NERVES=true   (Nerf 3 : pont EventBus)
+    #   - BEK_ENABLE_HERMES_NERVES=true      (Nerf 1 : outils Hermes réels)
+    #   - BEK_ENABLE_SKILLS_NERVES=true      (Nerf 8 : skills chargés au boot)
+    #   - BEK_ENABLE_HEADLESS_NERVES=true    (Nerf 11-13 : Playwright branché)
+    #   - BEK_ENABLE_TMUX_NERVES=true        (Nerf 14-17 : Tmux branché)
+    #   - BEK_ENABLE_WEB_AGENT_NERVES=true   (Nerf 4 : WebAgent tracé)
+    #   - BEK_ENABLE_GUARDIAN_NERVES=true    (Nerf 9 : Guardian tracé)
+    #   - BEK_ENABLE_APPROVAL_NERVES=true    (Nerf 5 : approbation humaine)
+    #   - BEK_ENABLE_MCP_NERVES=true         (Nerf 6 : MCP ↔ Hermes)
+    #   - BEK_ENABLE_COGNITIVE_NERVES=true   (Nerf 2 : Swarm + Grounding)
+    #   - BEK_ENABLE_ROUTER_NERVES=true      (Nerf 7 : SmartRouter sémantique)
+    #   - BEK_ENABLE_CRM_NERVES=true         (Nerf 10 : Sub-CRM → Hermes)
+    #
+    # ⚠️ Ce bloc est purement additif. Si un nerf échoue, le serveur
+    #    continue de démarrer avec le comportement legacy (dégradé mais stable).
+    # ══════════════════════════════════════════════════════════════════
+    try:
+        from nerves import (
+            event_bus_nerves,
+            hermes_nerves,
+            skills_nerves,
+            headless_nerves,
+            tmux_nerves,
+            web_agent_nerves,
+            guardian_nerves,
+            approval_nerves,
+            mcp_nerves,
+            cognitive_nerves,
+            router_nerves,
+            crm_nerves,
+        )
+
+        # 1. Pont EventBus (fondation pour tous les autres nerfs tracés)
+        _nerve_3_result = event_bus_nerves.activate_event_bus_nerves()
+
+        # 2. Outils Hermes réels
+        _nerve_1_result = hermes_nerves.activate_hermes_nerves()
+
+        # 3. Skills chargés au boot
+        _nerve_8_result = skills_nerves.activate_skills_nerves()
+
+        # 4. Headless branché
+        _nerve_11_result = headless_nerves.activate_headless_nerves()
+
+        # 5. Tmux branché
+        _nerve_14_result = tmux_nerves.activate_tmux_nerves()
+
+        # 6. WebAgent tracé
+        _nerve_4_result = web_agent_nerves.activate_web_agent_nerves()
+
+        # 7. Guardian tracé
+        _nerve_9_result = guardian_nerves.activate_guardian_nerves()
+
+        # 8. Approval Manager (interception automatique des tâches L3+)
+        _nerve_5_result = approval_nerves.activate_approval_nerves()
+
+        # 9. MCP Gateway (sync bidirectionnelle avec Hermes)
+        _nerve_6_result = mcp_nerves.activate_mcp_nerves()
+
+        # 10. Cortex cognitif (Swarm + Grounding)
+        _nerve_2_result = cognitive_nerves.activate_cognitive_nerves()
+
+        # 11. SmartRouter sémantique réel
+        _nerve_7_result = router_nerves.activate_router_nerves()
+
+        # 12. Sub-CRM Engine → Hermes
+        _nerve_10_result = crm_nerves.activate_crm_nerves()
+
+        logger.info(
+            "🧠 Système nerveux BEK activé | "
+            "Nerf 3 : %s | "
+            "Nerf 1 : %s (%d outils) | "
+            "Nerf 8 : %s (%d skills) | "
+            "Nerf 11-13 : %s (%d headless) | "
+            "Nerf 14-17 : %s (%d tmux) | "
+            "Nerf 4 : %s (%d web) | "
+            "Nerf 9 : %s (%d guardian) | "
+            "Nerf 5 : %s (%d approval) | "
+            "Nerf 6 : %s (%d mcp) | "
+            "Nerf 2 : %s (%d cognitive) | "
+            "Nerf 7 : %s (%d router) | "
+            "Nerf 10 : %s (%d crm)",
+            _nerve_3_result.get("status"),
+            _nerve_1_result.get("status"), _nerve_1_result.get("activated_count", 0),
+            _nerve_8_result.get("status"), _nerve_8_result.get("skills_loaded", 0),
+            _nerve_11_result.get("status"), _nerve_11_result.get("activated_count", 0),
+            _nerve_14_result.get("status"), _nerve_14_result.get("activated_count", 0),
+            _nerve_4_result.get("status"), _nerve_4_result.get("activated_count", 0),
+            _nerve_9_result.get("status"), _nerve_9_result.get("activated_count", 0),
+            _nerve_5_result.get("status"), _nerve_5_result.get("activated_count", 0),
+            _nerve_6_result.get("status"), _nerve_6_result.get("activated_count", 0),
+            _nerve_2_result.get("status"), _nerve_2_result.get("activated_count", 0),
+            _nerve_7_result.get("status"), _nerve_7_result.get("activated_count", 0),
+            _nerve_10_result.get("status"), _nerve_10_result.get("activated_count", 0),
+        )
+    except ImportError as _nerves_import_err:
+        logger.warning(
+            "⚠️ Paquet nerves/ introuvable (%s). Mode legacy conservé.",
+            _nerves_import_err,
+        )
+    except Exception as _nerves_err:
+        logger.error(
+            "❌ Activation des nerfs échouée : %s. Mode legacy conservé.",
+            _nerves_err,
+        )
+    # ══════════════════════════════════════════════════════════════════
+
     os.environ["BEK_BOOTSTRAPPED"] = "1"
 
 security_guard = hermes.security_guard
