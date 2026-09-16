@@ -1,80 +1,45 @@
-aiofiles
-aiohttp
-aiosqlite
-annotated-types
-anthropic
-anyio
-attrs
-certifi
-charset-normalizer
-chromadb
-click
-colorama
-fastapi
-fastembed
-filelock
-Flask
-flask-cors
-google-auth
-google-genai
-googleapis-common-protos
-groq
-grpcio
-gunicorn
-h11
-httpcore
-httpx
-huggingface_hub
-idna
-Jinja2
-jiter
-joblib
-jsonpatch
-jsonpointer
-jsonschema
-langchain-core
-langchain-google-genai
-langchain-groq
-langchain-openai
-langgraph
-langsmith
-loguru
-lxml
-numpy
-openai
-opencv-python
-openpyxl
-orjson
-packaging
-pandas
-pillow
-pinecone
-psutil
-psycopg2-binary
-pydantic
-pydantic-settings
-pydantic_core
-PyYAML
-regex
-requests
-rich
-safetensors
-scikit-learn
-scipy
-sentence-transformers
-SQLAlchemy
-starlette
-sympy
-tenacity
-tiktoken
-tokenizers
-torch
-tqdm
-transformers
-uvicorn
-websockets
-Werkzeug
-yarl
-zstandard
-beautifulsoup4==4.15.0
+# ==============================================================================
+# BEK-v16 — Requirements pour Render Free (512 Mo RAM)
+# ------------------------------------------------------------------------------
+# Version allégée : retiré torch, transformers, sentence-transformers,
+# fastembed, opencv, scikit-learn, scipy, langchain-*, Flask.
+# Seules les dépendances réellement utilisées par BEK-v16 sont conservées.
+# ==============================================================================
+
+# --- Core Web / API ---
+fastapi>=0.115.0,<0.120.0
+uvicorn>=0.32.0,<0.35.0
 python-multipart>=0.0.9
+aiofiles>=24.0.0
+pydantic>=2.9.0,<3.0.0
+pydantic-settings>=2.5.0
+
+# --- HTTP ---
+requests>=2.32.0,<3.0.0
+httpx>=0.27.0,<0.29.0
+aiohttp>=3.10.0,<4.0.0
+websockets>=13.0,<15.0
+
+# --- Bases de données ---
+psycopg2-binary>=2.9.9,<3.0.0
+pinecone>=5.0.0,<7.0.0
+chromadb>=0.5.0,<0.6.0
+numpy>=1.26.0,<3.0.0
+
+# --- LLM Providers ---
+groq>=0.13.0,<1.0.0
+
+# --- Parsing / fichiers ---
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+PyYAML>=6.0.0
+openpyxl>=3.1.0
+pillow>=10.0.0
+
+# --- Headless browser (headless_* tools) ---
+playwright>=1.45.0,<2.0.0
+
+# --- Utils ---
+tenacity>=8.2.0
+tiktoken>=0.7.0
+python-dotenv>=1.0.0

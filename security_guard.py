@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import re
+import secrets
 from pathlib import Path
 from typing import Any, Dict, Optional, Set, Tuple
 
@@ -87,21 +88,50 @@ class SecurityGuard:
         "stop_session": ("session_name", "provider", "model"),
     }
 
+    # -------------------------------------------------------------------------
+    # Patterns interdits — deux familles
+    # -------------------------------------------------------------------------
+    # 1) FORBIDDEN_PATTERNS : appliqués à TOUS les champs sauf code_content/content
     FORBIDDEN_PATTERNS = (
         re.compile(r"(?i)\bDROP\s+DATABASE\b"),
         re.compile(r"(?i)\bTRUNCATE\s+TABLE\b"),
         re.compile(r"(?i)\bFORMAT\s+[A-Z]:\b"),
         re.compile(r"(?i)\bRM\s+-RF\s+/\b"),
         re.compile(r"(?i)\bDEL\s+/[FQS]\s+[A-Z]:\\"),
-        re.compile(r"(?i)\bEVAL\s*\("),
-        re.compile(r"(?i)__IMPORT__\s*\("),
         re.compile(r"(?i)\bPOWERSHELL\b.*-ENC\b"),
         re.compile(r"(?i)\bNC\b.*-E\b"),
         re.compile(r"(?i)/DEV/(?:TCP|UDP)/"),
     )
 
+    # 2) FORBIDDEN_CODE_PATTERNS : appliqués EN PLUS à code_content et content
+    #    Ils visent les primitives d'exécution dynamique dangereuses.
+    FORBIDDEN_CODE_PATTERNS = (
+        re.compile(r"(?i)\beval\s*\("),
+        re.compile(r"(?i)\bexec\s*\("),
+        re.compile(r"(?i)\bcompile\s*\("),
+        re.compile(r"(?i)__import__\s*\("),
+        re.compile(r"(?i)\bglobals\s*\(\s*\)"),
+        re.compile(r"(?i)\blocals\s*\(\s*\)"),
+        re.compile(r"(?i)\bos\s*\.\s*system\s*\("),
+        re.compile(r"(?i)\bos\s*\.\s*popen\s*\("),
+        re.compile(r"(?i)\bos\s*\.\s*exec[lv]"),
+        re.compile(r"(?i)\bsubprocess\s*\."),
+        re.compile(r"(?i)\bpty\s*\."),
+        re.compile(r"(?i)\bctypes\s*\."),
+        re.compile(r"(?i)\bpickle\s*\.\s*loads\s*\("),
+        re.compile(r"(?i)\bmarshal\s*\.\s*loads\s*\("),
+        re.compile(r"(?i)\bwinreg\s*\."),
+        re.compile(r"(?i)\bsocket\s*\.\s*socket\s*\("),
+        re.compile(r"(?i)\burllib\s*\.\s*request\s*\."),
+        re.compile(r"(?i)\brequests\s*\.\s*(get|post|put|delete|patch)\s*\("),
+    )
+
+    # Imports bannis — étendus par rapport à la version d'origine
+    # NB : cette liste s'applique uniquement à create_dynamic_skill.
     BANNED_IMPORTS: Set[str] = {
-        "subprocess", "pty", "ctypes", "marshal", "pickle", "winreg"
+        "subprocess", "pty", "ctypes", "marshal", "pickle", "winreg",
+        "urllib", "requests", "http", "socket", "shutil",
+        "os", "sys", "importlib", "multiprocessing", "threading",
     }
 
     SECRET_PATTERNS = (
@@ -113,15 +143,34 @@ class SecurityGuard:
     )
 
     def __init__(self, secret_key: Optional[str] = None):
+        # ---------------------------------------------------------------------
+        # CORRECTIF CRITIQUE : plus de clé codée en dur.
+        # 1) clé fournie explicitement
+        # 2) variable d'environnement BEK_HSM_SECRET
+        # 3) fichier .env / env.txt
+        # 4) clé éphémère aléatoire (session uniquement) + avertissement fort
+        # ---------------------------------------------------------------------
         key = secret_key or os.environ.get(self.DEFAULT_SECRET_ENV, "")
         if not key:
             key = self._read_env_file(self.DEFAULT_SECRET_ENV)
+
+        self._ephemeral_key_used = False
         if not key:
-            key = "b078731f6b9fef2fafeac998854e8811b02f5427b95da0298dec3180a62aec0a"
+            key = secrets.token_hex(32)
+            self._ephemeral_key_used = True
+            logger.warning(
+                "⚠️ SecurityGuard : aucune clé HMAC persistante trouvée "
+                "(ni BEK_HSM_SECRET, ni .env/env.txt). Une clé ÉPHÉMÈRE a été "
+                "générée pour cette session. Les signatures HMAC ne seront PAS "
+                "valides après redémarrage. Définissez BEK_HSM_SECRET en production."
+            )
 
         self.secret_key = key.strip("\"' \r\n").encode("utf-8")
         self.allowed_actions = dict(self.ALLOWED_ACTIONS)
 
+    # -------------------------------------------------------------------------
+    # Chargement de la clé depuis .env
+    # -------------------------------------------------------------------------
     @staticmethod
     def _read_env_file(name: str) -> str:
         base = os.path.dirname(os.path.abspath(__file__))
@@ -139,6 +188,9 @@ class SecurityGuard:
                 continue
         return ""
 
+    # -------------------------------------------------------------------------
+    # DLP : masquage des secrets
+    # -------------------------------------------------------------------------
     @classmethod
     def sanitize_secrets(cls, text: str) -> str:
         """DLP: Masque automatiquement les clés et tokens sensibles."""
@@ -149,19 +201,26 @@ class SecurityGuard:
             sanitized = pattern.sub("[REDACTED_SECRET]", sanitized)
         return sanitized
 
+    # -------------------------------------------------------------------------
+    # Analyse AST — CORRECTIF : SyntaxError => REJET
+    # -------------------------------------------------------------------------
     @classmethod
     def validate_code_ast(cls, code_str: str) -> Tuple[bool, str]:
-        """Analyse syntaxique AST tolérante (nettoie les balises markdown et le BOM)."""
+        """
+        Analyse syntaxique AST tolérante (nettoie les balises markdown et le BOM).
+        CORRECTIF : un SyntaxError est désormais un REJET, pas un laissez-passer.
+        """
         if not isinstance(code_str, str) or not code_str.strip():
             return True, "OK"
-        
+
         cleaned = code_str.strip().lstrip("\ufeff")
         cleaned = re.sub(r"^```(?:python)?\s*|```$", "", cleaned, flags=re.M).strip()
 
         try:
             tree = ast.parse(cleaned)
-        except SyntaxError:
-            return True, "Ignoré (non-Python ou script brut)"
+        except SyntaxError as exc:
+            # CORRECTIF : on rejette explicitement au lieu de retourner True
+            return False, f"Code non analysable (SyntaxError) : {exc.msg}"
 
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
@@ -175,16 +234,37 @@ class SecurityGuard:
 
         return True, "OK"
 
+    # -------------------------------------------------------------------------
+    # Détection d'injection — CORRECTIF : ne plus exclure content/code_content
+    # -------------------------------------------------------------------------
     @classmethod
-    def _detect_injection(cls, value: Any) -> bool:
+    def _detect_injection(cls, value: Any, strict_code: bool = False) -> bool:
+        """
+        Détecte les patterns interdits.
+        - strict_code=True : applique aussi FORBIDDEN_CODE_PATTERNS
+          (utilisé pour code_content et content).
+        """
         try:
             text = value if isinstance(value, str) else json.dumps(
                 value, ensure_ascii=False, default=str
             )
         except Exception:
             return True
-        return any(pattern.search(text) for pattern in cls.FORBIDDEN_PATTERNS)
 
+        for pattern in cls.FORBIDDEN_PATTERNS:
+            if pattern.search(text):
+                return True
+
+        if strict_code:
+            for pattern in cls.FORBIDDEN_CODE_PATTERNS:
+                if pattern.search(text):
+                    return True
+
+        return False
+
+    # -------------------------------------------------------------------------
+    # Confinement de chemin
+    # -------------------------------------------------------------------------
     @classmethod
     def _validate_path_confinement(cls, path_val: Any) -> Tuple[bool, str]:
         if not isinstance(path_val, str) or not path_val.strip():
@@ -210,6 +290,9 @@ class SecurityGuard:
 
         return True, "OK"
 
+    # -------------------------------------------------------------------------
+    # Certification principale
+    # -------------------------------------------------------------------------
     def validate_and_certify(
         self,
         action: str,
@@ -246,15 +329,18 @@ class SecurityGuard:
                 if not is_safe:
                     return False, f"REJET SECURITE : {err_msg}", {}
 
-        # 2. Validation AST uniquement pour la création de code dynamique (EXCLUSION TOTALE de read_file)
+        # 2. Validation AST uniquement pour la création de code dynamique
         if action == "create_dynamic_skill" and "code_content" in sanitized:
             is_valid_code, err_code = self.validate_code_ast(sanitized["code_content"])
             if not is_valid_code:
                 return False, f"REJET SECURITE : {err_code}", {}
 
         # 3. Détection d'injections
+        #    CORRECTIF : on n'exclut PLUS content ni code_content.
+        #    Ils passent par la version stricte (FORBIDDEN_CODE_PATTERNS).
         for key, value in sanitized.items():
-            if key not in ("code_content", "content") and self._detect_injection(value):
+            strict = key in ("content", "code_content")
+            if self._detect_injection(value, strict_code=strict):
                 return (
                     False,
                     f"REJET SECURITE : Signature destructive ou injection detectee dans '{key}'.",
@@ -278,12 +364,16 @@ class SecurityGuard:
             "action": action,
             "params": sanitized,
             "certified": True,
-            "security_layer": "SecurityGuard-v15.3-Hardened",
-            "policy": "ALLOWLIST_STRICT + SANDBOX + DLP",
+            "security_layer": "SecurityGuard-v15.3-Hardened-v2",
+            "policy": "ALLOWLIST_STRICT + SANDBOX + DLP + HMAC-SHA256",
             "hsm_signature": signature,
+            "ephemeral_key": self._ephemeral_key_used,
         }
-        return True, "CERTIFIE PAR SECURITY GUARD (ALLOWLIST + SANDBOX + HMAC-SHA256)", envelope
+        return True, "CERTIFIE PAR SECURITY GUARD (ALLOWLIST + SANDBOX + DLP + HMAC-SHA256)", envelope
 
+    # -------------------------------------------------------------------------
+    # Vérification de signature — à appeler AVANT exécution (côté hermes_core)
+    # -------------------------------------------------------------------------
     def verify_signature(
         self,
         action: str,
@@ -306,12 +396,46 @@ class SecurityGuard:
         ).hexdigest()
         return hmac.compare_digest(expected, signature)
 
+    # -------------------------------------------------------------------------
+    # NOUVEAU : vérification d'enveloppe complète
+    # Utilisable depuis hermes_core._validate_task avant exécution.
+    # -------------------------------------------------------------------------
+    def verify_envelope(self, envelope: Dict[str, Any]) -> Tuple[bool, str]:
+        """
+        Vérifie qu'une enveloppe produite par validate_and_certify()
+        est bien certifiée et que la signature HMAC est valide.
+
+        Retourne (True, "OK") si l'enveloppe est valide, sinon (False, raison).
+        """
+        if not isinstance(envelope, dict):
+            return False, "Enveloppe absente ou invalide."
+
+        action = envelope.get("action")
+        params = envelope.get("params")
+        signature = envelope.get("hsm_signature")
+        certified = envelope.get("certified")
+
+        if not certified:
+            return False, "Enveloppe non certifiée."
+
+        if not action or not isinstance(params, dict) or not signature:
+            return False, "Enveloppe incomplète (action/params/signature manquants)."
+
+        if not self.verify_signature(action, params, signature):
+            return False, "Signature HMAC invalide."
+
+        return True, "OK"
+
+    # -------------------------------------------------------------------------
+    # État runtime
+    # -------------------------------------------------------------------------
     def runtime_status(self) -> Dict[str, Any]:
         return {
             "active": True,
             "policy": "ALLOWLIST_STRICT + SANDBOX + DLP + HMAC-SHA256",
             "allowed_actions_count": len(self.allowed_actions),
             "allowed_actions": sorted(self.allowed_actions.keys()),
+            "ephemeral_key_used": self._ephemeral_key_used,
         }
 
 

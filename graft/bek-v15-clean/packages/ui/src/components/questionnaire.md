@@ -1,0 +1,16 @@
+# bek-v15-clean/packages/ui/src/components/questionnaire.tsx
+
+- Questionnaire · function · L10-L21 — function Questionnaire({ className, ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Root>)
+- QuestionnaireProgress · function · L23-L37 — function QuestionnaireProgress({ className, ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Progress>)
+- QuestionnaireItem · function · L39-L53 — function QuestionnaireItem({ className, ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Item>)
+- QuestionnaireTitle · function · L55-L69 — function QuestionnaireTitle({ className, ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Title>)
+- QuestionnaireDescription · function · L71-L82 — function QuestionnaireDescription({ className, ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Description>)
+- QuestionnaireChoices · function · L84-L98 — function QuestionnaireChoices({ className, ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Choices>)
+- QuestionnaireChoice · function · L100-L146 — function QuestionnaireChoice({ children, className, ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Choice>)
+- QuestionnaireInput · function · L148-L168 — function QuestionnaireInput({ className, ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Input>)
+- QuestionnaireError · function · L170-L181 — function QuestionnaireError({ className, ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Error>)
+- QuestionnaireActions · function · L183-L197 — function QuestionnaireActions({ className, ...props }: React.ComponentProps<"div">)
+- QuestionnairePrevious · function · L199-L222 — function QuestionnairePrevious({ children, className, size = "default", variant = "outline", ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Previous> & Pick<React.ComponentProps<typeof Button>, "size" | "variant">)
+- QuestionnaireSkip · function · L224-L247 — function QuestionnaireSkip({ children, className, size = "default", variant = "outline", ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Skip> & Pick<React.ComponentProps<typeof Button>, "size" | "variant">)
+- QuestionnaireNext · function · L249-L272 — function QuestionnaireNext({ children, className, size = "default", variant = "default", ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Next> & Pick<React.ComponentProps<typeof Button>, "size" | "variant">)
+- QuestionnaireSubmit · function · L274-L297 — function QuestionnaireSubmit({ children, className, size = "default", variant = "default", ...props }: React.ComponentProps<typeof QuestionnairePrimitive.Submit> & Pick<React.ComponentProps<typeof Button>, "size" | "variant">)

@@ -1,0 +1,25 @@
+# bek-v15-clean/apps/api/src/agent/agent-definitions.service.ts
+
+- AgentDefinitionsService · class · L24-L794 — class AgentDefinitionsService
+- constructor · method · L25-L29 — constructor( @InjectDatabase() private readonly db: Db, private readonly access: AgentAccessService, private readonly trigger: AgentTriggerService, )
+- list · method · L31-L74 — async list(userId: string)
+- byId · method · L76-L158 — async byId(id: string, userId: string)
+- update · method · L160-L189 — async update(input: AgentUpdateInput, userId: string)
+- files · method · L191-L220 — async files(id: string, userId: string)
+- saveFile · method · L222-L326 — async saveFile(input: AgentSaveFileInput, userId: string)
+- revise · method · L328-L487 — async revise(input: AgentReviseInput, userId: string)
+- deploy · method · L489-L584 — async deploy(input: AgentDeployInput, userId: string)
+- pause · method · L586-L596 — async pause(id: string, userId: string)
+- resume · method · L598-L608 — async resume(id: string, userId: string)
+- archive · method · L610-L621 — async archive(id: string, userId: string)
+- restore · method · L623-L634 — async restore(id: string, userId: string)
+- remove · method · L636-L725 — async remove(id: string, userId: string)
+- changeStatus · method · L727-L765 — private async changeStatus( id: string, userId: string, allowedFrom: readonly AgentDefinitionStatus[], status: "LIVE" | "PAUSED" | "ARCHIVED", type: string, summary: string, invalidStatusMessage: string, extra: Prisma.AgentDefinitionUpdateInput = {}, )
+- lockAgent · method · L767-L788 — private async lockAgent(tx: Prisma.TransactionClient, id: string)
+- canAdmin · method · L790-L793 — private async canAdmin(userId: string): Promise<boolean>
+- versionMetadata · function · L796-L815 — function versionMetadata(manifest: unknown): { name?: string; description?: string | null; }
+- readCapabilities · function · L817-L845 — function readCapabilities(manifest: unknown)
+- reviseSummary · function · L847-L857 — function reviseSummary(input: { channel?: { name: string }; actions?: string[]; resources?: unknown[]; }): string
+- reviseValidation · function · L859-L882 — function reviseValidation( validation: unknown, before: string[], after: string[], ): Prisma.InputJsonValue
+- nextVersionNumber · function · L884-L895 — async function nextVersionNumber( tx: Prisma.TransactionClient, agentId: string, ): Promise<number>
+- carryArtifactsForward · function · L897-L923 — async function carryArtifactsForward( tx: Prisma.TransactionClient, fromVersionId: string, toVersionId: string, ): Promise<void>

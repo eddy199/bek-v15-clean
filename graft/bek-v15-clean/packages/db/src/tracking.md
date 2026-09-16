@@ -1,0 +1,29 @@
+# bek-v15-clean/packages/db/src/tracking.ts
+
+- GtmTagState · type · L39-L39 — type GtmTagState = "absent" | "url" | "attribute";
+- DomainScopeValue · type · L41-L41 — type DomainScopeValue = "SITE_AND_SUBDOMAINS" | "EXACT_HOST";
+- TrackedHost · interface · L43-L46 — interface TrackedHost
+- TrackingConfig · interface · L48-L57 — interface TrackingConfig
+- rateWindowKey · function · L61-L63 — function rateWindowKey(at: Date = new Date()): string
+- contactWindowKey · function · L65-L67 — function contactWindowKey(at: Date = new Date()): string
+- windowExpiry · function · L69-L76 — function windowExpiry(key: string, at: Date = new Date()): Date
+- trackingReady · function · L78-L83 — function trackingReady( limitToDomains: boolean, domainCount: number, ): boolean
+- mintSiteId · function · L85-L87 — function mintSiteId(): string
+- isSiteId · function · L89-L91 — function isSiteId(value: string | null | undefined): value is string
+- loaderUrl · function · L93-L95 — function loaderUrl(appUrl: string): string
+- trackingSnippet · function · L97-L99 — function trackingSnippet(appUrl: string, siteId: string): string
+- gtmLoaderUrl · function · L101-L103 — function gtmLoaderUrl(appUrl: string, siteId: string): string
+- gtmSnippet · function · L105-L107 — function gtmSnippet(appUrl: string, siteId: string): string
+- gtmContainerUrl · function · L109-L111 — function gtmContainerUrl(container: string): string
+- gtmContainers · function · L113-L117 — function gtmContainers(html: string): string[]
+- gtmTag · function · L119-L126 — function gtmTag(source: string, siteId: string): GtmTagState
+- configHash · function · L128-L143 — function configHash(config: TrackingConfig): string
+- isConfigHash · function · L145-L149 — function isConfigHash( value: string | null | undefined, ): value is string
+- normalizeHost · function · L151-L172 — function normalizeHost(input: string | null | undefined): string | null
+- normalizePath · function · L174-L184 — function normalizePath(input: string | null | undefined): string
+- stripQuery · function · L186-L193 — function stripQuery(input: string | null | undefined): string | null
+- matchedHost · function · L195-L211 — function matchedHost( host: string, config: TrackingConfig, ): TrackedHost | null
+- hostAllowed · function · L213-L217 — function hostAllowed(host: string, config: TrackingConfig): boolean
+- originAllowed · function · L219-L235 — function originAllowed( origin: string | null | undefined, config: TrackingConfig, ): boolean
+- dedupeKey · function · L237-L248 — function dedupeKey(parts: { host: string; path: string; email: string | null; at: Date; }): string
+- readTrackingConfig · function · L250-L289 — async function readTrackingConfig( db: Db, ): Promise<TrackingConfig | null>

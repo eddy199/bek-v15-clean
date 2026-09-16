@@ -1,0 +1,28 @@
+# bek-v15-clean/apps/api/src/telemetry/rollup.service.ts
+
+- Counted · type · L48-L48 — type Counted = { key: string; count: number };
+- RollupOutcome · type · L50-L54 — type RollupOutcome = { sent: boolean; reason?: string; milestones: string[]; };
+- RollupService · class · L57-L584 — class RollupService
+- constructor · method · L60-L63 — constructor( @InjectDatabase() private readonly db: Db, private readonly funnel: FunnelService, )
+- run · method · L65-L108 — async run(force = false): Promise<RollupOutcome>
+- giveBack · method · L110-L116 — private async giveBack( previous: Date | null, counters: Record<string, number>, ): Promise<void>
+- gather · method · L118-L134 — private async gather( since: Date, ): Promise<{ properties: Properties; counters: Record<string, number> }>
+- shape · method · L136-L168 — private async shape(): Promise<Properties>
+- postgresMajor · method · L170-L183 — private async postgresMajor(): Promise<string | null>
+- agent · method · L185-L227 — private async agent( since: Date, counters: Record<string, number>, ): Promise<Properties>
+- toolCalls · method · L229-L260 — private async toolCalls(since: Date): Promise<{ calls: Record<string, number>; errors: Record<string, number>; sandbox: boolean; }>
+- sessions · method · L262-L285 — private async sessions(since: Date): Promise<{ started: number; completed: number; failed: number; withTools: number; }>
+- of · function · L276-L277 — of = (type: string)
+- tasks · method · L287-L321 — private async tasks(since: Date): Promise<{ claimed: Record<string, number>; completed: Record<string, number>; retired: Record<string, number>; }>
+- attempts · method · L323-L343 — private async attempts( since: Date, ): Promise<{ mean: Record<string, number>; max: Record<string, number> }>
+- rechecks · method · L345-L365 — private async rechecks( since: Date, ): Promise<{ total: number; buckets: Record<string, number> }>
+- ledger · method · L367-L410 — private async ledger(): Promise<Properties>
+- evidenceKinds · method · L412-L426 — private async evidenceKinds(): Promise<Record<string, number>>
+- decisionHours · method · L428-L439 — private async decisionHours(): Promise<number | null>
+- supersededWithin · method · L441-L450 — private async supersededWithin(days: number): Promise<number>
+- crm · method · L452-L583 — private async crm(since: Date): Promise<Properties>
+- isSet · function · L586-L588 — function isSet(name: string): boolean
+- byKind · function · L590-L594 — function byKind(rows: Counted[]): Record<string, number>
+- merge · function · L596-L604 — function merge(rows: Counted[]): Record<string, number>
+- countsOf · function · L606-L616 — function countsOf( rows: Counted[], keys: readonly string[], ): Record<string, number>
+- round · function · L618-L620 — function round(value: number): number

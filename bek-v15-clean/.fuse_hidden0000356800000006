@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@pinecone-database/pinecone": "^8.2.0",
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.23.1",
+    "prisma": "^7.9.1"
+  }
+}

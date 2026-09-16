@@ -1,0 +1,24 @@
+# bek-v15-clean/apps/agent/agent/lib/builder-runtime.ts
+
+- BuilderResource · type · L16-L20 — type BuilderResource = { kind: "integration" | "company" | "contact" | "deal"; id: string; label: string; };
+- DraftTrigger · type · L22-L29 — type DraftTrigger = { type: "MANUAL" | "SCHEDULE" | "EVENT"; name: string; summary: string; event?: CrmEventType | null; nextRunAt?: string | null; intervalMinutes?: number | null; };
+- DraftAction · type · L31-L53 — type DraftAction = | { type: typeof AGENT_ACTION_TYPES.CRM_ACTIVITY_CREATE; provider: "crm"; summary: string; activityTypes: ("NOTE" | "TASK")[]; } | { type: typeof AGENT_ACTION_TYPES.RUN_SUMMARY; provider: "crm"; summary: string; } | { type: typeof AGENT_ACTION_TYPES.SLACK_MESSAGE_POST; provider: "slack"; summary: string; destination: { kind: "channel" | "user"; resolution: "chosen"; id: string; label: string; }; };
+- DraftAgentInput · type · L55-L64 — type DraftAgentInput = { name: string; description: string; instructions: string; triggers: DraftTrigger[]; recordScope: "SELECTED" | "WORKSPACE"; resources: BuilderResource[]; actions: DraftAction[]; access: string[]; };
+- BuilderArtifactPath · type · L72-L72 — type BuilderArtifactPath = (typeof BUILDER_ARTIFACT_PATHS)[number];
+- writeBuilderArtifact · function · L80-L126 — async function writeBuilderArtifact( conversationId: string, userId: string, path: BuilderArtifactPath, content: string, )
+- builderContext · function · L128-L183 — async function builderContext(conversationId: string, userId: string)
+- saveBuilderDraft · function · L185-L411 — async function saveBuilderDraft( conversationId: string, userId: string, input: DraftAgentInput, )
+- persistArtifactSnapshots · function · L413-L463 — async function persistArtifactSnapshots( tx: Prisma.TransactionClient, conversationId: string, versionId: string, files: ReturnType<typeof artifactFiles>, )
+- validateDraft · function · L465-L608 — async function validateDraft( userId: string, input: DraftAgentInput, taggedResources: BuilderResource[], )
+- connectionStatus · function · L610-L679 — async function connectionStatus(userId: string)
+- SlackConnections · type · L681-L681 — type SlackConnections = Awaited<ReturnType<typeof connectionStatus>>;
+- actionIntegrationIssues · function · L683-L700 — function actionIntegrationIssues( actions: DraftAction[], resources: BuilderResource[], ): string[]
+- slackDestinationIssues · function · L702-L720 — function slackDestinationIssues( destination: Extract< DraftAction, { type: typeof AGENT_ACTION_TYPES.SLACK_MESSAGE_POST } >["destination"], connections: Pick<SlackConnections, "slackChannels" | "slackPeople">, ): string[]
+- describeResources · function · L722-L771 — async function describeResources(resources: BuilderResource[])
+- missingResourceIds · function · L773-L778 — async function missingResourceIds(resources: BuilderResource[])
+- resourcesOf · function · L780-L799 — function resourcesOf(value: unknown): BuilderResource[]
+- uniqueResources · function · L801-L810 — function uniqueResources(resources: BuilderResource[]): BuilderResource[]
+- scheduleDate · function · L812-L816 — function scheduleDate(trigger: DraftTrigger, now: Date): Date | null
+- artifactFiles · function · L818-L839 — function artifactFiles(input: DraftAgentInput, manifest: object)
+- assertSafeArtifact · function · L841-L851 — function assertSafeArtifact(content: string): void
+- scopeSummary · function · L853-L862 — function scopeSummary( recordScope: DraftAgentInput["recordScope"], resources: BuilderResource[], ): string

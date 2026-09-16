@@ -3,6 +3,16 @@ BEK-v15.3 HYBRID
 Memory Layer (Dual Hybrid: ChromaDB Local + Pinecone Cloud + Neon PostgreSQL + Sync Compensation)
 --------------------------------------------------------------------------------------------------
 Couche mémoire locale / Pinecone / Neon PostgreSQL / ChromaDB avec compensation de synchronisation et suppression.
+
+CORRECTIF v18 (2026-09-16) :
+  - NVIDIA embedding RESTAURÉ (modèle configurable via env).
+
+CORRECTIF v19 (2026-09-16) :
+  - Troncature automatique des vecteurs NVIDIA (2048 dims) à target_dim (1024).
+    Pinecone et ChromaDB attendent 1024 dims, mais nvidia/nemotron-3-embed-1b
+    retourne 2048. On garde les 1024 premières dimensions.
+  - Si le vecteur est plus court que target_dim, complétion avec des zéros.
+  - Élimine les erreurs "[400] Vector dimension 2048 does not match the index 1024".
 """
 
 from __future__ import annotations
@@ -112,6 +122,13 @@ PINECONE_INDEX_NAME = _env("PINECONE_INDEX_NAME", "bek-memory")
 
 NEON_DATABASE_URL = _env("DATABASE_URL", _env("NEON_DATABASE_URL", ""))
 
+# Modèle d'embedding NVIDIA (configurable via env).
+NVIDIA_EMBEDDING_MODEL = _env("NVIDIA_EMBEDDING_MODEL", "nvidia/nemotron-3-embed-1b")
+NVIDIA_EMBEDDING_URL = _env(
+    "NVIDIA_EMBEDDING_URL",
+    "https://integrate.api.nvidia.com/v1/embeddings",
+)
+
 
 # ============================================================
 # LIMITS & TIMEOUTS
@@ -181,6 +198,24 @@ def _safe_top_k(top_k: Any) -> int:
     return max(MIN_TOP_K, min(value, MAX_TOP_K))
 
 
+def _fit_dimension(vector: List[float], target_dim: int) -> List[float]:
+    """
+    Ajuste un vecteur à la dimension cible.
+
+    CORRECTIF v19 :
+      - Tronque si le vecteur est plus long.
+      - Complète avec des zéros si plus court.
+      - Retourne le vecteur inchangé si la dimension est déjà bonne.
+    """
+    current_len = len(vector)
+    if current_len == target_dim:
+        return vector
+    if current_len > target_dim:
+        return vector[:target_dim]
+    # current_len < target_dim
+    return vector + [0.0] * (target_dim - current_len)
+
+
 # ============================================================
 # EMBEDDINGS
 # ============================================================
@@ -215,7 +250,14 @@ def get_embedding(
     input_type: str = "query",
     target_dim: int = DEFAULT_EMBEDDING_DIM,
 ) -> List[float]:
-    """Génère un embedding NVIDIA si disponible avec fallback déterministe."""
+    """
+    Génère un embedding via NVIDIA NIM, avec fallback local SHA-256.
+
+    CORRECTIF v19 :
+      - NVIDIA embedding peut retourner 2048 dims, mais Pinecone/Chroma
+        attendent 1024. On ajuste automatiquement le vecteur à target_dim.
+      - Si NVIDIA échoue, fallback SHA-256 local.
+    """
     text = clean_string(text)
     if not text:
         return []
@@ -226,20 +268,20 @@ def get_embedding(
 
     text = text[:MAX_EMBEDDING_INPUT_LENGTH]
 
+    # 1. Tentative NVIDIA embedding
     if NVIDIA_API_KEY:
         try:
-            url = "https://integrate.api.nvidia.com/v1/embeddings"
             headers = {
                 "Authorization": f"Bearer {NVIDIA_API_KEY}",
                 "Content-Type": "application/json",
             }
             payload = {
                 "input": [text],
-                "model": "nvidia/embeddings-nv-embed-qa-4",
+                "model": NVIDIA_EMBEDDING_MODEL,
                 "input_type": input_type,
             }
             response = requests.post(
-                url,
+                NVIDIA_EMBEDDING_URL,
                 json=payload,
                 headers=headers,
                 timeout=PINECONE_TIMEOUT_SECONDS,
@@ -251,14 +293,25 @@ def get_embedding(
             if isinstance(data, list) and data and isinstance(data[0], dict):
                 embedding = data[0].get("embedding")
                 if isinstance(embedding, list) and embedding:
-                    vector = [float(value) for value in embedding]
+                    vector = [float(v) for v in embedding]
+                    # CORRECTIF v19 : ajuster à target_dim
+                    original_len = len(vector)
+                    vector = _fit_dimension(vector, target_dim)
+                    if original_len != target_dim:
+                        logger.debug(
+                            "NVIDIA embedding %d dims → ajusté à %d",
+                            original_len, target_dim,
+                        )
                     if vector:
                         return vector
 
-            logger.warning("NVIDIA a retourné un embedding invalide.")
+            logger.warning("NVIDIA embedding a retourné un format invalide.")
         except Exception as exc:
-            logger.warning("Embedding NVIDIA indisponible : %s. Bascule sur fallback local.", exc)
+            logger.warning(
+                "Embedding NVIDIA indisponible : %s. Bascule sur fallback local.", exc
+            )
 
+    # 2. Fallback local SHA-256
     return _fallback_embedding(text, target_dim=target_dim)
 
 
@@ -427,7 +480,7 @@ def record_pending_sync(record_id: str, content: str, error_msg: str = "") -> No
 
 
 def replay_pending_syncs(limit: int = 20) -> int:
-    """Rejoue les synchronisations vectorielles Pinecone en attente (appelé par le Guardian)."""
+    """Rejoue les synchronisations vectorielles Pinecone en attente."""
     index = get_pinecone_index()
     if index is None:
         return 0
@@ -513,7 +566,7 @@ def search_memory(
     query: str = "",
     top_k: int = DEFAULT_TOP_K,
 ) -> str:
-    """Recherche duale : Pinecone (Cloud) avec fallback automatique ChromaDB (Local)."""
+    """Recherche duale : Pinecone (Cloud) avec fallback ChromaDB (Local)."""
     query = clean_string(query)
     if not query:
         return ""
@@ -571,7 +624,7 @@ def save_to_memory(
     user_query: str,
     agent_response: str = "",
 ) -> bool:
-    """Sauvegarde simultanée dans Pinecone (Cloud) et ChromaDB (Local) avec compensation d'échec."""
+    """Sauvegarde simultanée dans Pinecone (Cloud) et ChromaDB (Local)."""
     user_query = clean_string(user_query)
     agent_response = clean_string(agent_response)
 
@@ -614,7 +667,7 @@ def save_to_memory(
     else:
         record_pending_sync(record_id, combined_text, "Pinecone index indisponible lors de l'appel.")
 
-    # 2. Upsert ChromaDB Local (Sauvegarde immédiate hors-ligne)
+    # 2. Upsert ChromaDB Local
     chroma_coll = get_chroma_collection()
     if chroma_coll is not None:
         try:
@@ -637,10 +690,10 @@ def save_to_memory(
 # ==========================================
 
 def delete_from_memory(record_id: str = "", keyword: str = "") -> dict:
-    """Supprime un souvenir de Pinecone, ChromaDB et de la table sync_log Neon[cite: 3]."""
+    """Supprime un souvenir de Pinecone, ChromaDB et de la table sync_log Neon."""
     result = {"pinecone": False, "chroma": False, "neon_sync": False}
-    
-    # 1. Suppression Pinecone Cloud[cite: 3]
+
+    # 1. Suppression Pinecone Cloud
     index = get_pinecone_index()
     if index is not None and record_id:
         try:
@@ -650,7 +703,7 @@ def delete_from_memory(record_id: str = "", keyword: str = "") -> dict:
         except Exception as exc:
             logger.warning("Échec suppression Pinecone : %s", exc)
 
-    # 2. Suppression ChromaDB Local[cite: 3]
+    # 2. Suppression ChromaDB Local
     chroma_coll = get_chroma_collection()
     if chroma_coll is not None:
         try:
@@ -669,7 +722,7 @@ def delete_from_memory(record_id: str = "", keyword: str = "") -> dict:
         except Exception as exc:
             logger.warning("Échec suppression ChromaDB : %s", exc)
 
-    # 3. Suppression dans la table de compensation sync_log (Neon DB)[cite: 3]
+    # 3. Suppression dans la table de compensation sync_log (Neon DB)
     conn = get_db_connection()
     if conn:
         cur = None

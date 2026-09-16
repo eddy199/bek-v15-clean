@@ -7,13 +7,13 @@
 #   - Pipeline cognitif post-stream (Nerf 2) : Grounding + Swarm critique
 #   - TOUTES les fonctionnalités existantes préservées
 #
-# CORRECTIFS v2 (robustesse) :
-#   - logger défini EN TÊTE de fichier (fix NameError potentiel)
-#   - Bornage strict de la taille des messages (MAX_CHARS_PER_MESSAGE)
-#   - Bornage strict de la taille totale du contexte (MAX_TOTAL_CHARS)
-#   - _safe_str() : garantit des str propres (évite payloads binaires)
-#   - Constantes configurables via env.txt (BEK_CHAT_*)
-#   - Aucune brique supprimée : SmartRouter, EventBus, Cognitive, QualityGate
+# CORRECTIFS v3 (connaissance architecture) :
+#   - Chargement de docs/ARCHITECTURE.md au démarrage du module
+#   - Injection dans le prompt système → tous les LLM connaissent BEK-v16
+#   - Anti-hallucination : le LLM reçoit l'architecture réelle
+#   - Troncature configurable via BEK_CHAT_MAX_ARCHITECTURE_CHARS
+#   - Fallback multi-chemins (docs/ARCHITECTURE.md, ARCHITECTURE.md)
+#   - Aucune brique supprimée
 # ==============================================================================
 from __future__ import annotations
 
@@ -23,7 +23,8 @@ import logging
 import os
 import re
 import uuid
-from typing import Any, Dict, List
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
@@ -36,7 +37,7 @@ from provider_manager import provider_manager
 from services.action_executor import execute_agent_crm_tool
 from services.tasks import CURRENT_OS_NAME
 
-# ── LOGGER GLOBAL (défini EN TÊTE — plus de NameError possible) ──
+# ── LOGGER GLOBAL (défini EN TÊTE) ──
 logger = logging.getLogger("BEKApp")
 
 # ── EXPRESSION RÉGULIÈRE UNIQUE (Anti-Coupure Interface) ──
@@ -44,11 +45,6 @@ ACTION_REGEX = re.compile(r"\x5bACTION:(\w+)\x5d(.*?)\x5b/ACTION\x5d", re.DOTALL
 
 # ══════════════════════════════════════════════════════════════════
 # 🛡️ BORNES DE TAILLE — Évite d'envoyer 775 000 chars aux providers
-# ══════════════════════════════════════════════════════════════════
-# Ces bornes sont configurables via env.txt :
-#   BEK_CHAT_HISTORY_WINDOW      (défaut 6)
-#   BEK_CHAT_MAX_CHARS_PER_MSG   (défaut 8000)
-#   BEK_CHAT_MAX_TOTAL_CHARS     (défaut 32000)
 # ══════════════════════════════════════════════════════════════════
 
 
@@ -64,13 +60,76 @@ def _env_int(name: str, default: int, minimum: int = 1) -> int:
 HISTORY_WINDOW = _env_int("BEK_CHAT_HISTORY_WINDOW", 6, minimum=1)
 MAX_CHARS_PER_MESSAGE = _env_int("BEK_CHAT_MAX_CHARS_PER_MSG", 8000, minimum=200)
 MAX_TOTAL_CHARS = _env_int("BEK_CHAT_MAX_TOTAL_CHARS", 32000, minimum=1000)
+MAX_ARCHITECTURE_CHARS = _env_int("BEK_CHAT_MAX_ARCHITECTURE_CHARS", 15000, minimum=500)
+
+
+# ══════════════════════════════════════════════════════════════════
+# 🧠 CHARGEMENT DE L'ARCHITECTURE BEK-v16 (injectée dans le prompt)
+# ══════════════════════════════════════════════════════════════════
+# Charge docs/ARCHITECTURE.md (ou ARCHITECTURE.md à la racine) au boot du
+# module, puis l'injecte dans le prompt système. Tous les LLM (Kimi, Gemini,
+# Groq, NVIDIA...) reçoivent cette connaissance → anti-hallucination.
+# ══════════════════════════════════════════════════════════════════
+
+_WORKSPACE_DIR = Path(__file__).resolve().parent.parent  # F:\workspacekimi
+
+_ARCHITECTURE_CANDIDATES = [
+    _WORKSPACE_DIR / "docs" / "ARCHITECTURE.md",
+    _WORKSPACE_DIR / "ARCHITECTURE.md",
+]
+
+
+def _load_architecture_context() -> str:
+    """
+    Charge le contenu de ARCHITECTURE.md au démarrage du module.
+    Retourne une chaîne vide si le fichier est introuvable.
+    Ne lève JAMAIS d'exception.
+    """
+    for candidate in _ARCHITECTURE_CANDIDATES:
+        try:
+            if candidate.exists() and candidate.is_file():
+                with candidate.open("r", encoding="utf-8", errors="ignore") as f:
+                    content = f.read()
+
+                if not content.strip():
+                    continue
+
+                if len(content) > MAX_ARCHITECTURE_CHARS:
+                    content = content[:MAX_ARCHITECTURE_CHARS] + (
+                        "\n\n[…architecture tronquée pour respecter la limite]"
+                    )
+
+                logger.info(
+                    "[Archi] Contexte chargé : %s (%d chars)",
+                    candidate, len(content),
+                )
+                return content
+        except Exception as exc:
+            logger.warning("[Archi] Lecture échouée %s : %s", candidate, exc)
+
+    logger.warning(
+        "[Archi] Aucun fichier ARCHITECTURE.md trouvé dans %s. "
+        "Les LLM n'auront pas connaissance de l'architecture au boot.",
+        [str(c) for c in _ARCHITECTURE_CANDIDATES],
+    )
+    return ""
+
+
+_ARCHITECTURE_CONTEXT: str = _load_architecture_context()
+
+
+def get_architecture_context() -> str:
+    """Bridge public : retourne le contenu chargé de l'architecture."""
+    return _ARCHITECTURE_CONTEXT
+
+
+# ══════════════════════════════════════════════════════════════════
+# 🛡️ UTILITAIRES DE BORNAGE
+# ══════════════════════════════════════════════════════════════════
 
 
 def _safe_str(value: Any) -> str:
-    """
-    Convertit n'importe quelle valeur en str propre.
-    Évite les payloads binaires/dicts qui font exploser la taille.
-    """
+    """Convertit n'importe quelle valeur en str propre."""
     if value is None:
         return ""
     if isinstance(value, str):
@@ -92,23 +151,12 @@ def _truncate_messages(
     max_per_msg: int = MAX_CHARS_PER_MESSAGE,
     max_total: int = MAX_TOTAL_CHARS,
 ) -> List[Dict[str, Any]]:
-    """
-    Borne la taille des messages avant envoi aux providers.
-
-    - Ne garde que les `window` derniers messages.
-    - Tronque chaque message à `max_per_msg` caractères.
-    - Borne la taille totale cumulée à `max_total` caractères
-      (les messages les plus anciens sont tronqués en premier).
-
-    Ne lève JAMAIS d'exception. Retourne toujours une liste de dicts valides.
-    """
+    """Borne la taille des messages avant envoi aux providers."""
     if not messages or not isinstance(messages, list):
         return []
 
-    # 1. Fenêtre glissante : on prend les N derniers valides
     recent = [m for m in messages[-window:] if isinstance(m, dict)]
 
-    # 2. Normalisation + troncature par message
     normalized: List[Dict[str, Any]] = []
     for m in recent:
         role = _safe_str(m.get("role", "user"))[:32] or "user"
@@ -117,11 +165,9 @@ def _truncate_messages(
             content = content[:max_per_msg] + "\n…[tronqué]"
         normalized.append({"role": role, "content": content})
 
-    # 3. Borne de taille totale cumulée (tronque les plus anciens en priorité)
     total = sum(len(m["content"]) for m in normalized)
     if total > max_total:
         overflow = total - max_total
-        # On retire le surplus en partant du début (messages les plus anciens)
         for m in normalized:
             if overflow <= 0:
                 break
@@ -130,9 +176,7 @@ def _truncate_messages(
                 overflow -= content_len
                 m["content"] = "[…contenu ancien tronqué…]"
             else:
-                m["content"] = (
-                    "[…tronqué…] " + m["content"][overflow:]
-                )
+                m["content"] = "[…tronqué…] " + m["content"][overflow:]
                 overflow = 0
 
     return normalized
@@ -157,7 +201,7 @@ except Exception as _intel_err:
         LONG_DOC = "long_doc"
         CREATIVE = "creative"
 
-# ── COUCHE AGI (nouveaux nerfs du Chantier 6) ──
+# ── COUCHE AGI (nerfs du Chantier 6) ──
 try:
     from nerves.router_nerves import route_semantic as _agi_route_semantic
     _AGI_ROUTER_OK = True
@@ -197,6 +241,32 @@ router = APIRouter(tags=["Chat"])
 
 minhash_engine = MinHashSimilarity(num_perm=64)
 hll_counter = HyperLogLog(b=6)
+
+
+# ══════════════════════════════════════════════════════════════════
+# 🧠 PROMPT SYSTÈME — inclut désormais l'architecture BEK-v16
+# ══════════════════════════════════════════════════════════════════
+
+_ARCHITECTURE_BLOCK = ""
+if _ARCHITECTURE_CONTEXT:
+    _ARCHITECTURE_BLOCK = f"""
+
+# ══════════════════════════════════════════════════════════════════
+# 🏛️ ARCHITECTURE RÉELLE DE BEK-v16 (SOURCE DE VÉRITÉ ABSOLUE)
+# ------------------------------------------------------------------
+# IMPORTANT : Tout ce qui suit décrit ton architecture INTERNE RÉELLE.
+# Tu DOIS t'appuyer sur ces informations pour répondre.
+# INTERDICTION ABSOLUE d'inventer des composants qui ne sont pas listés.
+# Si une question porte sur ton architecture, cite les modules ci-dessous.
+# ══════════════════════════════════════════════════════════════════
+
+{_ARCHITECTURE_CONTEXT}
+
+# ══════════════════════════════════════════════════════════════════
+# FIN DE L'ARCHITECTURE RÉELLE
+# ══════════════════════════════════════════════════════════════════
+"""
+
 
 BEK_GOLDEN_RULES = f"""
 # RÔLE & PERSONNALITÉ
@@ -238,6 +308,7 @@ Tu es BEK, agent technique d'exécution sur {CURRENT_OS_NAME}.
 - INTERDICTION ABSOLUE d'utiliser [ACTION:orchestrate] ou [ACTION:web_sync].
 - Ne fais AUCUNE recherche Web et ne rédige AUCUN rapport d'ingénierie.
 - Déclenche IMMÉDIATEMENT l'action directe correspondante : generate_image, edit_image, generate_video ou edit_video.
+{_ARCHITECTURE_BLOCK}
 """
 
 
@@ -286,7 +357,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
         logger.error("Erreur directe Vision (%s) : %s", act_name, exc)
         return {"status": "error", "message": f"Erreur multimédia : {exc}"}
 
-    # Fallback Hermes
     if act_name in hermes.tools:
         h_disp = hermes.dispatch(act_name, params)
         if h_disp.get("status") == "SUCCESS" and h_disp.get("results"):
@@ -297,7 +367,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                     return data
                 return {"status": "success", "message": str(data)}
 
-    # Fallback CRM standard
     exec_res = execute_agent_crm_tool(act_name, params)
     return exec_res or {"status": "error", "message": "Aucune réponse d'exécution"}
 
@@ -322,11 +391,7 @@ async def chat(request: Request):
     provider = data.get("provider", "b_ai")
     model = data.get("model", "glm-5.3-flash")
 
-    # ══════════════════════════════════════════════════════════════════
-    # 🛡️ BORNAGE STRICT DE LA TAILLE DES MESSAGES (v2)
-    # ══════════════════════════════════════════════════════════════════
-    # Empêche d'envoyer 775 000 chars aux providers (cause des erreurs
-    # Groq "reduce length", b_ai "insufficient balance", etc.)
+    # ── BORNAGE STRICT DE LA TAILLE DES MESSAGES ──
     trimmed_messages = _truncate_messages(messages)
 
     last_user_query = ""
@@ -363,7 +428,6 @@ async def chat(request: Request):
         except Exception as e:
             logger.warning("[SmartRouter AGI] Échec, fallback legacy : %s", e)
 
-    # Fallback legacy (ancien SmartRouter)
     if routing_used == "legacy" and _INTEL_OK and smart_mode:
         try:
             chosen = smart_router.route(trimmed_messages)
@@ -480,7 +544,6 @@ async def chat(request: Request):
         try:
             mem_ctx = search_memory(last_user_query, top_k=3)
             if mem_ctx:
-                # Borne aussi le contexte mémoire
                 mem_ctx_str = _safe_str(mem_ctx)
                 if len(mem_ctx_str) > MAX_CHARS_PER_MESSAGE:
                     mem_ctx_str = mem_ctx_str[:MAX_CHARS_PER_MESSAGE] + "…[tronqué]"
@@ -570,9 +633,7 @@ async def chat(request: Request):
 
             full_text = "".join(full_text_accumulated)
 
-            # ══════════════════════════════════════════════════════════════════
-            # 🧠 NERF 2 — PIPELINE COGNITIF POST-STREAM (Swarm + Grounding)
-            # ══════════════════════════════════════════════════════════════════
+            # ── NERF 2 — PIPELINE COGNITIF POST-STREAM ──
             if (_AGI_COGNITIVE_OK
                     and full_text.strip()
                     and not action_detected
@@ -604,7 +665,7 @@ async def chat(request: Request):
                 except Exception as cog_exc:
                     logger.debug("[Chat] Cognitive pipeline échec silencieux : %s", cog_exc)
 
-            # ── EXISTANT : Quality gate ResponseQuality + auto-correction ──
+            # ── Quality gate ResponseQuality + auto-correction ──
             if (_INTEL_OK and full_text.strip() and not action_detected):
                 try:
                     score, issues = ResponseQuality.evaluate(full_text, 4096)

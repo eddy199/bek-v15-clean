@@ -13,6 +13,10 @@ google_drive_index.json
 *.key
 *.cert
 *.pfx
+*.p12
+credentials.json
+token.pickle
+service_account.json
 
 # ==============================================================================
 # 2. ENVIRONNEMENT PYTHON & CACHES
@@ -25,69 +29,75 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .coverage
 htmlcov/
-*.egg-info/
-dist/
-build/
 
 # ==============================================================================
-# 3. NODE.JS, NEXT.JS & BUILDS JAVASCRIPT
+# 3. LOGS & RUNTIME
 # ==============================================================================
-node_modules/
-node_portable/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-.next/
-.turbo/
-.output/
-out/
-.vercel/
+*.log
+bek_agent.log
+bek_app.log
+logs/
+*.pid
+*.sock
 
 # ==============================================================================
-# 4. BASES DE DONNÉES LOCALES, VECTEURS & LOGS
+# 4. BASES LOCALES & DONNÉES
 # ==============================================================================
 chroma_db/
-sessions/
-logs/
-*.log
-bek_app.log
-bek_agent.log
-%TEMP_PATH%/
-generated/*
-!generated/.gitkeep
+*.sqlite
+*.sqlite3
+*.db
+*.duckdb
 
 # ==============================================================================
-# 5. ARCHIVES, BACKUPS & DOUBLONS WINDOWS
+# 5. UPLOADS, GÉNÉRÉS, ARCHIVES
 # ==============================================================================
-backup/
-archive_old/
-graft/
+uploads/
+generated/
+outputs/
+downloads/
 *.zip
+*.tar
 *.tar.gz
 *.rar
-*.7z
 project_backup.zip
-
-# Fichiers de copie automatique Windows
-* - Copy*
-*- Copy*
-* - Copy.*
-*- Copy.*
-*.bak
+backups/
 
 # ==============================================================================
-# 6. SYSTÈME, ÉDITEURS & TEMP
+# 6. IDE / ÉDITEURS
 # ==============================================================================
-.DS_Store
-Thumbs.db
-ehthumbs.db
-.fuse_hidden*
-.idea/
 .vscode/
+.idea/
 *.swp
 *.swo
 *~
+
+# ==============================================================================
+# 7. SYSTÈME D'EXPLOITATION
+# ==============================================================================
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ==============================================================================
+# 8. DIVERS
+# ==============================================================================
+*.bak
+*.backup
+*.tmp
+tmp/
+temp/
+.cache/

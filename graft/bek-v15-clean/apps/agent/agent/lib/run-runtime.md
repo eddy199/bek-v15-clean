@@ -1,0 +1,39 @@
+# bek-v15-clean/apps/agent/agent/lib/run-runtime.ts
+
+- RunResource · type · L27-L31 — type RunResource = { kind: "integration" | "company" | "contact" | "deal"; id: string; label: string; };
+- RunRecordScope · type · L33-L33 — type RunRecordScope = "SELECTED" | "WORKSPACE";
+- RunActionRow · type · L35-L41 — type RunActionRow = { id: string; status: AgentActionStatus; externalId: string | null; requestHash: string | null; metadata: Prisma.JsonValue; };
+- RunActionClaim · type · L43-L50 — type RunActionClaim = | { claimed: false; actionId: string; externalId: string | null } | { claimed: true; actionId: string; claimedAt: Date; metadata: Prisma.JsonValue; };
+- approvedRunInstructions · function · L60-L74 — async function approvedRunInstructions(runId: string): Promise<string>
+- runContext · function · L76-L111 — async function runContext(runId: string)
+- queryRunCrm · function · L113-L145 — async function queryRunCrm( runId: string, input: { query: string; kinds?: ("contact" | "company" | "deal")[]; limit: number; }, )
+- readRunRecord · function · L147-L177 — async function readRunRecord( runId: string, input: { kind: "contact" | "company" | "deal"; id: string; }, )
+- createRunActivity · function · L179-L324 — async function createRunActivity( runId: string, callId: string, input: { type: "NOTE" | "TASK"; targetKind: "company" | "contact" | "deal"; targetId: string; subject?: string | null; body?: string | null; dueAt?: string | null; }, )
+- postRunSlackMessage · function · L326-L428 — async function postRunSlackMessage( runId: string, callId: string, input: { text: string }, abortSignal?: AbortSignal, )
+- findRunAction · function · L430-L440 — async function findRunAction( idempotencyKey: string, requestHash: string, ): Promise<RunActionRow | null>
+- claimRunAction · function · L442-L519 — async function claimRunAction( existing: RunActionRow | null, idempotencyKey: string, requestHash: string, data: Omit< Prisma.AgentActionUncheckedCreateInput, "idempotencyKey" | "requestHash" >, ): Promise<RunActionClaim>
+- failRunAction · function · L521-L539 — async function failRunAction( claim: Extract<RunActionClaim, { claimed: true }>, code: string, message: string, ): Promise<void>
+- sendSlackMessage · function · L541-L586 — async function sendSlackMessage( accessToken: string, destination: { kind: "channel" | "user"; id: string; label: string }, text: string, clientMessageId: string, options: { fetcher?: typeof fetch; abortSignal?: AbortSignal; beforePost?: () => Promise<void>; } = {}, ): Promise<{ channel: string; ts: string }>
+- assertRunActive · function · L588-L596 — async function assertRunActive(runId: string): Promise<void>
+- holdRunActionClaim · function · L598-L615 — async function holdRunActionClaim( runId: string, actionId: string, claimedAt: Date, ): Promise<void>
+- recordDeliveryOutsideClaim · function · L617-L638 — async function recordDeliveryOutsideClaim( actionId: string, messageId: string, ): Promise<void>
+- slackApiRequest · function · L640-L674 — async function slackApiRequest( fetcher: typeof fetch, accessToken: string, method: string, body: Record<string, unknown>, abortSignal?: AbortSignal, ): Promise<Record<string, unknown>>
+- slackActionErrorCode · function · L676-L681 — function slackActionErrorCode(message: string): string
+- stageRunResult · function · L683-L718 — async function stageRunResult( runId: string, input: { summary: string; result?: Record<string, unknown> | null; noActionNeeded?: { reason: string } | null; }, )
+- runReportedNoActionNeeded · function · L720-L727 — function runReportedNoActionNeeded(result: unknown): boolean
+- finishRun · function · L729-L795 — async function finishRun( runId: string, input: { summary: string; result?: Record<string, unknown> | null }, )
+- noActionNeededRefusal · function · L797-L814 — async function noActionNeededRefusal( tx: Prisma.TransactionClient, run: LockedAgentRun, ): Promise<string | null>
+- requiredActionFailure · function · L816-L878 — async function requiredActionFailure( tx: Prisma.TransactionClient, run: LockedAgentRun, ): Promise<{ code: string; message: string } | null>
+- failLockedRun · function · L880-L929 — async function failLockedRun( tx: Prisma.TransactionClient, run: LockedAgentRun, code: string, message: string, )
+- manifestDataScope · function · L931-L947 — function manifestDataScope(value: unknown): { mode: RunRecordScope; resources: RunResource[]; }
+- manifestActions · function · L949-L951 — function manifestActions(value: unknown)
+- externalManifestActions · function · L953-L957 — function externalManifestActions(value: unknown)
+- assertActivityAllowed · function · L959-L974 — function assertActivityAllowed( manifest: unknown, activityType: "NOTE" | "TASK", )
+- approvedSlackDestination · function · L976-L1019 — function approvedSlackDestination(manifest: unknown): { kind: "channel" | "user"; id: string; label: string; }
+- assertResourceAllowed · function · L1021-L1040 — function assertResourceAllowed( mode: RunRecordScope, resources: RunResource[], input: { kind: "contact" | "company" | "deal"; id: string }, )
+- allowedHistorySources · function · L1042-L1055 — function allowedHistorySources(resources: RunResource[]): { gmail: boolean; calendar: boolean; }
+- targetRecord · function · L1057-L1101 — async function targetRecord(kind: "company" | "contact" | "deal", id: string)
+- recordOf · function · L1103-L1107 — function recordOf(value: unknown): Record<string, unknown>
+- actionRequestHash · function · L1109-L1125 — function actionRequestHash(input: { type: "NOTE" | "TASK"; targetKind: "company" | "contact" | "deal"; targetId: string; subject?: string | null; body?: string | null; dueAt?: string | null; }): string
+- hashRequest · function · L1127-L1129 — function hashRequest(input: Record<string, unknown>): string
+- assertActionRequestMatches · function · L1131-L1138 — function assertActionRequestMatches( existingHash: string | null, requestHash: string, ): void

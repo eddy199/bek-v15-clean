@@ -88,6 +88,64 @@ class ResponseQuality:
     def to_dict(self) -> Dict[str, Any]:
         return {"passed": self.passed, "reason": self.reason}
 
+    # ══════════════════════════════════════════════════════════════════
+    # 🆕 AJOUT v16 — Méthode statique evaluate()
+    # ------------------------------------------------------------------
+    # Corrige l'erreur : "type object 'ResponseQuality' has no attribute
+    # 'evaluate'" levée par routers/chat.py (QualityGate).
+    #
+    # Compatible avec l'appel existant :
+    #     score, issues = ResponseQuality.evaluate(full_text, 4096)
+    #
+    # Retourne un tuple (score: int 0-100, issues: list[str]).
+    # Ne lève JAMAIS d'exception.
+    # ══════════════════════════════════════════════════════════════════
+    @staticmethod
+    def evaluate(text: str, max_tokens: int = 4096) -> tuple:
+        try:
+            if not text or not isinstance(text, str):
+                return 0, ["Réponse vide"]
+
+            issues = []
+            score = 100
+
+            # 1. Longueur minimale
+            if len(text.strip()) < 10:
+                issues.append("Réponse trop courte")
+                score -= 40
+
+            # 2. Troncature suspecte
+            if text.rstrip().endswith("..."):
+                issues.append("Réponse possiblement tronquée")
+                score -= 10
+
+            # 3. Caractères de remplacement (encodage cassé)
+            if "\ufffd" in text:
+                issues.append("Caractères de remplacement détectés (encodage)")
+                score -= 15
+
+            # 4. Boucles de répétition (même mot 5+ fois consécutives)
+            import re as _re
+            if _re.search(r"\b(\w+)(?:\s+\1){4,}\b", text, _re.IGNORECASE):
+                issues.append("Répétition suspecte détectée")
+                score -= 20
+
+            # 5. Marqueurs d'erreur explicites
+            lower = text.lower()
+            for marker in ("traceback", "error:", "exception:", "attributeerror"):
+                if marker in lower:
+                    issues.append(f"Marqueur d'erreur détecté : {marker}")
+                    score -= 15
+                    break
+
+            # 6. Bornage final
+            score = max(0, min(100, score))
+            return score, issues
+
+        except Exception as exc:
+            # En cas d'erreur imprévue, on retourne un score neutre
+            return 50, [f"Erreur évaluation : {exc}"]
+
 
 @dataclass
 class Task:

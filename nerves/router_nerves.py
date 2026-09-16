@@ -2,43 +2,16 @@
 # ==============================================================================
 # NERF 7 — SMARTROUTER SÉMANTIQUE RÉEL (nerves/router_nerves.py)
 # ------------------------------------------------------------------------------
-# Ce nerf transforme le SmartRouter (actuellement vide) en VRAI routeur
-# sémantique qui analyse la requête et choisit le meilleur provider/modèle.
-#
-# PROBLÈME RÉSOLU :
-#   - Actuellement : SmartRouter.route() retourne TOUJOURS "groq" sans analyse.
-#   - Résultat : pas d'optimisation par type de tâche, gaspillage de tokens.
-#
-# SOLUTION (ce nerf) :
-#   - Analyse sémantique de la requête (mots-clés + heuristiques)
-#   - Détection de l'intention : code / vision / complexe / long / chat / créatif
-#   - Utilisation de bek_routing_config.get_routing_strategy() (existant)
-#   - Utilisation de bek_model_hub.BEK_HUB_CONSTANTS (existant)
-#   - Fallback intelligent via provider_manager.is_provider_available()
-#
-# NOUVEAUX OUTILS HERMES (additifs) :
-#   - router_route         → route une requête vers le provider idéal
-#   - router_task_type     → détecte uniquement le type de tâche
-#   - router_providers     → liste les providers et leur disponibilité
-#
-# BRIDGES EXPOSÉS :
-#   - route_semantic()     → utilisable par chat.py (remplace le SmartRouter vide)
-#   - detect_task_type()   → détection pure du type de tâche
-#
-# RÈGLES D'OR :
-#   - Aucune modification de bek_intelligence.py
-#   - Aucune modification de bek_routing_config.py
-#   - Aucune modification de bek_model_hub.py
-#   - Aucune modification de provider_manager.py
-#   - Aucune modification de hermes_core.py
-#   - Feature-flag : BEK_ENABLE_ROUTER_NERVES (défaut true)
-#   - Ne bloque JAMAIS le flux principal
-#
-# CORRECTIFS v2 (robustesse) :
-#   - Réécriture complète en UTF-8 propre (fin du mojibake Ã©/ð/â)
-#   - Modèles correctement résolus (fallback "default" si vide)
-#   - Fallback chain par défaut cohérente avec les logs prod
-#   - Aucune signature modifiée : compatibilité totale avec chat.py
+# CORRECTIF v16 :
+#   - Utilise get_routing_model() pour choisir un modèle spécifique par tâche
+#     (ex : "complex" → "kimi-k3-swarm")
+#   - Compatible : fallback sur _resolve_model() si pas de modèle spécifique
+#   - Aucune signature modifiée
+# ------------------------------------------------------------------------------
+# CORRECTIF v17 (social) :
+#   - Les salutations en début de message ne déclenchent plus le type "social"
+#     si le message contient plus de 3 mots après retrait de la salutation.
+#   - Exemple : "bjr Fais une analyse..." → complex (et non social)
 # ==============================================================================
 
 from __future__ import annotations
@@ -64,11 +37,9 @@ def _is_enabled() -> bool:
 # ------------------------------------------------------------------------------
 
 def _publish_router_event(action: str, extra: Optional[Dict[str, Any]] = None) -> None:
-    """Publie un événement de routage sur l'EventBus unifié."""
     payload: Dict[str, Any] = {"action": action, "source": "router_nerves"}
     if extra:
         payload.update(extra)
-
     try:
         from nerves.event_bus_nerves import publish_event_unified
         publish_event_unified("skills-index", payload)
@@ -78,10 +49,9 @@ def _publish_router_event(action: str, extra: Optional[Dict[str, Any]] = None) -
 
 
 # ------------------------------------------------------------------------------
-# DÉTECTION DU TYPE DE TÂCHE (heuristique sémantique)
+# DÉTECTION DU TYPE DE TÂCHE
 # ------------------------------------------------------------------------------
 
-# Patterns de détection par catégorie
 _CODE_PATTERNS = [
     r"\b(code|script|fonction|class|débug|debug|refactor|algorithme|regex|sql|bash|python|javascript|react|fastapi|flask)\b",
     r"\b(compil|exécute|exécution|lance le|test unitaire|unittest|pytest)\b",
@@ -104,51 +74,57 @@ _CREATIVE_PATTERNS = [
     r"\b(histoire|poème|chanson|scénario|conte|créatif|imagination|invente)\b",
 ]
 _SOCIAL_PATTERNS = [
-    r"^\s*(bonjour|salut|bjr|hello|hi|hey|coucou|bonsoir|ça va|ca va)\b",
+    r"^\s*(bonjour|salut|bjr|hello|hi|hey|coucou|bonsoir|ça va|ca va|slt)\b",
 ]
+
+# Préfixe social plus large, utilisé pour retirer la salutation avant analyse
+_SOCIAL_PREFIX_RE = re.compile(
+    r"^\s*(bonjour|salut|bjr|hello|hi|hey|coucou|bonsoir|ça va|ca va|slt)\b[\s,!.?]*",
+    re.IGNORECASE,
+)
+
+
+def _strip_social_prefix(text: str) -> str:
+    """Retire une éventuelle salutation en début de message."""
+    return _SOCIAL_PREFIX_RE.sub("", text).strip()
 
 
 def detect_task_type(query: str) -> str:
-    """
-    Détecte le type de tâche à partir de la requête utilisateur.
-    Retourne l'un des types : chat, code, vision, complex, long, creative, social.
-    """
     if not query:
         return "chat"
 
     q = query.lower().strip()
 
-    # Social : priorité maximale (évite de mobiliser un LLM puissant pour "bonjour")
-    for pat in _SOCIAL_PATTERNS:
-        if re.search(pat, q):
-            return "social"
+    # ------------------------------------------------------------
+    # Détection sociale : uniquement si le message reste court
+    # après retrait de la salutation.
+    # Exemple :
+    #   "bjr"                          -> social
+    #   "bjr ça va ?"                  -> social
+    #   "bjr Fais une analyse..."      -> PAS social (complex)
+    # ------------------------------------------------------------
+    q_sans_salutation = _strip_social_prefix(q)
+    if len(q_sans_salutation.split()) <= 3:
+        for pat in _SOCIAL_PATTERNS:
+            if re.search(pat, q):
+                return "social"
 
-    # Vision
+    # Ensuite on garde l'ordre actuel de détection
     for pat in _VISION_PATTERNS:
         if re.search(pat, q):
             return "vision"
-
-    # Code
     for pat in _CODE_PATTERNS:
         if re.search(pat, q):
             return "code"
-
-    # Complexe
     for pat in _COMPLEX_PATTERNS:
         if re.search(pat, q):
             return "complex"
-
-    # Long
     for pat in _LONG_PATTERNS:
         if re.search(pat, q):
             return "long"
-
-    # Créatif
     for pat in _CREATIVE_PATTERNS:
         if re.search(pat, q):
             return "creative"
-
-    # Par défaut : chat
     return "chat"
 
 
@@ -157,16 +133,14 @@ def detect_task_type(query: str) -> str:
 # ------------------------------------------------------------------------------
 
 def _is_provider_available(provider: str) -> bool:
-    """Vérifie si un provider est disponible via provider_manager."""
     try:
         from provider_manager import provider_manager
         return provider_manager.is_provider_available(provider)
     except Exception:
-        return True  # Ne bloque pas en cas d'erreur
+        return True
 
 
 def _get_default_models(provider: str) -> List[str]:
-    """Récupère la liste des modèles disponibles pour un provider."""
     try:
         from provider_manager import provider_manager
         models = provider_manager.PROVIDER_MODELS.get(provider, [])
@@ -176,18 +150,16 @@ def _get_default_models(provider: str) -> List[str]:
 
 
 def _resolve_model(provider: str, preferred: str = "") -> str:
-    """Résout le modèle à utiliser pour un provider (jamais vide)."""
+    """Résout le modèle par défaut si pas de modèle spécifique fourni."""
     models = _get_default_models(provider)
     if preferred and preferred in models:
         return preferred
     if models:
         return models[0]
-    # Fallback : jamais de chaîne vide (évite les erreurs côté providers)
     return preferred or "default"
 
 
 def _fallback_chain() -> List[str]:
-    """Récupère la chaîne de fallback depuis bek_model_hub."""
     try:
         from bek_model_hub import get_hub_constants
         chain = get_hub_constants("fallback_chain")
@@ -195,8 +167,16 @@ def _fallback_chain() -> List[str]:
             return chain
     except Exception:
         pass
-    # Fallback de secours (aligné avec les providers actifs dans tes logs)
     return ["groq", "nvidia", "openrouter", "gemini"]
+
+
+# Import de get_routing_model (utilisé si disponible)
+try:
+    from bek_routing_config import get_routing_model as _get_routing_model
+    _ROUTING_MODEL_OK = True
+except Exception:
+    _get_routing_model = None
+    _ROUTING_MODEL_OK = False
 
 
 def route_semantic(
@@ -205,18 +185,6 @@ def route_semantic(
 ) -> Dict[str, Any]:
     """
     Bridge public : route sémantiquement la requête vers le meilleur provider/modèle.
-
-    Retourne un dict :
-      {
-        "provider": str,
-        "model": str,
-        "task_type": str,
-        "strategy": str,
-        "fallback_used": bool,
-        "reasoning": str,
-        "correlation_id": str
-      }
-
     Ne lève JAMAIS d'exception.
     """
     result: Dict[str, Any] = {
@@ -243,7 +211,7 @@ def route_semantic(
         except Exception as exc:
             logger.debug("[Nerf 7] bek_routing_config indisponible : %s", exc)
 
-        # 3. Si pas de préférence, on utilise le provider par défaut
+        # 3. Fallback provider par défaut
         if not preferred_provider:
             try:
                 from bek_model_hub import get_hub_constants
@@ -252,17 +220,26 @@ def route_semantic(
                 preferred_provider = "groq"
             result["strategy"] = f"default:{preferred_provider}"
 
-        # 4. Vérifier la disponibilité du provider préféré
+        # 4. Vérifier disponibilité provider
         if preferred_provider and _is_provider_available(preferred_provider):
             result["provider"] = preferred_provider
-            result["model"] = _resolve_model(preferred_provider)
+            # Tentative de modèle spécifique via get_routing_model()
+            specific_model = ""
+            if _ROUTING_MODEL_OK and _get_routing_model:
+                try:
+                    specific_model = _get_routing_model(task_type) or ""
+                except Exception:
+                    specific_model = ""
+            # Résolution finale (spécifique ou défaut)
+            result["model"] = _resolve_model(preferred_provider, specific_model)
         else:
-            # 5. Fallback : parcourir la chaîne de fallback
+            # 5. Fallback : parcourir la chaîne
             fallback_chain = _fallback_chain()
             result["fallback_used"] = True
             for fb_provider in fallback_chain:
                 if _is_provider_available(fb_provider):
                     result["provider"] = fb_provider
+                    # Fallback : pas de modèle spécifique, défaut provider
                     result["model"] = _resolve_model(fb_provider)
                     result["reasoning"] = (
                         f"Provider '{preferred_provider}' indisponible → "
@@ -270,7 +247,7 @@ def route_semantic(
                     )
                     break
 
-        # 6. Raisonnement (pour debug/logs)
+        # 6. Raisonnement (debug)
         if not result["reasoning"]:
             result["reasoning"] = (
                 f"Type '{task_type}' → provider '{result['provider']}' "
@@ -297,7 +274,6 @@ def route_semantic(
     except Exception as exc:
         logger.error("[Nerf 7] route_semantic échoué : %s", exc)
         _publish_router_event(action="route_error", extra={"error": str(exc)[:300]})
-        # Garantir une valeur de modèle non vide même en cas d'erreur
         if not result.get("model"):
             result["model"] = "default"
         return result
@@ -308,7 +284,6 @@ def route_semantic(
 # ------------------------------------------------------------------------------
 
 def _handler_router_route(query: str = "", **kwargs: Any) -> Dict[str, Any]:
-    """Handler Hermes : router_route → route_semantic()."""
     if not query:
         return {"status": "error", "message": "query obligatoire."}
     routing = route_semantic(query)
@@ -316,7 +291,6 @@ def _handler_router_route(query: str = "", **kwargs: Any) -> Dict[str, Any]:
 
 
 def _handler_router_task_type(query: str = "", **kwargs: Any) -> Dict[str, Any]:
-    """Handler Hermes : router_task_type → detect_task_type()."""
     if not query:
         return {"status": "error", "message": "query obligatoire."}
     return {
@@ -327,7 +301,6 @@ def _handler_router_task_type(query: str = "", **kwargs: Any) -> Dict[str, Any]:
 
 
 def _handler_router_providers(**kwargs: Any) -> Dict[str, Any]:
-    """Handler Hermes : router_providers → liste des providers disponibles."""
     try:
         from provider_manager import provider_manager
         providers_info: List[Dict[str, Any]] = []
@@ -350,10 +323,6 @@ def _handler_router_providers(**kwargs: Any) -> Dict[str, Any]:
         return {"status": "error", "message": str(exc)}
 
 
-# ------------------------------------------------------------------------------
-# TABLE DE CORRESPONDANCE
-# ------------------------------------------------------------------------------
-
 ROUTER_NERVES_TABLE: Dict[str, tuple] = {
     "router_route":      (_handler_router_route,      "L1"),
     "router_task_type":  (_handler_router_task_type,  "L1"),
@@ -366,19 +335,10 @@ ROUTER_NERVES_TABLE: Dict[str, tuple] = {
 # ------------------------------------------------------------------------------
 
 def activate_router_nerves() -> Dict[str, Any]:
-    """
-    Active les nerfs Router en enregistrant 3 outils Hermes.
-
-    Idempotent. Feature-flag BEK_ENABLE_ROUTER_NERVES.
-    """
     if not _is_enabled():
         logger.warning("[Nerf 7] Désactivé via BEK_ENABLE_ROUTER_NERVES=false")
-        return {
-            "status": "disabled",
-            "reason": "Feature-flag BEK_ENABLE_ROUTER_NERVES=false",
-        }
+        return {"status": "disabled", "reason": "Feature-flag"}
 
-    # Vérification des dépendances
     routing_config_available = False
     model_hub_available = False
     provider_manager_available = False
@@ -386,20 +346,20 @@ def activate_router_nerves() -> Dict[str, Any]:
     try:
         from bek_routing_config import get_routing_strategy  # noqa: F401
         routing_config_available = True
-    except Exception as exc:
-        logger.debug("[Nerf 7] bek_routing_config indisponible : %s", exc)
+    except Exception:
+        pass
 
     try:
         from bek_model_hub import get_hub_constants  # noqa: F401
         model_hub_available = True
-    except Exception as exc:
-        logger.debug("[Nerf 7] bek_model_hub indisponible : %s", exc)
+    except Exception:
+        pass
 
     try:
         from provider_manager import provider_manager  # noqa: F401
         provider_manager_available = True
-    except Exception as exc:
-        logger.debug("[Nerf 7] provider_manager indisponible : %s", exc)
+    except Exception:
+        pass
 
     try:
         from hermes_core import hermes
@@ -439,24 +399,6 @@ def activate_router_nerves() -> Dict[str, Any]:
     }
 
 
-# ------------------------------------------------------------------------------
-# TEST DIRECT (optionnel)
-# ------------------------------------------------------------------------------
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-    result = activate_router_nerves()
-    print("Résultat activation Nerf 7 :", result)
-
-    # Tests de détection
-    print()
-    print("Test route_semantic :")
-    for query in [
-        "Bonjour, comment vas-tu ?",
-        "Écris une fonction Python qui trie une liste",
-        "Génère une image d'un chat en 3D",
-        "Analyse complexe de l'architecture micro-services",
-        "Rédige un rapport détaillé sur l'IA",
-        "Écris-moi un poème sur l'automne",
-    ]:
-        routing = route_semantic(query)
-        print(f"  '{query[:40]}...' → {routing['task_type']} → {routing['provider']}/{routing['model']}")
+    logging.basicConfig(level=logging.INFO)
+    print(activate_router_nerves())

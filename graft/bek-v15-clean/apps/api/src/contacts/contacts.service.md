@@ -1,0 +1,22 @@
+# bek-v15-clean/apps/api/src/contacts/contacts.service.ts
+
+- ContactRow · type · L71-L96 — type ContactRow = { id: string; firstName: string; lastName: string | null; email: string | null; title: string | null; imageUrl: string | null; company: { id: string; name: string; domain: string | null; iconUrl: string | null; iconDarkUrl: string | null; iconTone: string | null; logoUrl: string | null; } | null; owner: { id: string; name: string; email: string; image: string | null; } | null; lastActivityAt: string | null; createdAt: string; fields: Record<string, string | number | boolean | null>; };
+- ContactsService · class · L112-L769 — class ContactsService
+- constructor · method · L115-L122 — constructor( @InjectDatabase() private readonly db: Db, private readonly companies: CompanyDirectoryService, private readonly agent: AgentTriggerService, private readonly queue: AgentQueueService, private readonly stamp: ActivityStampService, private readonly fields: FieldsService, )
+- list · method · L124-L167 — async list(input: ContactListInput): Promise<ListResult<ContactRow>>
+- byId · method · L169-L273 — async byId(id: string)
+- create · method · L275-L346 — async create(input: ContactCreateInput)
+- delete · method · L348-L398 — async delete(id: string): Promise<{ id: string; name: string }>
+- update · method · L400-L450 — async update(id: string, input: ContactUpdateInput)
+- bulkAssignOwner · method · L452-L475 — async bulkAssignOwner(input: ContactBulkOwnerInput): Promise<BulkResult>
+- bulkSetCompany · method · L477-L508 — async bulkSetCompany(input: ContactBulkCompanyInput): Promise<BulkResult>
+- bulkEnrich · method · L510-L512 — async bulkEnrich(ids: string[]): Promise<BulkResult>
+- bulkDelete · method · L514-L516 — async bulkDelete(ids: string[]): Promise<BulkResult>
+- allowAgain · method · L518-L526 — private async allowAgain( tx: Prisma.TransactionClient, email: string | null, ): Promise<void>
+- relationship · method · L528-L590 — private async relationship(contactId: string, companyId: string | null)
+- enrich · method · L592-L615 — async enrich(id: string): Promise<{ id: string; queued: true }>
+- decideFact · method · L617-L695 — async decideFact( input: FactDecisionInput, userId: string, ): Promise<{ contactId: string; field: string; applied: boolean }>
+- searchFilter · method · L697-L709 — private searchFilter(q: string): Prisma.ContactWhereInput
+- buildWhere · method · L711-L726 — private buildWhere(input: ContactListInput): Prisma.ContactWhereInput
+- facetCounts · method · L728-L754 — private async facetCounts(input: ContactListInput)
+- translate · method · L756-L768 — private translate(error: unknown, id: string): unknown

@@ -1,23 +1,29 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# NERF 3 — UNIFICATION EVENTBUS (nerves/event_bus_nerves.py) — VERSION RÉVISÉE
+# NERF 3 — UNIFICATION EVENTBUS (nerves/event_bus_nerves.py) — VERSION RÉVISÉE v2
 # ------------------------------------------------------------------------------
-# Ce nerf crée un PONT BIDIRECTIONNEL entre les deux implémentations
-# d'EventBus existantes dans BEK :
+# Ce nerf crée un PONT entre les deux implémentations d'EventBus existantes :
 #
 #   1. event_bus.py        → EventBusKafka      (SYNC, threads, Queue)
 #   2. event_bus_client.py → EventBusClient     (ASYNC, retry exponentiel)
 #
-# PROBLÈME RÉSOLU :
-#   - Avant : les deux bus étaient isolés → 50% des événements perdus
-#   - Après : pont bidirectionnel avec anti-boucle, thread-safe, borné
+# MODES DE FONCTIONNEMENT :
+#   - Mode BIDIRECTIONNEL (recommandé) :
+#       * Kafka → Async : abonnement actif sur chaque topic Kafka.
+#       * Async → Kafka : abonnement actif sur l'EventBusClient SI celui-ci
+#         expose une méthode `subscribe`. Sinon, voir mode unidirectionnel.
+#   - Mode UNIDIRECTIONNEL (fallback automatique) :
+#       * Kafka → Async : abonnement actif.
+#       * Async → Kafka : assuré uniquement via publish_unified().
 #
-# CORRECTIONS vs VERSION PRÉCÉDENTE :
-#   - ThreadPoolExecutor borné (max 4 workers) au lieu d'un thread par event
-#   - asyncio.run() isolé dans les workers au lieu de new_event_loop() global
-#   - Anti-boucle bidirectionnel via clé composite (topic|corr_id|ts)
-#   - _processed_ids protégé par Lock (thread-safe)
-#   - File d'attente bornée (maxsize=2000) pour éviter la saturation mémoire
+# CORRECTIFS v2 vs v1 :
+#   - _processed_keys : remplacement du set (nettoyage FIFO cassé) par un
+#     couple deque + set → vrai FIFO, O(1) en lookup et en éviction.
+#   - KAFKA_TOPICS : dérivé dynamiquement depuis EventBusKafka.VALID_TOPICS
+#     (source de vérité unique). Plus de duplication silencieuse.
+#   - Bridage bidirectionnel réel : la méthode _make_async_to_kafka_callback
+#     est désormais réellement utilisée si EventBusClient expose subscribe().
+#   - Traçabilité : le mode actif est retourné par activate() et get_status().
 #
 # RÈGLES D'OR :
 #   - Aucune modification de event_bus.py
@@ -34,7 +40,8 @@ import logging
 import os
 import threading
 import time
-from typing import Any, Dict, Optional, Set
+from collections import deque
+from typing import Any, Deque, Dict, Optional, Set
 
 logger = logging.getLogger("bek.nerves.event_bus")
 
@@ -55,6 +62,29 @@ _MAX_ASYNC_WORKERS = 4          # Nombre max de threads pour publier en async
 _MAX_PROCESSED_IDS = 10000      # Taille max de la mémoire anti-boucle
 _BRIDGE_TIMEOUT_SEC = 5.0       # Timeout pour une publication async
 
+# Fallback si event_bus.py n'est pas importable au moment de la définition
+_DEFAULT_KAFKA_TOPICS: Set[str] = {
+    "web-cleaned",
+    "skills-index",
+    "error-signals",
+    "vector-context",
+}
+
+
+def _resolve_kafka_topics() -> Set[str]:
+    """
+    Récupère les topics officiels depuis event_bus.EventBusKafka.VALID_TOPICS
+    (source de vérité unique). Retourne le fallback si l'import échoue.
+    """
+    try:
+        from event_bus import EventBusKafka
+        topics = getattr(EventBusKafka, "VALID_TOPICS", None)
+        if topics:
+            return set(topics)
+    except Exception as exc:
+        logger.debug("[Nerf 3] Import EventBusKafka.VALID_TOPICS échoué : %s", exc)
+    return set(_DEFAULT_KAFKA_TOPICS)
+
 
 # ------------------------------------------------------------------------------
 # PONT SINGLETON (idempotent, thread-safe)
@@ -62,35 +92,46 @@ _BRIDGE_TIMEOUT_SEC = 5.0       # Timeout pour une publication async
 
 class EventBusBridge:
     """
-    Pont bidirectionnel entre EventBusKafka (sync) et EventBusClient (async).
+    Pont entre EventBusKafka (sync) et EventBusClient (async).
 
     Anti-boucle : chaque événement est marqué par une clé composite unique
-    (topic + correlation_id + timestamp_ms), empêchant la republication infinie
-    dans les deux sens.
+    (topic + correlation_id + timestamp_ms), empêchant la republication infinie.
 
     Thread-safe : toutes les opérations critiques sont protégées par Lock.
     Borné : utilise un ThreadPoolExecutor limité pour éviter l'explosion de threads.
+
+    Modes :
+      - BIDIRECTIONNEL : souscription active dans les deux sens.
+      - UNIDIRECTIONNEL : souscription Kafka → Async, et publish_unified()
+        est l'unique voie Async → Kafka.
     """
 
-    # Topics supportés par EventBusKafka (source de vérité)
-    KAFKA_TOPICS: Set[str] = {
-        "web-cleaned",
-        "skills-index",
-        "error-signals",
-        "vector-context",
-    }
+    # Fallback public (conservé pour compatibilité).
+    # En pratique, les topics actifs sont résolus dynamiquement dans activate().
+    KAFKA_TOPICS: Set[str] = set(_DEFAULT_KAFKA_TOPICS)
 
     def __init__(self) -> None:
         self._activated: bool = False
         self._lock = threading.RLock()
 
-        # Anti-boucle : clé composite (topic|corr_id|ts_ms)
-        self._processed_keys: Set[str] = set()
+        # ----------------------------------------------------------------------
+        # CORRECTIF v2 : anti-boucle avec FIFO réel.
+        # - _processed_keys_set : lookup O(1).
+        # - _processed_keys_order : deque pour garantir l'ordre d'insertion.
+        # ----------------------------------------------------------------------
+        self._processed_keys_set: Set[str] = set()
+        self._processed_keys_order: Deque[str] = deque()
         self._processed_lock = threading.Lock()
 
         # Références aux bus
         self._kafka_bus: Any = None
         self._async_bus: Any = None
+
+        # Topics actifs (résolus au moment de l'activation)
+        self._active_topics: Set[str] = set()
+
+        # Mode actif : "bidirectional" ou "unidirectional"
+        self._mode: str = "unknown"
 
         # Pool de threads borné pour publication async
         self._async_executor: Optional[concurrent.futures.ThreadPoolExecutor] = None
@@ -117,16 +158,20 @@ class EventBusBridge:
         """
         Retourne True si la clé est NOUVELLE (à traiter).
         Retourne False si la clé a DÉJÀ été traitée (à ignorer).
+
+        CORRECTIF v2 : éviction FIFO réelle via deque.
         """
         with self._processed_lock:
-            if key in self._processed_keys:
+            if key in self._processed_keys_set:
                 return False
-            self._processed_keys.add(key)
-            # Limiter la taille mémoire
-            if len(self._processed_keys) > _MAX_PROCESSED_IDS:
-                # Garder les 50% les plus récents (simple FIFO via set → list)
-                recent = list(self._processed_keys)[-int(_MAX_PROCESSED_IDS * 0.5):]
-                self._processed_keys = set(recent)
+
+            # Éviction FIFO : si la deque est pleine, retirer le plus ancien.
+            if len(self._processed_keys_order) >= _MAX_PROCESSED_IDS:
+                oldest = self._processed_keys_order.popleft()
+                self._processed_keys_set.discard(oldest)
+
+            self._processed_keys_order.append(key)
+            self._processed_keys_set.add(key)
             return True
 
     # --------------------------------------------------------------------------
@@ -142,10 +187,14 @@ class EventBusBridge:
     # --------------------------------------------------------------------------
 
     def activate(self) -> Dict[str, Any]:
-        """Active le pont bidirectionnel. Idempotent."""
+        """Active le pont. Idempotent."""
         with self._lock:
             if self._activated:
-                return {"status": "already_activated", "stats": dict(self._stats)}
+                return {
+                    "status": "already_activated",
+                    "mode": self._mode,
+                    "stats": dict(self._stats),
+                }
 
             # 1. Import EventBusKafka (sync)
             try:
@@ -155,7 +204,19 @@ class EventBusBridge:
                 logger.error("[Nerf 3] Import EventBusKafka échoué : %s", exc)
                 return {"status": "error", "message": f"EventBusKafka indisponible : {exc}"}
 
-            # 2. Import EventBusClient (async) — optionnel
+            # 2. Résolution dynamique des topics depuis la source de vérité
+            source_topics = _resolve_kafka_topics()
+            if source_topics != set(self.KAFKA_TOPICS):
+                logger.warning(
+                    "[Nerf 3] Divergence de topics détectée | fallback=%s | source=%s "
+                    "→ utilisation de la source comme référence.",
+                    sorted(self.KAFKA_TOPICS), sorted(source_topics),
+                )
+            # Mise à jour du set public pour cohérence
+            EventBusBridge.KAFKA_TOPICS = set(source_topics)
+            self._active_topics = set(source_topics)
+
+            # 3. Import EventBusClient (async) — optionnel
             try:
                 from event_bus_client import event_bus as async_bus_instance
                 self._async_bus = async_bus_instance
@@ -167,16 +228,16 @@ class EventBusBridge:
                 )
                 self._async_bus = None
 
-            # 3. Créer le pool de threads borné pour publication async
+            # 4. Créer le pool de threads borné pour publication async
             self._async_executor = concurrent.futures.ThreadPoolExecutor(
                 max_workers=_MAX_ASYNC_WORKERS,
                 thread_name_prefix="bek-bridge",
             )
 
-            # 4. Enregistrer les subscribers Kafka → Async
+            # 5. Enregistrer les subscribers Kafka → Async
             kafka_subscribers_registered = 0
             if self._async_bus is not None:
-                for topic in self.KAFKA_TOPICS:
+                for topic in self._active_topics:
                     try:
                         self._kafka_bus.subscribe(
                             topic,
@@ -188,19 +249,57 @@ class EventBusBridge:
                             "[Nerf 3] Subscribe Kafka[%s] échoué : %s", topic, exc
                         )
 
+            # ------------------------------------------------------------------
+            # CORRECTIF v2 : tentative d'enregistrement du sens Async → Kafka.
+            # On ne peut le faire que si EventBusClient expose une méthode
+            # subscribe() utilisable côté async. Sinon, on reste en mode
+            # unidirectionnel (Async → Kafka uniquement via publish_unified()).
+            # ------------------------------------------------------------------
+            async_subscribers_registered = 0
+            if self._async_bus is not None and hasattr(self._async_bus, "subscribe"):
+                for topic in self._active_topics:
+                    try:
+                        callback = self._make_async_to_kafka_callback(topic)
+                        result = self._async_bus.subscribe(topic, callback)
+                        # Si subscribe retourne un awaitable, on le programme
+                        if asyncio.iscoroutine(result):
+                            try:
+                                loop = asyncio.get_event_loop()
+                                if loop.is_running():
+                                    loop.create_task(result)
+                                else:
+                                    loop.run_until_complete(result)
+                            except Exception:
+                                pass
+                        async_subscribers_registered += 1
+                    except Exception as exc:
+                        logger.debug(
+                            "[Nerf 3] Subscribe Async[%s] non supporté : %s", topic, exc
+                        )
+
+            # 6. Déterminer le mode effectif
+            if async_subscribers_registered > 0:
+                self._mode = "bidirectional"
+            else:
+                self._mode = "unidirectional"
+
             self._activated = True
             logger.info(
-                "🌉 [Nerf 3] Pont EventBus activé | Kafka→Async : %d topics | "
-                "Async→Kafka : via publish_unified() | Workers : %d",
+                "🌉 [Nerf 3] Pont EventBus activé | mode=%s | Kafka→Async : %d topics | "
+                "Async→Kafka : %d topics | Workers : %d",
+                self._mode,
                 kafka_subscribers_registered,
+                async_subscribers_registered,
                 _MAX_ASYNC_WORKERS,
             )
 
             return {
                 "status": "ok",
+                "mode": self._mode,
                 "kafka_to_async_topics": kafka_subscribers_registered,
+                "async_to_kafka_topics": async_subscribers_registered,
                 "async_available": self._async_bus is not None,
-                "topics": sorted(self.KAFKA_TOPICS),
+                "topics": sorted(self._active_topics),
                 "max_workers": _MAX_ASYNC_WORKERS,
             }
 
@@ -233,7 +332,7 @@ class EventBusBridge:
                 forward_payload["_bridged_from"] = "kafka"
                 forward_payload["_bridge_key"] = key
 
-                # Soumettre au pool borné (pas de thread manuel)
+                # Soumettre au pool borné
                 try:
                     self._async_executor.submit(
                         self._publish_async_safely,
@@ -241,7 +340,6 @@ class EventBusBridge:
                         forward_payload,
                     )
                 except RuntimeError:
-                    # Pool déjà shutdown
                     self._increment_stat("dropped_count")
                     return
 
@@ -259,11 +357,14 @@ class EventBusBridge:
         """
         Crée un callback async qui sera appelé par EventBusClient et qui
         republie l'événement sur EventBusKafka (sync).
+
+        Utilisé uniquement si EventBusClient expose une méthode subscribe()
+        compatible (mode bidirectionnel).
         """
         async def _callback(message: Dict[str, Any]) -> None:
             try:
                 correlation_id = message.get("correlation_id", "")
-                timestamp_ms = int(time.time() * 1000)
+                timestamp_ms = int(message.get("timestamp", time.time()) * 1000)
 
                 # Anti-boucle
                 key = self._make_key(topic, correlation_id, timestamp_ms)
@@ -304,7 +405,6 @@ class EventBusBridge:
         try:
             if self._async_bus is None:
                 return
-            # asyncio.run() crée et ferme un event loop propre pour ce worker
             asyncio.run(
                 asyncio.wait_for(
                     self._async_bus.publish(topic, payload),
@@ -364,12 +464,14 @@ class EventBusBridge:
         with self._stats_lock:
             stats = dict(self._stats)
         with self._processed_lock:
-            processed_count = len(self._processed_keys)
+            processed_count = len(self._processed_keys_set)
 
         return {
             "activated": self._activated,
+            "mode": self._mode,
             "kafka_available": self._kafka_bus is not None,
             "async_available": self._async_bus is not None,
+            "active_topics": sorted(self._active_topics),
             "processed_keys_count": processed_count,
             "max_processed_keys": _MAX_PROCESSED_IDS,
             "max_async_workers": _MAX_ASYNC_WORKERS,
@@ -408,7 +510,7 @@ def get_event_bus_bridge() -> EventBusBridge:
 # ------------------------------------------------------------------------------
 
 def activate_event_bus_nerves() -> Dict[str, Any]:
-    """Active le pont EventBus bidirectionnel. Idempotent."""
+    """Active le pont EventBus. Idempotent."""
     if not _is_enabled():
         logger.warning("[Nerf 3] Désactivé via BEK_ENABLE_EVENT_BUS_NERVES=false")
         return {
@@ -452,7 +554,6 @@ if __name__ == "__main__":
     print("Résultat activation Nerf 3 :", result)
     bridge = get_event_bus_bridge()
     print("Statut bridge :", bridge.get_status())
-    # Test publication unifiée
     corr_id = publish_event_unified("web-cleaned", {"query": "test", "source": "manual"})
     print("Publication unifiée, correlation_id :", corr_id)
     time.sleep(0.5)

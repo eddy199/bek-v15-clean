@@ -1,0 +1,21 @@
+# bek-v15-clean/packages/telemetry/src/install.ts
+
+- Install · type · L9-L14 — type Install = { uuid: string; version: string; createdAt: Date; lastRollupAt: Date | null; };
+- readInstall · function · L29-L47 — async function readInstall(): Promise<Install | null>
+- forgetInstall · function · L49-L52 — function forgetInstall(): void
+- syncVersion · function · L54-L73 — async function syncVersion( version = crmVersion(), ): Promise<Install | null>
+- Milestone · type · L86-L86 — type Milestone = (typeof MILESTONES)[number];
+- reachMilestone · function · L88-L99 — async function reachMilestone(step: Milestone): Promise<boolean>
+- forgetMilestone · function · L101-L105 — async function forgetMilestone(step: Milestone): Promise<void>
+- reachedMilestones · function · L107-L118 — async function reachedMilestones(): Promise<Milestone[]>
+- bumpCounter · function · L124-L139 — async function bumpCounter(name: string, by = 1): Promise<void>
+- drainCounters · function · L141-L153 — async function drainCounters(): Promise<Record<string, number>>
+- restoreCounters · function · L155-L161 — async function restoreCounters( counts: Record<string, number>, ): Promise<void>
+- RollupRefusal · type · L163-L163 — type RollupRefusal = "no install row" | "already sent today" | "failed";
+- RollupClaim · type · L165-L167 — type RollupClaim = | { claimed: true; previous: Date | null } | { claimed: false; reason: RollupRefusal };
+- claimRollup · function · L169-L202 — async function claimRollup( at: Date, force = false, ): Promise<RollupClaim>
+- releaseRollup · function · L204-L212 — async function releaseRollup(previous: Date | null): Promise<void>
+- daysSince · function · L216-L218 — function daysSince(from: Date, now = new Date()): number
+- utcDay · function · L220-L222 — function utcDay(at: Date): string
+- stableUuid · function · L224-L240 — function stableUuid(...parts: string[]): string
+- sameUtcDay · function · L242-L250 — function sameUtcDay(a: Date | null, b: Date): boolean

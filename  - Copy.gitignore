@@ -1,0 +1,22 @@
+# Fichiers de clés et secrets (CRITIQUE)
+.env
+.env.txt
+env.txt
+.env.save
+*.env
+google_accounts.json
+google_drive_index.json
+
+# Dossiers lourds / environnement local
+venv/
+node_modules/
+node_portable/
+__pycache__/
+*.pyc
+chroma_db/
+sessions/
+logs/
+*.log
+%TEMP_PATH%/
+backup/
+archive_old/

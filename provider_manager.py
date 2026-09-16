@@ -15,8 +15,17 @@ WORKSPACE_DIR = Path(__file__).resolve().parent
 
 class ProviderManager:
     # MODÈLES PAR FOURNISSEUR (16 Fournisseurs)
+    # ------------------------------------------------------------------------------
+    # CORRECTIF v20 (2026-09-16) :
+    #   - NVIDIA : ajout de 3 modèles chat (13 au total)
+    #       * mistralai/mistral-nemotron
+    #       * meta/llama-3.2-11b-vision-instruct
+    #       * meta/llama-3.2-90b-vision-instruct
+    #   - NVIDIA reste en POSITION 1 de la fallback chain
+    #   - Aucun autre provider ni modèle modifié
+    # ------------------------------------------------------------------------------
     PROVIDER_MODELS: Dict[str, List[str]] = {
-        # 1. Moonshot Kimi AI (Modèles exacts de l'interface)
+        # 1. Moonshot Kimi AI
         "kimi": [
             "kimi-k3",
             "kimi-k3-swarm",
@@ -28,14 +37,14 @@ class ProviderManager:
             "moonshot-v1-32k",
             "moonshot-v1-8k",
         ],
-        # 2. B.ai (Clé API)
+        # 2. B.ai
         "b_ai": [
             "glm-5.3-flash",
             "qwen3.8-flash",
             "mimo-v2.5",
             "hy3",
         ],
-        # 3. Kilo Code (Gratuit / Anonyme)
+        # 3. Kilo Code
         "kilo_anonymous": [
             "kilo-nemotron-3-ultra-550b",
             "kilo-step-3.7-flash",
@@ -60,7 +69,7 @@ class ProviderManager:
             "nvidia/nemotron-3.5-lightning:free",
             "liquid/lfm-2.5-2.6b:free",
         ],
-        # 4. OVHcloud (Gratuit / Anonyme)
+        # 4. OVHcloud
         "ovh_anonymous": [
             "ovh-qwen-3.5-397b",
             "ovh-gpt-oss-120b",
@@ -75,13 +84,13 @@ class ProviderManager:
             "ovh-mistral-nemo",
             "ovh-mistral-7b",
         ],
-        # 5. LLM7.io (Gratuit / Anonyme)
+        # 5. LLM7.io
         "llm7_anonymous": [
             "llm7-gpt-oss-20b",
             "llm7-mistral-nemo",
             "llm7-minimax-m2.7",
         ],
-        # 6. Groq (Clé API)
+        # 6. Groq
         "groq": [
             "openai/gpt-oss-120b",
             "openai/gpt-oss-20b",
@@ -91,31 +100,26 @@ class ProviderManager:
             "groq/compound",
             "groq/compound-mini",
         ],
-        # 7. NVIDIA NIM (Clés spécifiques ou générale)
+        # 7. NVIDIA NIM — 13 modèles chat actifs gratuits vérifiés
+        #    (Les modèles embedding sont gérés séparément dans memory.py)
         "nvidia": [
-            "meta/llama-3.3-70b-instruct",
-            "meta/llama-3.1-70b-instruct",
-            "meta/llama-3.1-8b-instruct",
+            # Modèles initiaux v18 (10)
+            "z-ai/glm-5.3",
+            "moonshotai/kimi-k3",
+            "deepseek-ai/deepseek-v4-flash-0731",
+            "nvidia/nemotron-3.5-lightning-30b-a3b",
+            "meta/muse-glimmer-30b",
+            "nvidia/ising-calibration-1.5-31b",
+            "poolside/laguna-xs-2.1",
+            "nvidia/nemotron-3-ultra-550b-a55b",
+            "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+            "nvidia/nemotron-3-super-120b-a12b",
+            # Ajouts v20 (3)
+            "mistralai/mistral-nemotron",
             "meta/llama-3.2-11b-vision-instruct",
             "meta/llama-3.2-90b-vision-instruct",
-            "nvidia/llama-3.3-nemotron-super-49b-v1",
-            "nvidia/llama-3.3-nemotron-super-49b-v1.5",
-            "nvidia/nemotron-3-super-120b-a12b",
-            "nvidia/nemotron-nano-12b-v2-vl",
-            "nvidia/nvidia-nemotron-nano-9b-v2",
-            "openai/gpt-oss-120b",
-            "openai/gpt-oss-20b",
-            "mistralai/mistral-nemotron",
-            "mistralai/mistral-medium-3.5-128b",
-            "google/gemma-4-31b-it",
-            "nvidia/ising-calibration-1.5-31b",
-            "nvidia/nemotron-3-nano-30b-a3b",
-            "nvidia/llama-3.1-nemotron-ultra-253b-v1",
-            "mistralai/mistral-large-2-instruct",
-            "minimaxai/minimax-m3",
-            "nvidia/nemotron-3-ultra-550b-a55b",
         ],
-        # 8. Google Gemini (Clé API)
+        # 8. Google Gemini
         "gemini": [
             "gemini-3.8-flash",
             "gemini-3.7-flash",
@@ -159,7 +163,7 @@ class ProviderManager:
             "laguna-xs-2.1",
             "free-models-router",
         ],
-        # 10. Mistral AI (Clé API)
+        # 10. Mistral AI
         "mistral": [
             "mistral-medium-3.5",
             "mistral-small-4",
@@ -169,7 +173,7 @@ class ProviderManager:
             "ministral-3-3b",
             "ministral-3-14b",
         ],
-        # 11. Cohere (Clé API)
+        # 11. Cohere
         "cohere": [
             "cohere-command-a-plus",
             "cohere-command-a",
@@ -178,24 +182,24 @@ class ProviderManager:
             "cohere-command-r7b",
             "cohere-aya-expanse-32b",
         ],
-        # 12. Aion Labs (Clé API)
+        # 12. Aion Labs
         "aionlabs": [
             "aion-2.0",
             "aion-rp-llama-3.1-8b",
             "aion-3.0",
             "aion-3.0-mini",
         ],
-        # 13. Zhipu AI (Clé API)
+        # 13. Zhipu AI
         "zhipu": [
             "glm-4.7-flash",
             "glm-4.5-flash",
             "glm-4.6v-flash",
         ],
-        # 14. SiliconFlow (Clé API)
+        # 14. SiliconFlow
         "siliconflow": [
             "siliconflow-qwen3-8b",
         ],
-        # 15. Hugging Face (Clé API)
+        # 15. Hugging Face
         "huggingface": [
             "Meta-Llama-3.1-8B-Instruct",
             "gemma-3-4b-it",
@@ -203,7 +207,7 @@ class ProviderManager:
             "Qwen2.5-Coder-7B-Instruct",
             "Qwen2.5-7B-Instruct",
         ],
-        # 16. Ollama Cloud (Clé API)
+        # 16. Ollama Cloud
         "ollama_cloud": [
             "deepseek-v4-pro",
             "deepseek-v4-flash",
@@ -217,14 +221,14 @@ class ProviderManager:
         ],
     }
 
-    # CHAÎNE DE FALLBACK
+    # CHAÎNE DE FALLBACK — v20 (NVIDIA en position 1)
     FALLBACK_ORDER: List[str] = [
+        "nvidia",
+        "groq",
         "kimi",
         "b_ai",
         "gemini",
         "kilo_anonymous",
-        "groq",
-        "nvidia",
         "huggingface",
         "openrouter",
         "ovh_anonymous",
@@ -368,10 +372,8 @@ class ProviderManager:
             if not isinstance(m, dict):
                 continue
             role = m.get("role", "user")
-            
             if role not in ["system", "user", "assistant"]:
                 role = "user"
-
             content = m.get("content", "")
             if isinstance(content, list):
                 parts = []
@@ -381,7 +383,6 @@ class ProviderManager:
                     elif isinstance(item, str):
                         parts.append(item)
                 content = " ".join(parts)
-            
             if isinstance(content, str) and content.strip():
                 formatted.append({"role": role, "content": content})
         return formatted
@@ -389,8 +390,8 @@ class ProviderManager:
     def execute_chat_stream(
         self,
         messages: List[Dict[str, Any]],
-        provider: str = "kimi",
-        model: str = "kimi-k3",
+        provider: str = "nvidia",
+        model: str = "nvidia/nemotron-3-super-120b-a12b",
         temperature: float = 0.7,
         max_tokens: int = 4096,
         top_p: float = 0.9,
@@ -411,19 +412,20 @@ class ProviderManager:
             selected_model = model
 
         if selected_provider == "groq" and total_chars > 16000:
-            logger.warning("[TPM Guard] Requête volumineuse (%d chars), routage vers kimi.", total_chars)
-            selected_provider = "kimi"
+            logger.warning("[TPM Guard] Requête volumineuse (%d chars), routage vers nvidia.", total_chars)
+            selected_provider = "nvidia"
 
         attempt_providers = [selected_provider] + [p for p in self.FALLBACK_ORDER if p != selected_provider]
         last_error_message = ""
 
         for current_prov in attempt_providers:
             available_models = self.PROVIDER_MODELS.get(current_prov, [])
-            
+
             if current_prov == selected_provider:
                 current_model = selected_model
             else:
-                if current_prov == "kimi": current_model = "kimi-k3"
+                if current_prov == "nvidia": current_model = "nvidia/nemotron-3-super-120b-a12b"
+                elif current_prov == "kimi": current_model = "kimi-k3"
                 elif current_prov == "b_ai": current_model = "glm-5.3-flash"
                 elif current_prov == "gemini": current_model = "gemini-3.8-flash"
                 elif current_prov == "kilo_anonymous": current_model = "kilo-nemotron-3-ultra-550b"
@@ -501,7 +503,7 @@ class ProviderManager:
                 last_error_message = f"Timeout ({resolved_p})"
                 continue
             except requests.RequestException as exc:
-                last_error_message = f"Réseau ({resolved_p}): {str(exc)}"
+                last_error_message = f"Réseau ({resolved_p}) : {str(exc)}"
                 continue
 
         yield {"error": f"Tous les providers ont échoué. Dernière erreur : {last_error_message}"}

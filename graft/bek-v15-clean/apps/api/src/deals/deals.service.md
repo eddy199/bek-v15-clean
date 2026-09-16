@@ -1,0 +1,26 @@
+# bek-v15-clean/apps/api/src/deals/deals.service.ts
+
+- DealsService · class · L101-L733 — class DealsService
+- constructor · method · L104-L110 — constructor( @InjectDatabase() private readonly db: Db, private readonly agent: AgentTriggerService, private readonly stamp: ActivityStampService, private readonly conversion: ConversionService, private readonly fields: FieldsService, )
+- list · method · L112-L186 — async list(input: DealListInput)
+- byId · method · L188-L235 — async byId(id: string)
+- create · method · L237-L290 — async create(input: DealCreateInput)
+- update · method · L292-L353 — async update(id: string, input: DealUpdateInput)
+- delete · method · L355-L383 — async delete(id: string): Promise<{ id: string; name: string }>
+- setStage · method · L385-L489 — async setStage(input: SetStageInput, actingUserId: string)
+- contactOptions · method · L491-L510 — async contactOptions(dealId: string)
+- attachContact · method · L512-L549 — async attachContact(input: DealAttachContactInput)
+- detachContact · method · L551-L567 — async detachContact(input: DealDetachContactInput)
+- setContactRole · method · L569-L582 — async setContactRole(input: DealContactRoleInput)
+- bulkAssignOwner · method · L584-L605 — async bulkAssignOwner(input: DealBulkOwnerInput): Promise<BulkResult>
+- bulkSetStage · method · L607-L622 — async bulkSetStage( input: DealBulkStageInput, actingUserId: string, ): Promise<BulkResult>
+- bulkDelete · method · L624-L626 — async bulkDelete(ids: string[]): Promise<BulkResult>
+- companyOf · method · L628-L639 — private async companyOf(dealId: string)
+- searchFilter · method · L641-L651 — private searchFilter(q: string): Prisma.DealWhereInput
+- buildWhere · method · L653-L676 — private buildWhere(input: DealListInput): Prisma.DealWhereInput
+- facetCounts · method · L678-L710 — private async facetCounts(input: DealListInput)
+- translate · method · L712-L720 — private translate(error: unknown, id: string): unknown
+- translateRelations · method · L722-L732 — private translateRelations(error: unknown): unknown
+- closingFilter · function · L735-L760 — function closingFilter(window: ClosingWindow): Prisma.DealWhereInput
+- roleOrNull · function · L762-L764 — function roleOrNull(value: string | null): string | null
+- parseDate · function · L766-L773 — function parseDate(value: string | null | undefined): Date | null

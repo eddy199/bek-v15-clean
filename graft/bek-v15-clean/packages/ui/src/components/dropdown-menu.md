@@ -1,0 +1,17 @@
+# bek-v15-clean/packages/ui/src/components/dropdown-menu.tsx
+
+- DropdownMenu · function · L8-L12 — function DropdownMenu({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>)
+- DropdownMenuPortal · function · L14-L20 — function DropdownMenuPortal({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>)
+- DropdownMenuTrigger · function · L22-L31 — function DropdownMenuTrigger({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>)
+- DropdownMenuContent · function · L33-L53 — function DropdownMenuContent({ className, align = "start", sideOffset = 4, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Content>)
+- DropdownMenuGroup · function · L55-L61 — function DropdownMenuGroup({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Group>)
+- DropdownMenuItem · function · L63-L84 — function DropdownMenuItem({ className, inset, variant = "default", ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Item> & { inset?: boolean; variant?: "default" | "destructive"; })
+- DropdownMenuCheckboxItem · function · L86-L117 — function DropdownMenuCheckboxItem({ className, children, checked, inset, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem> & { inset?: boolean; })
+- DropdownMenuRadioGroup · function · L119-L128 — function DropdownMenuRadioGroup({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>)
+- DropdownMenuRadioItem · function · L130-L159 — function DropdownMenuRadioItem({ className, children, inset, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.RadioItem> & { inset?: boolean; })
+- DropdownMenuLabel · function · L161-L179 — function DropdownMenuLabel({ className, inset, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Label> & { inset?: boolean; })
+- DropdownMenuSeparator · function · L181-L192 — function DropdownMenuSeparator({ className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>)
+- DropdownMenuShortcut · function · L194-L208 — function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">)
+- DropdownMenuSub · function · L210-L214 — function DropdownMenuSub({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Sub>)
+- DropdownMenuSubTrigger · function · L216-L238 — function DropdownMenuSubTrigger({ className, inset, children, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> & { inset?: boolean; })
+- DropdownMenuSubContent · function · L240-L254 — function DropdownMenuSubContent({ className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent>)

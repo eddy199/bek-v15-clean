@@ -2,8 +2,9 @@
 import os
 
 BEK_HUB_CONSTANTS = {
-    "default_provider": "groq",
-    "fallback_chain": ["groq", "nvidia", "openrouter", "gemini"],
+    # CORRECTIF v19 : NVIDIA en premier (gratuit illimité, actif)
+    "default_provider": "nvidia",
+    "fallback_chain": ["nvidia", "groq", "gemini", "openrouter"],
     "max_tokens_default": 1500,
     "temperature_default": 0.7
 }

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEK-v15 Hybrid — Agent IA & Matrice</title>
+<link rel="stylesheet" href="agent-ui.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+      --bg-main: linear-gradient(135deg, #2b2b2d 0%, #1e1e20 50%, #141415 100%);
+      --bg-sidebar: rgba(26, 26, 28, 0.85);
+      --text-main: #ffffff;
+      --text-dim: #a0a0a5;
+      --border-color: #3e3e42;
+      --accent-blue: #5c9ce6;
+      --bg-card: rgba(35, 35, 38, 0.7);
+  }
+  body, html, #app {
+      font-family: 'Ubuntu', sans-serif !important;
+      background: var(--bg-main) !important;
+      color: var(--text-main) !important;
+  }
+  .sidebar {
+      background: var(--bg-sidebar) !important;
+      backdrop-filter: blur(10px);
+      border-right: 1px solid var(--border-color) !important;
+  }
+  .nav-item {
+      color: var(--text-main) !important;
+      border-radius: 8px !important;
+      margin-bottom: 4px;
+      transition: all 0.2s;
+  }
+  .nav-item:hover, .nav-item.active {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: var(--text-main) !important;
+      border: 1px solid var(--border-color);
+  }
+  .nav-item svg { stroke: currentColor !important; }
+  textarea#user-input {
+      background-color: rgba(0, 0, 0, 0.4) !important;
+      color: var(--text-main) !important;
+      border: 1px solid var(--border-color) !important;
+      border-radius: 24px !important;
+      font-family: 'Ubuntu', sans-serif !important;
+      padding: 12px 20px !important;
+      min-height: 48px !important;
+      font-size: 15px !important;
+      resize: vertical !important;
+  }
+  .send-btn {
+      background-color: var(--accent-blue) !important;
+      border-radius: 14px !important;
+      border: none !important;
+      width: 40px !important;
+      height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+  }
+  #modelBadge {
+      background-color: rgba(92, 156, 230, 0.15) !important;
+      color: var(--accent-blue) !important;
+      padding: 4px 12px !important;
+      border-radius: 12px !important;
+      font-family: 'Ubuntu Mono', monospace !important;
+      font-size: 12px !important;
+      display: inline-block;
+  }
+  .matrix-widget {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+  }
+  .matrix-terminal {
+      background: rgba(10, 10, 12, 0.9);
+      color: #e0e0e0;
+      font-family: 'Ubuntu Mono', monospace;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #3e3e42;
+      font-size: 13.5px;
+  }
+  .crm-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 20px;
+  }
+  .crm-modal-overlay.active { display: flex; }
+  .crm-modal-container {
+      background: #181a1e;
+      border: 1px solid #3e3e42;
+      border-radius: 14px;
+      width: 100%; max-width: 920px; max-height: 85vh;
+      display: flex; flex-direction: column; overflow: hidden;
+  }
+  .crm-tab-btn {
+      padding: 8px 16px; border-radius: 6px;
+      color: var(--text-dim); font-size: 13px; cursor: pointer;
+  }
+  .crm-tab-btn.active {
+      background: rgba(92, 156, 230, 0.2);
+      color: var(--accent-blue); font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="brand-logo" style="display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius:8px;">
+        <img src="112.jpg" alt="BEK" style="width:100%;height:100%;object-fit:contain;" onerror="this.parentElement.innerHTML='<span style=\'color:#fff\'>B</span>'">
+      </div>
+      <div class="brand-text">
+        <strong>BEK</strong>
+        <span style="color: var(--accent-blue) !important;">v15 Hybrid</span>
+      </div>
+    </div>
+
+    <button class="new-chat" id="newChatBtn" style="background-color: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border-color); border-radius: 8px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      Nouvelle conversation
+    </button>
+
+    <div class="sb-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.35-4.35"/></svg>
+      <input id="convSearch" type="text" placeholder="Rechercher..." style="background:transparent; color:white;">
+    </div>
+
+    <div class="sb-section" style="color: var(--text-dim);">Conversations</div>
+    <div class="conv-list" id="convList"></div>
+
+    <nav class="sb-nav">
+      <div class="sb-section" style="color: var(--text-dim);">Navigation</div>
+      <button class="nav-item active" data-tab="chat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Chat</span>
+      </button>
+      <button class="nav-item" data-tab="skills">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.5 5 5.5.8-4 3.9.9 5.5L12 14.5 7.1 17.2l.9-5.5-4-3.9L9.5 7z"/></svg>
+        <span>Compétences</span>
+        <span class="nav-badge" id="navSkillsCount">0</span>
+      </button>
+      <button class="nav-item" data-tab="files">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/></svg>
+        <span>Fichiers</span>
+        <span class="nav-badge" id="navFilesCount">0</span>
+      </button>
+      <button class="nav-item" data-tab="memory">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 21h4M12 3a6 6 0 016 6c0 2-.5 3-1.5 4.5C15.3 15 15 15.7 15 17h-6c0-1.3-.3-2-1.5-3.5C6.5 12 6 11 6 9a6 6 0 016-6z"/></svg>
+        <span>Mémoire</span>
+      </button>
+      <button class="nav-item" data-tab="connectors">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        <span>Connecteurs</span>
+      </button>
+      <button class="nav-item" data-tab="matrix-bek">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <span>Matrisse CRM BEK</span>
+      </button>
+    </nav>
+  </aside>
+
+  <main class="main" id="main">
+    <!-- VUE CHAT -->
+    <div id="viewChat" class="view active">
+      <header class="header">
+        <h2 id="chatTitle">Chat</h2>
+        <div class="header-center">
+          <select id="providerSelect" class="select"></select>
+          <select id="modelSelect" class="select model-select"></select>
+        </div>
+        <div class="header-right" style="position: relative;">
+          <button class="icon-btn" id="menuOptionsBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+          </button>
+          <div id="dropdownMenu" style="display:none; position:absolute; right:0; top:40px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; width:200px; z-index:100; padding:6px 0;">
+            <button id="menuShare" style="width:100%; text-align:left; padding:8px 14px; font-size:12.5px; color:var(--text-main);">Partager la discussion</button>
+            <button id="menuExportPdf" style="width:100%; text-align:left; padding:8px 14px; font-size:12.5px; color:var(--text-main);">Exporter / Imprimer (PDF)</button>
+            <button id="menuClear" style="width:100%; text-align:left; padding:8px 14px; font-size:12.5px; color:#ff4a4a;">Vider la conversation</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <div class="messages" id="chat-box"></div>
+        <div class="input-area">
+          <div id="filePreviewBar" style="display:none; flex-wrap:wrap; gap:12px; padding-bottom:12px;"></div>
+          <div class="input-wrap" style="position: relative; display: flex; align-items: flex-end; gap: 8px;">
+            
+            <!-- BOUTON + POUR UPLOAD -->
+            <button class="icon-btn" id="uploadBtn" style="margin-right:4px; border:1px solid var(--border-color); border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <input type="file" id="hiddenFileInput" style="display: none;" multiple accept="*/*">
+            <input type="file" id="hiddenImageInput" style="display: none;" accept="image/*">
+
+            <div id="uploadMenu" style="display:none; position:absolute; left:0; bottom:55px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; width:240px; z-index:100; padding:6px 0;">
+              <button id="btnImportFile" style="width:100%; text-align:left; padding:10px 14px; font-size:13px; color:var(--text-main); display:flex; gap:10px; background:none; border:none; cursor:pointer;">📎 Importer des fichiers / ZIP (300 Mo)</button>
+              <button id="btnImportImage" style="width:100%; text-align:left; padding:10px 14px; font-size:13px; color:var(--text-main); display:flex; gap:10px; background:none; border:none; cursor:pointer;">🖼️ Envoyer une image</button>
+            </div>
+
+            <textarea id="user-input" rows="1" placeholder="Écrivez votre message, parlez au micro, ou joignez un fichier/ZIP jusqu'à 300 Mo..."></textarea>
+            
+            <!-- BOUTON MICRO (AUDIO) -->
+            <button id="micBtn" style="width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(92,156,230,0.15); color: var(--accent-blue); border: 1px solid var(--border-color); cursor:pointer; transition:0.3s;" title="Parler à l'agent">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+
+            <!-- BOUTON ENVOI -->
+            <button class="send-btn" id="send-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </button>
+          </div>
+          <div class="input-hint" style="color:var(--text-dim); margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+            <span id="modelBadge">— Initialisation</span>
+            <span>Support complet : Fichiers, Archives ZIP (Tmux/Hermes), Images & Audio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VUES SECONDAIRES -->
+    <div id="viewSkills" class="view" style="padding: 24px; overflow-y: auto;"></div>
+    <div id="viewFiles" class="view" style="padding: 24px; overflow-y: auto;"></div>
+    <div id="viewMemory" class="view" style="padding: 24px; overflow-y: auto;"></div>
+    <div id="viewConnectors" class="view" style="padding: 24px; overflow-y: auto;"></div>
+
+    <!-- VUE MATRISSE CRM -->
+    <div id="viewMatrixBek" class="view" style="padding: 24px; overflow-y: auto;">
+      <header class="matrix-glass-panel" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h2 style="margin: 0; font-size: 1.8em; font-weight: 700;">⚡ MATRISSE CRM BEK</h2>
+      </header>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+        <div class="matrix-widget" style="grid-column: 1 / 2;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="color: var(--accent-blue); margin: 0;">⚡ Sous-CRMs Instanciés</h3>
+            <div style="display: flex; gap: 6px;">
+              <button onclick="promptSpawnNewSubCRM()" style="background: var(--accent-blue); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">+ Nouveau</button>
+              <button onclick="loadSubCRMsUI()" style="background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 6px; font-size: 12px;">Actualiser</button>
+            </div>
+          </div>
+          <div id="subCrmsListContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto;"></div>
+        </div>
+
+        <div class="matrix-widget" style="grid-column: 2 / 3;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="color: #4ade80; margin: 0;">💼 Pipeline (Neon DB)</h3>
+            <div style="display: flex; gap: 6px;">
+              <button onclick="promptCreateOpportunity()" style="background: #4ade80; color: #000; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">+ Opportunité</button>
+              <button onclick="loadOpportunitiesUI()" style="background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 6px; font-size: 12px;">Actualiser</button>
+            </div>
+          </div>
+          <div id="opportunitiesListContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODALE SOUS-CRM -->
+<div id="subCrmModal" class="crm-modal-overlay">
+  <div class="crm-modal-container">
+    <div style="padding: 18px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h3 id="modalNicheTitle" style="margin: 0; color: #fff;"></h3>
+        <span id="modalSubId" style="font-size: 11px; color: var(--text-dim); font-family: monospace;"></span>
+      </div>
+      <button onclick="closeSubCRMModal()" style="font-size: 24px; color: var(--text-dim);">&times;</button>
+    </div>
+    <div style="padding: 10px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between;">
+      <div style="display: flex; gap: 8px;">
+        <button onclick="promptAddEntity()" style="background: var(--accent-blue); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px;">+ Ajouter Entité</button>
+        <button onclick="promptAddOperation()" style="background: rgba(255,255,255,0.08); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px;">+ Nouvelle Opération</button>
+      </div>
+    </div>
+    <div style="padding: 12px 24px; border-bottom: 1px solid var(--border-color); display: flex; gap: 10px;">
+      <button class="crm-tab-btn active" id="tabBtnEntities" onclick="switchModalTab('entities')">👥 Entités / Contacts</button>
+      <button class="crm-tab-btn" id="tabBtnOps" onclick="switchModalTab('operations')">⚙️ Opérations</button>
+      <button class="crm-tab-btn" id="tabBtnAnalytics" onclick="switchModalTab('analytics')">📈 Analytics</button>
+    </div>
+    <div style="padding: 20px 24px; flex: 1; overflow-y: auto;">
+      <div id="modalTabContent" style="background: rgba(10,10,12,0.8); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; font-family: monospace; font-size: 12.5px; overflow-x: auto;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX POUR AGRANDIR LES IMAGES -->
+<div id="imageLightbox" class="image-lightbox">
+    <img id="lightboxImg" src="" alt="Agrandissement">
+</div>
+
+<script src="agent-ui.js"></script>
+
+</body>
+</html>
