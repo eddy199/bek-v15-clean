@@ -101,3 +101,7 @@ desktop.ini
 tmp/
 temp/
 .cache/
+# Node portable (Windows uniquement, inutile pour Render Linux)
+node_portable/
+node_modules/
+package-lock.json
