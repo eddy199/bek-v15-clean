@@ -2,6 +2,9 @@
 # BEK-v16 — Routeur Chat Streaming & Human-in-the-Loop (routers/chat.py)
 # ------------------------------------------------------------------------------
 # + OpenTelemetry : spans sur chat.request, smart_router, cognitive_check
+# + Sanitizer tokens natifs LLM (Nemotron) + règles outil web
+# + Fix: plus de CANCELED_ACTION intempestif + logs headless_scrape
+# + headless_scrape : extraction texte via BeautifulSoup
 # ==============================================================================
 from __future__ import annotations
 
@@ -54,6 +57,32 @@ logger = logging.getLogger("BEKApp")
 
 # ── EXPRESSION RÉGULIÈRE UNIQUE (Anti-Coupure Interface) ──
 ACTION_REGEX = re.compile(r"\x5bACTION:(\w+)\x5d(.*?)\x5b/ACTION\x5d", re.DOTALL)
+
+# ── SANITIZER : tokens natifs de tool-calling LLM (Nemotron, Hermes format) ──
+_LLM_NATIVE_TOKENS = (
+    "<|tool_call_begin|>",
+    "<|tool_call_end|>",
+    "<|tool_call_argument_begin|>",
+    "<|tool_call_argument_end|>",
+    "<|tool_call|>",
+    "<|tool_sep|>",
+    "<|tool_calls_section_begin|>",
+    "<|tool_calls_section_end|>",
+)
+_LLM_NATIVE_REGEX = re.compile(
+    "|".join(re.escape(tok) for tok in _LLM_NATIVE_TOKENS)
+)
+_LLM_XML_TOOL_REGEX = re.compile(
+    r"<tool_call>.*?</tool_call>", re.DOTALL
+)
+
+
+def _sanitize_llm_output(text: str) -> str:
+    if not text:
+        return text
+    text = _LLM_NATIVE_REGEX.sub("", text)
+    text = _LLM_XML_TOOL_REGEX.sub("", text)
+    return text
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -272,6 +301,16 @@ Tu es BEK, agent technique d'exécution sur {CURRENT_OS_NAME}.
 - INTERDICTION de demander la permission.
 - Renvoie UNIQUEMENT la balise [ACTION:nom]{{"param":"v"}}[/ACTION].
 
+# 🚫 FORMAT DE SORTIE DES ACTIONS (RÈGLE ABSOLUE)
+- N'UTILISE JAMAIS de tokens spéciaux comme <|tool_call_begin|>,
+  <|tool_call_end|>, <|tool_call|>, <tool_call> ou tout autre format
+  natif de LLM.
+- TU DOIS utiliser EXCLUSIVEMENT le format :
+      [ACTION:nom]{{"param":"valeur"}}[/ACTION]
+- Aucun autre format ne sera reconnu par le runtime.
+- Si tu ne peux pas utiliser ce format exact, réponds en texte normal
+  sans tenter d'appeler un outil.
+
 # ACTIONS DISPONIBLES :
    - [ACTION:generate_image]{{"prompt": "detailed description in english"}}[/ACTION]
    - [ACTION:edit_image]{{"image_paths": ["filename.png"], "prompt": "exact modification directive in english"}}[/ACTION]
@@ -280,6 +319,8 @@ Tu es BEK, agent technique d'exécution sur {CURRENT_OS_NAME}.
    - [ACTION:create_dynamic_skill]{{"skill_name": "x", "code_content": "y"}}[/ACTION]
    - [ACTION:orchestrate]{{"goal": "..."}}[/ACTION]
    - [ACTION:web_sync]{{"query": "..."}}[/ACTION]
+   - [ACTION:headless_scrape]{{"url": "https://..."}}[/ACTION]
+   - [ACTION:headless_search]{{"query": "..."}}[/ACTION]
    - [ACTION:run_script]{{"script_name": "skills/x.py", "args": "--ip 127.0.0.1"}}[/ACTION]
    - [ACTION:execute_command]{{"command": "..."}}[/ACTION]
    - [ACTION:execute_tmux_headless]{{"session_name": "s", "command": "c"}}[/ACTION]
@@ -287,6 +328,18 @@ Tu es BEK, agent technique d'exécution sur {CURRENT_OS_NAME}.
    - [ACTION:search_memory]{{"query": "..."}}[/ACTION]
    - [ACTION:write_file]{{"filename": "...", "content": "..."}}[/ACTION]
    - [ACTION:read_file]{{"filename": "..."}}[/ACTION]
+
+# 🌐 RÈGLE DE SÉLECTION D'OUTIL WEB (CRITIQUE) :
+- URL explicite dans la demande (ex. "scrape https://...") → utiliser :
+      [ACTION:headless_scrape]{{"url": "https://..."}}[/ACTION]
+- Recherche Google/Bing (ex. "cherche X sur le web") → utiliser :
+      [ACTION:headless_search]{{"query": "..."}}[/ACTION]
+- Extraction d'emails/contacts d'une page → utiliser :
+      [ACTION:headless_scrape]{{"url": "https://..."}}[/ACTION]
+- Veille approfondie multi-sources avec rapport (ex. "fais une veille sur X") → utiliser :
+      [ACTION:web_sync]{{"query": "..."}}[/ACTION]
+- INTERDICTION ABSOLUE d'utiliser [ACTION:web_sync] quand une URL explicite
+  (http:// ou https://) est fournie dans la demande. Utilise headless_scrape.
 
 # DIRECTIVE MULTIMÉDIA ABSOLUE (PRIORITÉ MAXIMALE) :
 - Pour TOUTE demande de création, génération ou modification visuelle (photo, image, portrait, caricature, dessin, illustration, vidéo, animation) :
@@ -341,6 +394,52 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
         logger.error("Erreur directe Vision (%s) : %s", act_name, exc)
         return {"status": "error", "message": f"Erreur multimédia : {exc}"}
 
+    # ── Outils web : headless_scrape / headless_search ──
+    if act_name == "headless_scrape":
+        url = params.get("url") or params.get("query") or ""
+        if not url:
+            return {"status": "error", "message": "URL manquante pour headless_scrape"}
+        try:
+            from worker_headless import HeadlessWorker
+            from nerves._async_utils import run_async_safely
+            logger.info("[headless_scrape] Démarrage : %s", url)
+            worker = HeadlessWorker(headless=True)
+            result = run_async_safely(worker.fetch_page_content(url))
+            if result is None:
+                logger.warning(
+                    "[headless_scrape] fetch_page_content → None pour %s",
+                    url,
+                )
+                return {
+                    "status": "error",
+                    "message": (
+                        f"headless_scrape : impossible de charger {url}. "
+                        f"Vérifie que Playwright est bien installé "
+                        f"(`playwright install chromium`)."
+                    ),
+                }
+            preview = str(result)[:200] if result else ""
+            logger.info(
+                "[headless_scrape] OK %s (%d chars) | preview=%s",
+                url, len(str(result)), preview,
+            )
+            return result
+        except Exception as exc:
+            logger.error("Erreur headless_scrape : %s", exc, exc_info=True)
+            return {"status": "error", "message": f"headless_scrape échoué : {exc}"}
+
+    if act_name == "headless_search":
+        query = params.get("query") or ""
+        if not query:
+            return {"status": "error", "message": "Query manquante pour headless_search"}
+        try:
+            from nerves.headless_nerves import _handler_headless_search
+            return _handler_headless_search(query=query)
+        except Exception as exc:
+            logger.error("Erreur headless_search : %s", exc, exc_info=True)
+            return {"status": "error", "message": f"headless_search échoué : {exc}"}
+
+    # ── Fallback : Hermes / CRM executor ──
     if act_name in hermes.tools:
         h_disp = hermes.dispatch(act_name, params)
         if h_disp.get("status") == "SUCCESS" and h_disp.get("results"):
@@ -356,15 +455,57 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
 
 
 def _format_execution_result(act_name: str, exec_res: dict) -> str:
-    if isinstance(exec_res, dict):
-        fn = exec_res.get("filename", "")
-        if exec_res.get("status") == "success" and fn:
-            if any(fn.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"]):
-                return f"🎨 **Image générée !**\n\n![{fn}](/api/download/{fn})"
-            elif any(fn.lower().endswith(ext) for ext in [".mp4", ".webm", ".mov", ".avi"]):
-                return f"🎬 **Vidéo générée !**\n\n[Télécharger la vidéo](/api/download/{fn})\n\n"
-        return exec_res.get("message", "Opération OK")
-    return str(exec_res)
+    if not isinstance(exec_res, dict):
+        return str(exec_res)
+
+    # ── Images / Vidéos ──
+    fn = exec_res.get("filename", "")
+    if exec_res.get("status") == "success" and fn:
+        if any(fn.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"]):
+            return f"🎨 **Image générée !**\n\n![{fn}](/api/download/{fn})"
+        elif any(fn.lower().endswith(ext) for ext in [".mp4", ".webm", ".mov", ".avi"]):
+            return f"🎬 **Vidéo générée !**\n\n[Télécharger la vidéo](/api/download/{fn})\n\n"
+
+    # ── headless_scrape : extraction texte via BeautifulSoup ──
+    if act_name == "headless_scrape":
+        if exec_res.get("status") == "success":
+            url = exec_res.get("url", "")
+            title = exec_res.get("title", "")
+            html = exec_res.get("html", "") or ""
+
+            # Extraire le texte brut via BeautifulSoup
+            try:
+                from bs4 import BeautifulSoup
+                soup = BeautifulSoup(html, "html.parser")
+                for tag in soup(["script", "style", "noscript", "meta", "link"]):
+                    tag.decompose()
+                text = soup.get_text(separator="\n", strip=True)
+            except ImportError:
+                logger.warning("bs4 non installé → fallback HTML brut")
+                text = html  # fallback si bs4 absent
+
+            # Nettoie les lignes vides multiples
+            lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+            text = "\n".join(lines)
+
+            preview = text[:4000]
+            return (
+                f"✅ **Scraping réussi** : {url}\n"
+                f"- Titre : **{title}**\n"
+                f"- Contenu extrait : {len(text)} chars\n\n"
+                f"**Contenu textuel** :\n```\n{preview}\n```\n"
+                f"→ Analyse ce contenu et donne à l'utilisateur "
+                f"ce qu'il a demandé (titres, liens, emails, etc.)."
+            )
+        else:
+            return exec_res.get("message", "❌ headless_scrape a échoué")
+
+    # ── headless_search ──
+    if act_name == "headless_search":
+        return exec_res.get("message") or str(exec_res)
+
+    # ── Fallback ──
+    return exec_res.get("message", "Opération OK")
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -372,7 +513,6 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
 # ══════════════════════════════════════════════════════════════════
 @router.post("/api/chat")
 async def chat(request: Request):
-    """Point d'entrée unique. Le span parent englobe tout le traitement."""
     with span("chat.request") as chat_span:
         return await _chat_impl(request, chat_span)
 
@@ -383,7 +523,6 @@ async def _chat_impl(request: Request, chat_span):
     provider = data.get("provider", "b_ai")
     model = data.get("model", "glm-5.3-flash")
 
-    # ── OTel : métadonnées de base ──
     set_span_attribute("chat.messages_count", len(messages) if isinstance(messages, list) else 0)
     set_span_attribute("chat.provider", provider)
     set_span_attribute("chat.model", model)
@@ -391,7 +530,6 @@ async def _chat_impl(request: Request, chat_span):
     if trace_id:
         logger.info("[Chat] trace_id=%s provider=%s model=%s", trace_id, provider, model)
 
-    # ── BORNAGE STRICT DE LA TAILLE DES MESSAGES ──
     trimmed_messages = _truncate_messages(messages)
     set_span_attribute("chat.trimmed_count", len(trimmed_messages))
 
@@ -497,7 +635,7 @@ async def _chat_impl(request: Request, chat_span):
                 generate_slash(), media_type="text/event-stream"
             )
 
-    # ── Human-in-the-Loop (agreed/refused) ──
+    # ── Human-in-the-Loop (agreed / refused uniquement) ──
     if len(trimmed_messages) >= 2:
         prev_msg = trimmed_messages[-2]
         is_ast = prev_msg.get("role") == "assistant"
@@ -542,11 +680,6 @@ async def _chat_impl(request: Request, chat_span):
                            f"Donne ton retour à l'utilisateur.")
                     trimmed_messages[-1]["content"] += inj
 
-                    old_c = trimmed_messages[-2]["content"]
-                    trimmed_messages[-2]["content"] = old_c.replace(
-                        "[ACTION:", "[EXECUTED_ACTION:"
-                    )
-
             elif user_status == "refused":
                 old_c = trimmed_messages[-2]["content"]
                 trimmed_messages[-2]["content"] = old_c.replace(
@@ -554,11 +687,11 @@ async def _chat_impl(request: Request, chat_span):
                 )
                 inj = "\n\n[SYSTÈME - ACTION REFUSÉE. Propose autre chose.]"
                 trimmed_messages[-1]["content"] += inj
-            else:
-                old_c = trimmed_messages[-2]["content"]
-                trimmed_messages[-2]["content"] = old_c.replace(
-                    "[ACTION:", "[CANCELED_ACTION:"
-                )
+
+            # Sinon (user_status == "neutral") :
+            # Ne rien faire. L'utilisateur fait une nouvelle requête,
+            # on n'annule PAS l'action précédente et on traite
+            # normalement le nouveau message.
 
     # ── Prompt système dynamique ──
     dynamic_system_prompt = BEK_GOLDEN_RULES.strip()
@@ -615,6 +748,13 @@ async def _chat_impl(request: Request, chat_span):
             ):
                 if "chunk" in item:
                     chunk = item["chunk"]
+
+                    # ── Sanitizer : retire les tokens natifs LLM ──
+                    chunk = _sanitize_llm_output(chunk)
+
+                    if not chunk.strip():
+                        continue
+
                     full_text_accumulated.append(chunk)
                     current_text = "".join(full_text_accumulated)
 
