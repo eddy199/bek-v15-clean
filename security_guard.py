@@ -12,13 +12,13 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Set, Tuple
 
 logger = logging.getLogger("bek.security_guard")
+
 BASE_DIR = Path(__file__).resolve().parent
 
 
 class SecurityGuard:
     DEFAULT_SECRET_ENV = "BEK_HSM_SECRET"
 
-    # Fichiers sensibles strictement interdits à la lecture/écriture
     BLOCKED_SENSITIVE_FILES: Set[str] = {
         ".env",
         "env.txt",
@@ -29,9 +29,8 @@ class SecurityGuard:
         "config.json",
     }
 
-    # Allowlist exhaustive des actions Hermes, CRM, Fichiers, Images et Terminal
     ALLOWED_ACTIONS: Dict[str, Tuple[str, ...]] = {
-        # Actions CRM natives & Plugins
+        # CRM
         "create_contact": ("name", "email", "phone", "firstName", "provider", "model"),
         "create_deal": ("title", "amount", "name", "provider", "model"),
         "create_task": ("title", "name", "description", "provider", "model"),
@@ -39,18 +38,31 @@ class SecurityGuard:
         "update_contact": ("name", "email", "phone", "provider", "model"),
         "get_stats": ("provider", "model"),
         "neon_audit": ("tables", "provider", "model"),
-        "default_llm": ("query", "skill", "prompt", "provider", "model"),
 
-        # Actions Orchestration & Compétences
-        "create_dynamic_skill": ("skill_name", "code_content", "description", "provider", "model"),
+        # Orchestration
+        "default_llm": ("query", "skill", "prompt", "provider", "model"),
+        "create_dynamic_skill": (
+            "skill_name",
+            "code_content",
+            "description",
+            "provider",
+            "model",
+        ),
         "orchestrate": ("goal", "objective", "query", "provider", "model"),
-        "run_swarm_task": ("goal", "objective", "task_description", "query", "provider", "model"),
+        "run_swarm_task": (
+            "goal",
+            "objective",
+            "task_description",
+            "query",
+            "provider",
+            "model",
+        ),
         "multi_agent_workflow": ("goal", "objective", "query", "provider", "model"),
         "web_sync": ("query", "skill", "prompt", "provider", "model"),
         "web_search": ("query", "provider", "model"),
         "web_pipeline": ("query", "provider", "model"),
 
-        # Actions Mémoire Vectorielle
+        # Mémoire
         "save_memory": ("content", "provider", "model"),
         "remember": ("content", "provider", "model"),
         "save_to_memory": ("content", "provider", "model"),
@@ -60,7 +72,7 @@ class SecurityGuard:
         "forget": ("record_id", "keyword", "provider", "model"),
         "delete_from_memory": ("record_id", "keyword", "provider", "model"),
 
-        # Actions Fichiers & Archives
+        # Fichiers
         "write_file": ("filename", "content", "provider", "model"),
         "save_file": ("filename", "content", "provider", "model"),
         "create_file": ("filename", "content", "provider", "model"),
@@ -70,28 +82,44 @@ class SecurityGuard:
         "create_zip": ("folder_path", "output_zip", "provider", "model"),
         "analyze_zip_content": ("zip_path", "provider", "model"),
 
-        # Actions Multimédias & Vision
+        # Multimédia
         "analyze_image": ("image_path", "prompt", "provider", "model"),
         "generate_image": ("prompt", "filename", "provider", "model"),
-        "merge_and_edit_images": ("image_paths", "prompt", "provider", "model"),
+        "merge_and_edit_images": (
+            "image_paths",
+            "prompt",
+            "provider",
+            "model",
+        ),
 
-        # Actions Terminal & Background (Validation L4/L5)
+        # Terminal / Background
         "execute_command": ("command", "session_name", "provider", "model"),
         "run_script": ("command", "provider", "model"),
         "run_tests": ("command", "provider", "model"),
-        "execute_tmux_headless": ("session_name", "command", "provider", "model"),
-        "execute_background_task": ("session_name", "command", "provider", "model"),
-        "start_background_task": ("session_name", "command", "provider", "model"),
+        "execute_tmux_headless": (
+            "session_name",
+            "command",
+            "provider",
+            "model",
+        ),
+        "execute_background_task": (
+            "session_name",
+            "command",
+            "provider",
+            "model",
+        ),
+        "start_background_task": (
+            "session_name",
+            "command",
+            "provider",
+            "model",
+        ),
         "stop_background_task": ("session_name", "provider", "model"),
         "stop_tmux_headless": ("session_name", "provider", "model"),
         "kill_session": ("session_name", "provider", "model"),
         "stop_session": ("session_name", "provider", "model"),
     }
 
-    # -------------------------------------------------------------------------
-    # Patterns interdits — deux familles
-    # -------------------------------------------------------------------------
-    # 1) FORBIDDEN_PATTERNS : appliqués à TOUS les champs sauf code_content/content
     FORBIDDEN_PATTERNS = (
         re.compile(r"(?i)\bDROP\s+DATABASE\b"),
         re.compile(r"(?i)\bTRUNCATE\s+TABLE\b"),
@@ -103,8 +131,6 @@ class SecurityGuard:
         re.compile(r"(?i)/DEV/(?:TCP|UDP)/"),
     )
 
-    # 2) FORBIDDEN_CODE_PATTERNS : appliqués EN PLUS à code_content et content
-    #    Ils visent les primitives d'exécution dynamique dangereuses.
     FORBIDDEN_CODE_PATTERNS = (
         re.compile(r"(?i)\beval\s*\("),
         re.compile(r"(?i)\bexec\s*\("),
@@ -126,127 +152,180 @@ class SecurityGuard:
         re.compile(r"(?i)\brequests\s*\.\s*(get|post|put|delete|patch)\s*\("),
     )
 
-    # Imports bannis — étendus par rapport à la version d'origine
-    # NB : cette liste s'applique uniquement à create_dynamic_skill.
     BANNED_IMPORTS: Set[str] = {
-        "subprocess", "pty", "ctypes", "marshal", "pickle", "winreg",
-        "urllib", "requests", "http", "socket", "shutil",
-        "os", "sys", "importlib", "multiprocessing", "threading",
+        "subprocess",
+        "pty",
+        "ctypes",
+        "marshal",
+        "pickle",
+        "winreg",
+        "urllib",
+        "requests",
+        "http",
+        "socket",
+        "shutil",
+        "os",
+        "sys",
+        "importlib",
+        "multiprocessing",
+        "threading",
     }
 
     SECRET_PATTERNS = (
         re.compile(r"sk-[a-zA-Z0-9]{20,}", re.I),
-        re.compile(r"AIza[0-9A-Za-z-_]{35}", re.I),
+        re.compile(r"AIza[0-9A-Za-z\-_]{35}", re.I),
         re.compile(r"gsk_[a-zA-Z0-9]{20,}", re.I),
-        re.compile(r"nvapi-[a-zA-Z0-9-_]{20,}", re.I),
+        re.compile(r"nvapi-[a-zA-Z0-9\-_]{20,}", re.I),
         re.compile(r"Bearer\s+[a-zA-Z0-9._\-]{20,}", re.I),
     )
 
     def __init__(self, secret_key: Optional[str] = None):
-        # ---------------------------------------------------------------------
-        # CORRECTIF CRITIQUE : plus de clé codée en dur.
-        # 1) clé fournie explicitement
-        # 2) variable d'environnement BEK_HSM_SECRET
-        # 3) fichier .env / env.txt
-        # 4) clé éphémère aléatoire (session uniquement) + avertissement fort
-        # ---------------------------------------------------------------------
         key = secret_key or os.environ.get(self.DEFAULT_SECRET_ENV, "")
+
         if not key:
             key = self._read_env_file(self.DEFAULT_SECRET_ENV)
 
         self._ephemeral_key_used = False
+
         if not key:
             key = secrets.token_hex(32)
             self._ephemeral_key_used = True
+
             logger.warning(
-                "⚠️ SecurityGuard : aucune clé HMAC persistante trouvée "
-                "(ni BEK_HSM_SECRET, ni .env/env.txt). Une clé ÉPHÉMÈRE a été "
-                "générée pour cette session. Les signatures HMAC ne seront PAS "
-                "valides après redémarrage. Définissez BEK_HSM_SECRET en production."
+                "SecurityGuard : aucune clé HMAC persistante trouvée. "
+                "Une clé éphémère a été générée pour cette session. "
+                "Définissez BEK_HSM_SECRET en production."
             )
 
         self.secret_key = key.strip("\"' \r\n").encode("utf-8")
+
+        if len(self.secret_key) < 32:
+            raise ValueError(
+                "BEK_HSM_SECRET doit contenir au minimum 32 caractères."
+            )
+
         self.allowed_actions = dict(self.ALLOWED_ACTIONS)
 
-    # -------------------------------------------------------------------------
-    # Chargement de la clé depuis .env
-    # -------------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # ENV
+    # ------------------------------------------------------------------
+
     @staticmethod
     def _read_env_file(name: str) -> str:
-        base = os.path.dirname(os.path.abspath(__file__))
         for filename in (".env", "env.txt"):
-            path = os.path.join(base, filename)
-            if not os.path.exists(path):
+            path = BASE_DIR / filename
+
+            if not path.exists():
                 continue
+
             try:
-                with open(path, "r", encoding="utf-8-sig", errors="ignore") as fh:
+                with path.open(
+                    "r",
+                    encoding="utf-8-sig",
+                    errors="ignore",
+                ) as fh:
                     for line in fh:
                         line = line.strip()
+
                         if line.startswith(name + "="):
-                            return line.split("=", 1)[1].strip().strip("\"'")
+                            return (
+                                line.split("=", 1)[1]
+                                .strip()
+                                .strip("\"'")
+                            )
+
             except OSError:
                 continue
+
         return ""
 
-    # -------------------------------------------------------------------------
-    # DLP : masquage des secrets
-    # -------------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # DLP
+    # ------------------------------------------------------------------
+
     @classmethod
     def sanitize_secrets(cls, text: str) -> str:
-        """DLP: Masque automatiquement les clés et tokens sensibles."""
         if not isinstance(text, str):
             return text
+
         sanitized = text
+
         for pattern in cls.SECRET_PATTERNS:
-            sanitized = pattern.sub("[REDACTED_SECRET]", sanitized)
+            sanitized = pattern.sub(
+                "[REDACTED_SECRET]",
+                sanitized,
+            )
+
         return sanitized
 
-    # -------------------------------------------------------------------------
-    # Analyse AST — CORRECTIF : SyntaxError => REJET
-    # -------------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # AST
+    # ------------------------------------------------------------------
+
     @classmethod
     def validate_code_ast(cls, code_str: str) -> Tuple[bool, str]:
-        """
-        Analyse syntaxique AST tolérante (nettoie les balises markdown et le BOM).
-        CORRECTIF : un SyntaxError est désormais un REJET, pas un laissez-passer.
-        """
         if not isinstance(code_str, str) or not code_str.strip():
             return True, "OK"
 
         cleaned = code_str.strip().lstrip("\ufeff")
-        cleaned = re.sub(r"^```(?:python)?\s*|```$", "", cleaned, flags=re.M).strip()
+
+        cleaned = re.sub(
+            r"^```(?:python)?\s*|```$",
+            "",
+            cleaned,
+            flags=re.M,
+        ).strip()
 
         try:
             tree = ast.parse(cleaned)
         except SyntaxError as exc:
-            # CORRECTIF : on rejette explicitement au lieu de retourner True
             return False, f"Code non analysable (SyntaxError) : {exc.msg}"
 
         for node in ast.walk(tree):
+
             if isinstance(node, ast.Import):
                 for alias in node.names:
                     root_mod = alias.name.split(".")[0]
+
                     if root_mod in cls.BANNED_IMPORTS:
-                        return False, f"Import dangereux interdit : '{alias.name}'"
+                        return (
+                            False,
+                            f"Import dangereux interdit : '{alias.name}'",
+                        )
+
             elif isinstance(node, ast.ImportFrom):
-                if node.module and node.module.split(".")[0] in cls.BANNED_IMPORTS:
-                    return False, f"Import dangereux interdit : 'from {node.module}'"
+                if node.module:
+                    root_mod = node.module.split(".")[0]
+
+                    if root_mod in cls.BANNED_IMPORTS:
+                        return (
+                            False,
+                            f"Import dangereux interdit : "
+                            f"'from {node.module}'",
+                        )
 
         return True, "OK"
 
-    # -------------------------------------------------------------------------
-    # Détection d'injection — CORRECTIF : ne plus exclure content/code_content
-    # -------------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # INJECTION
+    # ------------------------------------------------------------------
+
     @classmethod
-    def _detect_injection(cls, value: Any, strict_code: bool = False) -> bool:
-        """
-        Détecte les patterns interdits.
-        - strict_code=True : applique aussi FORBIDDEN_CODE_PATTERNS
-          (utilisé pour code_content et content).
-        """
+    def _detect_injection(
+        cls,
+        value: Any,
+        strict_code: bool = False,
+    ) -> bool:
+
         try:
-            text = value if isinstance(value, str) else json.dumps(
-                value, ensure_ascii=False, default=str
+            text = (
+                value
+                if isinstance(value, str)
+                else json.dumps(
+                    value,
+                    ensure_ascii=False,
+                    default=str,
+                )
             )
         except Exception:
             return True
@@ -262,101 +341,202 @@ class SecurityGuard:
 
         return False
 
-    # -------------------------------------------------------------------------
-    # Confinement de chemin
-    # -------------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # PATH CONFINEMENT
+    # ------------------------------------------------------------------
+
     @classmethod
-    def _validate_path_confinement(cls, path_val: Any) -> Tuple[bool, str]:
+    def _validate_path_confinement(
+        cls,
+        path_val: Any,
+    ) -> Tuple[bool, str]:
+
         if not isinstance(path_val, str) or not path_val.strip():
             return False, "Chemin de fichier invalide ou vide."
 
         raw_clean = path_val.strip().strip("\"'")
 
-        if ".." in raw_clean or raw_clean.startswith("/") or re.match(r"^[a-zA-Z]:", raw_clean):
-            target_path = Path(raw_clean)
-            if not target_path.is_absolute():
-                target_path = (BASE_DIR / target_path).resolve()
-            else:
-                target_path = target_path.resolve()
+        if "\x00" in raw_clean:
+            return False, "Chemin contenant un caractère nul interdit."
 
-            try:
-                target_path.relative_to(BASE_DIR.resolve())
-            except ValueError:
-                return False, f"Sortie de sandbox refusee pour '{raw_clean}'."
+        target_path = Path(raw_clean)
 
-        filename = Path(raw_clean).name.lower()
-        if filename in cls.BLOCKED_SENSITIVE_FILES or filename.endswith((".key", ".pem", ".pfx")):
-            return False, f"Acces interdit au fichier sensible '{filename}'."
+        # Tous les chemins sont résolus dans BASE_DIR.
+        if target_path.is_absolute():
+            resolved = target_path.resolve()
+        else:
+            resolved = (BASE_DIR / target_path).resolve()
+
+        try:
+            resolved.relative_to(BASE_DIR.resolve())
+        except ValueError:
+            return (
+                False,
+                f"Sortie de sandbox refusée pour '{raw_clean}'.",
+            )
+
+        filename = resolved.name.lower()
+
+        if (
+            filename in cls.BLOCKED_SENSITIVE_FILES
+            or filename.endswith((".key", ".pem", ".pfx"))
+        ):
+            return (
+                False,
+                f"Accès interdit au fichier sensible '{filename}'.",
+            )
 
         return True, "OK"
 
-    # -------------------------------------------------------------------------
-    # Certification principale
-    # -------------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # CANONICALISATION HMAC
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _canonical_payload(
+        action: str,
+        params: Dict[str, Any],
+    ) -> bytes:
+
+        canonical = json.dumps(
+            params,
+            sort_keys=True,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
+
+        return f"{action}:{canonical}".encode("utf-8")
+
+    # ------------------------------------------------------------------
+    # CERTIFICATION
+    # ------------------------------------------------------------------
+
     def validate_and_certify(
         self,
         action: str,
         params: Optional[Dict[str, Any]],
     ) -> Tuple[bool, str, Dict[str, Any]]:
+
         if not isinstance(action, str) or not action.strip():
-            return False, "REJET SECURITE : Action invalide.", {}
+            return (
+                False,
+                "REJET SECURITE : Action invalide.",
+                {},
+            )
 
         action = action.strip()
+
         if action not in self.allowed_actions:
-            return False, f"REJET SECURITE : Action '{action}' non presente dans l'Allowlist.", {}
+            return (
+                False,
+                f"REJET SECURITE : Action '{action}' "
+                "non presente dans l'Allowlist.",
+                {},
+            )
 
         if params is None:
             params = {}
+
         if not isinstance(params, dict):
-            return False, "REJET SECURITE : Parametres invalides (dictionnaire requis).", {}
+            return (
+                False,
+                "REJET SECURITE : Parametres invalides.",
+                {},
+            )
 
         allowed = set(self.allowed_actions[action])
         unknown = set(params) - allowed
+
         if unknown:
             return (
                 False,
-                f"REJET SECURITE : Parametres non autorises pour '{action}': {sorted(unknown)}.",
+                f"REJET SECURITE : Parametres non autorises "
+                f"pour '{action}': {sorted(unknown)}.",
                 {},
             )
 
         sanitized = dict(params)
 
-        # 1. Validation de confinement de chemin (Path Traversal Guard)
-        file_keys = ("filename", "zip_path", "extract_to", "folder_path", "output_zip", "image_path")
-        for f_key in file_keys:
-            if f_key in sanitized:
-                is_safe, err_msg = self._validate_path_confinement(sanitized[f_key])
+        # --------------------------------------------------------------
+        # PATHS
+        # --------------------------------------------------------------
+
+        file_keys = (
+            "filename",
+            "zip_path",
+            "extract_to",
+            "folder_path",
+            "output_zip",
+            "image_path",
+        )
+
+        for key in file_keys:
+            if key in sanitized:
+
+                is_safe, err_msg = self._validate_path_confinement(
+                    sanitized[key]
+                )
+
                 if not is_safe:
-                    return False, f"REJET SECURITE : {err_msg}", {}
+                    return (
+                        False,
+                        f"REJET SECURITE : {err_msg}",
+                        {},
+                    )
 
-        # 2. Validation AST uniquement pour la création de code dynamique
-        if action == "create_dynamic_skill" and "code_content" in sanitized:
-            is_valid_code, err_code = self.validate_code_ast(sanitized["code_content"])
-            if not is_valid_code:
-                return False, f"REJET SECURITE : {err_code}", {}
+        # --------------------------------------------------------------
+        # CODE AST
+        # --------------------------------------------------------------
 
-        # 3. Détection d'injections
-        #    CORRECTIF : on n'exclut PLUS content ni code_content.
-        #    Ils passent par la version stricte (FORBIDDEN_CODE_PATTERNS).
-        for key, value in sanitized.items():
-            strict = key in ("content", "code_content")
-            if self._detect_injection(value, strict_code=strict):
+        if (
+            action == "create_dynamic_skill"
+            and "code_content" in sanitized
+        ):
+            valid, error = self.validate_code_ast(
+                sanitized["code_content"]
+            )
+
+            if not valid:
                 return (
                     False,
-                    f"REJET SECURITE : Signature destructive ou injection detectee dans '{key}'.",
+                    f"REJET SECURITE : {error}",
                     {},
                 )
 
-        canonical = json.dumps(
+        # --------------------------------------------------------------
+        # INJECTION / DLP
+        # --------------------------------------------------------------
+
+        for key, value in sanitized.items():
+
+            strict_code = key in {
+                "content",
+                "code_content",
+            }
+
+            if self._detect_injection(
+                value,
+                strict_code=strict_code,
+            ):
+                return (
+                    False,
+                    "REJET SECURITE : Signature destructive "
+                    f"ou injection detectee dans '{key}'.",
+                    {},
+                )
+
+        # --------------------------------------------------------------
+        # HMAC
+        # --------------------------------------------------------------
+
+        payload = self._canonical_payload(
+            action,
             sanitized,
-            sort_keys=True,
-            ensure_ascii=False,
-            separators=(",", ":"),
         )
-        payload = f"{action}:{canonical}"
+
         signature = hmac.new(
             self.secret_key,
-            payload.encode("utf-8"),
+            payload,
             hashlib.sha256,
         ).hexdigest()
 
@@ -364,77 +544,128 @@ class SecurityGuard:
             "action": action,
             "params": sanitized,
             "certified": True,
-            "security_layer": "SecurityGuard-v15.3-Hardened-v2",
-            "policy": "ALLOWLIST_STRICT + SANDBOX + DLP + HMAC-SHA256",
+            "security_layer": "SecurityGuard-v16-Hardened",
+            "policy": (
+                "ALLOWLIST_STRICT + SANDBOX + DLP "
+                "+ HMAC-SHA256"
+            ),
             "hsm_signature": signature,
             "ephemeral_key": self._ephemeral_key_used,
         }
-        return True, "CERTIFIE PAR SECURITY GUARD (ALLOWLIST + SANDBOX + DLP + HMAC-SHA256)", envelope
 
-    # -------------------------------------------------------------------------
-    # Vérification de signature — à appeler AVANT exécution (côté hermes_core)
-    # -------------------------------------------------------------------------
+        return (
+            True,
+            "CERTIFIE PAR SECURITY GUARD "
+            "(ALLOWLIST + SANDBOX + DLP + HMAC-SHA256)",
+            envelope,
+        )
+
+    # ------------------------------------------------------------------
+    # VERIFY SIGNATURE
+    # ------------------------------------------------------------------
+
     def verify_signature(
         self,
         action: str,
         params: Dict[str, Any],
         signature: str,
     ) -> bool:
+
+        if not isinstance(action, str):
+            return False
+
+        if not isinstance(params, dict):
+            return False
+
         if not isinstance(signature, str):
             return False
-        canonical = json.dumps(
-            params,
-            sort_keys=True,
-            ensure_ascii=False,
-            separators=(",", ":"),
-        )
-        payload = f"{action}:{canonical}"
+
         expected = hmac.new(
             self.secret_key,
-            payload.encode("utf-8"),
+            self._canonical_payload(action, params),
             hashlib.sha256,
         ).hexdigest()
-        return hmac.compare_digest(expected, signature)
 
-    # -------------------------------------------------------------------------
-    # NOUVEAU : vérification d'enveloppe complète
-    # Utilisable depuis hermes_core._validate_task avant exécution.
-    # -------------------------------------------------------------------------
-    def verify_envelope(self, envelope: Dict[str, Any]) -> Tuple[bool, str]:
-        """
-        Vérifie qu'une enveloppe produite par validate_and_certify()
-        est bien certifiée et que la signature HMAC est valide.
+        return hmac.compare_digest(
+            expected,
+            signature,
+        )
 
-        Retourne (True, "OK") si l'enveloppe est valide, sinon (False, raison).
-        """
+    # ------------------------------------------------------------------
+    # VERIFY ENVELOPE
+    # ------------------------------------------------------------------
+
+    def verify_envelope(
+        self,
+        envelope: Dict[str, Any],
+    ) -> Tuple[bool, str]:
+
         if not isinstance(envelope, dict):
             return False, "Enveloppe absente ou invalide."
+
+        if envelope.get("certified") is not True:
+            return False, "Enveloppe non certifiée."
 
         action = envelope.get("action")
         params = envelope.get("params")
         signature = envelope.get("hsm_signature")
-        certified = envelope.get("certified")
 
-        if not certified:
-            return False, "Enveloppe non certifiée."
+        if (
+            not isinstance(action, str)
+            or not action
+            or not isinstance(params, dict)
+            or not isinstance(signature, str)
+            or not signature
+        ):
+            return (
+                False,
+                "Enveloppe incomplète "
+                "(action/params/signature manquants).",
+            )
 
-        if not action or not isinstance(params, dict) or not signature:
-            return False, "Enveloppe incomplète (action/params/signature manquants)."
+        # L'action doit toujours être présente dans l'allowlist.
+        if action not in self.allowed_actions:
+            return (
+                False,
+                f"Action '{action}' absente de l'Allowlist.",
+            )
 
-        if not self.verify_signature(action, params, signature):
+        # Les paramètres de l'enveloppe doivent eux-mêmes
+        # respecter l'allowlist.
+        allowed = set(self.allowed_actions[action])
+
+        if set(params) - allowed:
+            return (
+                False,
+                "Paramètres de l'enveloppe non autorisés.",
+            )
+
+        if not self.verify_signature(
+            action,
+            params,
+            signature,
+        ):
             return False, "Signature HMAC invalide."
 
         return True, "OK"
 
-    # -------------------------------------------------------------------------
-    # État runtime
-    # -------------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # RUNTIME STATUS
+    # ------------------------------------------------------------------
+
     def runtime_status(self) -> Dict[str, Any]:
         return {
             "active": True,
-            "policy": "ALLOWLIST_STRICT + SANDBOX + DLP + HMAC-SHA256",
-            "allowed_actions_count": len(self.allowed_actions),
-            "allowed_actions": sorted(self.allowed_actions.keys()),
+            "policy": (
+                "ALLOWLIST_STRICT + SANDBOX + DLP "
+                "+ HMAC-SHA256"
+            ),
+            "allowed_actions_count": len(
+                self.allowed_actions
+            ),
+            "allowed_actions": sorted(
+                self.allowed_actions.keys()
+            ),
             "ephemeral_key_used": self._ephemeral_key_used,
         }
 

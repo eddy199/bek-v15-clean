@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
 # BEK-v16 HYBRID — SERVEUR PRINCIPAL FASTAPI (BOOTSTRAP MODULAIRE)
-# ARCHITECTURE MODULAIRE : ZERO RÉGRESSION / ROUTERS & SERVICES EXTRAITS
 # ==============================================================================
 from __future__ import annotations
+
+# Charger env.txt dans os.environ AVANT tout autre import métier
+from env_loader import load_env
+load_env()
+
 from typing import Any, Dict, Optional
 from pydantic import BaseModel
 import skill_runner
@@ -133,7 +137,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         return True, "Pre-Plan validé", None
 
     hermes.register_pre_plan_hook(_bek_pre_plan_validator)
-    
+
     # ----------------------------------------
     # ENREGISTREMENT DES OUTILS DE L'AGENT
     # ----------------------------------------
@@ -184,40 +188,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     # ══════════════════════════════════════════════════════════════════
     # 🧠 ACTIVATION DU SYSTÈME NERVEUX BEK
     # ══════════════════════════════════════════════════════════════════
-    # Ce bloc relie les briques EXISTANTES entre elles via le paquet nerves/.
-    # Aucune brique n'est supprimée ni modifiée.
-    #
-    # ORDRE D'ACTIVATION (important pour les dépendances entre nerfs) :
-    #   1. Nerf 3  : Pont EventBus (fondation pour tous les nerfs tracés)
-    #   2. Nerf 1  : Outils Hermes réels (écrase les stubs)
-    #   3. Nerf 8  : Skills chargés au boot
-    #   4. Nerf 11 : Headless branché (Playwright)
-    #   5. Nerf 14 : Tmux branché (tâches de fond)
-    #   6. Nerf 4  : WebAgent tracé (utilise le pont EventBus)
-    #   7. Nerf 9  : Guardian tracé (utilise le pont EventBus + Tmux)
-    #   8. Nerf 5  : Approval Manager (interception automatique L3+)
-    #   9. Nerf 6  : MCP Gateway ↔ Hermes (sync bidirectionnelle)
-    #  10. Nerf 2  : Cortex cognitif (Swarm + Grounding)
-    #  11. Nerf 7  : SmartRouter sémantique réel
-    #  12. Nerf 10 : Sub-CRM Engine → Hermes
-    #
-    # Feature-flags dans env.txt :
-    #   - BEK_ENABLE_EVENT_BUS_NERVES=true   (Nerf 3 : pont EventBus)
-    #   - BEK_ENABLE_HERMES_NERVES=true      (Nerf 1 : outils Hermes réels)
-    #   - BEK_ENABLE_SKILLS_NERVES=true      (Nerf 8 : skills chargés au boot)
-    #   - BEK_ENABLE_HEADLESS_NERVES=true    (Nerf 11-13 : Playwright branché)
-    #   - BEK_ENABLE_TMUX_NERVES=true        (Nerf 14-17 : Tmux branché)
-    #   - BEK_ENABLE_WEB_AGENT_NERVES=true   (Nerf 4 : WebAgent tracé)
-    #   - BEK_ENABLE_GUARDIAN_NERVES=true    (Nerf 9 : Guardian tracé)
-    #   - BEK_ENABLE_APPROVAL_NERVES=true    (Nerf 5 : approbation humaine)
-    #   - BEK_ENABLE_MCP_NERVES=true         (Nerf 6 : MCP ↔ Hermes)
-    #   - BEK_ENABLE_COGNITIVE_NERVES=true   (Nerf 2 : Swarm + Grounding)
-    #   - BEK_ENABLE_ROUTER_NERVES=true      (Nerf 7 : SmartRouter sémantique)
-    #   - BEK_ENABLE_CRM_NERVES=true         (Nerf 10 : Sub-CRM → Hermes)
-    #
-    # ⚠️ Ce bloc est purement additif. Si un nerf échoue, le serveur
-    #    continue de démarrer avec le comportement legacy (dégradé mais stable).
-    # ══════════════════════════════════════════════════════════════════
     try:
         from nerves import (
             event_bus_nerves,
@@ -234,40 +204,17 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
             crm_nerves,
         )
 
-        # 1. Pont EventBus (fondation pour tous les autres nerfs tracés)
         _nerve_3_result = event_bus_nerves.activate_event_bus_nerves()
-
-        # 2. Outils Hermes réels
         _nerve_1_result = hermes_nerves.activate_hermes_nerves()
-
-        # 3. Skills chargés au boot
         _nerve_8_result = skills_nerves.activate_skills_nerves()
-
-        # 4. Headless branché
         _nerve_11_result = headless_nerves.activate_headless_nerves()
-
-        # 5. Tmux branché
         _nerve_14_result = tmux_nerves.activate_tmux_nerves()
-
-        # 6. WebAgent tracé
         _nerve_4_result = web_agent_nerves.activate_web_agent_nerves()
-
-        # 7. Guardian tracé
         _nerve_9_result = guardian_nerves.activate_guardian_nerves()
-
-        # 8. Approval Manager (interception automatique des tâches L3+)
         _nerve_5_result = approval_nerves.activate_approval_nerves()
-
-        # 9. MCP Gateway (sync bidirectionnelle avec Hermes)
         _nerve_6_result = mcp_nerves.activate_mcp_nerves()
-
-        # 10. Cortex cognitif (Swarm + Grounding)
         _nerve_2_result = cognitive_nerves.activate_cognitive_nerves()
-
-        # 11. SmartRouter sémantique réel
         _nerve_7_result = router_nerves.activate_router_nerves()
-
-        # 12. Sub-CRM Engine → Hermes
         _nerve_10_result = crm_nerves.activate_crm_nerves()
 
         logger.info(
@@ -307,7 +254,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
             "❌ Activation des nerfs échouée : %s. Mode legacy conservé.",
             _nerves_err,
         )
-    # ══════════════════════════════════════════════════════════════════
 
     os.environ["BEK_BOOTSTRAPPED"] = "1"
 
@@ -325,6 +271,12 @@ async def lifespan(app: FastAPI):
     setup_json_logging()
     logger.info("setup_json_logging() exécuté lors du démarrage de l'application.")
     yield
+    # ── Shutdown : flush des spans OTel en attente ──
+    try:
+        from core.tracing import shutdown_tracing
+        shutdown_tracing()
+    except Exception:
+        pass
 
 
 # ==========================================
@@ -360,6 +312,16 @@ async def add_anti_cache_header(request: Request, call_next):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
+
+# ══════════════════════════════════════════════════════════════════
+# 🔭 OPENTELEMETRY — Tracing distribué
+# ══════════════════════════════════════════════════════════════════
+from core.tracing import init_tracing, shutdown_tracing  # noqa: E402
+
+
+# Init après le middleware HTTP → capture aussi les requêtes HTTP
+init_tracing(app)
 
 
 # Inclusion des routeurs modulaires
@@ -411,10 +373,10 @@ async def execute_skill_endpoint(request: SkillExecutionRequest):
         payload=request.payload,
         timeout_seconds=request.timeout
     )
-    
+
     if result.get("status") in ["error", "timeout"]:
         raise HTTPException(status_code=500, detail=result)
-        
+
     return result
 
 if __name__ == "__main__":

@@ -1,13 +1,11 @@
 /**
- * BEK-v15-HYBRID — Agent UI Controller (Gestion Fichiers Dynamique, Anti-Cache & Auto-Expand Gemini)
- * Intégration : Moonshot Kimi AI (K3, K3 Swarm, K3 Instant, K2.7 Code, K2.6, Moonshot v1)
+ * BEK-v15-HYBRID — Agent UI Controller (Mermaid sanitized + AIsa + tous providers)
  */
 (function() {
     'use strict';
 
-    const API_BASE = window.location.origin.includes('localhost') 
-        ? 'http://localhost:8765' 
-        : window.location.origin;
+    // ✅ CORRIGÉ : plus de hardcode de port. Utilise l'origine courante (marche sur :3001, :8765, Render, etc.)
+    const API_BASE = window.location.origin;
 
     const DOM = {
         chatBox: document.getElementById('chat-box'),
@@ -47,6 +45,114 @@
 
     window.__codeSnippetsRegistry = window.__codeSnippetsRegistry || {};
 
+    // ═══════════════════════════════════════════════════════════════
+    // MERMAID — Sanitizer + Init + Rendu
+    // ═══════════════════════════════════════════════════════════════
+    function sanitizeMermaid(code) {
+        if (!code) return code;
+        let out = String(code);
+
+        out = out.replace(/([A-Za-z_][A-Za-z0-9_]*)\[([^\]"\n]+)\]/g, (m, id, label) => {
+            const t = label.trim();
+            if (t.startsWith('"') && t.endsWith('"')) return m;
+            return `${id}["${t.replace(/"/g, "'")}"]`;
+        });
+
+        out = out.replace(/([A-Za-z_][A-Za-z0-9_]*)\(([^\)"\n]+)\)/g, (m, id, label) => {
+            const t = label.trim();
+            if (t.startsWith('"') && t.endsWith('"')) return m;
+            if (/[-=]{2,}|-->|==>/.test(t)) return m;
+            return `${id}("${t.replace(/"/g, "'")}")`;
+        });
+
+        out = out.replace(/([A-Za-z_][A-Za-z0-9_]*)\{([^\}"\n]+)\}/g, (m, id, label) => {
+            const t = label.trim();
+            if (t.startsWith('"') && t.endsWith('"')) return m;
+            return `${id}{"${t.replace(/"/g, "'")}"}`;
+        });
+
+        return out;
+    }
+
+    function initMermaid() {
+        if (!window.mermaid) {
+            console.warn('[Mermaid] window.mermaid non chargé');
+            return;
+        }
+        if (window.__mermaidReady) return;
+        try {
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: 'dark',
+                securityLevel: 'loose',
+                themeVariables: {
+                    primaryColor: '#1e2a3a',
+                    primaryTextColor: '#e2e8f0',
+                    primaryBorderColor: '#4f8ef7',
+                    lineColor: '#4f8ef7',
+                    secondaryColor: '#14181d',
+                    tertiaryColor: '#0b0d0f',
+                    background: '#0b0d0f',
+                    mainBkg: '#14181d',
+                    nodeBorder: '#4f8ef7',
+                    clusterBkg: '#101317',
+                    clusterBorder: '#2a323d',
+                    titleColor: '#f8fafc',
+                    edgeLabelBackground: '#1a1f26',
+                    fontFamily: 'Ubuntu, Inter, sans-serif'
+                }
+            });
+            window.__mermaidReady = true;
+            console.log('[Mermaid] initialisé');
+        } catch (e) {
+            console.error('[Mermaid] init failed:', e);
+        }
+    }
+
+    function renderMermaidIn(container) {
+        if (!container) return;
+        if (!window.mermaid) {
+            console.warn('[Mermaid] non chargé, rendu impossible');
+            return;
+        }
+        initMermaid();
+
+        const blocks = container.querySelectorAll('pre code.language-mermaid, pre code.lang-mermaid');
+        if (blocks.length === 0) return;
+        console.log('[Mermaid] ' + blocks.length + ' bloc(s) trouvé(s)');
+
+        blocks.forEach((el, idx) => {
+            const graph = (el.textContent || '').trim();
+            const sanitized = sanitizeMermaid(graph);
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mermaid-wrapper';
+            const target = document.createElement('div');
+            target.className = 'mermaid';
+            target.id = 'mermaid-' + Date.now() + '-' + idx;
+            target.textContent = sanitized;
+            wrapper.appendChild(target);
+
+            const codeContainer = el.closest('.code-container') || el.parentElement;
+            codeContainer.replaceWith(wrapper);
+
+            try {
+                const result = mermaid.run({ nodes: [target] });
+                if (result && typeof result.catch === 'function') {
+                    result.catch(err => {
+                        console.error('[Mermaid] run error bloc ' + idx + ':', err);
+                        wrapper.innerHTML =
+                            '<div style="color:#ff6b6b; padding:12px; font-size:12px;">⚠️ Mermaid : erreur de rendu — voir console F12</div>' +
+                            '<pre style="background:#1a1f26; padding:12px; border-radius:6px; font-size:11px; overflow-x:auto;"><code>' +
+                            escapeHtml(graph) + '</code></pre>';
+                    });
+                }
+            } catch (e) {
+                console.error('[Mermaid] exception bloc ' + idx + ':', e);
+            }
+        });
+    }
+
     function loadSyntaxHighlighter() {
         if (!document.getElementById('hljs-style')) {
             const link = document.createElement('link');
@@ -61,14 +167,18 @@
             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
             script.onload = () => {
                 if (window.marked) {
-                    const messages = document.querySelectorAll('.msg-bubble');
-                    messages.forEach(m => {
-                        m.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+                    document.querySelectorAll('.msg-bubble').forEach(m => {
+                        m.querySelectorAll('pre code').forEach(el => {
+                            if (!el.classList.contains('language-mermaid') && !el.classList.contains('lang-mermaid')) {
+                                hljs.highlightElement(el);
+                            }
+                        });
                     });
                 }
             };
             document.head.appendChild(script);
         }
+        initMermaid();
     }
 
     window.copyWholeMessage = async function(btn) {
@@ -177,7 +287,7 @@
         setupNavigationTabs();
         setupImagePasteListener();
         loadConversationsFromStorage();
-        
+
         if (conversations.length > 0) {
             loadConversation(conversations[0].id);
         } else {
@@ -191,11 +301,11 @@
             const res = await fetch(`${API_BASE}/api/config?t=${Date.now()}`);
             if (!res.ok) throw new Error("API Config non disponible");
             const data = await res.json();
-            
-            availableModels = data.models || {}; 
 
-            // Support exhaustif des modèles Moonshot Kimi AI (K2.6 → K3, Swarm, Instant, Code)
+            availableModels = data.models || {};
+
             if(!availableModels['kimi']) availableModels['kimi'] = ['kimi-k3', 'kimi-k3-swarm', 'kimi-k3-instant', 'kimi-k2.7-code', 'kimi-k2.6', 'kimi-k2-0905', 'moonshot-v1-128k', 'moonshot-v1-32k', 'moonshot-v1-8k'];
+            if(!availableModels['aisa']) availableModels['aisa'] = ['qwen-flash', 'qwen-mt-flash', 'qwen-mt-lite'];
             if(!availableModels['b_ai']) availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
             if(!availableModels['mistral']) availableModels['mistral'] = ['mistral-medium-3.5', 'mistral-small-4', 'mistral-large-3', 'ministral-3-8b', 'codestral', 'ministral-3-3b', 'ministral-3-14b'];
             if(!availableModels['cohere']) availableModels['cohere'] = ['cohere-command-a-plus', 'cohere-command-a', 'cohere-command-r-plus', 'cohere-command-r', 'cohere-command-r7b', 'cohere-aya-expanse-32b'];
@@ -205,11 +315,12 @@
             if(!availableModels['ovh_anonymous']) availableModels['ovh_anonymous'] = ["ovh-qwen-3.5-397b", "ovh-gpt-oss-120b", "ovh-gpt-oss-20b", "ovh-llama-3.3-70b", "ovh-qwen-3.6-27b", "ovh-qwen-3.5-9b", "ovh-qwen-3-32b", "ovh-qwen-coder-30b", "ovh-qwen-vl-72b", "ovh-mistral-small-3.2", "ovh-mistral-nemo", "ovh-mistral-7b"];
             if(!availableModels['kilo_anonymous']) availableModels['kilo_anonymous'] = ["kilo-nemotron-3-ultra-550b", "kilo-step-3.7-flash", "kilo-nemotron-3-super-120b", "kilo-nemotron-3-nano-omni", "kilo-laguna-s", "kilo-laguna-xs", "kilo-north-mini-code", "kilo-openrouter-free", "kilo-hy3", "kilo-nemotron-lightning", "kilo-lfm-2.5"];
             if(!availableModels['llm7_anonymous']) availableModels['llm7_anonymous'] = ["llm7-gpt-oss-20b", "llm7-mistral-nemo", "llm7-minimax-m2.7"];
-            
+
             let providersList = data.providers || [];
-            
+
             const requiredProviders = [
                 {id: 'kimi', name: 'Moonshot Kimi AI', configured: true},
+                {id: 'aisa', name: 'AIsa (Unified)', configured: true},
                 {id: 'b_ai', name: 'B.ai', configured: true},
                 {id: 'groq', name: 'Groq', configured: true},
                 {id: 'nvidia', name: 'NVIDIA NIM', configured: true},
@@ -245,7 +356,7 @@
 
             if (DOM.skillsCounter) DOM.skillsCounter.textContent = data.skills_count || globalSkills.length;
             populateSkillsView(globalSkills);
-            DOM.providerSelect.value = 'kimi'; // Forcer Kimi par défaut au démarrage
+            DOM.providerSelect.value = 'kimi';
             updateModelSelect();
             await loadFilesList();
         } catch (e) {
@@ -278,7 +389,7 @@
                 </div>
             </div>
             <div style="display:flex; flex-direction:column; gap:8px;">` +
-            (files.length === 0 ? '<p style="color:var(--text-dim); text-align:center; padding:30px;">Aucun fichier déposé ou généré.</p>' : 
+            (files.length === 0 ? '<p style="color:var(--text-dim); text-align:center; padding:30px;">Aucun fichier déposé ou généré.</p>' :
             files.map(f => `
                 <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
                     <span>📄 <strong>${escapeHtml(f.name)}</strong> <span style="color:var(--text-dim); font-size:11px; margin-left:8px;">(${(f.size/1024).toFixed(1)} Ko - ${escapeHtml(f.folder)})</span></span>
@@ -358,7 +469,7 @@
             if (!res.ok) throw new Error("API manquante");
             const data = await res.json();
             let pineconeColor = data.pinecone_status.includes('Connecté') ? '#4ade80' : '#f5a623';
-            
+
             view.innerHTML = `
                 <h2>Mémoire Long Terme & Index Vectoriel</h2>
                 <div style="margin-top:16px; display:flex; flex-direction:column; gap:12px;">
@@ -464,8 +575,8 @@
 
     function setupEventListeners() {
         if (DOM.providerSelect) DOM.providerSelect.addEventListener('change', updateModelSelect);
-        if (DOM.modelSelect) DOM.modelSelect.addEventListener('change', (e) => { 
-            currentModel = e.target.value; 
+        if (DOM.modelSelect) DOM.modelSelect.addEventListener('change', (e) => {
+            currentModel = e.target.value;
             if (DOM.modelBadge) DOM.modelBadge.innerText = `● ${currentProvider.toUpperCase()} / ${currentModel.split('/').pop()}`;
         });
 
@@ -528,13 +639,13 @@
 
         if (DOM.micBtn && DOM.userInput) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            
+
             if (SpeechRecognition) {
                 const recognition = new SpeechRecognition();
                 recognition.lang = 'fr-FR';
-                recognition.interimResults = true; 
-                recognition.continuous = false; 
-                
+                recognition.interimResults = true;
+                recognition.continuous = false;
+
                 let isRecording = false;
 
                 const resetMicUI = () => {
@@ -548,13 +659,7 @@
 
                 DOM.micBtn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-                        console.warn("L'API Web Speech nécessite souvent HTTPS.");
-                    }
-                    if (isRecording) {
-                        recognition.stop();
-                        return;
-                    }
+                    if (isRecording) { recognition.stop(); return; }
                     try { recognition.start(); } catch (err) { resetMicUI(); }
                 });
 
@@ -580,12 +685,7 @@
                     }
                 };
 
-                recognition.onerror = (event) => {
-                    resetMicUI();
-                    if (event.error === 'not-allowed' || event.error === 'network') {
-                        alert("Le navigateur a bloqué l'accès au microphone.");
-                    }
-                };
+                recognition.onerror = (event) => { resetMicUI(); };
                 recognition.onend = () => { resetMicUI(); };
             } else {
                 DOM.micBtn.style.display = 'none';
@@ -672,7 +772,7 @@
         DOM.filePreviewBar.style.display = 'flex';
         DOM.filePreviewBar.style.gap = '10px';
         DOM.filePreviewBar.style.padding = '10px 0';
-        
+
         DOM.filePreviewBar.innerHTML = attachedFiles.map((f, i) => {
             const isImg = f.match(/\.(png|jpe?g|gif|webp)$/i);
             if (isImg) {
@@ -696,18 +796,12 @@
     };
 
     function handleSendOrStop() {
-        if (isStreaming) {
-            stopGeneration();
-        } else {
-            sendMessage();
-        }
+        if (isStreaming) stopGeneration();
+        else sendMessage();
     }
 
     function stopGeneration() {
-        if (activeController) {
-            activeController.abort();
-            activeController = null;
-        }
+        if (activeController) { activeController.abort(); activeController = null; }
         isStreaming = false;
         if (DOM.sendBtn) DOM.sendBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`;
     }
@@ -720,10 +814,10 @@
         let fullTextContent = text;
         if (attachedFiles.length > 0) {
             fullTextContent += "\n[Fichiers joints : " + attachedFiles.join(', ') + "]";
-            
+
             const imageFiles = attachedFiles.filter(f => f.match(/\.(png|jpe?g|gif|webp)$/i));
             const zipFiles = attachedFiles.filter(f => f.match(/\.zip$/i));
-            
+
             if (imageFiles.length > 0) {
                 fullTextContent += "\n(INSTRUCTION SYSTEME : L'utilisateur a attaché ces images. Tu DOIS utiliser l'action [ACTION:analyze_image]{\"image_path\": \"uploads/" + imageFiles[0] + "\", \"prompt\": \"Décris cette image en détail\"}[/ACTION] pour les lire).";
             }
@@ -733,11 +827,11 @@
         }
 
         appendUserMessage(fullTextContent);
-        
+
         DOM.userInput.value = '';
         DOM.userInput.style.height = '24px';
         DOM.userInput.style.overflowY = 'hidden';
-        
+
         attachedFiles = [];
         renderAttachedFilesPreview();
 
@@ -809,6 +903,10 @@
             isStreaming = false;
             activeController = null;
             assistantDiv.innerHTML = formatMarkdown(fullResponse);
+
+            const parentMsg = assistantDiv.closest('.message');
+            if (parentMsg) renderMermaidIn(parentMsg);
+
             DOM.sendBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`;
         }
     }
@@ -816,7 +914,7 @@
     function appendUserMessage(text) {
         if (!DOM.chatBox) return;
         const div = document.createElement('div');
-        div.className = 'message user'; 
+        div.className = 'message user';
         div.innerHTML = `
             <div class="msg-meta"><span class="name">Vous</span></div>
             <div class="msg-bubble">${escapeHtml(text).replace(/\n/g, '<br>')}</div>
@@ -860,11 +958,9 @@
         DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
     }
 
-    // INTERCEPTE LA BALISE DE TÉLÉCHARGEMENT ET LA TRANSFORME EN WIDGET
     function formatMarkdown(text) {
         let cleanText = text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '');
 
-        // INJECTION SANS ESPACES POUR ÉVITER LE BUG DU BLOC DE CODE MARKDOWN
         cleanText = cleanText.replace(/\[FILE:(.*?)\]\((.*?)\)/g, (match, filename, url) => {
             return `<div class="file-attachment-card"><div class="file-attachment-icon">📄</div><div class="file-attachment-info"><div class="file-attachment-name">${filename}</div><div class="file-attachment-desc">Fichier généré prêt au téléchargement</div></div><a href="${url}" target="_blank" download class="file-attachment-btn">Télécharger</a></div>`;
         });
@@ -881,6 +977,12 @@
                     actualCode = codeObj || "";
                 }
                 const cleanLang = (actualLang).trim().toLowerCase();
+
+                if (cleanLang === 'mermaid') {
+                    const sanitized = sanitizeMermaid(actualCode);
+                    return `<pre><code class="language-mermaid">${escapeHtml(sanitized)}</code></pre>`;
+                }
+
                 const snippetId = 'snip_' + Math.random().toString(36).substring(2, 9);
                 window.__codeSnippetsRegistry[snippetId] = { code: actualCode, lang: cleanLang };
 
@@ -961,7 +1063,11 @@
         if (DOM.chatBox) DOM.chatBox.innerHTML = '';
         messageHistory.forEach(m => {
             if (m.role === 'user') appendUserMessage(m.content);
-            else if (m.role === 'assistant') appendAssistantMessage(formatMarkdown(m.content));
+            else if (m.role === 'assistant') {
+                const div = appendAssistantMessage(formatMarkdown(m.content));
+                const parentMsg = div.closest('.message');
+                if (parentMsg) renderMermaidIn(parentMsg);
+            }
         });
         renderConversationsList();
     };

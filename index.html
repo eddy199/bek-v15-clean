@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="agent-ui.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono&display=swap" rel="stylesheet">
 
 <style>
@@ -110,6 +111,21 @@
       background: rgba(92, 156, 230, 0.2);
       color: var(--accent-blue); font-weight: bold;
   }
+
+  /* Mermaid container */
+  .mermaid-wrapper {
+      background: #14181d;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 18px;
+      margin: 18px 0;
+      overflow-x: auto;
+      text-align: center;
+  }
+  .mermaid-wrapper svg {
+      max-width: 100%;
+      height: auto;
+  }
 </style>
 </head>
 <body>
@@ -178,6 +194,7 @@
         <div class="header-center">
           <select id="providerSelect" class="select">
             <option value="kimi">Moonshot Kimi AI ✅</option>
+            <option value="aisa">AIsa (Unified) ✅</option>
             <option value="b_ai">B.ai ✅</option>
             <option value="groq">Groq ✅</option>
             <option value="nvidia">NVIDIA NIM ✅</option>
@@ -217,7 +234,6 @@
           <div id="filePreviewBar" style="display:none; flex-wrap:wrap; gap:12px; padding-bottom:12px;"></div>
           <div class="input-wrap" style="position: relative; display: flex; align-items: flex-end; gap: 8px;">
             
-            <!-- BOUTON + POUR UPLOAD -->
             <button class="icon-btn" id="uploadBtn" style="margin-right:4px; border:1px solid var(--border-color); border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             </button>
@@ -231,12 +247,10 @@
 
             <textarea id="user-input" rows="1" placeholder="Écrivez votre message, parlez au micro, ou joignez un fichier/ZIP jusqu'à 300 Mo..."></textarea>
             
-            <!-- BOUTON MICRO (AUDIO) -->
             <button id="micBtn" style="width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(92,156,230,0.15); color: var(--accent-blue); border: 1px solid var(--border-color); cursor:pointer; transition:0.3s;" title="Parler à l'agent">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             </button>
 
-            <!-- BOUTON ENVOI -->
             <button class="send-btn" id="send-btn">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             </button>

@@ -14,15 +14,15 @@ WORKSPACE_DIR = Path(__file__).resolve().parent
 
 
 class ProviderManager:
-    # MODÈLES PAR FOURNISSEUR (16 Fournisseurs)
+    # MODÈLES PAR FOURNISSEUR (17 Fournisseurs)
     # ------------------------------------------------------------------------------
-    # CORRECTIF v20 (2026-09-16) :
-    #   - NVIDIA : ajout de 3 modèles chat (13 au total)
-    #       * mistralai/mistral-nemotron
-    #       * meta/llama-3.2-11b-vision-instruct
-    #       * meta/llama-3.2-90b-vision-instruct
-    #   - NVIDIA reste en POSITION 1 de la fallback chain
-    #   - Aucun autre provider ni modèle modifié
+    # CORRECTIF v21 (2026-09-18) :
+    #   - AJOUT DU FOURNISSEUR AISA (position 2 dans la fallback chain)
+    #   - AIsa est une passerelle unifiée compatible OpenAI
+    #   - URL de base : https://api.aisa.one/v1
+    #   - Authentification : Bearer token (AISA_API_KEY)
+    #   - Seuls les modèles GRATUITS sont conservés pour AIsa
+    #     (qwen-flash confirmé fonctionnel — les autres sont payants)
     # ------------------------------------------------------------------------------
     PROVIDER_MODELS: Dict[str, List[str]] = {
         # 1. Moonshot Kimi AI
@@ -37,14 +37,22 @@ class ProviderManager:
             "moonshot-v1-32k",
             "moonshot-v1-8k",
         ],
-        # 2. B.ai
+        # 2. AIsa — Unified Gateway (modèles GRATUITS uniquement)
+        #    Documentation : https://aisa.one/docs/guides/models
+        #    Endpoint : https://api.aisa.one/v1/chat/completions
+        "aisa": [
+            "qwen-flash",     # ✅ testé OK (gratuit)
+            "qwen-mt-flash",  # candidat gratuit
+            "qwen-mt-lite",   # candidat gratuit
+        ],
+        # 3. B.ai
         "b_ai": [
             "glm-5.3-flash",
             "qwen3.8-flash",
             "mimo-v2.5",
             "hy3",
         ],
-        # 3. Kilo Code
+        # 4. Kilo Code
         "kilo_anonymous": [
             "kilo-nemotron-3-ultra-550b",
             "kilo-step-3.7-flash",
@@ -69,7 +77,7 @@ class ProviderManager:
             "nvidia/nemotron-3.5-lightning:free",
             "liquid/lfm-2.5-2.6b:free",
         ],
-        # 4. OVHcloud
+        # 5. OVHcloud
         "ovh_anonymous": [
             "ovh-qwen-3.5-397b",
             "ovh-gpt-oss-120b",
@@ -84,13 +92,13 @@ class ProviderManager:
             "ovh-mistral-nemo",
             "ovh-mistral-7b",
         ],
-        # 5. LLM7.io
+        # 6. LLM7.io
         "llm7_anonymous": [
             "llm7-gpt-oss-20b",
             "llm7-mistral-nemo",
             "llm7-minimax-m2.7",
         ],
-        # 6. Groq
+        # 7. Groq
         "groq": [
             "openai/gpt-oss-120b",
             "openai/gpt-oss-20b",
@@ -100,10 +108,8 @@ class ProviderManager:
             "groq/compound",
             "groq/compound-mini",
         ],
-        # 7. NVIDIA NIM — 13 modèles chat actifs gratuits vérifiés
-        #    (Les modèles embedding sont gérés séparément dans memory.py)
+        # 8. NVIDIA NIM — 13 modèles chat actifs gratuits vérifiés
         "nvidia": [
-            # Modèles initiaux v18 (10)
             "z-ai/glm-5.3",
             "moonshotai/kimi-k3",
             "deepseek-ai/deepseek-v4-flash-0731",
@@ -114,12 +120,11 @@ class ProviderManager:
             "nvidia/nemotron-3-ultra-550b-a55b",
             "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
             "nvidia/nemotron-3-super-120b-a12b",
-            # Ajouts v20 (3)
             "mistralai/mistral-nemotron",
             "meta/llama-3.2-11b-vision-instruct",
             "meta/llama-3.2-90b-vision-instruct",
         ],
-        # 8. Google Gemini
+        # 9. Google Gemini
         "gemini": [
             "gemini-3.8-flash",
             "gemini-3.7-flash",
@@ -151,7 +156,7 @@ class ProviderManager:
             "lyria-3-clip-preview",
             "lyria-realtime-preview",
         ],
-        # 9. OpenRouter
+        # 10. OpenRouter
         "openrouter": [
             "auto",
             "gpt-oss-120b",
@@ -163,7 +168,7 @@ class ProviderManager:
             "laguna-xs-2.1",
             "free-models-router",
         ],
-        # 10. Mistral AI
+        # 11. Mistral AI
         "mistral": [
             "mistral-medium-3.5",
             "mistral-small-4",
@@ -173,7 +178,7 @@ class ProviderManager:
             "ministral-3-3b",
             "ministral-3-14b",
         ],
-        # 11. Cohere
+        # 12. Cohere
         "cohere": [
             "cohere-command-a-plus",
             "cohere-command-a",
@@ -182,24 +187,24 @@ class ProviderManager:
             "cohere-command-r7b",
             "cohere-aya-expanse-32b",
         ],
-        # 12. Aion Labs
+        # 13. Aion Labs
         "aionlabs": [
             "aion-2.0",
             "aion-rp-llama-3.1-8b",
             "aion-3.0",
             "aion-3.0-mini",
         ],
-        # 13. Zhipu AI
+        # 14. Zhipu AI
         "zhipu": [
             "glm-4.7-flash",
             "glm-4.5-flash",
             "glm-4.6v-flash",
         ],
-        # 14. SiliconFlow
+        # 15. SiliconFlow
         "siliconflow": [
             "siliconflow-qwen3-8b",
         ],
-        # 15. Hugging Face
+        # 16. Hugging Face
         "huggingface": [
             "Meta-Llama-3.1-8B-Instruct",
             "gemma-3-4b-it",
@@ -207,7 +212,7 @@ class ProviderManager:
             "Qwen2.5-Coder-7B-Instruct",
             "Qwen2.5-7B-Instruct",
         ],
-        # 16. Ollama Cloud
+        # 17. Ollama Cloud
         "ollama_cloud": [
             "deepseek-v4-pro",
             "deepseek-v4-flash",
@@ -221,9 +226,10 @@ class ProviderManager:
         ],
     }
 
-    # CHAÎNE DE FALLBACK — v20 (NVIDIA en position 1)
+    # CHAÎNE DE FALLBACK — v21 (AIsa en position 2)
     FALLBACK_ORDER: List[str] = [
         "nvidia",
+        "aisa",
         "groq",
         "kimi",
         "b_ai",
@@ -272,6 +278,7 @@ class ProviderManager:
             return True
         key_map = {
             "kimi": "MOONSHOT_API_KEY",
+            "aisa": "AISA_API_KEY",
             "b_ai": "B_AI_API_KEY",
             "groq": "GROQ_API_KEY",
             "nvidia": "NVIDIA_API_KEY",
@@ -307,6 +314,10 @@ class ProviderManager:
             key = self.get_api_key("MOONSHOT_API_KEY") or self.get_api_key("KIMI_API_KEY")
             base_url = self.get_api_key("MOONSHOT_BASE_URL") or "https://api.moonshot.cn/v1"
             return "kimi", key, base_url.rstrip("/") + "/chat/completions"
+
+        elif p == "aisa":
+            key = self.get_api_key("AISA_API_KEY")
+            return "aisa", key, "https://api.aisa.one/v1/chat/completions"
 
         elif p == "kilo_anonymous":
             return "kilo_anonymous", "none", "https://api.kilo.ai/api/gateway/chat/completions"
@@ -425,6 +436,7 @@ class ProviderManager:
                 current_model = selected_model
             else:
                 if current_prov == "nvidia": current_model = "nvidia/nemotron-3-super-120b-a12b"
+                elif current_prov == "aisa": current_model = "qwen-flash"
                 elif current_prov == "kimi": current_model = "kimi-k3"
                 elif current_prov == "b_ai": current_model = "glm-5.3-flash"
                 elif current_prov == "gemini": current_model = "gemini-3.8-flash"
@@ -439,7 +451,7 @@ class ProviderManager:
             headers = {
                 "Content-Type": "application/json; charset=utf-8",
                 "Accept": "text/event-stream; charset=utf-8",
-                "User-Agent": "BEK-v15.3-Agent",
+                "User-Agent": "BEK-v16-Agent",
             }
             if api_key != "none":
                 headers["Authorization"] = f"Bearer {api_key}"

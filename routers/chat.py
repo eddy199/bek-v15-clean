@@ -1,19 +1,7 @@
 # ==============================================================================
 # BEK-v16 — Routeur Chat Streaming & Human-in-the-Loop (routers/chat.py)
 # ------------------------------------------------------------------------------
-# COUCHE AGI INTÉGRÉE (Chantier 6) :
-#   - SmartRouter sémantique réel (Nerf 7) avec fallback legacy
-#   - EventBus unifié (Nerf 3) avec fallback legacy
-#   - Pipeline cognitif post-stream (Nerf 2) : Grounding + Swarm critique
-#   - TOUTES les fonctionnalités existantes préservées
-#
-# CORRECTIFS v3 (connaissance architecture) :
-#   - Chargement de docs/ARCHITECTURE.md au démarrage du module
-#   - Injection dans le prompt système → tous les LLM connaissent BEK-v16
-#   - Anti-hallucination : le LLM reçoit l'architecture réelle
-#   - Troncature configurable via BEK_CHAT_MAX_ARCHITECTURE_CHARS
-#   - Fallback multi-chemins (docs/ARCHITECTURE.md, ARCHITECTURE.md)
-#   - Aucune brique supprimée
+# + OpenTelemetry : spans sur chat.request, smart_router, cognitive_check
 # ==============================================================================
 from __future__ import annotations
 
@@ -37,19 +25,41 @@ from provider_manager import provider_manager
 from services.action_executor import execute_agent_crm_tool
 from services.tasks import CURRENT_OS_NAME
 
-# ── LOGGER GLOBAL (défini EN TÊTE) ──
+# ── OpenTelemetry ──
+try:
+    from core.tracing import (
+        span,
+        set_span_attribute,
+        set_span_status_ok,
+        set_span_status_error,
+        get_current_trace_id,
+    )
+    _TRACING_OK = True
+except Exception:
+    _TRACING_OK = False
+    from contextlib import contextmanager
+
+    @contextmanager
+    def span(name, **attrs):  # type: ignore
+        yield None
+
+    def set_span_attribute(k, v): pass  # type: ignore
+    def set_span_status_ok(): pass  # type: ignore
+    def set_span_status_error(msg=""): pass  # type: ignore
+    def get_current_trace_id(): return ""  # type: ignore
+
+
+# ── LOGGER GLOBAL ──
 logger = logging.getLogger("BEKApp")
 
 # ── EXPRESSION RÉGULIÈRE UNIQUE (Anti-Coupure Interface) ──
 ACTION_REGEX = re.compile(r"\x5bACTION:(\w+)\x5d(.*?)\x5b/ACTION\x5d", re.DOTALL)
 
-# ══════════════════════════════════════════════════════════════════
-# 🛡️ BORNES DE TAILLE — Évite d'envoyer 775 000 chars aux providers
-# ══════════════════════════════════════════════════════════════════
 
-
+# ══════════════════════════════════════════════════════════════════
+# 🛡️ BORNES DE TAILLE
+# ══════════════════════════════════════════════════════════════════
 def _env_int(name: str, default: int, minimum: int = 1) -> int:
-    """Lit un entier d'environnement avec fallback sûr."""
     try:
         val = int(os.getenv(name, str(default)))
         return max(minimum, val)
@@ -64,14 +74,9 @@ MAX_ARCHITECTURE_CHARS = _env_int("BEK_CHAT_MAX_ARCHITECTURE_CHARS", 15000, mini
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🧠 CHARGEMENT DE L'ARCHITECTURE BEK-v16 (injectée dans le prompt)
+# 🧠 CHARGEMENT DE L'ARCHITECTURE BEK-v16
 # ══════════════════════════════════════════════════════════════════
-# Charge docs/ARCHITECTURE.md (ou ARCHITECTURE.md à la racine) au boot du
-# module, puis l'injecte dans le prompt système. Tous les LLM (Kimi, Gemini,
-# Groq, NVIDIA...) reçoivent cette connaissance → anti-hallucination.
-# ══════════════════════════════════════════════════════════════════
-
-_WORKSPACE_DIR = Path(__file__).resolve().parent.parent  # F:\workspacekimi
+_WORKSPACE_DIR = Path(__file__).resolve().parent.parent
 
 _ARCHITECTURE_CANDIDATES = [
     _WORKSPACE_DIR / "docs" / "ARCHITECTURE.md",
@@ -80,25 +85,17 @@ _ARCHITECTURE_CANDIDATES = [
 
 
 def _load_architecture_context() -> str:
-    """
-    Charge le contenu de ARCHITECTURE.md au démarrage du module.
-    Retourne une chaîne vide si le fichier est introuvable.
-    Ne lève JAMAIS d'exception.
-    """
     for candidate in _ARCHITECTURE_CANDIDATES:
         try:
             if candidate.exists() and candidate.is_file():
                 with candidate.open("r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
-
                 if not content.strip():
                     continue
-
                 if len(content) > MAX_ARCHITECTURE_CHARS:
                     content = content[:MAX_ARCHITECTURE_CHARS] + (
                         "\n\n[…architecture tronquée pour respecter la limite]"
                     )
-
                 logger.info(
                     "[Archi] Contexte chargé : %s (%d chars)",
                     candidate, len(content),
@@ -108,8 +105,7 @@ def _load_architecture_context() -> str:
             logger.warning("[Archi] Lecture échouée %s : %s", candidate, exc)
 
     logger.warning(
-        "[Archi] Aucun fichier ARCHITECTURE.md trouvé dans %s. "
-        "Les LLM n'auront pas connaissance de l'architecture au boot.",
+        "[Archi] Aucun fichier ARCHITECTURE.md trouvé dans %s.",
         [str(c) for c in _ARCHITECTURE_CANDIDATES],
     )
     return ""
@@ -119,17 +115,13 @@ _ARCHITECTURE_CONTEXT: str = _load_architecture_context()
 
 
 def get_architecture_context() -> str:
-    """Bridge public : retourne le contenu chargé de l'architecture."""
     return _ARCHITECTURE_CONTEXT
 
 
 # ══════════════════════════════════════════════════════════════════
 # 🛡️ UTILITAIRES DE BORNAGE
 # ══════════════════════════════════════════════════════════════════
-
-
 def _safe_str(value: Any) -> str:
-    """Convertit n'importe quelle valeur en str propre."""
     if value is None:
         return ""
     if isinstance(value, str):
@@ -151,7 +143,6 @@ def _truncate_messages(
     max_per_msg: int = MAX_CHARS_PER_MESSAGE,
     max_total: int = MAX_TOTAL_CHARS,
 ) -> List[Dict[str, Any]]:
-    """Borne la taille des messages avant envoi aux providers."""
     if not messages or not isinstance(messages, list):
         return []
 
@@ -244,20 +235,14 @@ hll_counter = HyperLogLog(b=6)
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🧠 PROMPT SYSTÈME — inclut désormais l'architecture BEK-v16
+# 🧠 PROMPT SYSTÈME
 # ══════════════════════════════════════════════════════════════════
-
 _ARCHITECTURE_BLOCK = ""
 if _ARCHITECTURE_CONTEXT:
     _ARCHITECTURE_BLOCK = f"""
 
 # ══════════════════════════════════════════════════════════════════
 # 🏛️ ARCHITECTURE RÉELLE DE BEK-v16 (SOURCE DE VÉRITÉ ABSOLUE)
-# ------------------------------------------------------------------
-# IMPORTANT : Tout ce qui suit décrit ton architecture INTERNE RÉELLE.
-# Tu DOIS t'appuyer sur ces informations pour répondre.
-# INTERDICTION ABSOLUE d'inventer des composants qui ne sont pas listés.
-# Si une question porte sur ton architecture, cite les modules ci-dessous.
 # ══════════════════════════════════════════════════════════════════
 
 {_ARCHITECTURE_CONTEXT}
@@ -330,7 +315,6 @@ def _detect_user_response(query: str) -> str:
 
 
 def _execute_action_unified(act_name: str, params: dict) -> dict:
-    """Exécute directement les outils multimédias en court-circuitant le CRM, avec fallback Hermes."""
     try:
         if act_name == "generate_image":
             from services.vision import generate_image_with_provider
@@ -372,7 +356,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
 
 
 def _format_execution_result(act_name: str, exec_res: dict) -> str:
-    """Formate le message de retour avec support Markdown riche (images & vidéos)."""
     if isinstance(exec_res, dict):
         fn = exec_res.get("filename", "")
         if exec_res.get("status") == "success" and fn:
@@ -384,15 +367,33 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
     return str(exec_res)
 
 
+# ══════════════════════════════════════════════════════════════════
+# 🚀 ROUTE PRINCIPALE
+# ══════════════════════════════════════════════════════════════════
 @router.post("/api/chat")
 async def chat(request: Request):
+    """Point d'entrée unique. Le span parent englobe tout le traitement."""
+    with span("chat.request") as chat_span:
+        return await _chat_impl(request, chat_span)
+
+
+async def _chat_impl(request: Request, chat_span):
     data = await request.json() or {}
     messages = data.get("messages", [])
     provider = data.get("provider", "b_ai")
     model = data.get("model", "glm-5.3-flash")
 
+    # ── OTel : métadonnées de base ──
+    set_span_attribute("chat.messages_count", len(messages) if isinstance(messages, list) else 0)
+    set_span_attribute("chat.provider", provider)
+    set_span_attribute("chat.model", model)
+    trace_id = get_current_trace_id()
+    if trace_id:
+        logger.info("[Chat] trace_id=%s provider=%s model=%s", trace_id, provider, model)
+
     # ── BORNAGE STRICT DE LA TAILLE DES MESSAGES ──
     trimmed_messages = _truncate_messages(messages)
+    set_span_attribute("chat.trimmed_count", len(trimmed_messages))
 
     last_user_query = ""
     user_status = "neutral"
@@ -402,46 +403,64 @@ async def chat(request: Request):
         if last_msg.get("role") == "user":
             last_user_query = last_msg.get("content", "").strip()
             user_status = _detect_user_response(last_user_query)
+            set_span_attribute("chat.user_query_len", len(last_user_query))
 
     # ══════════════════════════════════════════════════════════════════
-    # 🧠 NERF 7 — SMARTROUTER SÉMANTIQUE RÉEL (avec fallback legacy)
+    # 🧠 NERF 7 — SMARTROUTER SÉMANTIQUE RÉEL
     # ══════════════════════════════════════════════════════════════════
     smart_mode = data.get("smart", True)
     routing_used = "legacy"
 
     if smart_mode and _AGI_ROUTER_OK and last_user_query:
         try:
-            routing = _agi_route_semantic(last_user_query)
-            routed_provider = routing.get("provider", "")
-            routed_model = routing.get("model", "")
-            if routed_provider:
-                provider = routed_provider
-                if routed_model:
-                    model = routed_model
-                routing_used = f"agi:{routing.get('task_type', 'chat')}"
-                logger.info(
-                    "[SmartRouter AGI] Route : %s/%s (type=%s, fallback=%s)",
-                    provider, model,
-                    routing.get("task_type", "?"),
-                    routing.get("fallback_used", False),
-                )
+            with span("chat.smart_router.agi",
+                      **{"router.engine": "agi",
+                         "router.query_len": len(last_user_query)}):
+                routing = _agi_route_semantic(last_user_query)
+                routed_provider = routing.get("provider", "")
+                routed_model = routing.get("model", "")
+                set_span_attribute("router.provider", routed_provider)
+                set_span_attribute("router.model", routed_model)
+                set_span_attribute("router.task_type", routing.get("task_type", "?"))
+                if routed_provider:
+                    provider = routed_provider
+                    if routed_model:
+                        model = routed_model
+                    routing_used = f"agi:{routing.get('task_type', 'chat')}"
+                    logger.info(
+                        "[SmartRouter AGI] Route : %s/%s (type=%s, fallback=%s)",
+                        provider, model,
+                        routing.get("task_type", "?"),
+                        routing.get("fallback_used", False),
+                    )
+                set_span_status_ok()
         except Exception as e:
+            set_span_status_error(str(e))
             logger.warning("[SmartRouter AGI] Échec, fallback legacy : %s", e)
 
     if routing_used == "legacy" and _INTEL_OK and smart_mode:
         try:
-            chosen = smart_router.route(trimmed_messages)
-            if chosen:
-                provider, model = chosen[0]
-                routing_used = "legacy"
-                logger.info("[SmartRouter legacy] Route : %s/%s", provider, model)
+            with span("chat.smart_router.legacy"):
+                chosen = smart_router.route(trimmed_messages)
+                if chosen:
+                    provider, model = chosen[0]
+                    routing_used = "legacy"
+                    set_span_attribute("router.provider", provider)
+                    set_span_attribute("router.model", model)
+                    set_span_status_ok()
+                    logger.info("[SmartRouter legacy] Route : %s/%s", provider, model)
         except Exception as e:
+            set_span_status_error(str(e))
             logger.warning("[SmartRouter legacy] Échec : %s", e)
 
+    set_span_attribute("chat.routing_used", routing_used)
+
     # ══════════════════════════════════════════════════════════════════
-    # 🌉 NERF 3 — EVENTBUS UNIFIÉ (avec fallback legacy)
+    # 🌉 NERF 3 — EVENTBUS UNIFIÉ
     # ══════════════════════════════════════════════════════════════════
     corr_id = f"corr_{uuid.uuid4().hex[:10]}"
+    set_span_attribute("chat.correlation_id", corr_id)
+
     if last_user_query:
         published = False
         if _AGI_EVENT_BUS_OK:
@@ -465,9 +484,11 @@ async def chat(request: Request):
             except Exception:
                 pass
 
+    # ── Slash command ──
     if last_user_query.startswith("/") and dispatch_slash_command:
         slash_res = dispatch_slash_command(last_user_query)
         if slash_res and slash_res.get("ok"):
+            set_span_attribute("chat.slash_command", True)
             async def generate_slash():
                 j_out = json.dumps({'chunk': slash_res['output']})
                 yield f"data: {j_out}\n\n"
@@ -476,6 +497,7 @@ async def chat(request: Request):
                 generate_slash(), media_type="text/event-stream"
             )
 
+    # ── Human-in-the-Loop (agreed/refused) ──
     if len(trimmed_messages) >= 2:
         prev_msg = trimmed_messages[-2]
         is_ast = prev_msg.get("role") == "assistant"
@@ -507,10 +529,13 @@ async def chat(request: Request):
                     params["provider"] = provider
                     params["model"] = model
 
-                    exec_res = _execute_action_unified(act_name, params)
-                    res_msg = _format_execution_result(act_name, exec_res)
-                    if len(res_msg) > 1500:
-                        res_msg = res_msg[:1500] + "\n... [tronqué]"
+                    with span("chat.action_execute", **{"action.name": act_name}):
+                        exec_res = _execute_action_unified(act_name, params)
+                        res_msg = _format_execution_result(act_name, exec_res)
+                        if len(res_msg) > 1500:
+                            res_msg = res_msg[:1500] + "\n... [tronqué]"
+                        set_span_attribute("action.result_len", len(res_msg))
+                        set_span_status_ok()
 
                     inj = (f"\n\n[SYSTÈME - RÉSULTAT DE L'ACTION "
                            f"'{act_name}' :] \n{res_msg}\n\n-> "
@@ -535,6 +560,7 @@ async def chat(request: Request):
                     "[ACTION:", "[CANCELED_ACTION:"
                 )
 
+    # ── Prompt système dynamique ──
     dynamic_system_prompt = BEK_GOLDEN_RULES.strip()
 
     if last_user_query:
@@ -542,29 +568,39 @@ async def chat(request: Request):
         hll_counter.add(last_user_query)
 
         try:
-            mem_ctx = search_memory(last_user_query, top_k=3)
-            if mem_ctx:
-                mem_ctx_str = _safe_str(mem_ctx)
-                if len(mem_ctx_str) > MAX_CHARS_PER_MESSAGE:
-                    mem_ctx_str = mem_ctx_str[:MAX_CHARS_PER_MESSAGE] + "…[tronqué]"
-                dynamic_system_prompt += f"\n\n[MÉMOIRE] :\n{mem_ctx_str}"
+            with span("chat.memory_search"):
+                mem_ctx = search_memory(last_user_query, top_k=3)
+                if mem_ctx:
+                    mem_ctx_str = _safe_str(mem_ctx)
+                    if len(mem_ctx_str) > MAX_CHARS_PER_MESSAGE:
+                        mem_ctx_str = mem_ctx_str[:MAX_CHARS_PER_MESSAGE] + "…[tronqué]"
+                    dynamic_system_prompt += f"\n\n[MÉMOIRE] :\n{mem_ctx_str}"
+                    set_span_attribute("memory.context_len", len(mem_ctx_str))
+                set_span_status_ok()
         except Exception as e:
             logger.warning("Erreur mémoire : %s", e)
 
         try:
-            plan = hermes.goap_planner(last_user_query)
-            if plan:
-                f_plan = [t for t in plan if t.get("tool") != "default_llm"]
-                if f_plan:
-                    p_json = json.dumps(f_plan, ensure_ascii=False)
-                    dynamic_system_prompt += f"\n\n[PLAN HERMES PRIORITAIRE À EXÉCUTER] :\n{p_json}"
+            with span("chat.hermes_planner"):
+                plan = hermes.goap_planner(last_user_query)
+                if plan:
+                    f_plan = [t for t in plan if t.get("tool") != "default_llm"]
+                    if f_plan:
+                        p_json = json.dumps(f_plan, ensure_ascii=False)
+                        dynamic_system_prompt += f"\n\n[PLAN HERMES PRIORITAIRE À EXÉCUTER] :\n{p_json}"
+                        set_span_attribute("hermes.plan_count", len(f_plan))
+                set_span_status_ok()
         except Exception as e:
+            set_span_status_error(str(e))
             logger.error("[HERMES] Échec planificateur : %s", e)
 
     exec_messages = [
         {"role": "system", "content": dynamic_system_prompt}
     ] + trimmed_messages
 
+    # ══════════════════════════════════════════════════════════════════
+    # 🌊 STREAMING
+    # ══════════════════════════════════════════════════════════════════
     async def generate_proxy():
         full_text_accumulated = []
         action_detected = False
@@ -632,6 +668,7 @@ async def chat(request: Request):
                         break
 
             full_text = "".join(full_text_accumulated)
+            set_span_attribute("chat.response_len", len(full_text))
 
             # ── NERF 2 — PIPELINE COGNITIF POST-STREAM ──
             if (_AGI_COGNITIVE_OK
@@ -639,30 +676,37 @@ async def chat(request: Request):
                     and not action_detected
                     and last_user_query):
                 try:
-                    cognitive = _agi_cognitive_pipeline(
-                        draft=full_text,
-                        original_query=last_user_query,
-                        provider=provider,
-                        model=model,
-                    )
-                    if cognitive.get("status") == "success":
-                        meta_cognitive = {
-                            "cognitive_verdict": cognitive.get("final_verdict", "GOOD"),
-                            "cognitive_needs_correction": cognitive.get("needs_correction", False),
-                            "cognitive_issues_count": len(cognitive.get("issues", [])),
-                            "routing_used": routing_used,
-                        }
-                        j_meta_cog = json.dumps({'meta': meta_cognitive})
-                        yield f"data: {j_meta_cog}\n\n"
+                    with span("chat.cognitive_check",
+                              **{"cognitive.draft_len": len(full_text)}):
+                        cognitive = _agi_cognitive_pipeline(
+                            draft=full_text,
+                            original_query=last_user_query,
+                            provider=provider,
+                            model=model,
+                        )
+                        if cognitive.get("status") == "success":
+                            meta_cognitive = {
+                                "cognitive_verdict": cognitive.get("final_verdict", "GOOD"),
+                                "cognitive_needs_correction": cognitive.get("needs_correction", False),
+                                "cognitive_issues_count": len(cognitive.get("issues", [])),
+                                "routing_used": routing_used,
+                            }
+                            j_meta_cog = json.dumps({'meta': meta_cognitive})
+                            yield f"data: {j_meta_cog}\n\n"
 
-                        if cognitive.get("needs_correction"):
-                            warn_msg = (
-                                f"\n\n> ⚠️ **Vérification cognitive** : "
-                                f"verdict `{cognitive.get('final_verdict')}`, "
-                                f"{len(cognitive.get('issues', []))} point(s) à vérifier.\n"
-                            )
-                            yield f"data: {json.dumps({'chunk': warn_msg})}\n\n"
+                            set_span_attribute("cognitive.verdict", cognitive.get("final_verdict", "?"))
+                            if cognitive.get("needs_correction"):
+                                set_span_status_error("needs_correction")
+                                warn_msg = (
+                                    f"\n\n> ⚠️ **Vérification cognitive** : "
+                                    f"verdict `{cognitive.get('final_verdict')}`, "
+                                    f"{len(cognitive.get('issues', []))} point(s) à vérifier.\n"
+                                )
+                                yield f"data: {json.dumps({'chunk': warn_msg})}\n\n"
+                            else:
+                                set_span_status_ok()
                 except Exception as cog_exc:
+                    set_span_status_error(str(cog_exc))
                     logger.debug("[Chat] Cognitive pipeline échec silencieux : %s", cog_exc)
 
             # ── Quality gate ResponseQuality + auto-correction ──
@@ -672,6 +716,7 @@ async def chat(request: Request):
                     meta_data = {'quality_score': score, 'issues': issues}
                     j_meta = json.dumps({'meta': meta_data})
                     yield f"data: {j_meta}\n\n"
+                    set_span_attribute("chat.quality_score", score)
 
                     if score < 60:
                         corrective = list(exec_messages) + [

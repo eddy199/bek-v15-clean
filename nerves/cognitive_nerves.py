@@ -1,50 +1,36 @@
 # -*- coding: utf-8 -*-
-# ==============================================================================
-# NERF 2 — CERVEAU COGNITIF BRANCHÉ (nerves/cognitive_nerves.py) — v6
-# ------------------------------------------------------------------------------
-# Ce nerf branche les 3 briques cognitives dormantes sur Hermes et Chat :
-#
-#   NERF 2 : Chat → Cortex (Swarm + Grounding + SSE)
-#
-# PROBLÈME RÉSOLU (v1) :
-#   - meta_cortex_swarm.py et meta_cortex_grounding.py existent mais ne sont
-#     JAMAIS appelés dans le flux principal.
-#
-# CORRECTIFS v2 : Résolution robuste du provider.
-# CORRECTIFS v3 : Résolution du modèle + détection échec silencieux.
-# CORRECTIFS v4 : Modèle Groq par défaut = "openai/gpt-oss-120b".
-# CORRECTIFS v5 : NVIDIA retiré temporairement.
-#
-# CORRECTIFS v6 :
-#   - NVIDIA RESTAURÉ et remonté en POSITION 1.
-#     * 10 modèles actifs gratuits vérifiés sur build.nvidia.com
-#     * Groq est saturé (TPD 200k atteint) → ne peut plus servir
-#     * NVIDIA devient le provider swarm principal de facto
-#   - _DEFAULT_SWARM_PROVIDERS : nvidia en premier
-#   - _DEFAULT_SWARM_FALLBACK_CHAIN : nvidia → groq → gemini → mistral → openrouter
-#   - _DEFAULT_SWARM_MODELS : modèle NVIDIA par défaut
-#   - Alias "kimi" et "b_ai" → "nvidia" (au lieu de "groq")
-#
-# RÈGLES D'OR :
-#   - Aucune modification de meta_cortex_swarm.py
-#   - Aucune modification de meta_cortex_grounding.py
-#   - Aucune modification de meta_cortex_sse_ui.py
-#   - Aucune modification de hermes_core.py
-#   - Feature-flag : BEK_ENABLE_COGNITIVE_NERVES (défaut true)
-#   - Ne bloque JAMAIS le flux principal (timeouts stricts)
-# ==============================================================================
+"""
+==============================================================================
+NERF 2 — CERVEAU COGNITIF BRANCHÉ (nerves/cognitive_nerves.py)
+------------------------------------------------------------------------------
+Rôle :
+  Chat → Cortex → Swarm + Grounding → EventBus
+
+Dépendances utilisées :
+  - meta_cortex_swarm.py
+  - meta_cortex_grounding.py
+  - hermes_core.py
+  - nerves.event_bus_nerves.py
+
+RÈGLES :
+  - Ne modifie aucun des modules ci-dessus.
+  - Feature-flag : BEK_ENABLE_COGNITIVE_NERVES (défaut true)
+  - Le pipeline cognitif ne doit jamais bloquer le flux principal.
+  - Les événements passent par le EventBus unifié du Nerf 3.
+==============================================================================
+"""
 
 from __future__ import annotations
 
 import logging
 import os
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger("bek.nerves.cognitive")
 
 
 # ------------------------------------------------------------------------------
-# FEATURE FLAG & SEUILS
+# FEATURE FLAG
 # ------------------------------------------------------------------------------
 
 def _is_enabled() -> bool:
@@ -66,7 +52,6 @@ def _min_length_for_grounding() -> int:
 
 
 def _degraded_confidence_threshold() -> float:
-    """En-dessous de ce seuil, un verdict GOOD est considéré dégradé."""
     try:
         return float(os.getenv("BEK_COGNITIVE_DEGRADED_CONFIDENCE", "0.05"))
     except (TypeError, ValueError):
@@ -74,15 +59,13 @@ def _degraded_confidence_threshold() -> float:
 
 
 # ------------------------------------------------------------------------------
-# RÉSOLUTION DU PROVIDER POUR LE SWARM
+# PROVIDERS SWARM
 # ------------------------------------------------------------------------------
-# CORRECTIF v6 : NVIDIA en position 1 (gratuit illimité, actif).
 
 _DEFAULT_SWARM_PROVIDERS = {"nvidia", "groq", "gemini", "openrouter", "mistral"}
+
 _DEFAULT_SWARM_FALLBACK_CHAIN = ["nvidia", "groq", "gemini", "mistral", "openrouter"]
 
-# Alias provider → provider réel supporté par le swarm.
-# v6 : kimi et b_ai redirigés vers nvidia (au lieu de groq saturé).
 _SWARM_PROVIDER_ALIASES: Dict[str, str] = {
     "kimi": "nvidia",
     "kimi-k3-swarm": "nvidia",
@@ -109,14 +92,14 @@ def _swarm_fallback_chain() -> List[str]:
 
 
 def _resolve_swarm_provider(provider: str) -> Dict[str, Any]:
-    """
-    Résout un provider utilisable par ReflexionSwarm.
-    """
+    """Résout le provider utilisé par ReflexionSwarm."""
     original = (provider or "").strip().lower()
     supported = _supported_swarm_providers()
 
     if not original:
-        fallback = _swarm_fallback_chain()[0]
+        fallback = next(
+            (c for c in _swarm_fallback_chain() if c in supported), "nvidia"
+        )
         return {
             "provider": fallback,
             "fallback_used": True,
@@ -126,6 +109,10 @@ def _resolve_swarm_provider(provider: str) -> Dict[str, Any]:
 
     if original in _SWARM_PROVIDER_ALIASES:
         mapped = _SWARM_PROVIDER_ALIASES[original]
+        if mapped not in supported:
+            mapped = next(
+                (c for c in _swarm_fallback_chain() if c in supported), "nvidia"
+            )
         return {
             "provider": mapped,
             "fallback_used": True,
@@ -137,7 +124,7 @@ def _resolve_swarm_provider(provider: str) -> Dict[str, Any]:
         return {
             "provider": original,
             "fallback_used": False,
-            "reason": "Provider supporté nativement",
+            "reason": "Provider supporté",
             "original": original,
         }
 
@@ -153,15 +140,14 @@ def _resolve_swarm_provider(provider: str) -> Dict[str, Any]:
     return {
         "provider": "nvidia",
         "fallback_used": True,
-        "reason": "Aucun candidat valide → nvidia par défaut",
+        "reason": "Aucun provider valide → nvidia par défaut",
         "original": original,
     }
 
 
 # ------------------------------------------------------------------------------
-# RÉSOLUTION DU MODÈLE POUR LE SWARM
+# MODÈLES SWARM
 # ------------------------------------------------------------------------------
-# CORRECTIF v6 : NVIDIA en premier.
 
 _DEFAULT_SWARM_MODELS: Dict[str, str] = {
     "nvidia": "nvidia/nemotron-3-super-120b-a12b",
@@ -173,7 +159,6 @@ _DEFAULT_SWARM_MODELS: Dict[str, str] = {
 
 
 def _default_model_for_provider(provider: str) -> str:
-    """Retourne le modèle par défaut pour un provider donné."""
     provider = (provider or "").strip().lower()
     env_key = f"BEK_COGNITIVE_MODEL_{provider.upper()}"
     override = os.getenv(env_key, "").strip()
@@ -183,24 +168,20 @@ def _default_model_for_provider(provider: str) -> str:
 
 
 def _is_model_valid_for_provider(model: str, provider: str) -> bool:
-    """
-    Vérifie si le modèle est plausible pour le provider.
-    """
+    """Vérification légère de compatibilité."""
     if not model:
         return True
-    m = model.lower()
-    p = (provider or "").lower()
-
-    incompatible_markers = {
+    model_lower = model.lower()
+    provider_lower = (provider or "").lower()
+    incompatible_families = {
         "kimi": "kimi",
         "kimi-k3-swarm": "kimi",
         "b_ai": "b_ai",
         "kilo": "kilo",
     }
-    for marker, family in incompatible_markers.items():
-        if marker in m and family != p:
+    for marker, family in incompatible_families.items():
+        if marker in model_lower and family != provider_lower:
             return False
-
     return True
 
 
@@ -209,16 +190,13 @@ def _resolve_swarm_model(
     model_received: str,
     provider_original: str,
 ) -> Dict[str, Any]:
-    """
-    Résout un modèle utilisable avec le provider résolu.
-    """
     original = (model_received or "").strip()
 
     if not original:
         return {
-            "model": "",
-            "fallback_used": False,
-            "reason": "Modèle vide → défaut provider",
+            "model": _default_model_for_provider(provider_resolved),
+            "fallback_used": True,
+            "reason": "Modèle vide → modèle par défaut du provider",
             "original": "",
         }
 
@@ -235,56 +213,56 @@ def _resolve_swarm_model(
         "model": default_model,
         "fallback_used": True,
         "reason": (
-            f"Modèle '{original}' incompatible avec provider "
-            f"'{provider_resolved}' → remplacement par '{default_model or 'défaut'}'"
+            f"Modèle '{original}' incompatible avec provider '{provider_resolved}' "
+            f"→ remplacement par '{default_model or 'défaut'}'"
         ),
         "original": original,
     }
 
 
 # ------------------------------------------------------------------------------
-# PUBLICATION EVENTBUS
+# EVENTBUS UNIFIÉ
 # ------------------------------------------------------------------------------
 
 def _publish_cognitive_event(
     action: str,
     extra: Optional[Dict[str, Any]] = None,
 ) -> None:
+    """Envoie les événements cognitifs au EventBus unifié du Nerf 3."""
     payload: Dict[str, Any] = {"action": action, "source": "cognitive_nerves"}
     if extra:
         payload.update(extra)
-
     try:
         from nerves.event_bus_nerves import publish_event_unified
         publish_event_unified("skills-index", payload)
-        logger.debug("[Nerf 2] Événement publié : skills-index / %s", action)
+        logger.debug("[Nerf 2] EventBus cognitive → %s", action)
     except Exception as exc:
-        logger.debug("[Nerf 2] Publication EventBus échouée (mode dégradé) : %s", exc)
+        logger.debug("[Nerf 2] EventBus indisponible pour '%s' : %s", action, exc)
 
 
 # ------------------------------------------------------------------------------
-# DÉTECTION SALUTATION
+# DÉTECTION DES MESSAGES SOCIAUX
 # ------------------------------------------------------------------------------
 
 _SOCIAL_KEYWORDS = {
-    "bonjour", "salut", "bjr", "hello", "hi", "hey", "coucou",
-    "bonsoir", "bonne nuit", "ça va", "ca va", "comment vas-tu",
-    "merci", "thanks", "au revoir", "bye", "à plus", "a plus",
-    "comment tu vas", "quoi de neuf", "wesh",
+    "bonjour", "salut", "bjr", "hello", "hi", "hey", "coucou", "bonsoir",
+    "bonne nuit", "ça va", "ca va", "comment vas-tu", "merci", "thanks",
+    "au revoir", "bye", "à plus", "a plus", "comment tu vas", "quoi de neuf",
+    "wesh",
 }
 
 
 def _is_social_message(query: str) -> bool:
     if not query:
         return False
-    q = query.lower().strip()
-    if len(q) > 60:
+    query_lower = query.lower().strip()
+    if len(query_lower) > 60:
         return False
-    return any(kw in q for kw in _SOCIAL_KEYWORDS)
+    return any(kw in query_lower for kw in _SOCIAL_KEYWORDS)
 
 
 # ------------------------------------------------------------------------------
-# BRIDGE 1 : SWARM
+# BRIDGE 1 — SWARM
 # ------------------------------------------------------------------------------
 
 def run_critique_swarm(
@@ -293,11 +271,7 @@ def run_critique_swarm(
     provider: str = "nvidia",
     model: str = "",
 ) -> Dict[str, Any]:
-    """
-    Bridge public : lance le débat 3 critiques (Factual, Logical, Contextual).
-
-    CORRECTIFS v6 : NVIDIA en premier (provider par défaut).
-    """
+    """Lance le ReflexionSwarm. Le provider NVIDIA est utilisé par défaut."""
     if not draft or len(draft.strip()) < _min_length_for_critique():
         return {
             "status": "skipped",
@@ -314,15 +288,9 @@ def run_critique_swarm(
             "confidence": 0.9,
         }
 
-    # --- Résolution provider ---
     provider_res = _resolve_swarm_provider(provider)
     llm_provider = provider_res["provider"]
-
     if provider_res["fallback_used"]:
-        logger.info(
-            "[Nerf 2] Provider swarm résolu : '%s' → '%s' (%s)",
-            provider_res["original"], llm_provider, provider_res["reason"],
-        )
         _publish_cognitive_event(
             action="swarm_provider_fallback",
             extra={
@@ -332,32 +300,26 @@ def run_critique_swarm(
             },
         )
 
-    # --- Résolution modèle ---
     model_res = _resolve_swarm_model(
         provider_resolved=llm_provider,
         model_received=model,
         provider_original=provider_res["original"],
     )
     llm_model = model_res["model"]
-
     if model_res["fallback_used"]:
-        logger.info(
-            "[Nerf 2] Modèle swarm résolu : '%s' → '%s' (%s)",
-            model_res["original"], llm_model or "défaut", model_res["reason"],
-        )
         _publish_cognitive_event(
             action="swarm_model_fallback",
             extra={
                 "original": model_res["original"],
-                "resolved": llm_model or "",
+                "resolved": llm_model,
                 "provider": llm_provider,
                 "reason": model_res["reason"],
             },
         )
 
+    swarm = None
     try:
         from meta_cortex_swarm import ReflexionSwarm
-
         swarm = ReflexionSwarm(
             llm_provider=llm_provider,
             llm_model=llm_model or None,
@@ -370,28 +332,25 @@ def run_critique_swarm(
         unanimous = bool(getattr(consensus, "unanimous", False))
         dominant_issues = getattr(consensus, "dominant_issues", []) or []
 
-        degraded = False
-        degraded_reason = ""
         threshold = _degraded_confidence_threshold()
-
-        if (
+        degraded = (
             verdict_str == "GOOD"
             and confidence <= threshold
-            and unanimous is True
+            and unanimous
             and len(dominant_issues) == 0
-        ):
-            degraded = True
+        )
+        degraded_reason = ""
+        if degraded:
             degraded_reason = (
-                f"Verdict GOOD avec confidence={confidence:.3f} ≤ {threshold} "
-                "et unanime → les critiques ont probablement échoué silencieusement."
+                f"Verdict GOOD avec confidence={confidence:.3f} "
+                f"≤ {threshold} et consensus sans problème détecté."
             )
-            logger.warning("[Nerf 2] Swarm DÉGRADÉ : %s", degraded_reason)
             _publish_cognitive_event(
                 action="swarm_degraded",
                 extra={
                     "reason": degraded_reason,
                     "provider_used": llm_provider,
-                    "model_used": llm_model or "défaut",
+                    "model_used": llm_model,
                     "confidence": confidence,
                 },
             )
@@ -405,16 +364,11 @@ def run_critique_swarm(
                 "issues_count": len(dominant_issues),
                 "provider_used": llm_provider,
                 "provider_original": provider_res["original"],
-                "model_used": llm_model or "",
+                "model_used": llm_model,
                 "model_original": model_res["original"],
                 "degraded": degraded,
             },
         )
-
-        try:
-            swarm.close()
-        except Exception:
-            pass
 
         return {
             "status": "degraded" if degraded else "success",
@@ -436,6 +390,14 @@ def run_critique_swarm(
 
     except ImportError as exc:
         logger.warning("[Nerf 2] meta_cortex_swarm indisponible : %s", exc)
+        _publish_cognitive_event(
+            action="swarm_unavailable",
+            extra={
+                "error": str(exc)[:300],
+                "provider_used": llm_provider,
+                "model_used": llm_model,
+            },
+        )
         return {
             "status": "error",
             "reason": f"meta_cortex_swarm indisponible : {exc}",
@@ -446,6 +408,7 @@ def run_critique_swarm(
             "model_used": llm_model,
             "model_original": model_res["original"],
         }
+
     except Exception as exc:
         logger.error("[Nerf 2] run_critique_swarm échoué : %s", exc)
         _publish_cognitive_event(
@@ -469,9 +432,16 @@ def run_critique_swarm(
             "model_original": model_res["original"],
         }
 
+    finally:
+        if swarm is not None:
+            try:
+                swarm.close()
+            except Exception:
+                pass
+
 
 # ------------------------------------------------------------------------------
-# BRIDGE 2 : GROUNDING (inchangé)
+# BRIDGE 2 — GROUNDING
 # ------------------------------------------------------------------------------
 
 def run_grounding(
@@ -479,12 +449,14 @@ def run_grounding(
     original_query: str,
     connection_string: str = "",
 ) -> Dict[str, Any]:
+    """Vérifie les affirmations du draft avec GroundingValidator."""
     if not draft or len(draft.strip()) < _min_length_for_grounding():
         return {
             "status": "skipped",
             "reason": "Draft trop court pour grounding",
             "verified_count": 0,
             "unverified_count": 0,
+            "unverifiable_count": 0,
         }
 
     if _is_social_message(original_query):
@@ -493,8 +465,10 @@ def run_grounding(
             "reason": "Message social détecté",
             "verified_count": 0,
             "unverified_count": 0,
+            "unverifiable_count": 0,
         }
 
+    validator = None
     try:
         from meta_cortex_grounding import GroundingValidator
 
@@ -513,25 +487,24 @@ def run_grounding(
         unverifiable_count = 0
         issues: List[Dict[str, Any]] = []
 
-        for r in results:
-            if not hasattr(r, "verified"):
+        for result in results:
+            if not hasattr(result, "verified"):
                 continue
-            if r.verified:
+            if result.verified:
                 verified_count += 1
-            elif r.actual_value == "UNVERIFIABLE":
+            elif result.actual_value == "UNVERIFIABLE":
                 unverifiable_count += 1
             else:
                 unverified_count += 1
-                issues.append({
-                    "claim": getattr(r.claim, "claim_text", "")[:200] if hasattr(r, "claim") else "",
-                    "expected": getattr(r, "expected_value", ""),
-                    "actual": getattr(r, "actual_value", ""),
-                })
-
-        try:
-            validator.close()
-        except Exception:
-            pass
+                issues.append(
+                    {
+                        "claim": getattr(
+                            getattr(result, "claim", None), "claim_text", ""
+                        )[:200],
+                        "expected": getattr(result, "expected_value", ""),
+                        "actual": getattr(result, "actual_value", ""),
+                    }
+                )
 
         _publish_cognitive_event(
             action="grounding_check",
@@ -560,7 +533,9 @@ def run_grounding(
             "reason": f"meta_cortex_grounding indisponible : {exc}",
             "verified_count": 0,
             "unverified_count": 0,
+            "unverifiable_count": 0,
         }
+
     except Exception as exc:
         logger.error("[Nerf 2] run_grounding échoué : %s", exc)
         _publish_cognitive_event(
@@ -572,11 +547,19 @@ def run_grounding(
             "reason": str(exc),
             "verified_count": 0,
             "unverified_count": 0,
+            "unverifiable_count": 0,
         }
+
+    finally:
+        if validator is not None:
+            try:
+                validator.close()
+            except Exception:
+                pass
 
 
 # ------------------------------------------------------------------------------
-# BRIDGE 3 : PIPELINE COGNITIF COMPLET
+# BRIDGE 3 — PIPELINE COGNITIF COMPLET
 # ------------------------------------------------------------------------------
 
 def run_cognitive_pipeline(
@@ -587,6 +570,7 @@ def run_cognitive_pipeline(
     enable_swarm: bool = True,
     enable_grounding: bool = True,
 ) -> Dict[str, Any]:
+    """Pipeline complet : Draft → Grounding → Swarm → Verdict → EventBus."""
     result: Dict[str, Any] = {
         "status": "success",
         "final_verdict": "GOOD",
@@ -597,18 +581,34 @@ def run_cognitive_pipeline(
         "grounding_result": None,
     }
 
+    if not _is_enabled():
+        return {
+            "status": "disabled",
+            "reason": "BEK_ENABLE_COGNITIVE_NERVES=false",
+            "final_verdict": "GOOD",
+            "needs_correction": False,
+            "degraded": True,
+            "issues": [],
+            "swarm_result": None,
+            "grounding_result": None,
+        }
+
     if _is_social_message(original_query):
         result["status"] = "skipped"
         result["reason"] = "Message social — pas de vérification cognitive"
         return result
 
+    # GROUNDING
     if enable_grounding:
         grounding = run_grounding(draft=draft, original_query=original_query)
         result["grounding_result"] = grounding
         if grounding.get("unverified_count", 0) > 0:
             result["needs_correction"] = True
             result["issues"].extend(grounding.get("issues", []))
+        if grounding.get("status") == "error":
+            result["degraded"] = True
 
+    # SWARM
     if enable_swarm:
         swarm = run_critique_swarm(
             draft=draft,
@@ -619,14 +619,17 @@ def run_cognitive_pipeline(
         result["swarm_result"] = swarm
         verdict = swarm.get("verdict", "GOOD")
         result["final_verdict"] = verdict
-
         if swarm.get("degraded"):
             result["degraded"] = True
             result["status"] = "degraded"
-
+        if swarm.get("status") == "error":
+            result["degraded"] = True
         if verdict in ("FIX", "ESCALATE"):
             result["needs_correction"] = True
             result["issues"].extend(swarm.get("dominant_issues", []))
+
+    if result["degraded"] and result["status"] == "success":
+        result["status"] = "degraded"
 
     _publish_cognitive_event(
         action="cognitive_pipeline_done",
@@ -654,7 +657,9 @@ def _handler_cognitive_critique(
 ) -> Dict[str, Any]:
     if not draft:
         return {"status": "error", "message": "draft obligatoire."}
-    return run_critique_swarm(draft=draft, original_query=original_query, provider=provider, model=model)
+    return run_critique_swarm(
+        draft=draft, original_query=original_query, provider=provider, model=model
+    )
 
 
 def _handler_cognitive_ground(
@@ -684,9 +689,13 @@ def _handler_cognitive_full_check(
     )
 
 
+# ------------------------------------------------------------------------------
+# TABLE HERMES
+# ------------------------------------------------------------------------------
+
 COGNITIVE_NERVES_TABLE: Dict[str, tuple] = {
-    "cognitive_critique":   (_handler_cognitive_critique,   "L2"),
-    "cognitive_ground":     (_handler_cognitive_ground,     "L2"),
+    "cognitive_critique": (_handler_cognitive_critique, "L2"),
+    "cognitive_ground": (_handler_cognitive_ground, "L2"),
     "cognitive_full_check": (_handler_cognitive_full_check, "L2"),
 }
 
@@ -696,6 +705,7 @@ COGNITIVE_NERVES_TABLE: Dict[str, tuple] = {
 # ------------------------------------------------------------------------------
 
 def activate_cognitive_nerves() -> Dict[str, Any]:
+    """Active les trois outils cognitifs Hermes."""
     if not _is_enabled():
         logger.warning("[Nerf 2] Désactivé via BEK_ENABLE_COGNITIVE_NERVES=false")
         return {
@@ -705,6 +715,7 @@ def activate_cognitive_nerves() -> Dict[str, Any]:
 
     swarm_available = False
     grounding_available = False
+
     try:
         from meta_cortex_swarm import ReflexionSwarm  # noqa: F401
         swarm_available = True
@@ -730,16 +741,27 @@ def activate_cognitive_nerves() -> Dict[str, Any]:
         try:
             hermes.register_tool(tool_name, handler, risk_level=risk_level)
             activated.append(tool_name)
-            logger.info("🧠 [Nerf 2] Outil cognitif branché : %s (risk=%s)", tool_name, risk_level)
+            logger.info("[Nerf 2] Outil cognitif branché : %s (risk=%s)", tool_name, risk_level)
         except Exception as exc:
             failed.append({"tool": tool_name, "error": str(exc)})
             logger.error("[Nerf 2] Échec branchement %s : %s", tool_name, exc)
 
+    eventbus_available = False
+    try:
+        from nerves.event_bus_nerves import get_event_bus_bridge
+        bridge = get_event_bus_bridge()
+        eventbus_available = bridge.get_status().get("activated", False)
+    except Exception as exc:
+        logger.debug(
+            "[Nerf 2] EventBus unifié non disponible au moment de l'activation : %s",
+            exc,
+        )
+
     logger.info(
-        "✅ [Nerf 2] Activation terminée : %d outils cognitifs branchés, %d échecs. "
-        "Swarm : %s | Grounding : %s | Providers swarm supportés : %s",
-        len(activated), len(failed), swarm_available, grounding_available,
-        sorted(_supported_swarm_providers()),
+        "[Nerf 2] Activation terminée : %d outils branchés, %d échecs | "
+        "Swarm=%s | Grounding=%s | EventBus=%s",
+        len(activated), len(failed),
+        swarm_available, grounding_available, eventbus_available,
     )
 
     return {
@@ -749,6 +771,7 @@ def activate_cognitive_nerves() -> Dict[str, Any]:
         "failed": failed,
         "swarm_available": swarm_available,
         "grounding_available": grounding_available,
+        "eventbus_available": eventbus_available,
         "bridges_exposed": [
             "run_critique_swarm",
             "run_grounding",
@@ -773,13 +796,27 @@ def activate_cognitive_nerves() -> Dict[str, Any]:
 # ------------------------------------------------------------------------------
 # TEST DIRECT
 # ------------------------------------------------------------------------------
+
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+    )
+
     result = activate_cognitive_nerves()
     print("Résultat activation Nerf 2 :", result)
     print()
-    for p in ["kimi", "b_ai", "groq", "nvidia", "inconnu", "", "gemini"]:
-        print(f"resolve_provider({p!r}) →", _resolve_swarm_provider(p))
+
+    for provider in ["kimi", "b_ai", "groq", "nvidia", "inconnu", "", "gemini"]:
+        print(f"resolve_provider({provider!r}) →", _resolve_swarm_provider(provider))
     print()
-    for prov, mod in [("nvidia", "kimi-k3-swarm"), ("nvidia", ""), ("groq", "llama-3.3-70b-versatile")]:
-        print(f"resolve_model({prov!r}, {mod!r}) →", _resolve_swarm_model(prov, mod, prov))
+
+    for provider, model in [
+        ("nvidia", "kimi-k3-swarm"),
+        ("nvidia", ""),
+        ("groq", "llama-3.3-70b-versatile"),
+    ]:
+        print(
+            f"resolve_model({provider!r}, {model!r}) →",
+            _resolve_swarm_model(provider, model, provider),
+        )

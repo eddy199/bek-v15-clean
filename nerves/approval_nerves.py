@@ -1,39 +1,21 @@
 # -*- coding: utf-8 -*-
-# ==============================================================================
-# NERF 5 — APPROVAL MANAGER BRANCHÉ À HERMES (nerves/approval_nerves.py)
-# ------------------------------------------------------------------------------
-# Ce nerf branche approval_manager.py (validation humaine L3-L5) sur Hermes :
-#
-#   NERF 5 : Hermes → ApprovalManager (interception automatique des tâches L3+)
-#
-# PROBLÈME RÉSOLU :
-#   - Actuellement : hermes._validate_task() retourne SECURITY_APPROVAL_REQUIRED
-#     pour L3-L5, mais RIEN ne soumet la demande à ApprovalManager.
-#   - Résultat : les tâches sensibles restent bloquées sans retour utilisateur.
-#
-# SOLUTION (ce nerf) :
-#   - Monkey-patch propre de _validate_task sur l'instance Hermes existante
-#   - À chaque tâche L3-L5, soumission automatique à ApprovalManager
-#   - Injection de approval_id dans le résultat retourné
-#   - Restauration possible via feature-flag
-#
-# NOUVEAUX OUTILS HERMES (additifs) :
-#   - approval_submit   → soumettre manuellement une demande d'approbation
-#   - approval_list     → lister les demandes (filtrable par statut)
-#   - approval_get      → consulter une demande par ID
-#   - approval_approve  → approuver + exécuter une demande
-#   - approval_reject   → rejeter une demande
-#
-# BRIDGES EXPOSÉS :
-#   - submit_for_human_approval()  → utilisable par d'autres nerfs
-#
-# RÈGLES D'OR :
-#   - Aucune modification de approval_manager.py
-#   - Aucune modification de hermes_core.py
-#   - Monkey-patch réversible (restauration possible)
-#   - Feature-flag : BEK_ENABLE_APPROVAL_NERVES (défaut true)
-#   - Traçabilité EventBus via Nerf 3
-# ==============================================================================
+"""
+==============================================================================
+NERF 5 — APPROVAL MANAGER BRANCHÉ À HERMES
+nerves/approval_nerves.py
+------------------------------------------------------------------------------
+Interception automatique des tâches L3-L5 + outils Hermes d'approbation.
+
+Corrections :
+  - Monkey-patch réversible et idempotent.
+  - Conservation correcte de la méthode originale.
+  - Détection robuste de SECURITY_APPROVAL_REQUIRED.
+  - Extraction des paramètres depuis plusieurs formats de tâche.
+  - Traçabilité EventBus via Nerf 3.
+  - Aucun blocage du flux principal.
+  - Les erreurs d'ApprovalManager restent isolées.
+==============================================================================
+"""
 
 from __future__ import annotations
 
@@ -41,7 +23,7 @@ import logging
 import os
 import types
 import uuid
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional
 
 logger = logging.getLogger("bek.nerves.approval")
 
@@ -55,7 +37,7 @@ def _is_enabled() -> bool:
 
 
 # ------------------------------------------------------------------------------
-# PUBLICATION EVENTBUS — via le pont unifié du Nerf 3
+# EVENTBUS
 # ------------------------------------------------------------------------------
 
 def _publish_approval_event(
@@ -63,10 +45,6 @@ def _publish_approval_event(
     approval_id: str = "",
     extra: Optional[Dict[str, Any]] = None,
 ) -> None:
-    """
-    Publie un événement d'approbation sur l'EventBus unifié.
-    Ne lève JAMAIS d'exception.
-    """
     payload: Dict[str, Any] = {
         "action": action,
         "approval_id": approval_id,
@@ -75,27 +53,78 @@ def _publish_approval_event(
     if extra:
         payload.update(extra)
 
-    # Les événements d'approbation sont critiques → topic error-signals si rejet, sinon skills-index
     topic = "error-signals" if action == "rejected" else "skills-index"
 
     try:
         from nerves.event_bus_nerves import publish_event_unified
         publish_event_unified(topic, payload)
-        logger.debug("[Nerf 5] Événement publié : %s / %s", topic, action)
+        logger.debug("[Nerf 5] EventBus : %s / %s", topic, action)
     except Exception as exc:
-        logger.debug("[Nerf 5] Publication EventBus échouée (mode dégradé) : %s", exc)
+        logger.debug("[Nerf 5] EventBus indisponible : %s", exc)
 
 
 # ------------------------------------------------------------------------------
-# ÉTAT DE L'INTERCEPTION (pour restauration)
+# ÉTAT DU PATCH
 # ------------------------------------------------------------------------------
 
-_original_validate: Optional[Callable] = None
-_interception_active: bool = False
+_original_validate: Optional[Callable[..., Any]] = None
+_original_owner: Any = None
+_interception_active = False
 
 
 # ------------------------------------------------------------------------------
-# BRIDGE PUBLIC — soumission automatique à l'ApprovalManager
+# HELPERS
+# ------------------------------------------------------------------------------
+
+def _safe_task_value(task: Any, key: str, default: Any = None) -> Any:
+    if isinstance(task, dict):
+        return task.get(key, default)
+    try:
+        return getattr(task, key, default)
+    except Exception:
+        return default
+
+
+def _extract_task_args(task: Any) -> Dict[str, Any]:
+    """Supporte : task["args"] | task.args | task["arguments"] | task.arguments."""
+    args = _safe_task_value(task, "args", None)
+    if args is None:
+        args = _safe_task_value(task, "arguments", None)
+    if isinstance(args, dict):
+        return dict(args)
+    return {}
+
+
+def _extract_tool_name(result: Dict[str, Any], task: Any) -> str:
+    tool = (
+        result.get("tool")
+        or result.get("tool_name")
+        or _safe_task_value(task, "tool", "")
+        or _safe_task_value(task, "tool_name", "")
+    )
+    return str(tool or "")
+
+
+def _extract_task_id(result: Dict[str, Any], task: Any) -> str:
+    task_id = (
+        result.get("task_id")
+        or _safe_task_value(task, "task_id", "")
+        or _safe_task_value(task, "id", "")
+    )
+    return str(task_id or "")
+
+
+def _extract_risk_level(result: Dict[str, Any], task: Any) -> str:
+    risk = (
+        result.get("risk_level")
+        or _safe_task_value(task, "risk_level", "")
+        or "L3"
+    )
+    return str(risk)
+
+
+# ------------------------------------------------------------------------------
+# BRIDGE PUBLIC
 # ------------------------------------------------------------------------------
 
 def submit_for_human_approval(
@@ -106,13 +135,11 @@ def submit_for_human_approval(
     trace_id: str = "",
     reason: str = "",
 ) -> Dict[str, Any]:
-    """
-    Bridge public : soumet une demande à l'ApprovalManager.
-    Utilisable directement par d'autres nerfs (Sub-CRM, orchestrateurs, etc.)
-    Ne lève JAMAIS d'exception. Retourne un dict avec approval_id.
-    """
-    if not tool or not risk_level:
-        return {"status": "error", "message": "tool et risk_level obligatoires."}
+    """Soumet une tâche à ApprovalManager. Ne lève jamais d'exception."""
+    if not tool:
+        return {"status": "error", "message": "tool obligatoire."}
+    if not risk_level:
+        return {"status": "error", "message": "risk_level obligatoire."}
 
     try:
         from approval_manager import approval_manager
@@ -121,26 +148,31 @@ def submit_for_human_approval(
         return {"status": "error", "message": "approval_manager indisponible."}
 
     try:
+        final_task_id = task_id or f"task_{uuid.uuid4().hex[:8]}"
+        final_trace_id = trace_id or f"trace_{uuid.uuid4().hex[:8]}"
+        final_reason = reason or (
+            f"Action {risk_level} nécessitant validation humaine."
+        )
+
         request = approval_manager.submit_request(
-            task_id=task_id or f"task_{uuid.uuid4().hex[:8]}",
-            trace_id=trace_id or f"trace_{uuid.uuid4().hex[:8]}",
+            task_id=final_task_id,
+            trace_id=final_trace_id,
             tool=tool,
             args=args or {},
             risk_level=risk_level,
-            reason=reason or f"Action {risk_level} nécessitant validation humaine.",
+            reason=final_reason,
         )
 
-        approval_id = getattr(request, "approval_id", "")
+        approval_id = str(getattr(request, "approval_id", "") or "")
 
-        # Traçabilité A2A
         _publish_approval_event(
             action="submitted",
             approval_id=approval_id,
             extra={
                 "tool": tool,
                 "risk_level": risk_level,
-                "task_id": task_id,
-                "trace_id": trace_id,
+                "task_id": final_task_id,
+                "trace_id": final_trace_id,
             },
         )
 
@@ -149,72 +181,90 @@ def submit_for_human_approval(
             "approval_id": approval_id,
             "risk_level": risk_level,
             "tool": tool,
+            "task_id": final_task_id,
+            "trace_id": final_trace_id,
             "message": f"Demande soumise pour approbation (niveau {risk_level}).",
         }
+
     except Exception as exc:
         logger.error("[Nerf 5] submit_for_human_approval échoué : %s", exc)
         return {"status": "error", "message": f"Soumission échouée : {exc}"}
 
 
 # ------------------------------------------------------------------------------
-# INTERCEPTION AUTOMATIQUE — monkey-patch réversible de _validate_task
+# PATCH HERMES
 # ------------------------------------------------------------------------------
 
-def _patched_validate_task(self, task: Any, trace_id: str) -> Optional[Dict[str, Any]]:
-    """
-    Version patchée de HermesCore._validate_task.
-    Appelle la version originale puis, si le résultat indique
-    SECURITY_APPROVAL_REQUIRED, soumet automatiquement la demande.
-    """
-    # Appel de la méthode originale (stockée dans _original_validate)
-    try:
-        if _original_validate is None:
-            return None
-        result = _original_validate(self, task, trace_id)
-    except Exception as exc:
-        logger.error("[Nerf 5] Erreur dans la méthode originale : %s", exc)
+def _patched_validate_task(
+    self,
+    task: Any,
+    trace_id: str,
+) -> Optional[Dict[str, Any]]:
+    """Wrapper autour de Hermes._validate_task."""
+    global _original_validate
+
+    if _original_validate is None:
+        logger.error("[Nerf 5] Méthode originale absente.")
         return None
 
-    # Interception uniquement si le résultat est une demande d'approbation
-    if not result or not isinstance(result, dict):
-        return result
+    try:
+        result = _original_validate(task, trace_id)
+    except TypeError:
+        try:
+            result = _original_validate(task)
+        except Exception as exc:
+            logger.error("[Nerf 5] Validation Hermes échouée : %s", exc)
+            return None
+    except Exception as exc:
+        logger.error("[Nerf 5] Validation Hermes échouée : %s", exc)
+        return None
 
+    if not isinstance(result, dict):
+        return result
     if result.get("status") != "SECURITY_APPROVAL_REQUIRED":
         return result
 
-    # Extraction des données de la tâche
-    tool_name = result.get("tool", "")
-    risk_level = result.get("risk_level", "L3")
-    task_id = result.get("task_id", "")
-    args = task.get("args", {}) if isinstance(task, dict) else {}
+    tool_name = _extract_tool_name(result, task)
+    risk_level = _extract_risk_level(result, task)
+    task_id = _extract_task_id(result, task)
+    args = _extract_task_args(task)
+    reason = str(
+        result.get("message")
+        or f"Action {risk_level} requérant validation humaine."
+    )
 
-    # Soumission automatique à ApprovalManager
     submission = submit_for_human_approval(
         tool=tool_name,
         args=args,
         risk_level=risk_level,
         task_id=task_id,
         trace_id=trace_id,
-        reason=result.get("message", f"Action {risk_level} requérant validation."),
+        reason=reason,
     )
 
-    # Enrichir le résultat avec l'approval_id
     if submission.get("status") == "submitted":
         result["approval_id"] = submission.get("approval_id", "")
         result["approval_status"] = "pending_human_validation"
+        result["approval_task_id"] = submission.get("task_id", task_id)
         logger.info(
-            "🛡️ [Nerf 5] Tâche %s (L3+) interceptée → approval_id=%s",
-            tool_name, submission.get("approval_id"),
+            "🛡️ [Nerf 5] Approval demandé | tool=%s | risk=%s | approval_id=%s",
+            tool_name, risk_level, submission.get("approval_id"),
         )
     else:
         result["approval_status"] = "submission_failed"
-        result["approval_error"] = submission.get("message", "Erreur inconnue")
+        result["approval_error"] = submission.get(
+            "message", "Erreur inconnue."
+        )
+        logger.error(
+            "[Nerf 5] Soumission ApprovalManager échouée pour %s : %s",
+            tool_name, result["approval_error"],
+        )
 
     return result
 
 
 # ------------------------------------------------------------------------------
-# HANDLERS HERMES — pilotage des approbations
+# HERMES HANDLERS
 # ------------------------------------------------------------------------------
 
 def _handler_approval_submit(
@@ -226,7 +276,6 @@ def _handler_approval_submit(
     trace_id: str = "",
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    """Handler Hermes : soumettre manuellement une demande d'approbation."""
     if not tool:
         return {"status": "error", "message": "Le nom de l'outil est obligatoire."}
     return submit_for_human_approval(
@@ -239,8 +288,10 @@ def _handler_approval_submit(
     )
 
 
-def _handler_approval_list(status: Optional[str] = None, **kwargs: Any) -> Dict[str, Any]:
-    """Handler Hermes : lister les demandes d'approbation."""
+def _handler_approval_list(
+    status: Optional[str] = None,
+    **kwargs: Any,
+) -> Dict[str, Any]:
     try:
         from approval_manager import approval_manager
         requests = approval_manager.list_requests(status=status)
@@ -254,19 +305,27 @@ def _handler_approval_list(status: Optional[str] = None, **kwargs: Any) -> Dict[
         return {"status": "error", "message": str(exc)}
 
 
-def _handler_approval_get(approval_id: str = "", **kwargs: Any) -> Dict[str, Any]:
-    """Handler Hermes : consulter une demande par ID."""
+def _handler_approval_get(
+    approval_id: str = "",
+    **kwargs: Any,
+) -> Dict[str, Any]:
     if not approval_id:
         return {"status": "error", "message": "approval_id obligatoire."}
     try:
         from approval_manager import approval_manager
-        req = approval_manager.get_request(approval_id)
-        if not req:
-            return {"status": "error", "message": f"Demande {approval_id} introuvable."}
-        return {
-            "status": "success",
-            "request": req.to_dict(),
-        }
+        request = approval_manager.get_request(approval_id)
+        if not request:
+            return {
+                "status": "error",
+                "message": f"Demande {approval_id} introuvable.",
+            }
+        if hasattr(request, "to_dict"):
+            data = request.to_dict()
+        elif isinstance(request, dict):
+            data = request
+        else:
+            data = {"approval_id": approval_id, "request": str(request)}
+        return {"status": "success", "request": data}
     except Exception as exc:
         logger.error("[Nerf 5] approval_get échoué : %s", exc)
         return {"status": "error", "message": str(exc)}
@@ -277,21 +336,28 @@ def _handler_approval_approve(
     admin_user: str = "admin",
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    """Handler Hermes : approuver + exécuter une demande."""
     if not approval_id:
         return {"status": "error", "message": "approval_id obligatoire."}
     try:
         from approval_manager import approval_manager
-        result = approval_manager.approve_and_execute(approval_id, admin_user=admin_user)
-
-        # Traçabilité A2A
+        result = approval_manager.approve_and_execute(
+            approval_id, admin_user=admin_user
+        )
+        result_status = (
+            result.get("status", "unknown")
+            if isinstance(result, dict)
+            else "completed"
+        )
         _publish_approval_event(
             action="approved",
             approval_id=approval_id,
-            extra={"admin_user": admin_user, "result": result.get("status")},
+            extra={"admin_user": admin_user, "result": result_status},
         )
-
-        return result
+        return (
+            result
+            if isinstance(result, dict)
+            else {"status": "success", "result": result}
+        )
     except Exception as exc:
         logger.error("[Nerf 5] approval_approve échoué : %s", exc)
         return {"status": "error", "message": str(exc)}
@@ -303,32 +369,30 @@ def _handler_approval_reject(
     reason: str = "Refusé par l'administrateur.",
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    """Handler Hermes : rejeter une demande."""
     if not approval_id:
         return {"status": "error", "message": "approval_id obligatoire."}
     try:
         from approval_manager import approval_manager
         result = approval_manager.reject_request(
-            approval_id,
-            admin_user=admin_user,
-            reason=reason,
+            approval_id, admin_user=admin_user, reason=reason
         )
-
-        # Traçabilité A2A
         _publish_approval_event(
             action="rejected",
             approval_id=approval_id,
             extra={"admin_user": admin_user, "reason": reason[:200]},
         )
-
-        return result
+        return (
+            result
+            if isinstance(result, dict)
+            else {"status": "success", "result": result}
+        )
     except Exception as exc:
         logger.error("[Nerf 5] approval_reject échoué : %s", exc)
         return {"status": "error", "message": str(exc)}
 
 
 # ------------------------------------------------------------------------------
-# TABLE DE CORRESPONDANCE
+# TABLE HERMES
 # ------------------------------------------------------------------------------
 
 APPROVAL_NERVES_TABLE: Dict[str, tuple] = {
@@ -346,15 +410,13 @@ APPROVAL_NERVES_TABLE: Dict[str, tuple] = {
 
 def activate_approval_nerves() -> Dict[str, Any]:
     """
-    Active les nerfs Approval en :
-      1. Installant le monkey-patch d'interception sur HermesCore._validate_task
-      2. Enregistrant 5 nouveaux outils Hermes pour piloter les approbations
-
-    Idempotent. Feature-flag BEK_ENABLE_APPROVAL_NERVES.
-
-    Retourne un rapport d'activation structuré.
+    Active :
+      1. l'interception Hermes._validate_task ;
+      2. les cinq outils Hermes.
     """
-    global _original_validate, _interception_active
+    global _original_validate
+    global _original_owner
+    global _interception_active
 
     if not _is_enabled():
         logger.warning("[Nerf 5] Désactivé via BEK_ENABLE_APPROVAL_NERVES=false")
@@ -363,47 +425,49 @@ def activate_approval_nerves() -> Dict[str, Any]:
             "reason": "Feature-flag BEK_ENABLE_APPROVAL_NERVES=false",
         }
 
-    # Vérification de la disponibilité d'ApprovalManager
+    # ApprovalManager
     approval_manager_available = False
     try:
         from approval_manager import approval_manager  # noqa: F401
         approval_manager_available = True
     except ImportError as exc:
-        logger.warning(
-            "⚠️ [Nerf 5] approval_manager.py indisponible (%s). "
-            "Les outils seront enregistrés mais échoueront à l'exécution.",
-            exc,
-        )
+        logger.warning("[Nerf 5] approval_manager indisponible : %s", exc)
 
+    # Hermes
     try:
         from hermes_core import hermes
     except ImportError as exc:
-        logger.error("[Nerf 5] Impossible d'importer hermes_core : %s", exc)
+        logger.error("[Nerf 5] hermes_core indisponible : %s", exc)
         return {"status": "error", "message": str(exc)}
 
-    # Étape 1 : Installation du monkey-patch (une seule fois)
+    # PATCH
     patch_installed = False
     if not _interception_active:
         try:
-            # Sauvegarder la méthode originale (bound method sur l'instance)
-            _original_validate = hermes._validate_task
-
-            # Installer la version patchée (bound method sur l'instance)
-            hermes._validate_task = types.MethodType(_patched_validate_task, hermes)
-
+            original = getattr(hermes, "_validate_task", None)
+            if original is None:
+                return {
+                    "status": "error",
+                    "message": "hermes._validate_task introuvable.",
+                }
+            _original_validate = original
+            _original_owner = hermes
+            hermes._validate_task = types.MethodType(
+                _patched_validate_task, hermes
+            )
             _interception_active = True
             patch_installed = True
-            logger.info("🛡️ [Nerf 5] Interception automatique L3+ installée sur Hermes")
+            logger.info("🛡️ [Nerf 5] Interception automatique L3+ installée")
         except Exception as exc:
-            logger.error("[Nerf 5] Échec installation monkey-patch : %s", exc)
+            logger.error("[Nerf 5] Installation monkey-patch échouée : %s", exc)
             return {
                 "status": "error",
                 "message": f"Monkey-patch échoué : {exc}",
             }
     else:
-        logger.debug("[Nerf 5] Monkey-patch déjà installé (idempotent)")
+        logger.debug("[Nerf 5] Monkey-patch déjà actif")
 
-    # Étape 2 : Enregistrement des 5 outils Hermes
+    # OUTILS HERMES
     activated: List[str] = []
     failed: List[Dict[str, str]] = []
 
@@ -411,15 +475,19 @@ def activate_approval_nerves() -> Dict[str, Any]:
         try:
             hermes.register_tool(tool_name, handler, risk_level=risk_level)
             activated.append(tool_name)
-            logger.info("🧠 [Nerf 5] Outil approval branché : %s (risk=%s)", tool_name, risk_level)
+            logger.info(
+                "🧠 [Nerf 5] Outil approval branché : %s (risk=%s)",
+                tool_name, risk_level,
+            )
         except Exception as exc:
             failed.append({"tool": tool_name, "error": str(exc)})
             logger.error("[Nerf 5] Échec branchement %s : %s", tool_name, exc)
 
     logger.info(
-        "✅ [Nerf 5] Activation terminée : %d outils approval branchés, %d échecs. "
-        "ApprovalManager disponible : %s | Monkey-patch : %s",
-        len(activated), len(failed), approval_manager_available, patch_installed,
+        "✅ [Nerf 5] Activation terminée | outils=%d | échecs=%d | "
+        "ApprovalManager=%s | patch=%s",
+        len(activated), len(failed),
+        approval_manager_available, _interception_active,
     )
 
     return {
@@ -435,45 +503,54 @@ def activate_approval_nerves() -> Dict[str, Any]:
 
 
 # ------------------------------------------------------------------------------
-# DÉSACTIVATION (restauration propre)
+# DÉSACTIVATION
 # ------------------------------------------------------------------------------
 
 def deactivate_approval_nerves() -> Dict[str, Any]:
-    """
-    Désactive le monkey-patch et restaure la méthode originale.
-    Utile pour tests ou rollback.
-    """
-    global _original_validate, _interception_active
+    """Restaure hermes._validate_task."""
+    global _original_validate
+    global _original_owner
+    global _interception_active
 
     if not _interception_active:
         return {"status": "already_inactive"}
 
     try:
-        from hermes_core import hermes
+        hermes = _original_owner
+        if hermes is None:
+            from hermes_core import hermes as hermes_instance
+            hermes = hermes_instance
+
         if _original_validate is not None:
             hermes._validate_task = _original_validate
-        _interception_active = False
+
         _original_validate = None
-        logger.info("🛡️ [Nerf 5] Interception désinstallée, comportement legacy restauré")
+        _original_owner = None
+        _interception_active = False
+        logger.info("🛡️ [Nerf 5] Interception désinstallée")
         return {"status": "ok", "message": "Interception désactivée."}
     except Exception as exc:
-        logger.error("[Nerf 5] Échec désactivation : %s", exc)
+        logger.error("[Nerf 5] Désactivation échouée : %s", exc)
         return {"status": "error", "message": str(exc)}
 
 
 # ------------------------------------------------------------------------------
-# TEST DIRECT (optionnel)
+# TEST DIRECT
 # ------------------------------------------------------------------------------
+
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+    )
+
     result = activate_approval_nerves()
     print("Résultat activation Nerf 5 :", result)
 
-    # Test soumission manuelle
-    sub = submit_for_human_approval(
+    test = submit_for_human_approval(
         tool="web_sync",
         args={"query": "test sensitive"},
         risk_level="L4",
         reason="Test manuel Nerf 5",
     )
-    print("Test submit_for_human_approval :", sub)
+    print("Test submit_for_human_approval :", test)

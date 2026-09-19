@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+# ==============================================================================
+# BEK-v16 — Logger JSON structuré
+# ==============================================================================
+from __future__ import annotations
+
 import json
 import logging
 import os
@@ -8,11 +13,15 @@ from typing import Any, Mapping, Optional
 
 
 class JsonLogFormatter(logging.Formatter):
-    """Formatter produisant des logs JSON structures conformes aux standards d'observabilite."""
+    """Formatter produisant des logs JSON structurés."""
 
     DEFAULT_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 
-    def formatTime(self, record: logging.LogRecord, datefmt: Optional[str] = None) -> str:
+    def formatTime(
+        self,
+        record: logging.LogRecord,
+        datefmt: Optional[str] = None,
+    ) -> str:
         dt = datetime.fromtimestamp(record.created, tz=timezone.utc)
         return dt.strftime(self.DEFAULT_TIME_FORMAT)
 
@@ -35,12 +44,30 @@ class JsonLogFormatter(logging.Formatter):
         if record.exc_info:
             log_record["exception"] = self.formatException(record.exc_info)
 
-        request_id = getattr(record, "request_id", None) or os.getenv("REQUEST_ID")
+        request_id = (
+            getattr(record, "request_id", None) or os.getenv("REQUEST_ID")
+        )
         if request_id:
             log_record["request_id"] = request_id
 
-        safe_record = {k: self._serialize(v) for k, v in log_record.items()}
-        return json.dumps(safe_record, ensure_ascii=False)
+        safe_record = {
+            key: self._serialize(value)
+            for key, value in log_record.items()
+        }
+
+        return json.dumps(
+            safe_record,
+            ensure_ascii=False,
+        )
+
+
+def _has_json_handler(logger: logging.Logger) -> bool:
+    """Vérifie si le logger possède déjà notre handler JSON."""
+    return any(
+        isinstance(handler, logging.StreamHandler)
+        and isinstance(handler.formatter, JsonLogFormatter)
+        for handler in logger.handlers
+    )
 
 
 def setup_json_logging(
@@ -48,18 +75,26 @@ def setup_json_logging(
     stream: Optional[Any] = sys.stdout,
     logger_names: Optional[list[str]] = None,
 ) -> None:
-    """Initialise le handler JSON sans ecraser les handlers existants."""
-    json_handler = logging.StreamHandler(stream)
-    json_handler.setFormatter(JsonLogFormatter())
-    json_handler.setLevel(level)
+    """
+    Initialise les logs JSON sans dupliquer les handlers.
 
-    if not logger_names:
-        root_logger = logging.getLogger()
-        root_logger.setLevel(level)
-        root_logger.addHandler(json_handler)
-        return
+    Si logger_names est None, configure le logger racine.
+    Sinon, configure uniquement les loggers demandés.
+    """
+    if logger_names:
+        target_loggers = [
+            logging.getLogger(name) for name in logger_names
+        ]
+    else:
+        target_loggers = [logging.getLogger()]
 
-    for name in logger_names:
-        logger = logging.getLogger(name)
+    for logger in target_loggers:
         logger.setLevel(level)
+
+        if _has_json_handler(logger):
+            continue
+
+        json_handler = logging.StreamHandler(stream)
+        json_handler.setFormatter(JsonLogFormatter())
+        json_handler.setLevel(level)
         logger.addHandler(json_handler)
