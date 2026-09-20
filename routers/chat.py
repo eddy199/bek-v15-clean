@@ -1,9 +1,17 @@
 # ==============================================================================
 # BEK-v16 — Routeur Chat Streaming & Human-in-the-Loop (routers/chat.py)
 # ------------------------------------------------------------------------------
-# CORRECTIF v9 (2026-09-20) :
-# - Détection affinée du web_sync (report présent mais court)
-# - Le v8 est conservé (extraction mots-clés, cascade, anti-blocage)
+# + OpenTelemetry : spans sur chat.request, smart_router, cognitive_check
+# + Sanitizer tokens natifs LLM (Nemotron) + règles outil web
+# + Fix: plus de CANCELED_ACTION intempestif + logs headless_scrape
+# + headless_scrape : extraction texte via BeautifulSoup
+#
+# CORRECTIF v10 (Fix déploiement Render) :
+# - Toutes les f-strings avec backslash (\n) à l'intérieur de {...} ont été
+#   extraites dans des variables intermédiaires. Cela corrige l'erreur
+#   "SyntaxError: f-string expression part cannot include a backslash"
+#   détectée sur Render (Python 3.10 strict).
+# - Aucun changement fonctionnel : uniquement du refactor de syntaxe.
 # ==============================================================================
 from __future__ import annotations
 
@@ -27,6 +35,7 @@ from provider_manager import provider_manager
 from services.action_executor import execute_agent_crm_tool
 from services.tasks import CURRENT_OS_NAME
 
+# ── OpenTelemetry ──
 try:
     from core.tracing import (
         span,
@@ -50,6 +59,9 @@ except Exception:
     def get_current_trace_id(): return ""  # type: ignore
 
 
+# ══════════════════════════════════════════════════════════════════
+# 📋 LOGGER
+# ══════════════════════════════════════════════════════════════════
 logger = logging.getLogger("BEKApp")
 
 ACTION_REGEX = re.compile(r"\x5bACTION:(\w+)\x5d(.*?)\x5b/ACTION\x5d", re.DOTALL)
@@ -72,6 +84,9 @@ def _sanitize_llm_output(text: str) -> str:
     return text
 
 
+# ══════════════════════════════════════════════════════════════════
+# 🛡️ CONFIGURATION
+# ══════════════════════════════════════════════════════════════════
 def _env_int(name: str, default: int, minimum: int = 1) -> int:
     try:
         return max(minimum, int(os.getenv(name, str(default))))
@@ -89,6 +104,7 @@ POOR_RESULT_THRESHOLD = _env_int("BEK_CHAT_POOR_RESULT_THRESHOLD", 200)
 MAX_CHUNKS_WITHOUT_CLOSE = _env_int("BEK_CHAT_MAX_CHUNKS_NO_CLOSE", 150)
 MAX_QUERY_WORDS = _env_int("BEK_CHAT_MAX_QUERY_WORDS", 8)
 
+# ── URLs stériles (recherche + login) ──
 _STERILE_URL_PATTERNS = (
     r"google\.com/finance\?sa=X",
     r"google\.com/search\?",
@@ -113,6 +129,7 @@ def _is_sterile_url(url: str) -> bool:
     return bool(_STERILE_URL_REGEX.search(url))
 
 
+# ── Stop-words pour extraction mots-clés ──
 _QUERY_STOPWORDS = {
     "cherche", "chercher", "recherche", "rechercher", "trouve", "trouver",
     "donne", "donner", "montre", "montrer", "résume", "résumer",
@@ -157,6 +174,7 @@ def _extract_keywords(query: str, max_words: int = MAX_QUERY_WORDS) -> str:
     return result
 
 
+# ── Détection traduction FR→EN ──
 _EN_MARKERS = {
     "latest", "news", "price", "current", "how", "what", "the",
     "today", "info", "update", "trending", "recent",
@@ -179,6 +197,9 @@ def _is_translation(original_query: str, sent_query: str) -> bool:
     return o_fr >= 1 and s_en >= 2 and s_fr == 0
 
 
+# ══════════════════════════════════════════════════════════════════
+# 🧠 CHARGEMENT ARCHITECTURE
+# ══════════════════════════════════════════════════════════════════
 _WORKSPACE_DIR = Path(__file__).resolve().parent.parent
 
 _ARCHITECTURE_CANDIDATES = [
@@ -215,6 +236,9 @@ def get_architecture_context() -> str:
     return _ARCHITECTURE_CONTEXT
 
 
+# ══════════════════════════════════════════════════════════════════
+# 🛡️ UTILITAIRES
+# ══════════════════════════════════════════════════════════════════
 def _safe_str(value: Any) -> str:
     if value is None:
         return ""
@@ -267,6 +291,7 @@ def _truncate_messages(
     return normalized
 
 
+# ── COUCHE INTELLIGENCE ──
 try:
     from bek_intelligence import (
         smart_router, auto_engine, ResponseQuality, Task
@@ -285,6 +310,7 @@ except Exception as _intel_err:
         LONG_DOC = "long_doc"
         CREATIVE = "creative"
 
+# ── COUCHE AGI (nerfs) ──
 try:
     from nerves.router_nerves import route_semantic as _agi_route_semantic
     _AGI_ROUTER_OK = True
@@ -326,6 +352,9 @@ minhash_engine = MinHashSimilarity(num_perm=64)
 hll_counter = HyperLogLog(b=6)
 
 
+# ══════════════════════════════════════════════════════════════════
+# 🧠 PROMPT SYSTÈME
+# ══════════════════════════════════════════════════════════════════
 _ARCHITECTURE_BLOCK = ""
 if _ARCHITECTURE_CONTEXT:
     _ARCHITECTURE_BLOCK = f"""
@@ -394,7 +423,7 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 - NE TRADUIS JAMAIS la requête. Utilisateur FR → requête FR.
 - Utilise EXACTEMENT les termes de l'utilisateur.
 
-## 🎯 EXTRACTION DE MOTS-CLÉS (RÈGLE V8 CRITIQUE)
+## 🎯 EXTRACTION DE MOTS-CLÉS (RÈGLE CRITIQUE)
 - Quand tu génères une requête pour headless_search, tu dois EXTRAIRE
   les MOTS-CLÉS essentiels au lieu d'envoyer la phrase complète.
 - Maximum 8 mots. Pas de verbes, pas d'articles.
@@ -439,6 +468,9 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 """
 
 
+# ══════════════════════════════════════════════════════════════════
+# 🔍 HELPERS
+# ══════════════════════════════════════════════════════════════════
 def _detect_user_response(query: str) -> str:
     if not query:
         return "neutral"
@@ -641,7 +673,6 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
         )
         return "\n".join(lines)
 
-    # ── web_sync v9 : détection affinée ──
     if act_name == "web_sync":
         if exec_res.get("status") != "success":
             return exec_res.get("message", "❌ web_sync a échoué")
@@ -696,6 +727,9 @@ def _extract_first_action(text: str) -> Optional[Dict[str, Any]]:
     return {"name": act_name, "params": params}
 
 
+# ══════════════════════════════════════════════════════════════════
+# 🚀 ROUTE PRINCIPALE
+# ══════════════════════════════════════════════════════════════════
 @router.post("/api/chat")
 async def chat(request: Request):
     with span("chat.request") as chat_span:
@@ -902,6 +936,9 @@ async def _chat_impl(request: Request, chat_span):
         {"role": "system", "content": dynamic_system_prompt}
     ] + trimmed_messages
 
+    # ══════════════════════════════════════════════════════════════════
+    # 🌊 STREAMING v10 (sans backslash dans f-string expressions)
+    # ══════════════════════════════════════════════════════════════════
     async def generate_proxy():
         act_name: str = ""
         params: Dict[str, Any] = {}
@@ -923,10 +960,12 @@ async def _chat_impl(request: Request, chat_span):
                 temperature=0.7,
                 max_tokens=4096,
             ):
+                # ── Gestion erreur provider (sans backslash dans f-string) ──
                 if "error" in item:
                     error_msg = item.get("error", "Erreur inconnue")
                     logger.error("[ProviderManager] Erreur : %s", error_msg)
-                    yield f"data: {json.dumps({'chunk': f'\n\n⚠️ **Erreur provider** : {error_msg}\n\n'})}\n\n"
+                    err_chunk = "\n\n⚠️ **Erreur provider** : " + str(error_msg) + "\n\n"
+                    yield f"data: {json.dumps({'chunk': err_chunk})}\n\n"
                     yield f"data: {json.dumps({'done': True})}\n\n"
                     return
 
@@ -951,7 +990,8 @@ async def _chat_impl(request: Request, chat_span):
                             "[Stream] Action incomplète détectée après %d chunks — abandon.",
                             chunks_without_close,
                         )
-                        yield f"data: {json.dumps({'chunk': '\n\n⚠️ **Action incomplète** détectée. Reformulez la demande.\n\n'})}\n\n"
+                        warn_incomplete = "\n\n⚠️ **Action incomplète** détectée. Reformulez la demande.\n\n"
+                        yield f"data: {json.dumps({'chunk': warn_incomplete})}\n\n"
                         yield f"data: {json.dumps({'done': True})}\n\n"
                         return
 
@@ -986,7 +1026,8 @@ async def _chat_impl(request: Request, chat_span):
                         if not eval_r["passed"]:
                             res_msg = f"⚠️ [BEK Guard] Filtré : {eval_r['reason']}"
 
-                        yield f"data: {json.dumps({'chunk': f'\n\n{res_msg}\n\n'})}\n\n"
+                        res_chunk = "\n\n" + str(res_msg) + "\n\n"
+                        yield f"data: {json.dumps({'chunk': res_chunk})}\n\n"
 
                         total_actions_executed += 1
                         action_was_executed = True
@@ -994,6 +1035,7 @@ async def _chat_impl(request: Request, chat_span):
 
                     break
 
+            # ── Relance unique conditionnelle ──
             relance_done = False
 
             while (
@@ -1011,14 +1053,16 @@ async def _chat_impl(request: Request, chat_span):
                         "[Fallback] headless_search pauvre → web_sync('%s')",
                         fallback_query,
                     )
-                    yield f"data: {json.dumps({'chunk': '\n\n🌐 *Fallback : veille multi-sources...*\n\n'})}\n\n"
+                    fallback_msg = "\n\n🌐 *Fallback : veille multi-sources...*\n\n"
+                    yield f"data: {json.dumps({'chunk': fallback_msg})}\n\n"
 
                     exec_res = _execute_action_unified(
                         "web_sync",
                         {"query": fallback_query, "provider": provider, "model": model},
                     )
                     res_msg = _format_execution_result("web_sync", exec_res)
-                    yield f"data: {json.dumps({'chunk': f'\n\n{res_msg}\n\n'})}\n\n"
+                    ws_chunk = "\n\n" + str(res_msg) + "\n\n"
+                    yield f"data: {json.dumps({'chunk': ws_chunk})}\n\n"
 
                     act_name = "web_sync"
                     total_actions_executed += 1
@@ -1048,7 +1092,8 @@ async def _chat_impl(request: Request, chat_span):
                     },
                 ]
 
-                yield f"data: {json.dumps({'chunk': '\n\n💭 *Synthèse en cours...*\n\n'})}\n\n"
+                synth_msg = "\n\n💭 *Synthèse en cours...*\n\n"
+                yield f"data: {json.dumps({'chunk': synth_msg})}\n\n"
 
                 for item2 in provider_manager.execute_chat_stream(
                     messages=synthesis_messages,
@@ -1059,7 +1104,8 @@ async def _chat_impl(request: Request, chat_span):
                 ):
                     if "error" in item2:
                         error_msg = item2.get("error", "Erreur inconnue")
-                        yield f"data: {json.dumps({'chunk': f'\n\n⚠️ Erreur synthèse : {error_msg}\n'})}\n\n"
+                        synth_err = "\n\n⚠️ Erreur synthèse : " + str(error_msg) + "\n"
+                        yield f"data: {json.dumps({'chunk': synth_err})}\n\n"
                         break
 
                     if "chunk" in item2:
@@ -1078,7 +1124,11 @@ async def _chat_impl(request: Request, chat_span):
                 logger.warning(
                     "[Stream] Action détectée mais non exécutée (incomplète)."
                 )
-                yield f"data: {json.dumps({'chunk': '\n\n⚠️ **Action incomplète** : le LLM n’a pas fermé sa balise [/ACTION]. Reformulez la demande.\n\n'})}\n\n"
+                final_incomplete = (
+                    "\n\n⚠️ **Action incomplète** : le LLM n’a pas fermé sa "
+                    "balise [/ACTION]. Reformulez la demande.\n\n"
+                )
+                yield f"data: {json.dumps({'chunk': final_incomplete})}\n\n"
 
             full_text = "".join(full_text_accumulated)
             set_span_attribute("chat.response_len", len(full_text))
@@ -1155,7 +1205,8 @@ async def _chat_impl(request: Request, chat_span):
 
         except Exception as stream_err:
             logger.error("[Stream Error] %s", stream_err, exc_info=True)
-            j_serr = json.dumps({'chunk': f'\n\n⚠️ Flux Error : {stream_err}'})
+            err_msg = "\n\n⚠️ Flux Error : " + str(stream_err)
+            j_serr = json.dumps({'chunk': err_msg})
             yield f"data: {j_serr}\n\n"
             yield f"data: {json.dumps({'done': True})}\n\n"
 
