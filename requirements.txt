@@ -1,11 +1,12 @@
 # ==============================================================================
 # BEK-v16 — Requirements pour Render Free (512 Mo RAM)
 # ------------------------------------------------------------------------------
-# Version OPTIMISÉE v2 :
+# Version OPTIMISÉE v3 :
 #   - Retiré : torch, transformers, sentence-transformers, fastembed,
-#     opencv, scikit-learn, scipy, langchain-*, Flask, chromadb
+#     opencv, scikit-learn, scipy, Flask, chromadb
 #   - Ajouté : redis (pour EventBus Redis Streams)
 #   - Playwright GARDÉ (utilisé par web_agent + worker_headless)
+#   - Langchain GARDÉ (utilisé par meta_cortex_swarm + swarm_core)
 # ==============================================================================
 
 # --- Core Web / API ---
@@ -42,6 +43,12 @@ pillow>=10.0.0
 
 # --- Headless browser (headless_* tools) ---
 playwright>=1.45.0,<2.0.0
+
+# --- Langchain (meta_cortex_swarm + swarm_core) ---
+langchain-core>=0.3.0,<0.4.0
+langchain-groq>=0.2.0,<0.3.0
+langchain-google-genai>=2.0.0,<3.0.0
+langchain-openai>=0.2.0,<0.4.0
 
 # --- Utils ---
 tenacity>=8.2.0
