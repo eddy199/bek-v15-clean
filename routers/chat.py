@@ -5,6 +5,12 @@
 # + Sanitizer tokens natifs LLM (Nemotron) + règles outil web
 # + Fix: plus de CANCELED_ACTION intempestif + logs headless_scrape
 # + headless_scrape : extraction texte via BeautifulSoup
+#
+# CORRECTIF v8 :
+# - Correctif 1 : extraction automatique de mots-clés si la requête
+#   headless_search contient > 8 mots (évite le bruit Bing/Pizza/Lotto)
+# - Correctif 3 : prompt renforcé avec exemples d'extraction de mots-clés
+# - Tout le reste conservé de v7 (anti-blocage, URLs stériles, etc.)
 # ==============================================================================
 from __future__ import annotations
 
@@ -15,7 +21,7 @@ import os
 import re
 import uuid
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
@@ -52,29 +58,21 @@ except Exception:
     def get_current_trace_id(): return ""  # type: ignore
 
 
-# ── LOGGER GLOBAL ──
+# ══════════════════════════════════════════════════════════════════
+# 📋 LOGGER
+# ══════════════════════════════════════════════════════════════════
 logger = logging.getLogger("BEKApp")
 
-# ── EXPRESSION RÉGULIÈRE UNIQUE (Anti-Coupure Interface) ──
 ACTION_REGEX = re.compile(r"\x5bACTION:(\w+)\x5d(.*?)\x5b/ACTION\x5d", re.DOTALL)
 
-# ── SANITIZER : tokens natifs de tool-calling LLM (Nemotron, Hermes format) ──
 _LLM_NATIVE_TOKENS = (
-    "<|tool_call_begin|>",
-    "<|tool_call_end|>",
-    "<|tool_call_argument_begin|>",
-    "<|tool_call_argument_end|>",
-    "<|tool_call|>",
-    "<|tool_sep|>",
-    "<|tool_calls_section_begin|>",
-    "<|tool_calls_section_end|>",
+    "<|tool_call_begin|>", "<|tool_call_end|>",
+    "<|tool_call_argument_begin|>", "<|tool_call_argument_end|>",
+    "<|tool_call|>", "<|tool_sep|>",
+    "<|tool_calls_section_begin|>", "<|tool_calls_section_end|>",
 )
-_LLM_NATIVE_REGEX = re.compile(
-    "|".join(re.escape(tok) for tok in _LLM_NATIVE_TOKENS)
-)
-_LLM_XML_TOOL_REGEX = re.compile(
-    r"<tool_call>.*?</tool_call>", re.DOTALL
-)
+_LLM_NATIVE_REGEX = re.compile("|".join(re.escape(t) for t in _LLM_NATIVE_TOKENS))
+_LLM_XML_TOOL_REGEX = re.compile(r"<tool_call>.*?</tool_call>", re.DOTALL)
 
 
 def _sanitize_llm_output(text: str) -> str:
@@ -86,24 +84,138 @@ def _sanitize_llm_output(text: str) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🛡️ BORNES DE TAILLE
+# 🛡️ CONFIGURATION
 # ══════════════════════════════════════════════════════════════════
 def _env_int(name: str, default: int, minimum: int = 1) -> int:
     try:
-        val = int(os.getenv(name, str(default)))
-        return max(minimum, val)
+        return max(minimum, int(os.getenv(name, str(default))))
     except (TypeError, ValueError):
         return default
 
 
-HISTORY_WINDOW = _env_int("BEK_CHAT_HISTORY_WINDOW", 6, minimum=1)
-MAX_CHARS_PER_MESSAGE = _env_int("BEK_CHAT_MAX_CHARS_PER_MSG", 8000, minimum=200)
-MAX_TOTAL_CHARS = _env_int("BEK_CHAT_MAX_TOTAL_CHARS", 32000, minimum=1000)
-MAX_ARCHITECTURE_CHARS = _env_int("BEK_CHAT_MAX_ARCHITECTURE_CHARS", 15000, minimum=500)
+HISTORY_WINDOW = _env_int("BEK_CHAT_HISTORY_WINDOW", 6)
+MAX_CHARS_PER_MESSAGE = _env_int("BEK_CHAT_MAX_CHARS_PER_MSG", 8000)
+MAX_TOTAL_CHARS = _env_int("BEK_CHAT_MAX_TOTAL_CHARS", 32000)
+MAX_ARCHITECTURE_CHARS = _env_int("BEK_CHAT_MAX_ARCHITECTURE_CHARS", 15000)
+
+MAX_TOTAL_ACTIONS = _env_int("BEK_CHAT_MAX_TOTAL_ACTIONS", 2)
+POOR_RESULT_THRESHOLD = _env_int("BEK_CHAT_POOR_RESULT_THRESHOLD", 200)
+MAX_CHUNKS_WITHOUT_CLOSE = _env_int("BEK_CHAT_MAX_CHUNKS_NO_CLOSE", 150)
+
+# ── Correctif 1 : seuil d'extraction mots-clés ──
+MAX_QUERY_WORDS = _env_int("BEK_CHAT_MAX_QUERY_WORDS", 8)
+
+# ── URLs stériles (recherche + login) ──
+_STERILE_URL_PATTERNS = (
+    r"google\.com/finance\?sa=X",
+    r"google\.com/search\?",
+    r"bing\.com/search\?",
+    r"duckduckgo\.com/\?q=",
+    r"duckduckgo\.com/html/\?q=",
+    r"accounts\.google\.com",
+    r"login\.microsoftonline\.com",
+    r"signin\.",
+    r"/signin",
+    r"/login",
+    r"/auth/",
+    r"auth0\.com",
+    r"okta\.com",
+)
+_STERILE_URL_REGEX = re.compile("|".join(_STERILE_URL_PATTERNS), re.IGNORECASE)
+
+
+def _is_sterile_url(url: str) -> bool:
+    if not url:
+        return False
+    return bool(_STERILE_URL_REGEX.search(url))
+
+
+# ── Correctif 1 : stop-words pour extraction mots-clés ──
+_QUERY_STOPWORDS = {
+    # Français — verbes et articles de requête
+    "cherche", "chercher", "recherche", "rechercher", "trouve", "trouver",
+    "donne", "donner", "montre", "montrer", "résume", "résumer",
+    "les", "le", "la", "un", "une", "des", "du", "de", "d",
+    "et", "ou", "en", "au", "aux", "ce", "cette", "ces", "cet",
+    "sur", "sous", "dans", "par", "pour", "avec", "sans",
+    "dernières", "dernière", "dernier", "derniers",
+    "chacune", "chacun", "chaque", "phrases", "phrase",
+    "actualité", "actualités",  # gardé en keyword car souvent utile
+    "à", "a", "y", "ne", "pas", "plus", "que", "qui", "quoi",
+    "est", "sont", "été", "être",
+    # Anglais
+    "the", "of", "to", "in", "on", "at", "by", "for",
+    "is", "are", "was", "were", "be", "been",
+    "it", "its", "as", "or", "and", "but", "if", "so", "no",
+    "do", "does", "did", "has", "have", "had", "this", "that",
+    "with", "from", "will", "would", "can", "could", "should",
+    "search", "find", "get", "give", "show", "summarize",
+    "latest", "recent", "top", "best",
+    # Nombres isolés
+    "5", "10", "3", "2", "1",
+}
+
+
+def _extract_keywords(query: str, max_words: int = MAX_QUERY_WORDS) -> str:
+    """
+    Correctif 1 : réduit une phrase longue en mots-clés.
+
+    Si la requête contient <= max_words mots, elle est retournée telle quelle.
+    Sinon, on retire les stop-words et on garde les mots les plus signifiants.
+    """
+    if not query or not query.strip():
+        return query
+
+    words = query.strip().split()
+    if len(words) <= max_words:
+        return query
+
+    # Filtrer les stop-words (insensible à la casse)
+    keywords = []
+    for w in words:
+        w_clean = re.sub(r"[^\w]", "", w.lower())
+        if w_clean and w_clean not in _QUERY_STOPWORDS:
+            keywords.append(w)
+
+    if not keywords:
+        # Fallback : prendre les premiers mots
+        return " ".join(words[:max_words])
+
+    # Limiter à max_words
+    result = " ".join(keywords[:max_words])
+
+    logger.info(
+        "[KeywordExtract] '%s' → '%s'",
+        query[:80], result[:80],
+    )
+    return result
+
+
+# ── Détection traduction FR→EN ──
+_EN_MARKERS = {
+    "latest", "news", "price", "current", "how", "what", "the",
+    "today", "info", "update", "trending", "recent",
+}
+_FR_MARKERS = {
+    "actualité", "actualités", "prix", "actuel", "actuelle", "aujourd",
+    "comment", "quoi", "quel", "quelle", "dernières", "dernière",
+    "nouvelles", "nouveaux", "récent", "récente",
+}
+
+
+def _is_translation(original_query: str, sent_query: str) -> bool:
+    if not original_query or not sent_query:
+        return False
+    o_lower = original_query.lower()
+    s_lower = sent_query.lower()
+    o_fr = sum(1 for m in _FR_MARKERS if m in o_lower)
+    s_en = sum(1 for m in _EN_MARKERS if m in s_lower)
+    s_fr = sum(1 for m in _FR_MARKERS if m in s_lower)
+    return o_fr >= 1 and s_en >= 2 and s_fr == 0
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🧠 CHARGEMENT DE L'ARCHITECTURE BEK-v16
+# 🧠 CHARGEMENT ARCHITECTURE
 # ══════════════════════════════════════════════════════════════════
 _WORKSPACE_DIR = Path(__file__).resolve().parent.parent
 
@@ -148,7 +260,7 @@ def get_architecture_context() -> str:
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🛡️ UTILITAIRES DE BORNAGE
+# 🛡️ UTILITAIRES
 # ══════════════════════════════════════════════════════════════════
 def _safe_str(value: Any) -> str:
     if value is None:
@@ -202,7 +314,7 @@ def _truncate_messages(
     return normalized
 
 
-# ── COUCHE INTELLIGENCE ADDITIVE (legacy) ──
+# ── COUCHE INTELLIGENCE ──
 try:
     from bek_intelligence import (
         smart_router, auto_engine, ResponseQuality, Task
@@ -221,12 +333,12 @@ except Exception as _intel_err:
         LONG_DOC = "long_doc"
         CREATIVE = "creative"
 
-# ── COUCHE AGI (nerfs du Chantier 6) ──
+# ── COUCHE AGI (nerfs) ──
 try:
     from nerves.router_nerves import route_semantic as _agi_route_semantic
     _AGI_ROUTER_OK = True
 except Exception as _router_err:
-    logger.debug("Nerf 7 (SmartRouter AGI) non chargé : %s", _router_err)
+    logger.debug("Nerf 7 non chargé : %s", _router_err)
     _agi_route_semantic = None
     _AGI_ROUTER_OK = False
 
@@ -234,7 +346,7 @@ try:
     from nerves.event_bus_nerves import publish_event_unified as _agi_publish_event
     _AGI_EVENT_BUS_OK = True
 except Exception as _eb_err:
-    logger.debug("Nerf 3 (EventBus unifié) non chargé : %s", _eb_err)
+    logger.debug("Nerf 3 non chargé : %s", _eb_err)
     _agi_publish_event = None
     _AGI_EVENT_BUS_OK = False
 
@@ -242,7 +354,7 @@ try:
     from nerves.cognitive_nerves import run_cognitive_pipeline as _agi_cognitive_pipeline
     _AGI_COGNITIVE_OK = True
 except Exception as _cog_err:
-    logger.debug("Nerf 2 (Pipeline cognitif) non chargé : %s", _cog_err)
+    logger.debug("Nerf 2 non chargé : %s", _cog_err)
     _agi_cognitive_pipeline = None
     _AGI_COGNITIVE_OK = False
 
@@ -264,7 +376,7 @@ hll_counter = HyperLogLog(b=6)
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🧠 PROMPT SYSTÈME
+# 🧠 PROMPT SYSTÈME (v8 : extraction mots-clés renforcée)
 # ══════════════════════════════════════════════════════════════════
 _ARCHITECTURE_BLOCK = ""
 if _ARCHITECTURE_CONTEXT:
@@ -285,31 +397,26 @@ if _ARCHITECTURE_CONTEXT:
 BEK_GOLDEN_RULES = f"""
 # RÔLE & PERSONNALITÉ
 Tu es BEK, agent technique d'exécution sur {CURRENT_OS_NAME}.
+Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 
-# POUVOIRS SYSTÈME ET ACCÈS TERMINAL
-- Tu disposes d'un accès TOTAL au système local.
-- Accès au terminal, Git, Neon DB, Pinecone.
+# POUVOIRS SYSTÈME
+- Accès TOTAL au système local : terminal, Git, Neon DB, Pinecone.
 - INTERDICTION d'affirmer "Je n'ai pas accès à Internet".
 - EXÉCUTE DIRECTEMENT via les outils dédiés les actions demandées.
 
 # DIRECTIVES CONVERSATIONNELLES
 - Parle naturellement et brièvement. Pas de bavardage.
-- Salutations : réponds en une seule phrase courte.
+- Salutations : une phrase courte.
 
-# EXÉCUTION D'OUTILS & ACTIONS (RÈGLE STRICTE)
+# EXÉCUTION D'OUTILS (RÈGLE STRICTE)
 - DÈS QUE l'utilisateur demande une action, N'ATTENDS PAS.
 - INTERDICTION de demander la permission.
 - Renvoie UNIQUEMENT la balise [ACTION:nom]{{"param":"v"}}[/ACTION].
 
-# 🚫 FORMAT DE SORTIE DES ACTIONS (RÈGLE ABSOLUE)
-- N'UTILISE JAMAIS de tokens spéciaux comme <|tool_call_begin|>,
-  <|tool_call_end|>, <|tool_call|>, <tool_call> ou tout autre format
-  natif de LLM.
-- TU DOIS utiliser EXCLUSIVEMENT le format :
-      [ACTION:nom]{{"param":"valeur"}}[/ACTION]
-- Aucun autre format ne sera reconnu par le runtime.
-- Si tu ne peux pas utiliser ce format exact, réponds en texte normal
-  sans tenter d'appeler un outil.
+# 🚫 FORMAT DES ACTIONS (RÈGLE ABSOLUE)
+- N'UTILISE JAMAIS de tokens spéciaux (<|tool_call_begin|>, <tool_call>, etc.)
+- Format EXCLUSIF : [ACTION:nom]{{"param":"valeur"}}[/ACTION]
+- TU DOIS TOUJOURS FERMER la balise avec [/ACTION].
 
 # ACTIONS DISPONIBLES :
    - [ACTION:generate_image]{{"prompt": "detailed description in english"}}[/ACTION]
@@ -329,34 +436,72 @@ Tu es BEK, agent technique d'exécution sur {CURRENT_OS_NAME}.
    - [ACTION:write_file]{{"filename": "...", "content": "..."}}[/ACTION]
    - [ACTION:read_file]{{"filename": "..."}}[/ACTION]
 
-# 🌐 RÈGLE DE SÉLECTION D'OUTIL WEB (CRITIQUE) :
-- URL explicite dans la demande (ex. "scrape https://...") → utiliser :
-      [ACTION:headless_scrape]{{"url": "https://..."}}[/ACTION]
-- Recherche Google/Bing (ex. "cherche X sur le web") → utiliser :
-      [ACTION:headless_search]{{"query": "..."}}[/ACTION]
-- Extraction d'emails/contacts d'une page → utiliser :
-      [ACTION:headless_scrape]{{"url": "https://..."}}[/ACTION]
-- Veille approfondie multi-sources avec rapport (ex. "fais une veille sur X") → utiliser :
-      [ACTION:web_sync]{{"query": "..."}}[/ACTION]
-- INTERDICTION ABSOLUE d'utiliser [ACTION:web_sync] quand une URL explicite
-  (http:// ou https://) est fournie dans la demande. Utilise headless_scrape.
+# 🌐 SÉLECTION D'OUTIL WEB
+- URL explicite → headless_scrape
+- Recherche web → headless_search
+- Extraction contacts d'une page → headless_scrape
+- Veille multi-sources approfondie → web_sync
 
-# DIRECTIVE MULTIMÉDIA ABSOLUE (PRIORITÉ MAXIMALE) :
-- Pour TOUTE demande de création, génération ou modification visuelle (photo, image, portrait, caricature, dessin, illustration, vidéo, animation) :
-- INTERDICTION ABSOLUE d'utiliser [ACTION:orchestrate] ou [ACTION:web_sync].
-- Ne fais AUCUNE recherche Web et ne rédige AUCUN rapport d'ingénierie.
-- Déclenche IMMÉDIATEMENT l'action directe correspondante : generate_image, edit_image, generate_video ou edit_video.
+# 🌐 FORMULATION DE REQUÊTE (CRITIQUE)
+- NE TRADUIS JAMAIS la requête. Utilisateur FR → requête FR.
+- Utilise EXACTEMENT les termes de l'utilisateur.
+
+## 🎯 EXTRACTION DE MOTS-CLÉS (RÈGLE V8 CRITIQUE)
+- Quand tu génères une requête pour headless_search, tu dois EXTRAIRE
+  les MOTS-CLÉS essentiels au lieu d'envoyer la phrase complète.
+- Maximum 8 mots. Pas de verbes, pas d'articles.
+- Exemples CORRECTS :
+  User : "Cherche les 5 dernières actualités sur l'IA en 2026 et résume chacune en 2 phrases."
+  ✅ Toi : [ACTION:headless_search]{{"query": "actualités IA 2026"}}[/ACTION]
+
+  User : "Peux-tu me trouver les dernières nouvelles concernant OpenAI ?"
+  ✅ Toi : [ACTION:headless_search]{{"query": "OpenAI news"}}[/ACTION]
+
+  User : "Quel est le prix actuel du Bitcoin en euros ?"
+  ✅ Toi : [ACTION:headless_search]{{"query": "prix Bitcoin EUR"}}[/ACTION]
+
+- Exemples INTERDITS (phrases complètes) :
+  ❌ [ACTION:headless_search]{{"query": "Cherche les 5 dernières actualités sur l'IA en 2026 et résume chacune en 2 phrases."}}[/ACTION]
+  ❌ [ACTION:headless_search]{{"query": "Peux-tu me trouver les dernières nouvelles concernant OpenAI ?"}}[/ACTION]
+
+## ❌ EXEMPLES DE TRADUCTION INTERDITS
+  User: "Quel est le prix actuel du Bitcoin en euros ?"
+  ❌ [ACTION:headless_search]{{"query": "Bitcoin price EUR"}}[/ACTION]
+
+# 🎯 CADRAGE STRICT
+- Réponds STRICTEMENT à la question.
+- Respecte le FORMAT demandé (ex: "5 items × 2 phrases" → exactement 5×2).
+- Va droit au but. Pas de bavardage.
+
+# HONNÊTETÉ RADICALE
+- Si tu n'as PAS l'info → dis-le CLAIREMENT.
+- INTERDICTION ABSOLUE d'inventer faits, dates, chiffres, URLs.
+
+# 🚨 RÈGLE FINALE CRITIQUE
+- Tu appelles UN SEUL outil par réponse utilisateur.
+- Une fois le résultat obtenu, tu DOIS conclure.
+- INTERDICTION d'appeler un 2ᵉ outil. Sauf si le 1ᵉʳ a retourné 0 résultat
+  ou un résultat vide, auquel cas tu peux essayer web_sync UNE SEULE FOIS.
+- INTERDICTION ABSOLUE d'inventer une URL.
+- INTERDICTION d'utiliser des URLs de LOGIN (accounts.google.com, /login, etc.).
+
+# DIRECTIVE MULTIMÉDIA ABSOLUE
+- Pour TOUTE demande visuelle : generate_image, edit_image,
+  generate_video, ou edit_video.
 {_ARCHITECTURE_BLOCK}
 """
 
 
+# ══════════════════════════════════════════════════════════════════
+# 🔍 HELPERS
+# ══════════════════════════════════════════════════════════════════
 def _detect_user_response(query: str) -> str:
     if not query:
         return "neutral"
     q = query.lower().strip()
     agreed = {
         "oui", "yes", "ok", "okay", "vasy", "vas-y",
-        "go", "d'accord", "ouais", "y", "o", "fine"
+        "go", "d'accord", "ouais", "y", "o", "fine",
     }
     refused = {"non", "no", "stop", "annule", "cancel", "jamais"}
     words = set(re.findall(r"\b\w+\b", q))
@@ -391,14 +536,25 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             prompt = params.get("prompt") or params.get("user_prompt") or params.get("query") or ""
             return merge_and_edit_videos(video_paths=paths, user_prompt=prompt)
     except Exception as exc:
-        logger.error("Erreur directe Vision (%s) : %s", act_name, exc)
+        logger.error("Erreur Vision (%s) : %s", act_name, exc)
         return {"status": "error", "message": f"Erreur multimédia : {exc}"}
 
-    # ── Outils web : headless_scrape / headless_search ──
     if act_name == "headless_scrape":
         url = params.get("url") or params.get("query") or ""
         if not url:
             return {"status": "error", "message": "URL manquante pour headless_scrape"}
+
+        if _is_sterile_url(url):
+            logger.warning("[headless_scrape] URL stérile rejetée : %s", url)
+            return {
+                "status": "error",
+                "message": (
+                    f"URL stérile rejetée (page de recherche ou de login). "
+                    f"Utilise une URL DIRECTE de contenu issue des résultats "
+                    f"de headless_search."
+                ),
+            }
+
         try:
             from worker_headless import HeadlessWorker
             from nerves._async_utils import run_async_safely
@@ -406,17 +562,9 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             worker = HeadlessWorker(headless=True)
             result = run_async_safely(worker.fetch_page_content(url))
             if result is None:
-                logger.warning(
-                    "[headless_scrape] fetch_page_content → None pour %s",
-                    url,
-                )
                 return {
                     "status": "error",
-                    "message": (
-                        f"headless_scrape : impossible de charger {url}. "
-                        f"Vérifie que Playwright est bien installé "
-                        f"(`playwright install chromium`)."
-                    ),
+                    "message": f"headless_scrape : impossible de charger {url}.",
                 }
             preview = str(result)[:200] if result else ""
             logger.info(
@@ -432,6 +580,10 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
         query = params.get("query") or ""
         if not query:
             return {"status": "error", "message": "Query manquante pour headless_search"}
+
+        # ── Correctif 1 : extraction automatique de mots-clés ──
+        query = _extract_keywords(query)
+
         try:
             from nerves.headless_nerves import _handler_headless_search
             return _handler_headless_search(query=query)
@@ -439,7 +591,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             logger.error("Erreur headless_search : %s", exc, exc_info=True)
             return {"status": "error", "message": f"headless_search échoué : {exc}"}
 
-    # ── Fallback : Hermes / CRM executor ──
     if act_name in hermes.tools:
         h_disp = hermes.dispatch(act_name, params)
         if h_disp.get("status") == "SUCCESS" and h_disp.get("results"):
@@ -454,11 +605,31 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
     return exec_res or {"status": "error", "message": "Aucune réponse d'exécution"}
 
 
+def _is_poor_result(exec_res: Optional[dict], act_name: str) -> bool:
+    if not isinstance(exec_res, dict):
+        return True
+    if exec_res.get("status") != "success":
+        return True
+
+    if act_name == "headless_search":
+        leads = exec_res.get("leads", []) or []
+        return len(leads) == 0
+
+    if act_name == "headless_scrape":
+        html = exec_res.get("html", "") or ""
+        return len(html) < POOR_RESULT_THRESHOLD
+
+    if act_name == "web_sync":
+        report = exec_res.get("report", "") or ""
+        return len(str(report)) < POOR_RESULT_THRESHOLD
+
+    return False
+
+
 def _format_execution_result(act_name: str, exec_res: dict) -> str:
     if not isinstance(exec_res, dict):
         return str(exec_res)
 
-    # ── Images / Vidéos ──
     fn = exec_res.get("filename", "")
     if exec_res.get("status") == "success" and fn:
         if any(fn.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"]):
@@ -466,14 +637,12 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
         elif any(fn.lower().endswith(ext) for ext in [".mp4", ".webm", ".mov", ".avi"]):
             return f"🎬 **Vidéo générée !**\n\n[Télécharger la vidéo](/api/download/{fn})\n\n"
 
-    # ── headless_scrape : extraction texte via BeautifulSoup ──
     if act_name == "headless_scrape":
         if exec_res.get("status") == "success":
             url = exec_res.get("url", "")
             title = exec_res.get("title", "")
             html = exec_res.get("html", "") or ""
 
-            # Extraire le texte brut via BeautifulSoup
             try:
                 from bs4 import BeautifulSoup
                 soup = BeautifulSoup(html, "html.parser")
@@ -481,10 +650,8 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
                     tag.decompose()
                 text = soup.get_text(separator="\n", strip=True)
             except ImportError:
-                logger.warning("bs4 non installé → fallback HTML brut")
-                text = html  # fallback si bs4 absent
+                text = html
 
-            # Nettoie les lignes vides multiples
             lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
             text = "\n".join(lines)
 
@@ -494,18 +661,95 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
                 f"- Titre : **{title}**\n"
                 f"- Contenu extrait : {len(text)} chars\n\n"
                 f"**Contenu textuel** :\n```\n{preview}\n```\n"
-                f"→ Analyse ce contenu et donne à l'utilisateur "
-                f"ce qu'il a demandé (titres, liens, emails, etc.)."
+                f"→ Analyse ce contenu et donne à l'utilisateur ce qu'il a demandé."
             )
         else:
             return exec_res.get("message", "❌ headless_scrape a échoué")
 
-    # ── headless_search ──
     if act_name == "headless_search":
-        return exec_res.get("message") or str(exec_res)
+        if not isinstance(exec_res, dict):
+            return f"Résultat brut : {exec_res}"
+        if exec_res.get("status") != "success":
+            return (
+                f"❌ headless_search a échoué : "
+                f"{exec_res.get('message', 'erreur inconnue')}"
+            )
+        leads = exec_res.get("leads", []) or []
+        query_used = exec_res.get("query", "")
+        if not leads:
+            return (
+                f"ℹ️ Aucun résultat trouvé pour : **{query_used}**\n\n"
+                f"→ Dis à l'utilisateur qu'aucun résultat pertinent n'a été "
+                f"trouvé et propose de reformuler."
+            )
+        lines = [f"✅ **{len(leads)} résultats** pour « {query_used} » :\n"]
+        for i, lead in enumerate(leads, 1):
+            title = (lead.get("title") or "")[:100]
+            url = lead.get("source_url") or ""
+            snippet = (lead.get("snippet") or "")[:200]
+            lines.append(f"**{i}. {title}**")
+            lines.append(f"   → {url}")
+            if snippet:
+                lines.append(f"   {snippet}")
+            lines.append("")
+        lines.append(
+            "→ Utilise ces résultats pour répondre à la demande. "
+            "Cite les sources (URLs)."
+        )
+        return "\n".join(lines)
 
-    # ── Fallback ──
+    if act_name == "web_sync":
+        if exec_res.get("status") != "success":
+            return exec_res.get("message", "❌ web_sync a échoué")
+
+        report = exec_res.get("report", "") or ""
+        report_str = str(report).strip()
+
+        if not report_str or len(report_str) < 100:
+            return (
+                "⚠️ **Veille web sans résultat exploitable**\n\n"
+                "→ Le pipeline WebAgent n'a pas pu extraire de contenu.\n"
+                "→ Causes possibles : sources bloquées (DDG), réseau, timeout.\n"
+                "→ Dis HONNÊTEMENT à l'utilisateur qu'aucune source n'a été "
+                "trouvée et propose de reformuler la demande.\n"
+                "→ N'INVENTE AUCUNE actualité."
+            )
+
+        return f"🌐 **Veille web approfondie** :\n\n{report_str[:5000]}"
+
     return exec_res.get("message", "Opération OK")
+
+
+def _extract_first_action(text: str) -> Optional[Dict[str, Any]]:
+    if not text:
+        return None
+    matches = list(ACTION_REGEX.finditer(text))
+    if not matches:
+        return None
+    match = matches[0]
+    act_name = match.group(1)
+    raw_payload = match.group(2).strip()
+
+    params: Dict[str, Any] = {}
+    try:
+        p_json = json.loads(raw_payload)
+        if isinstance(p_json, dict):
+            params = p_json
+    except Exception:
+        try:
+            p_ast = ast.literal_eval(raw_payload)
+            if isinstance(p_ast, dict):
+                params = p_ast
+        except Exception:
+            pass
+
+    if act_name == "headless_scrape":
+        url = params.get("url") or ""
+        if _is_sterile_url(url):
+            logger.info("[ActionFilter] Action stérile rejetée : %s", url)
+            return None
+
+    return {"name": act_name, "params": params}
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -544,7 +788,7 @@ async def _chat_impl(request: Request, chat_span):
             set_span_attribute("chat.user_query_len", len(last_user_query))
 
     # ══════════════════════════════════════════════════════════════════
-    # 🧠 NERF 7 — SMARTROUTER SÉMANTIQUE RÉEL
+    # 🧠 NERF 7 — SMARTROUTER
     # ══════════════════════════════════════════════════════════════════
     smart_mode = data.get("smart", True)
     routing_used = "legacy"
@@ -594,7 +838,7 @@ async def _chat_impl(request: Request, chat_span):
     set_span_attribute("chat.routing_used", routing_used)
 
     # ══════════════════════════════════════════════════════════════════
-    # 🌉 NERF 3 — EVENTBUS UNIFIÉ
+    # 🌉 NERF 3 — EVENTBUS
     # ══════════════════════════════════════════════════════════════════
     corr_id = f"corr_{uuid.uuid4().hex[:10]}"
     set_span_attribute("chat.correlation_id", corr_id)
@@ -614,7 +858,7 @@ async def _chat_impl(request: Request, chat_span):
                 )
                 published = True
             except Exception as e:
-                logger.debug("[EventBus AGI] Échec, fallback legacy : %s", e)
+                logger.debug("[EventBus AGI] Échec : %s", e)
 
         if not published and event_bus:
             try:
@@ -635,7 +879,7 @@ async def _chat_impl(request: Request, chat_span):
                 generate_slash(), media_type="text/event-stream"
             )
 
-    # ── Human-in-the-Loop (agreed / refused uniquement) ──
+    # ── Human-in-the-Loop ──
     if len(trimmed_messages) >= 2:
         prev_msg = trimmed_messages[-2]
         is_ast = prev_msg.get("role") == "assistant"
@@ -670,8 +914,8 @@ async def _chat_impl(request: Request, chat_span):
                     with span("chat.action_execute", **{"action.name": act_name}):
                         exec_res = _execute_action_unified(act_name, params)
                         res_msg = _format_execution_result(act_name, exec_res)
-                        if len(res_msg) > 1500:
-                            res_msg = res_msg[:1500] + "\n... [tronqué]"
+                        if len(res_msg) > 3000:
+                            res_msg = res_msg[:3000] + "\n... [tronqué]"
                         set_span_attribute("action.result_len", len(res_msg))
                         set_span_status_ok()
 
@@ -687,11 +931,6 @@ async def _chat_impl(request: Request, chat_span):
                 )
                 inj = "\n\n[SYSTÈME - ACTION REFUSÉE. Propose autre chose.]"
                 trimmed_messages[-1]["content"] += inj
-
-            # Sinon (user_status == "neutral") :
-            # Ne rien faire. L'utilisateur fait une nouvelle requête,
-            # on n'annule PAS l'action précédente et on traite
-            # normalement le nouveau message.
 
     # ── Prompt système dynamique ──
     dynamic_system_prompt = BEK_GOLDEN_RULES.strip()
@@ -732,11 +971,20 @@ async def _chat_impl(request: Request, chat_span):
     ] + trimmed_messages
 
     # ══════════════════════════════════════════════════════════════════
-    # 🌊 STREAMING
+    # 🌊 STREAMING (v8)
     # ══════════════════════════════════════════════════════════════════
     async def generate_proxy():
-        full_text_accumulated = []
+        act_name: str = ""
+        params: Dict[str, Any] = {}
+        res_msg: str = ""
+        exec_res: Optional[Dict[str, Any]] = None
+
+        full_text_accumulated: List[str] = []
         action_detected = False
+        total_actions_executed = 0
+        action_was_executed = False
+        last_result_poor = False
+        chunks_without_close = 0
 
         try:
             for item in provider_manager.execute_chat_stream(
@@ -746,71 +994,171 @@ async def _chat_impl(request: Request, chat_span):
                 temperature=0.7,
                 max_tokens=4096,
             ):
-                if "chunk" in item:
-                    chunk = item["chunk"]
+                if "error" in item:
+                    error_msg = item.get("error", "Erreur inconnue")
+                    logger.error("[ProviderManager] Erreur : %s", error_msg)
+                    yield f"data: {json.dumps({'chunk': f'\n\n⚠️ **Erreur provider** : {error_msg}\n\n'})}\n\n"
+                    yield f"data: {json.dumps({'done': True})}\n\n"
+                    return
 
-                    # ── Sanitizer : retire les tokens natifs LLM ──
-                    chunk = _sanitize_llm_output(chunk)
+                if "chunk" not in item:
+                    continue
 
-                    if not chunk.strip():
-                        continue
+                chunk = item["chunk"]
+                chunk = _sanitize_llm_output(chunk)
+                if not chunk.strip():
+                    continue
 
-                    full_text_accumulated.append(chunk)
-                    current_text = "".join(full_text_accumulated)
+                full_text_accumulated.append(chunk)
+                current_text = "".join(full_text_accumulated)
 
-                    if "[ACTION:" in current_text:
-                        action_detected = True
+                if "[ACTION:" in current_text:
+                    action_detected = True
 
-                    j_chunk = json.dumps({'chunk': chunk}, ensure_ascii=False)
-                    yield f"data: {j_chunk}\n\n"
+                if action_detected and "[/ACTION]" not in current_text:
+                    chunks_without_close += 1
+                    if chunks_without_close > MAX_CHUNKS_WITHOUT_CLOSE:
+                        logger.warning(
+                            "[Stream] Action incomplète détectée après %d chunks — abandon.",
+                            chunks_without_close,
+                        )
+                        yield f"data: {json.dumps({'chunk': '\n\n⚠️ **Action incomplète** détectée. Reformulez la demande.\n\n'})}\n\n"
+                        yield f"data: {json.dumps({'done': True})}\n\n"
+                        return
 
-                    if action_detected and "[/ACTION]" in current_text:
-                        try:
-                            action_matches = list(ACTION_REGEX.finditer(current_text))
+                j_chunk = json.dumps({'chunk': chunk}, ensure_ascii=False)
+                yield f"data: {j_chunk}\n\n"
 
-                            if action_matches:
-                                match = action_matches[-1]
-                                act_name = match.group(1)
-                                raw_payload = match.group(2).strip()
-                                params = {}
-                                try:
-                                    p_json = json.loads(raw_payload)
-                                    if isinstance(p_json, dict):
-                                        params = p_json
-                                except Exception:
-                                    try:
-                                        p_ast = ast.literal_eval(raw_payload)
-                                        if isinstance(p_ast, dict):
-                                            params = p_ast
-                                    except Exception:
-                                        pass
+                if action_detected and not action_was_executed and "[/ACTION]" in current_text:
+                    action_match = _extract_first_action(current_text)
+                    if action_match:
+                        act_name = action_match["name"]
+                        params = action_match["params"]
 
-                                params["provider"] = provider
-                                params["model"] = model
+                        if act_name == "headless_search":
+                            sent_query = params.get("query", "")
+                            if _is_translation(last_user_query, sent_query):
+                                logger.warning(
+                                    "[QueryCorrect] Traduction détectée : '%s' → '%s'",
+                                    sent_query, last_user_query,
+                                )
+                                params["query"] = last_user_query
 
-                                msg_imm = '\n\n⚙️ *Exécution...*\n'
-                                j_imm = json.dumps({'chunk': msg_imm})
-                                yield f"data: {j_imm}\n\n"
+                        params["provider"] = provider
+                        params["model"] = model
 
-                                exec_res = _execute_action_unified(act_name, params)
-                                res_msg = _format_execution_result(act_name, exec_res)
+                        msg_imm = '\n\n⚙️ *Exécution...*\n'
+                        yield f"data: {json.dumps({'chunk': msg_imm})}\n\n"
 
-                                eval_r = evaluate_response_quality(last_user_query, res_msg)
-                                if not eval_r["passed"]:
-                                    res_msg = f"⚠️ [BEK Guard] Filtré : {eval_r['reason']}"
+                        exec_res = _execute_action_unified(act_name, params)
+                        res_msg = _format_execution_result(act_name, exec_res)
 
-                                j_res = json.dumps({'chunk': f'\n\n{res_msg}\n'})
-                                yield f"data: {j_res}\n\n"
-                        except Exception as e:
-                            logger.error("Erreur exécution : %s", e)
-                            j_err = json.dumps({'chunk': f'\n⚠️ Erreur : {e}\n'})
-                            yield f"data: {j_err}\n\n"
+                        eval_r = evaluate_response_quality(last_user_query, res_msg)
+                        if not eval_r["passed"]:
+                            res_msg = f"⚠️ [BEK Guard] Filtré : {eval_r['reason']}"
+
+                        yield f"data: {json.dumps({'chunk': f'\n\n{res_msg}\n\n'})}\n\n"
+
+                        total_actions_executed += 1
+                        action_was_executed = True
+                        last_result_poor = _is_poor_result(exec_res, act_name)
+
+                    break
+
+            # ── Relance unique conditionnelle ──
+            relance_done = False
+
+            while (
+                action_was_executed
+                and last_result_poor
+                and not relance_done
+                and total_actions_executed < MAX_TOTAL_ACTIONS
+            ):
+                relance_done = True
+
+                if act_name == "headless_search":
+                    fallback_query = last_user_query or params.get("query", "")
+                    # Correctif 1 : extraction mots-clés aussi pour le fallback
+                    fallback_query = _extract_keywords(fallback_query)
+                    logger.info(
+                        "[Fallback] headless_search pauvre → web_sync('%s')",
+                        fallback_query,
+                    )
+                    yield f"data: {json.dumps({'chunk': '\n\n🌐 *Fallback : veille multi-sources...*\n\n'})}\n\n"
+
+                    exec_res = _execute_action_unified(
+                        "web_sync",
+                        {"query": fallback_query, "provider": provider, "model": model},
+                    )
+                    res_msg = _format_execution_result("web_sync", exec_res)
+                    yield f"data: {json.dumps({'chunk': f'\n\n{res_msg}\n\n'})}\n\n"
+
+                    act_name = "web_sync"
+                    total_actions_executed += 1
+                    last_result_poor = _is_poor_result(exec_res, act_name)
+
+                synthesis_messages = list(exec_messages) + [
+                    {
+                        "role": "assistant",
+                        "content": "".join(full_text_accumulated),
+                    },
+                    {
+                        "role": "user",
+                        "content": (
+                            f"[RÉSULTAT DE L'ACTION '{act_name}'] :\n\n"
+                            f"{res_msg}\n\n"
+                            f"→ Analyse les informations ci-dessus et réponds à ma "
+                            f"demande initiale :\n« {last_user_query} »\n\n"
+                            f"RÈGLES SIMPLES :\n"
+                            f"  1. Utilise UNIQUEMENT les informations ci-dessus.\n"
+                            f"  2. Si elles sont SUFFISANTES → conclus directement.\n"
+                            f"  3. Si elles sont INSUFFISANTES → dis-le honnêtement.\n"
+                            f"  4. N'appelle AUCUN outil supplémentaire.\n"
+                            f"  5. N'invente RIEN (pas d'URLs, pas de chiffres).\n"
+                            f"  6. Cite tes sources (URLs) si tu en as.\n"
+                            f"  7. Respecte le format demandé.\n"
+                        ),
+                    },
+                ]
+
+                yield f"data: {json.dumps({'chunk': '\n\n💭 *Synthèse en cours...*\n\n'})}\n\n"
+
+                for item2 in provider_manager.execute_chat_stream(
+                    messages=synthesis_messages,
+                    provider=provider,
+                    model=model,
+                    temperature=0.5,
+                    max_tokens=2048,
+                ):
+                    if "error" in item2:
+                        error_msg = item2.get("error", "Erreur inconnue")
+                        yield f"data: {json.dumps({'chunk': f'\n\n⚠️ Erreur synthèse : {error_msg}\n'})}\n\n"
                         break
+
+                    if "chunk" in item2:
+                        chunk2 = _sanitize_llm_output(item2["chunk"])
+                        if chunk2.strip():
+                            if "[ACTION:" in chunk2:
+                                logger.warning(
+                                    "[Synthèse] Action détectée malgré interdiction — ignorée."
+                                )
+                            else:
+                                yield f"data: {json.dumps({'chunk': chunk2}, ensure_ascii=False)}\n\n"
+
+                break
+
+            if action_detected and not action_was_executed:
+                logger.warning(
+                    "[Stream] Action détectée mais non exécutée (incomplète)."
+                )
+                yield f"data: {json.dumps({'chunk': '\n\n⚠️ **Action incomplète** : le LLM n’a pas fermé sa balise [/ACTION]. Reformulez la demande.\n\n'})}\n\n"
 
             full_text = "".join(full_text_accumulated)
             set_span_attribute("chat.response_len", len(full_text))
+            set_span_attribute("chat.total_actions", total_actions_executed)
+            set_span_attribute("chat.last_result_poor", last_result_poor)
 
-            # ── NERF 2 — PIPELINE COGNITIF POST-STREAM ──
+            # ── NERF 2 — COGNITIF ──
             if (_AGI_COGNITIVE_OK
                     and full_text.strip()
                     and not action_detected
@@ -847,9 +1195,9 @@ async def _chat_impl(request: Request, chat_span):
                                 set_span_status_ok()
                 except Exception as cog_exc:
                     set_span_status_error(str(cog_exc))
-                    logger.debug("[Chat] Cognitive pipeline échec silencieux : %s", cog_exc)
+                    logger.debug("[Chat] Cognitive échec silencieux : %s", cog_exc)
 
-            # ── Quality gate ResponseQuality + auto-correction ──
+            # ── Quality gate ──
             if (_INTEL_OK and full_text.strip() and not action_detected):
                 try:
                     score, issues = ResponseQuality.evaluate(full_text, 4096)
@@ -870,8 +1218,7 @@ async def _chat_impl(request: Request, chat_span):
                         corrected_text = corr_stream[0]
                         if corrected_text.strip() != full_text.strip():
                             msg_corr = '\n\n--- ✨ Version corrigée ---\n\n'
-                            j_msg = json.dumps({'chunk': msg_corr})
-                            yield f"data: {j_msg}\n\n"
+                            yield f"data: {json.dumps({'chunk': msg_corr})}\n\n"
 
                             for i in range(0, len(corrected_text), 24):
                                 c_part = corrected_text[i:i + 24]
@@ -882,7 +1229,7 @@ async def _chat_impl(request: Request, chat_span):
             yield f"data: {json.dumps({'done': True})}\n\n"
 
         except Exception as stream_err:
-            logger.error("[Stream Error] %s", stream_err)
+            logger.error("[Stream Error] %s", stream_err, exc_info=True)
             j_serr = json.dumps({'chunk': f'\n\n⚠️ Flux Error : {stream_err}'})
             yield f"data: {j_serr}\n\n"
             yield f"data: {json.dumps({'done': True})}\n\n"
