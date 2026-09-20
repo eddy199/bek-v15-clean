@@ -1,16 +1,9 @@
 # ==============================================================================
 # BEK-v16 — Routeur Chat Streaming & Human-in-the-Loop (routers/chat.py)
 # ------------------------------------------------------------------------------
-# + OpenTelemetry : spans sur chat.request, smart_router, cognitive_check
-# + Sanitizer tokens natifs LLM (Nemotron) + règles outil web
-# + Fix: plus de CANCELED_ACTION intempestif + logs headless_scrape
-# + headless_scrape : extraction texte via BeautifulSoup
-#
-# CORRECTIF v8 :
-# - Correctif 1 : extraction automatique de mots-clés si la requête
-#   headless_search contient > 8 mots (évite le bruit Bing/Pizza/Lotto)
-# - Correctif 3 : prompt renforcé avec exemples d'extraction de mots-clés
-# - Tout le reste conservé de v7 (anti-blocage, URLs stériles, etc.)
+# CORRECTIF v9 (2026-09-20) :
+# - Détection affinée du web_sync (report présent mais court)
+# - Le v8 est conservé (extraction mots-clés, cascade, anti-blocage)
 # ==============================================================================
 from __future__ import annotations
 
@@ -34,7 +27,6 @@ from provider_manager import provider_manager
 from services.action_executor import execute_agent_crm_tool
 from services.tasks import CURRENT_OS_NAME
 
-# ── OpenTelemetry ──
 try:
     from core.tracing import (
         span,
@@ -58,9 +50,6 @@ except Exception:
     def get_current_trace_id(): return ""  # type: ignore
 
 
-# ══════════════════════════════════════════════════════════════════
-# 📋 LOGGER
-# ══════════════════════════════════════════════════════════════════
 logger = logging.getLogger("BEKApp")
 
 ACTION_REGEX = re.compile(r"\x5bACTION:(\w+)\x5d(.*?)\x5b/ACTION\x5d", re.DOTALL)
@@ -83,9 +72,6 @@ def _sanitize_llm_output(text: str) -> str:
     return text
 
 
-# ══════════════════════════════════════════════════════════════════
-# 🛡️ CONFIGURATION
-# ══════════════════════════════════════════════════════════════════
 def _env_int(name: str, default: int, minimum: int = 1) -> int:
     try:
         return max(minimum, int(os.getenv(name, str(default))))
@@ -101,11 +87,8 @@ MAX_ARCHITECTURE_CHARS = _env_int("BEK_CHAT_MAX_ARCHITECTURE_CHARS", 15000)
 MAX_TOTAL_ACTIONS = _env_int("BEK_CHAT_MAX_TOTAL_ACTIONS", 2)
 POOR_RESULT_THRESHOLD = _env_int("BEK_CHAT_POOR_RESULT_THRESHOLD", 200)
 MAX_CHUNKS_WITHOUT_CLOSE = _env_int("BEK_CHAT_MAX_CHUNKS_NO_CLOSE", 150)
-
-# ── Correctif 1 : seuil d'extraction mots-clés ──
 MAX_QUERY_WORDS = _env_int("BEK_CHAT_MAX_QUERY_WORDS", 8)
 
-# ── URLs stériles (recherche + login) ──
 _STERILE_URL_PATTERNS = (
     r"google\.com/finance\?sa=X",
     r"google\.com/search\?",
@@ -130,9 +113,7 @@ def _is_sterile_url(url: str) -> bool:
     return bool(_STERILE_URL_REGEX.search(url))
 
 
-# ── Correctif 1 : stop-words pour extraction mots-clés ──
 _QUERY_STOPWORDS = {
-    # Français — verbes et articles de requête
     "cherche", "chercher", "recherche", "rechercher", "trouve", "trouver",
     "donne", "donner", "montre", "montrer", "résume", "résumer",
     "les", "le", "la", "un", "une", "des", "du", "de", "d",
@@ -140,10 +121,9 @@ _QUERY_STOPWORDS = {
     "sur", "sous", "dans", "par", "pour", "avec", "sans",
     "dernières", "dernière", "dernier", "derniers",
     "chacune", "chacun", "chaque", "phrases", "phrase",
-    "actualité", "actualités",  # gardé en keyword car souvent utile
+    "actualité", "actualités",
     "à", "a", "y", "ne", "pas", "plus", "que", "qui", "quoi",
     "est", "sont", "été", "être",
-    # Anglais
     "the", "of", "to", "in", "on", "at", "by", "for",
     "is", "are", "was", "were", "be", "been",
     "it", "its", "as", "or", "and", "but", "if", "so", "no",
@@ -151,18 +131,11 @@ _QUERY_STOPWORDS = {
     "with", "from", "will", "would", "can", "could", "should",
     "search", "find", "get", "give", "show", "summarize",
     "latest", "recent", "top", "best",
-    # Nombres isolés
     "5", "10", "3", "2", "1",
 }
 
 
 def _extract_keywords(query: str, max_words: int = MAX_QUERY_WORDS) -> str:
-    """
-    Correctif 1 : réduit une phrase longue en mots-clés.
-
-    Si la requête contient <= max_words mots, elle est retournée telle quelle.
-    Sinon, on retire les stop-words et on garde les mots les plus signifiants.
-    """
     if not query or not query.strip():
         return query
 
@@ -170,7 +143,6 @@ def _extract_keywords(query: str, max_words: int = MAX_QUERY_WORDS) -> str:
     if len(words) <= max_words:
         return query
 
-    # Filtrer les stop-words (insensible à la casse)
     keywords = []
     for w in words:
         w_clean = re.sub(r"[^\w]", "", w.lower())
@@ -178,20 +150,13 @@ def _extract_keywords(query: str, max_words: int = MAX_QUERY_WORDS) -> str:
             keywords.append(w)
 
     if not keywords:
-        # Fallback : prendre les premiers mots
         return " ".join(words[:max_words])
 
-    # Limiter à max_words
     result = " ".join(keywords[:max_words])
-
-    logger.info(
-        "[KeywordExtract] '%s' → '%s'",
-        query[:80], result[:80],
-    )
+    logger.info("[KeywordExtract] '%s' → '%s'", query[:80], result[:80])
     return result
 
 
-# ── Détection traduction FR→EN ──
 _EN_MARKERS = {
     "latest", "news", "price", "current", "how", "what", "the",
     "today", "info", "update", "trending", "recent",
@@ -214,9 +179,6 @@ def _is_translation(original_query: str, sent_query: str) -> bool:
     return o_fr >= 1 and s_en >= 2 and s_fr == 0
 
 
-# ══════════════════════════════════════════════════════════════════
-# 🧠 CHARGEMENT ARCHITECTURE
-# ══════════════════════════════════════════════════════════════════
 _WORKSPACE_DIR = Path(__file__).resolve().parent.parent
 
 _ARCHITECTURE_CANDIDATES = [
@@ -237,18 +199,12 @@ def _load_architecture_context() -> str:
                     content = content[:MAX_ARCHITECTURE_CHARS] + (
                         "\n\n[…architecture tronquée pour respecter la limite]"
                     )
-                logger.info(
-                    "[Archi] Contexte chargé : %s (%d chars)",
-                    candidate, len(content),
-                )
+                logger.info("[Archi] Contexte chargé : %s (%d chars)", candidate, len(content))
                 return content
         except Exception as exc:
             logger.warning("[Archi] Lecture échouée %s : %s", candidate, exc)
 
-    logger.warning(
-        "[Archi] Aucun fichier ARCHITECTURE.md trouvé dans %s.",
-        [str(c) for c in _ARCHITECTURE_CANDIDATES],
-    )
+    logger.warning("[Archi] Aucun fichier ARCHITECTURE.md trouvé.")
     return ""
 
 
@@ -259,9 +215,6 @@ def get_architecture_context() -> str:
     return _ARCHITECTURE_CONTEXT
 
 
-# ══════════════════════════════════════════════════════════════════
-# 🛡️ UTILITAIRES
-# ══════════════════════════════════════════════════════════════════
 def _safe_str(value: Any) -> str:
     if value is None:
         return ""
@@ -314,7 +267,6 @@ def _truncate_messages(
     return normalized
 
 
-# ── COUCHE INTELLIGENCE ──
 try:
     from bek_intelligence import (
         smart_router, auto_engine, ResponseQuality, Task
@@ -333,7 +285,6 @@ except Exception as _intel_err:
         LONG_DOC = "long_doc"
         CREATIVE = "creative"
 
-# ── COUCHE AGI (nerfs) ──
 try:
     from nerves.router_nerves import route_semantic as _agi_route_semantic
     _AGI_ROUTER_OK = True
@@ -375,9 +326,6 @@ minhash_engine = MinHashSimilarity(num_perm=64)
 hll_counter = HyperLogLog(b=6)
 
 
-# ══════════════════════════════════════════════════════════════════
-# 🧠 PROMPT SYSTÈME (v8 : extraction mots-clés renforcée)
-# ══════════════════════════════════════════════════════════════════
 _ARCHITECTURE_BLOCK = ""
 if _ARCHITECTURE_CONTEXT:
     _ARCHITECTURE_BLOCK = f"""
@@ -462,7 +410,6 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 
 - Exemples INTERDITS (phrases complètes) :
   ❌ [ACTION:headless_search]{{"query": "Cherche les 5 dernières actualités sur l'IA en 2026 et résume chacune en 2 phrases."}}[/ACTION]
-  ❌ [ACTION:headless_search]{{"query": "Peux-tu me trouver les dernières nouvelles concernant OpenAI ?"}}[/ACTION]
 
 ## ❌ EXEMPLES DE TRADUCTION INTERDITS
   User: "Quel est le prix actuel du Bitcoin en euros ?"
@@ -471,7 +418,7 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 # 🎯 CADRAGE STRICT
 - Réponds STRICTEMENT à la question.
 - Respecte le FORMAT demandé (ex: "5 items × 2 phrases" → exactement 5×2).
-- Va droit au but. Pas de bavardage.
+- Va droit au but.
 
 # HONNÊTETÉ RADICALE
 - Si tu n'as PAS l'info → dis-le CLAIREMENT.
@@ -492,9 +439,6 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 """
 
 
-# ══════════════════════════════════════════════════════════════════
-# 🔍 HELPERS
-# ══════════════════════════════════════════════════════════════════
 def _detect_user_response(query: str) -> str:
     if not query:
         return "neutral"
@@ -581,7 +525,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
         if not query:
             return {"status": "error", "message": "Query manquante pour headless_search"}
 
-        # ── Correctif 1 : extraction automatique de mots-clés ──
         query = _extract_keywords(query)
 
         try:
@@ -698,6 +641,7 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
         )
         return "\n".join(lines)
 
+    # ── web_sync v9 : détection affinée ──
     if act_name == "web_sync":
         if exec_res.get("status") != "success":
             return exec_res.get("message", "❌ web_sync a échoué")
@@ -709,7 +653,7 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
             return (
                 "⚠️ **Veille web sans résultat exploitable**\n\n"
                 "→ Le pipeline WebAgent n'a pas pu extraire de contenu.\n"
-                "→ Causes possibles : sources bloquées (DDG), réseau, timeout.\n"
+                "→ Causes possibles : sources bloquées, réseau, timeout.\n"
                 "→ Dis HONNÊTEMENT à l'utilisateur qu'aucune source n'a été "
                 "trouvée et propose de reformuler la demande.\n"
                 "→ N'INVENTE AUCUNE actualité."
@@ -752,9 +696,6 @@ def _extract_first_action(text: str) -> Optional[Dict[str, Any]]:
     return {"name": act_name, "params": params}
 
 
-# ══════════════════════════════════════════════════════════════════
-# 🚀 ROUTE PRINCIPALE
-# ══════════════════════════════════════════════════════════════════
 @router.post("/api/chat")
 async def chat(request: Request):
     with span("chat.request") as chat_span:
@@ -787,9 +728,6 @@ async def _chat_impl(request: Request, chat_span):
             user_status = _detect_user_response(last_user_query)
             set_span_attribute("chat.user_query_len", len(last_user_query))
 
-    # ══════════════════════════════════════════════════════════════════
-    # 🧠 NERF 7 — SMARTROUTER
-    # ══════════════════════════════════════════════════════════════════
     smart_mode = data.get("smart", True)
     routing_used = "legacy"
 
@@ -837,9 +775,6 @@ async def _chat_impl(request: Request, chat_span):
 
     set_span_attribute("chat.routing_used", routing_used)
 
-    # ══════════════════════════════════════════════════════════════════
-    # 🌉 NERF 3 — EVENTBUS
-    # ══════════════════════════════════════════════════════════════════
     corr_id = f"corr_{uuid.uuid4().hex[:10]}"
     set_span_attribute("chat.correlation_id", corr_id)
 
@@ -866,7 +801,6 @@ async def _chat_impl(request: Request, chat_span):
             except Exception:
                 pass
 
-    # ── Slash command ──
     if last_user_query.startswith("/") and dispatch_slash_command:
         slash_res = dispatch_slash_command(last_user_query)
         if slash_res and slash_res.get("ok"):
@@ -879,7 +813,6 @@ async def _chat_impl(request: Request, chat_span):
                 generate_slash(), media_type="text/event-stream"
             )
 
-    # ── Human-in-the-Loop ──
     if len(trimmed_messages) >= 2:
         prev_msg = trimmed_messages[-2]
         is_ast = prev_msg.get("role") == "assistant"
@@ -932,7 +865,6 @@ async def _chat_impl(request: Request, chat_span):
                 inj = "\n\n[SYSTÈME - ACTION REFUSÉE. Propose autre chose.]"
                 trimmed_messages[-1]["content"] += inj
 
-    # ── Prompt système dynamique ──
     dynamic_system_prompt = BEK_GOLDEN_RULES.strip()
 
     if last_user_query:
@@ -970,9 +902,6 @@ async def _chat_impl(request: Request, chat_span):
         {"role": "system", "content": dynamic_system_prompt}
     ] + trimmed_messages
 
-    # ══════════════════════════════════════════════════════════════════
-    # 🌊 STREAMING (v8)
-    # ══════════════════════════════════════════════════════════════════
     async def generate_proxy():
         act_name: str = ""
         params: Dict[str, Any] = {}
@@ -1065,7 +994,6 @@ async def _chat_impl(request: Request, chat_span):
 
                     break
 
-            # ── Relance unique conditionnelle ──
             relance_done = False
 
             while (
@@ -1078,7 +1006,6 @@ async def _chat_impl(request: Request, chat_span):
 
                 if act_name == "headless_search":
                     fallback_query = last_user_query or params.get("query", "")
-                    # Correctif 1 : extraction mots-clés aussi pour le fallback
                     fallback_query = _extract_keywords(fallback_query)
                     logger.info(
                         "[Fallback] headless_search pauvre → web_sync('%s')",
@@ -1158,7 +1085,6 @@ async def _chat_impl(request: Request, chat_span):
             set_span_attribute("chat.total_actions", total_actions_executed)
             set_span_attribute("chat.last_result_poor", last_result_poor)
 
-            # ── NERF 2 — COGNITIF ──
             if (_AGI_COGNITIVE_OK
                     and full_text.strip()
                     and not action_detected
@@ -1197,7 +1123,6 @@ async def _chat_impl(request: Request, chat_span):
                     set_span_status_error(str(cog_exc))
                     logger.debug("[Chat] Cognitive échec silencieux : %s", cog_exc)
 
-            # ── Quality gate ──
             if (_INTEL_OK and full_text.strip() and not action_detected):
                 try:
                     score, issues = ResponseQuality.evaluate(full_text, 4096)

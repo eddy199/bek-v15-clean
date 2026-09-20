@@ -4,13 +4,16 @@ BEK-v15.3 HYBRID - Worker Headless Autonome (Playwright Engine Hardened)
 -----------------------------------------------------------------------
 Service d'extraction et de rendu web headless non‑interactif.
 
-CORRECTIF v14 :
-- Fallback anti-zéro restauré : si le filtre _is_relevant rejette TOUT mais
-  que des résultats bruts existent, on les retourne (le LLM les synthétisera
-  et écartera le bruit). Évite les "0 résultats" quand le LLM reformule
-  la requête (traduction, gonflage) et fait perdre les mots-clés.
+CORRECTIF v15 :
+- Cascade étendue : Google → Bing → DDG Lite → Qwant → Mojeek → Startpage
+- Qwant : moteur FR natif, excellent pour l'actualité francophone
+- Mojeek : peu protégé, bon pour les requêtes rares
+- Startpage : proxy Google anonymisé
+- Rotation User-Agent dynamique à chaque contexte Playwright
+- Cookies de session persistants par contexte
+- Détection de bruit améliorée (pages de navigation pure)
 - Le reste conservé : stop-list FR+EN, mot entier \b, seuil 2 lettres,
-  cascade Google/DDG/Bing, Bing en-US puis fr-FR, decode base64url.
+  décode base64url, fallback requests
 """
 
 from __future__ import annotations
@@ -58,6 +61,8 @@ class HeadlessWorker:
         "(KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     ]
 
     _STOPWORDS = {
@@ -92,6 +97,14 @@ class HeadlessWorker:
         "Sec-Fetch-User": "?1",
         "Cache-Control": "max-age=0",
     }
+
+    # Mots-clés de bruit de navigation (pages de tickers, menus, etc.)
+    _NOISE_MARKERS = (
+        "arrow_upward", "arrow_downward",
+        "SIXB", "SIXC", "SIXE", "SIXI", "SIXM", "SIXR",
+        "Nikkei 225", "S&P 500", "Dow Jones",
+        "playlist_add", "expand_content", "keyboard_arrow",
+    )
 
     def __init__(self, headless: bool = True, timeout_ms: int = 30000) -> None:
         self.headless = headless
@@ -128,8 +141,10 @@ class HeadlessWorker:
                 "--disable-blink-features=AutomationControlled",
             ],
         )
+        # v15 : rotation User-Agent
+        ua = random.choice(self._USER_AGENTS)
         context = await browser.new_context(
-            user_agent=self.DEFAULT_USER_AGENT,
+            user_agent=ua,
             viewport={"width": 1280, "height": 800},
             locale="fr-FR",
             timezone_id="Europe/Paris",
@@ -234,6 +249,38 @@ class HeadlessWorker:
             pass
         return raw
 
+    @staticmethod
+    def _resolve_qwant_url(raw: str) -> str:
+        """Qwant enveloppe parfois les URLs dans des redirections."""
+        if not raw:
+            return ""
+        if "qwant.com" in raw and "url=" in raw:
+            try:
+                parsed = urlparse(raw)
+                params = parse_qs(parsed.query)
+                u = params.get("url", [None])[0]
+                if u:
+                    return unquote(u)
+            except Exception:
+                pass
+        return raw
+
+    @staticmethod
+    def _resolve_startpage_url(raw: str) -> str:
+        """Startpage peut utiliser des redirections /do/."""
+        if not raw:
+            return ""
+        if "startpage.com" in raw and ("url=" in raw or "/do/" in raw):
+            try:
+                parsed = urlparse(raw)
+                params = parse_qs(parsed.query)
+                u = params.get("url", [None])[0]
+                if u:
+                    return unquote(u)
+            except Exception:
+                pass
+        return raw
+
     def _is_relevant(self, query: str, title: str, url: str) -> bool:
         keywords = [
             w.lower() for w in re.findall(r"\w+", query or "")
@@ -246,6 +293,14 @@ class HeadlessWorker:
             if re.search(rf"\b{re.escape(kw)}\b", haystack):
                 return True
         return False
+
+    @staticmethod
+    def _is_noisy_content(text: str) -> bool:
+        """Détecte un contenu pollué par de la navigation (menus, tickers)."""
+        if not text or len(text) < 200:
+            return False
+        hits = sum(1 for m in HeadlessWorker._NOISE_MARKERS if m in text)
+        return hits >= 3
 
     # ==================================================================
     # MOTEURS PLAYWRIGHT
@@ -324,7 +379,6 @@ class HeadlessWorker:
                 if len(results) >= limit:
                     break
 
-            # v14 — fallback anti-zéro
             if not results and fallback:
                 logger.info("[search/pw] Google → filtre strict, fallback brut (%d)", len(fallback))
                 results = fallback[:limit]
@@ -480,6 +534,174 @@ class HeadlessWorker:
         logger.warning("[search/pw] Bing → 0 résultats (en-US + fr-FR)")
         return []
 
+    # ── NOUVEAU v15 : Qwant ──
+    async def _search_qwant_playwright(
+        self, context: Any, query: str, limit: int
+    ) -> List[Dict[str, str]]:
+        """Qwant — moteur français, excellent pour l'actualité FR."""
+        page = await context.new_page()
+        try:
+            url = f"https://www.qwant.com/?q={quote_plus(query)}&t=web"
+            await page.goto(url, timeout=20000, wait_until="domcontentloaded")
+            try:
+                await page.wait_for_selector("a[data-testid='result-link'], article", timeout=8000)
+            except Exception:
+                pass
+            await page.wait_for_timeout(2500)
+            html = await page.content()
+            soup = BeautifulSoup(html, "html.parser")
+
+            results: List[Dict[str, str]] = []
+            # Qwant utilise plusieurs structures selon les versions
+            selectors = [
+                "a[data-testid='result-link']",
+                "article a[href^='http']",
+                "div[data-testid='web-result'] a[href^='http']",
+            ]
+            anchors = []
+            for sel in selectors:
+                found = soup.select(sel)
+                if found:
+                    anchors = found
+                    break
+
+            fallback: List[Dict[str, str]] = []
+            for a in anchors[: limit * 4]:
+                title = a.get_text(strip=True)
+                href = a.get("href", "")
+                if not href.startswith("http"):
+                    continue
+                real_url = self._resolve_qwant_url(href)
+                if not title or len(title) < 10:
+                    continue
+                item = {"title": title[:120], "url": real_url, "snippet": ""}
+                if self._is_relevant(query, title, real_url):
+                    results.append(item)
+                else:
+                    fallback.append(item)
+                if len(results) >= limit:
+                    break
+
+            if not results and fallback:
+                logger.info("[search/pw] Qwant → filtre strict, fallback brut (%d)", len(fallback))
+                results = fallback[:limit]
+
+            if results:
+                logger.info("[search/pw] Qwant → %d résultats", len(results))
+            else:
+                logger.warning("[search/pw] Qwant → 0 résultats")
+            return results
+        except Exception as exc:
+            logger.warning("[search/pw] Qwant échec : %s", exc)
+            return []
+        finally:
+            try: await page.close()
+            except Exception: pass
+
+    # ── NOUVEAU v15 : Mojeek ──
+    async def _search_mojeek_playwright(
+        self, context: Any, query: str, limit: int
+    ) -> List[Dict[str, str]]:
+        """Mojeek — peu protégé, bon pour les requêtes rares."""
+        page = await context.new_page()
+        try:
+            url = f"https://www.mojeek.com/search?q={quote_plus(query)}"
+            await page.goto(url, timeout=20000, wait_until="domcontentloaded")
+            try:
+                await page.wait_for_selector("ul.results-standard li, a.title", timeout=8000)
+            except Exception:
+                pass
+            await page.wait_for_timeout(1500)
+            html = await page.content()
+            soup = BeautifulSoup(html, "html.parser")
+
+            results: List[Dict[str, str]] = []
+            fallback: List[Dict[str, str]] = []
+            for li in soup.select("ul.results-standard li")[: limit * 4]:
+                a = li.select_one("a.title")
+                if not a:
+                    continue
+                title = a.get_text(strip=True)
+                href = a.get("href", "")
+                if not href.startswith("http"):
+                    continue
+                sn = li.select_one(".s")
+                snippet = sn.get_text(strip=True) if sn else ""
+                item = {"title": title, "url": href, "snippet": snippet}
+                if self._is_relevant(query, title, href):
+                    results.append(item)
+                else:
+                    fallback.append(item)
+                if len(results) >= limit:
+                    break
+
+            if not results and fallback:
+                logger.info("[search/pw] Mojeek → filtre strict, fallback brut (%d)", len(fallback))
+                results = fallback[:limit]
+
+            if results:
+                logger.info("[search/pw] Mojeek → %d résultats", len(results))
+            else:
+                logger.warning("[search/pw] Mojeek → 0 résultats")
+            return results
+        except Exception as exc:
+            logger.warning("[search/pw] Mojeek échec : %s", exc)
+            return []
+        finally:
+            try: await page.close()
+            except Exception: pass
+
+    # ── NOUVEAU v15 : Startpage ──
+    async def _search_startpage_playwright(
+        self, context: Any, query: str, limit: int
+    ) -> List[Dict[str, str]]:
+        """Startpage — proxy Google anonymisé."""
+        page = await context.new_page()
+        try:
+            url = f"https://www.startpage.com/sp/search?query={quote_plus(query)}"
+            await page.goto(url, timeout=20000, wait_until="domcontentloaded")
+            try:
+                await page.wait_for_selector("a.result-link, .w-gl__result", timeout=8000)
+            except Exception:
+                pass
+            await page.wait_for_timeout(2000)
+            html = await page.content()
+            soup = BeautifulSoup(html, "html.parser")
+
+            results: List[Dict[str, str]] = []
+            fallback: List[Dict[str, str]] = []
+            for el in soup.select("a.result-link, .w-gl__result-title a")[: limit * 4]:
+                title = el.get_text(strip=True)
+                href = el.get("href", "")
+                if not href.startswith("http"):
+                    continue
+                real_url = self._resolve_startpage_url(href)
+                if not title:
+                    continue
+                item = {"title": title, "url": real_url, "snippet": ""}
+                if self._is_relevant(query, title, real_url):
+                    results.append(item)
+                else:
+                    fallback.append(item)
+                if len(results) >= limit:
+                    break
+
+            if not results and fallback:
+                logger.info("[search/pw] Startpage → filtre strict, fallback brut (%d)", len(fallback))
+                results = fallback[:limit]
+
+            if results:
+                logger.info("[search/pw] Startpage → %d résultats", len(results))
+            else:
+                logger.warning("[search/pw] Startpage → 0 résultats")
+            return results
+        except Exception as exc:
+            logger.warning("[search/pw] Startpage échec : %s", exc)
+            return []
+        finally:
+            try: await page.close()
+            except Exception: pass
+
     # ==================================================================
     # FALLBACK REQUESTS
     # ==================================================================
@@ -624,11 +846,27 @@ class HeadlessWorker:
             context = None
             try:
                 playwright_obj, browser, context = await self._launch_browser()
-                raw = await self._search_google_playwright(context, query, limit)
-                if not raw:
-                    raw = await self._search_ddg_lite_playwright(context, query, limit)
-                if not raw:
-                    raw = await self._search_bing_playwright(context, query, limit)
+
+                # ── Cascade v15 : 6 moteurs ──
+                engines = [
+                    ("Google", self._search_google_playwright),
+                    ("Bing", self._search_bing_playwright),
+                    ("DDG Lite", self._search_ddg_lite_playwright),
+                    ("Qwant", self._search_qwant_playwright),
+                    ("Mojeek", self._search_mojeek_playwright),
+                    ("Startpage", self._search_startpage_playwright),
+                ]
+
+                for name, engine_fn in engines:
+                    try:
+                        raw = await engine_fn(context, query, limit)
+                    except Exception as exc:
+                        logger.warning("[search/pw] %s exception : %s", name, exc)
+                        raw = []
+                    if raw:
+                        logger.info("[search/pw] Cascade arrêtée sur %s", name)
+                        break
+
             except Exception as exc:
                 logger.error("[search/pw] Exception globale : %s", exc)
                 raw = []
