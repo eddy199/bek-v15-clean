@@ -1,3 +1,16 @@
+# ==============================================================================
+# BEK-v16 — Provider Manager (provider_manager.py)
+# ------------------------------------------------------------------------------
+# v24 (2026-09-20) :
+#   - AJOUT : Provider AGNES AI (vidéo gratuite)
+#   - AGNES_API_KEY + AGNES_BASE_URL dans PROVIDER_KEY_MAP
+#   - resolve_agnes_model_id() : conversion noms courts UI -> IDs officiels
+#   - get_agnes_endpoints() : URLs create + status prêtes à l'emploi
+#   - list_agnes_video_models() : liste des modèles Agnes disponibles
+#   - Mapping centralisé Veo 3.1 + Gemini image (v22 conservé)
+#   - Détection dynamique des modèles (v22 conservé)
+#   - Aucune régression : fallback chain texte inchangée
+# ==============================================================================
 from __future__ import annotations
 
 import json
@@ -14,16 +27,67 @@ WORKSPACE_DIR = Path(__file__).resolve().parent
 
 
 class ProviderManager:
-    # MODÈLES PAR FOURNISSEUR (17 Fournisseurs)
-    # ------------------------------------------------------------------------------
-    # CORRECTIF v21 (2026-09-18) :
-    #   - AJOUT DU FOURNISSEUR AISA (position 2 dans la fallback chain)
-    #   - AIsa est une passerelle unifiée compatible OpenAI
-    #   - URL de base : https://api.aisa.one/v1
-    #   - Authentification : Bearer token (AISA_API_KEY)
-    #   - Seuls les modèles GRATUITS sont conservés pour AIsa
-    #     (qwen-flash confirmé fonctionnel — les autres sont payants)
-    # ------------------------------------------------------------------------------
+
+    # ==========================================================================
+    # MAPPING CENTRALISÉ DES MODEL IDS OFFICIELS GOOGLE
+    # ==========================================================================
+    MODEL_ID_MAPPING: Dict[str, str] = {
+        # --------- Veo 3.1 (vidéo) ---------
+        "veo-3.1-gene-prev":            "veo-3.1-generate-preview",
+        "veo-3.1-lite-gene-prev":       "veo-3.1-lite-generate-preview",
+        "veo-3.1-fast-gene-prev":       "veo-3.1-fast-generate-preview",
+        "veo-3.1":                      "veo-3.1-generate-preview",
+        "veo-3.1-lite":                 "veo-3.1-lite-generate-preview",
+        "veo-3.1-fast":                 "veo-3.1-fast-generate-preview",
+        # --------- Gemini Image ---------
+        "gemini-3.1-flash-image":       "gemini-3.1-flash-image-preview",
+        "gemini-3.1-flash-lite-image":  "gemini-3.1-flash-lite-image-preview",
+        "gemini-2.5-flash-image":       "gemini-2.5-flash-image",
+    }
+
+    # ==========================================================================
+    # ★ NOUVEAU v24 — MAPPING AGNES VIDEO
+    # --------------------------------------------------------------------------
+    # Noms courts UI -> IDs officiels Agnes
+    # ==========================================================================
+    AGNES_MODEL_MAPPING: Dict[str, str] = {
+        # Noms courts UI
+        "agnes-v2":            "agnes-video-v2.0",
+        "agnes-v2.0":          "agnes-video-v2.0",
+        "agnes-video-v2":      "agnes-video-v2.0",
+        "agnes-video-v2.0":    "agnes-video-v2.0",
+        "agnes-flash":         "agnes-video-2.5-flash",
+        "agnes-v2.5-flash":    "agnes-video-2.5-flash",
+        "agnes-video-flash":   "agnes-video-2.5-flash",
+        "agnes-video-2.5-flash": "agnes-video-2.5-flash",
+    }
+
+    # Durées officiellement supportées par Veo 3.1 (en secondes)
+    VEO_SUPPORTED_DURATIONS: List[int] = [4, 6, 8]
+    VEO_MAX_SINGLE_CLIP: int = 8
+    VEO_MIN_CLIP: int = 4
+
+    # Endpoints
+    GEMINI_API_BASE: str = "https://generativelanguage.googleapis.com/v1beta"
+    AGNES_DEFAULT_BASE_URL: str = "https://apihub.agnes-ai.com/v1"
+
+    # ==========================================================================
+    # LIMITES AGNES VIDEO
+    # ==========================================================================
+    # - v2.0     : num_frames max 441 (~18 s @ 24 fps), 1080p
+    # - 2.5-flash: seconds max 12, 720p
+    # - RPM      : 1 (une requête par minute)
+    # ==========================================================================
+    AGNES_V2_MAX_FRAMES: int = 441
+    AGNES_V2_MIN_FRAMES: int = 81
+    AGNES_V2_DEFAULT_FPS: int = 24
+
+    AGNES_FLASH_MIN_SECONDS: int = 4
+    AGNES_FLASH_MAX_SECONDS: int = 12
+
+    # ==========================================================================
+    # MODÈLES PAR FOURNISSEUR
+    # ==========================================================================
     PROVIDER_MODELS: Dict[str, List[str]] = {
         # 1. Moonshot Kimi AI
         "kimi": [
@@ -38,12 +102,10 @@ class ProviderManager:
             "moonshot-v1-8k",
         ],
         # 2. AIsa — Unified Gateway (modèles GRATUITS uniquement)
-        #    Documentation : https://aisa.one/docs/guides/models
-        #    Endpoint : https://api.aisa.one/v1/chat/completions
         "aisa": [
-            "qwen-flash",     # ✅ testé OK (gratuit)
-            "qwen-mt-flash",  # candidat gratuit
-            "qwen-mt-lite",   # candidat gratuit
+            "qwen-flash",
+            "qwen-mt-flash",
+            "qwen-mt-lite",
         ],
         # 3. B.ai
         "b_ai": [
@@ -108,7 +170,7 @@ class ProviderManager:
             "groq/compound",
             "groq/compound-mini",
         ],
-        # 8. NVIDIA NIM — 13 modèles chat actifs gratuits vérifiés
+        # 8. NVIDIA NIM
         "nvidia": [
             "z-ai/glm-5.3",
             "moonshotai/kimi-k3",
@@ -126,6 +188,7 @@ class ProviderManager:
         ],
         # 9. Google Gemini
         "gemini": [
+            # ----- Chat / Texte -----
             "gemini-3.8-flash",
             "gemini-3.7-flash",
             "gemini-3.6-flash",
@@ -139,23 +202,49 @@ class ProviderManager:
             "gemini-1.5-pro-preview",
             "gemini-3-flash-preview",
             "gemini-3.1-flash-lite",
+
+            # ----- Images -----
             "gemini-3.1-flash-image",
             "gemini-3.1-flash-lite-image",
             "gemini-3-pro-image",
+            "gemini-2.5-flash-image",
+
+            # ----- Live / TTS -----
             "gemini-3.5-live-translate-preview",
             "gemini-3.1-flash-live-preview",
             "gemini-3.1-flash-tts-preview",
-            "gemini-2.5-flash-image",
             "gemini-2.5-flash-native-audio-preview-12-2025",
             "gemini-2.5-flash-preview-tts",
             "gemini-2.5-pro-preview-tts",
+            "gemini-omni-flash",
+
+            # ----- Veo 3.1 : noms courts UI -----
             "veo-3.1-gene-prev",
             "veo-3.1-lite-gene-prev",
-            "gemini-omni-flash",
+            "veo-3.1-fast-gene-prev",
+
+            # ----- Veo 3.1 : IDs officiels API -----
+            "veo-3.1-generate-preview",
+            "veo-3.1-lite-generate-preview",
+            "veo-3.1-fast-generate-preview",
+
+            # ----- Audio (Lyria) -----
             "lyria-3-pro-preview",
             "lyria-3-clip-preview",
             "lyria-realtime-preview",
         ],
+
+        # ★ NOUVEAU v24 — Agnes AI (vidéo gratuite) ★
+        "agnes": [
+            # Noms courts UI (recommandés)
+            "agnes-v2.0",             # 1080p, 18s max, frame-based
+            "agnes-v2.5-flash",       # 720p, 12s max, second-based
+
+            # IDs officiels
+            "agnes-video-v2.0",
+            "agnes-video-2.5-flash",
+        ],
+
         # 10. OpenRouter
         "openrouter": [
             "auto",
@@ -226,7 +315,9 @@ class ProviderManager:
         ],
     }
 
-    # CHAÎNE DE FALLBACK — v21 (AIsa en position 2)
+    # ==========================================================================
+    # CHAÎNE DE FALLBACK (texte/chat)
+    # ==========================================================================
     FALLBACK_ORDER: List[str] = [
         "nvidia",
         "aisa",
@@ -241,8 +332,35 @@ class ProviderManager:
         "llm7_anonymous",
     ]
 
+    # ==========================================================================
+    # CLÉS API PAR FOURNISSEUR
+    # ==========================================================================
+    PROVIDER_KEY_MAP: Dict[str, str] = {
+        "kimi":          "MOONSHOT_API_KEY",
+        "aisa":          "AISA_API_KEY",
+        "b_ai":          "B_AI_API_KEY",
+        "groq":          "GROQ_API_KEY",
+        "nvidia":        "NVIDIA_API_KEY",
+        "gemini":        "GEMINI_API_KEY",
+        "openrouter":    "OPENROUTER_API_KEY",
+        "mistral":       "MISTRAL_API_KEY",
+        "cohere":        "COHERE_API_KEY",
+        "aionlabs":      "AIONLABS_API_KEY",
+        "zhipu":         "ZHIPU_API_KEY",
+        "siliconflow":   "SILICONFLOW_API_KEY",
+        "huggingface":   "HUGGINGFACE_API_KEY",
+        "ollama_cloud":  "OLLAMA_API_KEY",
+        # ★ NOUVEAU v24 ★
+        "agnes":         "AGNES_API_KEY",
+    }
+
+    # ==========================================================================
+    # INITIALISATION
+    # ==========================================================================
     def __init__(self) -> None:
         self.env_cache: Dict[str, str] = {}
+        self._models_cache: Dict[str, Any] = {}
+        self._models_cache_ts: float = 0.0
         self._load_env_cache()
 
     def _load_env_cache(self) -> None:
@@ -262,6 +380,9 @@ class ProviderManager:
             except Exception as exc:
                 logger.warning("Erreur lecture %s : %s", filename, exc)
 
+    # ==========================================================================
+    # CLÉ API
+    # ==========================================================================
     def get_api_key(self, key_name: str) -> str:
         val = os.environ.get(key_name, "")
         if val:
@@ -276,23 +397,7 @@ class ProviderManager:
         p = provider.lower().strip()
         if "anonymous" in p:
             return True
-        key_map = {
-            "kimi": "MOONSHOT_API_KEY",
-            "aisa": "AISA_API_KEY",
-            "b_ai": "B_AI_API_KEY",
-            "groq": "GROQ_API_KEY",
-            "nvidia": "NVIDIA_API_KEY",
-            "gemini": "GEMINI_API_KEY",
-            "openrouter": "OPENROUTER_API_KEY",
-            "mistral": "MISTRAL_API_KEY",
-            "cohere": "COHERE_API_KEY",
-            "aionlabs": "AIONLABS_API_KEY",
-            "zhipu": "ZHIPU_API_KEY",
-            "siliconflow": "SILICONFLOW_API_KEY",
-            "huggingface": "HUGGINGFACE_API_KEY",
-            "ollama_cloud": "OLLAMA_API_KEY",
-        }
-        key_name = key_map.get(p)
+        key_name = self.PROVIDER_KEY_MAP.get(p)
         if not key_name:
             return False
         if self.get_api_key(key_name):
@@ -301,6 +406,9 @@ class ProviderManager:
             return bool(self.get_api_key("KIMI_API_KEY"))
         return False
 
+    # ==========================================================================
+    # RÉSOLUTION DES ENDPOINTS (chat texte)
+    # ==========================================================================
     def resolve_provider_endpoint(
         self, provider: str, model: str
     ) -> Tuple[str, str, str]:
@@ -377,6 +485,280 @@ class ProviderManager:
             key = self.get_api_key("GROQ_API_KEY")
             return "groq", key, "https://api.groq.com/openai/v1/chat/completions"
 
+    # ==========================================================================
+    # RÉSOLUTION DES MODEL IDS (Veo 3.1 + Gemini image)
+    # ==========================================================================
+    def resolve_model_id(self, model_name: str) -> str:
+        """
+        Convertit un nom court UI vers le model ID officiel Google.
+        Fonctionne pour Veo 3.1 et Gemini Image.
+        """
+        if not model_name:
+            return model_name
+
+        clean = model_name.replace("models/", "").strip()
+
+        # Mapping direct
+        if clean in self.MODEL_ID_MAPPING:
+            mapped = self.MODEL_ID_MAPPING[clean]
+            logger.info("[provider_manager] resolve_model_id: %s -> %s", clean, mapped)
+            return mapped
+
+        # Déjà un ID officiel Veo ?
+        if clean.startswith("veo-") and "generate" in clean:
+            return clean
+
+        # Déjà un ID officiel Gemini image ?
+        if clean.startswith("gemini-") and "image" in clean:
+            return clean
+
+        # Fallback générique : veo-xxx-gene-prev -> veo-xxx-generate-preview
+        if clean.startswith("veo-") and clean.endswith("-gene-prev"):
+            normalized = clean.replace("-gene-prev", "-generate-preview")
+            logger.warning(
+                "[provider_manager] resolve_model_id fallback: %s -> %s",
+                clean, normalized,
+            )
+            return normalized
+
+        return clean
+
+    def resolve_veo_model_id(self, model: str) -> str:
+        """Raccourci sémantique pour Veo."""
+        if not model:
+            return "veo-3.1-generate-preview"
+        resolved = self.resolve_model_id(model)
+        if not resolved.startswith("veo-"):
+            logger.warning(
+                "[provider_manager] resolve_veo_model_id: '%s' n'est pas un modèle Veo, "
+                "fallback sur veo-3.1-generate-preview", model,
+            )
+            return "veo-3.1-generate-preview"
+        return resolved
+
+    # ==========================================================================
+    # ★ NOUVEAU v24 — RÉSOLUTION DES MODEL IDS AGNES
+    # ==========================================================================
+    def resolve_agnes_model_id(self, model: str) -> str:
+        """
+        Convertit un nom court UI vers le model ID officiel Agnes.
+
+        Exemples :
+            "agnes-v2.0"       -> "agnes-video-v2.0"
+            "agnes-v2"         -> "agnes-video-v2.0"
+            "agnes-flash"      -> "agnes-video-2.5-flash"
+            "agnes-v2.5-flash" -> "agnes-video-2.5-flash"
+        """
+        if not model:
+            # Par défaut : v2.0 (1080p, plus de contrôle)
+            return "agnes-video-v2.0"
+
+        clean = model.replace("models/", "").strip()
+
+        # Mapping direct
+        if clean in self.AGNES_MODEL_MAPPING:
+            mapped = self.AGNES_MODEL_MAPPING[clean]
+            logger.info("[provider_manager] resolve_agnes_model_id: %s -> %s", clean, mapped)
+            return mapped
+
+        # Déjà un ID officiel ?
+        if clean.startswith("agnes-video-"):
+            return clean
+
+        # Fallback : v2.0
+        logger.warning(
+            "[provider_manager] resolve_agnes_model_id: '%s' inconnu, fallback sur agnes-video-v2.0",
+            model,
+        )
+        return "agnes-video-v2.0"
+
+    # ==========================================================================
+    # ENDPOINTS VEO (predictLongRunning + polling)
+    # ==========================================================================
+    def get_veo_endpoints(self, model: str) -> Dict[str, Any]:
+        """Retourne les URLs prêtes à l'emploi pour Veo 3.1."""
+        model_id = self.resolve_veo_model_id(model)
+        api_key = self.get_api_key("GEMINI_API_KEY")
+
+        return {
+            "model_id":         model_id,
+            "predict_url":      f"{self.GEMINI_API_BASE}/models/{model_id}:predictLongRunning",
+            "operations_base":  self.GEMINI_API_BASE,
+            "api_key":          api_key,
+            "headers": {
+                "Content-Type":   "application/json",
+                "x-goog-api-key": api_key,
+            },
+        }
+
+    # ==========================================================================
+    # ★ NOUVEAU v24 — ENDPOINTS AGNES (create + status)
+    # ==========================================================================
+    def get_agnes_endpoints(self, model: str = "agnes-v2.0") -> Dict[str, Any]:
+        """
+        Retourne les URLs prêtes à l'emploi pour Agnes AI Video.
+
+        Usage :
+            ep = provider_manager.get_agnes_endpoints("agnes-v2.0")
+            # ep = {
+            #   "model_id":     "agnes-video-v2.0",
+            #   "base_url":     "https://apihub.agnes-ai.com/v1",
+            #   "create_url":   "https://apihub.agnes-ai.com/v1/videos",
+            #   "status_url":   "https://apihub.agnes-ai.com/agnesapi",
+            #   "api_key":      "sk-...",
+            #   "headers":      { Authorization, Content-Type },
+            #   "is_v2":        True,   # True = v2.0 (frames), False = 2.5-flash (seconds)
+            #   "max_frames":   441,
+            #   "max_seconds":  12,
+            #   "default_fps":  24,
+            # }
+        """
+        model_id = self.resolve_agnes_model_id(model)
+        api_key = self.get_api_key("AGNES_API_KEY")
+        base_url = (
+            self.get_api_key("AGNES_BASE_URL")
+            or self.AGNES_DEFAULT_BASE_URL
+        ).rstrip("/")
+
+        is_v2 = model_id == "agnes-video-v2.0"
+
+        return {
+            "model_id":     model_id,
+            "base_url":     base_url,
+            "create_url":   f"{base_url}/videos",
+            # Endpoint de status (différent du /v1 !)
+            "status_url":   f"{base_url.replace('/v1', '')}/agnesapi",
+            "api_key":      api_key,
+            "headers": {
+                "Content-Type":  "application/json",
+                "Authorization": f"Bearer {api_key}",
+            },
+            "is_v2":        is_v2,
+            "max_frames":   self.AGNES_V2_MAX_FRAMES,     # 441
+            "min_frames":   self.AGNES_V2_MIN_FRAMES,     # 81
+            "default_fps":  self.AGNES_V2_DEFAULT_FPS,    # 24
+            "min_seconds":  self.AGNES_FLASH_MIN_SECONDS, # 4
+            "max_seconds":  self.AGNES_FLASH_MAX_SECONDS, # 12
+        }
+
+    def list_agnes_video_models(self) -> List[str]:
+        """Retourne la liste des modèles Agnes vidéo disponibles (IDs officiels)."""
+        return [
+            "agnes-video-v2.0",
+            "agnes-video-2.5-flash",
+        ]
+
+    # ==========================================================================
+    # DÉTECTION DYNAMIQUE DES MODÈLES DISPONIBLES
+    # ==========================================================================
+    def detect_available_models(
+        self,
+        provider: str = "gemini",
+        force_refresh: bool = False,
+        cache_ttl: int = 3600,
+    ) -> Dict[str, Any]:
+        """Détecte dynamiquement les modèles disponibles pour un fournisseur."""
+        p = provider.lower().strip()
+        now = time.time()
+
+        # Cache valide ?
+        cache_key = f"models_{p}"
+        if (
+            not force_refresh
+            and cache_key in self._models_cache
+            and (now - self._models_cache_ts) < cache_ttl
+        ):
+            cached = self._models_cache[cache_key]
+            return {
+                "provider":  p,
+                "source":    "cache",
+                "count":     len(cached.get("models", [])),
+                "models":    cached.get("models", []),
+                "raw":       cached.get("raw", {}),
+            }
+
+        # --- Gemini : appel API réel ---
+        if p == "gemini":
+            api_key = self.get_api_key("GEMINI_API_KEY")
+            if not api_key:
+                logger.warning("[provider_manager] Pas de GEMINI_API_KEY, fallback statique")
+                return self._static_models_response(p)
+
+            try:
+                url = f"{self.GEMINI_API_BASE}/models?key={api_key}&pageSize=200"
+                res = requests.get(url, timeout=30)
+                if res.status_code != 200:
+                    logger.warning(
+                        "[provider_manager] GET /models HTTP %s : %s",
+                        res.status_code, res.text[:300],
+                    )
+                    return self._static_models_response(p)
+
+                data = res.json()
+                models: List[Dict[str, Any]] = []
+                for m in data.get("models", []):
+                    name = m.get("name", "").replace("models/", "")
+                    if not name:
+                        continue
+                    models.append({
+                        "id":                name,
+                        "displayName":       m.get("displayName", name),
+                        "description":       m.get("description", ""),
+                        "inputTokenLimit":   m.get("inputTokenLimit"),
+                        "outputTokenLimit":  m.get("outputTokenLimit"),
+                        "supportedMethods":  m.get("supportedGenerationMethods", []),
+                    })
+
+                self._models_cache[cache_key] = {"models": models, "raw": data}
+                self._models_cache_ts = now
+
+                logger.info("[provider_manager] %d modèles Gemini détectés via API", len(models))
+                return {
+                    "provider":  p,
+                    "source":    "api",
+                    "count":     len(models),
+                    "models":    models,
+                    "raw":       data,
+                }
+
+            except requests.RequestException as e:
+                logger.warning("[provider_manager] Erreur détection Gemini : %s", e)
+                return self._static_models_response(p)
+
+        # --- Autres fournisseurs : statique ---
+        return self._static_models_response(p)
+
+    def _static_models_response(self, provider: str) -> Dict[str, Any]:
+        """Retourne la liste statique d'un fournisseur au même format."""
+        static_list = self.PROVIDER_MODELS.get(provider, [])
+        models = [{"id": m, "displayName": m, "supportedMethods": ["static"]} for m in static_list]
+        return {
+            "provider": provider,
+            "source":   "static",
+            "count":    len(models),
+            "models":   models,
+            "raw":      {},
+        }
+
+    def list_veo_models(self) -> List[str]:
+        """Retourne la liste des modèles Veo disponibles (IDs officiels)."""
+        return [
+            "veo-3.1-generate-preview",
+            "veo-3.1-fast-generate-preview",
+            "veo-3.1-lite-generate-preview",
+        ]
+
+    def list_gemini_image_models(self) -> List[str]:
+        """Retourne les modèles image Gemini disponibles (IDs officiels)."""
+        return [
+            "gemini-3.1-flash-image-preview",
+            "gemini-3.1-flash-lite-image-preview",
+            "gemini-2.5-flash-image",
+        ]
+
+    # ==========================================================================
+    # FORMATAGE DES MESSAGES
+    # ==========================================================================
     def format_messages(self, messages: List[Dict[str, Any]]) -> List[Dict[str, str]]:
         formatted = []
         for m in messages:
@@ -398,6 +780,9 @@ class ProviderManager:
                 formatted.append({"role": role, "content": content})
         return formatted
 
+    # ==========================================================================
+    # EXÉCUTION CHAT EN STREAM
+    # ==========================================================================
     def execute_chat_stream(
         self,
         messages: List[Dict[str, Any]],
@@ -423,10 +808,15 @@ class ProviderManager:
             selected_model = model
 
         if selected_provider == "groq" and total_chars > 16000:
-            logger.warning("[TPM Guard] Requête volumineuse (%d chars), routage vers nvidia.", total_chars)
+            logger.warning(
+                "[TPM Guard] Requête volumineuse (%d chars), routage vers nvidia.",
+                total_chars,
+            )
             selected_provider = "nvidia"
 
-        attempt_providers = [selected_provider] + [p for p in self.FALLBACK_ORDER if p != selected_provider]
+        attempt_providers = [selected_provider] + [
+            p for p in self.FALLBACK_ORDER if p != selected_provider
+        ]
         last_error_message = ""
 
         for current_prov in attempt_providers:
@@ -435,13 +825,13 @@ class ProviderManager:
             if current_prov == selected_provider:
                 current_model = selected_model
             else:
-                if current_prov == "nvidia": current_model = "nvidia/nemotron-3-super-120b-a12b"
-                elif current_prov == "aisa": current_model = "qwen-flash"
-                elif current_prov == "kimi": current_model = "kimi-k3"
-                elif current_prov == "b_ai": current_model = "glm-5.3-flash"
-                elif current_prov == "gemini": current_model = "gemini-3.8-flash"
+                if current_prov == "nvidia":           current_model = "nvidia/nemotron-3-super-120b-a12b"
+                elif current_prov == "aisa":           current_model = "qwen-flash"
+                elif current_prov == "kimi":           current_model = "kimi-k3"
+                elif current_prov == "b_ai":           current_model = "glm-5.3-flash"
+                elif current_prov == "gemini":         current_model = "gemini-3.8-flash"
                 elif current_prov == "kilo_anonymous": current_model = "kilo-nemotron-3-ultra-550b"
-                else: current_model = available_models[0] if available_models else "default"
+                else:                                  current_model = available_models[0] if available_models else "default"
 
             resolved_p, api_key, api_url = self.resolve_provider_endpoint(current_prov, current_model)
 
@@ -449,20 +839,20 @@ class ProviderManager:
                 continue
 
             headers = {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept": "text/event-stream; charset=utf-8",
-                "User-Agent": "BEK-v16-Agent",
+                "Content-Type":  "application/json; charset=utf-8",
+                "Accept":        "text/event-stream; charset=utf-8",
+                "User-Agent":    "BEK-v16-Agent",
             }
             if api_key != "none":
                 headers["Authorization"] = f"Bearer {api_key}"
 
             payload = {
-                "model": current_model,
-                "messages": clean_msgs,
+                "model":       current_model,
+                "messages":    clean_msgs,
                 "temperature": temperature,
-                "top_p": top_p,
-                "max_tokens": max_tokens,
-                "stream": True,
+                "top_p":       top_p,
+                "max_tokens":  max_tokens,
+                "stream":      True,
             }
 
             try:
@@ -477,7 +867,10 @@ class ProviderManager:
 
                     if resp.status_code != 200:
                         err_text = resp.text[:300]
-                        logger.warning("Échec provider %s (HTTP %s) : %s", resolved_p, resp.status_code, err_text)
+                        logger.warning(
+                            "Échec provider %s (HTTP %s) : %s",
+                            resolved_p, resp.status_code, err_text,
+                        )
                         last_error_message = f"HTTP {resp.status_code} ({resolved_p})"
                         continue
 
@@ -500,9 +893,9 @@ class ProviderManager:
                                 if chunk:
                                     received_chunks = True
                                     yield {
-                                        "chunk": chunk,
+                                        "chunk":    chunk,
                                         "provider": resolved_p,
-                                        "model": current_model,
+                                        "model":    current_model,
                                     }
                         except Exception:
                             continue
@@ -521,4 +914,7 @@ class ProviderManager:
         yield {"error": f"Tous les providers ont échoué. Dernière erreur : {last_error_message}"}
 
 
+# ==============================================================================
+# SINGLETON
+# ==============================================================================
 provider_manager = ProviderManager()

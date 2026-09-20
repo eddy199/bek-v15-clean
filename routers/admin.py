@@ -5,6 +5,11 @@
 #   - /health/nerves          → résumé condensé du système nerveux (monitoring)
 #   - /health/nerves/detail   → rapport détaillé des 12 nerfs (debug)
 #
+# AJOUT v16.1 (2026-09-20) :
+#   - Agnes AI ajouté à /api/config (vidéo gratuite, provider indépendant)
+#   - Liste providers désormais DYNAMIQUE depuis provider_manager.PROVIDER_MODELS
+#   - Le nom court UI reste accessible pour chaque provider
+#
 # TOUS LES ENDPOINTS EXISTANTS SONT PRÉSERVÉS :
 #   - /api/health
 #   - /api/config
@@ -57,6 +62,112 @@ except Exception as _nerves_health_err:
 router = APIRouter(tags=["Admin"])
 
 
+# ==============================================================================
+# MÉTADONNÉES DES PROVIDERS (nom d'affichage + icône + ordre UI)
+# ------------------------------------------------------------------------------
+# Cette table associe chaque identifiant provider interne à son nom UI.
+# v16.1 : Agnes AI ajouté en tête de liste (vidéo gratuite).
+# ==============================================================================
+PROVIDER_DISPLAY_NAMES = {
+    # ── Vidéo ──
+    "agnes":         "Agnes AI (Video)",
+    # ── Chat / texte ──
+    "kimi":          "Moonshot Kimi AI",
+    "aisa":          "AIsa (Unified)",
+    "b_ai":          "B.ai",
+    "groq":          "Groq",
+    "nvidia":        "NVIDIA NIM",
+    "gemini":        "Google Gemini",
+    "openrouter":    "OpenRouter",
+    "mistral":       "Mistral AI",
+    "cohere":        "Cohere",
+    "aionlabs":      "Aion Labs",
+    "zhipu":         "Zhipu AI",
+    "siliconflow":   "SiliconFlow",
+    "huggingface":   "Hugging Face",
+    "ollama_cloud":  "Ollama Cloud",
+    # ── Anonymes ──
+    "kilo_anonymous": "Kilo Code (Anonyme)",
+    "ovh_anonymous":  "OVHcloud (Anonyme)",
+    "llm7_anonymous": "LLM7.io (Anonyme)",
+}
+
+# Ordre d'affichage dans le sélecteur UI (Agnes en premier)
+PROVIDER_DISPLAY_ORDER = [
+    "agnes",
+    "kimi",
+    "aisa",
+    "b_ai",
+    "groq",
+    "nvidia",
+    "gemini",
+    "openrouter",
+    "mistral",
+    "cohere",
+    "aionlabs",
+    "zhipu",
+    "siliconflow",
+    "huggingface",
+    "ollama_cloud",
+    "kilo_anonymous",
+    "ovh_anonymous",
+    "llm7_anonymous",
+]
+
+
+def _build_providers_list():
+    """
+    Construit la liste des providers à afficher dans l'UI.
+
+    - Utilise PROVIDER_DISPLAY_ORDER pour l'ordre.
+    - Détecte automatiquement si la clé API est configurée.
+    - Inclut les providers anonymes qui n'ont pas besoin de clé.
+    - Ajoute tout provider présent dans PROVIDER_MODELS mais pas dans
+      PROVIDER_DISPLAY_ORDER (fallback automatique).
+    """
+    providers = []
+    seen = set()
+
+    for pid in PROVIDER_DISPLAY_ORDER:
+        # Le provider existe-t-il dans le provider_manager ?
+        if pid not in provider_manager.PROVIDER_MODELS and pid != "agnes":
+            continue
+
+        # Vérifier si la clé API est présente
+        key_name = provider_manager.PROVIDER_KEY_MAP.get(pid)
+        configured = True
+        if key_name:
+            configured = bool(provider_manager.get_api_key(key_name))
+        elif "anonymous" not in pid:
+            configured = False  # Provider non-anonyme sans clé déclarée
+
+        providers.append({
+            "id": pid,
+            "name": PROVIDER_DISPLAY_NAMES.get(pid, pid.upper()),
+            "configured": configured,
+        })
+        seen.add(pid)
+
+    # Fallback : ajouter les providers présents dans PROVIDER_MODELS
+    # mais non listés dans PROVIDER_DISPLAY_ORDER
+    for pid in provider_manager.PROVIDER_MODELS.keys():
+        if pid in seen:
+            continue
+        key_name = provider_manager.PROVIDER_KEY_MAP.get(pid)
+        configured = True
+        if key_name:
+            configured = bool(provider_manager.get_api_key(key_name))
+        elif "anonymous" not in pid:
+            configured = False
+        providers.append({
+            "id": pid,
+            "name": PROVIDER_DISPLAY_NAMES.get(pid, pid.upper()),
+            "configured": configured,
+        })
+
+    return providers
+
+
 # ══════════════════════════════════════════════════════════════════
 # ENDPOINTS EXISTANTS (préservés à l'identique)
 # ══════════════════════════════════════════════════════════════════
@@ -68,21 +179,14 @@ async def health():
 
 @router.get("/api/config")
 async def get_config():
-    providers_list = [
-        {"id": "b_ai", "name": "B.ai", "configured": True},
-        {"id": "kilo_anonymous", "name": "Kilo Code (Anonyme)", "configured": True},
-        {"id": "ovh_anonymous", "name": "OVHcloud (Anonyme)", "configured": True},
-        {"id": "llm7_anonymous", "name": "LLM7.io (Anonyme)", "configured": True},
-        {"id": "groq", "name": "Groq", "configured": True},
-        {"id": "nvidia", "name": "NVIDIA NIM", "configured": True},
-        {"id": "gemini", "name": "Google Gemini", "configured": True},
-        {"id": "openrouter", "name": "OpenRouter", "configured": True},
-        {"id": "mistral", "name": "Mistral AI", "configured": True},
-        {"id": "cohere", "name": "Cohere", "configured": True},
-        {"id": "aionlabs", "name": "Aion Labs", "configured": True},
-        {"id": "zhipu", "name": "Zhipu AI", "configured": True},
-        {"id": "siliconflow", "name": "SiliconFlow", "configured": True},
-    ]
+    """
+    Configuration de l'UI BEK.
+
+    v16.1 : La liste des providers est construite dynamiquement depuis
+    provider_manager. Agnes AI y figure en premier (vidéo gratuite).
+    """
+    providers_list = _build_providers_list()
+
     return {
         "providers": providers_list,
         "models": provider_manager.PROVIDER_MODELS,
@@ -90,7 +194,7 @@ async def get_config():
         "skills_count": len(skill_registry.skills),
         "mcp_tools": mcp_gateway.get_mcp_manifests(),
         "pending_tasks": get_pending_or_running_tasks(),
-        "radar_status": event_bus.get_radar_status() if event_bus else {"mode": "NORMAL"}
+        "radar_status": event_bus.get_radar_status() if event_bus else {"mode": "NORMAL"},
     }
 
 

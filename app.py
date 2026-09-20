@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
 # BEK-v16 HYBRID — SERVEUR PRINCIPAL FASTAPI (BOOTSTRAP MODULAIRE)
+# ------------------------------------------------------------------------------
+# v16.1 (2026-09-20) :
+#   - generate_video / edit_video : acceptent provider, model, duration,
+#     aspect_ratio, auto_stitch → permettent de router vers Agnes AI
+#   - Conserve toutes les autres fonctionnalités
 # ==============================================================================
 from __future__ import annotations
 
@@ -157,7 +162,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         risk_level="L1",
     )
 
-    # --- OUTILS MULTIMÉDIA (IMAGES & VIDÉOS) ---
+    # --- OUTILS MULTIMÉDIA (IMAGES) ---
     hermes.register_tool(
         "generate_image",
         lambda prompt="", query="", **kwargs: generate_image_with_provider(prompt=prompt or query) if generate_image_with_provider else {"status": "error", "message": "Module vision manquant"},
@@ -171,17 +176,44 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         ) if merge_and_edit_images else {"status": "error", "message": "Module vision manquant"},
         risk_level="L1",
     )
+
+    # ══════════════════════════════════════════════════════════════════
+    # ★ OUTILS VIDÉO v16.1 — Acceptent provider/model/duration/etc. ★
+    # ══════════════════════════════════════════════════════════════════
     hermes.register_tool(
         "generate_video",
-        lambda prompt="", query="", **kwargs: generate_video_with_provider(prompt=prompt or query) if generate_video_with_provider else {"status": "error", "message": "Module vidéo manquant"},
+        lambda prompt="", query="",
+               provider="gemini", model="veo-3.1-gene-prev",
+               duration=8, aspect_ratio="16:9", auto_stitch=True,
+               negative_prompt=None, person_generation="allow_all",
+               **kwargs:
+            generate_video_with_provider(
+                prompt=prompt or query,
+                provider=provider,
+                model=model,
+                duration=int(duration),
+                aspect_ratio=aspect_ratio,
+                auto_stitch=bool(auto_stitch),
+                negative_prompt=negative_prompt,
+                person_generation=person_generation,
+            ) if generate_video_with_provider else {"status": "error", "message": "Module vidéo manquant"},
         risk_level="L1",
     )
     hermes.register_tool(
         "edit_video",
-        lambda video_paths=None, prompt="", user_prompt="", query="", **kwargs: merge_and_edit_videos(
-            video_paths=video_paths,
-            user_prompt=user_prompt or prompt or query
-        ) if merge_and_edit_videos else {"status": "error", "message": "Module vidéo manquant"},
+        lambda video_paths=None, prompt="", user_prompt="", query="",
+               provider="gemini", model="veo-3.1-gene-prev",
+               duration=8, aspect_ratio="16:9", auto_stitch=True,
+               **kwargs:
+            merge_and_edit_videos(
+                video_paths=video_paths,
+                user_prompt=user_prompt or prompt or query,
+                provider=provider,
+                model=model,
+                duration=int(duration),
+                aspect_ratio=aspect_ratio,
+                auto_stitch=bool(auto_stitch),
+            ) if merge_and_edit_videos else {"status": "error", "message": "Module vidéo manquant"},
         risk_level="L1",
     )
 
@@ -285,7 +317,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="16.0",
+    version="16.1",
     lifespan=lifespan,
 )
 
@@ -319,10 +351,7 @@ async def add_anti_cache_header(request: Request, call_next):
 # ══════════════════════════════════════════════════════════════════
 from core.tracing import init_tracing, shutdown_tracing  # noqa: E402
 
-
-# Init après le middleware HTTP → capture aussi les requêtes HTTP
 init_tracing(app)
-
 
 # Inclusion des routeurs modulaires
 app.include_router(admin.router)
@@ -356,11 +385,13 @@ async def serve_static(filename: str):
         return FileResponse(target)
     raise HTTPException(status_code=404, detail="Fichier introuvable")
 
+
 # --- Modèle de requête pour l'exécution des compétences ---
 class SkillExecutionRequest(BaseModel):
     skill_name: str
     payload: Optional[Dict[str, Any]] = {}
     timeout: int = 30
+
 
 # --- Endpoint API d'exécution ---
 @app.post("/api/skills/execute")
@@ -378,6 +409,7 @@ async def execute_skill_endpoint(request: SkillExecutionRequest):
         raise HTTPException(status_code=500, detail=result)
 
     return result
+
 
 if __name__ == "__main__":
     import uvicorn

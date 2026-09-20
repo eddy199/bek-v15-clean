@@ -6,12 +6,12 @@
 # + Fix: plus de CANCELED_ACTION intempestif + logs headless_scrape
 # + headless_scrape : extraction texte via BeautifulSoup
 #
-# CORRECTIF v10 (Fix déploiement Render) :
-# - Toutes les f-strings avec backslash (\n) à l'intérieur de {...} ont été
-#   extraites dans des variables intermédiaires. Cela corrige l'erreur
-#   "SyntaxError: f-string expression part cannot include a backslash"
-#   détectée sur Render (Python 3.10 strict).
-# - Aucun changement fonctionnel : uniquement du refactor de syntaxe.
+# CORRECTIF v11 (2026-09-20) :
+# - Règle anti-refus : le LLM DOIT répondre s'il a la réponse dans l'historique
+# - Règle anti-hallucination temporelle : interdiction d'inventer des dates
+# - Règle de confiance exclusive aux outils : les données d'entraînement du LLM
+#   ne doivent JAMAIS contredire les résultats retournés par les outils.
+# - Aucun changement fonctionnel côté code (uniquement le prompt système).
 # ==============================================================================
 from __future__ import annotations
 
@@ -104,7 +104,6 @@ POOR_RESULT_THRESHOLD = _env_int("BEK_CHAT_POOR_RESULT_THRESHOLD", 200)
 MAX_CHUNKS_WITHOUT_CLOSE = _env_int("BEK_CHAT_MAX_CHUNKS_NO_CLOSE", 150)
 MAX_QUERY_WORDS = _env_int("BEK_CHAT_MAX_QUERY_WORDS", 8)
 
-# ── URLs stériles (recherche + login) ──
 _STERILE_URL_PATTERNS = (
     r"google\.com/finance\?sa=X",
     r"google\.com/search\?",
@@ -129,7 +128,6 @@ def _is_sterile_url(url: str) -> bool:
     return bool(_STERILE_URL_REGEX.search(url))
 
 
-# ── Stop-words pour extraction mots-clés ──
 _QUERY_STOPWORDS = {
     "cherche", "chercher", "recherche", "rechercher", "trouve", "trouver",
     "donne", "donner", "montre", "montrer", "résume", "résumer",
@@ -174,7 +172,6 @@ def _extract_keywords(query: str, max_words: int = MAX_QUERY_WORDS) -> str:
     return result
 
 
-# ── Détection traduction FR→EN ──
 _EN_MARKERS = {
     "latest", "news", "price", "current", "how", "what", "the",
     "today", "info", "update", "trending", "recent",
@@ -197,9 +194,6 @@ def _is_translation(original_query: str, sent_query: str) -> bool:
     return o_fr >= 1 and s_en >= 2 and s_fr == 0
 
 
-# ══════════════════════════════════════════════════════════════════
-# 🧠 CHARGEMENT ARCHITECTURE
-# ══════════════════════════════════════════════════════════════════
 _WORKSPACE_DIR = Path(__file__).resolve().parent.parent
 
 _ARCHITECTURE_CANDIDATES = [
@@ -236,9 +230,6 @@ def get_architecture_context() -> str:
     return _ARCHITECTURE_CONTEXT
 
 
-# ══════════════════════════════════════════════════════════════════
-# 🛡️ UTILITAIRES
-# ══════════════════════════════════════════════════════════════════
 def _safe_str(value: Any) -> str:
     if value is None:
         return ""
@@ -291,7 +282,6 @@ def _truncate_messages(
     return normalized
 
 
-# ── COUCHE INTELLIGENCE ──
 try:
     from bek_intelligence import (
         smart_router, auto_engine, ResponseQuality, Task
@@ -310,7 +300,6 @@ except Exception as _intel_err:
         LONG_DOC = "long_doc"
         CREATIVE = "creative"
 
-# ── COUCHE AGI (nerfs) ──
 try:
     from nerves.router_nerves import route_semantic as _agi_route_semantic
     _AGI_ROUTER_OK = True
@@ -353,7 +342,7 @@ hll_counter = HyperLogLog(b=6)
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🧠 PROMPT SYSTÈME
+# 🧠 PROMPT SYSTÈME v11 (règles renforcées)
 # ══════════════════════════════════════════════════════════════════
 _ARCHITECTURE_BLOCK = ""
 if _ARCHITECTURE_CONTEXT:
@@ -423,43 +412,74 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 - NE TRADUIS JAMAIS la requête. Utilisateur FR → requête FR.
 - Utilise EXACTEMENT les termes de l'utilisateur.
 
-## 🎯 EXTRACTION DE MOTS-CLÉS (RÈGLE CRITIQUE)
+## 🎯 EXTRACTION DE MOTS-CLÉS
 - Quand tu génères une requête pour headless_search, tu dois EXTRAIRE
   les MOTS-CLÉS essentiels au lieu d'envoyer la phrase complète.
 - Maximum 8 mots. Pas de verbes, pas d'articles.
 - Exemples CORRECTS :
-  User : "Cherche les 5 dernières actualités sur l'IA en 2026 et résume chacune en 2 phrases."
+  User : "Cherche les 5 dernières actualités sur l'IA en 2026."
   ✅ Toi : [ACTION:headless_search]{{"query": "actualités IA 2026"}}[/ACTION]
-
-  User : "Peux-tu me trouver les dernières nouvelles concernant OpenAI ?"
-  ✅ Toi : [ACTION:headless_search]{{"query": "OpenAI news"}}[/ACTION]
 
   User : "Quel est le prix actuel du Bitcoin en euros ?"
   ✅ Toi : [ACTION:headless_search]{{"query": "prix Bitcoin EUR"}}[/ACTION]
-
-- Exemples INTERDITS (phrases complètes) :
-  ❌ [ACTION:headless_search]{{"query": "Cherche les 5 dernières actualités sur l'IA en 2026 et résume chacune en 2 phrases."}}[/ACTION]
-
-## ❌ EXEMPLES DE TRADUCTION INTERDITS
-  User: "Quel est le prix actuel du Bitcoin en euros ?"
-  ❌ [ACTION:headless_search]{{"query": "Bitcoin price EUR"}}[/ACTION]
 
 # 🎯 CADRAGE STRICT
 - Réponds STRICTEMENT à la question.
 - Respecte le FORMAT demandé (ex: "5 items × 2 phrases" → exactement 5×2).
 - Va droit au but.
 
-# HONNÊTETÉ RADICALE
-- Si tu n'as PAS l'info → dis-le CLAIREMENT.
-- INTERDICTION ABSOLUE d'inventer faits, dates, chiffres, URLs.
+# ══════════════════════════════════════════════════════════════════
+# 🚨 RÈGLES CRITIQUES v11 (À RESPECTER ABSOLUMENT)
+# ══════════════════════════════════════════════════════════════════
 
-# 🚨 RÈGLE FINALE CRITIQUE
+## 📌 RÈGLE 1 — ANTI-REFUS (CRITIQUE)
+Si tu as DÉJÀ la réponse à la question dans l'historique de la conversation
+(réponse obtenue via un outil précédent, ou donnée par l'utilisateur),
+tu DOIS donner cette réponse DIRECTEMENT, sans appeler d'outil.
+
+- INTERDICTION ABSOLUE de dire "je ne peux pas répondre" si l'information
+  est disponible dans les messages précédents.
+- INTERDICTION de refuser de répéter une information déjà donnée.
+- Si l'utilisateur repose la même question, REDONNE la même réponse.
+
+## 📌 RÈGLE 2 — ANTI-HALLUCINATION TEMPORELLE (CRITIQUE)
+- N'INVENTE JAMAIS la date actuelle. Si tu ne sais pas quelle est la date
+  réelle, ne fais AUCUNE supposition temporelle.
+- Ne dis JAMAIS "les données sont de décembre 2025" ou toute autre date
+  si tu n'as pas VU cette date EXPLICITEMENT dans les résultats web.
+- Ne dis JAMAIS "nous sommes en 2026" ou toute autre année si tu n'en es
+  pas certain à partir des données disponibles.
+- Ta date de référence vient UNIQUEMENT des résultats des outils.
+
+## 📌 RÈGLE 3 — CONFIANCE EXCLUSIVE AUX OUTILS (CRITIQUE)
+- Ta source de vérité est UNIQUEMENT ce que les outils retournent.
+- Si un outil retourne "70 556,46 €" pour le Bitcoin, tu DOIS répondre
+  "70 556,46 €" MÊME SI tes données d'entraînement disent autre chose.
+- N'utilise JAMAIS tes données d'entraînement pour CONTREDIRE un résultat
+  d'outil. Tes données d'entraînement sont obsolètes par définition.
+- Si un outil retourne un résultat, tu le prends TEL QUEL.
+
+## 📌 RÈGLE 4 — RÉPONSES AUX QUESTIONS SIMPLES (CRITIQUE)
+- Si l'utilisateur pose une question factuelle simple (prix, date, météo, etc.)
+  et qu'un outil a déjà retourné la réponse dans cette conversation,
+  tu DOIS la donner IMMÉDIATEMENT sans appeler d'outil.
+- Formule de réponse attendue : la donnée brute + la source (URL).
+- Exemple attendu : "Le prix actuel du Bitcoin est **70 556,46 €**
+  (source : [Google Finance](URL))"
+
+## 📌 RÈGLE 5 — INTERDICTION DES OUTILS INUTILES
 - Tu appelles UN SEUL outil par réponse utilisateur.
 - Une fois le résultat obtenu, tu DOIS conclure.
-- INTERDICTION d'appeler un 2ᵉ outil. Sauf si le 1ᵉʳ a retourné 0 résultat
-  ou un résultat vide, auquel cas tu peux essayer web_sync UNE SEULE FOIS.
+- INTERDICTION d'appeler un 2ᵉ outil SAUF si le 1ᵉʳ a retourné 0 résultat
+  ou un résultat vide.
 - INTERDICTION ABSOLUE d'inventer une URL.
-- INTERDICTION d'utiliser des URLs de LOGIN (accounts.google.com, /login, etc.).
+- INTERDICTION d'utiliser des URLs de LOGIN (accounts.google.com, /login).
+
+## 📌 RÈGLE 6 — VÉRIFICATION FACTUELLE
+- Avant de dire "je ne peux pas", VÉRIFIE l'historique de la conversation.
+- Avant de dire "les données sont obsolètes", VÉRIFIE si tu as VU
+  une date obsolète dans les résultats (pas dans ton training).
+- Avant de dire "je n'ai pas accès", RAPPELLE-TOI que tu as des outils web.
 
 # DIRECTIVE MULTIMÉDIA ABSOLUE
 - Pour TOUTE demande visuelle : generate_image, edit_image,
@@ -936,9 +956,6 @@ async def _chat_impl(request: Request, chat_span):
         {"role": "system", "content": dynamic_system_prompt}
     ] + trimmed_messages
 
-    # ══════════════════════════════════════════════════════════════════
-    # 🌊 STREAMING v10 (sans backslash dans f-string expressions)
-    # ══════════════════════════════════════════════════════════════════
     async def generate_proxy():
         act_name: str = ""
         params: Dict[str, Any] = {}
@@ -960,7 +977,6 @@ async def _chat_impl(request: Request, chat_span):
                 temperature=0.7,
                 max_tokens=4096,
             ):
-                # ── Gestion erreur provider (sans backslash dans f-string) ──
                 if "error" in item:
                     error_msg = item.get("error", "Erreur inconnue")
                     logger.error("[ProviderManager] Erreur : %s", error_msg)
@@ -1035,7 +1051,6 @@ async def _chat_impl(request: Request, chat_span):
 
                     break
 
-            # ── Relance unique conditionnelle ──
             relance_done = False
 
             while (
@@ -1080,14 +1095,15 @@ async def _chat_impl(request: Request, chat_span):
                             f"{res_msg}\n\n"
                             f"→ Analyse les informations ci-dessus et réponds à ma "
                             f"demande initiale :\n« {last_user_query} »\n\n"
-                            f"RÈGLES SIMPLES :\n"
+                            f"RÈGLES STRICTES :\n"
                             f"  1. Utilise UNIQUEMENT les informations ci-dessus.\n"
                             f"  2. Si elles sont SUFFISANTES → conclus directement.\n"
                             f"  3. Si elles sont INSUFFISANTES → dis-le honnêtement.\n"
                             f"  4. N'appelle AUCUN outil supplémentaire.\n"
-                            f"  5. N'invente RIEN (pas d'URLs, pas de chiffres).\n"
+                            f"  5. N'invente RIEN (pas d'URLs, pas de chiffres, pas de dates).\n"
                             f"  6. Cite tes sources (URLs) si tu en as.\n"
                             f"  7. Respecte le format demandé.\n"
+                            f"  8. Si tu as la réponse, DONNE-LA. N'invente AUCUN prétexte pour refuser.\n"
                         ),
                     },
                 ]

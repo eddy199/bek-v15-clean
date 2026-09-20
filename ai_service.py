@@ -1,9 +1,10 @@
 """
 BEK-v15.2 HYBRID - Service IA & Couche de Compression Headroom
 -------------------------------------------------------------
-Définition des modèles supportés et pipeline de compression
-de contexte sans perte (headroom.compress) pour Groq, NVIDIA NIM,
-Gemini et OpenRouter.
+v16.1 (2026-09-20) :
+    - Ajout AGNES_MODELS (agnes-v2.0, agnes-v2.5-flash)
+    - Enrichissement GEMINI_MODELS (Veo 3.1 IDs officiels)
+    - ALL_MODELS inclut Agnes
 """
 
 from __future__ import annotations
@@ -63,8 +64,15 @@ GEMINI_MODELS: List[str] = [
     "gemini-2.5-flash-native-audio-preview-12-2025",
     "gemini-2.5-flash-preview-tts",
     "gemini-2.5-pro-preview-tts",
+    # ----- Veo 3.1 : noms courts UI (convertis automatiquement) -----
     "veo-3.1-gene-prev",
     "veo-3.1-lite-gene-prev",
+    "veo-3.1-fast-gene-prev",
+    # ----- Veo 3.1 : IDs officiels API -----
+    "veo-3.1-generate-preview",
+    "veo-3.1-lite-generate-preview",
+    "veo-3.1-fast-generate-preview",
+    # ----- Audio -----
     "gemini-omni-flash",
     "lyria-3-pro-preview",
     "lyria-3-clip-preview",
@@ -83,11 +91,18 @@ OPENROUTER_MODELS: List[str] = [
     "free-models-router",
 ]
 
+# ★ AGNES AI — Modèles vidéo gratuits (v16.1) ★
+AGNES_MODELS: List[str] = [
+    "agnes-v2.0",         # 1080p, frames (règle 8n+1), max 18s
+    "agnes-v2.5-flash",   # 720p, seconds, max 12s
+]
+
 ALL_MODELS: Dict[str, List[str]] = {
     "groq": GROQ_MODELS,
     "nvidia": NVIDIA_ACTIVE_MODELS,
     "gemini": GEMINI_MODELS,
     "openrouter": OPENROUTER_MODELS,
+    "agnes": AGNES_MODELS,      # ← AJOUT v16.1
 }
 
 # ==========================================

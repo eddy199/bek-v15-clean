@@ -1,6 +1,13 @@
 # ==============================================================================
 # BEK-v16 — Exécuteur d'actions & outils optimisé (services/action_executor.py)
 # COMPATIBILITÉ MULTI-OS / PATHGUARD / SCAN RAPIDE SANS GEL DU FLUX
+# ------------------------------------------------------------------------------
+# v22 (2026-09-20) :
+#   - Ajout de generate_video (Veo 3.1 via predictLongRunning)
+#   - Ajout de merge_and_edit_videos (concat FFmpeg local ou génération Veo)
+#   - Import des nouvelles fonctions depuis services.vision
+#   - Balises [FILE:...] + <video> pour affichage UI
+#   - Aucune régression sur le reste
 # ==============================================================================
 from __future__ import annotations
 
@@ -17,7 +24,16 @@ from pathlib import Path
 from core.paths import WORKSPACE_DIR, FILES_DIR, GENERATED_DIR
 from core.security.path_guard import find_existing, safe_path
 from core.utils import json_safe
-from services.vision import analyze_image_with_vision, generate_image_with_provider, merge_and_edit_images
+
+# --- Imports vision : image + vidéo ---
+from services.vision import (
+    analyze_image_with_vision,
+    generate_image_with_provider,
+    merge_and_edit_images,
+    generate_video_with_provider,     # NOUVEAU v22
+    merge_and_edit_videos,            # NOUVEAU v22
+)
+
 from services.tasks import start_background_task, stop_background_task
 from state_synchronizer import update_task_state
 from memory import save_to_memory, search_memory, delete_from_memory
@@ -38,12 +54,15 @@ except ImportError:
     web_agent_instance = None
 
 
+# ==============================================================================
+# SCAN RAPIDE DU WORKSPACE (sans gel du flux)
+# ==============================================================================
 def _fast_workspace_scan(pattern: str = "") -> list[str]:
     """Scanne le workspace instantanément en ignorant les dossiers lourds."""
     ignored_dirs = {
         "node_modules", "node_portable", "venv", ".venv", "env", "ENV",
         "__pycache__", ".turbo", ".output", ".next", ".git", ".pytest_cache",
-        "dist", "build", "backup", "archive_old", "graft"
+        "dist", "build", "backup", "archive_old", "graft",
     }
     results = []
     reg = re.compile(pattern, re.IGNORECASE) if pattern else None
@@ -64,6 +83,9 @@ def _fast_workspace_scan(pattern: str = "") -> list[str]:
     return results
 
 
+# ==============================================================================
+# DISPATCHER PRINCIPAL
+# ==============================================================================
 def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
     correlation_id = f"corr_{uuid.uuid4().hex[:12]}"
     task_id = f"task_{uuid.uuid4().hex[:8]}"
@@ -225,7 +247,7 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             if not zip_path or not zip_path.is_file():
                 update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
                 return {"status": "error", "message": f"Archive ZIP introuvable : {zip_filename}"}
-            
+
             target_dir = safe_path(extract_to_folder)
             try:
                 target_dir.mkdir(parents=True, exist_ok=True)
@@ -283,7 +305,7 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             image_path = parameters.get("image_path", "")
             prompt = parameters.get("prompt", "Analyse cette image.")
             provider = parameters.get("provider", "gemini")
-            model = parameters.get("model", "gemini-1.5-flash")
+            model = parameters.get("model", "gemini-2.5-flash")
             vision_result = analyze_image_with_vision(image_path, prompt, provider=provider, model=model)
             if "Erreur" in vision_result or "Error" in vision_result:
                 update_task_state(task_id, "FAILED", correlation_id, "Échec vision")
@@ -324,13 +346,115 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             return {"status": "success", "message": f"🪄 **Fusion réussie !**\n\n![{final_filename}](/api/download/{final_filename})"}
 
         # ----------------------------------------------------------------------
+        # 7bis. GÉNÉRATION VIDÉO (VEO 3.1) — NOUVEAU v22
+        # ----------------------------------------------------------------------
+        elif action_name in ("generate_video", "create_video", "video_generation"):
+            prompt = parameters.get("prompt", "")
+            filename = parameters.get("filename", f"gen_video_{uuid.uuid4().hex[:6]}.mp4")
+            provider = parameters.get("provider", "gemini")
+            model = parameters.get("model", "veo-3.1-gene-prev")   # nom court UI
+            aspect_ratio = parameters.get("aspect_ratio", "16:9")
+            try:
+                duration = int(parameters.get("duration", 8))
+            except (TypeError, ValueError):
+                duration = 8
+            auto_stitch = bool(parameters.get("auto_stitch", True))
+            negative_prompt = parameters.get("negative_prompt")
+            person_generation = parameters.get("person_generation", "allow_all")
+
+            if not prompt:
+                update_task_state(task_id, "FAILED", correlation_id, "Prompt vidéo vide")
+                return {"status": "error", "message": "Le prompt est obligatoire pour générer une vidéo."}
+
+            update_task_state(task_id, "RUNNING", correlation_id, f"Vidéo Veo: {duration}s")
+
+            gen_result = generate_video_with_provider(
+                prompt=prompt,
+                provider=provider,
+                model=model,
+                output_filename=filename,
+                aspect_ratio=aspect_ratio,
+                duration=duration,
+                auto_stitch=auto_stitch,
+                negative_prompt=negative_prompt,
+                person_generation=person_generation,
+            )
+
+            if gen_result.get("status") == "error":
+                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
+                return {"status": "error", "message": f"ÉCHEC VIDÉO: {gen_result.get('message')}"}
+
+            final_filename = gen_result.get("filename")
+            model_id = gen_result.get("model_id", model)
+            stitched = gen_result.get("stitched", False)
+            clips = gen_result.get("clips", [])
+
+            info = f"🎬 **Vidéo générée !** ({duration}s, {aspect_ratio})\n"
+            info += f"- Modèle API : `{model_id}`\n"
+            if stitched and clips:
+                info += f"- Mode : multi-clips assemblés `{clips}`\n"
+            info += f"\n[FILE:{final_filename}](/api/download/{final_filename})\n\n"
+            info += (
+                f'<video controls src="/api/download/{final_filename}" '
+                f'style="max-width:100%;border-radius:8px;"></video>'
+            )
+
+            update_task_state(task_id, "COMPLETED", correlation_id, f"Vidéo générée: {final_filename}")
+            return {"status": "success", "message": info}
+
+        elif action_name in ("merge_and_edit_videos", "merge_videos", "edit_video"):
+            video_paths = parameters.get("video_paths", [])
+            prompt = parameters.get("prompt", parameters.get("user_prompt", ""))
+            provider = parameters.get("provider", "gemini")
+            model = parameters.get("model", "veo-3.1-gene-prev")
+            filename = parameters.get("filename", f"merged_video_{uuid.uuid4().hex[:6]}.mp4")
+            aspect_ratio = parameters.get("aspect_ratio", "16:9")
+            try:
+                duration = int(parameters.get("duration", 8))
+            except (TypeError, ValueError):
+                duration = 8
+            auto_stitch = bool(parameters.get("auto_stitch", True))
+
+            update_task_state(task_id, "RUNNING", correlation_id, "Fusion/édition vidéo")
+
+            gen_result = merge_and_edit_videos(
+                video_paths=video_paths,
+                prompt=prompt,
+                provider=provider,
+                model=model,
+                output_filename=filename,
+                aspect_ratio=aspect_ratio,
+                duration=duration,
+                auto_stitch=auto_stitch,
+            )
+
+            if gen_result.get("status") == "error":
+                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
+                return {"status": "error", "message": f"ÉCHEC VIDÉO: {gen_result.get('message')}"}
+
+            final_filename = gen_result.get("filename")
+            merged = gen_result.get("videos_merged")
+            note = f" ({merged} clips fusionnés)" if merged else ""
+
+            update_task_state(task_id, "COMPLETED", correlation_id, f"Vidéo finale: {final_filename}")
+            return {
+                "status": "success",
+                "message": (
+                    f"🎞️ **Vidéo finale prête !**{note}\n\n"
+                    f"[FILE:{final_filename}](/api/download/{final_filename})\n\n"
+                    f'<video controls src="/api/download/{final_filename}" '
+                    f'style="max-width:100%;border-radius:8px;"></video>'
+                ),
+            }
+
+        # ----------------------------------------------------------------------
         # 8. EXÉCUTION SYSTÈME & SCAN RAPIDE SANS GEL DU TERMINAL
         # ----------------------------------------------------------------------
         elif action_name in ("execute_command", "run_script", "run_tests"):
             command = parameters.get("command", "dir" if os.name == "nt" else "ls -la").strip()
             cmd_lower = command.lower()
 
-            # Interception intelligente des scans récursifs lourds pour réponse immédiate (<0.05s)
+            # Interception des scans récursifs lourds
             if any(k in cmd_lower for k in ["dir /s", "get-childitem", "find .", "ls -r", "tree"]):
                 pattern = ""
                 match = re.search(r"[*'\"\\]([a-zA-Z0-9_\-\.]+[*'\"\\]|[a-zA-Z0-9_\-\.]+)", command)
@@ -353,11 +477,16 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                     cwd=WORKSPACE_DIR,
                     capture_output=True,
                     text=True,
-                    timeout=30
+                    timeout=30,
                 )
                 output = (res.stdout + "\n" + res.stderr).strip()
                 status_str = "success" if res.returncode == 0 else "error"
-                update_task_state(task_id, "COMPLETED" if res.returncode == 0 else "FAILED", correlation_id, command[:100])
+                update_task_state(
+                    task_id,
+                    "COMPLETED" if res.returncode == 0 else "FAILED",
+                    correlation_id,
+                    command[:100],
+                )
                 return {"status": status_str, "message": f"Commande exécutée :\n{output[-2500:]}"}
             except subprocess.TimeoutExpired:
                 update_task_state(task_id, "FAILED", correlation_id, "Timeout (30s)")

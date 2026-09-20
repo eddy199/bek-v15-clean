@@ -1,5 +1,6 @@
 /**
- * BEK-v15-HYBRID — Agent UI Controller (Mermaid sanitized + AIsa + tous providers)
+ * BEK-v15-HYBRID — Agent UI Controller (Mermaid sanitized + AIsa + Agnes AI + tous providers)
+ * v16.1 : Ajout du provider Agnes AI (vidéo gratuite)
  */
 (function() {
     'use strict';
@@ -293,7 +294,7 @@
         } else {
             createNewConversation();
         }
-        appendSystemMessage('🟢 BEK-v15.3 HYBRID opérationnel avec toutes les briques actives (Uploads 300Mo, Pinecone, Neon, Audio & Actions).');
+        appendSystemMessage('🟢 BEK-v16.1 HYBRID opérationnel — Veo 3.1 + Agnes AI + tous providers.');
     }
 
     async function loadConfig() {
@@ -304,6 +305,9 @@
 
             availableModels = data.models || {};
 
+            // ============================================================
+            // LISTE DE SECOURS DES MODÈLES (si backend /api/config incomplet)
+            // ============================================================
             if(!availableModels['kimi']) availableModels['kimi'] = ['kimi-k3', 'kimi-k3-swarm', 'kimi-k3-instant', 'kimi-k2.7-code', 'kimi-k2.6', 'kimi-k2-0905', 'moonshot-v1-128k', 'moonshot-v1-32k', 'moonshot-v1-8k'];
             if(!availableModels['aisa']) availableModels['aisa'] = ['qwen-flash', 'qwen-mt-flash', 'qwen-mt-lite'];
             if(!availableModels['b_ai']) availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
@@ -316,9 +320,14 @@
             if(!availableModels['kilo_anonymous']) availableModels['kilo_anonymous'] = ["kilo-nemotron-3-ultra-550b", "kilo-step-3.7-flash", "kilo-nemotron-3-super-120b", "kilo-nemotron-3-nano-omni", "kilo-laguna-s", "kilo-laguna-xs", "kilo-north-mini-code", "kilo-openrouter-free", "kilo-hy3", "kilo-nemotron-lightning", "kilo-lfm-2.5"];
             if(!availableModels['llm7_anonymous']) availableModels['llm7_anonymous'] = ["llm7-gpt-oss-20b", "llm7-mistral-nemo", "llm7-minimax-m2.7"];
 
+            // ★ AGNES AI — Modèles vidéo gratuits ★
+            if(!availableModels['agnes']) availableModels['agnes'] = ["agnes-v2.0", "agnes-v2.5-flash"];
+
             let providersList = data.providers || [];
 
             const requiredProviders = [
+                // ★ AGNES AI — en premier ★
+                {id: 'agnes', name: 'Agnes AI (Video)', configured: true},
                 {id: 'kimi', name: 'Moonshot Kimi AI', configured: true},
                 {id: 'aisa', name: 'AIsa (Unified)', configured: true},
                 {id: 'b_ai', name: 'B.ai', configured: true},
@@ -934,7 +943,7 @@
         div.className = 'message assistant';
         div.innerHTML = `
             <div class="msg-meta">
-                <span class="name">BEK-v15 Hybrid</span>
+                <span class="name">BEK-v16 Hybrid</span>
                 <span class="model-tag">${currentProvider} • ${currentModel.split('/').pop()}</span>
             </div>
             <div class="msg-bubble content">${html}</div>
