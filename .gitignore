@@ -118,3 +118,6 @@ test_agnes_extension.py
 test_veo.py
 test_*.png
 test_*.mp4
+# Local backups
+*.backup-*
+*.backup
