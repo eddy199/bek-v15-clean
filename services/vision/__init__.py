@@ -1,33 +1,47 @@
 # ==============================================================================
 # BEK-v16 — Vision Package
 # ------------------------------------------------------------------------------
-# Point d'entrée du package services.vision
-# v28 (2026-09-20) : Structure modulaire
-#
-# Rôle : réexporter TOUT (legacy + modules) pour que les imports existants
-# `from services.vision import X` continuent de fonctionner.
+# v28 (2026-09-20) : Lot 2/4 — Migration progressive
+#   - image_analysis / image_generation / veo_client → modules
+#   - Le reste (agnes, video_generation, extension, concat) reste dans legacy
 # ==============================================================================
 from __future__ import annotations
 
 # ==============================================================================
-# 1. RÉEXPORT DU LEGACY (v27.1 complet)
-# ------------------------------------------------------------------------------
-# Toutes les fonctions principales vivent encore dans vision_legacy.py.
-# Elles seront migrées progressivement dans les modules du package (Lots 2-4).
+# 1. NOUVEAUX MODULES (Lot 2)
 # ==============================================================================
-from services.vision_legacy import (
-    # Public API — fonctions
-    resolve_model_id,
-    get_api_key,
+from services.vision.image_analysis import (
     analyze_image_with_vision,
+)
+from services.vision.image_generation import (
     generate_image_with_provider,
     merge_and_edit_images,
+)
+from services.vision.veo_client import (
+    _veo_headers,
+    _veo_raise_for_status,
+    _veo_extract_video,
+    _veo_download,
+    _veo_poll_operation,
+    _veo_generate_single_clip,
+    _veo_generate_stitched,
+)
+
+# ==============================================================================
+# 2. LEGACY (fonctions pas encore migrées)
+# ------------------------------------------------------------------------------
+# Agnès, video_generation, extension, concat sont encore dans legacy
+# ==============================================================================
+from services.vision_legacy import (
+    # Public API — fonctions encore dans legacy
+    resolve_model_id,
+    get_api_key,
     generate_video_with_provider,
     extend_video_with_agnes,
     extend_video_multiple,
     concat_videos,
     merge_and_edit_videos,
-    # Constantes legacy (déjà présentes dans le legacy)
+    # Constantes
     VEO_SUPPORTED_DURATIONS,
     VEO_MAX_SINGLE_CLIP,
     VEO_MIN_CLIP,
@@ -47,24 +61,10 @@ from services.vision_legacy import (
 )
 
 # ==============================================================================
-# 2. CONSTANTES & UTILS DU PACKAGE (Lot 1)
-# ------------------------------------------------------------------------------
-# Les modules du package vont remplacer progressivement le legacy.
-# Pour l'instant ils coexistent, mais on n'importe QUE le legacy pour
-# éviter les conflits (le legacy est complet et fonctionne).
-# ==============================================================================
-# NOTE : Les imports ci-dessous sont volontairement commentés pour éviter
-# les conflits entre constants.py et vision_legacy.py.
-# On les activera au fur et à mesure de la migration (Lots 2-4).
-#
-# from services.vision.constants import (...)
-# from services.vision.ffmpeg_utils import (...)
-
-# ==============================================================================
 # __all__ — Exposition publique
 # ==============================================================================
 __all__ = [
-    # Public API — fonctions
+    # Public API
     "resolve_model_id",
     "get_api_key",
     "analyze_image_with_vision",
