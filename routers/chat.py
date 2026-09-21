@@ -12,6 +12,10 @@
 # - Règle de confiance exclusive aux outils : les données d'entraînement du LLM
 #   ne doivent JAMAIS contredire les résultats retournés par les outils.
 # - Aucun changement fonctionnel côté code (uniquement le prompt système).
+#
+# CORRECTIF v12 (2026-09-21) :
+# - Vidéo : provider="agnes", model="agnes-v2.0", with_audio=True par défaut
+# - Prompt système enrichi avec exemples vidéo complets
 # ==============================================================================
 from __future__ import annotations
 
@@ -342,7 +346,7 @@ hll_counter = HyperLogLog(b=6)
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🧠 PROMPT SYSTÈME v11 (règles renforcées)
+# 🧠 PROMPT SYSTÈME v12 (règles renforcées + vidéo)
 # ══════════════════════════════════════════════════════════════════
 _ARCHITECTURE_BLOCK = ""
 if _ARCHITECTURE_CONTEXT:
@@ -384,10 +388,39 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 - Format EXCLUSIF : [ACTION:nom]{{"param":"valeur"}}[/ACTION]
 - TU DOIS TOUJOURS FERMER la balise avec [/ACTION].
 
+# ══════════════════════════════════════════════════════════════════
+# 🎬 RÈGLES VIDÉO (CRITIQUE — À RESPECTER ABSOLUMENT)
+# ══════════════════════════════════════════════════════════════════
+- Pour toute demande de vidéo, tu DOIS appeler generate_video.
+- TOUJOURS spécifier ces paramètres :
+  * provider : "agnes"           (gratuit, 1080p, quota illimité)
+  * model    : "agnes-v2.0"      (le meilleur)
+  * duration : 5                 (par défaut, ou la durée demandée)
+  * aspect_ratio : "16:9"        (ou "9:16" pour vertical)
+  * with_audio : true            (audio synchronisé)
+  * audio_style : "children"     (ou "default", "nature", "music", "cinematic")
+- Le prompt DOIT être en ANGLAIS, descriptif, avec le style visuel.
+
+- EXEMPLE COMPLET :
+  [ACTION:generate_video]{{
+    "prompt": "A cute kitten playing happily in a sunny flower garden, vibrant 3D animation, bright cheerful atmosphere, children's animated movie style",
+    "provider": "agnes",
+    "model": "agnes-v2.0",
+    "duration": 5,
+    "aspect_ratio": "16:9",
+    "with_audio": true,
+    "audio_style": "children"
+  }}[/ACTION]
+
+- ⚠️ N'UTILISE PAS Veo (pas de quota disponible).
+- ⚠️ N'UTILISE PAS gemini comme provider pour la vidéo.
+
+# ══════════════════════════════════════════════════════════════════
+
 # ACTIONS DISPONIBLES :
    - [ACTION:generate_image]{{"prompt": "detailed description in english"}}[/ACTION]
    - [ACTION:edit_image]{{"image_paths": ["filename.png"], "prompt": "exact modification directive in english"}}[/ACTION]
-   - [ACTION:generate_video]{{"prompt": "detailed video description in english"}}[/ACTION]
+   - [ACTION:generate_video]{{"prompt": "...", "provider": "agnes", "model": "agnes-v2.0", "duration": 5, "aspect_ratio": "16:9", "with_audio": true, "audio_style": "children"}}[/ACTION]
    - [ACTION:edit_video]{{"video_paths": ["filename.mp4"], "prompt": "exact modification directive in english"}}[/ACTION]
    - [ACTION:create_dynamic_skill]{{"skill_name": "x", "code_content": "y"}}[/ACTION]
    - [ACTION:orchestrate]{{"goal": "..."}}[/ACTION]
@@ -509,6 +542,9 @@ def _detect_user_response(query: str) -> str:
 
 
 def _execute_action_unified(act_name: str, params: dict) -> dict:
+    # ══════════════════════════════════════════════════════════════════
+    # MULTIMÉDIA — IMAGES
+    # ══════════════════════════════════════════════════════════════════
     try:
         if act_name == "generate_image":
             from services.vision import generate_image_with_provider
@@ -521,20 +557,62 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             prompt = params.get("prompt") or params.get("user_prompt") or params.get("query") or ""
             return merge_and_edit_images(image_paths=paths, user_prompt=prompt)
 
+        # ══════════════════════════════════════════════════════════════════
+        # MULTIMÉDIA — VIDÉO (CORRIGÉ v12)
+        # provider="agnes" + model="agnes-v2.0" + with_audio=True par défaut
+        # ══════════════════════════════════════════════════════════════════
         elif act_name == "generate_video":
             from services.vision import generate_video_with_provider
+
             prompt = params.get("prompt") or params.get("query") or ""
-            return generate_video_with_provider(prompt=prompt)
+
+            # Valeurs par défaut : Agnes + audio activé
+            provider_v    = params.get("provider", "agnes")
+            model_v       = params.get("model", "agnes-v2.0")
+            duration_v    = params.get("duration", 5)
+            aspect_ratio_v = params.get("aspect_ratio", "16:9")
+            with_audio_v  = params.get("with_audio", True)
+            audio_style_v = params.get("audio_style", "children")
+
+            logger.info(
+                "[generate_video] prompt=%r provider=%s model=%s duration=%s",
+                prompt[:80], provider_v, model_v, duration_v,
+            )
+
+            return generate_video_with_provider(
+                prompt=prompt,
+                provider=provider_v,
+                model=model_v,
+                duration=int(duration_v),
+                aspect_ratio=aspect_ratio_v,
+                with_audio=bool(with_audio_v),
+                audio_style=audio_style_v,
+            )
 
         elif act_name == "edit_video":
             from services.vision import merge_and_edit_videos
+
             paths = params.get("video_paths") or params.get("video_path") or []
             prompt = params.get("prompt") or params.get("user_prompt") or params.get("query") or ""
-            return merge_and_edit_videos(video_paths=paths, user_prompt=prompt)
+
+            provider_v = params.get("provider", "agnes")
+            model_v = params.get("model", "agnes-v2.0")
+            duration_v = params.get("duration", 5)
+
+            return merge_and_edit_videos(
+                video_paths=paths,
+                prompt=prompt,
+                provider=provider_v,
+                model=model_v,
+                duration=int(duration_v),
+            )
     except Exception as exc:
-        logger.error("Erreur Vision (%s) : %s", act_name, exc)
+        logger.error("Erreur Vision (%s) : %s", act_name, exc, exc_info=True)
         return {"status": "error", "message": f"Erreur multimédia : {exc}"}
 
+    # ══════════════════════════════════════════════════════════════════
+    # HEADLESS — SCRAPE
+    # ══════════════════════════════════════════════════════════════════
     if act_name == "headless_scrape":
         url = params.get("url") or params.get("query") or ""
         if not url:
@@ -572,6 +650,9 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             logger.error("Erreur headless_scrape : %s", exc, exc_info=True)
             return {"status": "error", "message": f"headless_scrape échoué : {exc}"}
 
+    # ══════════════════════════════════════════════════════════════════
+    # HEADLESS — SEARCH
+    # ══════════════════════════════════════════════════════════════════
     if act_name == "headless_search":
         query = params.get("query") or ""
         if not query:
@@ -586,6 +667,9 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             logger.error("Erreur headless_search : %s", exc, exc_info=True)
             return {"status": "error", "message": f"headless_search échoué : {exc}"}
 
+    # ══════════════════════════════════════════════════════════════════
+    # HERMES + FALLBACK
+    # ══════════════════════════════════════════════════════════════════
     if act_name in hermes.tools:
         h_disp = hermes.dispatch(act_name, params)
         if h_disp.get("status") == "SUCCESS" and h_disp.get("results"):
