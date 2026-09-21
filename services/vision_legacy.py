@@ -1515,16 +1515,16 @@ def concat_videos(
 # ==============================================================================
 def generate_video_with_provider(
     prompt: str,
-    provider: str = "gemini",
-    model: str = "veo-3.1-gene-prev",
+    provider: str = "agnes",             # ← AGNES par défaut
+    model: str = "agnes-v2.0",           # ← v2.0 par défaut
     output_filename: str = "",
     aspect_ratio: str = "16:9",
-    duration: int = 8,
+    duration: int = 5,                   # ← 5s par défaut
     auto_stitch: bool = True,
     negative_prompt: Optional[str] = None,
     person_generation: str = VEO_DEFAULT_PERSON_GENERATION,
-    with_audio: bool = False,
-    audio_style: str = "default",
+    with_audio: bool = True,             # ← AUDIO par défaut
+    audio_style: str = "children",       # ← style enfants
 ) -> Dict[str, Any]:
     if not output_filename:
         output_filename = f"gen_video_{uuid.uuid4().hex[:8]}.mp4"
