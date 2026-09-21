@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK-v16 — Vision Package (FINAL v31)
+# BEK-v16 — Vision Package (FINAL v32)
 # ------------------------------------------------------------------------------
 # Refactoring complet terminé (Lot 1 + 2 + 3 + 4) :
 #   - constants.py          : toutes les constantes
@@ -8,6 +8,7 @@
 #   - image_generation.py   : generate_image_with_provider + merge_and_edit_images
 #   - pollinations_client.py: ★ v26 — client Pollinations (gratuit, illimité)
 #   - huggingface_client.py : ★ v25 — client Hugging Face (image + img2img)
+#   - whisper_client.py     : ★ v32 — sous-titres Whisper (local)
 #   - veo_client.py         : client Veo 3.1 complet
 #   - agnes_client.py       : client Agnes complet
 #   - video_generation.py   : generate_video_with_provider
@@ -20,6 +21,7 @@
 # v26 (2026-09-21) : Ajout Pollinations client (image par défaut)
 # v30 (2026-09-21) : Ajout _ffmpeg_concat_crossfade (transition douce)
 # v31 (2026-09-21) : Crossfade activé dans video_extension
+# v32 (2026-09-21) : Ajout Whisper client (sous-titres locaux)
 # ==============================================================================
 from __future__ import annotations
 
@@ -96,6 +98,14 @@ from services.vision.huggingface_client import (
 )
 
 # ==============================================================================
+# 4quater. WHISPER CLIENT (★ v32 — sous-titres)
+# ==============================================================================
+from services.vision.whisper_client import (
+    generate_subtitles_from_video,
+    burn_subtitles_into_video,
+)
+
+# ==============================================================================
 # 5. VEO CLIENT
 # ==============================================================================
 from services.vision.veo_client import (
@@ -134,7 +144,7 @@ from services.vision.video_generation import (
 # ==============================================================================
 from services.vision.video_extension import (
     _extract_first_frame,
-    _extract_last_frame as _extract_last_frame_ext,  # alias pour éviter doublon
+    _extract_last_frame as _extract_last_frame_ext,
     _agnes_extend_video_with_agnes,
     extend_video_with_agnes,
     extend_video_multiple,
@@ -181,6 +191,9 @@ __all__ = [
     # Image — Hugging Face ★ v25
     "generate_image_with_huggingface",
     "edit_image_with_huggingface",
+    # Whisper — sous-titres ★ v32
+    "generate_subtitles_from_video",
+    "burn_subtitles_into_video",
     # Vidéo — génération
     "generate_video_with_provider",
     # Vidéo — extension

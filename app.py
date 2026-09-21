@@ -2,16 +2,10 @@
 # ==============================================================================
 # BEK-v16 HYBRID — SERVEUR PRINCIPAL FASTAPI (BOOTSTRAP MODULAIRE)
 # ------------------------------------------------------------------------------
-# v16.1 (2026-09-20) :
-#   - generate_video / edit_video : acceptent provider, model, duration,
-#     aspect_ratio, auto_stitch → permettent de router vers Agnes AI
-#   - Conserve toutes les autres fonctionnalités
-# v16.2 (2026-09-21) :
-#   - Ajout de extend_video / extend_video_multiple (Agnes multi_reference)
-#   - Enregistrement Hermes des 2 nouveaux outils vidéo
-# v16.3 (2026-09-21) :
-#   - Ajout route /api/config (providers + modèles + skills pour l'UI)
-#   - Fix: le menu UI chargait sur /api/config qui n'existait pas
+# v16.1 (2026-09-20) : generate_video / edit_video acceptent provider/model
+# v16.2 (2026-09-21) : extend_video + extend_video_multiple
+# v16.3 (2026-09-21) : route /api/config
+# v16.4 (2026-09-21) : outils Whisper (generate_subtitles + burn_subtitles)
 # ==============================================================================
 from __future__ import annotations
 
@@ -131,12 +125,8 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         parameters_schema={},
         handler=lambda: {
             "tables": [
-                "companies",
-                "contacts",
-                "opportunities",
-                "matrix_sub_crms",
-                "bek_task_states",
-                "sync_log",
+                "companies", "contacts", "opportunities",
+                "matrix_sub_crms", "bek_task_states", "sync_log",
             ]
         },
     )
@@ -188,7 +178,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     )
 
     # ══════════════════════════════════════════════════════════════════
-    # ★ OUTILS VIDÉO v16.1 — Acceptent provider/model/duration/etc. ★
+    # ★ OUTILS VIDÉO v16.1
     # ══════════════════════════════════════════════════════════════════
     hermes.register_tool(
         "generate_video",
@@ -228,7 +218,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     )
 
     # ══════════════════════════════════════════════════════════════════
-    # ★ EXTENSION VIDÉO v28 — Agnes multi_reference ★
+    # ★ EXTENSION VIDÉO v28 — Agnes multi_reference
     # ══════════════════════════════════════════════════════════════════
     def _extend_video_handler(
         video_path="LAST", prompt="", new_prompt="",
@@ -265,34 +255,61 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         except Exception as e:
             return {"status": "error", "message": f"extend_video_multiple échec : {e}"}
 
-    hermes.register_tool(
-        "extend_video",
-        _extend_video_handler,
-        risk_level="L1",
-    )
-    hermes.register_tool(
-        "extend_video_multiple",
-        _extend_video_multiple_handler,
-        risk_level="L1",
-    )
+    hermes.register_tool("extend_video", _extend_video_handler, risk_level="L1")
+    hermes.register_tool("extend_video_multiple", _extend_video_multiple_handler, risk_level="L1")
+
+    # ══════════════════════════════════════════════════════════════════
+    # ★ SOUS-TITRES WHISPER (v32)
+    # ══════════════════════════════════════════════════════════════════
+    def _generate_subtitles_handler(
+        video_path="LAST", language=None, model="base", **kwargs
+    ):
+        try:
+            from services.vision.whisper_client import generate_subtitles_from_video
+            return generate_subtitles_from_video(
+                video_path=video_path,
+                language=language,
+                model_name=model,
+            )
+        except Exception as e:
+            return {"status": "error", "message": f"Whisper échec : {e}"}
+
+    def _burn_subtitles_handler(
+        video_path="LAST", srt_path=None, language=None,
+        model="base", **kwargs
+    ):
+        try:
+            from services.vision.whisper_client import (
+                generate_subtitles_from_video,
+                burn_subtitles_into_video,
+            )
+            if not srt_path:
+                srt_result = generate_subtitles_from_video(
+                    video_path=video_path,
+                    language=language,
+                    model_name=model,
+                )
+                if srt_result.get("status") == "error":
+                    return srt_result
+                srt_path = srt_result.get("srt_path")
+            return burn_subtitles_into_video(
+                video_path=video_path,
+                srt_path=srt_path,
+            )
+        except Exception as e:
+            return {"status": "error", "message": f"Burn subs échec : {e}"}
+
+    hermes.register_tool("generate_subtitles", _generate_subtitles_handler, risk_level="L1")
+    hermes.register_tool("burn_subtitles", _burn_subtitles_handler, risk_level="L1")
 
     # ══════════════════════════════════════════════════════════════════
     # 🧠 ACTIVATION DU SYSTÈME NERVEUX BEK
     # ══════════════════════════════════════════════════════════════════
     try:
         from nerves import (
-            event_bus_nerves,
-            hermes_nerves,
-            skills_nerves,
-            headless_nerves,
-            tmux_nerves,
-            web_agent_nerves,
-            guardian_nerves,
-            approval_nerves,
-            mcp_nerves,
-            cognitive_nerves,
-            router_nerves,
-            crm_nerves,
+            event_bus_nerves, hermes_nerves, skills_nerves, headless_nerves,
+            tmux_nerves, web_agent_nerves, guardian_nerves, approval_nerves,
+            mcp_nerves, cognitive_nerves, router_nerves, crm_nerves,
         )
 
         _nerve_3_result = event_bus_nerves.activate_event_bus_nerves()
@@ -310,17 +327,11 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
 
         logger.info(
             "🧠 Système nerveux BEK activé | "
-            "Nerf 3 : %s | "
-            "Nerf 1 : %s (%d outils) | "
-            "Nerf 8 : %s (%d skills) | "
-            "Nerf 11-13 : %s (%d headless) | "
-            "Nerf 14-17 : %s (%d tmux) | "
-            "Nerf 4 : %s (%d web) | "
-            "Nerf 9 : %s (%d guardian) | "
-            "Nerf 5 : %s (%d approval) | "
-            "Nerf 6 : %s (%d mcp) | "
-            "Nerf 2 : %s (%d cognitive) | "
-            "Nerf 7 : %s (%d router) | "
+            "Nerf 3 : %s | Nerf 1 : %s (%d outils) | Nerf 8 : %s (%d skills) | "
+            "Nerf 11-13 : %s (%d headless) | Nerf 14-17 : %s (%d tmux) | "
+            "Nerf 4 : %s (%d web) | Nerf 9 : %s (%d guardian) | "
+            "Nerf 5 : %s (%d approval) | Nerf 6 : %s (%d mcp) | "
+            "Nerf 2 : %s (%d cognitive) | Nerf 7 : %s (%d router) | "
             "Nerf 10 : %s (%d crm)",
             _nerve_3_result.get("status"),
             _nerve_1_result.get("status"), _nerve_1_result.get("activated_count", 0),
@@ -336,15 +347,9 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
             _nerve_10_result.get("status"), _nerve_10_result.get("activated_count", 0),
         )
     except ImportError as _nerves_import_err:
-        logger.warning(
-            "⚠️ Paquet nerves/ introuvable (%s). Mode legacy conservé.",
-            _nerves_import_err,
-        )
+        logger.warning("⚠️ Paquet nerves/ introuvable (%s). Mode legacy conservé.", _nerves_import_err)
     except Exception as _nerves_err:
-        logger.error(
-            "❌ Activation des nerfs échouée : %s. Mode legacy conservé.",
-            _nerves_err,
-        )
+        logger.error("❌ Activation des nerfs échouée : %s. Mode legacy conservé.", _nerves_err)
 
     os.environ["BEK_BOOTSTRAPPED"] = "1"
 
@@ -362,7 +367,6 @@ async def lifespan(app: FastAPI):
     setup_json_logging()
     logger.info("setup_json_logging() exécuté lors du démarrage de l'application.")
     yield
-    # ── Shutdown : flush des spans OTel en attente ──
     try:
         from core.tracing import shutdown_tracing
         shutdown_tracing()
@@ -376,7 +380,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="16.1",
+    version="16.4",
     lifespan=lifespan,
 )
 
@@ -406,7 +410,7 @@ async def add_anti_cache_header(request: Request, call_next):
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🔭 OPENTELEMETRY — Tracing distribué
+# 🔭 OPENTELEMETRY
 # ══════════════════════════════════════════════════════════════════
 from core.tracing import init_tracing, shutdown_tracing  # noqa: E402
 
@@ -450,13 +454,9 @@ def _provider_display_name(provider_id: str) -> str:
 
 @app.get("/api/config")
 async def get_config():
-    """
-    Retourne la config des providers + modèles + skills pour l'UI.
-    Lit directement depuis provider_manager (source de vérité).
-    """
+    """Retourne la config des providers + modèles + skills pour l'UI."""
     from provider_manager import provider_manager
 
-    # ─── Providers avec statut configured ───
     providers = []
     for provider_id, models in provider_manager.PROVIDER_MODELS.items():
         try:
@@ -469,7 +469,6 @@ async def get_config():
             "configured": configured,
         })
 
-    # ─── Skills depuis skills.py ───
     skills_list = []
     try:
         from skills import list_skills as _list_skills
@@ -502,7 +501,6 @@ async def get_config():
 # ---------- Endpoint de health check du worker headless ----------
 @app.get("/health/worker")
 async def health_worker():
-    """Vérifie le statut du worker headless sans bloquer l'event loop."""
     try:
         return {"status": "ok", "worker": "running"}
     except Exception as exc:
@@ -534,9 +532,6 @@ class SkillExecutionRequest(BaseModel):
 # --- Endpoint API d'exécution ---
 @app.post("/api/skills/execute")
 async def execute_skill_endpoint(request: SkillExecutionRequest):
-    """
-    Exécute une compétence de manière asynchrone via un sous-processus isolé.
-    """
     result = await skill_runner.execute_skill_async(
         skill_name=request.skill_name,
         payload=request.payload,

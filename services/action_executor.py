@@ -2,15 +2,9 @@
 # BEK-v16 — Exécuteur d'actions & outils optimisé (services/action_executor.py)
 # COMPATIBILITÉ MULTI-OS / PATHGUARD / SCAN RAPIDE SANS GEL DU FLUX
 # ------------------------------------------------------------------------------
-# v22 (2026-09-20) :
-#   - Ajout de generate_video (Veo 3.1 via predictLongRunning)
-#   - Ajout de merge_and_edit_videos (concat FFmpeg local ou génération Veo)
-#   - Import des nouvelles fonctions depuis services.vision
-#   - Balises [FILE:...] + <video> pour affichage UI
-#   - Aucune régression sur le reste
-# v28 (2026-09-21) :
-#   - Ajout de extend_video / extend_video_multiple (Agnes multi_reference)
-#   - Correction provider par défaut : agnes au lieu de gemini pour vidéo
+# v22 (2026-09-20) : generate_video + merge_and_edit_videos
+# v28 (2026-09-21) : extend_video / extend_video_multiple (Agnes)
+# v32 (2026-09-21) : sous-titres Whisper (generate_subtitles + burn_subtitles)
 # ==============================================================================
 from __future__ import annotations
 
@@ -33,10 +27,10 @@ from services.vision import (
     analyze_image_with_vision,
     generate_image_with_provider,
     merge_and_edit_images,
-    generate_video_with_provider,     # NOUVEAU v22
-    merge_and_edit_videos,            # NOUVEAU v22
-    extend_video_with_agnes,          # NOUVEAU v28
-    extend_video_multiple,            # NOUVEAU v28
+    generate_video_with_provider,
+    merge_and_edit_videos,
+    extend_video_with_agnes,
+    extend_video_multiple,
 )
 
 from services.tasks import start_background_task, stop_background_task
@@ -321,8 +315,8 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         elif action_name == "generate_image":
             prompt = parameters.get("prompt", "")
             filename = parameters.get("filename", f"generated_{uuid.uuid4().hex[:6]}.png")
-            provider = parameters.get("provider", "gemini")
-            model = parameters.get("model", "gemini-3.1-flash-image")
+            provider = parameters.get("provider", "pollinations")
+            model = parameters.get("model", "flux-3d")
             if not prompt:
                 update_task_state(task_id, "FAILED", correlation_id, "Prompt vide")
                 return {"status": "error", "message": "Le prompt est obligatoire."}
@@ -357,7 +351,7 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             prompt = parameters.get("prompt", "")
             filename = parameters.get("filename", f"gen_video_{uuid.uuid4().hex[:6]}.mp4")
             provider = parameters.get("provider", "gemini")
-            model = parameters.get("model", "veo-3.1-gene-prev")   # nom court UI
+            model = parameters.get("model", "veo-3.1-gene-prev")
             aspect_ratio = parameters.get("aspect_ratio", "16:9")
             try:
                 duration = int(parameters.get("duration", 8))
@@ -526,13 +520,105 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             return {"status": "success", "message": info}
 
         # ----------------------------------------------------------------------
+        # 7quater. SOUS-TITRES WHISPER (v32)
+        # ----------------------------------------------------------------------
+        elif action_name in ("generate_subtitles", "subtitle_video", "whisper_transcribe"):
+            from services.vision.whisper_client import generate_subtitles_from_video
+
+            video_path = parameters.get("video_path", "LAST")
+            language = parameters.get("language")
+            model_name = parameters.get("model", "base")
+
+            update_task_state(
+                task_id, "RUNNING", correlation_id,
+                f"Whisper transcription ({model_name})"
+            )
+
+            gen_result = generate_subtitles_from_video(
+                video_path=video_path,
+                language=language,
+                model_name=model_name,
+            )
+
+            if gen_result.get("status") == "error":
+                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
+                return {
+                    "status": "error",
+                    "message": f"ÉCHEC SOUS-TITRES : {gen_result.get('message')}",
+                }
+
+            srt_filename = gen_result.get("srt_filename")
+            language_detected = gen_result.get("language", "?")
+            segments = gen_result.get("segments_count", 0)
+
+            info = f"🎤 **Sous-titres générés !**\n"
+            info += f"- Langue détectée : `{language_detected}`\n"
+            info += f"- Segments : **{segments}**\n"
+            info += f"- Modèle Whisper : `{model_name}`\n"
+            info += f"\n[FILE:{srt_filename}](/api/download/{srt_filename})\n"
+
+            update_task_state(task_id, "COMPLETED", correlation_id, f"Sous-titres : {srt_filename}")
+            return {"status": "success", "message": info}
+
+        elif action_name in ("burn_subtitles", "add_subtitles_to_video"):
+            from services.vision.whisper_client import (
+                generate_subtitles_from_video,
+                burn_subtitles_into_video,
+            )
+
+            video_path = parameters.get("video_path", "LAST")
+            language = parameters.get("language")
+            model_name = parameters.get("model", "base")
+            srt_path = parameters.get("srt_path")
+
+            update_task_state(task_id, "RUNNING", correlation_id, "Burn sous-titres")
+
+            if not srt_path:
+                srt_result = generate_subtitles_from_video(
+                    video_path=video_path,
+                    language=language,
+                    model_name=model_name,
+                )
+                if srt_result.get("status") == "error":
+                    return {
+                        "status": "error",
+                        "message": f"Échec génération .srt : {srt_result.get('message')}",
+                    }
+                srt_path = srt_result.get("srt_path")
+
+            burn_result = burn_subtitles_into_video(
+                video_path=video_path,
+                srt_path=srt_path,
+            )
+
+            if burn_result.get("status") == "error":
+                return {
+                    "status": "error",
+                    "message": f"ÉCHEC INCRUSTATION : {burn_result.get('message')}",
+                }
+
+            final_filename = burn_result.get("filename")
+
+            info = f"🎬 **Vidéo sous-titrée !**\n"
+            info += f"- Source : `{os.path.basename(video_path)}`\n"
+            info += f"- Sous-titres : `{os.path.basename(srt_path)}`\n\n"
+            info += f"[FILE:{final_filename}](/api/download/{final_filename})\n\n"
+            info += (
+                f'<video controls loop '
+                f'src="/api/download/{final_filename}" '
+                f'style="max-width:100%;border-radius:8px;"></video>'
+            )
+
+            update_task_state(task_id, "COMPLETED", correlation_id, f"Sous-titres brûlés : {final_filename}")
+            return {"status": "success", "message": info}
+
+        # ----------------------------------------------------------------------
         # 8. EXÉCUTION SYSTÈME & SCAN RAPIDE SANS GEL DU TERMINAL
         # ----------------------------------------------------------------------
         elif action_name in ("execute_command", "run_script", "run_tests"):
             command = parameters.get("command", "dir" if os.name == "nt" else "ls -la").strip()
             cmd_lower = command.lower()
 
-            # Interception des scans récursifs lourds
             if any(k in cmd_lower for k in ["dir /s", "get-childitem", "find .", "ls -r", "tree"]):
                 pattern = ""
                 match = re.search(r"[*'\"\\]([a-zA-Z0-9_\-\.]+[*'\"\\]|[a-zA-Z0-9_\-\.]+)", command)

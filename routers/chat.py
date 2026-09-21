@@ -7,28 +7,22 @@
 # + headless_scrape : extraction texte via BeautifulSoup
 #
 # CORRECTIF v11 (2026-09-20) :
-# - Règle anti-refus : le LLM DOIT répondre s'il a la réponse dans l'historique
-# - Règle anti-hallucination temporelle : interdiction d'inventer des dates
-# - Règle de confiance exclusive aux outils : les données d'entraînement du LLM
-#   ne doivent JAMAIS contredire les résultats retournés par les outils.
+# - Règle anti-refus + anti-hallucination temporelle + confiance outils
 #
 # CORRECTIF v12 (2026-09-21) :
 # - Vidéo : provider="agnes", model="agnes-v2.0", with_audio=True par défaut
-# - Prompt système enrichi avec exemples vidéo complets
 #
 # CORRECTIF v13 (2026-09-21) :
-# - BUGFIX CRITIQUE : ne plus écraser params["provider"] / params["model"]
-#   pour les actions multimédia (generate_video, edit_video,
-#   generate_image, edit_image).
-#   L'agent spécifie déjà "agnes" + "agnes-v2.0" dans la balise,
-#   il ne faut PAS les remplacer par le provider du chat (kimi, groq, etc.).
+# - BUGFIX : ne plus écraser params["provider"]/["model"] pour multimédia
 #
 # CORRECTIF v14 (2026-09-21) :
-# - Ajout extend_video + extend_video_multiple dans le prompt système
-# - Règle anti-confusion : extend_video ≠ edit_video
-# - Ajout extend_video / extend_video_multiple dans MULTIMEDIA_ACTIONS
-# - Ajout branche extend_video dans _execute_action_unified
-# - Affichage "Vidéo étendue !" vs "Vidéo générée !" dans _format_execution_result
+# - Ajout extend_video + extend_video_multiple (Agnes continuité)
+#
+# CORRECTIF v15 (2026-09-22) :
+# - ★ AJOUT : generate_subtitles + burn_subtitles (Whisper local)
+# - Règles strictes sous-titres dans le prompt système
+# - Ajout dans MULTIMEDIA_ACTIONS
+# - Branche _execute_action_unified pour Whisper
 # ==============================================================================
 from __future__ import annotations
 
@@ -122,7 +116,6 @@ MAX_CHUNKS_WITHOUT_CLOSE = _env_int("BEK_CHAT_MAX_CHUNKS_NO_CLOSE", 150)
 MAX_QUERY_WORDS = _env_int("BEK_CHAT_MAX_QUERY_WORDS", 8)
 
 # Actions multimédia qui ont leur PROPRE provider/model
-# (l'agent les spécifie déjà dans la balise, ne pas les écraser)
 MULTIMEDIA_ACTIONS = (
     "generate_video",
     "edit_video",
@@ -130,6 +123,8 @@ MULTIMEDIA_ACTIONS = (
     "extend_video_multiple",
     "generate_image",
     "edit_image",
+    "generate_subtitles",     # ★ v15 — Whisper
+    "burn_subtitles",         # ★ v15 — Whisper
 )
 
 _STERILE_URL_PATTERNS = (
@@ -370,7 +365,7 @@ hll_counter = HyperLogLog(b=6)
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🧠 PROMPT SYSTÈME v14 (règles renforcées + extend_video)
+# 🧠 PROMPT SYSTÈME v15 (règles renforcées + Whisper)
 # ══════════════════════════════════════════════════════════════════
 _ARCHITECTURE_BLOCK = ""
 if _ARCHITECTURE_CONTEXT:
@@ -462,14 +457,45 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 - ⚠️ N'UTILISE PAS gemini comme provider pour la vidéo.
 
 # ══════════════════════════════════════════════════════════════════
+# 🎤 RÈGLES SOUS-TITRES WHISPER (CRITIQUE)
+# ══════════════════════════════════════════════════════════════════
+- GÉNÉRER des sous-titres (.srt) pour une vidéo → generate_subtitles
+- INCRUSTER les sous-titres dans la vidéo (hard subs) → burn_subtitles
+- Ces outils utilisent Whisper (local, gratuit, illimité)
+
+⚠️ RÈGLE DE SÉLECTION :
+- Si l'utilisateur dit « sous-titre », « génère les sous-titres »,
+  « transcris », « SRT » → generate_subtitles
+- Si l'utilisateur dit « incruste », « ajoute les sous-titres sur la vidéo »,
+  « grave les sous-titres » → burn_subtitles
+
+- Modèles disponibles : "tiny" (rapide), "base" (défaut), "small" (précis)
+- Langue par défaut : "fr" (français) — utilise null pour auto-détection
+
+- EXEMPLES :
+  * "génère les sous-titres de la vidéo X" 
+    → [ACTION:generate_subtitles]{{"video_path": "X.mp4", "language": "fr", "model": "base"}}[/ACTION]
+  
+  * "sous-titre cette vidéo"
+    → [ACTION:burn_subtitles]{{"video_path": "X.mp4", "language": "fr", "model": "base"}}[/ACTION]
+
+  * "incruste les sous-titres sur X"
+    → [ACTION:burn_subtitles]{{"video_path": "X.mp4", "language": "fr"}}[/ACTION]
+
+  * "transcris la vidéo Y en anglais"
+    → [ACTION:generate_subtitles]{{"video_path": "Y.mp4", "language": "en"}}[/ACTION]
+
+# ══════════════════════════════════════════════════════════════════
 
 # ACTIONS DISPONIBLES :
-      - [ACTION:generate_image]{{"prompt": "detailed description in english", "provider": "pollinations", "model": "flux-3d"}}[/ACTION]
+   - [ACTION:generate_image]{{"prompt": "detailed description in english", "provider": "pollinations", "model": "flux-3d"}}[/ACTION]
    - [ACTION:edit_image]{{"image_paths": ["filename.png"], "prompt": "exact modification directive in english"}}[/ACTION]
    - [ACTION:generate_video]{{"prompt": "...", "provider": "agnes", "model": "agnes-v2.0", "duration": 5, "aspect_ratio": "16:9", "with_audio": true, "audio_style": "children"}}[/ACTION]
    - [ACTION:edit_video]{{"video_paths": ["filename.mp4"], "prompt": "exact modification directive in english"}}[/ACTION]
    - [ACTION:extend_video]{{"video_path": "filename.mp4", "prompt": "continuation prompt in english", "duration": 9, "with_audio": true, "audio_style": "nature"}}[/ACTION]
    - [ACTION:extend_video_multiple]{{"video_path": "filename.mp4", "prompts": ["scene 1", "scene 2"], "duration": 9, "with_audio": true, "audio_style": "nature"}}[/ACTION]
+   - [ACTION:generate_subtitles]{{"video_path": "filename.mp4", "language": "fr", "model": "base"}}[/ACTION]
+   - [ACTION:burn_subtitles]{{"video_path": "filename.mp4", "language": "fr", "model": "base"}}[/ACTION]
    - [ACTION:create_dynamic_skill]{{"skill_name": "x", "code_content": "y"}}[/ACTION]
    - [ACTION:orchestrate]{{"goal": "..."}}[/ACTION]
    - [ACTION:web_sync]{{"query": "..."}}[/ACTION]
@@ -562,7 +588,6 @@ tu DOIS donner cette réponse DIRECTEMENT, sans appeler d'outil.
   une date obsolète dans les résultats (pas dans ton training).
 - Avant de dire "je n'ai pas accès", RAPPELLE-TOI que tu as des outils web.
 
-# DIRECTIVE MULTIMÉDIA ABSOLUE
 # ══════════════════════════════════════════════════════════════════
 # 🎨 RÈGLES IMAGE (CRITIQUE — À RESPECTER ABSOLUMENT)
 # ══════════════════════════════════════════════════════════════════
@@ -591,8 +616,10 @@ tu DOIS donner cette réponse DIRECTEMENT, sans appeler d'outil.
 
 # ══════════════════════════════════════════════════════════════════
 
+# DIRECTIVE MULTIMÉDIA ABSOLUE
 - Pour TOUTE demande visuelle : generate_image, edit_image,
-  generate_video, edit_video, extend_video, extend_video_multiple.
+  generate_video, edit_video, extend_video, extend_video_multiple,
+  generate_subtitles, burn_subtitles.
 {_ARCHITECTURE_BLOCK}
 """
 
@@ -625,7 +652,9 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
         if act_name == "generate_image":
             from services.vision import generate_image_with_provider
             prompt = params.get("prompt") or params.get("query") or ""
-            return generate_image_with_provider(prompt=prompt)
+            provider_v = params.get("provider", "pollinations")
+            model_v = params.get("model", "flux-3d")
+            return generate_image_with_provider(prompt=prompt, provider=provider_v, model=model_v)
 
         elif act_name == "edit_image":
             from services.vision import merge_and_edit_images
@@ -634,7 +663,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             return merge_and_edit_images(image_paths=paths, user_prompt=prompt)
 
         # ══════════════════════════════════════════════════════════════════
-        # MULTIMÉDIA — VIDÉO (v12 + v14)
+        # MULTIMÉDIA — VIDÉO
         # ══════════════════════════════════════════════════════════════════
         elif act_name == "generate_video":
             from services.vision import generate_video_with_provider
@@ -681,7 +710,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                 duration=int(duration_v),
             )
 
-        # ★ NOUVEAU v14 — extend_video (vraie extension avec continuité)
+        # ★ v14 — extend_video (vraie extension avec continuité)
         elif act_name == "extend_video":
             from services.vision import extend_video_with_agnes
 
@@ -709,7 +738,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                 audio_style=audio_style_v,
             )
 
-        # ★ NOUVEAU v14 — extend_video_multiple
+        # ★ v14 — extend_video_multiple
         elif act_name == "extend_video_multiple":
             from services.vision import extend_video_multiple
 
@@ -732,6 +761,61 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                 duration_per_clip=int(duration_v),
                 with_audio=bool(with_audio_v),
                 audio_style=audio_style_v,
+            )
+
+        # ★ v15 — generate_subtitles (Whisper → .srt)
+        elif act_name == "generate_subtitles":
+            from services.vision.whisper_client import generate_subtitles_from_video
+
+            video_path = params.get("video_path") or "LAST"
+            language = params.get("language")
+            model_name = params.get("model", "base")
+
+            logger.info(
+                "[generate_subtitles] video=%s language=%s model=%s",
+                video_path, language, model_name,
+            )
+
+            return generate_subtitles_from_video(
+                video_path=video_path,
+                language=language,
+                model_name=model_name,
+            )
+
+        # ★ v15 — burn_subtitles (Whisper + FFmpeg incrustation)
+        elif act_name == "burn_subtitles":
+            from services.vision.whisper_client import (
+                generate_subtitles_from_video,
+                burn_subtitles_into_video,
+            )
+
+            video_path = params.get("video_path") or "LAST"
+            language = params.get("language")
+            model_name = params.get("model", "base")
+            srt_path = params.get("srt_path")
+
+            logger.info(
+                "[burn_subtitles] video=%s language=%s model=%s",
+                video_path, language, model_name,
+            )
+
+            # Si pas de .srt fourni → on le génère d'abord
+            if not srt_path:
+                srt_result = generate_subtitles_from_video(
+                    video_path=video_path,
+                    language=language,
+                    model_name=model_name,
+                )
+                if srt_result.get("status") == "error":
+                    return {
+                        "status": "error",
+                        "message": f"Échec génération .srt : {srt_result.get('message')}",
+                    }
+                srt_path = srt_result.get("srt_path")
+
+            return burn_subtitles_into_video(
+                video_path=video_path,
+                srt_path=srt_path,
             )
     except Exception as exc:
         logger.error("Erreur Vision (%s) : %s", act_name, exc, exc_info=True)
@@ -837,6 +921,42 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
         return str(exec_res)
 
     fn = exec_res.get("filename", "")
+    srt_fn = exec_res.get("srt_filename", "")
+
+    # ═══════════════════════════════════════════════════════════════════
+    # ★ v15 — SOUS-TITRES WHISPER
+    # ═══════════════════════════════════════════════════════════════════
+    if act_name == "generate_subtitles" and exec_res.get("status") == "success":
+        language = exec_res.get("language", "?")
+        segments = exec_res.get("segments_count", 0)
+        text_preview = exec_res.get("text", "")[:300]
+        return (
+            f"🎤 **Sous-titres générés !**\n"
+            f"- Langue détectée : `{language}`\n"
+            f"- Segments : **{segments}**\n"
+            f"- Fichier : `{srt_fn}`\n\n"
+            f"**Aperçu :**\n```\n{text_preview}\n```\n\n"
+            f"[📥 Télécharger le .srt](/api/download/{srt_fn})\n"
+        )
+
+    # ═══════════════════════════════════════════════════════════════════
+    # ★ v15 — VIDÉO SOUS-TITRÉE
+    # ═══════════════════════════════════════════════════════════════════
+    if act_name == "burn_subtitles" and exec_res.get("status") == "success" and fn:
+        size_mb = exec_res.get("size_bytes", 0) / (1024 * 1024)
+        return (
+            f"🎬 **Vidéo sous-titrée !**\n"
+            f"- Fichier : `{fn}`\n"
+            f"- Taille : **{size_mb:.1f} Mo**\n\n"
+            f"[📥 Télécharger la vidéo sous-titrée](/api/download/{fn})\n\n"
+            f'<video controls loop '
+            f'src="/api/download/{fn}" '
+            f'style="max-width:100%;border-radius:8px;"></video>'
+        )
+
+    # ═══════════════════════════════════════════════════════════════════
+    # Images générées
+    # ═══════════════════════════════════════════════════════════════════
     if exec_res.get("status") == "success" and fn:
         if any(fn.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"]):
             return f"🎨 **Image générée !**\n\n![{fn}](/api/download/{fn})"
@@ -887,7 +1007,6 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
 
             info = "\n".join(info_lines)
 
-            # Lecteur vidéo HTML5 natif
             video_player = (
                 f'\n\n<video controls autoplay loop muted '
                 f'style="max-width:100%; border-radius:12px; '
@@ -1163,7 +1282,6 @@ async def _chat_impl(request: Request, chat_span):
                         except Exception:
                             pass
 
-                    # ★ v13 : NE PAS écraser provider/model pour les actions multimédia
                     if act_name not in MULTIMEDIA_ACTIONS:
                         params["provider"] = provider
                         params["model"] = model
@@ -1299,7 +1417,6 @@ async def _chat_impl(request: Request, chat_span):
                                 )
                                 params["query"] = last_user_query
 
-                        # ★ v13 : NE PAS écraser provider/model pour les actions multimédia
                         if act_name not in MULTIMEDIA_ACTIONS:
                             params["provider"] = provider
                             params["model"] = model
