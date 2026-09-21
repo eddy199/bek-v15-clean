@@ -8,6 +8,9 @@
 #   - Import des nouvelles fonctions depuis services.vision
 #   - Balises [FILE:...] + <video> pour affichage UI
 #   - Aucune régression sur le reste
+# v28 (2026-09-21) :
+#   - Ajout de extend_video / extend_video_multiple (Agnes multi_reference)
+#   - Correction provider par défaut : agnes au lieu de gemini pour vidéo
 # ==============================================================================
 from __future__ import annotations
 
@@ -32,6 +35,8 @@ from services.vision import (
     merge_and_edit_images,
     generate_video_with_provider,     # NOUVEAU v22
     merge_and_edit_videos,            # NOUVEAU v22
+    extend_video_with_agnes,          # NOUVEAU v28
+    extend_video_multiple,            # NOUVEAU v28
 )
 
 from services.tasks import start_background_task, stop_background_task
@@ -405,8 +410,8 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
         elif action_name in ("merge_and_edit_videos", "merge_videos", "edit_video"):
             video_paths = parameters.get("video_paths", [])
             prompt = parameters.get("prompt", parameters.get("user_prompt", ""))
-            provider = parameters.get("provider", "gemini")
-            model = parameters.get("model", "veo-3.1-gene-prev")
+            provider = parameters.get("provider", "agnes")
+            model = parameters.get("model", "agnes-v2.0")
             filename = parameters.get("filename", f"merged_video_{uuid.uuid4().hex[:6]}.mp4")
             aspect_ratio = parameters.get("aspect_ratio", "16:9")
             try:
@@ -446,6 +451,79 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
                     f'style="max-width:100%;border-radius:8px;"></video>'
                 ),
             }
+
+        # ----------------------------------------------------------------------
+        # 7ter. EXTENSION VIDÉO (AGNES multi_reference) — NOUVEAU v28
+        # ----------------------------------------------------------------------
+        elif action_name in ("extend_video", "extend_video_multiple"):
+            video_path = parameters.get("video_path", "LAST")
+            duration = int(parameters.get("duration", 9))
+            with_audio = bool(parameters.get("with_audio", True))
+            audio_style = parameters.get("audio_style", "nature")
+
+            update_task_state(
+                task_id, "RUNNING", correlation_id,
+                f"Extension vidéo: {duration}s"
+            )
+
+            if action_name == "extend_video_multiple":
+                prompts_list = parameters.get("prompts", [])
+                if not prompts_list:
+                    update_task_state(task_id, "FAILED", correlation_id, "Liste prompts vide")
+                    return {
+                        "status": "error",
+                        "message": "Fournis une liste 'prompts' pour extend_video_multiple.",
+                    }
+                gen_result = extend_video_multiple(
+                    video_path=video_path,
+                    prompts=prompts_list,
+                    duration_per_clip=duration,
+                    with_audio=with_audio,
+                    audio_style=audio_style,
+                )
+            else:
+                prompt = parameters.get("prompt", "")
+                if not prompt:
+                    update_task_state(task_id, "FAILED", correlation_id, "Prompt d'extension vide")
+                    return {
+                        "status": "error",
+                        "message": "Le prompt d'extension est obligatoire.",
+                    }
+                gen_result = extend_video_with_agnes(
+                    video_path=video_path,
+                    new_prompt=prompt,
+                    duration=duration,
+                    with_audio=with_audio,
+                    audio_style=audio_style,
+                )
+
+            if gen_result.get("status") == "error":
+                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
+                return {
+                    "status": "error",
+                    "message": f"ÉCHEC EXTENSION: {gen_result.get('message')}",
+                }
+
+            final_filename = gen_result.get("filename")
+            mode_used = gen_result.get("mode_used", "multi_reference")
+            source_video = gen_result.get("source_video", "")
+            extended_by = gen_result.get("extended_by", duration)
+
+            info = f"🎬 **Vidéo étendue !** (+{extended_by}s)\n"
+            info += f"- Mode continuité : `{mode_used}`\n"
+            if source_video:
+                info += f"- Source : `{source_video}`\n"
+            if with_audio:
+                info += f"- Audio : ✅ ({audio_style})\n"
+            info += f"\n[FILE:{final_filename}](/api/download/{final_filename})\n\n"
+            info += (
+                f'<video controls loop '
+                f'src="/api/download/{final_filename}" '
+                f'style="max-width:100%;border-radius:8px;"></video>'
+            )
+
+            update_task_state(task_id, "COMPLETED", correlation_id, f"Vidéo étendue: {final_filename}")
+            return {"status": "success", "message": info}
 
         # ----------------------------------------------------------------------
         # 8. EXÉCUTION SYSTÈME & SCAN RAPIDE SANS GEL DU TERMINAL

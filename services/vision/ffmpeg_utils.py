@@ -3,6 +3,8 @@
 # ------------------------------------------------------------------------------
 # Helpers FFmpeg communs
 # v28 (2026-09-20) : Extraction depuis vision.py v27.1
+# v29 (2026-09-21) : Concat avec normalisation audio (AAC 48kHz 192k)
+# v30 (2026-09-21) : Ajout _ffmpeg_concat_crossfade (transition douce)
 # ==============================================================================
 from __future__ import annotations
 
@@ -146,20 +148,134 @@ def _extract_last_frame(video_path: str, output_path: Optional[str] = None) -> s
 
 
 # ==============================================================================
-# CONCATÉNATION (SANS RÉENCODAGE — rapide)
+# CONCATÉNATION (AVEC NORMALISATION AUDIO — v29)
+# ------------------------------------------------------------------------------
+# v28 : concat simple -c copy (rapide mais trous audio possibles)
+# v29 : réencodage audio + alignement PTS pour son continu au raccord
 # ==============================================================================
 def _ffmpeg_concat(clip_files: List[str], output: str) -> None:
-    """Concat avec FFmpeg concat demuxer (mode -c copy)."""
+    """
+    Concat avec FFmpeg concat demuxer.
+
+    ★ v29 : réencodage audio (AAC 48kHz stéréo) pour éviter les coupures
+    de son au point de jonction entre les clips.
+
+    Vidéo : copie directe (-c:v copy) car même codec/résolution.
+    Audio : réencodage AAC uniforme + aresample async pour alignement.
+    """
     list_file = output + ".txt"
     with open(list_file, "w", encoding="utf-8") as f:
         for c in clip_files:
             escaped = c.replace("'", "'\\''")
             f.write(f"file '{escaped}'\n")
 
+    # ─── Diagnostic : détecter les paramètres audio des clips ───
+    for c in clip_files:
+        info = _detect_video_codec(c)
+        logger.info(
+            "[vision.ffmpeg] Concat input: %s | v=%s a=%s sr=%s ch=%s",
+            os.path.basename(c),
+            info.get("video_codec"),
+            info.get("audio_codec"),
+            info.get("sample_rate"),
+            info.get("channels"),
+        )
+
     _ffmpeg_run([
-        "ffmpeg", "-y", "-f", "concat", "-safe", "0",
-        "-i", list_file, "-c", "copy", output,
+        "ffmpeg", "-y",
+        "-f", "concat", "-safe", "0",
+        "-i", list_file,
+        # ─── Vidéo : copie (pas de réencodage, même codec) ───
+        "-c:v", "copy",
+        # ─── Audio : réencodage uniforme pour son continu ───
+        "-c:a", "aac",
+        "-ar", "48000",
+        "-ac", "2",
+        "-b:a", "192k",
+        # ─── Filtre audio : alignement PTS + compensation silence ───
+        "-af", "aresample=async=1:min_hard_comp=0.100000:first_pts=0,dynaudnorm=p=0.9",
+        # ─── Éviter les décalages de timestamps ───
+        "-avoid_negative_ts", "make_zero",
+        "-fflags", "+genpts",
+        # ─── Faststart pour streaming web ───
+        "-movflags", "+faststart",
+        output,
     ])
+
+
+# ==============================================================================
+# CONCATÉNATION AVEC CROSSFADE (v30)
+# ------------------------------------------------------------------------------
+# Fusionne 2 clips avec une transition en fondu (vidéo + audio).
+# Utilise le filtre FFmpeg xfade pour un rendu professionnel.
+#
+# v30 (2026-09-21) : Création initiale
+# ==============================================================================
+def _ffmpeg_concat_crossfade(
+    clip1: str,
+    clip2: str,
+    output: str,
+    fade_duration: float = 0.5,
+) -> None:
+    """
+    Concatène 2 vidéos avec une transition en fondu (crossfade).
+
+    Args:
+        clip1         : première vidéo (chemin absolu)
+        clip2         : deuxième vidéo (chemin absolu)
+        output        : fichier de sortie
+        fade_duration : durée du fondu en secondes (défaut 0.5s)
+
+    Effet :
+        [Clip 1.................][XXXX]
+                                [XXXX][Clip 2.................]
+                            ↑
+                        transition douce
+    """
+    # Durée du clip 1 (pour placer correctement l'offset du xfade)
+    dur1 = _get_video_duration(clip1)
+    if dur1 <= fade_duration:
+        logger.warning(
+            "[vision.ffmpeg] Clip1 trop court (%ss) pour crossfade %ss — fallback concat simple",
+            dur1, fade_duration,
+        )
+        _ffmpeg_concat([clip1, clip2], output)
+        return
+
+    # Offset = moment où commence le crossfade (durée du clip1 - fade)
+    offset = dur1 - fade_duration
+
+    logger.info(
+        "[vision.ffmpeg] Crossfade : clip1=%.2fs, fade=%.2fs, offset=%.2fs",
+        dur1, fade_duration, offset,
+    )
+
+    # Filtre complexe :
+    #   1. xfade → transition vidéo (fondu)
+    #   2. acrossfade → transition audio (fondu)
+    filter_complex = (
+        f"[0:v][1:v]xfade=transition=fade:duration={fade_duration}:offset={offset}[v];"
+        f"[0:a][1:a]acrossfade=d={fade_duration}:c1=tri:c2=tri[a]"
+    )
+
+    _ffmpeg_run([
+        "ffmpeg", "-y",
+        "-i", clip1,
+        "-i", clip2,
+        "-filter_complex", filter_complex,
+        "-map", "[v]",
+        "-map", "[a]",
+        "-c:v", "libx264",
+        "-preset", "fast",
+        "-crf", "20",
+        "-c:a", "aac",
+        "-ar", "48000",
+        "-b:a", "192k",
+        "-movflags", "+faststart",
+        output,
+    ])
+
+    logger.info("[vision.ffmpeg] Crossfade terminé : %s", output)
 
 
 # ==============================================================================

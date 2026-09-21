@@ -1,6 +1,7 @@
 /**
  * BEK-v15-HYBRID — Agent UI Controller (Mermaid sanitized + AIsa + Agnes AI + tous providers)
  * v16.1 : Ajout du provider Agnes AI (vidéo gratuite)
+ * v16.2 : Fix syntax error (CSS dupliqué à la fin retiré)
  */
 (function() {
     'use strict';
@@ -41,6 +42,7 @@
     let currentConvId = null;
     let isStreaming = false;
     let attachedFiles = [];
+    let pendingUploads = {};   // ★ v27 : uploads en cours (spinner)
     let activeController = null;
     let globalSkills = [];
 
@@ -324,6 +326,11 @@
             if(!availableModels['agnes']) availableModels['agnes'] = ["agnes-v2.0", "agnes-v2.5-flash"];
 
             let providersList = data.providers || [];
+
+            // ★ FORCER Agnes en tête de liste (fallback si backend ne l'envoie pas)
+            if (!providersList.some(p => p.id === 'agnes')) {
+                providersList.unshift({id: 'agnes', name: 'Agnes AI (Video)', configured: true});
+            }
 
             const requiredProviders = [
                 // ★ AGNES AI — en premier ★
@@ -754,49 +761,204 @@
     }
 
     async function uploadFileToServer(file) {
+        // ★ v27 : affichage immédiat avec spinner
+        const tempId = `upload_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        pendingUploads[tempId] = {
+            name: file.name,
+            size: file.size,
+            status: 'uploading',
+            progress: 0,
+        };
+        renderAttachedFilesPreview();
+
         const formData = new FormData();
         formData.append('file', file);
         try {
-            const resp = await fetch(`${API_BASE}/api/upload?t=${Date.now()}`, { method: 'POST', body: formData });
+            const resp = await fetch(`${API_BASE}/api/upload?t=${Date.now()}`, {
+                method: 'POST',
+                body: formData,
+            });
             const data = await resp.json();
             if (resp.ok) {
-                attachedFiles.push(data.filename);
+                // Retirer le pending, ajouter le vrai fichier
+                delete pendingUploads[tempId];
+                attachedFiles.push({
+                    filename: data.filename,
+                    size: file.size,
+                    type: file.type,
+                    status: 'done',
+                });
                 renderAttachedFilesPreview();
                 if (window.loadFilesList) await window.loadFilesList();
             } else {
-                alert(`Erreur upload : ${data.error}`);
+                pendingUploads[tempId].status = 'error';
+                pendingUploads[tempId].error = data.error || 'Erreur inconnue';
+                renderAttachedFilesPreview();
+                setTimeout(() => {
+                    delete pendingUploads[tempId];
+                    renderAttachedFilesPreview();
+                }, 4000);
             }
         } catch (err) {
-            alert("Erreur réseau lors de l'upload.");
+            pendingUploads[tempId].status = 'error';
+            pendingUploads[tempId].error = 'Erreur réseau';
+            renderAttachedFilesPreview();
+            setTimeout(() => {
+                delete pendingUploads[tempId];
+                renderAttachedFilesPreview();
+            }, 4000);
         }
+    }
+
+    // ★ v27 : icônes par type de fichier
+    function getFileIcon(filename, mimeType) {
+        const ext = (filename.split('.').pop() || '').toLowerCase();
+        if (mimeType?.startsWith('image/') || ['png','jpg','jpeg','gif','webp','bmp','svg'].includes(ext)) return '🖼️';
+        if (mimeType?.startsWith('video/') || ['mp4','webm','mov','avi','mkv'].includes(ext)) return '🎬';
+        if (mimeType?.startsWith('audio/') || ['mp3','wav','ogg','flac','m4a'].includes(ext)) return '🎵';
+        if (ext === 'pdf') return '📕';
+        if (['zip','rar','7z','tar','gz'].includes(ext)) return '🗜️';
+        if (['exe','msi','bat','sh','cmd'].includes(ext)) return '⚙️';
+        if (['doc','docx','odt'].includes(ext)) return '📝';
+        if (['xls','xlsx','ods','csv'].includes(ext)) return '📊';
+        if (['ppt','pptx','odp'].includes(ext)) return '📽️';
+        if (['txt','md','log'].includes(ext)) return '📄';
+        if (['json','xml','yaml','yml','toml','ini'].includes(ext)) return '🔧';
+        if (['js','ts','py','java','c','cpp','rs','go','rb','php','html','css','sql'].includes(ext)) return '💻';
+        return '📎';
+    }
+
+    function formatFileSize(bytes) {
+        if (!bytes || bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return `${(bytes / Math.pow(k, i)).toFixed(1)} ${sizes[i]}`;
     }
 
     function renderAttachedFilesPreview() {
         if (!DOM.filePreviewBar) return;
-        if (attachedFiles.length === 0) {
+
+        const pendingCount = Object.keys(pendingUploads).length;
+        const totalCount = attachedFiles.length + pendingCount;
+
+        if (totalCount === 0) {
             DOM.filePreviewBar.style.display = 'none';
             DOM.filePreviewBar.innerHTML = '';
             return;
         }
+
         DOM.filePreviewBar.style.display = 'flex';
+        DOM.filePreviewBar.style.flexWrap = 'wrap';
         DOM.filePreviewBar.style.gap = '10px';
         DOM.filePreviewBar.style.padding = '10px 0';
 
-        DOM.filePreviewBar.innerHTML = attachedFiles.map((f, i) => {
-            const isImg = f.match(/\.(png|jpe?g|gif|webp)$/i);
+        let html = '';
+
+        // ─── Fichiers en cours d'upload (spinner) ───
+        for (const [tempId, info] of Object.entries(pendingUploads)) {
+            const isError = info.status === 'error';
+            const borderColor = isError ? '#ef4444' : 'var(--accent-blue)';
+            html += `
+                <div class="file-preview-item" style="
+                    position:relative; min-width:200px; max-width:280px;
+                    padding:12px 14px; border-radius:12px;
+                    border:1px solid ${borderColor};
+                    background:rgba(30,41,59,0.6);
+                    display:flex; align-items:center; gap:12px;
+                    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+                    animation: pulseFade 1.5s ease-in-out infinite;
+                ">
+                    <div style="font-size:24px;">${isError ? '⚠️' : '⏳'}</div>
+                    <div style="flex:1; overflow:hidden;">
+                        <div style="font-size:12px; font-weight:600; color:#f8fafc; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">
+                            ${escapeHtml(info.name)}
+                        </div>
+                        <div style="font-size:11px; color:${isError ? '#ef4444' : '#94a3b8'}; margin-top:2px;">
+                            ${isError ? escapeHtml(info.error || 'Erreur') : `Upload en cours… ${formatFileSize(info.size)}`}
+                        </div>
+                    </div>
+                    ${!isError ? `<div class="spinner-mini"></div>` : ''}
+                </div>
+            `;
+        }
+
+        // ─── Fichiers uploadés ───
+        html += attachedFiles.map((f, i) => {
+            const filename = typeof f === 'string' ? f : f.filename;
+            const size = typeof f === 'object' ? f.size : 0;
+            const type = typeof f === 'object' ? f.type : '';
+            const icon = getFileIcon(filename, type);
+            const isImg = filename.match(/\.(png|jpe?g|gif|webp|bmp|svg)$/i);
+            const isVideo = filename.match(/\.(mp4|webm|mov|avi|mkv)$/i);
+
+            // ─── Preview image (miniature) ───
             if (isImg) {
                 return `
-                <div style="position:relative; width:80px; height:80px; border-radius:12px; border:1px solid var(--border-color); overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
-                    <img src="${API_BASE}/api/download/${encodeURIComponent(f)}" style="width:100%; height:100%; object-fit:cover;">
-                    <button onclick="removeAttachedFile(${i})" style="position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.7); color:#fff; border:none; border-radius:50%; width:20px; height:20px; font-size:10px; cursor:pointer;">✕</button>
-                </div>`;
-            } else {
-                return `
-                <span style="background:rgba(92,156,230,0.2); color:var(--accent-blue); padding:6px 10px; border-radius:8px; font-size:12px; display:flex; align-items:center; gap:8px; border:1px solid rgba(92,156,230,0.4);">
-                    📎 ${escapeHtml(f)} <button onclick="removeAttachedFile(${i})" style="color:#ff4a4a; font-weight:bold; background:none; border:none; cursor:pointer; font-size:14px;">&times;</button>
-                </span>`;
+                    <div class="file-preview-item" style="
+                        position:relative; width:80px; height:80px;
+                        border-radius:12px; border:1px solid var(--border-color);
+                        overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.3);
+                    ">
+                        <img src="${API_BASE}/api/download/${encodeURIComponent(filename)}"
+                             style="width:100%; height:100%; object-fit:cover;"
+                             alt="${escapeHtml(filename)}">
+                        <button onclick="removeAttachedFile(${i})" class="file-preview-close"
+                                style="position:absolute; top:4px; right:4px;">✕</button>
+                    </div>
+                `;
             }
+
+            // ─── Preview vidéo (lecteur inline) ───
+            if (isVideo) {
+                return `
+                    <div class="file-preview-item" style="
+                        position:relative; width:160px; height:90px;
+                        border-radius:12px; border:1px solid var(--border-color);
+                        overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.3);
+                        background:#000;
+                    ">
+                        <video src="${API_BASE}/api/download/${encodeURIComponent(filename)}"
+                               style="width:100%; height:100%; object-fit:cover;" muted></video>
+                        <div style="position:absolute; bottom:0; left:0; right:0; padding:2px 6px;
+                                    background:linear-gradient(transparent, rgba(0,0,0,0.8));
+                                    color:#fff; font-size:10px; text-overflow:ellipsis;
+                                    white-space:nowrap; overflow:hidden;">
+                            🎬 ${escapeHtml(filename)}
+                        </div>
+                        <button onclick="removeAttachedFile(${i})" class="file-preview-close"
+                                style="position:absolute; top:4px; right:4px;">✕</button>
+                    </div>
+                `;
+            }
+
+            // ─── Preview fichier (icône + nom + taille) ───
+            return `
+                <div class="file-preview-item" style="
+                    position:relative; min-width:180px; max-width:280px;
+                    padding:10px 12px; border-radius:12px;
+                    border:1px solid var(--border-color);
+                    background:rgba(30,41,59,0.6);
+                    display:flex; align-items:center; gap:10px;
+                    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+                ">
+                    <div style="font-size:24px;">${icon}</div>
+                    <div style="flex:1; overflow:hidden;">
+                        <div style="font-size:12px; font-weight:600; color:#f8fafc;
+                                    text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">
+                            ${escapeHtml(filename)}
+                        </div>
+                        <div style="font-size:11px; color:#94a3b8; margin-top:2px;">
+                            ${size ? formatFileSize(size) : 'Prêt'}
+                        </div>
+                    </div>
+                    <button onclick="removeAttachedFile(${i})" class="file-preview-close"
+                            style="position:relative; top:auto; right:auto;">✕</button>
+                </div>
+            `;
         }).join('');
+
+        DOM.filePreviewBar.innerHTML = html;
     }
 
     window.removeAttachedFile = function(index) {
@@ -822,16 +984,24 @@
 
         let fullTextContent = text;
         if (attachedFiles.length > 0) {
-            fullTextContent += "\n[Fichiers joints : " + attachedFiles.join(', ') + "]";
+            fullTextContent += "\n[Fichiers joints : " + attachedFiles.map(f => typeof f === 'string' ? f : f.filename).join(', ') + "]";
 
-            const imageFiles = attachedFiles.filter(f => f.match(/\.(png|jpe?g|gif|webp)$/i));
-            const zipFiles = attachedFiles.filter(f => f.match(/\.zip$/i));
+            const imageFiles = attachedFiles.filter(f => {
+                const name = typeof f === 'string' ? f : f.filename;
+                return name.match(/\.(png|jpe?g|gif|webp)$/i);
+            });
+            const zipFiles = attachedFiles.filter(f => {
+                const name = typeof f === 'string' ? f : f.filename;
+                return name.match(/\.zip$/i);
+            });
 
             if (imageFiles.length > 0) {
-                fullTextContent += "\n(INSTRUCTION SYSTEME : L'utilisateur a attaché ces images. Tu DOIS utiliser l'action [ACTION:analyze_image]{\"image_path\": \"uploads/" + imageFiles[0] + "\", \"prompt\": \"Décris cette image en détail\"}[/ACTION] pour les lire).";
+                const firstName = typeof imageFiles[0] === 'string' ? imageFiles[0] : imageFiles[0].filename;
+                fullTextContent += "\n(INSTRUCTION SYSTEME : L'utilisateur a attaché ces images. Tu DOIS utiliser l'action [ACTION:analyze_image]{\"image_path\": \"uploads/" + firstName + "\", \"prompt\": \"Décris cette image en détail\"}[/ACTION] pour les lire).";
             }
             if (zipFiles.length > 0) {
-                fullTextContent += "\n(INSTRUCTION SYSTEME : Utilise [ACTION:analyze_zip_content]{\"zip_path\": \"uploads/" + zipFiles[0] + "\"}[/ACTION]).";
+                const firstName = typeof zipFiles[0] === 'string' ? zipFiles[0] : zipFiles[0].filename;
+                fullTextContent += "\n(INSTRUCTION SYSTEME : Utilise [ACTION:analyze_zip_content]{\"zip_path\": \"uploads/" + firstName + "\"}[/ACTION]).";
             }
         }
 

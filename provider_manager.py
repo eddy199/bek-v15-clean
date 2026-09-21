@@ -10,6 +10,13 @@
 #   - Mapping centralisé Veo 3.1 + Gemini image (v22 conservé)
 #   - Détection dynamique des modèles (v22 conservé)
 #   - Aucune régression : fallback chain texte inchangée
+#
+# v25 (2026-09-21) :
+#   - AJOUT : Provider HUGGING FACE IMAGE (via Inference API)
+#   - HF_IMAGE_MODELS : mapping noms courts UI -> IDs officiels
+#   - get_huggingface_image_endpoints() : URL predict prête à l'emploi
+#   - resolve_huggingface_image_model_id() : conversion noms courts
+#   - list_huggingface_image_models() : liste des modèles image HF
 # ==============================================================================
 from __future__ import annotations
 
@@ -46,7 +53,7 @@ class ProviderManager:
     }
 
     # ==========================================================================
-    # ★ NOUVEAU v24 — MAPPING AGNES VIDEO
+    # ★ v24 — MAPPING AGNES VIDEO
     # --------------------------------------------------------------------------
     # Noms courts UI -> IDs officiels Agnes
     # ==========================================================================
@@ -62,6 +69,29 @@ class ProviderManager:
         "agnes-video-2.5-flash": "agnes-video-2.5-flash",
     }
 
+    # ==========================================================================
+    # ★ v25 — MAPPING HUGGING FACE IMAGE
+    # --------------------------------------------------------------------------
+    # Noms courts UI -> IDs officiels HF
+    # ==========================================================================
+    HF_IMAGE_MODELS: Dict[str, str] = {
+        # Noms courts UI (recommandés)
+        "hf-flux-schnell":  "black-forest-labs/FLUX.1-schnell",       # rapide, gratuit
+        "hf-flux-dev":      "black-forest-labs/FLUX.1-dev",           # qualité, payant
+        "hf-sdxl-turbo":    "stabilityai/sdxl-turbo",                  # rapide, gratuit
+        "hf-sd-3.5-large":  "stabilityai/stable-diffusion-3.5-large",  # qualité pro
+        "hf-sd-3.5-medium": "stabilityai/stable-diffusion-3.5-medium", # équilibré
+        "hf-sd-2.1":        "stabilityai/stable-diffusion-2-1",        # classique gratuit
+
+        # IDs officiels (si l'utilisateur les passe directement)
+        "black-forest-labs/FLUX.1-schnell": "black-forest-labs/FLUX.1-schnell",
+        "black-forest-labs/FLUX.1-dev":     "black-forest-labs/FLUX.1-dev",
+        "stabilityai/sdxl-turbo":           "stabilityai/sdxl-turbo",
+        "stabilityai/stable-diffusion-3.5-large": "stabilityai/stable-diffusion-3.5-large",
+        "stabilityai/stable-diffusion-3.5-medium": "stabilityai/stable-diffusion-3.5-medium",
+        "stabilityai/stable-diffusion-2-1": "stabilityai/stable-diffusion-2-1",
+    }
+
     # Durées officiellement supportées par Veo 3.1 (en secondes)
     VEO_SUPPORTED_DURATIONS: List[int] = [4, 6, 8]
     VEO_MAX_SINGLE_CLIP: int = 8
@@ -70,13 +100,11 @@ class ProviderManager:
     # Endpoints
     GEMINI_API_BASE: str = "https://generativelanguage.googleapis.com/v1beta"
     AGNES_DEFAULT_BASE_URL: str = "https://apihub.agnes-ai.com/v1"
+        # ★ v25.1 : endpoint déprécié api-inference → nouveau router
+    HF_INFERENCE_BASE: str = "https://router.huggingface.co/hf-inference/models"
 
     # ==========================================================================
     # LIMITES AGNES VIDEO
-    # ==========================================================================
-    # - v2.0     : num_frames max 441 (~18 s @ 24 fps), 1080p
-    # - 2.5-flash: seconds max 12, 720p
-    # - RPM      : 1 (une requête par minute)
     # ==========================================================================
     AGNES_V2_MAX_FRAMES: int = 441
     AGNES_V2_MIN_FRAMES: int = 81
@@ -188,7 +216,6 @@ class ProviderManager:
         ],
         # 9. Google Gemini
         "gemini": [
-            # ----- Chat / Texte -----
             "gemini-3.8-flash",
             "gemini-3.7-flash",
             "gemini-3.6-flash",
@@ -202,14 +229,10 @@ class ProviderManager:
             "gemini-1.5-pro-preview",
             "gemini-3-flash-preview",
             "gemini-3.1-flash-lite",
-
-            # ----- Images -----
             "gemini-3.1-flash-image",
             "gemini-3.1-flash-lite-image",
             "gemini-3-pro-image",
             "gemini-2.5-flash-image",
-
-            # ----- Live / TTS -----
             "gemini-3.5-live-translate-preview",
             "gemini-3.1-flash-live-preview",
             "gemini-3.1-flash-tts-preview",
@@ -217,30 +240,21 @@ class ProviderManager:
             "gemini-2.5-flash-preview-tts",
             "gemini-2.5-pro-preview-tts",
             "gemini-omni-flash",
-
-            # ----- Veo 3.1 : noms courts UI -----
             "veo-3.1-gene-prev",
             "veo-3.1-lite-gene-prev",
             "veo-3.1-fast-gene-prev",
-
-            # ----- Veo 3.1 : IDs officiels API -----
             "veo-3.1-generate-preview",
             "veo-3.1-lite-generate-preview",
             "veo-3.1-fast-generate-preview",
-
-            # ----- Audio (Lyria) -----
             "lyria-3-pro-preview",
             "lyria-3-clip-preview",
             "lyria-realtime-preview",
         ],
 
-        # ★ NOUVEAU v24 — Agnes AI (vidéo gratuite) ★
+        # ★ v24 — Agnes AI (vidéo gratuite) ★
         "agnes": [
-            # Noms courts UI (recommandés)
-            "agnes-v2.0",             # 1080p, 18s max, frame-based
-            "agnes-v2.5-flash",       # 720p, 12s max, second-based
-
-            # IDs officiels
+            "agnes-v2.0",
+            "agnes-v2.5-flash",
             "agnes-video-v2.0",
             "agnes-video-2.5-flash",
         ],
@@ -293,13 +307,20 @@ class ProviderManager:
         "siliconflow": [
             "siliconflow-qwen3-8b",
         ],
-        # 16. Hugging Face
+        # 16. Hugging Face (texte + image)
         "huggingface": [
+            # Chat / Texte
             "Meta-Llama-3.1-8B-Instruct",
             "gemma-3-4b-it",
             "phi-4",
             "Qwen2.5-Coder-7B-Instruct",
             "Qwen2.5-7B-Instruct",
+            # ★ v25 — Image ★
+            "hf-flux-schnell",
+            "hf-sdxl-turbo",
+            "hf-sd-3.5-large",
+            "hf-sd-3.5-medium",
+            "hf-sd-2.1",
         ],
         # 17. Ollama Cloud
         "ollama_cloud": [
@@ -350,7 +371,6 @@ class ProviderManager:
         "siliconflow":   "SILICONFLOW_API_KEY",
         "huggingface":   "HUGGINGFACE_API_KEY",
         "ollama_cloud":  "OLLAMA_API_KEY",
-        # ★ NOUVEAU v24 ★
         "agnes":         "AGNES_API_KEY",
     }
 
@@ -489,30 +509,23 @@ class ProviderManager:
     # RÉSOLUTION DES MODEL IDS (Veo 3.1 + Gemini image)
     # ==========================================================================
     def resolve_model_id(self, model_name: str) -> str:
-        """
-        Convertit un nom court UI vers le model ID officiel Google.
-        Fonctionne pour Veo 3.1 et Gemini Image.
-        """
+        """Convertit un nom court UI vers le model ID officiel Google."""
         if not model_name:
             return model_name
 
         clean = model_name.replace("models/", "").strip()
 
-        # Mapping direct
         if clean in self.MODEL_ID_MAPPING:
             mapped = self.MODEL_ID_MAPPING[clean]
             logger.info("[provider_manager] resolve_model_id: %s -> %s", clean, mapped)
             return mapped
 
-        # Déjà un ID officiel Veo ?
         if clean.startswith("veo-") and "generate" in clean:
             return clean
 
-        # Déjà un ID officiel Gemini image ?
         if clean.startswith("gemini-") and "image" in clean:
             return clean
 
-        # Fallback générique : veo-xxx-gene-prev -> veo-xxx-generate-preview
         if clean.startswith("veo-") and clean.endswith("-gene-prev"):
             normalized = clean.replace("-gene-prev", "-generate-preview")
             logger.warning(
@@ -537,40 +550,38 @@ class ProviderManager:
         return resolved
 
     # ==========================================================================
-    # ★ NOUVEAU v24 — RÉSOLUTION DES MODEL IDS AGNES
+    # ★ v24 — RÉSOLUTION DES MODEL IDS AGNES
     # ==========================================================================
     def resolve_agnes_model_id(self, model: str) -> str:
-        """
-        Convertit un nom court UI vers le model ID officiel Agnes.
-
-        Exemples :
-            "agnes-v2.0"       -> "agnes-video-v2.0"
-            "agnes-v2"         -> "agnes-video-v2.0"
-            "agnes-flash"      -> "agnes-video-2.5-flash"
-            "agnes-v2.5-flash" -> "agnes-video-2.5-flash"
-        """
+        """Convertit un nom court UI vers le model ID officiel Agnes."""
         if not model:
-            # Par défaut : v2.0 (1080p, plus de contrôle)
             return "agnes-video-v2.0"
 
         clean = model.replace("models/", "").strip()
 
-        # Mapping direct
         if clean in self.AGNES_MODEL_MAPPING:
             mapped = self.AGNES_MODEL_MAPPING[clean]
             logger.info("[provider_manager] resolve_agnes_model_id: %s -> %s", clean, mapped)
             return mapped
 
-        # Déjà un ID officiel ?
         if clean.startswith("agnes-video-"):
             return clean
 
-        # Fallback : v2.0
         logger.warning(
             "[provider_manager] resolve_agnes_model_id: '%s' inconnu, fallback sur agnes-video-v2.0",
             model,
         )
         return "agnes-video-v2.0"
+
+    # ==========================================================================
+    # ★ v25 — RÉSOLUTION DES MODEL IDS HUGGING FACE IMAGE
+    # ==========================================================================
+    def resolve_huggingface_image_model_id(self, model: str) -> str:
+        """Convertit un nom court UI vers le model ID officiel HF (image)."""
+        if not model:
+            return "black-forest-labs/FLUX.1-schnell"
+        clean = model.replace("models/", "").strip()
+        return self.HF_IMAGE_MODELS.get(clean, clean)
 
     # ==========================================================================
     # ENDPOINTS VEO (predictLongRunning + polling)
@@ -592,27 +603,10 @@ class ProviderManager:
         }
 
     # ==========================================================================
-    # ★ NOUVEAU v24 — ENDPOINTS AGNES (create + status)
+    # ★ v24 — ENDPOINTS AGNES (create + status)
     # ==========================================================================
     def get_agnes_endpoints(self, model: str = "agnes-v2.0") -> Dict[str, Any]:
-        """
-        Retourne les URLs prêtes à l'emploi pour Agnes AI Video.
-
-        Usage :
-            ep = provider_manager.get_agnes_endpoints("agnes-v2.0")
-            # ep = {
-            #   "model_id":     "agnes-video-v2.0",
-            #   "base_url":     "https://apihub.agnes-ai.com/v1",
-            #   "create_url":   "https://apihub.agnes-ai.com/v1/videos",
-            #   "status_url":   "https://apihub.agnes-ai.com/agnesapi",
-            #   "api_key":      "sk-...",
-            #   "headers":      { Authorization, Content-Type },
-            #   "is_v2":        True,   # True = v2.0 (frames), False = 2.5-flash (seconds)
-            #   "max_frames":   441,
-            #   "max_seconds":  12,
-            #   "default_fps":  24,
-            # }
-        """
+        """Retourne les URLs prêtes à l'emploi pour Agnes AI Video."""
         model_id = self.resolve_agnes_model_id(model)
         api_key = self.get_api_key("AGNES_API_KEY")
         base_url = (
@@ -626,19 +620,18 @@ class ProviderManager:
             "model_id":     model_id,
             "base_url":     base_url,
             "create_url":   f"{base_url}/videos",
-            # Endpoint de status (différent du /v1 !)
-            "status_url":   f"{base_url.replace('/v1', '')}/agnesapi",
+            "status_url":   f"{base_url}/videos",
             "api_key":      api_key,
             "headers": {
                 "Content-Type":  "application/json",
                 "Authorization": f"Bearer {api_key}",
             },
             "is_v2":        is_v2,
-            "max_frames":   self.AGNES_V2_MAX_FRAMES,     # 441
-            "min_frames":   self.AGNES_V2_MIN_FRAMES,     # 81
-            "default_fps":  self.AGNES_V2_DEFAULT_FPS,    # 24
-            "min_seconds":  self.AGNES_FLASH_MIN_SECONDS, # 4
-            "max_seconds":  self.AGNES_FLASH_MAX_SECONDS, # 12
+            "max_frames":   self.AGNES_V2_MAX_FRAMES,
+            "min_frames":   self.AGNES_V2_MIN_FRAMES,
+            "default_fps":  self.AGNES_V2_DEFAULT_FPS,
+            "min_seconds":  self.AGNES_FLASH_MIN_SECONDS,
+            "max_seconds":  self.AGNES_FLASH_MAX_SECONDS,
         }
 
     def list_agnes_video_models(self) -> List[str]:
@@ -646,6 +639,45 @@ class ProviderManager:
         return [
             "agnes-video-v2.0",
             "agnes-video-2.5-flash",
+        ]
+
+    # ==========================================================================
+    # ★ v25 — ENDPOINTS HUGGING FACE IMAGE
+    # ==========================================================================
+    def get_huggingface_image_endpoints(self, model: str = "hf-flux-schnell") -> Dict[str, Any]:
+        """
+        Retourne les URLs prêtes à l'emploi pour Hugging Face Inference API (image).
+
+        Usage :
+            ep = provider_manager.get_huggingface_image_endpoints("hf-flux-schnell")
+            # ep = {
+            #   "model_id":     "black-forest-labs/FLUX.1-schnell",
+            #   "predict_url":  "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+            #   "api_key":      "hf_...",
+            #   "headers":      { Authorization, Content-Type },
+            # }
+        """
+        model_id = self.resolve_huggingface_image_model_id(model)
+        api_key = self.get_api_key("HUGGINGFACE_API_KEY")
+
+        return {
+            "model_id":    model_id,
+            "predict_url": f"{self.HF_INFERENCE_BASE}/{model_id}",
+            "api_key":     api_key,
+            "headers": {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type":  "application/json",
+            },
+        }
+
+    def list_huggingface_image_models(self) -> List[str]:
+        """Retourne la liste des modèles image HF disponibles (noms courts UI)."""
+        return [
+            "hf-flux-schnell",
+            "hf-sdxl-turbo",
+            "hf-sd-3.5-large",
+            "hf-sd-3.5-medium",
+            "hf-sd-2.1",
         ]
 
     # ==========================================================================
@@ -661,7 +693,6 @@ class ProviderManager:
         p = provider.lower().strip()
         now = time.time()
 
-        # Cache valide ?
         cache_key = f"models_{p}"
         if (
             not force_refresh
@@ -677,7 +708,6 @@ class ProviderManager:
                 "raw":       cached.get("raw", {}),
             }
 
-        # --- Gemini : appel API réel ---
         if p == "gemini":
             api_key = self.get_api_key("GEMINI_API_KEY")
             if not api_key:
@@ -725,7 +755,6 @@ class ProviderManager:
                 logger.warning("[provider_manager] Erreur détection Gemini : %s", e)
                 return self._static_models_response(p)
 
-        # --- Autres fournisseurs : statique ---
         return self._static_models_response(p)
 
     def _static_models_response(self, provider: str) -> Dict[str, Any]:

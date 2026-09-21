@@ -22,6 +22,13 @@
 #   generate_image, edit_image).
 #   L'agent spécifie déjà "agnes" + "agnes-v2.0" dans la balise,
 #   il ne faut PAS les remplacer par le provider du chat (kimi, groq, etc.).
+#
+# CORRECTIF v14 (2026-09-21) :
+# - Ajout extend_video + extend_video_multiple dans le prompt système
+# - Règle anti-confusion : extend_video ≠ edit_video
+# - Ajout extend_video / extend_video_multiple dans MULTIMEDIA_ACTIONS
+# - Ajout branche extend_video dans _execute_action_unified
+# - Affichage "Vidéo étendue !" vs "Vidéo générée !" dans _format_execution_result
 # ==============================================================================
 from __future__ import annotations
 
@@ -119,6 +126,8 @@ MAX_QUERY_WORDS = _env_int("BEK_CHAT_MAX_QUERY_WORDS", 8)
 MULTIMEDIA_ACTIONS = (
     "generate_video",
     "edit_video",
+    "extend_video",
+    "extend_video_multiple",
     "generate_image",
     "edit_image",
 )
@@ -361,7 +370,7 @@ hll_counter = HyperLogLog(b=6)
 
 
 # ══════════════════════════════════════════════════════════════════
-# 🧠 PROMPT SYSTÈME v12 (règles renforcées + vidéo)
+# 🧠 PROMPT SYSTÈME v14 (règles renforcées + extend_video)
 # ══════════════════════════════════════════════════════════════════
 _ARCHITECTURE_BLOCK = ""
 if _ARCHITECTURE_CONTEXT:
@@ -406,7 +415,20 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 # ══════════════════════════════════════════════════════════════════
 # 🎬 RÈGLES VIDÉO (CRITIQUE — À RESPECTER ABSOLUMENT)
 # ══════════════════════════════════════════════════════════════════
-- Pour toute demande de vidéo, tu DOIS appeler generate_video.
+- NOUVELLE vidéo (à partir de zéro)    → generate_video
+- MODIFIER une vidéo (couper, monter)  → edit_video
+- ÉTENDRE / CONTINUER une vidéo
+  existante (même personnage, même
+  décor, suite de la scène)            → extend_video ⚠️ OBLIGATOIRE
+
+⚠️ RÈGLE ANTI-CONFUSION :
+- Si l'utilisateur dit « étends », « continue », « ajoute X secondes »,
+  « suite de la vidéo », « prolonge » → c'est TOUJOURS extend_video.
+- N'utilise JAMAIS edit_video pour une extension. edit_video régénère
+  une nouvelle vidéo depuis zéro et PERD la continuité du personnage.
+- extend_video PRÉSERVE la couleur / le personnage / le décor.
+
+- Pour toute NOUVELLE vidéo, tu DOIS appeler generate_video.
 - TOUJOURS spécifier ces paramètres :
   * provider : "agnes"           (gratuit, 1080p, quota illimité)
   * model    : "agnes-v2.0"      (le meilleur)
@@ -416,7 +438,7 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
   * audio_style : "children"     (ou "default", "nature", "music", "cinematic")
 - Le prompt DOIT être en ANGLAIS, descriptif, avec le style visuel.
 
-- EXEMPLE COMPLET :
+- EXEMPLE COMPLET (nouvelle vidéo) :
   [ACTION:generate_video]{{
     "prompt": "A cute kitten playing happily in a sunny flower garden, vibrant 3D animation, bright cheerful atmosphere, children's animated movie style",
     "provider": "agnes",
@@ -427,16 +449,27 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
     "audio_style": "children"
   }}[/ACTION]
 
+- EXEMPLE EXTENSION (continuer une vidéo existante) :
+  [ACTION:extend_video]{{
+    "video_path": "gen_video_943e17e3.mp4",
+    "prompt": "The same gray kitten continues running through the sunny flower garden and meets a small friendly dog. The kitten says 'Bonjour' in French. Maintain exactly the same character, garden, and 3D Pixar style.",
+    "duration": 9,
+    "with_audio": true,
+    "audio_style": "nature"
+  }}[/ACTION]
+
 - ⚠️ N'UTILISE PAS Veo (pas de quota disponible).
 - ⚠️ N'UTILISE PAS gemini comme provider pour la vidéo.
 
 # ══════════════════════════════════════════════════════════════════
 
 # ACTIONS DISPONIBLES :
-   - [ACTION:generate_image]{{"prompt": "detailed description in english"}}[/ACTION]
+      - [ACTION:generate_image]{{"prompt": "detailed description in english", "provider": "pollinations", "model": "flux-3d"}}[/ACTION]
    - [ACTION:edit_image]{{"image_paths": ["filename.png"], "prompt": "exact modification directive in english"}}[/ACTION]
    - [ACTION:generate_video]{{"prompt": "...", "provider": "agnes", "model": "agnes-v2.0", "duration": 5, "aspect_ratio": "16:9", "with_audio": true, "audio_style": "children"}}[/ACTION]
    - [ACTION:edit_video]{{"video_paths": ["filename.mp4"], "prompt": "exact modification directive in english"}}[/ACTION]
+   - [ACTION:extend_video]{{"video_path": "filename.mp4", "prompt": "continuation prompt in english", "duration": 9, "with_audio": true, "audio_style": "nature"}}[/ACTION]
+   - [ACTION:extend_video_multiple]{{"video_path": "filename.mp4", "prompts": ["scene 1", "scene 2"], "duration": 9, "with_audio": true, "audio_style": "nature"}}[/ACTION]
    - [ACTION:create_dynamic_skill]{{"skill_name": "x", "code_content": "y"}}[/ACTION]
    - [ACTION:orchestrate]{{"goal": "..."}}[/ACTION]
    - [ACTION:web_sync]{{"query": "..."}}[/ACTION]
@@ -530,8 +563,36 @@ tu DOIS donner cette réponse DIRECTEMENT, sans appeler d'outil.
 - Avant de dire "je n'ai pas accès", RAPPELLE-TOI que tu as des outils web.
 
 # DIRECTIVE MULTIMÉDIA ABSOLUE
+# ══════════════════════════════════════════════════════════════════
+# 🎨 RÈGLES IMAGE (CRITIQUE — À RESPECTER ABSOLUMENT)
+# ══════════════════════════════════════════════════════════════════
+- Pour TOUTE demande de génération d'image, tu DOIS appeler generate_image.
+- TOUJOURS spécifier ces paramètres :
+  * provider : "pollinations"    (gratuit, illimité, fiable)
+  * model    : "flux-3d"         (style 3D Pixar parfait)
+- Le prompt DOIT être en ANGLAIS, descriptif et détaillé.
+
+- EXEMPLE COMPLET :
+  [ACTION:generate_image]{{
+    "prompt": "a cute white kitten with bright blue eyes in a sunny flower garden, vibrant 3D Pixar-style animation, bright cheerful atmosphere",
+    "provider": "pollinations",
+    "model": "flux-3d"
+  }}[/ACTION]
+
+- Si l'utilisateur demande EXPLICITEMENT une qualité photo-réaliste,
+  tu peux utiliser : "provider": "gemini", "model": "gemini-3.1-flash-image"
+  (attention : Gemini peut être limité en quota)
+
+- AUTRES MODÈLES POLLINATIONS disponibles :
+  * "flux-3d"      : 3D stylisé (défaut, Pixar)
+  * "flux-realism" : photoréaliste
+  * "flux-anime"   : anime / manga
+  * "flux"         : généraliste
+
+# ══════════════════════════════════════════════════════════════════
+
 - Pour TOUTE demande visuelle : generate_image, edit_image,
-  generate_video, ou edit_video.
+  generate_video, edit_video, extend_video, extend_video_multiple.
 {_ARCHITECTURE_BLOCK}
 """
 
@@ -573,15 +634,13 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             return merge_and_edit_images(image_paths=paths, user_prompt=prompt)
 
         # ══════════════════════════════════════════════════════════════════
-        # MULTIMÉDIA — VIDÉO (CORRIGÉ v12)
-        # provider="agnes" + model="agnes-v2.0" + with_audio=True par défaut
+        # MULTIMÉDIA — VIDÉO (v12 + v14)
         # ══════════════════════════════════════════════════════════════════
         elif act_name == "generate_video":
             from services.vision import generate_video_with_provider
 
             prompt = params.get("prompt") or params.get("query") or ""
 
-            # Valeurs par défaut : Agnes + audio activé
             provider_v    = params.get("provider", "agnes")
             model_v       = params.get("model", "agnes-v2.0")
             duration_v    = params.get("duration", 5)
@@ -620,6 +679,59 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                 provider=provider_v,
                 model=model_v,
                 duration=int(duration_v),
+            )
+
+        # ★ NOUVEAU v14 — extend_video (vraie extension avec continuité)
+        elif act_name == "extend_video":
+            from services.vision import extend_video_with_agnes
+
+            video_path = params.get("video_path") or params.get("video_paths") or "LAST"
+            if isinstance(video_path, list):
+                video_path = video_path[0] if video_path else "LAST"
+
+            prompt = params.get("prompt") or params.get("user_prompt") or params.get("query") or ""
+            model_v = params.get("model", "agnes-v2.0")
+            duration_v = params.get("duration", 9)
+            with_audio_v = params.get("with_audio", True)
+            audio_style_v = params.get("audio_style", "nature")
+
+            logger.info(
+                "[extend_video] video=%s duration=%s prompt=%r",
+                video_path, duration_v, prompt[:80],
+            )
+
+            return extend_video_with_agnes(
+                video_path=video_path,
+                new_prompt=prompt,
+                model=model_v,
+                duration=int(duration_v),
+                with_audio=bool(with_audio_v),
+                audio_style=audio_style_v,
+            )
+
+        # ★ NOUVEAU v14 — extend_video_multiple
+        elif act_name == "extend_video_multiple":
+            from services.vision import extend_video_multiple
+
+            video_path = params.get("video_path") or "LAST"
+            prompts_list = params.get("prompts", [])
+            model_v = params.get("model", "agnes-v2.0")
+            duration_v = params.get("duration", 9)
+            with_audio_v = params.get("with_audio", True)
+            audio_style_v = params.get("audio_style", "nature")
+
+            logger.info(
+                "[extend_video_multiple] video=%s clips=%d duration=%s",
+                video_path, len(prompts_list), duration_v,
+            )
+
+            return extend_video_multiple(
+                video_path=video_path,
+                prompts=prompts_list,
+                model=model_v,
+                duration_per_clip=int(duration_v),
+                with_audio=bool(with_audio_v),
+                audio_style=audio_style_v,
             )
     except Exception as exc:
         logger.error("Erreur Vision (%s) : %s", act_name, exc, exc_info=True)
@@ -724,30 +836,54 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
     if not isinstance(exec_res, dict):
         return str(exec_res)
 
-    fn = exec_res.get("filename", "")         # ← 4 espaces ✅
+    fn = exec_res.get("filename", "")
     if exec_res.get("status") == "success" and fn:
         if any(fn.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"]):
             return f"🎨 **Image générée !**\n\n![{fn}](/api/download/{fn})"
         elif any(fn.lower().endswith(ext) for ext in [".mp4", ".webm", ".mov", ".avi"]):
-            # 🎬 Affichage vidéo inline avec lecteur HTML5 (comme Gemini/ChatGPT)
+            # ═══════════════════════════════════════════════════════════════
+            # ★ v14 — Détection extension vs génération
+            # ═══════════════════════════════════════════════════════════════
             duration = exec_res.get("actual_duration") or exec_res.get("duration") or ""
             provider = exec_res.get("provider", "")
             model = exec_res.get("model_id", "")
             with_audio = exec_res.get("with_audio", False)
             stitched = exec_res.get("stitched", False)
             clips = exec_res.get("clips", [])
+            mode_used = exec_res.get("mode_used", "")
+            extended_by = exec_res.get("extended_by")
+            source_video = exec_res.get("source_video", "")
 
-            info_lines = [f"🎬 **Vidéo générée !**"]
-            if duration:
-                info_lines.append(f"- Durée : **{duration}s**")
-            if provider:
-                info_lines.append(f"- Provider : `{provider}`")
-            if model:
-                info_lines.append(f"- Modèle : `{model}`")
-            if with_audio:
-                info_lines.append(f"- Audio : ✅ avec audio")
-            if stitched and clips:
-                info_lines.append(f"- Multi-clips : `{clips}`")
+            is_extension = (
+                bool(extended_by)
+                or act_name in ("extend_video", "extend_video_multiple")
+                or bool(mode_used and mode_used in ("keyframes", "multi_reference"))
+            )
+
+            if is_extension:
+                info_lines = [f"🎬 **Vidéo étendue !**" + (f" (+{extended_by}s)" if extended_by else "")]
+                if mode_used:
+                    info_lines.append(f"- Mode continuité : `{mode_used}`")
+                if source_video:
+                    info_lines.append(f"- Source : `{source_video}`")
+                if with_audio:
+                    info_lines.append(f"- Audio : ✅ avec audio")
+                if duration:
+                    info_lines.append(f"- Durée totale : **{duration}s**")
+                if clips and len(clips) > 1:
+                    info_lines.append(f"- Extensions multiples : `{len(clips)}` clips")
+            else:
+                info_lines = [f"🎬 **Vidéo générée !**"]
+                if duration:
+                    info_lines.append(f"- Durée : **{duration}s**")
+                if provider:
+                    info_lines.append(f"- Provider : `{provider}`")
+                if model:
+                    info_lines.append(f"- Modèle : `{model}`")
+                if with_audio:
+                    info_lines.append(f"- Audio : ✅ avec audio")
+                if stitched and clips:
+                    info_lines.append(f"- Multi-clips : `{clips}`")
 
             info = "\n".join(info_lines)
 

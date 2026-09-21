@@ -6,6 +6,12 @@
 #   - generate_video / edit_video : acceptent provider, model, duration,
 #     aspect_ratio, auto_stitch → permettent de router vers Agnes AI
 #   - Conserve toutes les autres fonctionnalités
+# v16.2 (2026-09-21) :
+#   - Ajout de extend_video / extend_video_multiple (Agnes multi_reference)
+#   - Enregistrement Hermes des 2 nouveaux outils vidéo
+# v16.3 (2026-09-21) :
+#   - Ajout route /api/config (providers + modèles + skills pour l'UI)
+#   - Fix: le menu UI chargait sur /api/config qui n'existait pas
 # ==============================================================================
 from __future__ import annotations
 
@@ -40,13 +46,17 @@ try:
         generate_image_with_provider,
         merge_and_edit_images,
         generate_video_with_provider,
-        merge_and_edit_videos
+        merge_and_edit_videos,
+        extend_video_with_agnes,
+        extend_video_multiple,
     )
 except ImportError:
     generate_image_with_provider = None
     merge_and_edit_images = None
     generate_video_with_provider = None
     merge_and_edit_videos = None
+    extend_video_with_agnes = None
+    extend_video_multiple = None
 
 try:
     from sub_crm_engine import SubCRMEngine
@@ -218,6 +228,55 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     )
 
     # ══════════════════════════════════════════════════════════════════
+    # ★ EXTENSION VIDÉO v28 — Agnes multi_reference ★
+    # ══════════════════════════════════════════════════════════════════
+    def _extend_video_handler(
+        video_path="LAST", prompt="", new_prompt="",
+        duration=9, with_audio=True, audio_style="nature", **kwargs
+    ):
+        try:
+            if extend_video_with_agnes is None:
+                return {"status": "error", "message": "Module extend_video indisponible"}
+            return extend_video_with_agnes(
+                video_path=video_path,
+                new_prompt=new_prompt or prompt,
+                duration=int(duration),
+                with_audio=bool(with_audio),
+                audio_style=audio_style,
+            )
+        except Exception as e:
+            return {"status": "error", "message": f"extend_video échec : {e}"}
+
+    def _extend_video_multiple_handler(
+        video_path="LAST", prompts=None,
+        duration=9, with_audio=True, audio_style="nature", max_clips=5, **kwargs
+    ):
+        try:
+            if extend_video_multiple is None:
+                return {"status": "error", "message": "Module extend_video_multiple indisponible"}
+            return extend_video_multiple(
+                video_path=video_path,
+                prompts=prompts or [],
+                duration_per_clip=int(duration),
+                with_audio=bool(with_audio),
+                audio_style=audio_style,
+                max_clips=int(max_clips),
+            )
+        except Exception as e:
+            return {"status": "error", "message": f"extend_video_multiple échec : {e}"}
+
+    hermes.register_tool(
+        "extend_video",
+        _extend_video_handler,
+        risk_level="L1",
+    )
+    hermes.register_tool(
+        "extend_video_multiple",
+        _extend_video_multiple_handler,
+        risk_level="L1",
+    )
+
+    # ══════════════════════════════════════════════════════════════════
     # 🧠 ACTIVATION DU SYSTÈME NERVEUX BEK
     # ══════════════════════════════════════════════════════════════════
     try:
@@ -359,6 +418,85 @@ app.include_router(files.router)
 app.include_router(memory.router)
 app.include_router(crm.router)
 app.include_router(chat.router)
+
+
+# ══════════════════════════════════════════════════════════════════
+# ★ v16.3 — ROUTE /api/config (pour l'UI)
+# ══════════════════════════════════════════════════════════════════
+def _provider_display_name(provider_id: str) -> str:
+    """Nom affiché pour chaque provider dans l'UI."""
+    names = {
+        "agnes":          "Agnes AI (Video)",
+        "kimi":           "Moonshot Kimi AI",
+        "aisa":           "AIsa (Unified)",
+        "b_ai":           "B.ai",
+        "groq":           "Groq",
+        "nvidia":         "NVIDIA NIM",
+        "gemini":         "Google Gemini",
+        "openrouter":     "OpenRouter",
+        "mistral":        "Mistral AI",
+        "cohere":         "Cohere",
+        "aionlabs":       "Aion Labs",
+        "zhipu":          "Zhipu AI",
+        "siliconflow":    "SiliconFlow",
+        "ovh_anonymous":  "OVHcloud (Anonyme)",
+        "kilo_anonymous": "Kilo Code (Anonyme)",
+        "llm7_anonymous": "LLM7.io (Anonyme)",
+        "huggingface":    "Hugging Face",
+        "ollama_cloud":   "Ollama Cloud",
+    }
+    return names.get(provider_id, provider_id.replace("_", " ").title())
+
+
+@app.get("/api/config")
+async def get_config():
+    """
+    Retourne la config des providers + modèles + skills pour l'UI.
+    Lit directement depuis provider_manager (source de vérité).
+    """
+    from provider_manager import provider_manager
+
+    # ─── Providers avec statut configured ───
+    providers = []
+    for provider_id, models in provider_manager.PROVIDER_MODELS.items():
+        try:
+            configured = provider_manager.is_provider_available(provider_id)
+        except Exception:
+            configured = False
+        providers.append({
+            "id": provider_id,
+            "name": _provider_display_name(provider_id),
+            "configured": configured,
+        })
+
+    # ─── Skills depuis skills.py ───
+    skills_list = []
+    try:
+        from skills import list_skills as _list_skills
+        raw_skills = _list_skills() or []
+        for s in raw_skills:
+            if not isinstance(s, dict):
+                continue
+            name = s.get("name") or s.get("command") or "skill"
+            skills_list.append({
+                "name": name,
+                "description": s.get("description", ""),
+                "command": s.get("command") or ("/" + name if not name.startswith("/") else name),
+            })
+    except Exception as exc:
+        logger.warning("[api/config] Impossible de charger les skills : %s", exc)
+
+    logger.info(
+        "[api/config] %d providers | %d skills retournés",
+        len(providers), len(skills_list),
+    )
+
+    return {
+        "models": provider_manager.PROVIDER_MODELS,
+        "providers": providers,
+        "skills": skills_list,
+        "skills_count": len(skills_list),
+    }
 
 
 # ---------- Endpoint de health check du worker headless ----------

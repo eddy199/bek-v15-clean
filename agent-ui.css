@@ -723,3 +723,57 @@ think {
     padding: 14px 16px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   ★ v27 — Prévisualisation upload fichiers (spinner + icônes)
+   ══════════════════════════════════════════════════════════════════ */
+
+.file-preview-item {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.file-preview-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+}
+
+/* Bouton "X" pour supprimer un fichier */
+.file-preview-close {
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+    flex-shrink: 0;
+}
+
+.file-preview-close:hover {
+    background: #ef4444;
+}
+
+/* Spinner mini pour upload en cours */
+.spinner-mini {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(92,156,230,0.3);
+    border-top-color: var(--accent-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulseFade {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
