@@ -11,11 +11,17 @@
 # - Règle anti-hallucination temporelle : interdiction d'inventer des dates
 # - Règle de confiance exclusive aux outils : les données d'entraînement du LLM
 #   ne doivent JAMAIS contredire les résultats retournés par les outils.
-# - Aucun changement fonctionnel côté code (uniquement le prompt système).
 #
 # CORRECTIF v12 (2026-09-21) :
 # - Vidéo : provider="agnes", model="agnes-v2.0", with_audio=True par défaut
 # - Prompt système enrichi avec exemples vidéo complets
+#
+# CORRECTIF v13 (2026-09-21) :
+# - BUGFIX CRITIQUE : ne plus écraser params["provider"] / params["model"]
+#   pour les actions multimédia (generate_video, edit_video,
+#   generate_image, edit_image).
+#   L'agent spécifie déjà "agnes" + "agnes-v2.0" dans la balise,
+#   il ne faut PAS les remplacer par le provider du chat (kimi, groq, etc.).
 # ==============================================================================
 from __future__ import annotations
 
@@ -107,6 +113,15 @@ MAX_TOTAL_ACTIONS = _env_int("BEK_CHAT_MAX_TOTAL_ACTIONS", 2)
 POOR_RESULT_THRESHOLD = _env_int("BEK_CHAT_POOR_RESULT_THRESHOLD", 200)
 MAX_CHUNKS_WITHOUT_CLOSE = _env_int("BEK_CHAT_MAX_CHUNKS_NO_CLOSE", 150)
 MAX_QUERY_WORDS = _env_int("BEK_CHAT_MAX_QUERY_WORDS", 8)
+
+# Actions multimédia qui ont leur PROPRE provider/model
+# (l'agent les spécifie déjà dans la balise, ne pas les écraser)
+MULTIMEDIA_ACTIONS = (
+    "generate_video",
+    "edit_video",
+    "generate_image",
+    "edit_image",
+)
 
 _STERILE_URL_PATTERNS = (
     r"google\.com/finance\?sa=X",
@@ -709,12 +724,45 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
     if not isinstance(exec_res, dict):
         return str(exec_res)
 
-    fn = exec_res.get("filename", "")
+    fn = exec_res.get("filename", "")         # ← 4 espaces ✅
     if exec_res.get("status") == "success" and fn:
         if any(fn.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"]):
             return f"🎨 **Image générée !**\n\n![{fn}](/api/download/{fn})"
         elif any(fn.lower().endswith(ext) for ext in [".mp4", ".webm", ".mov", ".avi"]):
-            return f"🎬 **Vidéo générée !**\n\n[Télécharger la vidéo](/api/download/{fn})\n\n"
+            # 🎬 Affichage vidéo inline avec lecteur HTML5 (comme Gemini/ChatGPT)
+            duration = exec_res.get("actual_duration") or exec_res.get("duration") or ""
+            provider = exec_res.get("provider", "")
+            model = exec_res.get("model_id", "")
+            with_audio = exec_res.get("with_audio", False)
+            stitched = exec_res.get("stitched", False)
+            clips = exec_res.get("clips", [])
+
+            info_lines = [f"🎬 **Vidéo générée !**"]
+            if duration:
+                info_lines.append(f"- Durée : **{duration}s**")
+            if provider:
+                info_lines.append(f"- Provider : `{provider}`")
+            if model:
+                info_lines.append(f"- Modèle : `{model}`")
+            if with_audio:
+                info_lines.append(f"- Audio : ✅ avec audio")
+            if stitched and clips:
+                info_lines.append(f"- Multi-clips : `{clips}`")
+
+            info = "\n".join(info_lines)
+
+            # Lecteur vidéo HTML5 natif
+            video_player = (
+                f'\n\n<video controls autoplay loop muted '
+                f'style="max-width:100%; border-radius:12px; '
+                f'box-shadow:0 4px 20px rgba(0,0,0,0.3); margin:12px 0;">'
+                f'<source src="/api/download/{fn}" type="video/mp4">'
+                f'Votre navigateur ne supporte pas la vidéo HTML5.'
+                f'</video>\n\n'
+                f'[📥 Télécharger la vidéo](/api/download/{fn})\n'
+            )
+
+            return info + video_player
 
     if act_name == "headless_scrape":
         if exec_res.get("status") == "success":
@@ -979,8 +1027,10 @@ async def _chat_impl(request: Request, chat_span):
                         except Exception:
                             pass
 
-                    params["provider"] = provider
-                    params["model"] = model
+                    # ★ v13 : NE PAS écraser provider/model pour les actions multimédia
+                    if act_name not in MULTIMEDIA_ACTIONS:
+                        params["provider"] = provider
+                        params["model"] = model
 
                     with span("chat.action_execute", **{"action.name": act_name}):
                         exec_res = _execute_action_unified(act_name, params)
@@ -1113,8 +1163,10 @@ async def _chat_impl(request: Request, chat_span):
                                 )
                                 params["query"] = last_user_query
 
-                        params["provider"] = provider
-                        params["model"] = model
+                        # ★ v13 : NE PAS écraser provider/model pour les actions multimédia
+                        if act_name not in MULTIMEDIA_ACTIONS:
+                            params["provider"] = provider
+                            params["model"] = model
 
                         msg_imm = '\n\n⚙️ *Exécution...*\n'
                         yield f"data: {json.dumps({'chunk': msg_imm})}\n\n"
@@ -1225,7 +1277,7 @@ async def _chat_impl(request: Request, chat_span):
                     "[Stream] Action détectée mais non exécutée (incomplète)."
                 )
                 final_incomplete = (
-                    "\n\n⚠️ **Action incomplète** : le LLM n’a pas fermé sa "
+                    "\n\n⚠️ **Action incomplète** : le LLM n'a pas fermé sa "
                     "balise [/ACTION]. Reformulez la demande.\n\n"
                 )
                 yield f"data: {json.dumps({'chunk': final_incomplete})}\n\n"
