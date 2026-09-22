@@ -6,6 +6,8 @@
 #   - burn_subtitles_into_video()     : incruste les sous-titres dans la vidéo
 #
 # v32 (2026-09-21) : Création initiale
+# v32.1 (2026-09-22) : Résolution automatique du chemin vidéo/.srt
+# v32.2 (2026-09-22) : Import Whisper optionnel (compatibilité Render free)
 # ==============================================================================
 from __future__ import annotations
 
@@ -17,7 +19,13 @@ import uuid
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import whisper  # pip install openai-whisper
+# ★ v32.2 : import optionnel — Whisper peut ne pas être installé sur Render
+try:
+    import whisper  # pip install openai-whisper
+    _WHISPER_AVAILABLE = True
+except ImportError:
+    whisper = None
+    _WHISPER_AVAILABLE = False
 
 from core.paths import GENERATED_DIR, WORKSPACE_DIR
 
@@ -32,6 +40,13 @@ _WHISPER_MODELS_CACHE: Dict[str, Any] = {}
 # ==============================================================================
 def _load_whisper_model(model_name: str = "base"):
     """Charge un modèle Whisper (avec cache)."""
+    # ★ v32.2 : vérification Whisper disponible
+    if not _WHISPER_AVAILABLE:
+        raise RuntimeError(
+            "Whisper n'est pas installé sur ce serveur. "
+            "Exécute : pip install openai-whisper"
+        )
+
     if model_name in _WHISPER_MODELS_CACHE:
         return _WHISPER_MODELS_CACHE[model_name]
 
@@ -80,7 +95,7 @@ def _seconds_to_srt_time(seconds: float) -> str:
 
 
 # ==============================================================================
-# GÉNÉRATION DE SOUS-TITRES (.srt)
+# RÉSOLUTION DE CHEMIN
 # ==============================================================================
 def _resolve_video_path(video_path: str) -> str:
     """
@@ -133,6 +148,9 @@ def _resolve_video_path(video_path: str) -> str:
     return ""
 
 
+# ==============================================================================
+# GÉNÉRATION DE SOUS-TITRES (.srt)
+# ==============================================================================
 def generate_subtitles_from_video(
     video_path: str,
     language: Optional[str] = None,
@@ -142,6 +160,17 @@ def generate_subtitles_from_video(
     """
     Transcrit une vidéo en sous-titres .srt via Whisper.
     """
+    # ★ v32.2 : vérification Whisper disponible
+    if not _WHISPER_AVAILABLE:
+        return {
+            "status": "error",
+            "message": (
+                "Whisper n'est pas installé sur ce serveur. "
+                "Sur Render free tier, Whisper n'est pas disponible. "
+                "Utilise-le en local à la place : pip install openai-whisper"
+            ),
+        }
+
     # ★ v32.1 : résolution automatique du chemin
     resolved_path = _resolve_video_path(video_path)
     if not resolved_path:
@@ -227,6 +256,16 @@ def burn_subtitles_into_video(
     """
     Incruste les sous-titres .srt dans la vidéo (hard subs).
     """
+    # ★ v32.2 : vérification Whisper disponible
+    if not _WHISPER_AVAILABLE:
+        return {
+            "status": "error",
+            "message": (
+                "Whisper n'est pas installé sur ce serveur. "
+                "Utilise-le en local à la place."
+            ),
+        }
+
     # ★ v32.1 : résolution automatique du chemin vidéo
     resolved_path = _resolve_video_path(video_path)
     if not resolved_path:
@@ -249,8 +288,8 @@ def burn_subtitles_into_video(
                 srt_path = os.path.abspath(cand)
                 break
 
-        if not os.path.exists(srt_path):
-            return {"status": "error", "message": f"Sous-titres introuvables : {srt_path}"}
+    if not os.path.exists(srt_path):
+        return {"status": "error", "message": f"Sous-titres introuvables : {srt_path}"}
 
     if not output_path:
         base_name = os.path.splitext(os.path.basename(video_path))[0]
