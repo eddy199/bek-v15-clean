@@ -6,8 +6,38 @@
 # v16.2 (2026-09-21) : extend_video + extend_video_multiple
 # v16.3 (2026-09-21) : route /api/config
 # v16.4 (2026-09-21) : outils Whisper (generate_subtitles + burn_subtitles)
+# v16.5 (2026-09-22) : ★ FIX Ctrl+C — arrêt propre sans blocage atexit
+# v18.0 (2026-09-24) : ★ Régénération ARCHITECTURE.md AVANT imports routeurs
+# v18.1 (2026-09-25) : ★ Route OpenAI-compatible /v1/chat/completions pour DSH
 # ==============================================================================
 from __future__ import annotations
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ FIX CTRL+C — INSTALLÉ AVANT TOUT IMPORT LOURD
+# ══════════════════════════════════════════════════════════════════════════════
+import signal as _signal
+import os as _os
+import sys as _sys
+
+def _bek_force_exit(signum, frame):
+    try:
+        _sys.stdout.write("\n\033[91m🔴 BEK — Arrêt forcé (Ctrl+C). Nettoyage immédiat.\033[0m\n")
+        _sys.stdout.flush()
+        _sys.stderr.flush()
+    except Exception:
+        pass
+    _os._exit(0)
+
+try:
+    _signal.signal(_signal.SIGINT, _bek_force_exit)
+    if hasattr(_signal, "SIGBREAK"):
+        _signal.signal(_signal.SIGBREAK, _bek_force_exit)
+except Exception as _sig_err:
+    print(f"[BEK] Impossible d'installer le handler SIGINT : {_sig_err}")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# FIN FIX CTRL+C
+# ══════════════════════════════════════════════════════════════════════════════
 
 # Charger env.txt dans os.environ AVANT tout autre import métier
 from env_loader import load_env
@@ -75,8 +105,24 @@ except ImportError:
         def get_mcp_manifests(self): return []
     mcp_gateway = MCPGatewayMock()
 
+# ══════════════════════════════════════════════════════════════════════════
+# ★ v18 — Régénérer ARCHITECTURE.md AVANT d'importer les routeurs
+# --------------------------------------------------------------------------
+# Ordre critique : prompts.py charge ARCHITECTURE.md à l'import de routers.chat.
+# On utilise print() car logger n'est pas encore défini à ce stade.
+# ══════════════════════════════════════════════════════════════════════════
+try:
+    from generate_architecture_doc import update_documentation_file
+    if update_documentation_file():
+        print("[v18] ✅ ARCHITECTURE.md régénéré AVANT imports routeurs.")
+    else:
+        print("[v18] ⚠️ Régénération ARCHITECTURE.md retournée False.")
+except Exception as exc:
+    print(f"[v18] ⚠️ Régénération pré-imports échouée : {exc}")
+
 # --- IMPORT DES ROUTEURS ---
 from routers import admin, chat, crm, files, memory
+from routers import openai_compat  # ★ v18.1 — adaptateur OpenAI-compatible
 
 # ==========================================
 # CONFIGURATION DU LOGGING
@@ -112,12 +158,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         logger.info("Tables Neon DB et schéma Matrix initialisés.")
     except Exception as exc:
         logger.warning("Initialisation DB partielle : %s", exc)
-
-    try:
-        from generate_architecture_doc import update_documentation_file
-        update_documentation_file()
-    except Exception as exc:
-        logger.debug("Génération auto architecture Doc : %s", exc)
 
     mcp_gateway.register_mcp_tool(
         name="neon_audit",
@@ -367,11 +407,21 @@ async def lifespan(app: FastAPI):
     setup_json_logging()
     logger.info("setup_json_logging() exécuté lors du démarrage de l'application.")
     yield
+
+    logger.info("🛑 Arrêt de BEK — nettoyage explicite des services...")
     try:
         from core.tracing import shutdown_tracing
         shutdown_tracing()
-    except Exception:
-        pass
+        logger.info("✓ OpenTelemetry arrêté proprement.")
+    except Exception as exc:
+        logger.debug("shutdown_tracing : %s", exc)
+
+    try:
+        from event_bus import shutdown_event_bus_sync
+        shutdown_event_bus_sync()
+        logger.info("✓ EventBus arrêté proprement.")
+    except Exception as exc:
+        logger.debug("shutdown_event_bus_sync : %s", exc)
 
 
 # ==========================================
@@ -380,7 +430,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="16.4",
+    version="18.1",
     lifespan=lifespan,
 )
 
@@ -422,6 +472,7 @@ app.include_router(files.router)
 app.include_router(memory.router)
 app.include_router(crm.router)
 app.include_router(chat.router)
+app.include_router(openai_compat.router)  # ★ v18.1 — /v1/chat/completions + /v1/models
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -498,6 +549,27 @@ async def get_config():
     }
 
 
+# ══════════════════════════════════════════════════════════════════
+# ★ v18 — ROUTE /api/refresh-architecture
+# ------------------------------------------------------------------
+# Régénère ARCHITECTURE.md à chaud après modification du code
+# (nouveaux outils, nerfs, briques, etc.)
+# ══════════════════════════════════════════════════════════════════
+@app.post("/api/refresh-architecture")
+async def refresh_architecture():
+    """Régénère docs/ARCHITECTURE.md à chaud."""
+    try:
+        from generate_architecture_doc import update_documentation_file
+        success = update_documentation_file()
+        return {
+            "status": "ok" if success else "error",
+            "message": "Architecture régénérée avec succès" if success else "Échec de la génération",
+        }
+    except Exception as exc:
+        logger.error("[refresh-architecture] %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
 # ---------- Endpoint de health check du worker headless ----------
 @app.get("/health/worker")
 async def health_worker():
@@ -544,9 +616,21 @@ async def execute_skill_endpoint(request: SkillExecutionRequest):
     return result
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ FIX CTRL+C — WRAPPER UVICORN
+# ══════════════════════════════════════════════════════════════════════════════
 if __name__ == "__main__":
     import uvicorn
 
     port = int(os.environ.get("PORT", "8765"))
     host = os.environ.get("HOST", "0.0.0.0")
-    uvicorn.run("app:app", host=host, port=port, reload=False)
+
+    try:
+        uvicorn.run("app:app", host=host, port=port, reload=False)
+    except KeyboardInterrupt:
+        try:
+            _sys.stdout.write("\n🔴 BEK — Arrêt forcé. Au revoir.\n")
+            _sys.stdout.flush()
+        except Exception:
+            pass
+        _os._exit(0)
