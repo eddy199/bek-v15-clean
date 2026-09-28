@@ -1,0 +1,77 @@
+{
+  "abreviation": "BEK-ECO",
+  "nom_complet": "Economic Cognitive Optimization",
+  "sous_titre": "Réflexion Économique",
+  "version": "1.0",
+  "date": "2026-09-23",
+  "author": "BEK Project",
+  "license": "BEK-LVC-v1.0",
+
+  "description": "Optimise chaque décision selon 7 facteurs pondérés. Gère le cache multi-niveaux et les limites quotidiennes.",
+
+  "brevet": "docs/brevets/BREVET_ECO.md",
+  "module": "bek_core.eco.optimizer",
+  "package": "bek_core.eco",
+
+  "functions": {
+    "optimize": {
+      "params": ["tier", "query"],
+      "optional": ["context"],
+      "returns": "dict",
+      "description": "Optimise une décision selon 7 facteurs"
+    },
+    "cache_get": {
+      "params": ["key"],
+      "returns": "dict",
+      "description": "Cherche dans le cache"
+    },
+    "cache_set": {
+      "params": ["key", "value"],
+      "optional": ["ttl"],
+      "returns": "bool",
+      "description": "Stocke dans le cache"
+    },
+    "check_limits": {
+      "params": [],
+      "optional": ["scope"],
+      "returns": "dict",
+      "description": "Vérifie les limites quotidiennes"
+    }
+  },
+
+  "classes": {
+    "BekEcoOptimizer": {
+      "description": "Optimiseur économique principal",
+      "methods": ["optimize", "cache_get", "cache_set", "cache_clear", "check_limits", "increment_limit"]
+    }
+  },
+
+  "constants": {
+    "BEK_ECO_DEFAULT_TTL": 3600,
+    "BEK_ECO_DEFAULT_DAILY_LIMIT": 50,
+    "BEK_ECO_CACHE_FILE": "data/bek_eco_cache.json",
+    "BEK_ECO_LIMITS_FILE": "data/bek_eco_limits.json"
+  },
+
+  "weights": {
+    "conformite": 0.25,
+    "securite": 0.20,
+    "precision": 0.20,
+    "efficience": 0.15,
+    "rentabilite": 0.10,
+    "productivite": 0.05,
+    "technologie": 0.05
+  },
+
+  "performance": {
+    "cache_hit_target": 0.40,
+    "cost_reduction_target": 0.60,
+    "latency_cache_hit_ms": 500
+  },
+
+  "dependencies": [],
+  "used_by": ["BEK-REX", "BEK-MEM", "BEK-AGENT-v18"],
+
+  "status": "active",
+  "priority": "critical"
+}

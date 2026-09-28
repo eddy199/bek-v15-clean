@@ -344,7 +344,7 @@ class ProviderManager:
         "aisa",
         "groq",
         "kimi",
-        "b_ai",
+        # "b_ai",  # Désactivé 2026-09-28 : crédit épuisé (balance=0)
         "gemini",
         "kilo_anonymous",
         "huggingface",

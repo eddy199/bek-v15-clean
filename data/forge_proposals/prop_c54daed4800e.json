@@ -1,0 +1,28 @@
+{
+  "rule_version": "1.0",
+  "rule_id": "rule_c9b1ec2325da",
+  "rule_type": "bypass",
+  "priority": 50,
+  "trigger": {
+    "action": "create_dynamic_skill",
+    "status": "error",
+    "error_type": "SandboxRejection",
+    "min_occurrences": 3
+  },
+  "action": {
+    "type": "bypass",
+    "description": "Renforcer le prompt du générateur",
+    "block_when": "matching_trigger",
+    "message": "Renforcer le prompt du générateur"
+  },
+  "confidence": 0.9,
+  "source_critique_id": "crit_TEST_2",
+  "created_at": "2026-09-22T16:22:41.582035+00:00",
+  "applied_count": 0,
+  "success_count": 0,
+  "last_applied_at": null,
+  "tags": [
+    "skill",
+    "sandbox"
+  ]
+}

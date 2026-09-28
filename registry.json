@@ -1,0 +1,17 @@
+{
+  "briques": {
+    "BEK-REX": {
+      "nom_complet": "Reflective EXecution",
+      "version": "1.0",
+      "module": "bek_core.rex.router",
+      "brevet": "docs/brevets/BREVET_REX.md",
+      "functions": {
+        "route": {"params": ["query"]},
+        "list_tiers": {"params": []}
+      },
+      "dependencies": [],
+      "status": "active"
+    }
+  },
+  "config": {}
+}

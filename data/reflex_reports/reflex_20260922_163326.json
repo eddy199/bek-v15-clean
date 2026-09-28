@@ -1,0 +1,135 @@
+{
+  "report_id": "reflex_20260922_163326",
+  "generated_at_utc": "2026-09-22T16:33:26.938077+00:00",
+  "duration_ms": 9142.4,
+  "window_hours": 1,
+  "min_occurrences": 3,
+  "top_n": 20,
+  "summary": {
+    "total_episodes": 14,
+    "success_count": 4,
+    "error_count": 10,
+    "success_rate": 0.2857,
+    "unique_actions": 3,
+    "unique_error_types": 3,
+    "patterns_total": 4,
+    "patterns_significant": 3
+  },
+  "top_patterns": [
+    {
+      "signature": {
+        "action": "web_sync",
+        "status": "error",
+        "error_type": "TimeoutError"
+      },
+      "count": 6,
+      "avg_latency_ms": 5025.0,
+      "min_latency_ms": 5000.0,
+      "max_latency_ms": 5050.0,
+      "first_seen": "2026-09-22 18:33:13.541547",
+      "last_seen": "2026-09-22 18:33:14.982654",
+      "sample_messages": [
+        "Timeout DDG",
+        "Timeout DDG",
+        "Timeout DDG"
+      ],
+      "sample_parameters": [
+        "{\"query\": \"test_5\"}",
+        "{\"query\": \"test_4\"}",
+        "{\"query\": \"test_3\"}"
+      ]
+    },
+    {
+      "signature": {
+        "action": "web_sync",
+        "status": "success",
+        "error_type": ""
+      },
+      "count": 4,
+      "avg_latency_ms": 127.5,
+      "min_latency_ms": 120.0,
+      "max_latency_ms": 135.0,
+      "first_seen": "2026-09-22 18:33:15.022013",
+      "last_seen": "2026-09-22 18:33:15.126589",
+      "sample_messages": [
+        "3 résultats",
+        "3 résultats",
+        "3 résultats"
+      ],
+      "sample_parameters": [
+        "{\"query\": \"ok_3\"}",
+        "{\"query\": \"ok_2\"}",
+        "{\"query\": \"ok_1\"}"
+      ]
+    },
+    {
+      "signature": {
+        "action": "create_dynamic_skill",
+        "status": "error",
+        "error_type": "SandboxRejection"
+      },
+      "count": 3,
+      "avg_latency_ms": 8.0,
+      "min_latency_ms": 8.0,
+      "max_latency_ms": 8.0,
+      "first_seen": "2026-09-22 18:33:15.154949",
+      "last_seen": "2026-09-22 18:33:15.221387",
+      "sample_messages": [
+        "Sandbox AST refus",
+        "Sandbox AST refus",
+        "Sandbox AST refus"
+      ],
+      "sample_parameters": [
+        "{\"skill_name\": \"evil_2\"}",
+        "{\"skill_name\": \"evil_1\"}",
+        "{\"skill_name\": \"evil_0\"}"
+      ]
+    }
+  ],
+  "action_breakdown": {
+    "rare_action": {
+      "success": 0,
+      "error": 1,
+      "other": 0
+    },
+    "create_dynamic_skill": {
+      "success": 0,
+      "error": 3,
+      "other": 0
+    },
+    "web_sync": {
+      "success": 4,
+      "error": 6,
+      "other": 0
+    }
+  },
+  "critic": {
+    "enabled": false,
+    "max_patterns": 10,
+    "analyzed": 0,
+    "succeeded": 0,
+    "failed": 0
+  },
+  "critiques": [],
+  "forge": {
+    "enabled": true,
+    "dry_run": true,
+    "auto_staging": false,
+    "analyzed": 1,
+    "proposed": 1,
+    "skipped": 0,
+    "proposals": [
+      {
+        "proposal_id": "prop_03ab53106305",
+        "status": "staging",
+        "proposal_type": "rule",
+        "rule_type": "fallback",
+        "rule_id": "rule_b0d11d212201",
+        "confidence": 0.92,
+        "dry_run": true,
+        "approval_id": "",
+        "expires_at": "2026-09-23T16:33:27.073596+00:00"
+      }
+    ]
+  }
+}

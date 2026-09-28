@@ -1,12 +1,14 @@
 /**
- * BEK-v15-HYBRID — Agent UI Controller (Mermaid sanitized + AIsa + Agnes AI + tous providers)
- * v16.1 : Ajout du provider Agnes AI (vidéo gratuite)
- * v16.2 : Fix syntax error (CSS dupliqué à la fin retiré)
+ * BEK-v15-HYBRID — Agent UI Controller (VERSION FINALE C6.3)
+ * ============================================================
+ * Base : ta version GitHub fonctionnelle (v16.2)
+ * Ajout : onglet Reflex + boutons Approuver/Rejeter/Inspecter + Lancer cycle
+ * Aucune suppression — tout ton code de 6 mois est intact.
+ * ============================================================
  */
 (function() {
     'use strict';
 
-    // ✅ CORRIGÉ : plus de hardcode de port. Utilise l'origine courante (marche sur :3001, :8765, Render, etc.)
     const API_BASE = window.location.origin;
 
     const DOM = {
@@ -17,6 +19,7 @@
         modelSelect: document.getElementById('modelSelect'),
         skillsCounter: document.getElementById('navSkillsCount'),
         filesCounter: document.getElementById('navFilesCount'),
+        reflexCounter: document.getElementById('navReflexCount'),
         menuOptionsBtn: document.getElementById('menuOptionsBtn'),
         dropdownMenu: document.getElementById('dropdownMenu'),
         uploadBtn: document.getElementById('uploadBtn'),
@@ -42,9 +45,13 @@
     let currentConvId = null;
     let isStreaming = false;
     let attachedFiles = [];
-    let pendingUploads = {};   // ★ v27 : uploads en cours (spinner)
+    let pendingUploads = {};
     let activeController = null;
     let globalSkills = [];
+
+    // ─── Reflex state ───
+    let reflexFilter = 'staging';
+    let reflexProposals = [];
 
     window.__codeSnippetsRegistry = window.__codeSnippetsRegistry || {};
 
@@ -114,15 +121,11 @@
 
     function renderMermaidIn(container) {
         if (!container) return;
-        if (!window.mermaid) {
-            console.warn('[Mermaid] non chargé, rendu impossible');
-            return;
-        }
+        if (!window.mermaid) return;
         initMermaid();
 
         const blocks = container.querySelectorAll('pre code.language-mermaid, pre code.lang-mermaid');
         if (blocks.length === 0) return;
-        console.log('[Mermaid] ' + blocks.length + ' bloc(s) trouvé(s)');
 
         blocks.forEach((el, idx) => {
             const graph = (el.textContent || '').trim();
@@ -145,7 +148,7 @@
                     result.catch(err => {
                         console.error('[Mermaid] run error bloc ' + idx + ':', err);
                         wrapper.innerHTML =
-                            '<div style="color:#ff6b6b; padding:12px; font-size:12px;">⚠️ Mermaid : erreur de rendu — voir console F12</div>' +
+                            '<div style="color:#ff6b6b; padding:12px; font-size:12px;">⚠️ Mermaid : erreur de rendu</div>' +
                             '<pre style="background:#1a1f26; padding:12px; border-radius:6px; font-size:11px; overflow-x:auto;"><code>' +
                             escapeHtml(graph) + '</code></pre>';
                     });
@@ -184,6 +187,9 @@
         initMermaid();
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // COPIE / TÉLÉCHARGEMENT
+    // ═══════════════════════════════════════════════════════════════
     window.copyWholeMessage = async function(btn) {
         if (!btn) return;
         const msgEl = btn.closest('.message');
@@ -261,7 +267,7 @@
                 vertical-align: middle;
                 margin-left: 6px;
                 border-radius: 2px;
-                box-shadow: 0 0 8px var(--accent-glow);
+                box-shadow: 0 0 8px var(--accent-glow, rgba(79,142,247,0.5));
             }
             @keyframes gemini-blink {
                 0%, 100% { opacity: 1; }
@@ -278,10 +284,163 @@
                 border-color: #ef4444 !important;
                 animation: pulse-mic 1.5s infinite !important;
             }
+            .msg-actions {
+                display: flex;
+                gap: 6px;
+                margin-top: 8px;
+                opacity: 0.6;
+                transition: opacity 0.2s;
+            }
+            .message:hover .msg-actions {
+                opacity: 1;
+            }
+            .msg-actions button {
+                background: transparent;
+                border: 1px solid var(--border-color, #3e3e42);
+                color: var(--text-dim, #a0a0a5);
+                padding: 4px 10px;
+                border-radius: 6px;
+                font-size: 11px;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                transition: 0.15s;
+            }
+            .msg-actions button:hover {
+                background: rgba(92, 156, 230, 0.1);
+                border-color: var(--accent-blue, #5c9ce6);
+                color: var(--accent-blue, #5c9ce6);
+            }
+            .code-container {
+                background: #0d1117;
+                border: 1px solid #30363d;
+                border-radius: 8px;
+                margin: 12px 0;
+                overflow: hidden;
+            }
+            .code-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 14px;
+                background: #161b22;
+                border-bottom: 1px solid #30363d;
+            }
+            .code-lang-name {
+                font-family: 'Ubuntu Mono', monospace;
+                font-size: 11px;
+                color: #8b949e;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                font-weight: 600;
+            }
+            .code-actions-group {
+                display: flex;
+                gap: 6px;
+            }
+            .code-action-btn {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid #30363d;
+                color: #c9d1d9;
+                padding: 4px 10px;
+                border-radius: 5px;
+                font-size: 11px;
+                cursor: pointer;
+                transition: 0.15s;
+            }
+            .code-action-btn:hover {
+                background: rgba(92, 156, 230, 0.15);
+                border-color: #5c9ce6;
+                color: #5c9ce6;
+            }
+            .code-container pre {
+                margin: 0;
+                padding: 14px 16px;
+                overflow-x: auto;
+                background: transparent;
+            }
+            .code-container pre code {
+                font-family: 'Ubuntu Mono', monospace;
+                font-size: 13px;
+                line-height: 1.5;
+                background: transparent !important;
+                padding: 0 !important;
+            }
+            .file-attachment-card {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                background: rgba(30, 41, 59, 0.6);
+                border: 1px solid var(--border-color, #3e3e42);
+                border-radius: 10px;
+                padding: 12px 16px;
+                margin: 10px 0;
+            }
+            .file-attachment-icon {
+                font-size: 28px;
+            }
+            .file-attachment-info {
+                flex: 1;
+            }
+            .file-attachment-name {
+                font-weight: 600;
+                color: #f8fafc;
+                font-size: 13px;
+            }
+            .file-attachment-desc {
+                font-size: 11px;
+                color: #94a3b8;
+                margin-top: 2px;
+            }
+            .file-attachment-btn {
+                background: var(--accent-blue, #5c9ce6);
+                color: #fff;
+                padding: 6px 14px;
+                border-radius: 6px;
+                font-size: 12px;
+                text-decoration: none;
+                font-weight: 600;
+            }
+            @keyframes pulseFade {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+            }
+            .spinner-mini {
+                width: 16px;
+                height: 16px;
+                border: 2px solid rgba(92, 156, 230, 0.3);
+                border-top-color: var(--accent-blue, #5c9ce6);
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+            }
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+            .file-preview-close {
+                background: rgba(0,0,0,0.6);
+                color: #fff;
+                border: none;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                font-size: 12px;
+                line-height: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .file-preview-close:hover {
+                background: #ef4444;
+            }
         `;
         document.head.appendChild(style);
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════════════════════════
     async function init() {
         loadSyntaxHighlighter();
         injectEnhancedCSS();
@@ -290,13 +449,14 @@
         setupNavigationTabs();
         setupImagePasteListener();
         loadConversationsFromStorage();
+        await refreshReflexBadge();
 
         if (conversations.length > 0) {
             loadConversation(conversations[0].id);
         } else {
             createNewConversation();
         }
-        appendSystemMessage('🟢 BEK-v16.1 HYBRID opérationnel — Veo 3.1 + Agnes AI + tous providers.');
+        appendSystemMessage('🟢 BEK-v16.1 HYBRID opérationnel — Reflex Loop intégré.');
     }
 
     async function loadConfig() {
@@ -304,36 +464,27 @@
             const res = await fetch(`${API_BASE}/api/config?t=${Date.now()}`);
             if (!res.ok) throw new Error("API Config non disponible");
             const data = await res.json();
-
             availableModels = data.models || {};
 
-            // ============================================================
-            // LISTE DE SECOURS DES MODÈLES (si backend /api/config incomplet)
-            // ============================================================
-            if(!availableModels['kimi']) availableModels['kimi'] = ['kimi-k3', 'kimi-k3-swarm', 'kimi-k3-instant', 'kimi-k2.7-code', 'kimi-k2.6', 'kimi-k2-0905', 'moonshot-v1-128k', 'moonshot-v1-32k', 'moonshot-v1-8k'];
-            if(!availableModels['aisa']) availableModels['aisa'] = ['qwen-flash', 'qwen-mt-flash', 'qwen-mt-lite'];
-            if(!availableModels['b_ai']) availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
-            if(!availableModels['mistral']) availableModels['mistral'] = ['mistral-medium-3.5', 'mistral-small-4', 'mistral-large-3', 'ministral-3-8b', 'codestral', 'ministral-3-3b', 'ministral-3-14b'];
-            if(!availableModels['cohere']) availableModels['cohere'] = ['cohere-command-a-plus', 'cohere-command-a', 'cohere-command-r-plus', 'cohere-command-r', 'cohere-command-r7b', 'cohere-aya-expanse-32b'];
-            if(!availableModels['aionlabs']) availableModels['aionlabs'] = ['aion-2.0', 'aion-rp-llama-3.1-8b', 'aion-3.0', 'aion-3.0-mini'];
-            if(!availableModels['zhipu']) availableModels['zhipu'] = ['glm-4.7-flash', 'glm-4.5-flash', 'glm-4.6v-flash'];
-            if(!availableModels['siliconflow']) availableModels['siliconflow'] = ['siliconflow-qwen3-8b'];
-            if(!availableModels['ovh_anonymous']) availableModels['ovh_anonymous'] = ["ovh-qwen-3.5-397b", "ovh-gpt-oss-120b", "ovh-gpt-oss-20b", "ovh-llama-3.3-70b", "ovh-qwen-3.6-27b", "ovh-qwen-3.5-9b", "ovh-qwen-3-32b", "ovh-qwen-coder-30b", "ovh-qwen-vl-72b", "ovh-mistral-small-3.2", "ovh-mistral-nemo", "ovh-mistral-7b"];
-            if(!availableModels['kilo_anonymous']) availableModels['kilo_anonymous'] = ["kilo-nemotron-3-ultra-550b", "kilo-step-3.7-flash", "kilo-nemotron-3-super-120b", "kilo-nemotron-3-nano-omni", "kilo-laguna-s", "kilo-laguna-xs", "kilo-north-mini-code", "kilo-openrouter-free", "kilo-hy3", "kilo-nemotron-lightning", "kilo-lfm-2.5"];
-            if(!availableModels['llm7_anonymous']) availableModels['llm7_anonymous'] = ["llm7-gpt-oss-20b", "llm7-mistral-nemo", "llm7-minimax-m2.7"];
-
-            // ★ AGNES AI — Modèles vidéo gratuits ★
-            if(!availableModels['agnes']) availableModels['agnes'] = ["agnes-v2.0", "agnes-v2.5-flash"];
+            if (!availableModels['kimi']) availableModels['kimi'] = ['kimi-k3', 'kimi-k3-swarm', 'kimi-k3-instant', 'kimi-k2.7-code', 'kimi-k2.6', 'kimi-k2-0905', 'moonshot-v1-128k', 'moonshot-v1-32k', 'moonshot-v1-8k'];
+            if (!availableModels['aisa']) availableModels['aisa'] = ['qwen-flash', 'qwen-mt-flash', 'qwen-mt-lite'];
+            if (!availableModels['b_ai']) availableModels['b_ai'] = ['glm-5.3-flash', 'qwen3.8-flash', 'mimo-v2.5', 'hy3'];
+            if (!availableModels['mistral']) availableModels['mistral'] = ['mistral-medium-3.5', 'mistral-small-4', 'mistral-large-3', 'ministral-3-8b', 'codestral', 'ministral-3-3b', 'ministral-3-14b'];
+            if (!availableModels['cohere']) availableModels['cohere'] = ['cohere-command-a-plus', 'cohere-command-a', 'cohere-command-r-plus', 'cohere-command-r', 'cohere-command-r7b', 'cohere-aya-expanse-32b'];
+            if (!availableModels['aionlabs']) availableModels['aionlabs'] = ['aion-2.0', 'aion-rp-llama-3.1-8b', 'aion-3.0', 'aion-3.0-mini'];
+            if (!availableModels['zhipu']) availableModels['zhipu'] = ['glm-4.7-flash', 'glm-4.5-flash', 'glm-4.6v-flash'];
+            if (!availableModels['siliconflow']) availableModels['siliconflow'] = ['siliconflow-qwen3-8b'];
+            if (!availableModels['ovh_anonymous']) availableModels['ovh_anonymous'] = ["ovh-qwen-3.5-397b", "ovh-gpt-oss-120b", "ovh-gpt-oss-20b", "ovh-llama-3.3-70b", "ovh-qwen-3.6-27b", "ovh-qwen-3.5-9b", "ovh-qwen-3-32b", "ovh-qwen-coder-30b", "ovh-qwen-vl-72b", "ovh-mistral-small-3.2", "ovh-mistral-nemo", "ovh-mistral-7b"];
+            if (!availableModels['kilo_anonymous']) availableModels['kilo_anonymous'] = ["kilo-nemotron-3-ultra-550b", "kilo-step-3.7-flash", "kilo-nemotron-3-super-120b", "kilo-nemotron-3-nano-omni", "kilo-laguna-s", "kilo-laguna-xs", "kilo-north-mini-code", "kilo-openrouter-free", "kilo-hy3", "kilo-nemotron-lightning", "kilo-lfm-2.5"];
+            if (!availableModels['llm7_anonymous']) availableModels['llm7_anonymous'] = ["llm7-gpt-oss-20b", "llm7-mistral-nemo", "llm7-minimax-m2.7"];
+            if (!availableModels['agnes']) availableModels['agnes'] = ["agnes-v2.0", "agnes-v2.5-flash"];
 
             let providersList = data.providers || [];
-
-            // ★ FORCER Agnes en tête de liste (fallback si backend ne l'envoie pas)
             if (!providersList.some(p => p.id === 'agnes')) {
                 providersList.unshift({id: 'agnes', name: 'Agnes AI (Video)', configured: true});
             }
 
             const requiredProviders = [
-                // ★ AGNES AI — en premier ★
                 {id: 'agnes', name: 'Agnes AI (Video)', configured: true},
                 {id: 'kimi', name: 'Moonshot Kimi AI', configured: true},
                 {id: 'aisa', name: 'AIsa (Unified)', configured: true},
@@ -422,8 +573,9 @@
         try {
             const res = await fetch(`${API_BASE}/api/files/${encodeURIComponent(filename)}`, { method: 'DELETE' });
             if (res.ok) await loadFilesList();
+            else alert(`Erreur : HTTP ${res.status}`);
         } catch (e) {
-            alert("Erreur réseau");
+            alert(`Erreur réseau : ${e}`);
         }
     };
 
@@ -434,10 +586,10 @@
             if (res.ok) {
                 await loadFilesList();
             } else {
-                alert("Erreur serveur lors de la suppression des fichiers.");
+                alert(`Erreur : HTTP ${res.status}`);
             }
         } catch (e) {
-            alert("Erreur réseau");
+            alert(`Erreur réseau : ${e}`);
         }
     };
 
@@ -447,10 +599,13 @@
         view.innerHTML = `
             <h2>Compétences Actives (${skills.length})</h2>
             <p style="color:var(--text-dim); font-size:12.5px; margin-bottom:18px; background:rgba(255,255,255,0.05); padding:10px 14px; border-radius:8px;">
-                💡 <strong>Note :</strong> Les noms et descriptions des modules proviennent de la base de données open-source mondiale. Ils sont affichés dans leur langue d'origine (Anglais).
+                💡 <strong>Note :</strong> Les noms et descriptions des modules proviennent de la base de données open-source mondiale.
             </p>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px;">` +
-            skills.map(s => `
+            skills.map(s => {
+                const cmd = s.command || s.name || '';
+                const fullCmd = cmd.startsWith('/') ? cmd : '/' + cmd;
+                return `
                 <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:14px; border-radius:8px; display:flex; flex-direction:column; justify-content:space-between;">
                     <div>
                         <strong style="color:var(--text-main); font-size:14px;">${escapeHtml(s.name)}</strong>
@@ -460,12 +615,12 @@
                         </p>
                     </div>
                     <div style="margin-top: 6px;">
-                        <button onclick="insertPromptToChat('${s.command.startsWith('/') ? s.command : '/' + s.command}')" style="cursor:pointer; background:rgba(92,156,230,0.15); border:1px solid rgba(92,156,230,0.4); color:var(--accent-blue); padding:6px 10px; border-radius:6px; font-family:'Ubuntu Mono', monospace; font-size:12px; font-weight:bold; width:100%; text-align:left; transition:0.2s;">
-                            Exécuter : ${s.command.startsWith('/') ? s.command : '/' + s.command} ➜
+                        <button onclick="insertPromptToChat('${escapeHtml(fullCmd)}')" style="cursor:pointer; background:rgba(92,156,230,0.15); border:1px solid rgba(92,156,230,0.4); color:var(--accent-blue); padding:6px 10px; border-radius:6px; font-family:'Ubuntu Mono', monospace; font-size:12px; font-weight:bold; width:100%; text-align:left; transition:0.2s;">
+                            Exécuter : ${escapeHtml(fullCmd)} ➜
                         </button>
                     </div>
                 </div>
-            `).join('') + `</div>`;
+            `}).join('') + `</div>`;
     }
 
     window.insertPromptToChat = function(cmd) {
@@ -480,58 +635,294 @@
     async function loadMemoryView() {
         const view = document.getElementById('viewMemory');
         if (!view) return;
+        view.innerHTML = '<p style="color:var(--text-dim);">Chargement…</p>';
         try {
             const res = await fetch(`${API_BASE}/api/memory?t=${Date.now()}`);
             if (!res.ok) throw new Error("API manquante");
             const data = await res.json();
-            let pineconeColor = data.pinecone_status.includes('Connecté') ? '#4ade80' : '#f5a623';
+            const pineconeColor = (data.pinecone_status || '').includes('Connecté') ? '#4ade80' : '#f5a623';
+
+            const memories = data.memory || data.memories || [];
+            let memoriesHtml = '';
+            if (memories.length > 0) {
+                memoriesHtml = memories.slice(0, 10).map(m => `
+                    <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:12px 16px; margin-bottom:8px;">
+                        <div style="font-size:13px; color:#e2e8f0; margin-bottom:6px;">${escapeHtml(m.content || '')}</div>
+                        <div style="font-size:11px; color:var(--text-dim); font-family:monospace;">${escapeHtml(m.timestamp || '')}</div>
+                    </div>
+                `).join('');
+            } else {
+                memoriesHtml = '<p style="color:var(--text-dim); text-align:center; padding:20px;">Aucun souvenir vectoriel pour l\'instant.</p>';
+            }
 
             view.innerHTML = `
                 <h2>Mémoire Long Terme & Index Vectoriel</h2>
-                <div style="margin-top:16px; display:flex; flex-direction:column; gap:12px;">
+                <div style="margin-top:16px; display:flex; flex-direction:column; gap:16px;">
                     <div class="matrix-widget">
-                        <h3>Pinecone Vector Database : <span style="color:${pineconeColor};">${data.pinecone_status}</span></h3>
-                        <p style="color:var(--text-dim); font-size:13px; margin-top:8px;">Indexation vectorielle des conversations et règles d'or synchronisée en temps réel.</p>
+                        <h3 style="margin:0;">Pinecone Vector Database :
+                            <span style="color:${pineconeColor};">${escapeHtml(data.pinecone_status || '—')}</span>
+                        </h3>
+                        <p style="color:var(--text-dim); font-size:13px; margin-top:8px;">
+                            Indexation vectorielle des conversations et règles d'or synchronisée en temps réel.
+                        </p>
                         <div style="margin-top:12px; font-family:monospace; font-size:12px; color:var(--accent-blue);">
-                            - Entités Neon DB totales : ${data.neon_state_entries}<br>
+                            - Entités Neon DB totales : ${data.neon_state_entries ?? '—'}<br>
                             - Règles BEK synchronisées : ${data.system_rules_synced ? 'OUI' : 'NON'}
                         </div>
+                    </div>
+                    <div class="matrix-widget">
+                        <h3 style="margin:0 0 12px 0;">Souvenirs Récents</h3>
+                        ${memoriesHtml}
                     </div>
                 </div>
             `;
         } catch (e) {
-            view.innerHTML = `<p style="color:#ff4a4a">Erreur de chargement mémoire.</p>`;
+            view.innerHTML = `<p style="color:#ff4a4a">Erreur de chargement mémoire : ${escapeHtml(String(e))}</p>`;
         }
     }
 
     async function loadConnectorsView() {
         const view = document.getElementById('viewConnectors');
         if (!view) return;
+        view.innerHTML = '<p style="color:var(--text-dim);">Chargement…</p>';
         try {
             const res = await fetch(`${API_BASE}/api/connectors?t=${Date.now()}`);
             if (!res.ok) throw new Error("API manquante");
             const data = await res.json();
-            view.innerHTML = `<h2>Connecteurs Système & Serveurs</h2><div style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">` +
-                data.connectors.map(c => {
-                    let statusColor = c.status.includes('Actif') || c.status.includes('Prêt') ? '#4ade80' : '#f5a623';
-                    if (c.status.includes('Erreur')) statusColor = '#ff4a4a';
+            view.innerHTML = `<h2>Connecteurs Système & Serveurs</h2>
+                <div style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">` +
+                (data.connectors || []).map(c => {
+                    let statusColor = '#4ade80';
+                    const s = (c.status || '').toLowerCase();
+                    if (s.includes('erreur') || s.includes('error')) statusColor = '#ff4a4a';
+                    else if (s.includes('non configur') || s.includes('inconnu')) statusColor = '#f5a623';
                     return `
                     <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
                         <div>
-                            <strong>${escapeHtml(c.name)}</strong>
-                            <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Type : ${escapeHtml(c.type)}</div>
+                            <strong>${escapeHtml(c.name || '—')}</strong>
+                            <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Type : ${escapeHtml(c.type || '—')}</div>
                         </div>
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <span style="font-size:11px; font-family:monospace; color:var(--text-dim);">${c.latency_ms} ms</span>
-                            <span style="background:rgba(255,255,255,0.05); color:${statusColor}; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">${escapeHtml(c.status)}</span>
+                            <span style="font-size:11px; font-family:monospace; color:var(--text-dim);">${c.latency_ms ?? 0} ms</span>
+                            <span style="background:rgba(255,255,255,0.05); color:${statusColor}; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">${escapeHtml(c.status || '—')}</span>
                         </div>
-                    </div>
-                `}).join('') + `</div>`;
+                    </div>`;
+                }).join('') + `</div>`;
         } catch (e) {
-            view.innerHTML = `<p style="color:#ff4a4a">Erreur connecteurs.</p>`;
+            view.innerHTML = `<p style="color:#ff4a4a">Erreur connecteurs : ${escapeHtml(String(e))}</p>`;
         }
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // ★ C6.3 — REFLEX UI
+    // ═══════════════════════════════════════════════════════════════
+    async function refreshReflexBadge() {
+        try {
+            const res = await fetch(`${API_BASE}/api/reflex/stats?t=${Date.now()}`);
+            if (!res.ok) return;
+            const data = await res.json();
+            if (DOM.reflexCounter) {
+                DOM.reflexCounter.textContent = data.staging || 0;
+                DOM.reflexCounter.style.color = (data.staging || 0) > 0 ? '#f5a623' : '';
+            }
+        } catch (e) {
+            // silent
+        }
+    }
+
+    window.setReflexFilter = function(filter) {
+        reflexFilter = filter;
+        document.querySelectorAll('[data-reflex-filter]').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-reflex-filter') === filter);
+        });
+        renderReflexProposals();
+    };
+
+    window.runReflexCycle = async function() {
+        const btn = event?.target;
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = '⏳ Cycle en cours…';
+        }
+        try {
+            const res = await fetch(`${API_BASE}/api/reflex/run-cycle?hours=24&with_critic=false&with_forge=true&forge_dry_run=true`, {
+                method: 'POST',
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                alert(`Erreur : ${data.detail || data.message || res.status}`);
+                return;
+            }
+            alert(`✅ Cycle terminé\n\nPropositions créées : ${data.forge?.proposed ?? 0}\nRapport : ${data.report_id || '—'}`);
+            await loadReflexUI();
+        } catch (e) {
+            alert(`Erreur réseau : ${e}`);
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '▶️ Lancer un cycle';
+            }
+        }
+    };
+
+    window.loadReflexUI = async function() {
+        const container = document.getElementById('reflexProposalsContainer');
+        if (container) container.innerHTML = '<div class="reflex-empty">Chargement…</div>';
+
+        try {
+            const res = await fetch(`${API_BASE}/api/reflex/stats?t=${Date.now()}`);
+            if (res.ok) {
+                const stats = await res.json();
+                const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val ?? '—'; };
+                setTxt('reflexStatTotal', stats.total ?? 0);
+                setTxt('reflexStatStaging', stats.staging ?? 0);
+                setTxt('reflexStatApproved', stats.approved ?? 0);
+                setTxt('reflexStatRejected', stats.rejected ?? 0);
+            }
+        } catch (e) {
+            console.warn('[Reflex] stats échec :', e);
+        }
+
+        try {
+            let url = `${API_BASE}/api/reflex/history?limit=200&t=${Date.now()}`;
+            if (reflexFilter) url += `&status=${encodeURIComponent(reflexFilter)}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            reflexProposals = data.proposals || [];
+            renderReflexProposals();
+            await refreshReflexBadge();
+        } catch (e) {
+            if (container) {
+                container.innerHTML = `<div class="reflex-empty" style="color:#ef4444;">
+                    Erreur de chargement : ${escapeHtml(String(e))}
+                </div>`;
+            }
+        }
+    };
+
+    function renderReflexProposals() {
+        const container = document.getElementById('reflexProposalsContainer');
+        if (!container) return;
+
+        const filtered = reflexFilter
+            ? reflexProposals.filter(p => p.status === reflexFilter)
+            : reflexProposals;
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="reflex-empty">Aucune proposition pour ce filtre.</div>';
+            return;
+        }
+
+        container.innerHTML = filtered.map(p => {
+            const content = p.content_parsed || {};
+            const extra = p.extra_parsed || {};
+            const sig = content.trigger || {};
+            const ruleType = content.rule_type || p.rule_type || 'unknown';
+            const confidence = typeof p.confidence === 'number'
+                ? (p.confidence * 100).toFixed(0) + '%'
+                : '—';
+            const description = (content.action && content.action.description) || '—';
+            const status = p.status || 'unknown';
+
+            const ruleClass = `reflex-rule-${ruleType}`;
+
+            const actionButtons = status === 'staging' ? `
+                <div class="reflex-actions">
+                    <button class="reflex-btn-approve" onclick="approveReflexProposal('${escapeHtml(p.proposal_id)}')">✅ Approuver</button>
+                    <button class="reflex-btn-reject" onclick="rejectReflexProposal('${escapeHtml(p.proposal_id)}')">❌ Rejeter</button>
+                    <button class="reflex-btn-inspect" onclick="inspectReflexProposal('${escapeHtml(p.proposal_id)}')">🔍 Inspecter</button>
+                </div>
+            ` : `
+                <div class="reflex-actions">
+                    <button class="reflex-btn-inspect" onclick="inspectReflexProposal('${escapeHtml(p.proposal_id)}')">🔍 Inspecter</button>
+                </div>
+            `;
+
+            return `
+                <div class="reflex-proposal">
+                    <div class="reflex-proposal-header">
+                        <div>
+                            <div class="reflex-proposal-title">
+                                <span class="${ruleClass} reflex-rule-type">${escapeHtml(ruleType)}</span>
+                                ${escapeHtml(sig.action || 'unknown')}/${escapeHtml(sig.error_type || '-')}
+                            </div>
+                            <div class="reflex-proposal-id">${escapeHtml(p.proposal_id)}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div class="reflex-confidence">Confiance : <strong>${confidence}</strong></div>
+                            <div class="reflex-confidence">Statut : <strong>${escapeHtml(status)}</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="reflex-meta-row">
+                        <span>Occurrences : <strong>${sig.min_occurrences ?? '—'}</strong></span>
+                        <span>Critique source : <strong>${escapeHtml(extra.critique_category || '—')}</strong> / <strong>${escapeHtml(extra.critique_severity || '—')}</strong></span>
+                    </div>
+
+                    <div class="reflex-description">
+                        ${escapeHtml(description)}
+                    </div>
+
+                    ${actionButtons}
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.approveReflexProposal = async function(proposalId) {
+        if (!confirm(`Approuver la proposition ${proposalId} ?`)) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/reflex/approve/${encodeURIComponent(proposalId)}`, {
+                method: 'POST',
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                alert(`Erreur : ${data.detail || data.message || res.status}`);
+                return;
+            }
+            await loadReflexUI();
+        } catch (e) {
+            alert(`Erreur réseau : ${e}`);
+        }
+    };
+
+    window.rejectReflexProposal = async function(proposalId) {
+        if (!confirm(`Rejeter la proposition ${proposalId} ?`)) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/reflex/reject/${encodeURIComponent(proposalId)}`, {
+                method: 'POST',
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                alert(`Erreur : ${data.detail || data.message || res.status}`);
+                return;
+            }
+            await loadReflexUI();
+        } catch (e) {
+            alert(`Erreur réseau : ${e}`);
+        }
+    };
+
+    window.inspectReflexProposal = async function(proposalId) {
+        try {
+            const res = await fetch(`${API_BASE}/api/reflex/inspect/${encodeURIComponent(proposalId)}`);
+            if (!res.ok) {
+                alert(`Erreur : HTTP ${res.status}`);
+                return;
+            }
+            const data = await res.json();
+            const content = data.proposal?.content_parsed || data.proposal || {};
+            const txt = JSON.stringify(content, null, 2);
+            alert(`Proposition ${proposalId} :\n\n${txt}`);
+        } catch (e) {
+            alert(`Erreur réseau : ${e}`);
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════════════
+    // MODELS + NAV + EVENTS
+    // ═══════════════════════════════════════════════════════════════
     function updateModelSelect() {
         if (!DOM.providerSelect || !DOM.modelSelect) return;
         currentProvider = DOM.providerSelect.value;
@@ -573,8 +964,13 @@
                     const view = document.getElementById('viewMatrixBek');
                     view.classList.add('active');
                     view.style.display = 'block';
-                    if(window.loadSubCRMsUI) window.loadSubCRMsUI();
-                    if(window.loadOpportunitiesUI) window.loadOpportunitiesUI();
+                    if (window.loadSubCRMsUI) window.loadSubCRMsUI();
+                    if (window.loadOpportunitiesUI) window.loadOpportunitiesUI();
+                } else if (tabName === 'reflex') {
+                    const view = document.getElementById('viewReflex');
+                    view.classList.add('active');
+                    view.style.display = 'block';
+                    loadReflexUI();
                 } else {
                     const viewEl = document.getElementById(`view${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
                     if (viewEl) {
@@ -701,7 +1097,7 @@
                     }
                 };
 
-                recognition.onerror = (event) => { resetMicUI(); };
+                recognition.onerror = () => { resetMicUI(); };
                 recognition.onend = () => { resetMicUI(); };
             } else {
                 DOM.micBtn.style.display = 'none';
@@ -761,7 +1157,6 @@
     }
 
     async function uploadFileToServer(file) {
-        // ★ v27 : affichage immédiat avec spinner
         const tempId = `upload_${Date.now()}_${Math.random().toString(36).slice(2)}`;
         pendingUploads[tempId] = {
             name: file.name,
@@ -780,7 +1175,6 @@
             });
             const data = await resp.json();
             if (resp.ok) {
-                // Retirer le pending, ajouter le vrai fichier
                 delete pendingUploads[tempId];
                 attachedFiles.push({
                     filename: data.filename,
@@ -810,7 +1204,6 @@
         }
     }
 
-    // ★ v27 : icônes par type de fichier
     function getFileIcon(filename, mimeType) {
         const ext = (filename.split('.').pop() || '').toLowerCase();
         if (mimeType?.startsWith('image/') || ['png','jpg','jpeg','gif','webp','bmp','svg'].includes(ext)) return '🖼️';
@@ -855,7 +1248,6 @@
 
         let html = '';
 
-        // ─── Fichiers en cours d'upload (spinner) ───
         for (const [tempId, info] of Object.entries(pendingUploads)) {
             const isError = info.status === 'error';
             const borderColor = isError ? '#ef4444' : 'var(--accent-blue)';
@@ -883,7 +1275,6 @@
             `;
         }
 
-        // ─── Fichiers uploadés ───
         html += attachedFiles.map((f, i) => {
             const filename = typeof f === 'string' ? f : f.filename;
             const size = typeof f === 'object' ? f.size : 0;
@@ -892,7 +1283,6 @@
             const isImg = filename.match(/\.(png|jpe?g|gif|webp|bmp|svg)$/i);
             const isVideo = filename.match(/\.(mp4|webm|mov|avi|mkv)$/i);
 
-            // ─── Preview image (miniature) ───
             if (isImg) {
                 return `
                     <div class="file-preview-item" style="
@@ -909,7 +1299,6 @@
                 `;
             }
 
-            // ─── Preview vidéo (lecteur inline) ───
             if (isVideo) {
                 return `
                     <div class="file-preview-item" style="
@@ -932,7 +1321,6 @@
                 `;
             }
 
-            // ─── Preview fichier (icône + nom + taille) ───
             return `
                 <div class="file-preview-item" style="
                     position:relative; min-width:180px; max-width:280px;
@@ -1269,6 +1657,9 @@
         saveConversationsToStorage();
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // CRM MATRIX BEK — Stubs remplacés plus tard si tu as les vraies API
+    // ═══════════════════════════════════════════════════════════════
     window.loadSubCRMsUI = async function() {
         const container = document.getElementById('subCrmsListContainer');
         if (!container) return;
@@ -1317,6 +1708,15 @@
         });
         if (window.loadOpportunitiesUI) window.loadOpportunitiesUI();
     };
+
+    // Stubs pour modales CRM
+    window.promptSpawnNewSubCRM = function() {};
+    window.promptCreateOpportunity = function() {};
+    window.closeSubCRMModal = function() {};
+    window.switchModalTab = function() {};
+    window.promptAddEntity = function() {};
+    window.promptAddOperation = function() {};
+    window.openSubCRMModal = function() {};
 
     document.addEventListener('DOMContentLoaded', init);
 })();

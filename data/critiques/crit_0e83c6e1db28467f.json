@@ -1,0 +1,26 @@
+{
+  "critique_id": "crit_0e83c6e1db28467f",
+  "status": "success",
+  "pattern_signature": {
+    "action": "web_sync",
+    "status": "error",
+    "error_type": "TimeoutError"
+  },
+  "pattern_count": 6,
+  "category": "RESEARCH_FAIL",
+  "severity": "HIGH",
+  "root_cause": "DuckDuckGo impose un timeout dur à 5s qui coupe systématiquement les requêtes web_sync avant qu'elles ne aboutissent.",
+  "fix_suggestion": "Basculer vers Mojeek ou Qwant dès 3s d'attente, et activer un cache de 10 min sur les requêtes identiques pour éviter les relances.",
+  "confidence": 0.92,
+  "tags": [
+    "web",
+    "timeout",
+    "provider-fallback",
+    "hard-limit"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b",
+  "latency_ms": 12916.37,
+  "dry_run": true,
+  "ts_utc": "2026-09-22T12:44:06.697738+00:00"
+}

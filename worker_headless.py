@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
 """
-BEK-v15.3 HYBRID - Worker Headless Autonome (Playwright Engine Hardened)
+BEK-v18 HYBRID - Worker Headless Autonome (Playwright Engine Hardened)
 -----------------------------------------------------------------------
 Service d'extraction et de rendu web headless non‑interactif.
 
-CORRECTIF v15 :
-- Cascade étendue : Google → Bing → DDG Lite → Qwant → Mojeek → Startpage
-- Qwant : moteur FR natif, excellent pour l'actualité francophone
-- Mojeek : peu protégé, bon pour les requêtes rares
-- Startpage : proxy Google anonymisé
-- Rotation User-Agent dynamique à chaque contexte Playwright
-- Cookies de session persistants par contexte
-- Détection de bruit améliorée (pages de navigation pure)
-- Le reste conservé : stop-list FR+EN, mot entier \b, seuil 2 lettres,
-  décode base64url, fallback requests
+CORRECTIF v16 (2026-09-22) :
+- ★ FIX : filtre URLs stériles AVANT retour (Yahoo home, Google search, etc.)
+- ★ FIX : suppression du fallback bruit qui forçait des homes en résultats
+- ★ FIX : les URLs sans path (home) sont rejetées
+- ★ FIX : les URLs de recherche/login sont rejetées
+
+CORRECTIF v17 (2026-09-24) :
+- ★ FIX : _is_relevant assoupli (accepte 0 match si query 1 mot)
+- ★ FIX : retrait des patterns stériles trop larges (click., /redirect?)
+
+CORRECTIF v18 (2026-09-24) :
+- ★ FIX MAJEUR : cumul multi-moteurs (ne s'arrête plus au 1er moteur)
+- ★ FIX : seuil minimum de résultats (3) avant d'arrêter la cascade
+- ★ FIX : dédoublonnage par URL après cumul
 """
 
 from __future__ import annotations
@@ -41,6 +45,100 @@ logging.basicConfig(
 )
 
 WORKSPACE_DIR = Path(__file__).resolve().parent
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ FIX v16 — FILTRE URLs STÉRILES
+# ══════════════════════════════════════════════════════════════════════════════
+_STERILE_URL_PATTERNS = (
+    # ── Homes de moteurs de recherche ──
+    r"^https?://(www\.)?google\.[a-z]{2,3}/?$",
+    r"^https?://(www\.)?bing\.com/?$",
+    r"^https?://(www\.)?duckduckgo\.com/?$",
+    r"^https?://(www\.)?qwant\.com/?$",
+    r"^https?://(www\.)?mojeek\.com/?$",
+    r"^https?://(www\.)?startpage\.com/?$",
+    r"^https?://(www\.)?yahoo\.com/?$",
+    r"^https?://(www\.)?yahoo\.fr/?$",
+    r"^https?://fr\.news\.yahoo\.com/?$",
+    r"^https?://fr\.search\.yahoo\.com/?.*",
+    r"^https?://news\.google\.com/?.*",
+    r"^https?://(www\.)?msn\.com/?.*",
+
+    # ── Pages de recherche (query strings) ──
+    r"[?&]q=",
+    r"[?&]query=",
+    r"[?&]search=",
+    r"/search\?",
+    r"/sp/search\?",
+    r"/html/\?q=",
+
+    # ── Pages de login / auth / consentement ──
+    r"/login",
+    r"/signin",
+    r"/sign-in",
+    r"/auth/",
+    r"/oauth",
+    r"/consent",
+    r"accounts\.google\.com",
+    r"login\.microsoftonline\.com",
+    r"auth0\.com",
+    r"okta\.com",
+
+    # ── Tracking / redirecteurs ──
+    r"google\.com/url\?",
+    r"google\.com/finance\?sa=X",
+    r"bing\.com/ck/a",
+)
+_STERILE_URL_REGEX = re.compile("|".join(_STERILE_URL_PATTERNS), re.IGNORECASE)
+
+
+def _is_sterile_url(url: str) -> bool:
+    """Vrai si l'URL est une home/login/recherche générique sans contenu éditorial."""
+    if not url:
+        return True
+
+    try:
+        parsed = urlparse(url)
+    except Exception:
+        return True
+
+    if parsed.scheme not in ("http", "https"):
+        return True
+
+    if not parsed.netloc:
+        return True
+
+    path = (parsed.path or "").strip("/")
+    if not path or path in ("index.html", "index.htm", "index.php", "home", "home.html"):
+        return True
+
+    if _STERILE_URL_REGEX.search(url):
+        return True
+
+    return False
+
+
+def _filter_sterile_results(results: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    """Filtre une liste de résultats en retirant les URLs stériles."""
+    if not results:
+        return []
+    kept = []
+    for item in results:
+        url = item.get("url") or item.get("source_url") or ""
+        if _is_sterile_url(url):
+            logger.debug("[sterile-filter] Rejeté : %s", url[:100])
+            continue
+        kept.append(item)
+    if len(kept) < len(results):
+        logger.info(
+            "[sterile-filter] %d/%d URLs stériles retirées",
+            len(results) - len(kept), len(results),
+        )
+    return kept
+# ══════════════════════════════════════════════════════════════════════════════
+# FIN FIX v16
+# ══════════════════════════════════════════════════════════════════════════════
 
 
 class HeadlessWorker:
@@ -98,7 +196,6 @@ class HeadlessWorker:
         "Cache-Control": "max-age=0",
     }
 
-    # Mots-clés de bruit de navigation (pages de tickers, menus, etc.)
     _NOISE_MARKERS = (
         "arrow_upward", "arrow_downward",
         "SIXB", "SIXC", "SIXE", "SIXI", "SIXM", "SIXR",
@@ -141,7 +238,6 @@ class HeadlessWorker:
                 "--disable-blink-features=AutomationControlled",
             ],
         )
-        # v15 : rotation User-Agent
         ua = random.choice(self._USER_AGENTS)
         context = await browser.new_context(
             user_agent=ua,
@@ -251,7 +347,6 @@ class HeadlessWorker:
 
     @staticmethod
     def _resolve_qwant_url(raw: str) -> str:
-        """Qwant enveloppe parfois les URLs dans des redirections."""
         if not raw:
             return ""
         if "qwant.com" in raw and "url=" in raw:
@@ -267,7 +362,6 @@ class HeadlessWorker:
 
     @staticmethod
     def _resolve_startpage_url(raw: str) -> str:
-        """Startpage peut utiliser des redirections /do/."""
         if not raw:
             return ""
         if "startpage.com" in raw and ("url=" in raw or "/do/" in raw):
@@ -282,21 +376,42 @@ class HeadlessWorker:
         return raw
 
     def _is_relevant(self, query: str, title: str, url: str) -> bool:
+        """
+        Vérifie si le résultat est pertinent pour la requête.
+
+        Politique assouplie v17 :
+        - Si AUCUN keyword n'est trouvé → on GARDE quand même (mieux que 0)
+        - Un keyword suffit
+        - Si query a 1 seul keyword → on accepte plus large
+        """
         keywords = [
             w.lower() for w in re.findall(r"\w+", query or "")
             if len(w) >= 2 and w.lower() not in self._STOPWORDS
         ]
         if not keywords:
             return True
+
         haystack = f"{title or ''} {url or ''}".lower()
+
+        matched = 0
         for kw in keywords:
             if re.search(rf"\b{re.escape(kw)}\b", haystack):
-                return True
+                matched += 1
+
+        if matched >= 1:
+            return True
+
+        if len(keywords) == 1 and len(title or "") > 30:
+            logger.debug(
+                "[_is_relevant] Assoupli : '%s' accepté malgré 0 match (query 1 mot)",
+                title[:60]
+            )
+            return True
+
         return False
 
     @staticmethod
     def _is_noisy_content(text: str) -> bool:
-        """Détecte un contenu pollué par de la navigation (menus, tickers)."""
         if not text or len(text) < 200:
             return False
         hits = sum(1 for m in HeadlessWorker._NOISE_MARKERS if m in text)
@@ -350,7 +465,6 @@ class HeadlessWorker:
             soup = BeautifulSoup(html, "html.parser")
 
             results: List[Dict[str, str]] = []
-            fallback: List[Dict[str, str]] = []
             for div in soup.select("div.g, div[data-hveid]")[: limit * 5]:
                 a = div.select_one("a")
                 if not a:
@@ -372,21 +486,20 @@ class HeadlessWorker:
                 sn = div.select_one("div[data-sncf], span.aCOpRe, div.VwiC3b")
                 snippet = sn.get_text(strip=True) if sn else ""
                 item = {"title": title, "url": href, "snippet": snippet}
-                if self._is_relevant(query, title, href):
-                    results.append(item)
-                else:
-                    fallback.append(item)
+
+                if _is_sterile_url(href):
+                    continue
+                if not self._is_relevant(query, title, href):
+                    continue
+
+                results.append(item)
                 if len(results) >= limit:
                     break
-
-            if not results and fallback:
-                logger.info("[search/pw] Google → filtre strict, fallback brut (%d)", len(fallback))
-                results = fallback[:limit]
 
             if results:
                 logger.info("[search/pw] Google → %d résultats", len(results))
             else:
-                logger.warning("[search/pw] Google → 0 résultats")
+                logger.warning("[search/pw] Google → 0 résultats (après filtre stérile)")
             return results
         except Exception as exc:
             logger.warning("[search/pw] Google échec : %s", exc)
@@ -421,7 +534,6 @@ class HeadlessWorker:
             )
 
             results: List[Dict[str, str]] = []
-            fallback: List[Dict[str, str]] = []
             for a in anchors[: limit * 3]:
                 title = a.get_text(strip=True)
                 url_clean = self._clean_ddg_url(a.get("href", ""))
@@ -442,22 +554,20 @@ class HeadlessWorker:
 
                 if not title or not url_clean or not url_clean.startswith("http"):
                     continue
-                item = {"title": title, "url": url_clean, "snippet": snippet}
-                if self._is_relevant(query, title, url_clean):
-                    results.append(item)
-                else:
-                    fallback.append(item)
+
+                if _is_sterile_url(url_clean):
+                    continue
+                if not self._is_relevant(query, title, url_clean):
+                    continue
+
+                results.append({"title": title, "url": url_clean, "snippet": snippet})
                 if len(results) >= limit:
                     break
-
-            if not results and fallback:
-                logger.info("[search/pw] DDG Lite → filtre strict, fallback brut (%d)", len(fallback))
-                results = fallback[:limit]
 
             if results:
                 logger.info("[search/pw] DDG Lite → %d résultats", len(results))
             else:
-                logger.warning("[search/pw] DDG Lite → 0 résultats")
+                logger.warning("[search/pw] DDG Lite → 0 résultats (après filtre stérile)")
             return results
         except Exception as exc:
             logger.warning("[search/pw] DDG Lite échec : %s", exc)
@@ -503,8 +613,12 @@ class HeadlessWorker:
                 real_url = self._resolve_bing_url(a.get("href", ""))
                 if not title or not real_url or not real_url.startswith("http"):
                     continue
+
+                if _is_sterile_url(real_url):
+                    continue
                 if not self._is_relevant(query, title, real_url):
                     continue
+
                 sn = li.select_one(".b_caption p")
                 snippet = sn.get_text(strip=True) if sn else ""
                 results.append({
@@ -534,11 +648,9 @@ class HeadlessWorker:
         logger.warning("[search/pw] Bing → 0 résultats (en-US + fr-FR)")
         return []
 
-    # ── NOUVEAU v15 : Qwant ──
     async def _search_qwant_playwright(
         self, context: Any, query: str, limit: int
     ) -> List[Dict[str, str]]:
-        """Qwant — moteur français, excellent pour l'actualité FR."""
         page = await context.new_page()
         try:
             url = f"https://www.qwant.com/?q={quote_plus(query)}&t=web"
@@ -552,7 +664,6 @@ class HeadlessWorker:
             soup = BeautifulSoup(html, "html.parser")
 
             results: List[Dict[str, str]] = []
-            # Qwant utilise plusieurs structures selon les versions
             selectors = [
                 "a[data-testid='result-link']",
                 "article a[href^='http']",
@@ -565,7 +676,6 @@ class HeadlessWorker:
                     anchors = found
                     break
 
-            fallback: List[Dict[str, str]] = []
             for a in anchors[: limit * 4]:
                 title = a.get_text(strip=True)
                 href = a.get("href", "")
@@ -574,22 +684,20 @@ class HeadlessWorker:
                 real_url = self._resolve_qwant_url(href)
                 if not title or len(title) < 10:
                     continue
-                item = {"title": title[:120], "url": real_url, "snippet": ""}
-                if self._is_relevant(query, title, real_url):
-                    results.append(item)
-                else:
-                    fallback.append(item)
+
+                if _is_sterile_url(real_url):
+                    continue
+                if not self._is_relevant(query, title, real_url):
+                    continue
+
+                results.append({"title": title[:120], "url": real_url, "snippet": ""})
                 if len(results) >= limit:
                     break
-
-            if not results and fallback:
-                logger.info("[search/pw] Qwant → filtre strict, fallback brut (%d)", len(fallback))
-                results = fallback[:limit]
 
             if results:
                 logger.info("[search/pw] Qwant → %d résultats", len(results))
             else:
-                logger.warning("[search/pw] Qwant → 0 résultats")
+                logger.warning("[search/pw] Qwant → 0 résultats (après filtre stérile)")
             return results
         except Exception as exc:
             logger.warning("[search/pw] Qwant échec : %s", exc)
@@ -598,11 +706,9 @@ class HeadlessWorker:
             try: await page.close()
             except Exception: pass
 
-    # ── NOUVEAU v15 : Mojeek ──
     async def _search_mojeek_playwright(
         self, context: Any, query: str, limit: int
     ) -> List[Dict[str, str]]:
-        """Mojeek — peu protégé, bon pour les requêtes rares."""
         page = await context.new_page()
         try:
             url = f"https://www.mojeek.com/search?q={quote_plus(query)}"
@@ -616,7 +722,6 @@ class HeadlessWorker:
             soup = BeautifulSoup(html, "html.parser")
 
             results: List[Dict[str, str]] = []
-            fallback: List[Dict[str, str]] = []
             for li in soup.select("ul.results-standard li")[: limit * 4]:
                 a = li.select_one("a.title")
                 if not a:
@@ -625,24 +730,22 @@ class HeadlessWorker:
                 href = a.get("href", "")
                 if not href.startswith("http"):
                     continue
+
+                if _is_sterile_url(href):
+                    continue
+                if not self._is_relevant(query, title, href):
+                    continue
+
                 sn = li.select_one(".s")
                 snippet = sn.get_text(strip=True) if sn else ""
-                item = {"title": title, "url": href, "snippet": snippet}
-                if self._is_relevant(query, title, href):
-                    results.append(item)
-                else:
-                    fallback.append(item)
+                results.append({"title": title, "url": href, "snippet": snippet})
                 if len(results) >= limit:
                     break
-
-            if not results and fallback:
-                logger.info("[search/pw] Mojeek → filtre strict, fallback brut (%d)", len(fallback))
-                results = fallback[:limit]
 
             if results:
                 logger.info("[search/pw] Mojeek → %d résultats", len(results))
             else:
-                logger.warning("[search/pw] Mojeek → 0 résultats")
+                logger.warning("[search/pw] Mojeek → 0 résultats (après filtre stérile)")
             return results
         except Exception as exc:
             logger.warning("[search/pw] Mojeek échec : %s", exc)
@@ -651,11 +754,9 @@ class HeadlessWorker:
             try: await page.close()
             except Exception: pass
 
-    # ── NOUVEAU v15 : Startpage ──
     async def _search_startpage_playwright(
         self, context: Any, query: str, limit: int
     ) -> List[Dict[str, str]]:
-        """Startpage — proxy Google anonymisé."""
         page = await context.new_page()
         try:
             url = f"https://www.startpage.com/sp/search?query={quote_plus(query)}"
@@ -669,7 +770,6 @@ class HeadlessWorker:
             soup = BeautifulSoup(html, "html.parser")
 
             results: List[Dict[str, str]] = []
-            fallback: List[Dict[str, str]] = []
             for el in soup.select("a.result-link, .w-gl__result-title a")[: limit * 4]:
                 title = el.get_text(strip=True)
                 href = el.get("href", "")
@@ -678,22 +778,20 @@ class HeadlessWorker:
                 real_url = self._resolve_startpage_url(href)
                 if not title:
                     continue
-                item = {"title": title, "url": real_url, "snippet": ""}
-                if self._is_relevant(query, title, real_url):
-                    results.append(item)
-                else:
-                    fallback.append(item)
+
+                if _is_sterile_url(real_url):
+                    continue
+                if not self._is_relevant(query, title, real_url):
+                    continue
+
+                results.append({"title": title, "url": real_url, "snippet": ""})
                 if len(results) >= limit:
                     break
-
-            if not results and fallback:
-                logger.info("[search/pw] Startpage → filtre strict, fallback brut (%d)", len(fallback))
-                results = fallback[:limit]
 
             if results:
                 logger.info("[search/pw] Startpage → %d résultats", len(results))
             else:
-                logger.warning("[search/pw] Startpage → 0 résultats")
+                logger.warning("[search/pw] Startpage → 0 résultats (après filtre stérile)")
             return results
         except Exception as exc:
             logger.warning("[search/pw] Startpage échec : %s", exc)
@@ -733,15 +831,20 @@ class HeadlessWorker:
             if r.status_code != 200:
                 return []
             soup = BeautifulSoup(r.text, "html.parser")
-            return [
-                {
-                    "title": a.get_text(strip=True),
-                    "url": self._clean_ddg_url(a.get("href", "")),
-                    "snippet": "",
-                }
-                for a in soup.select("a.result__a")[:limit]
-                if a.get_text(strip=True) and self._clean_ddg_url(a.get("href", ""))
-            ]
+            results = []
+            for a in soup.select("a.result__a")[:limit * 2]:
+                title = a.get_text(strip=True)
+                url_clean = self._clean_ddg_url(a.get("href", ""))
+                if not title or not url_clean:
+                    continue
+                if _is_sterile_url(url_clean):
+                    continue
+                if not self._is_relevant(query, title, url_clean):
+                    continue
+                results.append({"title": title, "url": url_clean, "snippet": ""})
+                if len(results) >= limit:
+                    break
+            return results
         except Exception:
             return []
 
@@ -756,7 +859,7 @@ class HeadlessWorker:
                 return []
             soup = BeautifulSoup(r.text, "html.parser")
             results = []
-            for li in soup.select("ul.results-standard li")[:limit]:
+            for li in soup.select("ul.results-standard li")[:limit * 2]:
                 a = li.select_one("a.title")
                 if not a:
                     continue
@@ -764,9 +867,15 @@ class HeadlessWorker:
                 url_clean = a.get("href", "")
                 if not title or not url_clean:
                     continue
+                if _is_sterile_url(url_clean):
+                    continue
+                if not self._is_relevant(query, title, url_clean):
+                    continue
                 sn = li.select_one(".s")
                 snippet = sn.get_text(strip=True) if sn else ""
                 results.append({"title": title, "url": url_clean, "snippet": snippet})
+                if len(results) >= limit:
+                    break
             return results
         except Exception:
             return []
@@ -789,6 +898,10 @@ class HeadlessWorker:
                 title = a.get_text(strip=True)
                 real_url = self._resolve_bing_url(a.get("href", ""))
                 if not title or not real_url:
+                    continue
+                if _is_sterile_url(real_url):
+                    continue
+                if not self._is_relevant(query, title, real_url):
                     continue
                 sn = li.select_one(".b_caption p")
                 snippet = sn.get_text(strip=True) if sn else ""
@@ -814,6 +927,10 @@ class HeadlessWorker:
                 title = el.get_text(strip=True)
                 url_clean = el.get("href", "")
                 if not title or not url_clean:
+                    continue
+                if _is_sterile_url(url_clean):
+                    continue
+                if not self._is_relevant(query, title, url_clean):
                     continue
                 results.append({"title": title, "url": url_clean, "snippet": ""})
                 if len(results) >= limit:
@@ -847,7 +964,6 @@ class HeadlessWorker:
             try:
                 playwright_obj, browser, context = await self._launch_browser()
 
-                # ── Cascade v15 : 6 moteurs ──
                 engines = [
                     ("Google", self._search_google_playwright),
                     ("Bing", self._search_bing_playwright),
@@ -857,15 +973,51 @@ class HeadlessWorker:
                     ("Startpage", self._search_startpage_playwright),
                 ]
 
+                # ══════════════════════════════════════════════════════════
+                # ★ v18 — CUMUL MULTI-MOTEURS
+                # ------------------------------------------------------------------
+                # Au lieu de s'arrêter au 1er moteur qui retourne quelque chose,
+                # on cumule jusqu'à atteindre _MIN_RESULTS_THRESHOLD résultats.
+                # ==================================================================
+                _MIN_RESULTS_THRESHOLD = 3
+                _all_results: List[Dict[str, str]] = []
+
                 for name, engine_fn in engines:
                     try:
-                        raw = await engine_fn(context, query, limit)
+                        partial = await engine_fn(context, query, limit)
                     except Exception as exc:
                         logger.warning("[search/pw] %s exception : %s", name, exc)
-                        raw = []
-                    if raw:
-                        logger.info("[search/pw] Cascade arrêtée sur %s", name)
-                        break
+                        partial = []
+
+                    if partial:
+                        _all_results.extend(partial)
+                        logger.info(
+                            "[search/pw] %s → %d résultats (cumul : %d)",
+                            name, len(partial), len(_all_results),
+                        )
+                        if len(_all_results) >= _MIN_RESULTS_THRESHOLD:
+                            logger.info(
+                                "[search/pw] Seuil %d atteint sur %s",
+                                _MIN_RESULTS_THRESHOLD, name,
+                            )
+                            break
+                    else:
+                        logger.info(
+                            "[search/pw] %s → 0 résultat, on continue", name,
+                        )
+
+                # Dédoublonner par URL
+                _seen_urls: set = set()
+                for r in _all_results:
+                    u = r.get("url", "")
+                    if u and u not in _seen_urls:
+                        _seen_urls.add(u)
+                        raw.append(r)
+
+                logger.info(
+                    "[search/pw] Total cumulé : %d résultats uniques (sur %d moteurs testés)",
+                    len(raw), len(engines),
+                )
 
             except Exception as exc:
                 logger.error("[search/pw] Exception globale : %s", exc)
@@ -908,6 +1060,8 @@ class HeadlessWorker:
             except Exception as exc:
                 logger.error("[search] Fallback requests échec : %s", exc)
                 raw = []
+
+        logger.info("[search] %d résultats bruts", len(raw))
 
         leads = []
         for item in raw:

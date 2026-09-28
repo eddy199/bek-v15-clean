@@ -1,10 +1,13 @@
 # ==============================================================================
-# BEK-v16 — Exécuteur d'actions & outils optimisé (services/action_executor.py)
+# BEK-v16 — Exécuteur d'actions & outils optimisé (services/action_executor.py) — FIX v35
 # COMPATIBILITÉ MULTI-OS / PATHGUARD / SCAN RAPIDE SANS GEL DU FLUX
 # ------------------------------------------------------------------------------
 # v22 (2026-09-20) : generate_video + merge_and_edit_videos
 # v28 (2026-09-21) : extend_video / extend_video_multiple (Agnes)
 # v32 (2026-09-21) : sous-titres Whisper (generate_subtitles + burn_subtitles)
+# v33 (2026-09-22) : SANDBOX AST sur create_dynamic_skill + source staging
+# v34 (2026-09-22) : Wrapper episodic_log autour du dispatcher
+# v35 (2026-09-22) : FIX log non-bloquant + import safe + truncate params
 # ==============================================================================
 from __future__ import annotations
 
@@ -13,13 +16,22 @@ import re
 import json
 import ast
 import uuid
+import time
 import zipfile
 import shutil
 import subprocess
 from pathlib import Path
 
+try:
+    from services.episode_logger import log_episode as _log_episode_sync
+    _EPISODE_LOG_OK = True
+except Exception:
+    _EPISODE_LOG_OK = False
+    def _log_episode_sync(*a, **k):
+        return ""
 from core.paths import WORKSPACE_DIR, FILES_DIR, GENERATED_DIR
 from core.security.path_guard import find_existing, safe_path
+from core.security.skill_sandbox import validate_skill_code
 from core.utils import json_safe
 
 # --- Imports vision : image + vidéo ---
@@ -52,6 +64,36 @@ try:
 except ImportError:
     web_agent_instance = None
 
+# ==============================================================================
+# FIX v35 — LOG EPISODIQUE NON-BLOQUANT (ne casse plus le chat)
+# ------------------------------------------------------------------------------
+# Avant : log_episode() appele en synchrone dans le finally -> DuckDB verrouille
+# + latence ajoutee a chaque outil.
+# Apres : envoi en thread daemon + kill-switch BEK_DISABLE_EPISODE_LOG=1.
+# ==============================================================================
+import threading as _th
+
+def _log_episode_bg(**kwargs) -> None:
+    if not _EPISODE_LOG_OK:
+        return
+    if os.getenv("BEK_DISABLE_EPISODE_LOG", "0").strip() in ("1", "true", "yes", "on"):
+        return
+    try:
+        # tronque params pour eviter JSON geant
+        params = kwargs.get("parameters") or {}
+        try:
+            s = json.dumps(params, default=str, ensure_ascii=False)
+            if len(s) > 4000:
+                kwargs["parameters"] = {"_truncated": True, "_preview": s[:4000]}
+        except Exception:
+            kwargs["parameters"] = {}
+        t = _th.Thread(target=_log_episode_sync, kwargs=kwargs, daemon=True)
+        t.start()
+    except Exception:
+        pass
+
+
+
 
 # ==============================================================================
 # SCAN RAPIDE DU WORKSPACE (sans gel du flux)
@@ -83,34 +125,94 @@ def _fast_workspace_scan(pattern: str = "") -> list[str]:
 
 
 # ==============================================================================
-# DISPATCHER PRINCIPAL
+# DISPATCHER PRINCIPAL (implémentation réelle)
 # ==============================================================================
-def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
+def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
     correlation_id = f"corr_{uuid.uuid4().hex[:12]}"
     task_id = f"task_{uuid.uuid4().hex[:8]}"
     update_task_state(task_id, "RUNNING", correlation_id, f"Action: {action_name}")
 
     try:
         # ----------------------------------------------------------------------
-        # 1. CRÉATION DYNAMIQUE DE SKILLS
+        # 1. CRÉATION DYNAMIQUE DE SKILLS (SANDBOX AST OBLIGATOIRE)
         # ----------------------------------------------------------------------
         if action_name == "create_dynamic_skill":
             skill_name = parameters.get("skill_name", "")
             code_content = parameters.get("code_content", "")
-            description = parameters.get("description", "Skill auto-généré par l'orchestrateur BEK")
+            description = parameters.get(
+                "description",
+                "Skill auto-généré par l'orchestrateur BEK",
+            )
+            source = parameters.get("source", "user")  # user | reflex-loop | orchestrator
+
             if not skill_name or not code_content:
-                update_task_state(task_id, "FAILED", correlation_id, "Nom du skill ou contenu manquant.")
-                return {"status": "error", "message": "Nom du skill ou contenu manquant."}
+                update_task_state(
+                    task_id, "FAILED", correlation_id,
+                    "Nom du skill ou contenu manquant.",
+                )
+                return {
+                    "status": "error",
+                    "message": "Nom du skill ou contenu manquant.",
+                }
+
+            # --- 1a. Validation sandbox AST obligatoire ---
+            validation = validate_skill_code(code_content)
+            if not validation.get("valid"):
+                errors_preview = validation.get("errors", [])[:3]
+                update_task_state(
+                    task_id, "FAILED", correlation_id,
+                    f"Sandbox AST refus: {errors_preview}",
+                )
+                return {
+                    "status": "error",
+                    "message": (
+                        "🛡️ Skill refusé par le sandbox AST.\n"
+                        "Erreurs détectées :\n- "
+                        + "\n- ".join(errors_preview)
+                    ),
+                    "errors": validation.get("errors", []),
+                }
+
+            # --- 1b. Enregistrement (délégué à skill_generator) ---
+            if not create_and_register_skill:
+                update_task_state(
+                    task_id, "FAILED", correlation_id,
+                    "Module skill_generator indisponible.",
+                )
+                return {
+                    "status": "error",
+                    "message": "Module skill_generator indisponible.",
+                }
+
             try:
-                if create_and_register_skill:
-                    res = create_and_register_skill(skill_name, code_content, description)
-                    update_task_state(task_id, "COMPLETED", correlation_id, f"Skill créé: {skill_name}")
-                    return res
-                update_task_state(task_id, "FAILED", correlation_id, "Module skill_generator indisponible.")
-                return {"status": "error", "message": "Module skill_generator indisponible."}
+                # Passe `source` si le générateur le supporte.
+                try:
+                    res = create_and_register_skill(
+                        skill_name,
+                        code_content,
+                        description,
+                        source=source,
+                    )
+                except TypeError:
+                    # Signature legacy sans `source`
+                    res = create_and_register_skill(
+                        skill_name,
+                        code_content,
+                        description,
+                    )
+
+                update_task_state(
+                    task_id, "COMPLETED", correlation_id,
+                    f"Skill créé: {skill_name} (source={source})",
+                )
+                return res
+
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur intégration skill : {str(e)}"}
+                return {
+                    "status": "error",
+                    "message": f"Erreur intégration skill : {str(e)}",
+                }
 
         # ----------------------------------------------------------------------
         # 2. ORCHESTRATION & ESSAIM DE SOUS-AGENTS
@@ -676,9 +778,66 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             update_task_state(task_id, "COMPLETED", correlation_id, f"Arrêt tâche: {session_name}")
             return stop_background_task(session_name)
 
-        update_task_state(task_id, "COMPLETED", correlation_id, "Action traitée")
-        return {"status": "success", "message": "Action traitée avec succès."}
+        # ----------------------------------------------------------------------
+        # 10. FALLBACK : action inconnue (corrige le faux SUCCESS)
+        # ----------------------------------------------------------------------
+        update_task_state(
+            task_id, "FAILED", correlation_id,
+            f"Action inconnue : '{action_name}'",
+        )
+        return {
+            "status": "error",
+            "message": f"Action inconnue : '{action_name}'. Aucun handler disponible.",
+        }
 
     except Exception as e:
         update_task_state(task_id, "FAILED", correlation_id, str(e))
         return {"status": "error", "message": f"Erreur critique outil : {str(e)}"}
+
+
+# ==============================================================================
+# WRAPPER PUBLIC : trace chaque appel dans episodic_log
+# ==============================================================================
+def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
+    """
+    Wrapper public qui :
+      1. mesure la latence de l'appel
+      2. appelle le dispatcher réel (_execute_agent_crm_tool_impl)
+      3. persiste l'épisode dans DuckDB (episodic_log)
+      4. retourne le résultat inchangé à l'appelant
+    """
+    t0 = time.monotonic()
+    result = None
+    status_for_log = "exception"
+    error_type = None
+
+    try:
+        result = _execute_agent_crm_tool_impl(action_name, parameters)
+        status_for_log = (result or {}).get("status", "unknown")
+        if status_for_log == "error":
+            error_type = (result or {}).get("error_type") or "ActionError"
+        return result
+
+    except Exception as exc:
+        error_type = type(exc).__name__
+        # On remonte l'exception après avoir loggé (le finally s'exécute avant)
+        raise
+
+    finally:
+        # FIX v35 : log non-bloquant, ne JAMAIS ralentir/casser une action
+        try:
+            latency_ms = (time.monotonic() - t0) * 1000.0
+            msg = ""
+            if isinstance(result, dict):
+                msg = str(result.get("message", ""))[:2000]
+            _log_episode_bg(
+                action=action_name,
+                parameters=parameters or {},
+                status=status_for_log,
+                message=msg,
+                error_type=error_type,
+                latency_ms=latency_ms,
+                source="action_executor",
+            )
+        except Exception:
+            pass

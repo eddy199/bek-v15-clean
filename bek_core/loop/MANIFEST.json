@@ -1,0 +1,65 @@
+{
+  "abreviation": "BEK-LOOP",
+  "nom_complet": "LOOp-adaptive Protocol",
+  "sous_titre": "Closed-Loop Reflexive Adaptation",
+  "version": "1.0",
+  "date": "2026-09-23",
+  "author": "BEK Project",
+  "license": "BEK-LVC-v1.0",
+
+  "description": "Enregistre les épisodes d'exécution et ferme la boucle d'apprentissage. Analyse les patterns et propose des améliorations.",
+
+  "brevet": "docs/brevets/BREVET_LOOP.md",
+  "module": "bek_core.loop.recorder",
+  "package": "bek_core.loop",
+
+  "functions": {
+    "record": {
+      "params": ["episode"],
+      "returns": "str",
+      "description": "Enregistre un épisode d'exécution"
+    },
+    "analyze": {
+      "params": [],
+      "optional": ["hours"],
+      "returns": "dict",
+      "description": "Analyse les épisodes récents"
+    },
+    "count": {
+      "params": [],
+      "returns": "int",
+      "description": "Nombre total d'épisodes"
+    }
+  },
+
+  "classes": {
+    "BekLoopRecorder": {
+      "description": "Enregistreur principal d'épisodes",
+      "methods": ["record", "analyze", "count", "clear"]
+    }
+  },
+
+  "constants": {
+    "BEK_LOOP_DEFAULT_HOURS": 24,
+    "BEK_LOOP_STORAGE_FILE": "data/bek_loop_episodes.json",
+    "BEK_LOOP_MAX_EPISODES": 10000
+  },
+
+  "storage": {
+    "type": "json_local",
+    "path": "data/bek_loop_episodes.json",
+    "fallback_duckdb": true
+  },
+
+  "performance": {
+    "record_time_ms": 1,
+    "analyze_time_ms": 50,
+    "improvement_target_per_month": 0.10
+  },
+
+  "dependencies": ["BEK-MEM"],
+  "used_by": ["BEK-REX", "BEK-FORGE", "BEK-AGENT-v18"],
+
+  "status": "active",
+  "priority": "critical"
+}

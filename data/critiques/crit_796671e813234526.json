@@ -1,0 +1,26 @@
+{
+  "critique_id": "crit_796671e813234526",
+  "status": "success",
+  "pattern_signature": {
+    "action": "create_dynamic_skill",
+    "status": "error",
+    "error_type": "SandboxRejection"
+  },
+  "pattern_count": 3,
+  "category": "CODE_SYNTAX",
+  "severity": "LOW",
+  "root_cause": "Le générateur de skills tente d'injecter du code malveillant (imports interdits comme subprocess/os) que le sandbox AST bloque correctement.",
+  "fix_suggestion": "Durcir le prompt générateur avec une liste explicite de modules interdits et ajouter une pré-validation AST côté générateur avant soumission au sandbox.",
+  "confidence": 0.95,
+  "tags": [
+    "skill-generator",
+    "sandbox",
+    "prompt-hardening",
+    "security-test"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b",
+  "latency_ms": 63461.65,
+  "dry_run": true,
+  "ts_utc": "2026-09-22T12:45:10.234017+00:00"
+}

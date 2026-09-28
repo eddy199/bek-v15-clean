@@ -155,13 +155,13 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         init_state_tables()
         if SubCRMEngine:
             SubCRMEngine.initialize_matrix_schema()
-        logger.info("Tables Neon DB et schéma Matrix initialisés.")
+        logger.info("Tables PostgreSQL (Supabase) et schéma Matrix initialisés.")
     except Exception as exc:
         logger.warning("Initialisation DB partielle : %s", exc)
 
     mcp_gateway.register_mcp_tool(
         name="neon_audit",
-        description="Audit des tables relationnelles Neon DB",
+        description="Audit des tables relationnelles PostgreSQL",
         parameters_schema={},
         handler=lambda: {
             "tables": [
@@ -198,7 +198,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     )
     hermes.register_tool(
         "neon_audit",
-        lambda **kwargs: {"status": "Neon DB audit demandé", "tables": ["companies", "contacts", "opportunities", "matrix_sub_crms", "sync_log"]},
+        lambda **kwargs: {"status": "Audit DB demandé", "tables": ["companies", "contacts", "opportunities", "matrix_sub_crms", "sync_log"]},
         risk_level="L1",
     )
 

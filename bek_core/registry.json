@@ -1,0 +1,81 @@
+{
+  "briques": {
+    "BEK-REX": {
+      "nom_complet": "Reflective EXecution",
+      "version": "1.0",
+      "module": "bek_core.rex.router",
+      "brevet": "docs/brevets/BREVET_REX.md",
+      "functions": {
+        "bek_rex_route": {"params": ["query"]},
+        "bek_rex_list_tiers": {"params": []}
+      },
+      "dependencies": [],
+      "status": "active"
+    },
+    "BEK-FLUX": {
+      "nom_complet": "Fast Layered Unified eXecution",
+      "version": "1.0",
+      "module": "bek_core.flux.executor",
+      "brevet": "docs/brevets/BREVET_FLUX.md",
+      "functions": {
+        "bek_flux_run": {"params": ["tasks"]},
+        "bek_flux_run_parallel": {"params": ["functions"]}
+      },
+      "dependencies": [],
+      "status": "active"
+    },
+    "BEK-MEM": {
+      "nom_complet": "Methodological Evolution Memory",
+      "version": "1.0",
+      "module": "bek_core.mem.matcher",
+      "brevet": "docs/brevets/BREVET_MEM.md",
+      "functions": {
+        "bek_mem_match": {"params": ["query"]},
+        "bek_mem_store": {"params": ["query", "tier", "result"]},
+        "bek_mem_update": {"params": ["prototype_id", "success", "time_ms"]}
+      },
+      "dependencies": ["BEK-ECO"],
+      "status": "active"
+    },
+    "BEK-LOOP": {
+      "nom_complet": "LOOp-adaptive Protocol",
+      "version": "1.0",
+      "module": "bek_core.loop.recorder",
+      "brevet": "docs/brevets/BREVET_LOOP.md",
+      "functions": {
+        "bek_loop_record": {"params": ["episode"]},
+        "bek_loop_analyze": {"params": []},
+        "bek_loop_count": {"params": []}
+      },
+      "dependencies": ["BEK-MEM"],
+      "status": "active"
+    },
+    "BEK-ECO": {
+      "nom_complet": "Economic Cognitive Optimization",
+      "version": "1.0",
+      "module": "bek_core.eco.optimizer",
+      "brevet": "docs/brevets/BREVET_ECO.md",
+      "functions": {
+        "bek_eco_optimize": {"params": ["tier", "query"]},
+        "bek_eco_cache_get": {"params": ["key"]},
+        "bek_eco_cache_set": {"params": ["key", "value"]},
+        "bek_eco_check_limits": {"params": []}
+      },
+      "dependencies": [],
+      "status": "active"
+    },
+    "BEK-STAIR": {
+      "nom_complet": "IBM STAIR Method",
+      "version": "1.2",
+      "module": "bek_core.stair.toc_builder",
+      "brevet": "docs/brevets/BREVET_STAIR.md",
+      "functions": {
+        "bek_stair_build_toc": {"params": ["pages", "query"]},
+        "bek_stair_validate": {"params": ["llm_response", "toc_context", "pages"]}
+      },
+      "dependencies": [],
+      "status": "active"
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,26 @@
+{
+  "critique_id": "crit_839ba435820549bf",
+  "status": "success",
+  "pattern_signature": {
+    "action": "web_sync",
+    "status": "error",
+    "error_type": "TimeoutError"
+  },
+  "pattern_count": 12,
+  "category": "RESEARCH_FAIL",
+  "severity": "HIGH",
+  "root_cause": "DuckDuckGo timeout systématiquement à 5s (seuil dur) sur web_sync, latences clusterées 5000-5100ms indiquant un blocage réseau ou anti-bot.",
+  "fix_suggestion": "Implémenter un fallback immédiat vers Mojeek/Qwant si DDG > 3s, ajouter un cache TTL 10min sur requêtes identiques, et monitorer le taux de succès par provider.",
+  "confidence": 0.92,
+  "tags": [
+    "web",
+    "timeout",
+    "provider-fallback",
+    "ddg"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b",
+  "latency_ms": 18222.31,
+  "dry_run": true,
+  "ts_utc": "2026-09-22T12:40:40.841892+00:00"
+}

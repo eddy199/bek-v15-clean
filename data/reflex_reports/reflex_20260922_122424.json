@@ -1,0 +1,60 @@
+{
+  "report_id": "reflex_20260922_122424",
+  "generated_at_utc": "2026-09-22T12:24:24.701986+00:00",
+  "duration_ms": 37.44,
+  "window_hours": 1,
+  "min_occurrences": 3,
+  "top_n": 10,
+  "summary": {
+    "total_episodes": 12,
+    "success_count": 0,
+    "error_count": 12,
+    "success_rate": 0.0,
+    "unique_actions": 3,
+    "unique_error_types": 2,
+    "patterns_total": 3,
+    "patterns_significant": 1
+  },
+  "top_patterns": [
+    {
+      "signature": {
+        "action": "test_reflex_action",
+        "status": "error",
+        "error_type": "TestError"
+      },
+      "count": 10,
+      "avg_latency_ms": 250.0,
+      "min_latency_ms": 250.0,
+      "max_latency_ms": 250.0,
+      "first_seen": "2026-09-22 14:17:44.148942",
+      "last_seen": "2026-09-22 14:24:24.668411",
+      "sample_messages": [
+        "erreur récurrente de test",
+        "erreur récurrente de test",
+        "erreur récurrente de test"
+      ],
+      "sample_parameters": [
+        "{\"i\": 4}",
+        "{\"i\": 3}",
+        "{\"i\": 2}"
+      ]
+    }
+  ],
+  "action_breakdown": {
+    "test_reflex_action": {
+      "success": 0,
+      "error": 10,
+      "other": 0
+    },
+    "create_dynamic_skill": {
+      "success": 0,
+      "error": 1,
+      "other": 0
+    },
+    "action_qui_nexiste_pas": {
+      "success": 0,
+      "error": 1,
+      "other": 0
+    }
+  }
+}

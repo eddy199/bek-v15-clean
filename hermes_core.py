@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK Hermes Core V4 - HARDENED & DYNAMIC PLANNER
+# BEK Hermes Core V4 - HARDENED & DYNAMIC PLANNER + DAG ADAPTER (ADR-001)
 # ==============================================================================
 # Fichier : hermes_core.py
 #
@@ -11,13 +11,8 @@
 # - Gestion des risques L1 -> L5
 # - Validation humaine pour L3+
 # - Vérification HMAC avant exécution
-# - Exécution parallèle via ThreadPoolExecutor
+# - Exécution parallèle via ThreadPoolExecutor et Moteur DAG Haute Densité
 # - Worker Guardian système
-#
-# Dépendances locales :
-#   memory.py
-#   security_guard.py
-#   skill_registry.py
 # ==============================================================================
 from __future__ import annotations
 
@@ -33,6 +28,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 from memory import get_db_connection, replay_pending_syncs
 from security_guard import SecurityGuard
 from skill_registry import skill_registry
+from core.hermes_dag_adapter import HermesDAGOrchestrator
 
 logger = logging.getLogger("bek.hermes")
 
@@ -172,6 +168,9 @@ class HermesCore:
             max_workers=max_workers,
             thread_name_prefix="bek-hermes",
         )
+
+        # ----- [ADR-001] Moteur d'exécution DAG Haute Densité CPU -----
+        self.dag_orchestrator = HermesDAGOrchestrator(max_workers=max_workers)
 
         # ----- Runtime state -----
         self._worker_lock = threading.Lock()
@@ -453,7 +452,6 @@ class HermesCore:
 
         # ----- Native keyword routing -----
         if not tasks:
-            # Image editing
             if "modifier" in obj_lower and any(
                 k in obj_lower for k in ("image", "photo", "dessin")
             ):
@@ -465,7 +463,6 @@ class HermesCore:
                         "trace_id": trace_id,
                     }
                 )
-            # Video editing
             elif "modifier" in obj_lower and any(
                 k in obj_lower for k in ("vidéo", "video", "film")
             ):
@@ -477,7 +474,6 @@ class HermesCore:
                         "trace_id": trace_id,
                     }
                 )
-            # Video generation
             elif any(
                 k in obj_lower
                 for k in ("vidéo", "video", "film", "génère une vidéo")
@@ -490,7 +486,6 @@ class HermesCore:
                         "trace_id": trace_id,
                     }
                 )
-            # Image generation
             elif any(
                 k in obj_lower
                 for k in ("image", "photo", "dessin", "génère une image")
@@ -503,7 +498,6 @@ class HermesCore:
                         "trace_id": trace_id,
                     }
                 )
-            # Web
             elif any(
                 k in obj_lower
                 for k in ("prospect", "web", "cherche", "recherche")
@@ -516,7 +510,6 @@ class HermesCore:
                         "trace_id": trace_id,
                     }
                 )
-            # CRM / database
             elif any(
                 k in obj_lower
                 for k in ("crm", "neon", "base", "database", "sql")
@@ -529,7 +522,6 @@ class HermesCore:
                         "trace_id": trace_id,
                     }
                 )
-            # Fallback
             else:
                 tasks.append(
                     {
@@ -564,7 +556,6 @@ class HermesCore:
     ) -> Dict[str, Any]:
         args = args or {}
 
-        # L3/L4/L5 -> validation humaine
         if self.requires_human_approval(tool):
             return {
                 "decision": "REQUIRE_HUMAN",
@@ -572,7 +563,6 @@ class HermesCore:
                 "reason": "Validation humaine requise.",
             }
 
-        # SecurityGuard obligatoire
         if self.security_guard is None:
             return {
                 "decision": "DENY",
@@ -580,7 +570,6 @@ class HermesCore:
                 "reason": "SecurityGuard indisponible.",
             }
 
-        # Certification
         try:
             ok, message, envelope = self.security_guard.validate_and_certify(
                 tool.name, args
@@ -600,7 +589,6 @@ class HermesCore:
                 "reason": message,
             }
 
-        # Vérification HMAC de l'enveloppe
         if not envelope:
             return {
                 "decision": "DENY",
@@ -696,7 +684,6 @@ class HermesCore:
                 "tool": tool_name,
             }
 
-        # Security
         security = self.security_check(tool, args)
         decision = security["decision"]
         if decision != "ALLOW":
@@ -939,6 +926,224 @@ class HermesCore:
         return final_payload
 
     # ==========================================================================
+    # DAG PARALLEL DISPATCH (ADR-001) — v2 corrigée
+    # ==========================================================================
+    def dispatch_dag_plan(
+        self,
+        goal_plan: Dict[str, Any],
+        trace_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Exécute un plan GOAP structuré en DAG avec parallélisme par vagues.
+
+        Correction vs v1 :
+          - Agrégation de status réelle (SUCCESS / PARTIAL_SUCCESS / FAILED).
+          - Cycle détecté → INVALID_DAG au lieu de crash générique.
+          - Handler DAG factorisé via _make_dag_handler.
+          - Payload final cohérent avec dispatch_parallel.
+        """
+        trace_id = trace_id or self.create_trace_id()
+        start_time = time.monotonic()
+
+        if self._shutdown:
+            return {
+                "trace_id": trace_id,
+                "status": "HERMES_SHUTDOWN",
+                "execution_ms": 0,
+                "results": {},
+            }
+
+        if not isinstance(goal_plan, dict) or "steps" not in goal_plan:
+            return {
+                "trace_id": trace_id,
+                "status": "INVALID_GOAL_PLAN",
+                "execution_ms": 0,
+                "results": {},
+                "error": "goal_plan doit être un dict avec une clé 'steps'.",
+            }
+
+        if not goal_plan.get("steps"):
+            return {
+                "trace_id": trace_id,
+                "status": "NO_STEPS",
+                "execution_ms": 0,
+                "results": {},
+            }
+
+        # ----- 1. Construction des handlers à partir des tools enregistrés -----
+        action_handlers: Dict[str, Callable[..., Any]] = {}
+
+        with self._tool_lock:
+            for name, tool in self.tools.items():
+                action_handlers[name] = self._make_dag_handler(tool, trace_id)
+
+        # ----- 2. Exécution DAG -----
+        try:
+            dag_results = self.dag_orchestrator.execute_goal_plan(
+                goal_plan, action_handlers
+            )
+        except ValueError as exc:
+            # Cas : cycle détecté par l'orchestrateur
+            logger.error("Plan DAG invalide : %s", exc)
+            return {
+                "trace_id": trace_id,
+                "status": "INVALID_DAG",
+                "execution_ms": round((time.monotonic() - start_time) * 1000, 2),
+                "results": {},
+                "error": str(exc),
+            }
+        except Exception as exc:
+            logger.exception("Erreur inattendue lors de l'exécution DAG")
+            return {
+                "trace_id": trace_id,
+                "status": "FAILED",
+                "execution_ms": round((time.monotonic() - start_time) * 1000, 2),
+                "results": {},
+                "error": str(exc),
+                "error_type": type(exc).__name__,
+            }
+
+        # ----- 3. Agrégation de status -----
+        execution_ms = round((time.monotonic() - start_time) * 1000, 2)
+        payload = self._aggregate_dag_results(
+            dag_results, trace_id, execution_ms, goal_plan
+        )
+
+        # ----- 4. Post-plan hooks (persistance Reflex-Loop) -----
+        for post_hook in self._post_plan_hooks:
+            try:
+                updated = post_hook(
+                    [
+                        {"action": s.get("action"), "id": s.get("id")}
+                        for s in goal_plan.get("steps", [])
+                    ],
+                    payload,
+                )
+                if isinstance(updated, dict):
+                    payload = updated
+            except Exception as post_err:
+                logger.error("Erreur Post-Plan Hook (DAG) : %s", post_err)
+
+        return payload
+
+    # --------------------------------------------------------------------------
+    def _make_dag_handler(
+        self,
+        tool: HermesTool,
+        trace_id: str,
+    ) -> Callable[[Dict[str, Any]], Dict[str, Any]]:
+        """
+        Fabrique un handler DAG pour un outil Hermes.
+        Combine security_check + exécution en une seule passe.
+        """
+
+        def handler(params: Dict[str, Any]) -> Dict[str, Any]:
+            # --- Security check ---
+            try:
+                sec = self.security_check(tool, params or {})
+            except Exception as exc:
+                logger.exception(
+                    "Security check exceptionnel | tool=%s", tool.name
+                )
+                return {
+                    "status": "FAILED",
+                    "tool": tool.name,
+                    "success": False,
+                    "error": f"security_check exception: {type(exc).__name__}",
+                    "error_type": "SECURITY_EXCEPTION",
+                }
+
+            if sec.get("decision") != "ALLOW":
+                return {
+                    "status": "FAILED",
+                    "tool": tool.name,
+                    "success": False,
+                    "error": sec.get("reason", "Security denied"),
+                    "error_type": "SECURITY_DENIED",
+                    "risk_level": tool.risk_level,
+                    "security_decision": sec.get("decision"),
+                }
+
+            # --- Exécution ---
+            task_id = self.create_task_id()
+            result = self._execute_tool(tool, params or {}, trace_id, task_id)
+            res_dict = result.to_dict()
+            # Normalise pour cohérence DAG
+            res_dict.setdefault(
+                "status", "OK" if res_dict.get("success") else "FAILED"
+            )
+            return res_dict
+
+        return handler
+
+    # --------------------------------------------------------------------------
+    @staticmethod
+    def _aggregate_dag_results(
+        dag_results: Dict[str, Any],
+        trace_id: str,
+        execution_ms: float,
+        goal_plan: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Agrège les résultats DAG en un payload cohérent avec dispatch_parallel.
+        """
+        if not dag_results:
+            return {
+                "trace_id": trace_id,
+                "status": "EMPTY",
+                "execution_ms": execution_ms,
+                "results": {},
+                "task_count": 0,
+                "success_count": 0,
+                "failure_count": 0,
+                "skipped_count": 0,
+                "timeout_count": 0,
+                "plan_id": goal_plan.get("plan_id"),
+            }
+
+        success = 0
+        failed = 0
+        skipped = 0
+        timeout = 0
+
+        for node_id, res in dag_results.items():
+            if not isinstance(res, dict):
+                success += 1
+                continue
+            status = res.get("status", "")
+            if status in ("OK", "SUCCESS") or res.get("success") is True:
+                success += 1
+            elif status == "SKIPPED":
+                skipped += 1
+            elif status == "TIMEOUT":
+                timeout += 1
+            else:
+                failed += 1
+
+        total = len(dag_results)
+        if success == total:
+            overall = "SUCCESS"
+        elif success == 0 and (failed + timeout) == total:
+            overall = "FAILED"
+        elif success == 0 and skipped == total:
+            overall = "ALL_SKIPPED"
+        else:
+            overall = "PARTIAL_SUCCESS"
+
+        return {
+            "trace_id": trace_id,
+            "status": overall,
+            "execution_ms": execution_ms,
+            "results": dag_results,
+            "plan_id": goal_plan.get("plan_id"),
+            "task_count": total,
+            "success_count": success,
+            "failure_count": failed,
+            "skipped_count": skipped,
+            "timeout_count": timeout,
+        }
+
+    # ==========================================================================
     # TOOL EXECUTION
     # ==========================================================================
     @staticmethod
@@ -1042,6 +1247,12 @@ class HermesCore:
         logger.info("Hermes executor shutting down.")
         self._shutdown = True
         self.executor.shutdown(wait=wait, cancel_futures=True)
+
+        # Fermeture propre du orchestrateur DAG
+        try:
+            self.dag_orchestrator.shutdown()
+        except Exception:
+            pass
 
 
 # ==============================================================================
@@ -1216,6 +1427,10 @@ def goap_planner(objective: str) -> List[Dict[str, Any]]:
 
 def dispatch_parallel(task_list: List[Dict[str, Any]]) -> Dict[str, Any]:
     return hermes.dispatch_parallel(task_list)
+
+
+def dispatch_dag_plan(goal_plan: Dict[str, Any]) -> Dict[str, Any]:
+    return hermes.dispatch_dag_plan(goal_plan)
 
 
 def dispatch(

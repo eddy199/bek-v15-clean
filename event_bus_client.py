@@ -7,22 +7,12 @@ Backends :
   • Redis Streams (redis-py SYNC + asyncio.to_thread) → production, persistant
   • Mock in-memory                                    → dev local sans Redis
 
-Approche :
-    Le client Redis est SYNCHRONE (redis-py classique). Toutes les opérations
-    bloquantes (XADD, XREAD, PING) sont exécutées dans un thread via
-    ``asyncio.to_thread``. Cela évite TOUT problème de event loop
-    (« bound to a different event loop », « Event loop is closed »).
-
-API publique :
-    await client.publish(topic, message) -> None
-    client.subscribe(topic, async_callback) -> None
-    client.unsubscribe(topic, async_callback) -> bool
-
-Variables d'environnement :
-    REDIS_URL           : redis://localhost:6379/0
-    USE_REAL_BUS        : true | false  (auto via REDIS_URL)
-    BEK_EVENTBUS_MAXLEN : 10000
-    BEK_EVENTBUS_OFFSETS: .eventbus_client_offsets.json
+CORRECTIF C6.1-bis (2026-09-22) :
+  - Protection contre "cannot schedule new futures after interpreter shutdown"
+  - Flag global _SHUTTING_DOWN : stoppe toute publication pendant l'arrêt
+  - Méthode shutdown_event_bus_sync() pour scripts/CLI
+  - Fermeture propre du client sync Redis
+  - Zéro spam de retry en fin de programme
 """
 
 from __future__ import annotations
@@ -69,7 +59,29 @@ VALID_TOPICS = {"web-cleaned", "skills-index", "error-signals", "vector-context"
 AsyncCallback = Callable[[Dict[str, Any]], Awaitable[None]]
 
 
+# ==============================================================================
+# ÉTAT GLOBAL SHUTDOWN (C6.1-bis)
+# ==============================================================================
+_SHUTTING_DOWN = False
+
+
+def is_shutting_down() -> bool:
+    """Indique si le client est en cours d'arrêt."""
+    return _SHUTTING_DOWN
+
+
+def _mark_shutting_down() -> None:
+    """Marque le client en arrêt (idempotent)."""
+    global _SHUTTING_DOWN
+    if not _SHUTTING_DOWN:
+        _SHUTTING_DOWN = True
+        logger.debug("[EventBusClient] Mode shutdown activé — publications bloquées")
+
+
 def _log(event: str, **fields: Any) -> None:
+    """Log structuré — silencieux pendant shutdown."""
+    if _SHUTTING_DOWN and event in ("publish_failure", "publish_giveup"):
+        return
     payload = {"event": event, **fields}
     try:
         logger.info(json.dumps(payload, ensure_ascii=False))
@@ -93,6 +105,8 @@ class _InMemoryBus:
         self._subscribers: Dict[str, List[AsyncCallback]] = {}
 
     async def publish(self, topic: str, message: Dict[str, Any]) -> None:
+        if _SHUTTING_DOWN:
+            return
         _log("publish", mode="mock", topic=topic)
         for cb in list(self._subscribers.get(topic, [])):
             try:
@@ -144,9 +158,6 @@ class _RedisBus:
         )
         self._offsets: Dict[str, str] = self._load_offsets()
 
-    # ------------------------------------------------------------------
-    # Offsets
-    # ------------------------------------------------------------------
     def _load_offsets(self) -> Dict[str, str]:
         try:
             if self._offsets_file.exists():
@@ -163,9 +174,6 @@ class _RedisBus:
         except Exception:
             pass
 
-    # ------------------------------------------------------------------
-    # Client sync
-    # ------------------------------------------------------------------
     def _get_sync_client(self) -> Any:
         if self._sync_client is None:
             if not _REDIS_SYNC_AVAILABLE:
@@ -194,19 +202,17 @@ class _RedisBus:
         client = self._get_sync_client()
         return client.xread({topic: last_id}, count=100, block=2000)
 
-    # ------------------------------------------------------------------
-    # API async (to_thread pour ne pas bloquer l'event loop)
-    # ------------------------------------------------------------------
     async def connect(self) -> None:
         ok = await asyncio.to_thread(self._sync_ping)
         if not ok:
             raise RuntimeError("Ping Redis échoué")
 
     async def reset(self) -> None:
-        # On abandonne le client sync : il sera recréé au prochain appel.
         self._sync_client = None
 
     async def publish(self, topic: str, message: Dict[str, Any]) -> None:
+        if _SHUTTING_DOWN:
+            return
         if topic not in VALID_TOPICS:
             raise ValueError(f"Topic inconnu : {topic}")
 
@@ -262,7 +268,7 @@ class _RedisBus:
 
     async def _dispatch_loop(self, topic: str) -> None:
         last_id = self._offsets.get(topic, "0")
-        while self._running:
+        while self._running and not _SHUTTING_DOWN:
             try:
                 result = await asyncio.to_thread(self._sync_xread, topic, last_id)
                 if not result:
@@ -291,8 +297,13 @@ class _RedisBus:
             except asyncio.CancelledError:
                 break
             except Exception as exc:
+                if _SHUTTING_DOWN:
+                    break
                 logger.error("[EventBusClient] boucle %s erreur : %s", topic, exc)
-                await asyncio.sleep(2)
+                try:
+                    await asyncio.sleep(2)
+                except asyncio.CancelledError:
+                    break
 
     async def close(self) -> None:
         self._running = False
@@ -307,6 +318,12 @@ class _RedisBus:
             except Exception:
                 pass
         self._tasks.clear()
+        # Fermer le client sync Redis si possible
+        try:
+            if self._sync_client is not None:
+                self._sync_client.close()
+        except Exception:
+            pass
         self._sync_client = None
 
 
@@ -329,7 +346,6 @@ class EventBusClient:
                     redis_url,
                     maxlen=int(os.getenv("BEK_EVENTBUS_MAXLEN", "10000")),
                 )
-                # Ping synchrone au démarrage (avant toute loop)
                 _sync_redis.Redis.from_url(
                     redis_url, socket_timeout=3, socket_connect_timeout=3
                 ).ping()
@@ -348,7 +364,8 @@ class EventBusClient:
     async def _ensure_connected(self) -> None:
         if self._mode != "redis":
             return
-        # Ping dans un thread pour valider la connexion
+        if _SHUTTING_DOWN:
+            return
         try:
             await self._bus.connect()
         except Exception as exc:
@@ -358,30 +375,48 @@ class EventBusClient:
             await self._bus._start_pending_dispatchers()
 
     async def publish(self, topic: str, message: Dict[str, Any]) -> None:
+        # C6.1-bis : ignorer si shutdown
+        if _SHUTTING_DOWN:
+            return
+
         try:
             await self._ensure_connected()
         except Exception:
-            pass  # On tente quand même le publish (reconnect interne)
+            pass
 
         max_attempts = 3
         delay = 0.5
         attempt = 0
 
         while attempt < max_attempts:
+            if _SHUTTING_DOWN:
+                return
             try:
                 await self._bus.publish(topic, message)
                 return
             except Exception as exc:
                 attempt += 1
+                err_str = str(exc).lower()
+
+                # Détection shutdown → on coupe immédiatement
+                if "interpreter shutdown" in err_str:
+                    _mark_shutting_down()
+                    return
+
                 _log("publish_failure", mode=self._mode, topic=topic,
                      attempt=attempt, error=str(exc))
                 if attempt >= max_attempts:
                     _log("publish_giveup", mode=self._mode, topic=topic, error=str(exc))
-                    raise
-                await asyncio.sleep(delay)
+                    return  # C6.1-bis : pas de raise, on abandonne silencieusement
+                try:
+                    await asyncio.sleep(delay)
+                except asyncio.CancelledError:
+                    return
                 delay *= 2
 
     def subscribe(self, topic: str, callback: AsyncCallback) -> None:
+        if _SHUTTING_DOWN:
+            return
         if self._mode == "redis" and _has_running_loop():
             if getattr(self._bus, "_sync_client", None) is None:
                 try:
@@ -404,8 +439,12 @@ class EventBusClient:
         return False
 
     async def close(self) -> None:
+        _mark_shutting_down()
         if hasattr(self._bus, "close"):
-            await self._bus.close()
+            try:
+                await self._bus.close()
+            except Exception:
+                pass
 
     @property
     def mode(self) -> str:
@@ -416,3 +455,48 @@ class EventBusClient:
 # Singleton
 # ==============================================================================
 event_bus = EventBusClient()
+
+
+# ==============================================================================
+# SHUTDOWN SYNCHRONE (C6.1-bis)
+# ==============================================================================
+def shutdown_event_bus_sync() -> None:
+    """
+    Arrête proprement l'EventBus depuis un contexte SYNCHRONE.
+
+    À appeler en fin de script/test/CLI pour éviter le spam de :
+        "cannot schedule new futures after interpreter shutdown"
+
+    Ne lève JAMAIS d'exception.
+    """
+    _mark_shutting_down()
+
+    # 1. Marquer le backend comme arrêté
+    try:
+        if hasattr(event_bus, "_bus") and hasattr(event_bus._bus, "_running"):
+            event_bus._bus._running = False
+    except Exception:
+        pass
+
+    # 2. Fermer le client sync Redis directement
+    try:
+        if hasattr(event_bus, "_bus") and hasattr(event_bus._bus, "_sync_client"):
+            sync_client = event_bus._bus._sync_client
+            if sync_client is not None:
+                try:
+                    sync_client.close()
+                except Exception:
+                    pass
+                event_bus._bus._sync_client = None
+    except Exception:
+        pass
+
+    # 3. Si un event loop est actif, tenter une fermeture async rapide
+    try:
+        loop = asyncio.get_running_loop()
+        loop.create_task(event_bus.close())
+    except RuntimeError:
+        # Pas de loop actif → rien à faire de plus
+        pass
+    except Exception:
+        pass

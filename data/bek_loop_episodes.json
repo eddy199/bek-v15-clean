@@ -1,0 +1,180 @@
+{
+  "episodes": [
+    {
+      "episode_id": "ep_1e654d9299c4",
+      "timestamp": 1790384733.4475865,
+      "query": "news Bitcoin",
+      "tier": "TIER_2",
+      "success": true,
+      "time_ms": 1240.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_8179c8ca056b",
+      "timestamp": 1790384733.449692,
+      "query": "news Bitcoin",
+      "tier": "TIER_2",
+      "success": true,
+      "time_ms": 1180.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_862872e05a5c",
+      "timestamp": 1790384733.4518383,
+      "query": "analyse crypto",
+      "tier": "TIER_3",
+      "success": true,
+      "time_ms": 4200.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_ac194dee373c",
+      "timestamp": 1790384733.4550536,
+      "query": "search error",
+      "tier": "TIER_1",
+      "success": false,
+      "time_ms": 5000.0,
+      "result_summary": "",
+      "error": "TimeoutError",
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_8531e8f44c6b",
+      "timestamp": 1790384733.4580574,
+      "query": "search error",
+      "tier": "TIER_1",
+      "success": false,
+      "time_ms": 5100.0,
+      "result_summary": "",
+      "error": "TimeoutError",
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_bedbd861e781",
+      "timestamp": 1790384733.5134294,
+      "query": "bonjour",
+      "tier": "TIER_0",
+      "success": true,
+      "time_ms": 100.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_17ce1ff56cbf",
+      "timestamp": 1790384733.5255477,
+      "query": "Cherche les news Bitcoin",
+      "tier": "TIER_2",
+      "success": true,
+      "time_ms": 100.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_3a851a678391",
+      "timestamp": 1790384733.5336926,
+      "query": "Analyse technique du marché crypto",
+      "tier": "TIER_3",
+      "success": true,
+      "time_ms": 100.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_c8e5849f70e2",
+      "timestamp": 1790386949.1448789,
+      "query": "news Bitcoin",
+      "tier": "TIER_2",
+      "success": true,
+      "time_ms": 1240.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_50ba26a76283",
+      "timestamp": 1790386949.1471508,
+      "query": "news Bitcoin",
+      "tier": "TIER_2",
+      "success": true,
+      "time_ms": 1180.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_254948ea59b0",
+      "timestamp": 1790386949.1506763,
+      "query": "analyse crypto",
+      "tier": "TIER_3",
+      "success": true,
+      "time_ms": 4200.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_158a3431025e",
+      "timestamp": 1790386949.1534886,
+      "query": "search error",
+      "tier": "TIER_1",
+      "success": false,
+      "time_ms": 5000.0,
+      "result_summary": "",
+      "error": "TimeoutError",
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_dcf20f8389b5",
+      "timestamp": 1790386949.1560621,
+      "query": "search error",
+      "tier": "TIER_1",
+      "success": false,
+      "time_ms": 5100.0,
+      "result_summary": "",
+      "error": "TimeoutError",
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_54791dc34b16",
+      "timestamp": 1790386949.211901,
+      "query": "bonjour",
+      "tier": "TIER_0",
+      "success": true,
+      "time_ms": 100.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_259e616f4fbf",
+      "timestamp": 1790386949.2209747,
+      "query": "Cherche les news Bitcoin",
+      "tier": "TIER_2",
+      "success": true,
+      "time_ms": 100.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "episode_id": "ep_61f81c925a99",
+      "timestamp": 1790386949.2326672,
+      "query": "Analyse technique du marché crypto",
+      "tier": "TIER_3",
+      "success": true,
+      "time_ms": 100.0,
+      "result_summary": "",
+      "error": null,
+      "metadata": {}
+    }
+  ]
+}

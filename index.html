@@ -18,6 +18,9 @@
       --text-dim: #a0a0a5;
       --border-color: #3e3e42;
       --accent-blue: #5c9ce6;
+      --accent-orange: #f5a623;
+      --accent-green: #4ade80;
+      --accent-red: #ef4444;
       --bg-card: rgba(35, 35, 38, 0.7);
   }
   body, html, #app {
@@ -111,8 +114,6 @@
       background: rgba(92, 156, 230, 0.2);
       color: var(--accent-blue); font-weight: bold;
   }
-
-  /* Mermaid container */
   .mermaid-wrapper {
       background: #14181d;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -125,6 +126,147 @@
   .mermaid-wrapper svg {
       max-width: 100%;
       height: auto;
+  }
+
+  /* ─── REFLEX UI (C6.3) ───────────────────────────────────────── */
+  .reflex-proposal {
+      background: rgba(35, 35, 38, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+      transition: border-color 0.15s ease;
+  }
+  .reflex-proposal:hover {
+      border-color: var(--accent-orange);
+  }
+  .reflex-proposal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+  }
+  .reflex-proposal-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f8fafc;
+  }
+  .reflex-proposal-id {
+      font-family: 'Ubuntu Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+  }
+  .reflex-rule-type {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+      font-family: 'Ubuntu Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+  }
+  .reflex-rule-fallback   { background: rgba(245, 166, 35, 0.2);  color: #f5a623; }
+  .reflex-rule-retry      { background: rgba(92, 156, 230, 0.2);  color: #5c9ce6; }
+  .reflex-rule-bypass     { background: rgba(239, 68, 68, 0.2);   color: #ef4444; }
+  .reflex-rule-parallelize{ background: rgba(74, 222, 128, 0.2);  color: #4ade80; }
+  .reflex-rule-cache      { background: rgba(139, 92, 246, 0.2);  color: #a78bfa; }
+  .reflex-rule-escalate   { background: rgba(239, 68, 68, 0.25);  color: #f87171; }
+  .reflex-confidence {
+      font-family: 'Ubuntu Mono', monospace;
+      font-size: 11.5px;
+      color: var(--text-dim);
+  }
+  .reflex-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 8px 0;
+      font-size: 12px;
+      color: var(--text-dim);
+  }
+  .reflex-meta-row strong {
+      color: #cbd5e1;
+  }
+  .reflex-description {
+      background: rgba(10, 10, 12, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+      font-size: 12.5px;
+      color: #e2e8f0;
+      line-height: 1.5;
+  }
+  .reflex-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+  }
+  .reflex-actions button {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: 0.15s;
+      border: 1px solid transparent;
+  }
+  .reflex-btn-approve {
+      background: rgba(74, 222, 128, 0.15);
+      color: var(--accent-green);
+      border-color: rgba(74, 222, 128, 0.4);
+  }
+  .reflex-btn-approve:hover {
+      background: rgba(74, 222, 128, 0.25);
+  }
+  .reflex-btn-reject {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--accent-red);
+      border-color: rgba(239, 68, 68, 0.4);
+  }
+  .reflex-btn-reject:hover {
+      background: rgba(239, 68, 68, 0.25);
+  }
+  .reflex-btn-inspect {
+      background: rgba(92, 156, 230, 0.15);
+      color: var(--accent-blue);
+      border-color: rgba(92, 156, 230, 0.4);
+  }
+  .reflex-btn-inspect:hover {
+      background: rgba(92, 156, 230, 0.25);
+  }
+  .reflex-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-dim);
+      font-size: 13px;
+  }
+  .reflex-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+  }
+  .reflex-stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 18px;
+      text-align: center;
+  }
+  .reflex-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #f8fafc;
+      font-family: 'Ubuntu Mono', monospace;
+  }
+  .reflex-stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
   }
 </style>
 </head>
@@ -171,6 +313,11 @@
         <span>Fichiers</span>
         <span class="nav-badge" id="navFilesCount">0</span>
       </button>
+      <button class="nav-item" data-tab="reflex">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s4 4 4 8a4 4 0 1 1-8 0c0-4 4-8 4-8z"/><path d="M8.5 14L5 17.5M15.5 14L19 17.5"/><path d="M9 21h6"/></svg>
+        <span>Reflex</span>
+        <span class="nav-badge" id="navReflexCount">0</span>
+      </button>
       <button class="nav-item" data-tab="memory">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 21h4M12 3a6 6 0 016 6c0 2-.5 3-1.5 4.5C15.3 15 15 15.7 15 17h-6c0-1.3-.3-2-1.5-3.5C6.5 12 6 11 6 9a6 6 0 016-6z"/></svg>
         <span>Mémoire</span>
@@ -194,26 +341,9 @@
         <div class="header-center">
           <select id="providerSelect" class="select">
             <option value="kimi">Moonshot Kimi AI ✅</option>
-            <option value="aisa">AIsa (Unified) ✅</option>
-            <option value="b_ai">B.ai ✅</option>
-            <option value="groq">Groq ✅</option>
-            <option value="nvidia">NVIDIA NIM ✅</option>
-            <option value="gemini">Google Gemini ✅</option>
-            <option value="openrouter">OpenRouter ✅</option>
-            <option value="mistral">Mistral AI ✅</option>
-            <option value="cohere">Cohere ✅</option>
-            <option value="aionlabs">Aion Labs ✅</option>
-            <option value="zhipu">Zhipu AI ✅</option>
-            <option value="siliconflow">SiliconFlow ✅</option>
-            <option value="ovh_anonymous">OVHcloud (Anonyme) ✅</option>
-            <option value="kilo_anonymous">Kilo Code (Anonyme) ✅</option>
-            <option value="llm7_anonymous">LLM7.io (Anonyme) ✅</option>
           </select>
           <select id="modelSelect" class="select model-select">
             <option value="glm-5.3-flash">glm-5.3-flash</option>
-            <option value="qwen3.8-flash">qwen3.8-flash</option>
-            <option value="mimo-v2.5">mimo-v2.5</option>
-            <option value="hy3">hy3</option>
           </select>
         </div>
         <div class="header-right" style="position: relative;">
@@ -233,7 +363,6 @@
         <div class="input-area">
           <div id="filePreviewBar" style="display:none; flex-wrap:wrap; gap:12px; padding-bottom:12px;"></div>
           <div class="input-wrap" style="position: relative; display: flex; align-items: flex-end; gap: 8px;">
-            
             <button class="icon-btn" id="uploadBtn" style="margin-right:4px; border:1px solid var(--border-color); border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             </button>
@@ -246,7 +375,7 @@
             </div>
 
             <textarea id="user-input" rows="1" placeholder="Écrivez votre message, parlez au micro, ou joignez un fichier/ZIP jusqu'à 300 Mo..."></textarea>
-            
+
             <button id="micBtn" style="width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(92,156,230,0.15); color: var(--accent-blue); border: 1px solid var(--border-color); cursor:pointer; transition:0.3s;" title="Parler à l'agent">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             </button>
@@ -268,6 +397,57 @@
     <div id="viewFiles" class="view" style="padding: 24px; overflow-y: auto;"></div>
     <div id="viewMemory" class="view" style="padding: 24px; overflow-y: auto;"></div>
     <div id="viewConnectors" class="view" style="padding: 24px; overflow-y: auto;"></div>
+
+    <!-- ★ C6.3 — VUE REFLEX -->
+    <div id="viewReflex" class="view" style="padding: 24px; overflow-y: auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <div>
+          <h2 style="margin:0; font-size:1.6em; font-weight:700;">🔥 Reflex Loop</h2>
+          <p style="color:var(--text-dim); font-size:12.5px; margin:4px 0 0 0;">
+            Propositions générées par la Forge à partir des critiques du Critic.
+          </p>
+        </div>
+        <div style="display:flex; gap:8px;">
+    <button onclick="runReflexCycle()" style="background:linear-gradient(135deg, #f5a623, #ef4444); border:none; color:#fff; padding:8px 16px; border-radius:8px; font-size:12.5px; cursor:pointer; font-weight:600;">
+        ▶️ Lancer un cycle
+    </button>
+    <button id="reflexRefreshBtn" onclick="loadReflexUI()" style="background:rgba(255,255,255,0.08); border:1px solid var(--border-color); color:var(--text-main); padding:8px 16px; border-radius:8px; font-size:12.5px; cursor:pointer; font-weight:600;">
+        🔄 Actualiser
+    </button>
+</div>
+      </div>
+
+      <div class="reflex-stats-grid" id="reflexStatsGrid">
+        <div class="reflex-stat-card">
+          <div class="reflex-stat-value" id="reflexStatTotal">—</div>
+          <div class="reflex-stat-label">Total</div>
+        </div>
+        <div class="reflex-stat-card">
+          <div class="reflex-stat-value" id="reflexStatStaging" style="color: #f5a623;">—</div>
+          <div class="reflex-stat-label">En staging</div>
+        </div>
+        <div class="reflex-stat-card">
+          <div class="reflex-stat-value" id="reflexStatApproved" style="color: #4ade80;">—</div>
+          <div class="reflex-stat-label">Approuvées</div>
+        </div>
+        <div class="reflex-stat-card">
+          <div class="reflex-stat-value" id="reflexStatRejected" style="color: #ef4444;">—</div>
+          <div class="reflex-stat-label">Rejetées</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px; display:flex; gap:8px; align-items:center;">
+        <span style="font-size:12px; color:var(--text-dim);">Filtre :</span>
+        <button class="crm-tab-btn active" data-reflex-filter="staging" onclick="setReflexFilter('staging')">En staging</button>
+        <button class="crm-tab-btn" data-reflex-filter="approved" onclick="setReflexFilter('approved')">Approuvées</button>
+        <button class="crm-tab-btn" data-reflex-filter="rejected" onclick="setReflexFilter('rejected')">Rejetées</button>
+        <button class="crm-tab-btn" data-reflex-filter="" onclick="setReflexFilter('')">Toutes</button>
+      </div>
+
+      <div id="reflexProposalsContainer">
+        <div class="reflex-empty">Chargement…</div>
+      </div>
+    </div>
 
     <!-- VUE MATRISSE CRM -->
     <div id="viewMatrixBek" class="view" style="padding: 24px; overflow-y: auto;">

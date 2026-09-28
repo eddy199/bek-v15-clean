@@ -1,6 +1,8 @@
 # ==========================================
 # BEK-v15.3 HYBRID - MOTEUR D'INSTANCIATION DYNAMIQUE DE SOUS-CRM
 # Génération autonome de sous-systèmes de niche & d'outils de dernière génération
+# ------------------------------------------------------------------------------
+# ★ v18.2 (2026-09-27) : Migration Neon → Supabase + fix cache env.txt
 # ==========================================
 
 from __future__ import annotations
@@ -13,6 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 ROOT_DIR = Path(__file__).resolve().parent
+
 
 def _load_env_fallback(path: Path) -> Dict[str, str]:
     """Charge un fichier env.txt simple de type KEY=VALUE sous Windows/Linux."""
@@ -33,41 +36,85 @@ def _load_env_fallback(path: Path) -> Dict[str, str]:
         pass
     return values
 
-ENV_LOCAL = _load_env_fallback(ROOT_DIR / "env.txt")
-ENV_LOCAL.update(_load_env_fallback(ROOT_DIR / ".env"))
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CHARGEMENT ENV — v18.2 : Priorité à os.environ + rechargement dynamique
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _reload_env_local() -> Dict[str, str]:
+    """Recharge env.txt à chaque appel (évite le cache au boot)."""
+    values = _load_env_fallback(ROOT_DIR / "env.txt")
+    values.update(_load_env_fallback(ROOT_DIR / ".env"))
+    return values
+
+
+# Chargement initial (peut être obsolète si env.txt a changé)
+ENV_LOCAL = _reload_env_local()
+
+
+def _get_db_url() -> str:
+    """
+    Retourne l'URL PostgreSQL active.
+
+    Priorité (v18.2) :
+      1. os.environ["DATABASE_URL"]      (défini par env_loader.load_env())
+      2. os.environ["NEON_DATABASE_URL"] (fallback ancien nom)
+      3. ENV_LOCAL rechargé dynamiquement (env.txt / .env)
+      4. os.environ["SUPABASE_DATABASE_URL"] (nouveau nom optionnel)
+    """
+    # 1. Priorité maximale : variables d'environnement actuelles
+    for key in ("DATABASE_URL", "NEON_DATABASE_URL", "SUPABASE_DATABASE_URL"):
+        val = os.environ.get(key)
+        if val and val.strip():
+            return val.strip()
+
+    # 2. Fallback : recharger env.txt (au cas où il a changé après le boot)
+    fresh_env = _reload_env_local()
+    for key in ("DATABASE_URL", "NEON_DATABASE_URL", "SUPABASE_DATABASE_URL"):
+        val = fresh_env.get(key)
+        if val and val.strip():
+            return val.strip()
+
+    return ""
+
 
 def get_db_connection() -> Optional[Any]:
-    """Connexion robuste à Neon PostgreSQL avec résilience multi-sources."""
-    neon_url = (
-        os.getenv("DATABASE_URL")
-        or os.getenv("NEON_DATABASE_URL")
-        or ENV_LOCAL.get("DATABASE_URL")
-        or ENV_LOCAL.get("NEON_DATABASE_URL")
-        or ""
-    )
-    if not neon_url:
+    """Connexion robuste à PostgreSQL (Supabase) avec résilience multi-sources."""
+    db_url = _get_db_url()
+    if not db_url:
         print("[SubCRMEngine] ⚠️ DATABASE_URL non configuré.")
         return None
 
     try:
         import psycopg2
-        return psycopg2.connect(neon_url, connect_timeout=10, sslmode="require")
+        return psycopg2.connect(db_url, connect_timeout=10, sslmode="require")
     except ImportError:
         print("[SubCRMEngine] ❌ psycopg2 n'est pas installé.")
         return None
     except Exception as e:
-        print(f"[SubCRMEngine Error] Échec connexion Neon DB : {e}")
+        # Masquer le mot de passe dans le message d'erreur
+        safe_msg = str(e)
+        if "@" in safe_msg and "://" in safe_msg:
+            try:
+                prefix = safe_msg.split("://", 1)[0]
+                rest = safe_msg.split("://", 1)[1]
+                if "@" in rest:
+                    safe_msg = f"{prefix}://[REDACTED]@{rest.split('@', 1)[1]}"
+            except Exception:
+                pass
+        print(f"[SubCRMEngine Error] Échec connexion DB : {safe_msg}")
         return None
 
 
 class SubCRMEngine:
     """
-    Gestionnaire central des sous-CRMs et matrices de niche avec gestion étanche des curseurs SQL.
+    Gestionnaire central des sous-CRMs et matrices de niche
+    avec gestion étanche des curseurs SQL.
     """
 
     @staticmethod
     def initialize_matrix_schema() -> bool:
-        """Assure la création de la table universelle des sous-CRM dans Neon."""
+        """Assure la création de la table universelle des sous-CRM."""
         conn = get_db_connection()
         if not conn:
             return False
@@ -141,13 +188,13 @@ class SubCRMEngine:
 
         specifications = {
             "objectives": objectives,
-            "architecture": "Python/Flask + Neon Polymorphic Layer",
+            "architecture": "Python/Flask + Supabase Polymorphic Layer",
             "generation": "Next-Gen Ultra-Powerful Node",
         }
 
         conn = get_db_connection()
         if not conn:
-            return {"status": "error", "message": "Connexion Neon DB indisponible pour l'instanciation."}
+            return {"status": "error", "message": "Connexion DB indisponible pour l'instanciation."}
 
         cur = None
         try:

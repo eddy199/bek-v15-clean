@@ -1,0 +1,40 @@
+{
+  "prototypes": {
+    "proto_4d9b05dcb39b": {
+      "prototype_id": "proto_4d9b05dcb39b",
+      "query": "Cherche les news sur le Bitcoin",
+      "tier": "TIER_2",
+      "methodology": "TIER_2",
+      "usage_count": 3,
+      "success_count": 0,
+      "avg_time_ms": 0.0,
+      "created_at": 1790384520.7253423,
+      "last_used": 1790386949.1136444,
+      "result_summary": "{'method': 'web_sync'}"
+    },
+    "proto_1f28de81c66a": {
+      "prototype_id": "proto_1f28de81c66a",
+      "query": "Quel est le prix actuel du Bitcoin",
+      "tier": "TIER_1",
+      "methodology": "TIER_1",
+      "usage_count": 3,
+      "success_count": 3,
+      "avg_time_ms": 937.875,
+      "created_at": 1790384520.7415624,
+      "last_used": 1790386949.1287563,
+      "result_summary": "{'method': 'headless_search'}"
+    },
+    "proto_c08f327873c6": {
+      "prototype_id": "proto_c08f327873c6",
+      "query": "Analyse technique du marché crypto",
+      "tier": "TIER_3",
+      "methodology": "TIER_3",
+      "usage_count": 3,
+      "success_count": 0,
+      "avg_time_ms": 0.0,
+      "created_at": 1790384520.7452354,
+      "last_used": 1790386949.1187809,
+      "result_summary": "{'method': 'web_sync + swarm'}"
+    }
+  }
+}

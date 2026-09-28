@@ -1,0 +1,7 @@
+{
+  "name": "clean_skill",
+  "description": "test propre",
+  "entrypoint": "clean_skill.py",
+  "risk_level": "L2",
+  "hash_sha256": "313cdb7574597ed404b024692c314355d24613c5ed454f7661255bf671bc39e7"
+}
