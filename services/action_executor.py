@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK-v16 — Exécuteur d'actions & outils optimisé (services/action_executor.py) — FIX v35
+# BEK-v16 — Exécuteur d'actions & outils optimisé (services/action_executor.py) — FIX v36
 # COMPATIBILITÉ MULTI-OS / PATHGUARD / SCAN RAPIDE SANS GEL DU FLUX
 # ------------------------------------------------------------------------------
 # v22 (2026-09-20) : generate_video + merge_and_edit_videos
@@ -8,6 +8,9 @@
 # v33 (2026-09-22) : SANDBOX AST sur create_dynamic_skill + source staging
 # v34 (2026-09-22) : Wrapper episodic_log autour du dispatcher
 # v35 (2026-09-22) : FIX log non-bloquant + import safe + truncate params
+# v36 (2026-09-28) : FIX read_file — lit le DÉBUT du fichier (50k chars)
+#                    au lieu des 3000 DERNIERS caractères.
+#                    L'agent ne voyait que la fin des fichiers longs.
 # ==============================================================================
 from __future__ import annotations
 
@@ -66,10 +69,6 @@ except ImportError:
 
 # ==============================================================================
 # FIX v35 — LOG EPISODIQUE NON-BLOQUANT (ne casse plus le chat)
-# ------------------------------------------------------------------------------
-# Avant : log_episode() appele en synchrone dans le finally -> DuckDB verrouille
-# + latence ajoutee a chaque outil.
-# Apres : envoi en thread daemon + kill-switch BEK_DISABLE_EPISODE_LOG=1.
 # ==============================================================================
 import threading as _th
 
@@ -79,7 +78,6 @@ def _log_episode_bg(**kwargs) -> None:
     if os.getenv("BEK_DISABLE_EPISODE_LOG", "0").strip() in ("1", "true", "yes", "on"):
         return
     try:
-        # tronque params pour eviter JSON geant
         params = kwargs.get("parameters") or {}
         try:
             s = json.dumps(params, default=str, ensure_ascii=False)
@@ -93,6 +91,40 @@ def _log_episode_bg(**kwargs) -> None:
         pass
 
 
+# ==============================================================================
+# FIX v36 — LECTURE DE FICHIER SANS TRONCATURE ARBITRAIRE
+# ------------------------------------------------------------------------------
+# Ancien : f.read()[-3000:] → ne gardait que les 3000 DERNIERS caractères.
+#          L'agent ne voyait que la fin des fichiers longs (ex: ARCHITECTURE.md).
+# Nouveau : lecture du DÉBUT du fichier (max 50 000 caractères par défaut).
+#           Configurable via BEK_READ_FILE_MAX_CHARS.
+# ==============================================================================
+BEK_READ_FILE_MAX_CHARS = int(os.getenv("BEK_READ_FILE_MAX_CHARS", "50000"))
+
+
+def _read_file_head(path: Path, max_chars: int = BEK_READ_FILE_MAX_CHARS) -> tuple[str, int]:
+    """
+    Lit le DÉBUT d'un fichier (pas la fin).
+
+    Retourne (contenu, taille_totale).
+
+    Si le fichier dépasse max_chars, ajoute un marqueur de troncature.
+    """
+    with open(path, "r", encoding="utf-8", errors="ignore") as f:
+        full = f.read()
+
+    total_len = len(full)
+
+    if total_len <= max_chars:
+        return full, total_len
+
+    head = full[:max_chars]
+    truncated_marker = (
+        f"\n\n[…fichier tronqué : {max_chars} premiers caractères "
+        f"sur {total_len} au total. "
+        f"Utilise read_file avec un autre fichier ou augmente BEK_READ_FILE_MAX_CHARS.]"
+    )
+    return head + truncated_marker, total_len
 
 
 # ==============================================================================
@@ -143,95 +175,71 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
                 "description",
                 "Skill auto-généré par l'orchestrateur BEK",
             )
-            source = parameters.get("source", "user")  # user | reflex-loop | orchestrator
+            source = parameters.get("source", "user")
 
             if not skill_name or not code_content:
-                update_task_state(
-                    task_id, "FAILED", correlation_id,
-                    "Nom du skill ou contenu manquant.",
-                )
-                return {
-                    "status": "error",
-                    "message": "Nom du skill ou contenu manquant.",
-                }
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "Nom du skill ou contenu manquant.")
+                return {"status": "error",
+                        "message": "Nom du skill ou contenu manquant."}
 
-            # --- 1a. Validation sandbox AST obligatoire ---
             validation = validate_skill_code(code_content)
             if not validation.get("valid"):
                 errors_preview = validation.get("errors", [])[:3]
-                update_task_state(
-                    task_id, "FAILED", correlation_id,
-                    f"Sandbox AST refus: {errors_preview}",
-                )
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  f"Sandbox AST refus: {errors_preview}")
                 return {
                     "status": "error",
-                    "message": (
-                        "🛡️ Skill refusé par le sandbox AST.\n"
-                        "Erreurs détectées :\n- "
-                        + "\n- ".join(errors_preview)
-                    ),
+                    "message": ("🛡️ Skill refusé par le sandbox AST.\n"
+                                "Erreurs détectées :\n- " + "\n- ".join(errors_preview)),
                     "errors": validation.get("errors", []),
                 }
 
-            # --- 1b. Enregistrement (délégué à skill_generator) ---
             if not create_and_register_skill:
-                update_task_state(
-                    task_id, "FAILED", correlation_id,
-                    "Module skill_generator indisponible.",
-                )
-                return {
-                    "status": "error",
-                    "message": "Module skill_generator indisponible.",
-                }
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "Module skill_generator indisponible.")
+                return {"status": "error",
+                        "message": "Module skill_generator indisponible."}
 
             try:
-                # Passe `source` si le générateur le supporte.
                 try:
                     res = create_and_register_skill(
-                        skill_name,
-                        code_content,
-                        description,
-                        source=source,
-                    )
+                        skill_name, code_content, description, source=source)
                 except TypeError:
-                    # Signature legacy sans `source`
                     res = create_and_register_skill(
-                        skill_name,
-                        code_content,
-                        description,
-                    )
-
-                update_task_state(
-                    task_id, "COMPLETED", correlation_id,
-                    f"Skill créé: {skill_name} (source={source})",
-                )
+                        skill_name, code_content, description)
+                update_task_state(task_id, "COMPLETED", correlation_id,
+                                  f"Skill créé: {skill_name} (source={source})")
                 return res
-
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {
-                    "status": "error",
-                    "message": f"Erreur intégration skill : {str(e)}",
-                }
+                return {"status": "error",
+                        "message": f"Erreur intégration skill : {str(e)}"}
 
         # ----------------------------------------------------------------------
         # 2. ORCHESTRATION & ESSAIM DE SOUS-AGENTS
         # ----------------------------------------------------------------------
         elif action_name in ("orchestrate", "run_swarm_task", "multi_agent_workflow"):
-            goal = parameters.get("goal", parameters.get("objective", parameters.get("query", "")))
+            goal = parameters.get("goal", parameters.get("objective",
+                            parameters.get("query", "")))
             if not goal:
                 update_task_state(task_id, "FAILED", correlation_id, "Objectif vide.")
-                return {"status": "error", "message": "L'objectif d'orchestration ne peut pas être vide."}
+                return {"status": "error",
+                        "message": "L'objectif d'orchestration ne peut pas être vide."}
             try:
                 if bek_orchestrator:
                     orch_report = bek_orchestrator.run(goal)
-                    update_task_state(task_id, "COMPLETED", correlation_id, "Orchestration réussie")
+                    update_task_state(task_id, "COMPLETED", correlation_id,
+                                      "Orchestration réussie")
                     return {"status": "success", "message": orch_report}
-                update_task_state(task_id, "FAILED", correlation_id, "bek_orchestrator indisponible")
-                return {"status": "error", "message": "Module bek_orchestrator indisponible sur l'hôte."}
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "bek_orchestrator indisponible")
+                return {"status": "error",
+                        "message": "Module bek_orchestrator indisponible sur l'hôte."}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur Orchestrateur : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur Orchestrateur : {str(e)}"}
 
         # ----------------------------------------------------------------------
         # 3. NAVIGATION & SYNCHRONISATION WEB
@@ -239,61 +247,91 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
         elif action_name in ("web_sync", "web_search", "web_pipeline"):
             query = parameters.get("query", "")
             if not query:
-                update_task_state(task_id, "FAILED", correlation_id, "Requête web_sync vide")
-                return {"status": "error", "message": "La requête web_sync est vide."}
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "Requête web_sync vide")
+                return {"status": "error",
+                        "message": "La requête web_sync est vide."}
             try:
-                res = web_agent_instance.run_pipeline(query) if web_agent_instance else "WebAgent non connecté"
-                update_task_state(task_id, "COMPLETED", correlation_id, f"Web sync: {query}")
-                return {"status": "success", "message": f"🌐 Synchronisation Web réussie pour '{query}' :\n{str(res)[:2500]}"}
+                res = (web_agent_instance.run_pipeline(query)
+                       if web_agent_instance else "WebAgent non connecté")
+                update_task_state(task_id, "COMPLETED", correlation_id,
+                                  f"Web sync: {query}")
+                return {
+                    "status": "success",
+                    "message": (f"🌐 Synchronisation Web réussie pour '{query}' :\n"
+                                f"{str(res)[:2500]}"),
+                }
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur web_sync : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur web_sync : {str(e)}"}
 
         # ----------------------------------------------------------------------
-        # 4. GESTION DE LA MÉMOIRE VECTORIELLE & PERSISTANTE
+        # 4. MÉMOIRE VECTORIELLE & PERSISTANTE
         # ----------------------------------------------------------------------
         elif action_name in ("save_memory", "remember", "save_to_memory"):
             content = parameters.get("content", "")
             if not content:
-                update_task_state(task_id, "FAILED", correlation_id, "Contenu mémoire vide")
-                return {"status": "error", "message": "Le contenu à mémoriser ne peut pas être vide."}
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "Contenu mémoire vide")
+                return {"status": "error",
+                        "message": "Le contenu à mémoriser ne peut pas être vide."}
             try:
                 save_to_memory(content)
-                update_task_state(task_id, "COMPLETED", correlation_id, "Mémoire sauvée")
-                return {"status": "success", "message": f"🧠 Information ancrée dans la mémoire vectorielle :\n\"{content}\""}
+                update_task_state(task_id, "COMPLETED", correlation_id,
+                                  "Mémoire sauvée")
+                return {
+                    "status": "success",
+                    "message": (f"🧠 Information ancrée dans la mémoire vectorielle :\n"
+                                f"\"{content}\""),
+                }
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur mémoire : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur mémoire : {str(e)}"}
 
         elif action_name in ("search_memory", "recall"):
             query = parameters.get("query", "")
             try:
                 mem_res = search_memory(query, top_k=3)
-                update_task_state(task_id, "COMPLETED", correlation_id, f"Recherche mémoire: {query}")
-                return {"status": "success", "message": f"🔍 Résultats mémoire pour '{query}' :\n{mem_res}"}
+                update_task_state(task_id, "COMPLETED", correlation_id,
+                                  f"Recherche mémoire: {query}")
+                return {"status": "success",
+                        "message": f"🔍 Résultats mémoire pour '{query}' :\n{mem_res}"}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur recherche mémoire : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur recherche mémoire : {str(e)}"}
 
         elif action_name in ("delete_memory", "forget", "delete_from_memory"):
             record_id = parameters.get("record_id", "")
             keyword = parameters.get("keyword", "")
             if not record_id and not keyword:
-                update_task_state(task_id, "FAILED", correlation_id, "Paramètres de suppression vides")
-                return {"status": "error", "message": "Fournis un 'record_id' ou un 'keyword' à supprimer de la mémoire."}
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "Paramètres de suppression vides")
+                return {"status": "error",
+                        "message": "Fournis un 'record_id' ou un 'keyword'."}
             try:
                 del_res = delete_from_memory(record_id=record_id, keyword=keyword)
-                update_task_state(task_id, "COMPLETED", correlation_id, f"Suppression mémoire (ID: {record_id}, Mot-clé: {keyword})")
+                update_task_state(task_id, "COMPLETED", correlation_id,
+                                  f"Suppression mémoire (ID: {record_id}, "
+                                  f"Mot-clé: {keyword})")
                 return {
                     "status": "success",
-                    "message": f"🗑️ **Suppression de la mémoire effectuée :**\n- Pinecone Cloud : `{del_res.get('pinecone')}`\n- ChromaDB Local : `{del_res.get('chroma')}`\n- Table Neon (sync_log) : `{del_res.get('neon_sync')}`"
+                    "message": (
+                        f"🗑️ **Suppression de la mémoire effectuée :**\n"
+                        f"- Pinecone Cloud : `{del_res.get('pinecone')}`\n"
+                        f"- ChromaDB Local : `{del_res.get('chroma')}`\n"
+                        f"- Table Neon (sync_log) : `{del_res.get('neon_sync')}`"
+                    ),
                 }
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur lors de la suppression mémoire : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur lors de la suppression mémoire : {str(e)}"}
 
         # ----------------------------------------------------------------------
-        # 5. OPÉRATIONS FICHIERS SÉCURISÉES (PATHGUARD)
+        # 5. OPÉRATIONS FICHIERS (PATHGUARD)
         # ----------------------------------------------------------------------
         elif action_name in ("write_file", "save_file", "create_file"):
             raw_filename = parameters.get("filename", "generated/agent_output.txt")
@@ -303,11 +341,19 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
                 content = parameters.get("content", "")
                 with open(safe_target, "w", encoding="utf-8") as f:
                     f.write(content)
-                update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier écrit: {safe_target.name}")
-                return {"status": "success", "message": f"Fichier `{safe_target.name}` enregistré avec succès.\n\n[FILE:{safe_target.name}](/api/download/{safe_target.name})"}
+                update_task_state(task_id, "COMPLETED", correlation_id,
+                                  f"Fichier écrit: {safe_target.name}")
+                return {
+                    "status": "success",
+                    "message": (
+                        f"Fichier `{safe_target.name}` enregistré avec succès.\n\n"
+                        f"[FILE:{safe_target.name}](/api/download/{safe_target.name})"
+                    ),
+                }
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur écriture : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur écriture : {str(e)}"}
 
         elif action_name == "delete_file":
             filename = parameters.get("filename", "")
@@ -315,89 +361,127 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             if target and target.is_file():
                 try:
                     target.unlink()
-                    update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier supprimé: {target.name}")
-                    return {"status": "success", "message": f"Fichier {target.name} supprimé avec succès."}
+                    update_task_state(task_id, "COMPLETED", correlation_id,
+                                      f"Fichier supprimé: {target.name}")
+                    return {"status": "success",
+                            "message": f"Fichier {target.name} supprimé."}
                 except Exception as e:
                     update_task_state(task_id, "FAILED", correlation_id, str(e))
-                    return {"status": "error", "message": f"Erreur suppression : {str(e)}"}
+                    return {"status": "error",
+                            "message": f"Erreur suppression : {str(e)}"}
             update_task_state(task_id, "FAILED", correlation_id, "Fichier introuvable")
-            return {"status": "error", "message": "Fichier introuvable ou accès refusé."}
+            return {"status": "error",
+                    "message": "Fichier introuvable ou accès refusé."}
 
         elif action_name == "read_file":
             filename = parameters.get("filename", "")
             target_path = find_existing(filename)
             try:
                 if target_path and target_path.is_file():
-                    with open(target_path, "r", encoding="utf-8", errors="ignore") as f:
-                        content = f.read()[-3000:]
-                    update_task_state(task_id, "COMPLETED", correlation_id, f"Fichier lu: {target_path.name}")
-                    return {"status": "success", "message": f"Contenu de {target_path.name} :\n{content}"}
-                update_task_state(task_id, "FAILED", correlation_id, "Fichier introuvable")
-                return {"status": "error", "message": "Fichier introuvable ou accès refusé."}
+                    # ★ FIX v36 : lit le DÉBUT du fichier (pas la fin)
+                    content, total_len = _read_file_head(target_path)
+                    update_task_state(task_id, "COMPLETED", correlation_id,
+                                      f"Fichier lu: {target_path.name} "
+                                      f"({len(content)}/{total_len} chars)")
+                    return {
+                        "status": "success",
+                        "message": (f"Contenu de {target_path.name} "
+                                    f"({total_len} caractères au total) :\n\n{content}"),
+                    }
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "Fichier introuvable")
+                return {"status": "error",
+                        "message": "Fichier introuvable ou accès refusé."}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur lecture : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur lecture : {str(e)}"}
 
         # ----------------------------------------------------------------------
-        # 6. GESTION DES ARCHIVES ZIP
+        # 6. ARCHIVES ZIP
         # ----------------------------------------------------------------------
         elif action_name == "extract_zip":
             zip_filename = parameters.get("zip_path", "")
-            extract_to_folder = parameters.get("extract_to", "generated/extracted_project")
+            extract_to_folder = parameters.get("extract_to",
+                                               "generated/extracted_project")
             zip_path = find_existing(zip_filename)
             if not zip_path or not zip_path.is_file():
                 update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
-                return {"status": "error", "message": f"Archive ZIP introuvable : {zip_filename}"}
+                return {"status": "error",
+                        "message": f"Archive ZIP introuvable : {zip_filename}"}
 
             target_dir = safe_path(extract_to_folder)
             try:
                 target_dir.mkdir(parents=True, exist_ok=True)
                 with zipfile.ZipFile(zip_path, "r") as zip_ref:
                     zip_ref.extractall(target_dir)
-                update_task_state(task_id, "COMPLETED", correlation_id, f"ZIP extrait: {zip_path.name}")
-                return {"status": "success", "message": f"Archive `{zip_path.name}` extraite dans `{target_dir.name}`."}
+                update_task_state(task_id, "COMPLETED", correlation_id,
+                                  f"ZIP extrait: {zip_path.name}")
+                return {"status": "success",
+                        "message": f"Archive `{zip_path.name}` extraite dans "
+                                   f"`{target_dir.name}`."}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur extraction ZIP : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur extraction ZIP : {str(e)}"}
 
         elif action_name == "create_zip":
             folder_name = parameters.get("folder_path", "generated/ia_project")
-            output_zip_name = parameters.get("output_zip", "generated/export_projet.zip")
+            output_zip_name = parameters.get("output_zip",
+                                             "generated/export_projet.zip")
             folder_path = safe_path(folder_name)
             output_path = safe_path(output_zip_name)
             try:
                 if not folder_path.exists():
-                    update_task_state(task_id, "FAILED", correlation_id, "Dossier introuvable")
-                    return {"status": "error", "message": f"Dossier source introuvable : {folder_name}"}
+                    update_task_state(task_id, "FAILED", correlation_id,
+                                      "Dossier introuvable")
+                    return {"status": "error",
+                            "message": f"Dossier source introuvable : {folder_name}"}
                 output_path.parent.mkdir(parents=True, exist_ok=True)
                 base_name = str(output_path).replace(".zip", "")
                 shutil.make_archive(base_name, "zip", str(folder_path))
-                update_task_state(task_id, "COMPLETED", correlation_id, f"ZIP créé: {output_path.name}")
-                return {"status": "success", "message": f"Archive `{output_path.name}` créée avec succès.\n\n[FILE:{output_path.name}](/api/download/{output_path.name})"}
+                update_task_state(task_id, "COMPLETED", correlation_id,
+                                  f"ZIP créé: {output_path.name}")
+                return {
+                    "status": "success",
+                    "message": (f"Archive `{output_path.name}` créée avec succès.\n\n"
+                                f"[FILE:{output_path.name}]"
+                                f"(/api/download/{output_path.name})"),
+                }
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur création ZIP : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur création ZIP : {str(e)}"}
 
         elif action_name == "analyze_zip_content":
             zip_filename = parameters.get("zip_path", "")
             zip_path = find_existing(zip_filename)
             try:
                 if not zip_path or not zip_path.is_file():
-                    update_task_state(task_id, "FAILED", correlation_id, "ZIP introuvable")
-                    return {"status": "error", "message": f"Archive introuvable : {zip_filename}"}
+                    update_task_state(task_id, "FAILED", correlation_id,
+                                      "ZIP introuvable")
+                    return {"status": "error",
+                            "message": f"Archive introuvable : {zip_filename}"}
                 with zipfile.ZipFile(zip_path, "r") as zip_ref:
                     namelist = zip_ref.namelist()
                     file_summaries = {}
                     for name in namelist[:15]:
-                        if any(name.endswith(ext) for ext in [".py", ".json", ".txt", ".md", ".js", ".html", ".css", ".ts", ".tsx"]):
+                        if any(name.endswith(ext) for ext in
+                               [".py", ".json", ".txt", ".md", ".js",
+                                ".html", ".css", ".ts", ".tsx"]):
                             with zip_ref.open(name) as f:
                                 content = f.read(1500).decode("utf-8", errors="ignore")
                                 file_summaries[name] = content[:250] + "..."
                 update_task_state(task_id, "COMPLETED", correlation_id, "ZIP analysé")
-                return {"status": "success", "message": f"Analyse ZIP réussie. Total fichiers : {len(namelist)}\nAperçu des fichiers :\n{json_safe(file_summaries)}"}
+                return {
+                    "status": "success",
+                    "message": (f"Analyse ZIP réussie. Total fichiers : {len(namelist)}\n"
+                                f"Aperçu des fichiers :\n{json_safe(file_summaries)}"),
+                }
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur analyse ZIP : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur analyse ZIP : {str(e)}"}
 
         # ----------------------------------------------------------------------
         # 7. VISION MULTIMODALE & IMAGES
@@ -407,28 +491,40 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             prompt = parameters.get("prompt", "Analyse cette image.")
             provider = parameters.get("provider", "gemini")
             model = parameters.get("model", "gemini-2.5-flash")
-            vision_result = analyze_image_with_vision(image_path, prompt, provider=provider, model=model)
+            vision_result = analyze_image_with_vision(
+                image_path, prompt, provider=provider, model=model)
             if "Erreur" in vision_result or "Error" in vision_result:
                 update_task_state(task_id, "FAILED", correlation_id, "Échec vision")
-                return {"status": "error", "message": f"ÉCHEC VISION: {vision_result}"}
+                return {"status": "error",
+                        "message": f"ÉCHEC VISION: {vision_result}"}
             update_task_state(task_id, "COMPLETED", correlation_id, "Vision réussie")
-            return {"status": "success", "message": f"Analyse Vision réussie :\n{vision_result}"}
+            return {"status": "success",
+                    "message": f"Analyse Vision réussie :\n{vision_result}"}
 
         elif action_name == "generate_image":
             prompt = parameters.get("prompt", "")
-            filename = parameters.get("filename", f"generated_{uuid.uuid4().hex[:6]}.png")
+            filename = parameters.get("filename",
+                                      f"generated_{uuid.uuid4().hex[:6]}.png")
             provider = parameters.get("provider", "pollinations")
             model = parameters.get("model", "flux-3d")
             if not prompt:
                 update_task_state(task_id, "FAILED", correlation_id, "Prompt vide")
                 return {"status": "error", "message": "Le prompt est obligatoire."}
-            gen_result = generate_image_with_provider(prompt, provider=provider, model=model, output_filename=filename)
+            gen_result = generate_image_with_provider(
+                prompt, provider=provider, model=model, output_filename=filename)
             if gen_result.get("status") == "error":
-                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
-                return {"status": "error", "message": f"ÉCHEC GÉNÉRATION: {gen_result.get('message')}"}
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  gen_result.get("message"))
+                return {"status": "error",
+                        "message": f"ÉCHEC GÉNÉRATION: {gen_result.get('message')}"}
             final_filename = gen_result.get("filename")
-            update_task_state(task_id, "COMPLETED", correlation_id, f"Image générée: {final_filename}")
-            return {"status": "success", "message": f"🎨 **Image générée !**\n\n![{final_filename}](/api/download/{final_filename})"}
+            update_task_state(task_id, "COMPLETED", correlation_id,
+                              f"Image générée: {final_filename}")
+            return {
+                "status": "success",
+                "message": (f"🎨 **Image générée !**\n\n"
+                            f"![{final_filename}](/api/download/{final_filename})"),
+            }
 
         elif action_name == "merge_and_edit_images":
             image_paths = parameters.get("image_paths", [])
@@ -436,22 +532,33 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             provider = parameters.get("provider", "gemini")
             model = parameters.get("model", "gemini-3.1-flash-image")
             if not image_paths or not prompt:
-                update_task_state(task_id, "FAILED", correlation_id, "Paramètres fusion manquants")
-                return {"status": "error", "message": "Fournis des images et un prompt."}
-            gen_result = merge_and_edit_images(image_paths, prompt, provider=provider, model=model)
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "Paramètres fusion manquants")
+                return {"status": "error",
+                        "message": "Fournis des images et un prompt."}
+            gen_result = merge_and_edit_images(
+                image_paths, prompt, provider=provider, model=model)
             if gen_result.get("status") == "error":
-                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
-                return {"status": "error", "message": f"ÉCHEC FUSION: {gen_result.get('message')}"}
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  gen_result.get("message"))
+                return {"status": "error",
+                        "message": f"ÉCHEC FUSION: {gen_result.get('message')}"}
             final_filename = gen_result.get("filename")
-            update_task_state(task_id, "COMPLETED", correlation_id, f"Fusion réussie: {final_filename}")
-            return {"status": "success", "message": f"🪄 **Fusion réussie !**\n\n![{final_filename}](/api/download/{final_filename})"}
+            update_task_state(task_id, "COMPLETED", correlation_id,
+                              f"Fusion réussie: {final_filename}")
+            return {
+                "status": "success",
+                "message": (f"🪄 **Fusion réussie !**\n\n"
+                            f"![{final_filename}](/api/download/{final_filename})"),
+            }
 
         # ----------------------------------------------------------------------
-        # 7bis. GÉNÉRATION VIDÉO (VEO 3.1) — NOUVEAU v22
+        # 7bis. GÉNÉRATION VIDÉO (VEO 3.1)
         # ----------------------------------------------------------------------
         elif action_name in ("generate_video", "create_video", "video_generation"):
             prompt = parameters.get("prompt", "")
-            filename = parameters.get("filename", f"gen_video_{uuid.uuid4().hex[:6]}.mp4")
+            filename = parameters.get("filename",
+                                      f"gen_video_{uuid.uuid4().hex[:6]}.mp4")
             provider = parameters.get("provider", "gemini")
             model = parameters.get("model", "veo-3.1-gene-prev")
             aspect_ratio = parameters.get("aspect_ratio", "16:9")
@@ -464,10 +571,13 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             person_generation = parameters.get("person_generation", "allow_all")
 
             if not prompt:
-                update_task_state(task_id, "FAILED", correlation_id, "Prompt vidéo vide")
-                return {"status": "error", "message": "Le prompt est obligatoire pour générer une vidéo."}
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "Prompt vidéo vide")
+                return {"status": "error",
+                        "message": "Le prompt est obligatoire pour générer une vidéo."}
 
-            update_task_state(task_id, "RUNNING", correlation_id, f"Vidéo Veo: {duration}s")
+            update_task_state(task_id, "RUNNING", correlation_id,
+                              f"Vidéo Veo: {duration}s")
 
             gen_result = generate_video_with_provider(
                 prompt=prompt,
@@ -482,8 +592,10 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             )
 
             if gen_result.get("status") == "error":
-                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
-                return {"status": "error", "message": f"ÉCHEC VIDÉO: {gen_result.get('message')}"}
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  gen_result.get("message"))
+                return {"status": "error",
+                        "message": f"ÉCHEC VIDÉO: {gen_result.get('message')}"}
 
             final_filename = gen_result.get("filename")
             model_id = gen_result.get("model_id", model)
@@ -495,12 +607,11 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             if stitched and clips:
                 info += f"- Mode : multi-clips assemblés `{clips}`\n"
             info += f"\n[FILE:{final_filename}](/api/download/{final_filename})\n\n"
-            info += (
-                f'<video controls src="/api/download/{final_filename}" '
-                f'style="max-width:100%;border-radius:8px;"></video>'
-            )
+            info += (f'<video controls src="/api/download/{final_filename}" '
+                     f'style="max-width:100%;border-radius:8px;"></video>')
 
-            update_task_state(task_id, "COMPLETED", correlation_id, f"Vidéo générée: {final_filename}")
+            update_task_state(task_id, "COMPLETED", correlation_id,
+                              f"Vidéo générée: {final_filename}")
             return {"status": "success", "message": info}
 
         elif action_name in ("merge_and_edit_videos", "merge_videos", "edit_video"):
@@ -508,7 +619,8 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             prompt = parameters.get("prompt", parameters.get("user_prompt", ""))
             provider = parameters.get("provider", "agnes")
             model = parameters.get("model", "agnes-v2.0")
-            filename = parameters.get("filename", f"merged_video_{uuid.uuid4().hex[:6]}.mp4")
+            filename = parameters.get("filename",
+                                      f"merged_video_{uuid.uuid4().hex[:6]}.mp4")
             aspect_ratio = parameters.get("aspect_ratio", "16:9")
             try:
                 duration = int(parameters.get("duration", 8))
@@ -516,7 +628,8 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
                 duration = 8
             auto_stitch = bool(parameters.get("auto_stitch", True))
 
-            update_task_state(task_id, "RUNNING", correlation_id, "Fusion/édition vidéo")
+            update_task_state(task_id, "RUNNING", correlation_id,
+                              "Fusion/édition vidéo")
 
             gen_result = merge_and_edit_videos(
                 video_paths=video_paths,
@@ -530,26 +643,28 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             )
 
             if gen_result.get("status") == "error":
-                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
-                return {"status": "error", "message": f"ÉCHEC VIDÉO: {gen_result.get('message')}"}
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  gen_result.get("message"))
+                return {"status": "error",
+                        "message": f"ÉCHEC VIDÉO: {gen_result.get('message')}"}
 
             final_filename = gen_result.get("filename")
             merged = gen_result.get("videos_merged")
             note = f" ({merged} clips fusionnés)" if merged else ""
 
-            update_task_state(task_id, "COMPLETED", correlation_id, f"Vidéo finale: {final_filename}")
+            update_task_state(task_id, "COMPLETED", correlation_id,
+                              f"Vidéo finale: {final_filename}")
             return {
                 "status": "success",
-                "message": (
-                    f"🎞️ **Vidéo finale prête !**{note}\n\n"
-                    f"[FILE:{final_filename}](/api/download/{final_filename})\n\n"
-                    f'<video controls src="/api/download/{final_filename}" '
-                    f'style="max-width:100%;border-radius:8px;"></video>'
-                ),
+                "message": (f"🎞️ **Vidéo finale prête !**{note}\n\n"
+                            f"[FILE:{final_filename}]"
+                            f"(/api/download/{final_filename})\n\n"
+                            f'<video controls src="/api/download/{final_filename}" '
+                            f'style="max-width:100%;border-radius:8px;"></video>'),
             }
 
         # ----------------------------------------------------------------------
-        # 7ter. EXTENSION VIDÉO (AGNES multi_reference) — NOUVEAU v28
+        # 7ter. EXTENSION VIDÉO (AGNES multi_reference)
         # ----------------------------------------------------------------------
         elif action_name in ("extend_video", "extend_video_multiple"):
             video_path = parameters.get("video_path", "LAST")
@@ -557,19 +672,16 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             with_audio = bool(parameters.get("with_audio", True))
             audio_style = parameters.get("audio_style", "nature")
 
-            update_task_state(
-                task_id, "RUNNING", correlation_id,
-                f"Extension vidéo: {duration}s"
-            )
+            update_task_state(task_id, "RUNNING", correlation_id,
+                              f"Extension vidéo: {duration}s")
 
             if action_name == "extend_video_multiple":
                 prompts_list = parameters.get("prompts", [])
                 if not prompts_list:
-                    update_task_state(task_id, "FAILED", correlation_id, "Liste prompts vide")
-                    return {
-                        "status": "error",
-                        "message": "Fournis une liste 'prompts' pour extend_video_multiple.",
-                    }
+                    update_task_state(task_id, "FAILED", correlation_id,
+                                      "Liste prompts vide")
+                    return {"status": "error",
+                            "message": "Fournis une liste 'prompts'."}
                 gen_result = extend_video_multiple(
                     video_path=video_path,
                     prompts=prompts_list,
@@ -580,11 +692,10 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             else:
                 prompt = parameters.get("prompt", "")
                 if not prompt:
-                    update_task_state(task_id, "FAILED", correlation_id, "Prompt d'extension vide")
-                    return {
-                        "status": "error",
-                        "message": "Le prompt d'extension est obligatoire.",
-                    }
+                    update_task_state(task_id, "FAILED", correlation_id,
+                                      "Prompt d'extension vide")
+                    return {"status": "error",
+                            "message": "Le prompt d'extension est obligatoire."}
                 gen_result = extend_video_with_agnes(
                     video_path=video_path,
                     new_prompt=prompt,
@@ -594,11 +705,10 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
                 )
 
             if gen_result.get("status") == "error":
-                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
-                return {
-                    "status": "error",
-                    "message": f"ÉCHEC EXTENSION: {gen_result.get('message')}",
-                }
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  gen_result.get("message"))
+                return {"status": "error",
+                        "message": f"ÉCHEC EXTENSION: {gen_result.get('message')}"}
 
             final_filename = gen_result.get("filename")
             mode_used = gen_result.get("mode_used", "multi_reference")
@@ -612,29 +722,27 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             if with_audio:
                 info += f"- Audio : ✅ ({audio_style})\n"
             info += f"\n[FILE:{final_filename}](/api/download/{final_filename})\n\n"
-            info += (
-                f'<video controls loop '
-                f'src="/api/download/{final_filename}" '
-                f'style="max-width:100%;border-radius:8px;"></video>'
-            )
+            info += (f'<video controls loop '
+                     f'src="/api/download/{final_filename}" '
+                     f'style="max-width:100%;border-radius:8px;"></video>')
 
-            update_task_state(task_id, "COMPLETED", correlation_id, f"Vidéo étendue: {final_filename}")
+            update_task_state(task_id, "COMPLETED", correlation_id,
+                              f"Vidéo étendue: {final_filename}")
             return {"status": "success", "message": info}
 
         # ----------------------------------------------------------------------
-        # 7quater. SOUS-TITRES WHISPER (v32)
+        # 7quater. SOUS-TITRES WHISPER
         # ----------------------------------------------------------------------
-        elif action_name in ("generate_subtitles", "subtitle_video", "whisper_transcribe"):
+        elif action_name in ("generate_subtitles", "subtitle_video",
+                             "whisper_transcribe"):
             from services.vision.whisper_client import generate_subtitles_from_video
 
             video_path = parameters.get("video_path", "LAST")
             language = parameters.get("language")
             model_name = parameters.get("model", "base")
 
-            update_task_state(
-                task_id, "RUNNING", correlation_id,
-                f"Whisper transcription ({model_name})"
-            )
+            update_task_state(task_id, "RUNNING", correlation_id,
+                              f"Whisper transcription ({model_name})")
 
             gen_result = generate_subtitles_from_video(
                 video_path=video_path,
@@ -643,11 +751,10 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             )
 
             if gen_result.get("status") == "error":
-                update_task_state(task_id, "FAILED", correlation_id, gen_result.get("message"))
-                return {
-                    "status": "error",
-                    "message": f"ÉCHEC SOUS-TITRES : {gen_result.get('message')}",
-                }
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  gen_result.get("message"))
+                return {"status": "error",
+                        "message": f"ÉCHEC SOUS-TITRES : {gen_result.get('message')}"}
 
             srt_filename = gen_result.get("srt_filename")
             language_detected = gen_result.get("language", "?")
@@ -659,7 +766,8 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             info += f"- Modèle Whisper : `{model_name}`\n"
             info += f"\n[FILE:{srt_filename}](/api/download/{srt_filename})\n"
 
-            update_task_state(task_id, "COMPLETED", correlation_id, f"Sous-titres : {srt_filename}")
+            update_task_state(task_id, "COMPLETED", correlation_id,
+                              f"Sous-titres : {srt_filename}")
             return {"status": "success", "message": info}
 
         elif action_name in ("burn_subtitles", "add_subtitles_to_video"):
@@ -673,7 +781,8 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             model_name = parameters.get("model", "base")
             srt_path = parameters.get("srt_path")
 
-            update_task_state(task_id, "RUNNING", correlation_id, "Burn sous-titres")
+            update_task_state(task_id, "RUNNING", correlation_id,
+                              "Burn sous-titres")
 
             if not srt_path:
                 srt_result = generate_subtitles_from_video(
@@ -682,10 +791,9 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
                     model_name=model_name,
                 )
                 if srt_result.get("status") == "error":
-                    return {
-                        "status": "error",
-                        "message": f"Échec génération .srt : {srt_result.get('message')}",
-                    }
+                    return {"status": "error",
+                            "message": f"Échec génération .srt : "
+                                       f"{srt_result.get('message')}"}
                 srt_path = srt_result.get("srt_path")
 
             burn_result = burn_subtitles_into_video(
@@ -694,10 +802,9 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             )
 
             if burn_result.get("status") == "error":
-                return {
-                    "status": "error",
-                    "message": f"ÉCHEC INCRUSTATION : {burn_result.get('message')}",
-                }
+                return {"status": "error",
+                        "message": f"ÉCHEC INCRUSTATION : "
+                                   f"{burn_result.get('message')}"}
 
             final_filename = burn_result.get("filename")
 
@@ -705,35 +812,41 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
             info += f"- Source : `{os.path.basename(video_path)}`\n"
             info += f"- Sous-titres : `{os.path.basename(srt_path)}`\n\n"
             info += f"[FILE:{final_filename}](/api/download/{final_filename})\n\n"
-            info += (
-                f'<video controls loop '
-                f'src="/api/download/{final_filename}" '
-                f'style="max-width:100%;border-radius:8px;"></video>'
-            )
+            info += (f'<video controls loop '
+                     f'src="/api/download/{final_filename}" '
+                     f'style="max-width:100%;border-radius:8px;"></video>')
 
-            update_task_state(task_id, "COMPLETED", correlation_id, f"Sous-titres brûlés : {final_filename}")
+            update_task_state(task_id, "COMPLETED", correlation_id,
+                              f"Sous-titres brûlés : {final_filename}")
             return {"status": "success", "message": info}
 
         # ----------------------------------------------------------------------
-        # 8. EXÉCUTION SYSTÈME & SCAN RAPIDE SANS GEL DU TERMINAL
+        # 8. EXÉCUTION SYSTÈME
         # ----------------------------------------------------------------------
         elif action_name in ("execute_command", "run_script", "run_tests"):
-            command = parameters.get("command", "dir" if os.name == "nt" else "ls -la").strip()
+            command = parameters.get("command",
+                                     "dir" if os.name == "nt" else "ls -la").strip()
             cmd_lower = command.lower()
 
-            if any(k in cmd_lower for k in ["dir /s", "get-childitem", "find .", "ls -r", "tree"]):
+            if any(k in cmd_lower for k in ["dir /s", "get-childitem",
+                                            "find .", "ls -r", "tree"]):
                 pattern = ""
-                match = re.search(r"[*'\"\\]([a-zA-Z0-9_\-\.]+[*'\"\\]|[a-zA-Z0-9_\-\.]+)", command)
+                match = re.search(
+                    r"[*'\"\\]([a-zA-Z0-9_\-\.]+[*'\"\\]|[a-zA-Z0-9_\-\.]+)",
+                    command)
                 if match:
-                    raw = match.group(1).replace("*", "").replace("'", "").replace('"', "")
+                    raw = (match.group(1).replace("*", "")
+                           .replace("'", "").replace('"', ""))
                     if raw and raw not in ("s", "b", "f", "r", "w", "v"):
                         pattern = raw
 
                 matched = _fast_workspace_scan(pattern)
-                output = f"Scan instantané ({len(matched)} fichiers trouvés) :\n" + "\n".join(matched[:100])
+                output = (f"Scan instantané ({len(matched)} fichiers trouvés) :\n"
+                          + "\n".join(matched[:100]))
                 if len(matched) > 100:
                     output += f"\n... et {len(matched) - 100} autres fichiers."
-                update_task_state(task_id, "COMPLETED", correlation_id, f"Scan workspace ({pattern or 'global'})")
+                update_task_state(task_id, "COMPLETED", correlation_id,
+                                  f"Scan workspace ({pattern or 'global'})")
                 return {"status": "success", "message": output}
 
             try:
@@ -753,46 +866,55 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
                     correlation_id,
                     command[:100],
                 )
-                return {"status": status_str, "message": f"Commande exécutée :\n{output[-2500:]}"}
+                return {"status": status_str,
+                        "message": f"Commande exécutée :\n{output[-2500:]}"}
             except subprocess.TimeoutExpired:
-                update_task_state(task_id, "FAILED", correlation_id, "Timeout (30s)")
-                return {"status": "error", "message": "⚠️ Commande interrompue : l'exécution a dépassé 30s."}
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "Timeout (30s)")
+                return {"status": "error",
+                        "message": "⚠️ Commande interrompue : "
+                                   "l'exécution a dépassé 30s."}
             except Exception as e:
                 update_task_state(task_id, "FAILED", correlation_id, str(e))
-                return {"status": "error", "message": f"Erreur exécution : {str(e)}"}
+                return {"status": "error",
+                        "message": f"Erreur exécution : {str(e)}"}
 
         # ----------------------------------------------------------------------
-        # 9. TÂCHES D'ARRIÈRE-PLAN (HEADLESS / TMUX / WORKERS)
+        # 9. TÂCHES D'ARRIÈRE-PLAN
         # ----------------------------------------------------------------------
-        elif action_name in ("execute_tmux_headless", "execute_background_task", "start_background_task"):
-            session_name = parameters.get("session_name", f"job_{uuid.uuid4().hex[:6]}")
+        elif action_name in ("execute_tmux_headless", "execute_background_task",
+                             "start_background_task"):
+            session_name = parameters.get("session_name",
+                                          f"job_{uuid.uuid4().hex[:6]}")
             command = parameters.get("command", "")
             if not command:
-                update_task_state(task_id, "FAILED", correlation_id, "Commande vide")
-                return {"status": "error", "message": "La commande ne peut pas être vide."}
-            update_task_state(task_id, "RUNNING", correlation_id, f"Tâche de fond: {session_name}")
+                update_task_state(task_id, "FAILED", correlation_id,
+                                  "Commande vide")
+                return {"status": "error",
+                        "message": "La commande ne peut pas être vide."}
+            update_task_state(task_id, "RUNNING", correlation_id,
+                              f"Tâche de fond: {session_name}")
             return start_background_task(session_name, command)
 
-        elif action_name in ("stop_background_task", "stop_tmux_headless", "kill_session", "stop_session"):
+        elif action_name in ("stop_background_task", "stop_tmux_headless",
+                             "kill_session", "stop_session"):
             session_name = parameters.get("session_name", "monitor_task")
-            update_task_state(task_id, "COMPLETED", correlation_id, f"Arrêt tâche: {session_name}")
+            update_task_state(task_id, "COMPLETED", correlation_id,
+                              f"Arrêt tâche: {session_name}")
             return stop_background_task(session_name)
 
         # ----------------------------------------------------------------------
-        # 10. FALLBACK : action inconnue (corrige le faux SUCCESS)
+        # 10. FALLBACK
         # ----------------------------------------------------------------------
-        update_task_state(
-            task_id, "FAILED", correlation_id,
-            f"Action inconnue : '{action_name}'",
-        )
-        return {
-            "status": "error",
-            "message": f"Action inconnue : '{action_name}'. Aucun handler disponible.",
-        }
+        update_task_state(task_id, "FAILED", correlation_id,
+                          f"Action inconnue : '{action_name}'")
+        return {"status": "error",
+                "message": f"Action inconnue : '{action_name}'."}
 
     except Exception as e:
         update_task_state(task_id, "FAILED", correlation_id, str(e))
-        return {"status": "error", "message": f"Erreur critique outil : {str(e)}"}
+        return {"status": "error",
+                "message": f"Erreur critique outil : {str(e)}"}
 
 
 # ==============================================================================
@@ -802,7 +924,7 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
     """
     Wrapper public qui :
       1. mesure la latence de l'appel
-      2. appelle le dispatcher réel (_execute_agent_crm_tool_impl)
+      2. appelle le dispatcher réel
       3. persiste l'épisode dans DuckDB (episodic_log)
       4. retourne le résultat inchangé à l'appelant
     """
@@ -820,11 +942,9 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
 
     except Exception as exc:
         error_type = type(exc).__name__
-        # On remonte l'exception après avoir loggé (le finally s'exécute avant)
         raise
 
     finally:
-        # FIX v35 : log non-bloquant, ne JAMAIS ralentir/casser une action
         try:
             latency_ms = (time.monotonic() - t0) * 1000.0
             msg = ""
