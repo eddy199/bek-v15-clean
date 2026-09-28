@@ -1,14 +1,15 @@
 # ==============================================================================
 # BEK-v16 — Requirements pour Render Free (512 Mo RAM)
 # ------------------------------------------------------------------------------
-# Version OPTIMISÉE v4 (2026-09-28) :
-#   - Ajout : networkx (DAG Engine — BEK-FLUX + Hermes DAG Adapter)
-#   - Ajout : duckdb (Reflex Loop — episode_logger)
-#   - Ajout : opentelemetry-instrumentation-* (fix tracing)
+# Version OPTIMISÉE v5 (2026-09-28) :
+#   - Retiré : duckdb (compilation C++ trop lourde pour Render Free 512 MB)
+#           → Fallback SQLite automatique dans episode_logger.py
+#   - Fixé : opentelemetry-instrumentation-* en versions STABLES (==)
+#   - Gardé : networkx (DAG Engine)
 #   - Retiré : torch, transformers, sentence-transformers, fastembed,
-#     opencv, scikit-learn, scipy, Flask, chromadb
-#   - Playwright GARDÉ (utilisé par web_agent + worker_headless)
-#   - Langchain GARDÉ (utilisé par meta_cortex_swarm + swarm_core)
+#              opencv, scikit-learn, scipy, Flask, chromadb
+#   - Playwright GARDÉ (web_agent + worker_headless)
+#   - Langchain GARDÉ (meta_cortex_swarm + swarm_core)
 # ==============================================================================
 
 # --- Core Web / API ---
@@ -56,16 +57,17 @@ langchain-openai>=0.2.0,<0.4.0
 networkx>=3.3.0,<4.0.0
 
 # --- Reflex Loop (episode_logger + forge) ---
-duckdb>=1.1.0,<2.0.0
+# ★ v5 : duckdb RETIRÉ (compilation C++ trop lourde pour Render Free)
+#        episode_logger.py utilisera SQLite en fallback automatique.
 
-# --- OpenTelemetry (tracing) ---
-opentelemetry-api>=1.27.0,<2.0.0
-opentelemetry-sdk>=1.27.0,<2.0.0
-opentelemetry-exporter-otlp-proto-grpc>=1.27.0,<2.0.0
-opentelemetry-instrumentation-fastapi>=0.48b0
-opentelemetry-instrumentation-httpx>=0.48b0
-opentelemetry-instrumentation-requests>=0.48b0
-opentelemetry-instrumentation-logging>=0.48b0
+# --- OpenTelemetry (tracing) — versions STABLES fixées ---
+opentelemetry-api==1.27.0
+opentelemetry-sdk==1.27.0
+opentelemetry-exporter-otlp-proto-grpc==1.27.0
+opentelemetry-instrumentation-fastapi==0.48b0
+opentelemetry-instrumentation-httpx==0.48b0
+opentelemetry-instrumentation-requests==0.48b0
+opentelemetry-instrumentation-logging==0.48b0
 
 # --- Utils ---
 tenacity>=8.2.0
