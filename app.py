@@ -8,6 +8,7 @@
 # v18.2 (2026-09-29) : Intégration HINDSIGHT (outils + routes API)
 # v18.5 (2026-09-29) : Feedback utilisateur (routes /api/feedback)
 # v18.6 (2026-09-29) : Pending feedbacks traités au boot + route async
+# v18.10 (2026-09-29) : ★ Route admin /api/admin/flush-redis
 # ==============================================================================
 from __future__ import annotations
 
@@ -186,7 +187,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     except Exception as exc:
         logger.error("Impossible de démarrer les workers Hermes : %s", exc)
 
-    # ★ v18.6 — Traiter les feedbacks pending au démarrage
     try:
         n_pending = _process_pending_feedbacks()
         if n_pending > 0:
@@ -345,7 +345,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     hermes.register_tool("generate_subtitles", _generate_subtitles_handler, risk_level="L1")
     hermes.register_tool("burn_subtitles", _burn_subtitles_handler, risk_level="L1")
 
-    # ★ v18.2 — OUTILS HINDSIGHT
     def _hindsight_query_handler(query: str = "", **kwargs):
         if not query:
             return {"status": "error", "message": "query obligatoire"}
@@ -370,7 +369,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     hermes.register_tool("hindsight_recall", _hindsight_recall_handler, risk_level="L1")
     logger.info("🧠 Outils Hindsight enregistrés : hindsight_query + hindsight_recall")
 
-    # ★ v18.5 — OUTIL FEEDBACK
     def _submit_feedback_handler(
         user_query: str = "", agent_response: str = "",
         correction: str = "", feedback_type: str = "correction",
@@ -477,7 +475,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="18.6",
+    version="18.10",
     lifespan=lifespan,
 )
 
@@ -671,6 +669,81 @@ async def api_list_feedback(limit: int = 50):
         }
     except Exception as exc:
         logger.error("[feedback/list] %s", exc)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+# ══════════════════════════════════════════════════════════════════
+# ★ v18.10 — ROUTE ADMIN : vider Redis Streams
+# ══════════════════════════════════════════════════════════════════
+@app.post("/api/admin/flush-redis")
+async def api_flush_redis():
+    """
+    Vide tous les streams Redis.
+
+    À utiliser quand les logs montrent un flood de 'publish_success'
+    au démarrage (replay des 10000 derniers événements).
+
+    Effet :
+      - Supprime TOUS les streams Redis (web-cleaned, skills-index, etc.)
+      - Les offsets locaux .eventbus_offsets.json deviennent obsolètes
+      - Au prochain boot, plus aucun replay d'historique
+
+    ⚠️ À appeler uniquement depuis un contexte admin de confiance.
+    """
+    try:
+        import redis as _redis_lib
+    except ImportError:
+        raise HTTPException(
+            status_code=500,
+            detail="redis-py non installé. pip install redis",
+        )
+
+    redis_url = os.environ.get("REDIS_URL", "").strip()
+    if not redis_url:
+        raise HTTPException(
+            status_code=400,
+            detail="REDIS_URL non configuré dans l'environnement",
+        )
+
+    try:
+        client = _redis_lib.Redis.from_url(
+            redis_url,
+            decode_responses=True,
+            socket_timeout=10,
+            socket_connect_timeout=5,
+        )
+        client.ping()
+
+        # Compte les clés avant
+        keys_before = client.keys("*")
+        count_before = len(keys_before)
+
+        # Vide tout
+        client.flushall()
+
+        # Vérifie
+        keys_after = client.keys("*")
+        count_after = len(keys_after)
+
+        logger.warning(
+            "[FLUSH-REDIS] %d clés supprimées (%d → %d) | URL=%s",
+            count_before - count_after,
+            count_before,
+            count_after,
+            redis_url.split("@")[-1] if "@" in redis_url else redis_url,
+        )
+
+        return {
+            "status": "ok",
+            "redis_url_host": redis_url.split("@")[-1] if "@" in redis_url else redis_url,
+            "keys_before": count_before,
+            "keys_after": count_after,
+            "keys_deleted": count_before - count_after,
+            "message": f"Redis vidé : {count_before - count_after} clés supprimées",
+        }
+
+    except Exception as exc:
+        logger.error("[FLUSH-REDIS] %s", exc, exc_info=True)
         raise HTTPException(status_code=500, detail=str(exc))
 
 
