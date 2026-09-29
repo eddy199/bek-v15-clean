@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Routeur Chat (Orchestrateur) — v18.2
+# BEK-v18 — Routeur Chat (Orchestrateur) — v18.4
 # ------------------------------------------------------------------------------
-# v18.2 (2026-09-29) : Integration HINDSIGHT (memoire long-terme structuree)
-#   - Ajout hindsight_build_context() en parallele de Pinecone
-#   - Le contexte Hindsight est fusionne dans le prompt systeme
+# v18.2 : Integration HINDSIGHT (memoire long-terme structuree)
+# v18.3 : MEMORY COORDINATOR — orchestration des 4 memoires
+# v18.4 (2026-09-29) : ★ Async coordinator (fix event loop Hindsight)
 # ==============================================================================
 
 from __future__ import annotations
@@ -28,17 +28,32 @@ from .chat_modules import formatters as fmt
 from .chat_modules import routing as rt
 from .chat_modules import streaming as st
 
-# ★ v18.2 — HINDSIGHT
+# ★ HINDSIGHT
 try:
     from hindsight_memory import (
         hindsight_build_context,
         hindsight_status as _hindsight_status,
     )
     _HINDSIGHT_AVAILABLE = True
-except ImportError as _e:
+except ImportError:
     _HINDSIGHT_AVAILABLE = False
     def hindsight_build_context(q, max_results=3): return ""
     def _hindsight_status(): return {"enabled": False, "connected": False}
+
+# ★ MEMORY COORDINATOR (async)
+try:
+    from memory_coordinator import coordinate_memories_async
+    _COORDINATOR_AVAILABLE = True
+except ImportError:
+    _COORDINATOR_AVAILABLE = False
+    async def coordinate_memories_async(query, max_chars=4000):
+        class _Dummy:
+            context = ""
+            facts = []
+            conflicts = []
+            sources_used = []
+            elapsed_ms = 0.0
+        return _Dummy()
 
 logger = logging.getLogger("BEKApp")
 
@@ -131,34 +146,55 @@ async def _chat_impl(request: Request, chat_span):
         except Exception as e:
             logger.debug("[SlashCommand] Échec : %s", e)
 
-    # ─── 7. MÉMOIRE (Pinecone + Hindsight en parallèle) ───
+    # ─── 7. MÉMOIRE UNIFIÉE (via Memory Coordinator ASYNC) ───
     dynamic_system_prompt = pr.BEK_GOLDEN_RULES.strip()
 
     if last_user_query:
-        # 7a. Pinecone (mémoire vectorielle classique)
-        try:
-            mem_ctx = search_memory(last_user_query, top_k=3)
-            if mem_ctx:
-                mem_ctx_str = val._safe_str(mem_ctx)
-                if len(mem_ctx_str) > cfg.MAX_CHARS_PER_MESSAGE:
-                    mem_ctx_str = mem_ctx_str[:cfg.MAX_CHARS_PER_MESSAGE] + "…[tronqué]"
-                dynamic_system_prompt += f"\n\n[MÉMOIRE PINECONE] :\n{mem_ctx_str}"
-        except Exception as e:
-            logger.warning("Erreur mémoire Pinecone : %s", e)
-
-        # ★ 7b. Hindsight (mémoire long-terme structurée)
-        if _HINDSIGHT_AVAILABLE:
+        _coordinator_ok = False
+        if _COORDINATOR_AVAILABLE:
             try:
-                hindsight_ctx = hindsight_build_context(last_user_query, max_results=3)
-                if hindsight_ctx:
-                    if len(hindsight_ctx) > cfg.MAX_CHARS_PER_MESSAGE:
-                        hindsight_ctx = hindsight_ctx[:cfg.MAX_CHARS_PER_MESSAGE] + "…[tronqué]"
-                    dynamic_system_prompt += f"\n\n[MÉMOIRE HINDSIGHT] :\n{hindsight_ctx}"
-                    logger.info("[Chat] Contexte Hindsight fusionné (%d chars)", len(hindsight_ctx))
+                unified = await coordinate_memories_async(last_user_query, max_chars=4000)
+                if unified.context:
+                    dynamic_system_prompt += (
+                        f"\n\n[MÉMOIRE UNIFIÉE — "
+                        f"{len(unified.facts)} faits, "
+                        f"{len(unified.conflicts)} conflits résolus, "
+                        f"sources={','.join(unified.sources_used)}]\n"
+                        f"{unified.context}"
+                    )
+                    logger.info(
+                        "[Chat] Coordinator : %d faits | %d conflits | sources=%s | %.0fms",
+                        len(unified.facts), len(unified.conflicts),
+                        unified.sources_used, unified.elapsed_ms,
+                    )
+                    _coordinator_ok = True
                 else:
-                    logger.debug("[Chat] Hindsight : aucun contexte trouvé")
+                    logger.debug("[Chat] Coordinator : aucun contexte trouvé")
             except Exception as e:
-                logger.warning("Erreur mémoire Hindsight : %s", e)
+                logger.warning("[Chat] Coordinator échec, fallback : %s", e)
+
+        # Fallback : Pinecone + Hindsight séparés
+        if not _coordinator_ok:
+            try:
+                mem_ctx = search_memory(last_user_query, top_k=3)
+                if mem_ctx:
+                    mem_ctx_str = val._safe_str(mem_ctx)
+                    if len(mem_ctx_str) > cfg.MAX_CHARS_PER_MESSAGE:
+                        mem_ctx_str = mem_ctx_str[:cfg.MAX_CHARS_PER_MESSAGE] + "…[tronqué]"
+                    dynamic_system_prompt += f"\n\n[MÉMOIRE PINECONE] :\n{mem_ctx_str}"
+            except Exception as e:
+                logger.warning("Erreur mémoire Pinecone : %s", e)
+
+            if _HINDSIGHT_AVAILABLE:
+                try:
+                    hindsight_ctx = hindsight_build_context(last_user_query, max_results=3)
+                    if hindsight_ctx:
+                        if len(hindsight_ctx) > cfg.MAX_CHARS_PER_MESSAGE:
+                            hindsight_ctx = hindsight_ctx[:cfg.MAX_CHARS_PER_MESSAGE] + "…[tronqué]"
+                        dynamic_system_prompt += f"\n\n[MÉMOIRE HINDSIGHT] :\n{hindsight_ctx}"
+                        logger.info("[Chat] Contexte Hindsight fusionné (%d chars)", len(hindsight_ctx))
+                except Exception as e:
+                    logger.warning("Erreur mémoire Hindsight : %s", e)
 
         # 7c. Plan Hermes
         try:
@@ -196,7 +232,7 @@ async def _chat_impl(request: Request, chat_span):
 async def chat_debug():
     return {
         "status": "ok",
-        "version": "18.2",
+        "version": "18.4",
         "config": cfg.get_config_summary(),
         "prompts": pr.get_prompt_summary(),
         "validation": val.get_validation_summary(),
@@ -205,4 +241,14 @@ async def chat_debug():
         "stair": st.get_stair_summary(),
         "streaming": st.get_streaming_summary(),
         "hindsight": _hindsight_status(),
+        "coordinator": {
+            "available": _COORDINATOR_AVAILABLE,
+            "mode": "async",
+            "sources": ["pinecone", "chromadb", "supabase", "hindsight"],
+            "priority_rules": [
+                "1. Hindsight gagne (faits structurés)",
+                "2. Plus récent gagne",
+                "3. Confidence élevée gagne",
+            ],
+        },
     }
