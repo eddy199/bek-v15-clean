@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# NERF 3 — UNIFICATION EVENTBUS
+# NERF 3 — UNIFICATION EVENTBUS (v18.7)
 # nerves/event_bus_nerves.py
 # ------------------------------------------------------------------------------
 # Pont EventBusKafka (sync) <-> EventBusClient (async)
 #
 # Corrections :
 #   - Anti-boucle robuste par bridge_id persistant.
+#   - ★ v18.7 : Pont Async→Kafka DÉSACTIVÉ (cause de boucle infinie).
 #   - FIFO borné pour les événements traités.
 #   - Topics dérivés de EventBusKafka.VALID_TOPICS.
-#   - Support bidirectionnel si EventBusClient expose subscribe().
-#   - Fallback unidirectionnel sinon.
 #   - Propagation correcte de correlation_id.
 #   - Activation idempotente et thread-safe.
 #   - Publication non bloquante.
@@ -60,23 +59,13 @@ _DEFAULT_KAFKA_TOPICS: Set[str] = {
 
 
 def _resolve_kafka_topics() -> Set[str]:
-    """
-    Source de vérité : EventBusKafka.VALID_TOPICS.
-    """
     try:
         from event_bus import EventBusKafka
-
         topics = getattr(EventBusKafka, "VALID_TOPICS", None)
-
         if topics:
             return set(topics)
-
     except Exception as exc:
-        logger.debug(
-            "[Nerf 3] Impossible de lire VALID_TOPICS : %s",
-            exc,
-        )
-
+        logger.debug("[Nerf 3] Impossible de lire VALID_TOPICS : %s", exc)
     return set(_DEFAULT_KAFKA_TOPICS)
 
 
@@ -85,13 +74,6 @@ def _resolve_kafka_topics() -> Set[str]:
 # ------------------------------------------------------------------------------
 
 class EventBusBridge:
-    """
-    Pont entre EventBusKafka et EventBusClient.
-
-    Le bridge_id permet de distinguer les événements générés par
-    le pont lui-même des événements externes.
-    """
-
     KAFKA_TOPICS: Set[str] = set(_DEFAULT_KAFKA_TOPICS)
 
     def __init__(self) -> None:
@@ -106,7 +88,6 @@ class EventBusBridge:
         self._async_bus: Any = None
 
         self._active_topics: Set[str] = set()
-
         self._mode = "unknown"
 
         self._async_executor: Optional[
@@ -121,7 +102,6 @@ class EventBusBridge:
             "dropped_count": 0,
             "error_count": 0,
         }
-
         self._stats_lock = threading.Lock()
 
     # --------------------------------------------------------------------------
@@ -135,15 +115,6 @@ class EventBusBridge:
         timestamp_ms: int,
         bridge_id: str = "",
     ) -> str:
-        """
-        Construit une clé stable d'événement.
-
-        Priorité :
-          bridge_id + correlation_id + timestamp
-
-        Cela évite de considérer deux événements différents comme identiques
-        lorsque le timestamp est identique.
-        """
         return (
             f"{topic}|"
             f"{bridge_id}|"
@@ -152,10 +123,6 @@ class EventBusBridge:
         )
 
     def _mark_and_check(self, key: str) -> bool:
-        """
-        True  = événement nouveau.
-        False = événement déjà traité.
-        """
         with self._processed_lock:
             if key in self._processed_keys_set:
                 return False
@@ -166,18 +133,13 @@ class EventBusBridge:
 
             self._processed_keys_order.append(key)
             self._processed_keys_set.add(key)
-
             return True
 
     # --------------------------------------------------------------------------
     # STATS
     # --------------------------------------------------------------------------
 
-    def _increment_stat(
-        self,
-        key: str,
-        delta: int = 1,
-    ) -> None:
+    def _increment_stat(self, key: str, delta: int = 1) -> None:
         with self._stats_lock:
             self._stats[key] = self._stats.get(key, 0) + delta
 
@@ -186,17 +148,12 @@ class EventBusBridge:
     # --------------------------------------------------------------------------
 
     @staticmethod
-    def _extract_payload(
-        event: Any,
-    ) -> Dict[str, Any]:
+    def _extract_payload(event: Any) -> Dict[str, Any]:
         if not isinstance(event, dict):
             return {}
-
         payload = event.get("payload")
-
         if isinstance(payload, dict):
             return dict(payload)
-
         return dict(event)
 
     @staticmethod
@@ -220,16 +177,11 @@ class EventBusBridge:
             or payload.get("timestamp")
             or time.time()
         )
-
         try:
             value = float(raw_timestamp)
-
-            # Timestamp déjà exprimé en millisecondes.
             if value > 10_000_000_000:
                 return int(value)
-
             return int(value * 1000)
-
         except (TypeError, ValueError):
             return int(time.time() * 1000)
 
@@ -238,11 +190,6 @@ class EventBusBridge:
     # --------------------------------------------------------------------------
 
     def activate(self) -> Dict[str, Any]:
-        """
-        Active le bridge.
-
-        Idempotent.
-        """
         with self._lock:
             if self._activated:
                 return {
@@ -253,56 +200,31 @@ class EventBusBridge:
                     "bridge_id": self._bridge_id,
                 }
 
-            # ------------------------------------------------------------------
             # Kafka
-            # ------------------------------------------------------------------
-
             try:
                 from event_bus import EventBusKafka
-
                 self._kafka_bus = EventBusKafka()
-
             except Exception as exc:
-                logger.error(
-                    "[Nerf 3] EventBusKafka indisponible : %s",
-                    exc,
-                )
-
+                logger.error("[Nerf 3] EventBusKafka indisponible : %s", exc)
                 return {
                     "status": "error",
                     "message": f"EventBusKafka indisponible : {exc}",
                 }
 
-            # ------------------------------------------------------------------
             # Topics
-            # ------------------------------------------------------------------
-
             source_topics = _resolve_kafka_topics()
-
             EventBusBridge.KAFKA_TOPICS = set(source_topics)
             self._active_topics = set(source_topics)
 
-            # ------------------------------------------------------------------
             # Async bus
-            # ------------------------------------------------------------------
-
             try:
                 from event_bus_client import event_bus
-
                 self._async_bus = event_bus
-
             except Exception as exc:
-                logger.warning(
-                    "[Nerf 3] EventBusClient indisponible : %s",
-                    exc,
-                )
-
+                logger.warning("[Nerf 3] EventBusClient indisponible : %s", exc)
                 self._async_bus = None
 
-            # ------------------------------------------------------------------
             # Executor
-            # ------------------------------------------------------------------
-
             self._async_executor = (
                 concurrent.futures.ThreadPoolExecutor(
                     max_workers=_MAX_ASYNC_WORKERS,
@@ -310,12 +232,8 @@ class EventBusBridge:
                 )
             )
 
-            # ------------------------------------------------------------------
             # Kafka -> Async
-            # ------------------------------------------------------------------
-
             kafka_subscribers_registered = 0
-
             if self._async_bus is not None:
                 for topic in sorted(self._active_topics):
                     try:
@@ -323,51 +241,23 @@ class EventBusBridge:
                             topic,
                             self._make_kafka_to_async_callback(topic),
                         )
-
                         kafka_subscribers_registered += 1
-
                     except Exception as exc:
                         logger.warning(
                             "[Nerf 3] Subscribe Kafka[%s] échoué : %s",
-                            topic,
-                            exc,
+                            topic, exc,
                         )
 
-            # ------------------------------------------------------------------
-            # Async -> Kafka
-            # ------------------------------------------------------------------
-
+            # ★ v18.7 — Async -> Kafka DÉSACTIVÉ (boucle infinie)
+            # Le pont Async→Kafka provoquait une boucle infinie sur
+            # 'skills-index' car asyncio.run() dans _publish_async_safely
+            # crée une nouvelle event loop qui perd le bridge_id.
             async_subscribers_registered = 0
+            logger.info(
+                "🔇 [Nerf 3] Pont Async→Kafka DÉSACTIVÉ (anti-boucle v18.7)"
+            )
 
-            if (
-                self._async_bus is not None
-                and hasattr(self._async_bus, "subscribe")
-            ):
-                for topic in sorted(self._active_topics):
-                    try:
-                        callback = self._make_async_to_kafka_callback(topic)
-
-                        result = self._async_bus.subscribe(
-                            topic,
-                            callback,
-                        )
-
-                        if inspect.isawaitable(result):
-                            self._schedule_awaitable(result)
-
-                        async_subscribers_registered += 1
-
-                    except Exception as exc:
-                        logger.debug(
-                            "[Nerf 3] Subscribe Async[%s] non disponible : %s",
-                            topic,
-                            exc,
-                        )
-
-            # ------------------------------------------------------------------
             # MODE
-            # ------------------------------------------------------------------
-
             if async_subscribers_registered > 0:
                 self._mode = "bidirectional"
             else:
@@ -392,6 +282,7 @@ class EventBusBridge:
                 "topics": sorted(self._active_topics),
                 "max_workers": _MAX_ASYNC_WORKERS,
                 "bridge_id": self._bridge_id,
+                "note": "Async→Kafka disabled (anti-loop v18.7)",
             }
 
     # --------------------------------------------------------------------------
@@ -400,15 +291,10 @@ class EventBusBridge:
 
     @staticmethod
     def _schedule_awaitable(awaitable: Any) -> None:
-        """
-        Programme proprement une coroutine sans supposer qu'une boucle
-        asyncio est toujours disponible dans le thread courant.
-        """
         try:
             loop = asyncio.get_running_loop()
             loop.create_task(awaitable)
             return
-
         except RuntimeError:
             pass
 
@@ -417,8 +303,7 @@ class EventBusBridge:
                 asyncio.run(awaitable)
             except Exception as exc:
                 logger.debug(
-                    "[Nerf 3] Coroutine subscribe échouée : %s",
-                    exc,
+                    "[Nerf 3] Coroutine subscribe échouée : %s", exc,
                 )
 
         thread = threading.Thread(
@@ -432,23 +317,12 @@ class EventBusBridge:
     # KAFKA -> ASYNC
     # --------------------------------------------------------------------------
 
-    def _make_kafka_to_async_callback(
-        self,
-        topic: str,
-    ):
+    def _make_kafka_to_async_callback(self, topic: str):
         def _callback(event: Dict[str, Any]) -> None:
             try:
                 payload = self._extract_payload(event)
-
-                correlation_id = self._extract_correlation_id(
-                    event,
-                    payload,
-                )
-
-                timestamp_ms = self._extract_timestamp_ms(
-                    event,
-                    payload,
-                )
+                correlation_id = self._extract_correlation_id(event, payload)
+                timestamp_ms = self._extract_timestamp_ms(event, payload)
 
                 source_bridge_id = str(
                     payload.get("_bridge_id")
@@ -456,35 +330,22 @@ class EventBusBridge:
                     or ""
                 )
 
-                # Événement provenant déjà de CE bridge :
-                # on ne le renvoie pas vers l'autre côté.
                 if source_bridge_id == self._bridge_id:
                     return
 
                 key = self._make_key(
-                    topic,
-                    correlation_id,
-                    timestamp_ms,
-                    source_bridge_id,
+                    topic, correlation_id, timestamp_ms, source_bridge_id,
                 )
 
                 if not self._mark_and_check(key):
                     return
 
-                if (
-                    self._async_bus is None
-                    or self._async_executor is None
-                ):
+                if self._async_bus is None or self._async_executor is None:
                     self._increment_stat("dropped_count")
                     return
 
                 forward_payload = dict(payload)
-
-                forward_payload.setdefault(
-                    "correlation_id",
-                    correlation_id,
-                )
-
+                forward_payload.setdefault("correlation_id", correlation_id)
                 forward_payload["_bridge_id"] = self._bridge_id
                 forward_payload["_bridged_from"] = "kafka"
                 forward_payload["_bridge_key"] = key
@@ -495,103 +356,23 @@ class EventBusBridge:
                         topic,
                         forward_payload,
                     )
-
                 except RuntimeError:
                     self._increment_stat("dropped_count")
 
             except Exception as exc:
                 self._increment_stat("error_count")
-
-                logger.debug(
-                    "[Nerf 3] Kafka→Async erreur : %s",
-                    exc,
-                )
+                logger.debug("[Nerf 3] Kafka→Async erreur : %s", exc)
 
         return _callback
 
     # --------------------------------------------------------------------------
-    # ASYNC -> KAFKA
+    # ASYNC -> KAFKA (désactivé en v18.7, gardé pour compat)
     # --------------------------------------------------------------------------
 
-    def _make_async_to_kafka_callback(
-        self,
-        topic: str,
-    ):
+    def _make_async_to_kafka_callback(self, topic: str):
         async def _callback(message: Dict[str, Any]) -> None:
-            try:
-                if not isinstance(message, dict):
-                    return
-
-                source_bridge_id = str(
-                    message.get("_bridge_id", "")
-                )
-
-                # Empêche le retour vers Kafka d'un événement que CE bridge
-                # vient lui-même de pousser sur Async.
-                if source_bridge_id == self._bridge_id:
-                    return
-
-                correlation_id = str(
-                    message.get("correlation_id")
-                    or ""
-                )
-
-                timestamp_ms = self._extract_timestamp_ms(
-                    message,
-                    message,
-                )
-
-                key = self._make_key(
-                    topic,
-                    correlation_id,
-                    timestamp_ms,
-                    source_bridge_id,
-                )
-
-                if not self._mark_and_check(key):
-                    return
-
-                if self._kafka_bus is None:
-                    self._increment_stat("dropped_count")
-                    return
-
-                forward_payload = dict(message)
-
-                forward_payload.setdefault(
-                    "correlation_id",
-                    correlation_id,
-                )
-
-                forward_payload["_bridge_id"] = self._bridge_id
-                forward_payload["_bridged_from"] = "async"
-                forward_payload["_bridge_key"] = key
-
-                try:
-                    self._kafka_bus.publish(
-                        topic,
-                        forward_payload,
-                    )
-
-                    self._increment_stat(
-                        "async_to_kafka_count"
-                    )
-
-                except Exception as exc:
-                    self._increment_stat("error_count")
-
-                    logger.debug(
-                        "[Nerf 3] Async→Kafka publication échouée : %s",
-                        exc,
-                    )
-
-            except Exception as exc:
-                self._increment_stat("error_count")
-
-                logger.debug(
-                    "[Nerf 3] Async→Kafka erreur : %s",
-                    exc,
-                )
-
+            # ★ v18.7 : callback désactivé pour éviter la boucle infinie
+            return
         return _callback
 
     # --------------------------------------------------------------------------
@@ -607,10 +388,7 @@ class EventBusBridge:
             if self._async_bus is None:
                 return
 
-            coroutine = self._async_bus.publish(
-                topic,
-                payload,
-            )
+            coroutine = self._async_bus.publish(topic, payload)
 
             asyncio.run(
                 asyncio.wait_for(
@@ -618,26 +396,17 @@ class EventBusBridge:
                     timeout=_BRIDGE_TIMEOUT_SEC,
                 )
             )
-
-            self._increment_stat(
-                "kafka_to_async_count"
-            )
+            self._increment_stat("kafka_to_async_count")
 
         except asyncio.TimeoutError:
             self._increment_stat("error_count")
-
             logger.debug(
                 "[Nerf 3] Async publish timeout : %.1fs",
                 _BRIDGE_TIMEOUT_SEC,
             )
-
         except Exception as exc:
             self._increment_stat("error_count")
-
-            logger.debug(
-                "[Nerf 3] Async publish échoué : %s",
-                exc,
-            )
+            logger.debug("[Nerf 3] Async publish échoué : %s", exc)
 
     # --------------------------------------------------------------------------
     # API UNIFIÉE
@@ -648,56 +417,30 @@ class EventBusBridge:
         topic: str,
         payload: Dict[str, Any],
     ) -> str:
-        """
-        Publie sur Kafka et Async.
-
-        Le payload conserve le même correlation_id sur les deux bus.
-        """
         if not isinstance(payload, dict):
             payload = {}
 
-        correlation_id = str(
-            payload.get("correlation_id")
-            or ""
-        )
+        correlation_id = str(payload.get("correlation_id") or "")
 
-        # ------------------------------------------------------------------
         # Kafka
-        # ------------------------------------------------------------------
-
         try:
             if self._kafka_bus is not None:
-                result = self._kafka_bus.publish(
-                    topic,
-                    payload,
-                )
-
+                result = self._kafka_bus.publish(topic, payload)
                 if result:
                     correlation_id = str(result)
-
         except Exception as exc:
             self._increment_stat("error_count")
+            logger.debug("[Nerf 3] Kafka publish échoué : %s", exc)
 
-            logger.debug(
-                "[Nerf 3] Kafka publish échoué : %s",
-                exc,
-            )
-
-        # ------------------------------------------------------------------
         # Async
-        # ------------------------------------------------------------------
-
         if (
             self._async_bus is not None
             and self._async_executor is not None
         ):
             try:
                 forward_payload = dict(payload)
-
                 if correlation_id:
-                    forward_payload["correlation_id"] = (
-                        correlation_id
-                    )
+                    forward_payload["correlation_id"] = correlation_id
 
                 forward_payload["_bridge_id"] = self._bridge_id
                 forward_payload["_bridged_from"] = "unified"
@@ -707,16 +450,12 @@ class EventBusBridge:
                     topic,
                     forward_payload,
                 )
-
             except RuntimeError:
                 self._increment_stat("dropped_count")
-
             except Exception as exc:
                 self._increment_stat("error_count")
-
                 logger.debug(
-                    "[Nerf 3] Async unified publish échoué : %s",
-                    exc,
+                    "[Nerf 3] Async unified publish échoué : %s", exc,
                 )
 
         return correlation_id
@@ -730,9 +469,7 @@ class EventBusBridge:
             stats = dict(self._stats)
 
         with self._processed_lock:
-            processed_count = len(
-                self._processed_keys_set
-            )
+            processed_count = len(self._processed_keys_set)
 
         return {
             "activated": self._activated,
@@ -761,14 +498,10 @@ class EventBusBridge:
                     )
                 except Exception:
                     pass
-
                 self._async_executor = None
 
             self._activated = False
-
-            logger.info(
-                "🌉 [Nerf 3] EventBus bridge arrêté"
-            )
+            logger.info("🌉 [Nerf 3] EventBus bridge arrêté")
 
 
 # ------------------------------------------------------------------------------
@@ -781,11 +514,9 @@ _bridge_singleton_lock = threading.RLock()
 
 def get_event_bus_bridge() -> EventBusBridge:
     global _bridge_instance
-
     with _bridge_singleton_lock:
         if _bridge_instance is None:
             _bridge_instance = EventBusBridge()
-
         return _bridge_instance
 
 
@@ -796,39 +527,21 @@ def get_event_bus_bridge() -> EventBusBridge:
 def activate_event_bus_nerves() -> Dict[str, Any]:
     if not _is_enabled():
         logger.warning(
-            "[Nerf 3] Désactivé via "
-            "BEK_ENABLE_EVENT_BUS_NERVES=false"
+            "[Nerf 3] Désactivé via BEK_ENABLE_EVENT_BUS_NERVES=false"
         )
-
         return {
             "status": "disabled",
-            "reason": (
-                "Feature-flag "
-                "BEK_ENABLE_EVENT_BUS_NERVES=false"
-            ),
+            "reason": "Feature-flag BEK_ENABLE_EVENT_BUS_NERVES=false",
         }
 
     try:
         bridge = get_event_bus_bridge()
         result = bridge.activate()
-
-        logger.info(
-            "✅ [Nerf 3] Activation : %s",
-            result.get("status"),
-        )
-
+        logger.info("✅ [Nerf 3] Activation : %s", result.get("status"))
         return result
-
     except Exception as exc:
-        logger.error(
-            "[Nerf 3] Activation échouée : %s",
-            exc,
-        )
-
-        return {
-            "status": "error",
-            "message": str(exc),
-        }
+        logger.error("[Nerf 3] Activation échouée : %s", exc)
+        return {"status": "error", "message": str(exc)}
 
 
 # ------------------------------------------------------------------------------
@@ -839,26 +552,15 @@ def publish_event_unified(
     topic: str,
     payload: Dict[str, Any],
 ) -> str:
-    """
-    API publique utilisée par les autres nerfs.
-    """
     try:
         bridge = get_event_bus_bridge()
-
         if not bridge._activated:
             bridge.activate()
-
-        return bridge.publish_unified(
-            topic,
-            payload,
-        )
-
+        return bridge.publish_unified(topic, payload)
     except Exception as exc:
         logger.debug(
-            "[Nerf 3] publish_event_unified échoué : %s",
-            exc,
+            "[Nerf 3] publish_event_unified échoué : %s", exc,
         )
-
         return ""
 
 
@@ -869,43 +571,20 @@ def publish_event_unified(
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
-        format=(
-            "%(asctime)s - "
-            "%(levelname)s - "
-            "%(message)s"
-        ),
+        format="%(asctime)s - %(levelname)s - %(message)s",
     )
 
     result = activate_event_bus_nerves()
-
-    print(
-        "Résultat activation Nerf 3 :",
-        result,
-    )
+    print("Résultat activation Nerf 3 :", result)
 
     bridge = get_event_bus_bridge()
-
-    print(
-        "Statut bridge :",
-        bridge.get_status(),
-    )
+    print("Statut bridge :", bridge.get_status())
 
     corr_id = publish_event_unified(
         "web-cleaned",
-        {
-            "query": "test",
-            "source": "manual",
-        },
+        {"query": "test", "source": "manual"},
     )
-
-    print(
-        "Publication unifiée, correlation_id :",
-        corr_id,
-    )
+    print("Publication unifiée, correlation_id :", corr_id)
 
     time.sleep(0.5)
-
-    print(
-        "Statut après publication :",
-        bridge.get_status(),
-    )
+    print("Statut après publication :", bridge.get_status())

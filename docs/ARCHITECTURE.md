@@ -115,9 +115,9 @@ Format EXCLUSIF :
 ## 📊 ÉTAT RÉEL DU SYSTÈME (généré automatiquement)
 ═══════════════════════════════════════════════════════════════════════════════
 
-> *Dernière synchronisation : 2026-09-29 09:04:47 UTC*
+> *Dernière synchronisation : 2026-09-29 17:24:02 UTC*
 
-### 🔧 Outils Hermes enregistrés (44)
+### 🔧 Outils Hermes enregistrés (7)
 
 | Outil | Risque | Exécution |
 |---|---|---|
@@ -128,43 +128,6 @@ Format EXCLUSIF :
 | `edit_image` | **L1** | ✅ Auto |
 | `generate_video` | **L1** | ✅ Auto |
 | `edit_video` | **L1** | ✅ Auto |
-| `orchestrate` | **L2** | ✅ Auto |
-| `extend_video` | **L1** | ✅ Auto |
-| `extend_video_multiple` | **L1** | ✅ Auto |
-| `generate_subtitles` | **L1** | ✅ Auto |
-| `burn_subtitles` | **L1** | ✅ Auto |
-| `headless_scrape` | **L2** | ✅ Auto |
-| `headless_search` | **L2** | ✅ Auto |
-| `headless_extract_leads` | **L2** | ✅ Auto |
-| `headless_render` | **L2** | ✅ Auto |
-| `tmux_start_task` | **L3** | ⚠️ Humain requis |
-| `tmux_stop_task` | **L3** | ⚠️ Humain requis |
-| `tmux_list_tasks` | **L1** | ✅ Auto |
-| `tmux_task_status` | **L1** | ✅ Auto |
-| `web_agent_traced` | **L3** | ⚠️ Humain requis |
-| `web_agent_scrape` | **L2** | ✅ Auto |
-| `guardian_status` | **L1** | ✅ Auto |
-| `guardian_audit_log` | **L1** | ✅ Auto |
-| `guardian_trigger_audit` | **L2** | ✅ Auto |
-| `approval_submit` | **L1** | ✅ Auto |
-| `approval_list` | **L1** | ✅ Auto |
-| `approval_get` | **L1** | ✅ Auto |
-| `approval_approve` | **L2** | ✅ Auto |
-| `approval_reject` | **L2** | ✅ Auto |
-| `mcp_list_tools` | **L1** | ✅ Auto |
-| `mcp_execute` | **L2** | ✅ Auto |
-| `mcp_register` | **L2** | ✅ Auto |
-| `cognitive_critique` | **L2** | ✅ Auto |
-| `cognitive_ground` | **L2** | ✅ Auto |
-| `cognitive_full_check` | **L2** | ✅ Auto |
-| `router_route` | **L1** | ✅ Auto |
-| `router_task_type` | **L1** | ✅ Auto |
-| `router_providers` | **L1** | ✅ Auto |
-| `sub_crm_spawn` | **L2** | ✅ Auto |
-| `sub_crm_list` | **L1** | ✅ Auto |
-| `sub_crm_get` | **L1** | ✅ Auto |
-| `sub_crm_opportunities` | **L1** | ✅ Auto |
-| `sub_crm_stats` | **L1** | ✅ Auto |
 
 ### 🧠 Système nerveux (12 nerfs)
 

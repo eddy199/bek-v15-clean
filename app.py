@@ -6,7 +6,8 @@
 # v18.0 (2026-09-24) : Régénération ARCHITECTURE.md AVANT imports routeurs
 # v18.1 (2026-09-25) : Route OpenAI-compatible /v1/chat/completions
 # v18.2 (2026-09-29) : Intégration HINDSIGHT (outils + routes API)
-# v18.5 (2026-09-29) : ★ Feedback utilisateur (routes /api/feedback)
+# v18.5 (2026-09-29) : Feedback utilisateur (routes /api/feedback)
+# v18.6 (2026-09-29) : Pending feedbacks traités au boot + route async
 # ==============================================================================
 from __future__ import annotations
 
@@ -115,6 +116,7 @@ try:
         submit_feedback as _submit_feedback,
         list_feedbacks as _list_feedbacks,
         feedback_stats as _feedback_stats,
+        process_pending_feedbacks as _process_pending_feedbacks,
     )
     _FEEDBACK_AVAILABLE = True
 except ImportError as _e:
@@ -122,6 +124,7 @@ except ImportError as _e:
     def _submit_feedback(**kwargs): return {"status": "error", "message": "feedback_memory indisponible"}
     def _list_feedbacks(limit=50): return []
     def _feedback_stats(): return {"total": 0}
+    def _process_pending_feedbacks(): return 0
 
 # ★ v18 — Régénérer ARCHITECTURE.md AVANT les routeurs
 try:
@@ -182,6 +185,14 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         logger.info("Workers Hermes démarrés avec succès.")
     except Exception as exc:
         logger.error("Impossible de démarrer les workers Hermes : %s", exc)
+
+    # ★ v18.6 — Traiter les feedbacks pending au démarrage
+    try:
+        n_pending = _process_pending_feedbacks()
+        if n_pending > 0:
+            logger.info("✓ %d feedbacks pending traités au boot", n_pending)
+    except Exception as exc:
+        logger.warning("Pending feedbacks : %s", exc)
 
     def _bek_pre_plan_validator(objective: str, trace_id: str | None):
         return True, "Pre-Plan validé", None
@@ -466,7 +477,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="18.5",
+    version="18.6",
     lifespan=lifespan,
 )
 
@@ -632,9 +643,10 @@ class FeedbackRequest(BaseModel):
 
 @app.post("/api/feedback")
 async def api_submit_feedback(req: FeedbackRequest):
-    """Enregistre un feedback utilisateur dans Hindsight."""
+    """Enregistre un feedback utilisateur dans Hindsight (ASYNC)."""
     try:
-        result = _submit_feedback(
+        from feedback_memory import submit_feedback_async
+        result = await submit_feedback_async(
             user_query=req.user_query,
             agent_response=req.agent_response,
             correction=req.correction,
