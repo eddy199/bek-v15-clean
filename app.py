@@ -2,19 +2,13 @@
 # ==============================================================================
 # BEK-v16 HYBRID — SERVEUR PRINCIPAL FASTAPI (BOOTSTRAP MODULAIRE)
 # ------------------------------------------------------------------------------
-# v16.1 (2026-09-20) : generate_video / edit_video acceptent provider/model
-# v16.2 (2026-09-21) : extend_video + extend_video_multiple
-# v16.3 (2026-09-21) : route /api/config
-# v16.4 (2026-09-21) : outils Whisper (generate_subtitles + burn_subtitles)
-# v16.5 (2026-09-22) : ★ FIX Ctrl+C — arrêt propre sans blocage atexit
-# v18.0 (2026-09-24) : ★ Régénération ARCHITECTURE.md AVANT imports routeurs
-# v18.1 (2026-09-25) : ★ Route OpenAI-compatible /v1/chat/completions pour DSH
+# v16.5 (2026-09-22) : FIX Ctrl+C
+# v18.0 (2026-09-24) : Régénération ARCHITECTURE.md AVANT imports routeurs
+# v18.1 (2026-09-25) : Route OpenAI-compatible /v1/chat/completions
+# v18.2 (2026-09-29) : ★ Intégration HINDSIGHT (outils + routes API)
 # ==============================================================================
 from __future__ import annotations
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ★ FIX CTRL+C — INSTALLÉ AVANT TOUT IMPORT LOURD
-# ══════════════════════════════════════════════════════════════════════════════
 import signal as _signal
 import os as _os
 import sys as _sys
@@ -35,11 +29,6 @@ try:
 except Exception as _sig_err:
     print(f"[BEK] Impossible d'installer le handler SIGINT : {_sig_err}")
 
-# ══════════════════════════════════════════════════════════════════════════════
-# FIN FIX CTRL+C
-# ══════════════════════════════════════════════════════════════════════════════
-
-# Charger env.txt dans os.environ AVANT tout autre import métier
 from env_loader import load_env
 load_env()
 
@@ -105,12 +94,21 @@ except ImportError:
         def get_mcp_manifests(self): return []
     mcp_gateway = MCPGatewayMock()
 
-# ══════════════════════════════════════════════════════════════════════════
-# ★ v18 — Régénérer ARCHITECTURE.md AVANT d'importer les routeurs
-# --------------------------------------------------------------------------
-# Ordre critique : prompts.py charge ARCHITECTURE.md à l'import de routers.chat.
-# On utilise print() car logger n'est pas encore défini à ce stade.
-# ══════════════════════════════════════════════════════════════════════════
+# ★ v18.2 — HINDSIGHT
+try:
+    from hindsight_memory import (
+        hindsight_reflect,
+        hindsight_recall,
+        hindsight_status as _hindsight_status,
+    )
+    _HINDSIGHT_AVAILABLE = True
+except ImportError as _e:
+    _HINDSIGHT_AVAILABLE = False
+    def hindsight_reflect(q): return ""
+    def hindsight_recall(q): return []
+    def _hindsight_status(): return {"enabled": False, "connected": False}
+
+# ★ v18 — Régénérer ARCHITECTURE.md AVANT les routeurs
 try:
     from generate_architecture_doc import update_documentation_file
     if update_documentation_file():
@@ -120,13 +118,9 @@ try:
 except Exception as exc:
     print(f"[v18] ⚠️ Régénération pré-imports échouée : {exc}")
 
-# --- IMPORT DES ROUTEURS ---
 from routers import admin, chat, crm, files, memory
-from routers import openai_compat  # ★ v18.1 — adaptateur OpenAI-compatible
+from routers import openai_compat
 
-# ==========================================
-# CONFIGURATION DU LOGGING
-# ==========================================
 logger = logging.getLogger("BEKApp")
 logger.setLevel(logging.INFO)
 
@@ -144,9 +138,6 @@ if not logger.handlers:
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-# ==========================================
-# INITIALISATION GLOBALE & HERMES HOOKS
-# ==========================================
 _BEK_ALREADY_BOOTSTRAPPED = os.environ.get("BEK_BOOTSTRAPPED") == "1"
 
 if not _BEK_ALREADY_BOOTSTRAPPED:
@@ -177,15 +168,11 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     except Exception as exc:
         logger.error("Impossible de démarrer les workers Hermes : %s", exc)
 
-
     def _bek_pre_plan_validator(objective: str, trace_id: str | None):
         return True, "Pre-Plan validé", None
 
     hermes.register_pre_plan_hook(_bek_pre_plan_validator)
 
-    # ----------------------------------------
-    # ENREGISTREMENT DES OUTILS DE L'AGENT
-    # ----------------------------------------
     hermes.register_tool(
         "web_sync",
         lambda query="", **kwargs: web_agent_instance.run_pipeline(query) if web_agent_instance else "WebAgent indisponible",
@@ -202,7 +189,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         risk_level="L1",
     )
 
-    # --- OUTILS MULTIMÉDIA (IMAGES) ---
     hermes.register_tool(
         "generate_image",
         lambda prompt="", query="", **kwargs: generate_image_with_provider(prompt=prompt or query) if generate_image_with_provider else {"status": "error", "message": "Module vision manquant"},
@@ -217,9 +203,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         risk_level="L1",
     )
 
-    # ══════════════════════════════════════════════════════════════════
-    # ★ OUTILS VIDÉO v16.1
-    # ══════════════════════════════════════════════════════════════════
     hermes.register_tool(
         "generate_video",
         lambda prompt="", query="",
@@ -257,9 +240,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         risk_level="L1",
     )
 
-    # ══════════════════════════════════════════════════════════════════
-    # ★ EXTENSION VIDÉO v28 — Agnes multi_reference
-    # ══════════════════════════════════════════════════════════════════
     def _extend_video_handler(
         video_path="LAST", prompt="", new_prompt="",
         duration=9, with_audio=True, audio_style="nature", **kwargs
@@ -298,9 +278,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     hermes.register_tool("extend_video", _extend_video_handler, risk_level="L1")
     hermes.register_tool("extend_video_multiple", _extend_video_multiple_handler, risk_level="L1")
 
-    # ══════════════════════════════════════════════════════════════════
-    # ★ SOUS-TITRES WHISPER (v32)
-    # ══════════════════════════════════════════════════════════════════
     def _generate_subtitles_handler(
         video_path="LAST", language=None, model="base", **kwargs
     ):
@@ -342,9 +319,31 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     hermes.register_tool("generate_subtitles", _generate_subtitles_handler, risk_level="L1")
     hermes.register_tool("burn_subtitles", _burn_subtitles_handler, risk_level="L1")
 
-    # ══════════════════════════════════════════════════════════════════
-    # 🧠 ACTIVATION DU SYSTÈME NERVEUX BEK
-    # ══════════════════════════════════════════════════════════════════
+    # ★ v18.2 — OUTILS HINDSIGHT
+    def _hindsight_query_handler(query: str = "", **kwargs):
+        if not query:
+            return {"status": "error", "message": "query obligatoire"}
+        try:
+            answer = hindsight_reflect(query)
+            if answer:
+                return {"status": "success", "answer": answer}
+            results = hindsight_recall(query)
+            return {"status": "success", "results": results, "answer": ""}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    def _hindsight_recall_handler(query: str = "", **kwargs):
+        if not query:
+            return {"status": "error", "message": "query obligatoire"}
+        try:
+            return {"status": "success", "results": hindsight_recall(query)}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    hermes.register_tool("hindsight_query", _hindsight_query_handler, risk_level="L1")
+    hermes.register_tool("hindsight_recall", _hindsight_recall_handler, risk_level="L1")
+    logger.info("🧠 Outils Hindsight enregistrés : hindsight_query + hindsight_recall")
+
     try:
         from nerves import (
             event_bus_nerves, hermes_nerves, skills_nerves, headless_nerves,
@@ -399,9 +398,6 @@ if security_guard is None:
 
 GLOBAL_SYSTEM_CONTEXT = load_project_documentation(DOCS_DIR)
 
-# ==========================================
-# GESTION DU CYCLE DE VIE (LIFESPAN)
-# ==========================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_json_logging()
@@ -423,14 +419,19 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.debug("shutdown_event_bus_sync : %s", exc)
 
+    # ★ v18.2 — Fermer Hindsight proprement
+    try:
+        from hindsight_memory import hindsight_close
+        hindsight_close()
+        logger.info("✓ Hindsight fermé proprement.")
+    except Exception as exc:
+        logger.debug("hindsight_close : %s", exc)
 
-# ==========================================
-# APPLICATION FASTAPI & MONTAGE DES ROUTES
-# ==========================================
+
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="18.1",
+    version="18.2",
     lifespan=lifespan,
 )
 
@@ -459,27 +460,19 @@ async def add_anti_cache_header(request: Request, call_next):
     return response
 
 
-# ══════════════════════════════════════════════════════════════════
-# 🔭 OPENTELEMETRY
-# ══════════════════════════════════════════════════════════════════
 from core.tracing import init_tracing, shutdown_tracing  # noqa: E402
 
 init_tracing(app)
 
-# Inclusion des routeurs modulaires
 app.include_router(admin.router)
 app.include_router(files.router)
 app.include_router(memory.router)
 app.include_router(crm.router)
 app.include_router(chat.router)
-app.include_router(openai_compat.router)  # ★ v18.1 — /v1/chat/completions + /v1/models
+app.include_router(openai_compat.router)
 
 
-# ══════════════════════════════════════════════════════════════════
-# ★ v16.3 — ROUTE /api/config (pour l'UI)
-# ══════════════════════════════════════════════════════════════════
 def _provider_display_name(provider_id: str) -> str:
-    """Nom affiché pour chaque provider dans l'UI."""
     names = {
         "agnes":          "Agnes AI (Video)",
         "kimi":           "Moonshot Kimi AI",
@@ -505,7 +498,6 @@ def _provider_display_name(provider_id: str) -> str:
 
 @app.get("/api/config")
 async def get_config():
-    """Retourne la config des providers + modèles + skills pour l'UI."""
     from provider_manager import provider_manager
 
     providers = []
@@ -549,15 +541,8 @@ async def get_config():
     }
 
 
-# ══════════════════════════════════════════════════════════════════
-# ★ v18 — ROUTE /api/refresh-architecture
-# ------------------------------------------------------------------
-# Régénère ARCHITECTURE.md à chaud après modification du code
-# (nouveaux outils, nerfs, briques, etc.)
-# ══════════════════════════════════════════════════════════════════
 @app.post("/api/refresh-architecture")
 async def refresh_architecture():
-    """Régénère docs/ARCHITECTURE.md à chaud."""
     try:
         from generate_architecture_doc import update_documentation_file
         success = update_documentation_file()
@@ -570,7 +555,35 @@ async def refresh_architecture():
         raise HTTPException(status_code=500, detail=str(exc))
 
 
-# ---------- Endpoint de health check du worker headless ----------
+# ══════════════════════════════════════════════════════════════════
+# ★ v18.2 — ROUTES HINDSIGHT
+# ══════════════════════════════════════════════════════════════════
+@app.get("/api/hindsight/status")
+async def api_hindsight_status():
+    return _hindsight_status()
+
+
+@app.get("/api/hindsight/query")
+async def api_hindsight_query(q: str = ""):
+    if not q:
+        raise HTTPException(status_code=400, detail="Paramètre 'q' obligatoire")
+    if not _HINDSIGHT_AVAILABLE:
+        return {"status": "error", "message": "Hindsight non disponible"}
+    try:
+        answer = hindsight_reflect(q)
+        results = hindsight_recall(q)
+        return {
+            "status": "ok",
+            "query": q,
+            "answer": answer,
+            "results_count": len(results),
+            "results": results,
+        }
+    except Exception as exc:
+        logger.error("[hindsight/query] %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
 @app.get("/health/worker")
 async def health_worker():
     try:
@@ -580,7 +593,6 @@ async def health_worker():
         return {"status": "error", "detail": str(exc)}
 
 
-# Fichiers statiques et index
 @app.get("/")
 async def index():
     return FileResponse(os.path.join(WORKSPACE_DIR, "index.html"))
@@ -594,14 +606,12 @@ async def serve_static(filename: str):
     raise HTTPException(status_code=404, detail="Fichier introuvable")
 
 
-# --- Modèle de requête pour l'exécution des compétences ---
 class SkillExecutionRequest(BaseModel):
     skill_name: str
     payload: Optional[Dict[str, Any]] = {}
     timeout: int = 30
 
 
-# --- Endpoint API d'exécution ---
 @app.post("/api/skills/execute")
 async def execute_skill_endpoint(request: SkillExecutionRequest):
     result = await skill_runner.execute_skill_async(
@@ -609,16 +619,11 @@ async def execute_skill_endpoint(request: SkillExecutionRequest):
         payload=request.payload,
         timeout_seconds=request.timeout
     )
-
     if result.get("status") in ["error", "timeout"]:
         raise HTTPException(status_code=500, detail=result)
-
     return result
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ★ FIX CTRL+C — WRAPPER UVICORN
-# ══════════════════════════════════════════════════════════════════════════════
 if __name__ == "__main__":
     import uvicorn
 

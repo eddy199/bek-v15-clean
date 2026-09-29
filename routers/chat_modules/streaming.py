@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Streaming (v1.3.2 — 4 LEVIERS + Fix espaces NVIDIA)
+# BEK-v18 — Chat Module : Streaming (v1.3.3 — 4 LEVIERS + HINDSIGHT + Fix NVIDIA)
 # ------------------------------------------------------------------------------
-# Version : 1.3.2
+# Version : 1.3.3
 # Date : 2026-09-29
 # ------------------------------------------------------------------------------
-# ★ v1.3.2 — FIX espaces NVIDIA nemotron (chunks mot-par-mot)
+# ★ v1.3.3 — Ajout HINDSIGHT (memorisation automatique des conversations)
 # ==============================================================================
 
 from __future__ import annotations
@@ -27,6 +27,19 @@ from . import scrape as scr
 from . import stair as st
 
 logger = logging.getLogger("BEKApp")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v1.3.3 — HINDSIGHT (memorisation long-terme)
+# ══════════════════════════════════════════════════════════════════════════════
+
+try:
+    from hindsight_memory import hindsight_retain_conversation
+    _HINDSIGHT_AVAILABLE = True
+except ImportError:
+    _HINDSIGHT_AVAILABLE = False
+    def hindsight_retain_conversation(user_message, agent_response, context=None):
+        return False
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -132,7 +145,7 @@ def _sanitize_llm_output(text: str, strip_reasoning: bool = True) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.3.2 — CORRECTEUR D'ESPACES (fix NVIDIA nemotron)
+# CORRECTEUR D'ESPACES (fix NVIDIA nemotron)
 # ══════════════════════════════════════════════════════════════════════════════
 
 _MOT_PATTERN = _re.compile(
@@ -195,7 +208,7 @@ class _LoopDetector:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STREAMING PRINCIPAL (v1.3.2)
+# STREAMING PRINCIPAL (v1.3.3)
 # ══════════════════════════════════════════════════════════════════════════════
 
 async def stream_chat(
@@ -686,6 +699,29 @@ async def stream_chat(
                 except Exception as _mem_upd_err:
                     logger.debug("[BEK-MEM] Échec update : %s", _mem_upd_err)
 
+            # ★ v1.3.3 — HINDSIGHT : memoriser la conversation
+            if (
+                _HINDSIGHT_AVAILABLE
+                and _success
+                and not _cached_response_served
+                and last_user_query
+                and full_text_accumulated
+            ):
+                try:
+                    final_agent_response = "".join(full_text_accumulated)
+                    if final_agent_response and len(final_agent_response) > 20:
+                        hindsight_retain_conversation(
+                            user_message=last_user_query,
+                            agent_response=final_agent_response[:1000],
+                            context="chat_conversation",
+                        )
+                        logger.info(
+                            "[Streaming v1.3.3] Hindsight retain OK (%d chars)",
+                            len(final_agent_response),
+                        )
+                except Exception as _hind_err:
+                    logger.debug("[Hindsight] Échec retain : %s", _hind_err)
+
         except Exception as _loop_err:
             logger.debug("[Streaming v1.3] Erreur finally : %s", _loop_err)
 
@@ -698,7 +734,7 @@ async def stream_chat(
 
 def get_streaming_summary() -> dict:
     return {
-        "version": "1.3.2",
+        "version": "1.3.3",
         "functions": [
             "_sanitize_llm_output",
             "_strip_reasoning",
@@ -707,22 +743,24 @@ def get_streaming_summary() -> dict:
         ],
         "uses_modules": [
             "config", "validation", "actions", "formatters",
-            "routing", "scrape", "stair",
+            "routing", "scrape", "stair", "hindsight_memory",
         ],
         "leviers_v1_3": {
-            "bek_eco_cache": "✅ branché (avant appel LLM)",
-            "bek_mem_prototypes": "✅ branché (après web_sync)",
+            "bek_eco_cache": "✅ branché",
+            "bek_mem_prototypes": "✅ branché",
             "bek_rex_routing": "✅ branché",
-            "bek_loop_feedback": "✅ branché (dans finally)",
+            "bek_loop_feedback": "✅ branché",
+            "hindsight_memory": "✅ branché" if _HINDSIGHT_AVAILABLE else "⚠️ indisponible",
         },
         "flags_activation": {
             "BEK_ECO_CACHE_ENABLED": BEK_ECO_CACHE_ENABLED,
             "BEK_MEM_ENABLED": BEK_MEM_ENABLED,
             "BEK_LOOP_ENABLED": BEK_LOOP_ENABLED,
             "BEK_FIX_SPACING_ENABLED": BEK_FIX_SPACING_ENABLED,
+            "HINDSIGHT_AVAILABLE": _HINDSIGHT_AVAILABLE,
         },
         "garde_fous_v1_2": {
-            "timeout_dur": f"{MAX_STREAM_DURATION_SEC}s (env: BEK_STREAM_TIMEOUT_SEC)",
+            "timeout_dur": f"{MAX_STREAM_DURATION_SEC}s",
             "loop_detection": f"window={LOOP_WINDOW}, threshold={LOOP_THRESHOLD}",
             "reasoning_limit": f"{MAX_REASONING_CHARS} chars",
         },

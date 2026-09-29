@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Routeur Chat (Orchestrateur)
+# BEK-v18 — Routeur Chat (Orchestrateur) — v18.2
 # ------------------------------------------------------------------------------
-# 🏛️ Rôle : Orchestrer les modules chat_modules/*
-# 📄 Doc : docs/BEK_LVC.md
-# ------------------------------------------------------------------------------
-# Auteur : BEK Project
-# Version : 18.1
-# Date : 2026-09-28
-# ------------------------------------------------------------------------------
-# v18.1 : Désactivation SmartRouter AGI (remplacé par BEK-REX dans streaming.py)
+# v18.2 (2026-09-29) : Integration HINDSIGHT (memoire long-terme structuree)
+#   - Ajout hindsight_build_context() en parallele de Pinecone
+#   - Le contexte Hindsight est fusionne dans le prompt systeme
 # ==============================================================================
 
 from __future__ import annotations
@@ -26,7 +21,6 @@ from hermes_core import hermes
 from memory import search_memory
 from services.tasks import CURRENT_OS_NAME
 
-# ─── Import des modules chat ───
 from .chat_modules import config as cfg
 from .chat_modules import prompts as pr
 from .chat_modules import validation as val
@@ -34,27 +28,27 @@ from .chat_modules import formatters as fmt
 from .chat_modules import routing as rt
 from .chat_modules import streaming as st
 
+# ★ v18.2 — HINDSIGHT
+try:
+    from hindsight_memory import (
+        hindsight_build_context,
+        hindsight_status as _hindsight_status,
+    )
+    _HINDSIGHT_AVAILABLE = True
+except ImportError as _e:
+    _HINDSIGHT_AVAILABLE = False
+    def hindsight_build_context(q, max_results=3): return ""
+    def _hindsight_status(): return {"enabled": False, "connected": False}
+
 logger = logging.getLogger("BEKApp")
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# INITIALISATION BEK-LVC AU BOOT
-# ══════════════════════════════════════════════════════════════════════════════
 
 cfg.init_bek_lvc()
 
-
-# ══════════════════════════════════════════════════════════════════════════════
 # OPENTELEMETRY (optionnel)
-# ══════════════════════════════════════════════════════════════════════════════
-
 try:
     from core.tracing import (
-        span,
-        set_span_attribute,
-        set_span_status_ok,
-        set_span_status_error,
-        get_current_trace_id,
+        span, set_span_attribute, set_span_status_ok,
+        set_span_status_error, get_current_trace_id,
     )
     _TRACING_OK = True
 except Exception:
@@ -62,25 +56,15 @@ except Exception:
     from contextlib import contextmanager
 
     @contextmanager
-    def span(name, **attrs):
-        yield None
-
+    def span(name, **attrs): yield None
     def set_span_attribute(k, v): pass
     def set_span_status_ok(): pass
     def set_span_status_error(msg=""): pass
     def get_current_trace_id(): return ""
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ROUTER
-# ══════════════════════════════════════════════════════════════════════════════
-
 router = APIRouter(tags=["Chat"])
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# ROUTE PRINCIPALE
-# ══════════════════════════════════════════════════════════════════════════════
 
 @router.post("/api/chat")
 async def chat(request: Request):
@@ -89,13 +73,11 @@ async def chat(request: Request):
 
 
 async def _chat_impl(request: Request, chat_span):
-    """Implémentation du chat avec orchestration modulaire (v18.1)."""
-
-    # ─── 1. LECTURE DE LA REQUÊTE ───
+    # ─── 1. LECTURE ───
     data = await request.json() or {}
     messages = data.get("messages", [])
-    provider = data.get("provider", "b_ai")
-    model = data.get("model", "glm-5.3-flash")
+    provider = data.get("provider", "nvidia")
+    model = data.get("model", "nvidia/nemotron-3-super-120b-a12b")
 
     set_span_attribute("chat.messages_count", len(messages) if isinstance(messages, list) else 0)
     set_span_attribute("chat.provider", provider)
@@ -105,11 +87,11 @@ async def _chat_impl(request: Request, chat_span):
     if trace_id:
         logger.info("[Chat] trace_id=%s provider=%s model=%s", trace_id, provider, model)
 
-    # ─── 2. TRONCATURE DES MESSAGES ───
+    # ─── 2. TRONCATURE ───
     trimmed_messages = val._truncate_messages(messages)
     set_span_attribute("chat.trimmed_count", len(trimmed_messages))
 
-    # ─── 3. EXTRACTION DE LA DERNIÈRE REQUÊTE ───
+    # ─── 3. DERNIÈRE REQUÊTE ───
     last_user_query = ""
     user_status = "neutral"
 
@@ -120,14 +102,11 @@ async def _chat_impl(request: Request, chat_span):
             user_status = val._detect_user_response(last_user_query)
             set_span_attribute("chat.user_query_len", len(last_user_query))
 
-    # ─── 4. ROUTING : géré par BEK-REX dans streaming.py (v18.1) ───
-    # Le SmartRouter AGI a été désactivé car redondant avec BEK-REX.
-    # Le routage fin (TIER_0 → TIER_4) se fait maintenant automatiquement
-    # dans st.stream_chat() via BEK-REX.
+    # ─── 4. ROUTING ───
     routing_used = "bek_rex"
     set_span_attribute("chat.routing_used", routing_used)
 
-    # ─── 5. EVENTBUS (optionnel) ───
+    # ─── 5. EVENTBUS ───
     if last_user_query:
         try:
             from event_bus import EventBusKafka
@@ -136,7 +115,7 @@ async def _chat_impl(request: Request, chat_span):
         except Exception:
             pass
 
-    # ─── 6. COMMANDES SLASH ───
+    # ─── 6. SLASH ───
     if last_user_query.startswith("/"):
         try:
             from skills import dispatch_command as dispatch_slash_command
@@ -152,22 +131,36 @@ async def _chat_impl(request: Request, chat_span):
         except Exception as e:
             logger.debug("[SlashCommand] Échec : %s", e)
 
-    # ─── 7. MÉMOIRE + PLAN HERMES ───
+    # ─── 7. MÉMOIRE (Pinecone + Hindsight en parallèle) ───
     dynamic_system_prompt = pr.BEK_GOLDEN_RULES.strip()
 
     if last_user_query:
-        # Mémoire Pinecone
+        # 7a. Pinecone (mémoire vectorielle classique)
         try:
             mem_ctx = search_memory(last_user_query, top_k=3)
             if mem_ctx:
                 mem_ctx_str = val._safe_str(mem_ctx)
                 if len(mem_ctx_str) > cfg.MAX_CHARS_PER_MESSAGE:
                     mem_ctx_str = mem_ctx_str[:cfg.MAX_CHARS_PER_MESSAGE] + "…[tronqué]"
-                dynamic_system_prompt += f"\n\n[MÉMOIRE] :\n{mem_ctx_str}"
+                dynamic_system_prompt += f"\n\n[MÉMOIRE PINECONE] :\n{mem_ctx_str}"
         except Exception as e:
-            logger.warning("Erreur mémoire : %s", e)
+            logger.warning("Erreur mémoire Pinecone : %s", e)
 
-        # Plan Hermes
+        # ★ 7b. Hindsight (mémoire long-terme structurée)
+        if _HINDSIGHT_AVAILABLE:
+            try:
+                hindsight_ctx = hindsight_build_context(last_user_query, max_results=3)
+                if hindsight_ctx:
+                    if len(hindsight_ctx) > cfg.MAX_CHARS_PER_MESSAGE:
+                        hindsight_ctx = hindsight_ctx[:cfg.MAX_CHARS_PER_MESSAGE] + "…[tronqué]"
+                    dynamic_system_prompt += f"\n\n[MÉMOIRE HINDSIGHT] :\n{hindsight_ctx}"
+                    logger.info("[Chat] Contexte Hindsight fusionné (%d chars)", len(hindsight_ctx))
+                else:
+                    logger.debug("[Chat] Hindsight : aucun contexte trouvé")
+            except Exception as e:
+                logger.warning("Erreur mémoire Hindsight : %s", e)
+
+        # 7c. Plan Hermes
         try:
             plan = hermes.goap_planner(last_user_query)
             if plan:
@@ -180,12 +173,12 @@ async def _chat_impl(request: Request, chat_span):
         except Exception as e:
             logger.error("[HERMES] Échec planificateur : %s", e)
 
-    # ─── 8. CONSTRUCTION DES MESSAGES ───
+    # ─── 8. MESSAGES ───
     exec_messages = [
         {"role": "system", "content": dynamic_system_prompt},
     ] + trimmed_messages
 
-    # ─── 9. STREAMING (pipeline v1.3 avec les 4 leviers) ───
+    # ─── 9. STREAMING ───
     return StreamingResponse(
         st.stream_chat(
             exec_messages=exec_messages,
@@ -199,16 +192,11 @@ async def _chat_impl(request: Request, chat_span):
     )
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ROUTE DEBUG
-# ══════════════════════════════════════════════════════════════════════════════
-
 @router.get("/api/chat/debug")
 async def chat_debug():
-    """Endpoint de debug pour vérifier la configuration."""
     return {
         "status": "ok",
-        "version": "18.1",
+        "version": "18.2",
         "config": cfg.get_config_summary(),
         "prompts": pr.get_prompt_summary(),
         "validation": val.get_validation_summary(),
@@ -216,4 +204,5 @@ async def chat_debug():
         "routing": rt.get_routing_summary(),
         "stair": st.get_stair_summary(),
         "streaming": st.get_streaming_summary(),
+        "hindsight": _hindsight_status(),
     }
