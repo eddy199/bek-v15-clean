@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-# ==============================================================================
-# BEK-v18 — Routeur Chat (Orchestrateur) — v18.4
+# BEK-v18 — Routeur Chat (Orchestrateur) — v18.9
 # ------------------------------------------------------------------------------
 # v18.2 : Integration HINDSIGHT (memoire long-terme structuree)
 # v18.3 : MEMORY COORDINATOR — orchestration des 4 memoires
-# v18.4 (2026-09-29) : ★ Async coordinator (fix event loop Hindsight)
-# ==============================================================================
+# v18.4 : Async coordinator (fix event loop Hindsight)
+# v18.9 (2026-09-29) : ★ Singleton async event_bus (fix flood web-cleaned)
 
 from __future__ import annotations
 
@@ -121,12 +119,14 @@ async def _chat_impl(request: Request, chat_span):
     routing_used = "bek_rex"
     set_span_attribute("chat.routing_used", routing_used)
 
-    # ─── 5. EVENTBUS ───
+    # ─── 5. EVENTBUS — v18.9 : utilise le singleton async ───
     if last_user_query:
         try:
-            from event_bus import EventBusKafka
-            event_bus = EventBusKafka()
-            event_bus.publish("web-cleaned", {"query": last_user_query})
+            import asyncio
+            from event_bus_client import event_bus as _async_bus
+            asyncio.create_task(
+                _async_bus.publish("web-cleaned", {"query": last_user_query})
+            )
         except Exception:
             pass
 
@@ -232,7 +232,7 @@ async def _chat_impl(request: Request, chat_span):
 async def chat_debug():
     return {
         "status": "ok",
-        "version": "18.4",
+        "version": "18.9",
         "config": cfg.get_config_summary(),
         "prompts": pr.get_prompt_summary(),
         "validation": val.get_validation_summary(),
