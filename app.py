@@ -5,7 +5,8 @@
 # v16.5 (2026-09-22) : FIX Ctrl+C
 # v18.0 (2026-09-24) : Régénération ARCHITECTURE.md AVANT imports routeurs
 # v18.1 (2026-09-25) : Route OpenAI-compatible /v1/chat/completions
-# v18.2 (2026-09-29) : ★ Intégration HINDSIGHT (outils + routes API)
+# v18.2 (2026-09-29) : Intégration HINDSIGHT (outils + routes API)
+# v18.5 (2026-09-29) : ★ Feedback utilisateur (routes /api/feedback)
 # ==============================================================================
 from __future__ import annotations
 
@@ -107,6 +108,20 @@ except ImportError as _e:
     def hindsight_reflect(q): return ""
     def hindsight_recall(q): return []
     def _hindsight_status(): return {"enabled": False, "connected": False}
+
+# ★ v18.5 — FEEDBACK
+try:
+    from feedback_memory import (
+        submit_feedback as _submit_feedback,
+        list_feedbacks as _list_feedbacks,
+        feedback_stats as _feedback_stats,
+    )
+    _FEEDBACK_AVAILABLE = True
+except ImportError as _e:
+    _FEEDBACK_AVAILABLE = False
+    def _submit_feedback(**kwargs): return {"status": "error", "message": "feedback_memory indisponible"}
+    def _list_feedbacks(limit=50): return []
+    def _feedback_stats(): return {"total": 0}
 
 # ★ v18 — Régénérer ARCHITECTURE.md AVANT les routeurs
 try:
@@ -344,6 +359,27 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     hermes.register_tool("hindsight_recall", _hindsight_recall_handler, risk_level="L1")
     logger.info("🧠 Outils Hindsight enregistrés : hindsight_query + hindsight_recall")
 
+    # ★ v18.5 — OUTIL FEEDBACK
+    def _submit_feedback_handler(
+        user_query: str = "", agent_response: str = "",
+        correction: str = "", feedback_type: str = "correction",
+        **kwargs
+    ):
+        if not user_query or not correction:
+            return {"status": "error", "message": "user_query et correction obligatoires"}
+        try:
+            return _submit_feedback(
+                user_query=user_query,
+                agent_response=agent_response,
+                correction=correction,
+                feedback_type=feedback_type,
+            )
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    hermes.register_tool("submit_feedback", _submit_feedback_handler, risk_level="L1")
+    logger.info("🧠 Outil Feedback enregistré : submit_feedback")
+
     try:
         from nerves import (
             event_bus_nerves, hermes_nerves, skills_nerves, headless_nerves,
@@ -419,7 +455,6 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.debug("shutdown_event_bus_sync : %s", exc)
 
-    # ★ v18.2 — Fermer Hindsight proprement
     try:
         from hindsight_memory import hindsight_close
         hindsight_close()
@@ -431,7 +466,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="18.2",
+    version="18.5",
     lifespan=lifespan,
 )
 
@@ -581,6 +616,49 @@ async def api_hindsight_query(q: str = ""):
         }
     except Exception as exc:
         logger.error("[hindsight/query] %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+# ══════════════════════════════════════════════════════════════════
+# ★ v18.5 — ROUTES FEEDBACK UTILISATEUR
+# ══════════════════════════════════════════════════════════════════
+class FeedbackRequest(BaseModel):
+    user_query: str
+    agent_response: str = ""
+    correction: str
+    feedback_type: str = "correction"
+    rating: Optional[int] = None
+
+
+@app.post("/api/feedback")
+async def api_submit_feedback(req: FeedbackRequest):
+    """Enregistre un feedback utilisateur dans Hindsight."""
+    try:
+        result = _submit_feedback(
+            user_query=req.user_query,
+            agent_response=req.agent_response,
+            correction=req.correction,
+            feedback_type=req.feedback_type,
+            rating=req.rating,
+        )
+        return result
+    except Exception as exc:
+        logger.error("[feedback] %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/api/feedback")
+async def api_list_feedback(limit: int = 50):
+    """Liste les derniers feedbacks + statistiques."""
+    try:
+        return {
+            "status": "ok",
+            "available": _FEEDBACK_AVAILABLE,
+            "stats": _feedback_stats(),
+            "feedbacks": _list_feedbacks(limit=limit),
+        }
+    except Exception as exc:
+        logger.error("[feedback/list] %s", exc)
         raise HTTPException(status_code=500, detail=str(exc))
 
 
