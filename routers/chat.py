@@ -1,9 +1,10 @@
-# BEK-v18 — Routeur Chat (Orchestrateur) — v18.9
+# BEK-v18 — Routeur Chat (Orchestrateur) — v18.9.1
 # ------------------------------------------------------------------------------
 # v18.2 : Integration HINDSIGHT (memoire long-terme structuree)
 # v18.3 : MEMORY COORDINATOR — orchestration des 4 memoires
 # v18.4 : Async coordinator (fix event loop Hindsight)
 # v18.9 (2026-09-29) : ★ Singleton async event_bus (fix flood web-cleaned)
+# v18.9.1 (2026-09-29) : ★ Fix chat_debug — import stair séparé (évite 500 error)
 
 from __future__ import annotations
 
@@ -228,19 +229,43 @@ async def _chat_impl(request: Request, chat_span):
     )
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v18.9.1 — WRAPPER SAFE POUR DEBUG
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _safe_call(fn, name: str = "unknown"):
+    """Wrapper safe : retourne le résultat ou un dict d'erreur."""
+    try:
+        return fn()
+    except Exception as exc:
+        return {"error": f"{name}: {str(exc)}"}
+
+
 @router.get("/api/chat/debug")
 async def chat_debug():
+    """Endpoint de debug pour vérifier la configuration."""
+    # Import stair séparément (évite conflit d'alias avec streaming)
+    try:
+        from .chat_modules import stair as _stair_module
+    except ImportError:
+        _stair_module = None
+
+    stair_summary = (
+        _safe_call(_stair_module.get_stair_summary, "stair")
+        if _stair_module else {"error": "stair module indisponible"}
+    )
+
     return {
         "status": "ok",
-        "version": "18.9",
-        "config": cfg.get_config_summary(),
-        "prompts": pr.get_prompt_summary(),
-        "validation": val.get_validation_summary(),
-        "formatters": fmt.get_formatters_summary(),
-        "routing": rt.get_routing_summary(),
-        "stair": st.get_stair_summary(),
-        "streaming": st.get_streaming_summary(),
-        "hindsight": _hindsight_status(),
+        "version": "18.9.1",
+        "config": _safe_call(cfg.get_config_summary, "config"),
+        "prompts": _safe_call(pr.get_prompt_summary, "prompts"),
+        "validation": _safe_call(val.get_validation_summary, "validation"),
+        "formatters": _safe_call(fmt.get_formatters_summary, "formatters"),
+        "routing": _safe_call(rt.get_routing_summary, "routing"),
+        "stair": stair_summary,
+        "streaming": _safe_call(st.get_streaming_summary, "streaming"),
+        "hindsight": _safe_call(_hindsight_status, "hindsight"),
         "coordinator": {
             "available": _COORDINATOR_AVAILABLE,
             "mode": "async",
