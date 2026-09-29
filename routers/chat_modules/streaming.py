@@ -60,7 +60,7 @@ def _env_bool(name: str, default: bool = True) -> bool:
     return v in ("1", "true", "yes", "on")
 
 
-MAX_STREAM_DURATION_SEC = _env_int("BEK_STREAM_TIMEOUT_SEC", 120, minimum=10)
+MAX_STREAM_DURATION_SEC = _env_int("BEK_STREAM_TIMEOUT_SEC", 300, minimum=60)
 
 LOOP_DETECT_ENABLED = _env_bool("BEK_LOOP_DETECT_ENABLED", True)
 LOOP_WINDOW = _env_int("BEK_LOOP_WINDOW", 15, minimum=5)
