@@ -3,20 +3,11 @@
 # BEK-v18 — Chat Module : Streaming (v1.3.2 — 4 LEVIERS + Fix espaces NVIDIA)
 # ------------------------------------------------------------------------------
 # 🏛️ Rôle : Streaming SSE + cache BEK-ECO + mémoire BEK-MEM + feedback BEK-LOOP
-# 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
-# Auteur : BEK Project
 # Version : 1.3.2
 # Date : 2026-09-29
 # ------------------------------------------------------------------------------
-# ★ v1.1 — Connecteurs branchés : BEK-STAIR + filtre reasoning
-# ★ v1.2 — Correctifs anti-boucle (timeout, loop detector, reasoning limit)
-# ★ v1.3 — 4 LEVIERS D'ACCÉLÉRATION
-# ★ v1.3.1 — FIX Python 3.12+ : \n\n hors des f-strings
-# ★ v1.3.2 (2026-09-29) — FIX espaces NVIDIA nemotron :
-#   - Ajout _fix_spacing() : réinsère les espaces manquants
-#   - "Jenotetasatisfaction" → "Je note ta satisfaction"
-#   - Appliqué dans les 2 boucles (principale + synthèse)
+# ★ v1.3.2 — FIX espaces NVIDIA nemotron (chunks mot-par-mot)
 # ==============================================================================
 
 from __future__ import annotations
@@ -41,7 +32,7 @@ logger = logging.getLogger("BEKApp")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.2 — GARDE-FOUS ANTI-BOUCLE (configurables par env)
+# CONFIGURATION
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _env_int(name: str, default: int, minimum: int = 1) -> int:
@@ -59,24 +50,19 @@ def _env_bool(name: str, default: bool = True) -> bool:
 
 
 MAX_STREAM_DURATION_SEC = _env_int("BEK_STREAM_TIMEOUT_SEC", 300, minimum=60)
-
 LOOP_DETECT_ENABLED = _env_bool("BEK_LOOP_DETECT_ENABLED", True)
 LOOP_WINDOW = _env_int("BEK_LOOP_WINDOW", 15, minimum=5)
 LOOP_THRESHOLD = _env_int("BEK_LOOP_THRESHOLD", 4, minimum=2)
-
 MAX_REASONING_CHARS = _env_int("BEK_MAX_REASONING_CHARS", 6000, minimum=500)
 
-# ★ v1.3 — Activation des leviers d'accélération
 BEK_ECO_CACHE_ENABLED = _env_bool("BEK_ECO_CACHE_ENABLED", True)
 BEK_MEM_ENABLED = _env_bool("BEK_MEM_ENABLED", True)
 BEK_LOOP_ENABLED = _env_bool("BEK_LOOP_ENABLED", True)
-
-# ★ v1.3.2 — Correcteur d'espaces NVIDIA
 BEK_FIX_SPACING_ENABLED = _env_bool("BEK_FIX_SPACING_ENABLED", True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# MESSAGES DES GARDE-FOUS (extraits pour compatibilité Python 3.12+)
+# MESSAGES GARDE-FOUS (hors f-strings pour Python 3.12+)
 # ══════════════════════════════════════════════════════════════════════════════
 
 _MSG_TIMEOUT_DUR = "\n\n⏱️ **Délai dépassé** — réponse interrompue."
@@ -87,7 +73,7 @@ _MSG_SYNTH_VERBOSE = "\n\n🧠 Synthèse trop verbeuse — arrêt."
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# NETTOYAGE DES TOKENS LLM
+# NETTOYAGE LLM
 # ══════════════════════════════════════════════════════════════════════════════
 
 _LLM_NATIVE_TOKENS = (
@@ -97,9 +83,7 @@ _LLM_NATIVE_TOKENS = (
     "<|tool_calls_section_begin|>", "<|tool_calls_section_end|>",
 )
 
-_LLM_NATIVE_REGEX = _re.compile(
-    "|".join(_re.escape(t) for t in _LLM_NATIVE_TOKENS),
-)
+_LLM_NATIVE_REGEX = _re.compile("|".join(_re.escape(t) for t in _LLM_NATIVE_TOKENS))
 _LLM_XML_TOOL_REGEX = _re.compile(r"<tool_call>.*?</tool_call>", _re.DOTALL)
 
 
@@ -111,36 +95,6 @@ _THINKING_PATTERNS = (
     _re.compile(r"<think>.*?</think>", _re.DOTALL | _re.IGNORECASE),
     _re.compile(r"<thinking>.*?</thinking>", _re.DOTALL | _re.IGNORECASE),
     _re.compile(r"<reasoning>.*?</reasoning>", _re.DOTALL | _re.IGNORECASE),
-    _re.compile(
-        r"^(?:Okay|OK|Alright|Let me|Let's|I need to|I should|I will|"
-        r"I'm going to|First,|Hmm,|Wait,|Actually,|So,)\s+"
-        r"(?:the user|I|we|check|see|look|think|consider|analyze).*?"
-        r"(?=\n\n|\[ACTION:|\Z)",
-        _re.DOTALL | _re.IGNORECASE | _re.MULTILINE,
-    ),
-    _re.compile(
-        r"^(?:Attends?|Attendez|Hmm+|Bizarre|Bon|Alors|Voyons|Vérifions)\s*,?\s*"
-        r"(?:je|il|elle|on|nous|tu|vous|ça|cela|ceci)\s+.*?$",
-        _re.MULTILINE | _re.IGNORECASE,
-    ),
-    _re.compile(
-        r"^J'y ai réfléchi.*?(?=\n\n|\Z)",
-        _re.DOTALL | _re.IGNORECASE,
-    ),
-    _re.compile(
-        r"^(?:En fait|Cependant|Toutefois)\s*,\s+"
-        r"(?:je|il|elle|on|nous)\s+.*?$",
-        _re.MULTILINE | _re.IGNORECASE,
-    ),
-    _re.compile(
-        r"^(?:Il y a|Il est|C'est)\s+(?:un conflit|un problème|délicat|ambigu|"
-        r"possible que|probable que).*?$",
-        _re.MULTILINE | _re.IGNORECASE,
-    ),
-    _re.compile(
-        r"^\*(?:Attends?|Vérifions|Analysons|Réfléchissons|Hmm)\b.*?\*$",
-        _re.MULTILINE | _re.IGNORECASE,
-    ),
 )
 
 _THINKING_LINE_PATTERNS = (
@@ -159,7 +113,6 @@ _THINKING_LINE_PATTERNS = (
 
 
 def _strip_reasoning(text: str) -> str:
-    """Retire le raisonnement interne exposé par le LLM."""
     if not text:
         return text
     for pattern in _THINKING_PATTERNS:
@@ -171,7 +124,6 @@ def _strip_reasoning(text: str) -> str:
 
 
 def _sanitize_llm_output(text: str, strip_reasoning: bool = True) -> str:
-    """Nettoie les tokens natifs du LLM + reasoning."""
     if not text:
         return text
     text = _LLM_NATIVE_REGEX.sub("", text)
@@ -182,13 +134,9 @@ def _sanitize_llm_output(text: str, strip_reasoning: bool = True) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.3.2 — CORRECTEUR D'ESPACES (fix NVIDIA nemotron chunks mot-par-mot)
-# ------------------------------------------------------------------------------
-# Certains modèles (nemotron-3.5-lightning) envoient les chunks MOT PAR MOT
-# sans espace. Résultat : "Jenotetasatisfaction" au lieu de "Je note ta satisfaction"
+# ★ v1.3.2 — CORRECTEUR D'ESPACES (fix NVIDIA nemotron)
 # ══════════════════════════════════════════════════════════════════════════════
 
-# Mots français courants (pour réinsérer les espaces)
 _MOT_PATTERN = _re.compile(
     r'\b('
     r'je|tu|il|elle|on|nous|vous|ils|elles|'
@@ -207,41 +155,23 @@ _MOT_PATTERN = _re.compile(
 
 
 def _fix_spacing(text: str) -> str:
-    """
-    Réinsère les espaces manquants dans le texte streamé.
-    Corrige : "Jenotetasatisfaction" → "Je note ta satisfaction"
-    """
+    """Réinsère les espaces manquants. 'Jenotetasatisfaction' -> 'Je note ta satisfaction'."""
     if not text or len(text) < 3:
         return text
-
-    # 1. camelCase → camel Case (aB → a B)
     text = _re.sub(r'([a-zà-ÿ])([A-ZÀ-Ý])', r'\1 \2', text)
-
-    # 2. Ponctuation collée → espace après (sauf apostrophes)
     text = _re.sub(r'([.!?,;:])([A-ZÀ-Ýa-zà-ÿ])', r'\1 \2', text)
-
-    # 3. Mots courants français collés → séparés
     text = _MOT_PATTERN.sub(lambda m: m.group(1) + ' ', text)
-
-    # 4. Nettoyage : supprime les doubles espaces
     text = _re.sub(r'  +', ' ', text)
-
-    # 5. Supprime l'espace avant la ponctuation
     text = _re.sub(r' ([.!?,;:])', r'\1', text)
-
-    # 6. Restaure les apostrophes collées (j' ai → j'ai)
     text = _re.sub(r"(\w) '\s*(\w)", r"\1'\2", text)
-
     return text
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.2 — DÉTECTEUR DE BOUCLE
+# DÉTECTEUR DE BOUCLE
 # ══════════════════════════════════════════════════════════════════════════════
 
 class _LoopDetector:
-    """Détecte les boucles de raisonnement via répétition de chunks normalisés."""
-
     def __init__(self, window: int = LOOP_WINDOW, threshold: int = LOOP_THRESHOLD):
         self.window = window
         self.threshold = threshold
@@ -277,12 +207,8 @@ async def stream_chat(
     provider: str,
     model: str,
 ) -> AsyncGenerator[str, None]:
-    """
-    Génère le flux SSE complet pour une requête de chat (v1.3.2).
-    """
     from provider_manager import provider_manager
 
-    # ─── ÉTAT ───
     act_name: str = ""
     params: Dict[str, Any] = {}
     res_msg: str = ""
@@ -296,12 +222,10 @@ async def stream_chat(
     chunks_without_close = 0
     auto_scraped_pages: List[Dict[str, Any]] = []
 
-    # Garde-fous
     _start_time = time.monotonic()
     _reasoning_chars = 0
     _loop_detector = _LoopDetector() if LOOP_DETECT_ENABLED else None
 
-    # ★ v1.3 — État des leviers
     _routing_result: Dict = {}
     _eco_result: Dict = {}
     _mem_proto_id: str = ""
@@ -314,9 +238,7 @@ async def stream_chat(
         logger.info("[Streaming v1.3] Requête de fraîcheur détectée")
 
     try:
-        # ══════════════════════════════════════════════════════════════════════
-        # ★ LEVIER 3 — BEK-REX (routing affiné)
-        # ══════════════════════════════════════════════════════════════════════
+        # LEVIER 3 — BEK-REX
         try:
             _routing_result = rt._bek_rex_route(last_user_query)
             logger.info(
@@ -331,9 +253,7 @@ async def stream_chat(
 
         _tier = _routing_result.get("tier", "TIER_3")
 
-        # ══════════════════════════════════════════════════════════════════════
-        # ★ LEVIER 1 — BEK-ECO (cache économique)
-        # ══════════════════════════════════════════════════════════════════════
+        # LEVIER 1 — BEK-ECO (cache)
         if BEK_ECO_CACHE_ENABLED and last_user_query:
             try:
                 _eco_result = rt._bek_eco_check_cache(last_user_query, _tier)
@@ -343,9 +263,7 @@ async def stream_chat(
                     cached_response = cached_value.get("response", "")
 
                     if cached_response:
-                        logger.info(
-                            "[Streaming v1.3] ⚡ BEK-ECO cache HIT — réponse instantanée"
-                        )
+                        logger.info("[Streaming v1.3] ⚡ BEK-ECO cache HIT — réponse instantanée")
                         _cached_response_served = True
 
                         cache_badge = "⚡ *[réponse en cache]*\n\n"
@@ -366,9 +284,7 @@ async def stream_chat(
             except Exception as _eco_err:
                 logger.warning("[Streaming v1.3] BEK-ECO échec : %s", _eco_err)
 
-        # ══════════════════════════════════════════════════════════════════════
-        # BOUCLE PRINCIPALE — Stream du LLM
-        # ══════════════════════════════════════════════════════════════════════
+        # BOUCLE PRINCIPALE
         for item in provider_manager.execute_chat_stream(
             messages=exec_messages,
             provider=provider,
@@ -403,7 +319,6 @@ async def stream_chat(
 
             chunk = item["chunk"]
             chunk = _sanitize_llm_output(chunk, strip_reasoning=True)
-            # ★ v1.3.2 — fix espaces NVIDIA nemotron
             if BEK_FIX_SPACING_ENABLED:
                 chunk = _fix_spacing(chunk)
             if not chunk.strip():
@@ -415,7 +330,6 @@ async def stream_chat(
             if "[ACTION:" in current_text:
                 action_detected = True
 
-            # Limite reasoning
             if not action_detected and MAX_REASONING_CHARS:
                 _reasoning_chars += len(chunk)
                 if _reasoning_chars > MAX_REASONING_CHARS:
@@ -429,7 +343,6 @@ async def stream_chat(
                     yield f"data: {json.dumps({'done': True})}\n\n"
                     return
 
-            # Détection de boucle
             if _loop_detector is not None and not action_detected:
                 if _loop_detector.add(chunk):
                     logger.warning(
@@ -462,7 +375,7 @@ async def stream_chat(
             j_chunk = json.dumps({'chunk': chunk}, ensure_ascii=False)
             yield f"data: {j_chunk}\n\n"
 
-            # ─── EXTRACTION ET EXÉCUTION D'ACTION ───
+            # EXTRACTION D'ACTION
             if action_detected and not action_was_executed and "[/ACTION]" in current_text:
                 action_match = act._extract_first_action(current_text)
                 if action_match:
@@ -488,18 +401,11 @@ async def stream_chat(
                                 _should_use_ws,
                             )
                             if _should_use_ws:
-                                logger.info(
-                                    "[PATCH 3.2.b] Redirection : headless_search → web_sync"
-                                )
+                                logger.info("[PATCH 3.2.b] Redirection : headless_search → web_sync")
                                 act_name = "web_sync"
-                                params = {
-                                    "query": params.get("query", last_user_query),
-                                }
+                                params = {"query": params.get("query", last_user_query)}
                         except Exception as _rex_err:
-                            logger.warning(
-                                "[PATCH 3.2.b] BEK-REX échec : %s",
-                                _rex_err,
-                            )
+                            logger.warning("[PATCH 3.2.b] BEK-REX échec : %s", _rex_err)
 
                     if act_name not in cfg.MULTIMEDIA_ACTIONS:
                         params["provider"] = provider
@@ -517,9 +423,7 @@ async def stream_chat(
                         if exec_res.get("status") == "success":
                             leads = exec_res.get("leads", []) or []
                             if leads:
-                                auto_scrape_msg = (
-                                    "\n\n📄 *Extraction du contenu des pages...*\n\n"
-                                )
+                                auto_scrape_msg = "\n\n📄 *Extraction du contenu des pages...*\n\n"
                                 yield f"data: {json.dumps({'chunk': auto_scrape_msg})}\n\n"
                                 try:
                                     auto_scraped_pages = scr._auto_scrape_search_results(
@@ -527,16 +431,11 @@ async def stream_chat(
                                         last_user_query or params.get("query", ""),
                                     )
                                 except Exception as exc:
-                                    logger.warning(
-                                        "[AutoScrape] Échec : %s", exc,
-                                    )
+                                    logger.warning("[AutoScrape] Échec : %s", exc)
                                     auto_scraped_pages = []
 
                                 if auto_scraped_pages:
-                                    pages_msg = (
-                                        f"✅ **{len(auto_scraped_pages)} page(s) "
-                                        f"extraite(s)**\n\n"
-                                    )
+                                    pages_msg = f"✅ **{len(auto_scraped_pages)} page(s) extraite(s)**\n\n"
                                     yield f"data: {json.dumps({'chunk': pages_msg})}\n\n"
 
                     try:
@@ -551,9 +450,7 @@ async def stream_chat(
                         try:
                             pages_for_stair = auto_scraped_pages or []
                             if pages_for_stair:
-                                toc = st._stair_build_toc(
-                                    pages_for_stair, last_user_query,
-                                )
+                                toc = st._stair_build_toc(pages_for_stair, last_user_query)
                                 if toc:
                                     stair_res = st._stair_validate_response(
                                         res_msg, toc, pages_for_stair,
@@ -580,9 +477,7 @@ async def stream_chat(
                     res_chunk = "\n\n" + str(res_msg) + "\n\n"
 
                     if auto_scraped_pages:
-                        scraped_block = scr._format_auto_scraped_block(
-                            auto_scraped_pages,
-                        )
+                        scraped_block = scr._format_auto_scraped_block(auto_scraped_pages)
                         res_chunk += scraped_block
 
                     yield f"data: {json.dumps({'chunk': res_chunk})}\n\n"
@@ -591,9 +486,7 @@ async def stream_chat(
                     action_was_executed = True
                     last_result_poor = fmt._is_poor_result(exec_res, act_name)
 
-                    # ══════════════════════════════════════════════════════════
-                    # ★ LEVIER 2 — BEK-MEM (enregistrer un prototype si succès)
-                    # ══════════════════════════════════════════════════════════
+                    # LEVIER 2 — BEK-MEM
                     if BEK_MEM_ENABLED and not last_result_poor:
                         try:
                             _mem_proto_id = rt._bek_mem_store(
@@ -606,18 +499,13 @@ async def stream_chat(
                                 },
                             )
                             if _mem_proto_id:
-                                logger.info(
-                                    "[Streaming v1.3] BEK-MEM prototype : %s",
-                                    _mem_proto_id,
-                                )
+                                logger.info("[Streaming v1.3] BEK-MEM prototype : %s", _mem_proto_id)
                         except Exception as _mem_err:
                             logger.debug("[BEK-MEM] Échec store : %s", _mem_err)
 
                 break
 
-        # ══════════════════════════════════════════════════════════════════════
-        # SYNTHÈSE (PATCH 3D)
-        # ══════════════════════════════════════════════════════════════════════
+        # SYNTHÈSE
         relance_done = False
         _has_auto_scraped = bool(auto_scraped_pages)
         _needs_synthesis = last_result_poor or _has_auto_scraped
@@ -639,10 +527,7 @@ async def stream_chat(
             if act_name == "headless_search" and last_result_poor and not _has_auto_scraped:
                 fallback_query = last_user_query or params.get("query", "")
                 fallback_query = val._extract_keywords(fallback_query)
-                logger.info(
-                    "[Fallback] headless_search pauvre → web_sync('%s')",
-                    fallback_query,
-                )
+                logger.info("[Fallback] headless_search pauvre → web_sync('%s')", fallback_query)
                 fallback_msg = "\n\n🌐 *Fallback : veille multi-sources...*\n\n"
                 yield f"data: {json.dumps({'chunk': fallback_msg})}\n\n"
 
@@ -707,13 +592,140 @@ async def stream_chat(
                     break
 
                 if "chunk" in item2:
-                    chunk2 = _sanitize_llm_output(
-                        item2["chunk"], strip_reasoning=True,
-                    )
-                    # ★ v1.3.2 — fix espaces NVIDIA nemotron
+                    chunk2 = _sanitize_llm_output(item2["chunk"], strip_reasoning=True)
                     if BEK_FIX_SPACING_ENABLED:
                         chunk2 = _fix_spacing(chunk2)
                     if chunk2.strip():
                         _synth_reasoning_chars += len(chunk2)
                         if MAX_REASONING_CHARS and _synth_reasoning_chars > MAX_REASONING_CHARS:
-                            logger.warning("[Syn
+                            logger.warning("[Synthèse] 🧠 Réflexion excessive — arrêt.")
+                            yield f"data: {json.dumps({'chunk': _MSG_SYNTH_VERBOSE})}\n\n"
+                            break
+
+                        if "[ACTION:" in chunk2:
+                            logger.warning(
+                                "[Synthèse] Action détectée malgré interdiction — ignorée."
+                            )
+                        else:
+                            yield f"data: {json.dumps({'chunk': chunk2}, ensure_ascii=False)}\n\n"
+
+                        full_text_accumulated.append(chunk2)
+
+            break
+
+        # ACTION INCOMPLÈTE
+        if action_detected and not action_was_executed:
+            logger.warning("[Streaming v1.3] Action détectée mais non exécutée (incomplète).")
+            final_incomplete = (
+                "\n\n⚠️ **Action incomplète** : le LLM n'a pas fermé sa "
+                "balise [/ACTION]. Reformulez la demande.\n\n"
+            )
+            yield f"data: {json.dumps({'chunk': final_incomplete})}\n\n"
+
+        _total_elapsed = time.monotonic() - _start_time
+        logger.info(
+            "[Streaming v1.3] ✓ Terminé en %.2fs | actions=%d | chunks=%d",
+            _total_elapsed, total_actions_executed, len(full_text_accumulated),
+        )
+
+    except Exception as stream_err:
+        logger.error("[Streaming v1.3] Erreur : %s", stream_err, exc_info=True)
+        err_msg = f"\n\n⚠️ Flux Error : {stream_err}\n"
+        yield f"data: {json.dumps({'chunk': err_msg})}\n\n"
+        _success = False
+        _error_type = type(stream_err).__name__
+
+    finally:
+        # LEVIER 4 — BEK-LOOP
+        try:
+            _total_elapsed_final = time.monotonic() - _start_time
+
+            if BEK_LOOP_ENABLED and not _cached_response_served and last_user_query:
+                rt._bek_loop_record(
+                    query=last_user_query,
+                    tier=_routing_result.get("tier", "TIER_3"),
+                    provider=provider,
+                    model=model,
+                    success=_success,
+                    time_ms=_total_elapsed_final * 1000,
+                    error_type=_error_type,
+                )
+                logger.info(
+                    "[Streaming v1.3] BEK-LOOP épisode enregistré (%.0fms, success=%s)",
+                    _total_elapsed_final * 1000, _success,
+                )
+
+            if (
+                BEK_ECO_CACHE_ENABLED
+                and _success
+                and not _cached_response_served
+                and last_user_query
+                and full_text_accumulated
+                and not action_detected
+            ):
+                try:
+                    final_response = "".join(full_text_accumulated)
+                    if final_response and len(final_response) > 50:
+                        rt._bek_eco_store_cache(
+                            query=last_user_query,
+                            tier=_routing_result.get("tier", "TIER_3"),
+                            response=final_response,
+                        )
+                        logger.info(
+                            "[Streaming v1.3] BEK-ECO réponse mise en cache (%d chars)",
+                            len(final_response),
+                        )
+                except Exception as _cache_store_err:
+                    logger.debug("[BEK-ECO] Échec store final : %s", _cache_store_err)
+
+            if BEK_MEM_ENABLED and _mem_proto_id:
+                try:
+                    rt._bek_mem_update(
+                        prototype_id=_mem_proto_id,
+                        success=_success,
+                        time_ms=_total_elapsed_final * 1000,
+                    )
+                except Exception as _mem_upd_err:
+                    logger.debug("[BEK-MEM] Échec update : %s", _mem_upd_err)
+
+        except Exception as _loop_err:
+            logger.debug("[Streaming v1.3] Erreur finally : %s", _loop_err)
+
+        yield f"data: {json.dumps({'done': True})}\n\n"
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# RÉSUMÉ POUR DEBUG
+# ══════════════════════════════════════════════════════════════════════════════
+
+def get_streaming_summary() -> dict:
+    return {
+        "version": "1.3.2",
+        "functions": [
+            "_sanitize_llm_output",
+            "_strip_reasoning",
+            "_fix_spacing",
+            "stream_chat",
+        ],
+        "uses_modules": [
+            "config", "validation", "actions", "formatters",
+            "routing", "scrape", "stair",
+        ],
+        "leviers_v1_3": {
+            "bek_eco_cache": "✅ branché (avant appel LLM)",
+            "bek_mem_prototypes": "✅ branché (après web_sync)",
+            "bek_rex_routing": "✅ branché",
+            "bek_loop_feedback": "✅ branché (dans finally)",
+        },
+        "flags_activation": {
+            "BEK_ECO_CACHE_ENABLED": BEK_ECO_CACHE_ENABLED,
+            "BEK_MEM_ENABLED": BEK_MEM_ENABLED,
+            "BEK_LOOP_ENABLED": BEK_LOOP_ENABLED,
+            "BEK_FIX_SPACING_ENABLED": BEK_FIX_SPACING_ENABLED,
+        },
+        "garde_fous_v1_2": {
+            "timeout_dur": f"{MAX_STREAM_DURATION_SEC}s (env: BEK_STREAM_TIMEOUT_SEC)",
+            "loop_detection": f"window={LOOP_WINDOW}, threshold={LOOP_THRESHOLD}",
+            "reasoning_limit": f"{MAX_REASONING_CHARS} chars",
+        },
+    }s
