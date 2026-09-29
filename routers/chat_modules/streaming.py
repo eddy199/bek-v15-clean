@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Streaming (v1.3 — 4 LEVIERS D'ACCÉLÉRATION)
+# BEK-v18 — Chat Module : Streaming (v1.3.1 — 4 LEVIERS + Fix Python 3.12)
 # ------------------------------------------------------------------------------
 # 🏛️ Rôle : Streaming SSE + cache BEK-ECO + mémoire BEK-MEM + feedback BEK-LOOP
 # 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 1.3
-# Date : 2026-09-26
+# Version : 1.3.1
+# Date : 2026-09-29
 # ------------------------------------------------------------------------------
 # ★ v1.1 — Connecteurs branchés : BEK-STAIR + filtre reasoning
 # ★ v1.2 — Correctifs anti-boucle (timeout, loop detector, reasoning limit)
@@ -16,6 +16,9 @@
 #   - Levier 2 : BEK-MEM prototypes (après web_sync réussi)
 #   - Levier 3 : BEK-REX affiné (déjà branché, garde-fous)
 #   - Levier 4 : BEK-LOOP feedback (fin de chaque stream)
+# ★ v1.3.1 (2026-09-29) — FIX Python 3.12+ :
+#   - Extraire les \n\n hors des f-strings (backslash interdit dans {})
+#   - Les messages des garde-fous sont maintenant des variables locales
 # ==============================================================================
 
 from __future__ import annotations
@@ -69,6 +72,20 @@ MAX_REASONING_CHARS = _env_int("BEK_MAX_REASONING_CHARS", 6000, minimum=500)
 BEK_ECO_CACHE_ENABLED = _env_bool("BEK_ECO_CACHE_ENABLED", True)
 BEK_MEM_ENABLED = _env_bool("BEK_MEM_ENABLED", True)
 BEK_LOOP_ENABLED = _env_bool("BEK_LOOP_ENABLED", True)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# MESSAGES DES GARDE-FOUS (extraits pour compatibilité Python 3.12+)
+# ------------------------------------------------------------------------------
+# Python 3.12 interdit les backslashes (\n) dans une f-string. On les extrait
+# dans des constantes avant.
+# ══════════════════════════════════════════════════════════════════════════════
+
+_MSG_TIMEOUT_DUR = "\n\n⏱️ **Délai dépassé** — réponse interrompue."
+_MSG_REASONING_OVERFLOW = "\n\n🧠 **Réflexion excessive** — arrêt automatique. Reformulez la demande."
+_MSG_LOOP_DETECTED = "\n\n🔁 **Boucle détectée** — arrêt automatique. Reformulez la demande."
+_MSG_SYNTH_TIMEOUT = "\n\n⏱️ Synthèse trop longue — interrompue."
+_MSG_SYNTH_VERBOSE = "\n\n🧠 Synthèse trop verbeuse — arrêt."
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -198,7 +215,7 @@ class _LoopDetector:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STREAMING PRINCIPAL (v1.3)
+# STREAMING PRINCIPAL (v1.3.1)
 # ══════════════════════════════════════════════════════════════════════════════
 
 async def stream_chat(
@@ -209,7 +226,7 @@ async def stream_chat(
     model: str,
 ) -> AsyncGenerator[str, None]:
     """
-    Génère le flux SSE complet pour une requête de chat (v1.3).
+    Génère le flux SSE complet pour une requête de chat (v1.3.1).
     """
     from provider_manager import provider_manager
 
@@ -313,7 +330,8 @@ async def stream_chat(
                     "[Streaming v1.3] ⏱️ Timeout dur atteint (%.1fs > %ds) — arrêt.",
                     _elapsed, MAX_STREAM_DURATION_SEC,
                 )
-                yield f"data: {json.dumps({'chunk': '\n\n⏱️ **Délai dépassé** — réponse interrompue.'})}\n\n"
+                # ★ v1.3.1 — message extrait dans une variable
+                yield f"data: {json.dumps({'chunk': _MSG_TIMEOUT_DUR})}\n\n"
                 _success = False
                 _error_type = "stream_timeout"
                 yield f"data: {json.dumps({'done': True})}\n\n"
@@ -351,7 +369,8 @@ async def stream_chat(
                         "[Streaming v1.3] 🧠 Réflexion excessive (%d chars > %d) — arrêt.",
                         _reasoning_chars, MAX_REASONING_CHARS,
                     )
-                    yield f"data: {json.dumps({'chunk': '\n\n🧠 **Réflexion excessive** — arrêt automatique. Reformulez la demande.'})}\n\n"
+                    # ★ v1.3.1 — message extrait
+                    yield f"data: {json.dumps({'chunk': _MSG_REASONING_OVERFLOW})}\n\n"
                     _success = False
                     _error_type = "reasoning_overflow"
                     yield f"data: {json.dumps({'done': True})}\n\n"
@@ -364,7 +383,8 @@ async def stream_chat(
                         "[Streaming v1.3] 🔁 Boucle détectée (fenêtre=%d, seuil=%d) — arrêt.",
                         LOOP_WINDOW, LOOP_THRESHOLD,
                     )
-                    yield f"data: {json.dumps({'chunk': '\n\n🔁 **Boucle détectée** — arrêt automatique. Reformulez la demande.'})}\n\n"
+                    # ★ v1.3.1 — message extrait
+                    yield f"data: {json.dumps({'chunk': _MSG_LOOP_DETECTED})}\n\n"
                     _success = False
                     _error_type = "loop_detected"
                     yield f"data: {json.dumps({'done': True})}\n\n"
@@ -625,7 +645,8 @@ async def stream_chat(
             ):
                 if MAX_STREAM_DURATION_SEC and (time.monotonic() - _synth_start) > MAX_STREAM_DURATION_SEC:
                     logger.warning("[Synthèse] ⏱️ Timeout dur atteint — arrêt.")
-                    yield f"data: {json.dumps({'chunk': '\n\n⏱️ Synthèse trop longue — interrompue.'})}\n\n"
+                    # ★ v1.3.1 — message extrait
+                    yield f"data: {json.dumps({'chunk': _MSG_SYNTH_TIMEOUT})}\n\n"
                     break
 
                 if "error" in item2:
@@ -642,7 +663,8 @@ async def stream_chat(
                         _synth_reasoning_chars += len(chunk2)
                         if MAX_REASONING_CHARS and _synth_reasoning_chars > MAX_REASONING_CHARS:
                             logger.warning("[Synthèse] 🧠 Réflexion excessive — arrêt.")
-                            yield f"data: {json.dumps({'chunk': '\n\n🧠 Synthèse trop verbeuse — arrêt.'})}\n\n"
+                            # ★ v1.3.1 — message extrait
+                            yield f"data: {json.dumps({'chunk': _MSG_SYNTH_VERBOSE})}\n\n"
                             break
 
                         if "[ACTION:" in chunk2:
@@ -753,7 +775,7 @@ async def stream_chat(
 def get_streaming_summary() -> dict:
     """Résumé du module streaming."""
     return {
-        "version": "1.3",
+        "version": "1.3.1",
         "functions": [
             "_sanitize_llm_output",
             "_strip_reasoning",
