@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Streaming (v1.3.1 — 4 LEVIERS + Fix Python 3.12)
+# BEK-v18 — Chat Module : Streaming (v1.3.2 — 4 LEVIERS + Fix espaces NVIDIA)
 # ------------------------------------------------------------------------------
 # 🏛️ Rôle : Streaming SSE + cache BEK-ECO + mémoire BEK-MEM + feedback BEK-LOOP
 # 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 1.3.1
+# Version : 1.3.2
 # Date : 2026-09-29
 # ------------------------------------------------------------------------------
 # ★ v1.1 — Connecteurs branchés : BEK-STAIR + filtre reasoning
 # ★ v1.2 — Correctifs anti-boucle (timeout, loop detector, reasoning limit)
-# ★ v1.3 — 4 LEVIERS D'ACCÉLÉRATION :
-#   - Levier 1 : BEK-ECO cache (avant chaque appel LLM)
-#   - Levier 2 : BEK-MEM prototypes (après web_sync réussi)
-#   - Levier 3 : BEK-REX affiné (déjà branché, garde-fous)
-#   - Levier 4 : BEK-LOOP feedback (fin de chaque stream)
-# ★ v1.3.1 (2026-09-29) — FIX Python 3.12+ :
-#   - Extraire les \n\n hors des f-strings (backslash interdit dans {})
-#   - Les messages des garde-fous sont maintenant des variables locales
+# ★ v1.3 — 4 LEVIERS D'ACCÉLÉRATION
+# ★ v1.3.1 — FIX Python 3.12+ : \n\n hors des f-strings
+# ★ v1.3.2 (2026-09-29) — FIX espaces NVIDIA nemotron :
+#   - Ajout _fix_spacing() : réinsère les espaces manquants
+#   - "Jenotetasatisfaction" → "Je note ta satisfaction"
+#   - Appliqué dans les 2 boucles (principale + synthèse)
 # ==============================================================================
 
 from __future__ import annotations
@@ -73,12 +71,12 @@ BEK_ECO_CACHE_ENABLED = _env_bool("BEK_ECO_CACHE_ENABLED", True)
 BEK_MEM_ENABLED = _env_bool("BEK_MEM_ENABLED", True)
 BEK_LOOP_ENABLED = _env_bool("BEK_LOOP_ENABLED", True)
 
+# ★ v1.3.2 — Correcteur d'espaces NVIDIA
+BEK_FIX_SPACING_ENABLED = _env_bool("BEK_FIX_SPACING_ENABLED", True)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MESSAGES DES GARDE-FOUS (extraits pour compatibilité Python 3.12+)
-# ------------------------------------------------------------------------------
-# Python 3.12 interdit les backslashes (\n) dans une f-string. On les extrait
-# dans des constantes avant.
 # ══════════════════════════════════════════════════════════════════════════════
 
 _MSG_TIMEOUT_DUR = "\n\n⏱️ **Délai dépassé** — réponse interrompue."
@@ -184,6 +182,60 @@ def _sanitize_llm_output(text: str, strip_reasoning: bool = True) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# ★ v1.3.2 — CORRECTEUR D'ESPACES (fix NVIDIA nemotron chunks mot-par-mot)
+# ------------------------------------------------------------------------------
+# Certains modèles (nemotron-3.5-lightning) envoient les chunks MOT PAR MOT
+# sans espace. Résultat : "Jenotetasatisfaction" au lieu de "Je note ta satisfaction"
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Mots français courants (pour réinsérer les espaces)
+_MOT_PATTERN = _re.compile(
+    r'\b('
+    r'je|tu|il|elle|on|nous|vous|ils|elles|'
+    r'le|la|les|un|une|des|du|de|d|l|'
+    r'et|ou|mais|car|donc|or|ni|'
+    r'ne|pas|plus|moins|tres|bien|mal|'
+    r'est|sont|etait|etaient|sera|seront|'
+    r'ai|as|a|avons|avez|ont|avait|avaient|'
+    r'pour|par|avec|sans|sur|sous|dans|'
+    r'que|qui|quoi|dont|ou|'
+    r'ce|cet|cette|ces|mon|ma|mes|ton|ta|tes|son|sa|ses|'
+    r'notre|nos|votre|vos|leur|leurs'
+    r')\b',
+    _re.IGNORECASE,
+)
+
+
+def _fix_spacing(text: str) -> str:
+    """
+    Réinsère les espaces manquants dans le texte streamé.
+    Corrige : "Jenotetasatisfaction" → "Je note ta satisfaction"
+    """
+    if not text or len(text) < 3:
+        return text
+
+    # 1. camelCase → camel Case (aB → a B)
+    text = _re.sub(r'([a-zà-ÿ])([A-ZÀ-Ý])', r'\1 \2', text)
+
+    # 2. Ponctuation collée → espace après (sauf apostrophes)
+    text = _re.sub(r'([.!?,;:])([A-ZÀ-Ýa-zà-ÿ])', r'\1 \2', text)
+
+    # 3. Mots courants français collés → séparés
+    text = _MOT_PATTERN.sub(lambda m: m.group(1) + ' ', text)
+
+    # 4. Nettoyage : supprime les doubles espaces
+    text = _re.sub(r'  +', ' ', text)
+
+    # 5. Supprime l'espace avant la ponctuation
+    text = _re.sub(r' ([.!?,;:])', r'\1', text)
+
+    # 6. Restaure les apostrophes collées (j' ai → j'ai)
+    text = _re.sub(r"(\w) '\s*(\w)", r"\1'\2", text)
+
+    return text
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # ★ v1.2 — DÉTECTEUR DE BOUCLE
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -215,7 +267,7 @@ class _LoopDetector:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STREAMING PRINCIPAL (v1.3.1)
+# STREAMING PRINCIPAL (v1.3.2)
 # ══════════════════════════════════════════════════════════════════════════════
 
 async def stream_chat(
@@ -226,7 +278,7 @@ async def stream_chat(
     model: str,
 ) -> AsyncGenerator[str, None]:
     """
-    Génère le flux SSE complet pour une requête de chat (v1.3.1).
+    Génère le flux SSE complet pour une requête de chat (v1.3.2).
     """
     from provider_manager import provider_manager
 
@@ -330,7 +382,6 @@ async def stream_chat(
                     "[Streaming v1.3] ⏱️ Timeout dur atteint (%.1fs > %ds) — arrêt.",
                     _elapsed, MAX_STREAM_DURATION_SEC,
                 )
-                # ★ v1.3.1 — message extrait dans une variable
                 yield f"data: {json.dumps({'chunk': _MSG_TIMEOUT_DUR})}\n\n"
                 _success = False
                 _error_type = "stream_timeout"
@@ -352,6 +403,9 @@ async def stream_chat(
 
             chunk = item["chunk"]
             chunk = _sanitize_llm_output(chunk, strip_reasoning=True)
+            # ★ v1.3.2 — fix espaces NVIDIA nemotron
+            if BEK_FIX_SPACING_ENABLED:
+                chunk = _fix_spacing(chunk)
             if not chunk.strip():
                 continue
 
@@ -369,7 +423,6 @@ async def stream_chat(
                         "[Streaming v1.3] 🧠 Réflexion excessive (%d chars > %d) — arrêt.",
                         _reasoning_chars, MAX_REASONING_CHARS,
                     )
-                    # ★ v1.3.1 — message extrait
                     yield f"data: {json.dumps({'chunk': _MSG_REASONING_OVERFLOW})}\n\n"
                     _success = False
                     _error_type = "reasoning_overflow"
@@ -383,7 +436,6 @@ async def stream_chat(
                         "[Streaming v1.3] 🔁 Boucle détectée (fenêtre=%d, seuil=%d) — arrêt.",
                         LOOP_WINDOW, LOOP_THRESHOLD,
                     )
-                    # ★ v1.3.1 — message extrait
                     yield f"data: {json.dumps({'chunk': _MSG_LOOP_DETECTED})}\n\n"
                     _success = False
                     _error_type = "loop_detected"
@@ -645,7 +697,6 @@ async def stream_chat(
             ):
                 if MAX_STREAM_DURATION_SEC and (time.monotonic() - _synth_start) > MAX_STREAM_DURATION_SEC:
                     logger.warning("[Synthèse] ⏱️ Timeout dur atteint — arrêt.")
-                    # ★ v1.3.1 — message extrait
                     yield f"data: {json.dumps({'chunk': _MSG_SYNTH_TIMEOUT})}\n\n"
                     break
 
@@ -659,151 +710,10 @@ async def stream_chat(
                     chunk2 = _sanitize_llm_output(
                         item2["chunk"], strip_reasoning=True,
                     )
+                    # ★ v1.3.2 — fix espaces NVIDIA nemotron
+                    if BEK_FIX_SPACING_ENABLED:
+                        chunk2 = _fix_spacing(chunk2)
                     if chunk2.strip():
                         _synth_reasoning_chars += len(chunk2)
                         if MAX_REASONING_CHARS and _synth_reasoning_chars > MAX_REASONING_CHARS:
-                            logger.warning("[Synthèse] 🧠 Réflexion excessive — arrêt.")
-                            # ★ v1.3.1 — message extrait
-                            yield f"data: {json.dumps({'chunk': _MSG_SYNTH_VERBOSE})}\n\n"
-                            break
-
-                        if "[ACTION:" in chunk2:
-                            logger.warning(
-                                "[Synthèse] Action détectée malgré interdiction — ignorée."
-                            )
-                        else:
-                            yield f"data: {json.dumps({'chunk': chunk2}, ensure_ascii=False)}\n\n"
-
-                        full_text_accumulated.append(chunk2)
-
-            break
-
-        # ══════════════════════════════════════════════════════════════════════
-        # ACTION INCOMPLÈTE
-        # ══════════════════════════════════════════════════════════════════════
-        if action_detected and not action_was_executed:
-            logger.warning(
-                "[Streaming v1.3] Action détectée mais non exécutée (incomplète)."
-            )
-            final_incomplete = (
-                "\n\n⚠️ **Action incomplète** : le LLM n'a pas fermé sa "
-                "balise [/ACTION]. Reformulez la demande.\n\n"
-            )
-            yield f"data: {json.dumps({'chunk': final_incomplete})}\n\n"
-
-        _total_elapsed = time.monotonic() - _start_time
-        logger.info(
-            "[Streaming v1.3] ✓ Terminé en %.2fs | actions=%d | chunks=%d",
-            _total_elapsed, total_actions_executed, len(full_text_accumulated),
-        )
-
-    except Exception as stream_err:
-        logger.error("[Streaming v1.3] Erreur : %s", stream_err, exc_info=True)
-        err_msg = f"\n\n⚠️ Flux Error : {stream_err}\n"
-        yield f"data: {json.dumps({'chunk': err_msg})}\n\n"
-        _success = False
-        _error_type = type(stream_err).__name__
-
-    finally:
-        # ══════════════════════════════════════════════════════════════════════
-        # ★ LEVIER 4 — BEK-LOOP (feedback des latences)
-        # ══════════════════════════════════════════════════════════════════════
-        try:
-            _total_elapsed_final = time.monotonic() - _start_time
-
-            # Cache hit : court-circuiter BEK-LOOP (déjà tracé dans le cache path)
-            if BEK_LOOP_ENABLED and not _cached_response_served and last_user_query:
-                rt._bek_loop_record(
-                    query=last_user_query,
-                    tier=_routing_result.get("tier", "TIER_3"),
-                    provider=provider,
-                    model=model,
-                    success=_success,
-                    time_ms=_total_elapsed_final * 1000,
-                    error_type=_error_type,
-                )
-                logger.info(
-                    "[Streaming v1.3] BEK-LOOP épisode enregistré (%.0fms, success=%s)",
-                    _total_elapsed_final * 1000, _success,
-                )
-
-            # ★ BEK-ECO : mise en cache de la réponse finale (si succès complet)
-            if (
-                BEK_ECO_CACHE_ENABLED
-                and _success
-                and not _cached_response_served
-                and last_user_query
-                and full_text_accumulated
-                and not action_detected  # Ne pas cacher les réponses avec actions (résultats changeants)
-            ):
-                try:
-                    final_response = "".join(full_text_accumulated)
-                    if final_response and len(final_response) > 50:
-                        rt._bek_eco_store_cache(
-                            query=last_user_query,
-                            tier=_routing_result.get("tier", "TIER_3"),
-                            response=final_response,
-                        )
-                        logger.info(
-                            "[Streaming v1.3] BEK-ECO réponse mise en cache (%d chars)",
-                            len(final_response),
-                        )
-                except Exception as _cache_store_err:
-                    logger.debug("[BEK-ECO] Échec store final : %s", _cache_store_err)
-
-            # ★ BEK-MEM : mise à jour du prototype (feedback de latence)
-            if BEK_MEM_ENABLED and _mem_proto_id:
-                try:
-                    rt._bek_mem_update(
-                        prototype_id=_mem_proto_id,
-                        success=_success,
-                        time_ms=_total_elapsed_final * 1000,
-                    )
-                except Exception as _mem_upd_err:
-                    logger.debug("[BEK-MEM] Échec update : %s", _mem_upd_err)
-
-        except Exception as _loop_err:
-            logger.debug("[Streaming v1.3] Erreur finally : %s", _loop_err)
-
-        yield f"data: {json.dumps({'done': True})}\n\n"
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# RÉSUMÉ POUR DEBUG
-# ══════════════════════════════════════════════════════════════════════════════
-
-def get_streaming_summary() -> dict:
-    """Résumé du module streaming."""
-    return {
-        "version": "1.3.1",
-        "functions": [
-            "_sanitize_llm_output",
-            "_strip_reasoning",
-            "stream_chat",
-        ],
-        "uses_modules": [
-            "config", "validation", "actions", "formatters",
-            "routing", "scrape", "stair",
-        ],
-        "connecteurs": {
-            "bek_stair": "✅ branché (anti-hallucination)",
-            "filtre_reasoning": "✅ renforcé (FR + EN)",
-            "loop_detector": "✅ actif",
-        },
-        "leviers_v1_3": {
-            "bek_eco_cache": "✅ branché (avant appel LLM)",
-            "bek_mem_prototypes": "✅ branché (après web_sync)",
-            "bek_rex_routing": "✅ branché (déjà présent, conservé)",
-            "bek_loop_feedback": "✅ branché (dans finally)",
-        },
-        "flags_activation": {
-            "BEK_ECO_CACHE_ENABLED": BEK_ECO_CACHE_ENABLED,
-            "BEK_MEM_ENABLED": BEK_MEM_ENABLED,
-            "BEK_LOOP_ENABLED": BEK_LOOP_ENABLED,
-        },
-        "garde_fous_v1_2": {
-            "timeout_dur": f"{MAX_STREAM_DURATION_SEC}s (env: BEK_STREAM_TIMEOUT_SEC)",
-            "loop_detection": f"window={LOOP_WINDOW}, threshold={LOOP_THRESHOLD}",
-            "reasoning_limit": f"{MAX_REASONING_CHARS} chars",
-        },
-    }
+                            logger.warning("[Syn
