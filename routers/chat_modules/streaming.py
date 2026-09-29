@@ -2,8 +2,6 @@
 # ==============================================================================
 # BEK-v18 — Chat Module : Streaming (v1.3.2 — 4 LEVIERS + Fix espaces NVIDIA)
 # ------------------------------------------------------------------------------
-# 🏛️ Rôle : Streaming SSE + cache BEK-ECO + mémoire BEK-MEM + feedback BEK-LOOP
-# ------------------------------------------------------------------------------
 # Version : 1.3.2
 # Date : 2026-09-29
 # ------------------------------------------------------------------------------
@@ -728,4 +726,4 @@ def get_streaming_summary() -> dict:
             "loop_detection": f"window={LOOP_WINDOW}, threshold={LOOP_THRESHOLD}",
             "reasoning_limit": f"{MAX_REASONING_CHARS} chars",
         },
-    }s
+    }
