@@ -2,12 +2,17 @@
 # ==============================================================================
 # skill_generator.py — Générateur de skills dynamiques (sandbox + EventBus)
 # ------------------------------------------------------------------------------
+# v18.8 (2026-09-29) : ★ Fix doublon EventBus
+#   - Suppression du fallback async dans _publish_event()
+#   - Le bridge Kafka→Async (Nerf 3) propage automatiquement le sync
+#   - Évite les doublons de publication
+#
 # Sécurité :
 #   • Validation stricte du nom (regex)
 #   • Sandbox AST statique avant écriture
 #   • Taille max du code : 200 KB
-#   • Chargement du skill NE se fait PAS dans le process principal (délégué au runner)
-#   • Notification EventBus (skills-index) via bus synchrone
+#   • Chargement du skill NE se fait PAS dans le process principal
+#   • Notification EventBus (skills-index) via bus synchrone UNIQUEMENT
 #   • Hash SHA-256 du code écrit
 # ==============================================================================
 
@@ -74,12 +79,15 @@ except ImportError:
         return {"valid": not errors, "errors": errors}
 
 
-# ── EventBus (bus synchrone prioritaire pour éviter le problème de loop fermée) ─
+# ── EventBus (bus synchrone UNIQUEMENT — v18.8) ─────────────────────────────
 def _publish_event(action: str, extra: Optional[Dict[str, Any]] = None) -> None:
     """
     Publie un événement sur 'skills-index'.
-    Utilise le bus SYNCHRONE (EventBusKafka) car create_and_register_skill
-    est une fonction synchrone → évite les problèmes d'event loop fermée.
+
+    v18.8 : Un SEUL publish (sync). Le bridge Kafka→Async (Nerf 3)
+    propage automatiquement vers les abonnés async.
+
+    Avant v18.8 : publish sync + publish async → DOUBLON.
     """
     payload = {"action": action, "source": "skill_generator"}
     if extra:
@@ -95,16 +103,8 @@ def _publish_event(action: str, extra: Optional[Dict[str, Any]] = None) -> None:
     except Exception as exc:
         logger.debug("[SkillGenerator] bus sync indisponible : %s", exc)
 
-    # Fallback : bus async si on est déjà dans une loop qui tourne
-    try:
-        import asyncio
-        from event_bus_client import event_bus  # type: ignore
-        loop = asyncio.get_running_loop()
-        loop.create_task(event_bus.publish("skills-index", payload))
-    except RuntimeError:
-        logger.debug("[SkillGenerator] aucun bus disponible, event ignoré")
-    except Exception as exc:
-        logger.debug("[SkillGenerator] publish async échoué : %s", exc)
+    # v18.8 : PLUS DE FALLBACK ASYNC — le bridge s'en charge.
+    # Si le bus sync échoue, on ignore silencieusement (log debug déjà fait).
 
 
 # ── Helpers ─────────────────────────────────────────────────────────────────
@@ -231,7 +231,7 @@ def create_and_register_skill(
 
     logger.info("✨ [SkillGenerator] Skill '%s' créé (hash=%s…)", name, code_hash[:12])
 
-    # 8. Notification EventBus
+    # 8. Notification EventBus (UNE SEULE publication — v18.8)
     _publish_event(
         "skill_created",
         {
