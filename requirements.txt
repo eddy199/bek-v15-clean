@@ -75,3 +75,9 @@ tiktoken>=0.7.0
 python-dotenv>=1.0.0
 psutil>=5.9.0,<7.0.0
 werkzeug>=3.0.0,<4.0.0
+
+# --- Hindsight (mémoire long-terme structurée) ---
+hindsight-client>=0.10.0
+
+# --- ChromaDB (fallback local vectoriel) ---
+chromadb>=0.5.0,<1.0.0
