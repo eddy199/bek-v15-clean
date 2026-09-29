@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — BEK-LOOP Recorder
+# BEK-v18 — BEK-LOOP Recorder (Optimisation Concurrente SQLite)
 # ------------------------------------------------------------------------------
 # 🏛️ BREVET : BEK-LOOP-v1.0
 # 📄 Doc : docs/brevets/BREVET_LOOP.md
-# 🎯 Rôle : Enregistrement et analyse des épisodes
+# 🎯 Rôle : Enregistrement et analyse thread-safe / process-safe
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 1.0
-# Date : 2026-09-23
+# Version : 2.0 (Refactored)
+# Date : 2026-09-28
 # ==============================================================================
 
 from __future__ import annotations
 
 import json
 import logging
+import sqlite3
 import time
 import uuid
 from collections import defaultdict
@@ -29,7 +30,7 @@ logger = logging.getLogger("bek.core.loop")
 # ══════════════════════════════════════════════════════════════════════════════
 
 BEK_LOOP_DEFAULT_HOURS = 24
-BEK_LOOP_STORAGE_FILE = "data/bek_loop_episodes.json"
+BEK_LOOP_STORAGE_DB = "data/bek_loop_episodes.db" # Remplacement du .json par .db
 BEK_LOOP_MAX_EPISODES = 10000
 
 
@@ -39,112 +40,87 @@ BEK_LOOP_MAX_EPISODES = 10000
 
 class BekLoopRecorder:
     """
-    Enregistreur BEK-LOOP.
+    Enregistreur BEK-LOOP (Process-Safe).
 
-    Enregistre chaque épisode d'exécution et permet l'analyse
-    des patterns pour l'amélioration continue.
-
-    Usage :
-        recorder = BekLoopRecorder()
-        recorder.record({
-            "query": "Cherche Bitcoin",
-            "tier": "TIER_2",
-            "success": True,
-            "time_ms": 35000
-        })
-        
-        analysis = recorder.analyze(hours=24)
+    Enregistre chaque épisode d'exécution via SQLite (Mode WAL).
+    Permet à plusieurs workers (BEK-FLUX) d'écrire en simultané sans
+    corruption de données et analyse les patterns sans exploser la RAM.
     """
 
     def __init__(self, storage_path: Optional[str] = None):
-        self.storage_path = Path(storage_path or BEK_LOOP_STORAGE_FILE)
-        self._episodes: List[Dict[str, Any]] = []
-        self._load()
+        self.db_path = Path(storage_path or BEK_LOOP_STORAGE_DB)
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        self._init_db()
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # CHARGEMENT / SAUVEGARDE
-    # ──────────────────────────────────────────────────────────────────────────
+    def _get_conn(self) -> sqlite3.Connection:
+        """Crée une connexion SQLite avec timeout pour gérer la concurrence."""
+        conn = sqlite3.connect(self.db_path, timeout=15.0)
+        # Le mode WAL (Write-Ahead Logging) est critique pour le multi-processing
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.row_factory = sqlite3.Row
+        return conn
 
-    def _load(self) -> None:
-        """Charge les épisodes depuis le disque."""
-        if not self.storage_path.exists():
-            self._episodes = []
-            return
-
+    def _init_db(self) -> None:
+        """Initialise la table des épisodes."""
         try:
-            with open(self.storage_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            self._episodes = data.get("episodes", [])
-            logger.info("BekLoop : %d épisodes chargés", len(self._episodes))
+            with self._get_conn() as conn:
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS episodes (
+                        episode_id TEXT PRIMARY KEY,
+                        timestamp REAL,
+                        query TEXT,
+                        tier TEXT,
+                        success INTEGER,
+                        time_ms REAL,
+                        result_summary TEXT,
+                        error TEXT,
+                        metadata TEXT
+                    )
+                """)
+                # Index pour accélérer les analyses temporelles
+                conn.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON episodes(timestamp)")
         except Exception as exc:
-            logger.warning("BekLoop : erreur chargement : %s", exc)
-            self._episodes = []
-
-    def _save(self) -> None:
-        """Sauvegarde les épisodes sur le disque."""
-        try:
-            self.storage_path.parent.mkdir(parents=True, exist_ok=True)
-
-            # Limiter la taille
-            if len(self._episodes) > BEK_LOOP_MAX_EPISODES:
-                self._episodes = self._episodes[-BEK_LOOP_MAX_EPISODES:]
-
-            with open(self.storage_path, "w", encoding="utf-8") as f:
-                json.dump(
-                    {"episodes": self._episodes},
-                    f,
-                    indent=2,
-                    ensure_ascii=False,
-                )
-        except Exception as exc:
-            logger.error("BekLoop : erreur sauvegarde : %s", exc)
+            logger.error("BekLoop : Erreur d'initialisation de la DB : %s", exc)
 
     # ──────────────────────────────────────────────────────────────────────────
     # ENREGISTREMENT
     # ──────────────────────────────────────────────────────────────────────────
 
     def record(self, episode: Dict[str, Any]) -> str:
-        """
-        Enregistre un épisode d'exécution.
-
-        Args:
-            episode: {
-                "query": str,
-                "tier": str,
-                "success": bool,
-                "time_ms": float,
-                "result": str (optionnel),
-                "error": str (optionnel)
-            }
-
-        Returns:
-            str: episode_id
-        """
+        """Enregistre un épisode d'exécution en base."""
         episode_id = f"ep_{uuid.uuid4().hex[:12]}"
+        timestamp = time.time()
+        
+        query = episode.get("query", "")
+        tier = episode.get("tier", "TIER_3")
+        success = 1 if episode.get("success", False) else 0
+        time_ms = float(episode.get("time_ms", 0.0))
+        result_summary = str(episode.get("result", ""))[:200]
+        error = episode.get("error", "")
+        metadata = json.dumps(episode.get("metadata", {}))
 
-        episode_record = {
-            "episode_id": episode_id,
-            "timestamp": time.time(),
-            "query": episode.get("query", ""),
-            "tier": episode.get("tier", "TIER_3"),
-            "success": bool(episode.get("success", False)),
-            "time_ms": float(episode.get("time_ms", 0.0)),
-            "result_summary": str(episode.get("result", ""))[:200],
-            "error": episode.get("error"),
-            "metadata": episode.get("metadata", {}),
-        }
+        try:
+            with self._get_conn() as conn:
+                conn.execute("""
+                    INSERT INTO episodes 
+                    (episode_id, timestamp, query, tier, success, time_ms, result_summary, error, metadata)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (episode_id, timestamp, query, tier, success, time_ms, result_summary, error, metadata))
+                
+                # Nettoyage automatique si on dépasse la limite
+                conn.execute("""
+                    DELETE FROM episodes 
+                    WHERE episode_id IN (
+                        SELECT episode_id FROM episodes 
+                        ORDER BY timestamp DESC 
+                        LIMIT -1 OFFSET ?
+                    )
+                """, (BEK_LOOP_MAX_EPISODES,))
 
-        self._episodes.append(episode_record)
-
-        # Sauvegarder à chaque enregistrement (démo + robustesse)
-        self._save()
-
-        logger.debug(
-            "BekLoop : épisode %s enregistré | tier=%s | success=%s",
-            episode_id,
-            episode_record["tier"],
-            episode_record["success"],
-        )
+            logger.debug("BekLoop : épisode %s enregistré | tier=%s | success=%s", episode_id, tier, bool(success))
+            
+        except Exception as exc:
+            logger.error("BekLoop : Échec de l'enregistrement de l'épisode : %s", exc)
 
         return episode_id
 
@@ -153,46 +129,30 @@ class BekLoopRecorder:
     # ──────────────────────────────────────────────────────────────────────────
 
     def analyze(self, hours: int = BEK_LOOP_DEFAULT_HOURS) -> Dict[str, Any]:
-        """
-        Analyse les épisodes récents.
-
-        Args:
-            hours: Fenêtre d'analyse en heures
-
-        Returns:
-            dict: {
-                "total": int,
-                "success_rate": float,
-                "avg_time_ms": float,
-                "by_tier": {...},
-                "patterns": [...],
-                "errors": [...]
-            }
-        """
+        """Analyse les épisodes récents."""
         cutoff = time.time() - (hours * 3600)
-        recent = [e for e in self._episodes if e.get("timestamp", 0) >= cutoff]
+        recent = []
+
+        try:
+            with self._get_conn() as conn:
+                cursor = conn.execute("SELECT * FROM episodes WHERE timestamp >= ?", (cutoff,))
+                recent = [dict(row) for row in cursor.fetchall()]
+        except Exception as exc:
+            logger.error("BekLoop : Erreur lors de l'analyse : %s", exc)
+            return {"total": 0, "success_rate": 0.0, "avg_time_ms": 0.0, "by_tier": {}, "patterns": [], "errors": []}
 
         if not recent:
-            return {
-                "total": 0,
-                "success_rate": 0.0,
-                "avg_time_ms": 0.0,
-                "by_tier": {},
-                "patterns": [],
-                "errors": [],
-            }
+            return {"total": 0, "success_rate": 0.0, "avg_time_ms": 0.0, "by_tier": {}, "patterns": [], "errors": []}
 
-        # Statistiques globales
         total = len(recent)
-        success_count = sum(1 for e in recent if e.get("success"))
-        total_time = sum(e.get("time_ms", 0) for e in recent)
+        success_count = sum(1 for e in recent if e.get("success") == 1)
+        total_time = sum(e.get("time_ms", 0.0) for e in recent)
 
-        # Par tier
         by_tier = defaultdict(lambda: {"count": 0, "success": 0, "time_ms": 0.0})
         for e in recent:
             tier = e.get("tier", "UNKNOWN")
             by_tier[tier]["count"] += 1
-            if e.get("success"):
+            if e.get("success") == 1:
                 by_tier[tier]["success"] += 1
             by_tier[tier]["time_ms"] += e.get("time_ms", 0.0)
 
@@ -205,11 +165,8 @@ class BekLoopRecorder:
             for tier, stats in by_tier.items()
         }
 
-        # Patterns d'échec
-        failures = [e for e in recent if not e.get("success")]
+        failures = [e for e in recent if e.get("success") == 0]
         patterns = self._detect_failure_patterns(failures)
-
-        # Erreurs fréquentes
         errors = self._collect_errors(failures)
 
         return {
@@ -222,17 +179,11 @@ class BekLoopRecorder:
             "window_hours": hours,
         }
 
-    def _detect_failure_patterns(
-        self,
-        failures: List[Dict[str, Any]],
-    ) -> List[Dict[str, Any]]:
-        """Détecte les patterns d'échec répétés."""
-        # Grouper par tier
+    def _detect_failure_patterns(self, failures: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         by_tier = defaultdict(int)
         for e in failures:
             by_tier[e.get("tier", "UNKNOWN")] += 1
 
-        # Patterns = tiers avec >= 3 échecs
         patterns = []
         for tier, count in by_tier.items():
             if count >= 3:
@@ -242,14 +193,9 @@ class BekLoopRecorder:
                     "count": count,
                     "suggestion": f"Reconsidérer le routing vers {tier}",
                 })
-
         return patterns
 
-    def _collect_errors(
-        self,
-        failures: List[Dict[str, Any]],
-    ) -> List[Dict[str, Any]]:
-        """Collecte les erreurs fréquentes."""
+    def _collect_errors(self, failures: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         error_count = defaultdict(int)
         for e in failures:
             err = e.get("error")
@@ -258,11 +204,7 @@ class BekLoopRecorder:
 
         return [
             {"error": err, "count": count}
-            for err, count in sorted(
-                error_count.items(),
-                key=lambda x: x[1],
-                reverse=True,
-            )[:10]
+            for err, count in sorted(error_count.items(), key=lambda x: x[1], reverse=True)[:10]
         ]
 
     # ──────────────────────────────────────────────────────────────────────────
@@ -270,15 +212,20 @@ class BekLoopRecorder:
     # ──────────────────────────────────────────────────────────────────────────
 
     def count(self) -> int:
-        """Nombre total d'épisodes."""
-        return len(self._episodes)
+        try:
+            with self._get_conn() as conn:
+                return conn.execute("SELECT count(*) FROM episodes").fetchone()[0]
+        except Exception:
+            return 0
 
     def clear(self) -> int:
-        """Efface tous les épisodes."""
-        count = len(self._episodes)
-        self._episodes = []
-        self._save()
-        return count
+        try:
+            with self._get_conn() as conn:
+                count = conn.execute("SELECT count(*) FROM episodes").fetchone()[0]
+                conn.execute("DELETE FROM episodes")
+                return count
+        except Exception:
+            return 0
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -286,18 +233,13 @@ class BekLoopRecorder:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def bek_loop_record(episode: Dict[str, Any]) -> str:
-    """Enregistre un épisode."""
     recorder = BekLoopRecorder()
     return recorder.record(episode)
 
-
 def bek_loop_analyze(hours: int = BEK_LOOP_DEFAULT_HOURS) -> Dict[str, Any]:
-    """Analyse les épisodes récents."""
     recorder = BekLoopRecorder()
     return recorder.analyze(hours=hours)
 
-
 def bek_loop_count() -> int:
-    """Nombre total d'épisodes."""
     recorder = BekLoopRecorder()
     return recorder.count()
