@@ -1,0 +1,115 @@
+# -*- coding: utf-8 -*-
+"""Genere docs/BEK_CPU.md"""
+from pathlib import Path
+
+DOCS = Path(__file__).resolve().parent / "docs"
+DOCS.mkdir(exist_ok=True)
+
+C = "# 🖥️ BEK CPU LOGIQUE VIRTUEL (v18.6)\n\n"
+C += "> Document décrivant le CPU Logique Virtuel de BEK-v18.\n\n"
+
+C += "## 🎯 PRÉSENTATION\n\n"
+C += "Le BEK CPU est une couche d'abstraction au-dessus des LLM qui permet\n"
+C += "d'exécuter des actions cognitives complexes (routing, cache, mémoire,\n"
+C += "apprentissage) de manière unifiée.\n\n"
+
+C += "## 🧱 LES 6 BRIQUES FONDAMENTALES\n\n"
+C += "| Brique | Rôle |\n"
+C += "|---|---|\n"
+C += "| BEK-REX | Routage intelligent (5 tiers : TIER_0 → TIER_4) |\n"
+C += "| BEK-FLUX | Parallélisation DAG |\n"
+C += "| BEK-MEM | Mémoire par prototypes |\n"
+C += "| BEK-LOOP | Apprentissage continu (latences) |\n"
+C += "| BEK-ECO | Économie de calcul (cache) |\n"
+C += "| BEK-STAIR | Anti-hallucination (validation ToC) |\n\n"
+
+C += "## 🆕 NOUVELLES BRIQUES v18.6\n\n"
+C += "| Brique | Fichier | Rôle |\n"
+C += "|---|---|---|\n"
+C += "| HINDSIGHT | hindsight_memory.py | Mémoire structurée long-terme |\n"
+C += "| MEMORY COORDINATOR | memory_coordinator.py | Orchestration 4 couches |\n"
+C += "| FEEDBACK MEMORY | feedback_memory.py | Apprentissage utilisateur |\n\n"
+
+C += "## 🏗️ ARCHITECTURE GLOBALE\n\n"
+C += "    UTILISATEUR\n"
+C += "        ↓\n"
+C += "    routers/chat.py\n"
+C += "        ↓ coordinate_memories_async()\n"
+C += "    streaming.py (v1.3.3)\n"
+C += "        - BEK-REX : routage\n"
+C += "        - BEK-ECO : cache\n"
+C += "        - LLM : génération\n"
+C += "        - BEK-LOOP : feedback\n"
+C += "        - HINDSIGHT : retain\n"
+C += "        ↓\n"
+C += "    4 couches MÉMOIRE (via Coordinator)\n"
+C += "        - Pinecone, ChromaDB, Supabase, Hindsight\n\n"
+
+C += "## 🔌 API\n\n"
+C += "### BekCPU\n\n"
+C += "```python\n"
+C += "from bek_core import BekCPU\n"
+C += "result = BekCPU.execute('BEK-REX', 'bek_rex_action', query='Bonjour')\n"
+C += "```\n\n"
+
+C += "### BEK-REX\n\n"
+C += "```python\n"
+C += "from bek_core import rex\n"
+C += "tier = rex.route('Bonjour')\n"
+C += "```\n\n"
+
+C += "### BEK-ECO\n\n"
+C += "```python\n"
+C += "from bek_core import eco\n"
+C += "cached = eco.check_cache('Bonjour')\n"
+C += "```\n\n"
+
+C += "### BEK-LOOP\n\n"
+C += "```python\n"
+C += "from bek_core import loop\n"
+C += "loop.record_episode(query='Bonjour', tier='TIER_0', success=True, time_ms=1200)\n"
+C += "```\n\n"
+
+C += "### BEK-MEM\n\n"
+C += "```python\n"
+C += "from bek_core import mem\n"
+C += "mem.store_prototype(query='...', method='...', result={...})\n"
+C += "```\n\n"
+
+C += "## 📊 FLUX\n\n"
+C += "    1. UTILISATEUR envoie requête\n"
+C += "    2. routers/chat.py : coordinate_memories_async + goap_planner\n"
+C += "    3. streaming.py : BEK-REX.route + BEK-ECO.check_cache + LLM\n"
+C += "    4. finally : BEK-LOOP.record + HINDSIGHT.retain\n"
+C += "    5. RÉPONSE à l'utilisateur\n\n"
+
+C += "## 🔧 CONFIG (env.txt)\n\n"
+C += "    BEK_ECO_CACHE_ENABLED=true\n"
+C += "    BEK_MEM_ENABLED=true\n"
+C += "    BEK_LOOP_ENABLED=true\n"
+C += "    BEK_FIX_SPACING_ENABLED=true\n"
+C += "    BEK_HINDSIGHT_ENABLED=true\n\n"
+
+C += "## 📈 MÉTRIQUES\n\n"
+C += "| Métrique | Valeur |\n"
+C += "|---|---|\n"
+C += "| Réponse cache HIT | < 1s |\n"
+C += "| Réponse cache MISS | 3-15s |\n"
+C += "| Temps Coordinator | 2-15s |\n"
+C += "| Skills chargés | 5193 |\n"
+C += "| Outils Hermes | 33 |\n"
+C += "| Nerfs actifs | 12 |\n\n"
+
+C += "## 📚 RÉFÉRENCES\n\n"
+C += "- bek_core/ : implémentation briques\n"
+C += "- memory_coordinator.py\n"
+C += "- hindsight_memory.py\n"
+C += "- feedback_memory.py\n"
+C += "- docs/MEMORY_ARCHITECTURE.md\n"
+C += "- docs/FEEDBACK_SYSTEM.md\n\n"
+
+C += "---\n\nVersion : 18.6\nDate : 2026-09-29\nAuteur : BEK Project\n"
+
+target = DOCS / "BEK_CPU.md"
+target.write_text(C, encoding="utf-8")
+print(f"OK : {target} ({len(C)} chars)")
