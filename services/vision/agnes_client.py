@@ -1,9 +1,11 @@
 # ==============================================================================
-# BEK-v16 — Vision / Agnes Client (v32.2 — base64 PUR pour V2.5)
+# BEK-v16 — Vision / Agnes Client (v32.4 — Limites frames par résolution)
 # ------------------------------------------------------------------------------
-# v32.2 (2026-09-30) : Fix API Agnes 2.5
-#   - _load_image_as_base64_pure() : envoie du base64 SANS préfixe data URI
-#   - Agnes 2.5 REFUSE "data:image/jpeg;base64,..." → veut base64 pur
+# v32.4 (2026-10-01) : ★ Fix limite 1080P
+#   - 1080P : max 241 frames (10s)  ← AVANT : plantait si > 241
+#   - 720P  : max 481 frames (20s)
+#   - 480P  : max 961 frames (40s)
+#   - Le code ajuste automatiquement à la limite de la résolution choisie
 # ==============================================================================
 from __future__ import annotations
 
@@ -21,10 +23,12 @@ from services.vision.constants import (
     AGNES_V2_MIN_FRAMES,
     AGNES_V2_MAX_FRAMES,
     AGNES_V2_DEFAULT_FPS,
+    AGNES_V2_DEFAULT_RESOLUTION,
     AGNES_RPM_WAIT_SECONDS,
     AGNES_MAX_RETRIES,
     AGNES_RETRY_BASE_DELAY,
     AUDIO_STYLE_PROMPTS,
+    get_max_frames_for_resolution,
 )
 
 logger = logging.getLogger("bek.vision.agnes")
@@ -52,15 +56,42 @@ def _inject_picture_refs_in_prompt(prompt: str, num_images: int) -> str:
     return prefix + prompt
 
 
-def _agnes_seconds_to_frames_optimal(seconds: float, fps: int = 24) -> int:
+def _agnes_seconds_to_frames_optimal(
+    seconds: float,
+    fps: int = 24,
+    resolution: str = AGNES_V2_DEFAULT_RESOLUTION,
+) -> int:
+    """
+    ★ v32.4 — Convertit une durée en frames, en respectant :
+      1. La limite de la résolution (1080P=241, 720P=481, 480P=961)
+      2. La grille 8n+1 d'Agnes
+      3. Les bornes min/max
+    """
+    max_frames = get_max_frames_for_resolution(resolution)
+
     target_frames = seconds * fps
+
     if target_frames <= AGNES_V2_MIN_FRAMES:
         return AGNES_V2_MIN_FRAMES
-    if target_frames >= AGNES_V2_MAX_FRAMES:
-        return AGNES_V2_MAX_FRAMES
+
+    if target_frames >= max_frames:
+        # ★ Ajuster au max de la grille 8n+1 <= max_frames
+        n_max = (max_frames - 1) // 8
+        frames = 8 * n_max + 1
+        if frames > max_frames:
+            n_max -= 1
+            frames = 8 * n_max + 1
+        logger.info(
+            "[vision.agnes] Durée demandée (%ss) dépasse limite %s "
+            "(max %d frames) → ajustée à %d frames (%.2fs)",
+            seconds, resolution, max_frames, frames, frames / fps,
+        )
+        return frames
+
+    # Sur la grille 8n+1
     n_max = int((target_frames - 1) // 8)
     frames = 8 * n_max + 1
-    frames = max(AGNES_V2_MIN_FRAMES, min(AGNES_V2_MAX_FRAMES, frames))
+    frames = max(AGNES_V2_MIN_FRAMES, min(max_frames, frames))
     return frames
 
 
@@ -124,13 +155,7 @@ def _load_image_as_data_uri(image_path_or_data: str) -> str:
 
 
 def _load_image_as_base64_pure(image_path_or_data: str) -> str:
-    """
-    ★ v32.2 — Charge une image en BASE64 PUR (sans préfixe data URI).
-
-    Agnes 2.5 REFUSE 'data:image/jpeg;base64,...'. Elle veut :
-      - soit une URL publique http(s)
-      - soit du base64 pur
-    """
+    """★ v32.2 — base64 PUR pour Agnes 2.5."""
     if not image_path_or_data:
         return ""
     if image_path_or_data.startswith("data:"):
@@ -144,7 +169,7 @@ def _load_image_as_base64_pure(image_path_or_data: str) -> str:
 
 
 # ==============================================================================
-# CRÉATION DE TÂCHE
+# ★ v32.4 — CRÉATION DE TÂCHE avec limite par résolution
 # ==============================================================================
 def _agnes_create_task(
     prompt: str,
@@ -156,7 +181,16 @@ def _agnes_create_task(
     mode: str = "ti2vid",
     first_frame: Optional[str] = None,
     reference_images: Optional[List[str]] = None,
+    resolution: str = AGNES_V2_DEFAULT_RESOLUTION,
 ) -> Dict[str, Any]:
+    """
+    Crée une tâche Agnes.
+
+    ★ v32.4 — La limite de frames est calculée selon la résolution :
+      - 1080P : max 241 frames (10s)
+      - 720P  : max 481 frames (20s)
+      - 480P  : max 961 frames (40s)
+    """
     ep = _get_agnes_endpoints(model_id)
     url = ep["create_url"]
     headers = ep["headers"]
@@ -164,14 +198,13 @@ def _agnes_create_task(
     is_v25 = _is_agnes_v25(model_id)
 
     logger.info(
-        "[vision.agnes] v32.2 create_task model=%s is_v25=%s mode=%s",
-        model_id, is_v25, mode,
+        "[vision.agnes] v32.4 create_task model=%s is_v25=%s mode=%s resolution=%s",
+        model_id, is_v25, mode, resolution,
     )
 
     final_prompt = prompt
     if is_v25 and reference_images and mode in ("reference", "multi_reference"):
         final_prompt = _inject_picture_refs_in_prompt(prompt, len(reference_images))
-        logger.info("[vision.agnes] Prompt enrichi <Picture N> : %s", final_prompt[:150])
 
     payload: Dict[str, Any] = {
         "model": ep["model_id"],
@@ -180,10 +213,10 @@ def _agnes_create_task(
 
     if is_v25 and mode == "multi_reference":
         payload["mode"] = "reference"
-        logger.info("[vision.agnes] V2.5 détecté : mode 'reference'")
     else:
         payload["mode"] = mode
 
+    # ─── Agnes V2.0 : width/height + num_frames ───
     if ep.get("is_v2", False):
         if aspect_ratio == "16:9":
             payload["width"] = 1920
@@ -198,16 +231,21 @@ def _agnes_create_task(
             payload["width"] = 1920
             payload["height"] = 1080
 
-        num_frames = _agnes_seconds_to_frames_optimal(duration, fps)
+        # ★ v32.4 — Calcul intelligent selon résolution
+        num_frames = _agnes_seconds_to_frames_optimal(
+            duration, fps, resolution=resolution
+        )
         payload["num_frames"] = num_frames
         payload["frame_rate"] = fps
+
         actual_duration = num_frames / fps
         logger.info(
-            "[vision.agnes] V2.0 : duration=%ss -> frames=%s (%.2fs)",
-            duration, num_frames, actual_duration,
+            "[vision.agnes] V2.0 : duration=%ss → frames=%s (%.2fs) @ %s",
+            duration, num_frames, actual_duration, resolution,
         )
     else:
-        payload["size"] = "720P"
+        # Agnes V2.5 Flash
+        payload["size"] = resolution.lower()
         payload["aspect_ratio"] = aspect_ratio
         seconds = max(ep.get("min_seconds", 4), min(ep.get("max_seconds", 12), duration))
         payload["seconds"] = str(seconds)
@@ -216,14 +254,14 @@ def _agnes_create_task(
     if negative_prompt:
         payload["negative_prompt"] = negative_prompt
 
-    # ─── keyframes : first_frame comme point de départ ───
+    # ─── keyframes ───
     if mode == "keyframes" and first_frame:
         if is_v25:
             img_data = _load_image_as_base64_pure(first_frame)
         else:
             img_data = _load_image_as_data_uri(first_frame)
         payload["image"] = [img_data, img_data]
-        logger.info("[vision.agnes] mode=keyframes : first_frame ajoutée (base64_pure=%s)", is_v25)
+        logger.info("[vision.agnes] mode=keyframes : first_frame ajoutée")
 
     # ─── reference / multi_reference ───
     if reference_images and mode in ("reference", "multi_reference"):
@@ -236,21 +274,15 @@ def _agnes_create_task(
 
         if is_v25:
             payload["images"] = refs_data
-            logger.info(
-                "[vision.agnes] V2.5 mode=reference : %d images en base64 PUR dans 'images' (len[0]=%d)",
-                len(refs_data), len(refs_data[0]) if refs_data else 0,
-            )
         else:
-            # ★ v32.3 — Agnes 2.0 exige "background_image" en multi_reference
-            # La DERNIÈRE image sert d'arrière-plan (celle de Wafa)
-            payload["image"] = refs_data          # requête officielle : "image" = liste
-            payload["background_image"] = refs_data[-1]  # dernière = fond
-            logger.info(
-                "[vision.agnes] V2.0 mode=multi_reference : %d images dans 'image' + background_image",
-                len(refs_data),
-            )
+            # ★ Agnes 2.0 : image + background_image
+            payload["image"] = refs_data
+            payload["background_image"] = refs_data[-1]
+        logger.info(
+            "[vision.agnes] %s mode=%s : %d images ajoutées",
+            "V2.5" if is_v25 else "V2.0", mode, len(refs_data),
+        )
 
-    # ─── keyframes + refs fallback ───
     if mode == "keyframes" and reference_images and not first_frame:
         refs_data: List[str] = []
         for ref_path in reference_images:
@@ -258,19 +290,12 @@ def _agnes_create_task(
                 refs_data.append(_load_image_as_base64_pure(ref_path))
             else:
                 refs_data.append(_load_image_as_data_uri(ref_path))
-
-        if is_v25:
-            payload["images"] = refs_data
-        else:
-            payload["reference_images"] = refs_data
-
-        logger.info("[vision.agnes] mode=keyframes (fallback refs) : %d refs", len(refs_data))
+        payload["images" if is_v25 else "reference_images"] = refs_data
 
     logger.info(
-        "[vision.agnes] create_task → model=%s mode=%s duration=%ss first_frame=%s refs=%d payload_keys=%s",
-        ep["model_id"], payload.get("mode"), duration,
-        "oui" if first_frame else "non",
-        len(reference_images) if reference_images else 0,
+        "[vision.agnes] create_task → model=%s mode=%s duration=%ss resolution=%s frames=%s payload_keys=%s",
+        ep["model_id"], payload.get("mode"), duration, resolution,
+        payload.get("num_frames", "N/A"),
         list(payload.keys()),
     )
 
@@ -355,7 +380,9 @@ def _agnes_generate_single_clip(
     reference_images: Optional[List[str]] = None,
     poll_interval: int = 10,
     max_wait: int = 1800,
+    resolution: str = AGNES_V2_DEFAULT_RESOLUTION,
 ) -> Dict[str, Any]:
+    """Lance UNE génération Agnes complète."""
     task_data = _agnes_create_task(
         prompt=prompt,
         model_id=model_id,
@@ -366,6 +393,7 @@ def _agnes_generate_single_clip(
         mode=mode,
         first_frame=first_frame,
         reference_images=reference_images,
+        resolution=resolution,
     )
 
     task_id = (
@@ -373,9 +401,6 @@ def _agnes_generate_single_clip(
         or task_data.get("id")
         or task_data.get("data", {}).get("task_id")
         or task_data.get("data", {}).get("id")
-        or task_data.get("data", {}).get("task", {}).get("id")
-        or task_data.get("result", {}).get("task_id")
-        or task_data.get("result", {}).get("id")
     )
     if not task_id:
         raise RuntimeError(
@@ -423,4 +448,5 @@ def _agnes_generate_single_clip(
         "model_id": model_id,
         "mode": mode,
         "video_url": video_url,
+        "resolution": resolution,
     }
