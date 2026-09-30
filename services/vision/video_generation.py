@@ -112,6 +112,7 @@ def _generate_video_with_agnes(
     prompt, model_id, duration, aspect_ratio,
     with_audio, audio_style, negative_prompt, output_path,
     image_paths=None, style_preset="cardboard_3d",
+    resolution: str = "1080P",
 ) -> Dict[str, Any]:
     reference_images: List[str] = []
     if image_paths:
@@ -175,6 +176,7 @@ def _generate_video_with_agnes(
             mode=auto_mode,
             first_frame=first_frame,
             reference_images=reference_images if reference_images else None,
+            resolution=resolution,
         )
 
         if not output_path:
@@ -287,6 +289,7 @@ def generate_video_with_provider(
     image_paths: Optional[List[str]] = None,
     reference_images: Optional[List[str]] = None,
     style_preset: str = "auto",
+    resolution: str = "1080P",
 ) -> Dict[str, Any]:
     if not prompt:
         return {"status": "error", "message": "Prompt vide."}
@@ -342,6 +345,7 @@ def generate_video_with_provider(
                 output_path=save_path,
                 image_paths=refs,
                 style_preset=effective_style,
+                resolution=resolution,
             )
 
         elif provider_lower in ("gemini", "google", "veo"):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Actions (v1.4.2)
+# BEK-v18 — Chat Module : Actions (v1.4.3)
 # ------------------------------------------------------------------------------
 # 🏛️ Rôle : Exécution des actions (multimédia, web, skills, etc.)
 # 📄 Doc : docs/BEK_LVC.md
@@ -9,8 +9,9 @@
 # ★ v1.3 — Regex tolérante aux espaces parasites (bug NVIDIA NIM)
 # ★ v1.4 — Nettoyage des espaces parasites dans les params
 # ★ v1.4.1 — Fix _clean_str_param ciblé (prompts préservés)
-# ★ v1.4.2 — ★ Résolution des chemins AVANT appel direct Agnes
-#            (fix : uploads/xxx.jpg était envoyé tel quel → HTTP 400)
+# ★ v1.4.2 — Résolution des chemins AVANT appel direct Agnes
+# ★ v1.4.3 — ★ Transmet `resolution` (1080P/720P/480P) au pipeline vidéo
+#             (permet des vidéos 12s en 720P, 20s en 720P, etc.)
 # ==============================================================================
 
 from __future__ import annotations
@@ -65,25 +66,14 @@ _UUID_SPACE_RE = re.compile(
 
 
 def _clean_str_param(s: str) -> str:
-    """
-    Nettoie UNIQUEMENT les espaces parasites dans les chemins.
-    NE TOUCHE PAS aux phrases normales (prompts, descriptions).
-    """
+    """Nettoie UNIQUEMENT les espaces parasites dans les chemins."""
     if not isinstance(s, str):
         return s
 
-    # 1. "x .jpg" ou "x. jpg" → "x.jpg"
     s = _EXT_SPACE_RE.sub(r".\1", s)
-
-    # 2. "uploads/ x.jpg" → "uploads/x.jpg"
     s = _SLASH_SPACE_RE.sub(r"/\2", s)
-
-    # 3. "dossier\ x.jpg" → "dossier\x.jpg"
     s = _BACKSLASH_SPACE_RE.sub(r"\\\2", s)
-
-    # 4. "1c8a -4333" → "1c8a-4333"
     s = _UUID_SPACE_RE.sub(r"\1\2\3", s)
-
     return s.strip()
 
 
@@ -265,7 +255,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             return _r
 
         # ══════════════════════════════════════════════════════════════════════
-        # ★ v1.4.2 — VIDÉO AVEC IMAGES DE RÉFÉRENCE
+        # ★ v1.4.3 — VIDÉO AVEC IMAGES DE RÉFÉRENCE + RESOLUTION
         # ==========================================================================
         elif act_name == "generate_video":
             from services.vision import generate_video_with_provider
@@ -276,6 +266,8 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             aspect_ratio_v = params.get("aspect_ratio", "16:9")
             with_audio_v = params.get("with_audio", True)
             audio_style_v = params.get("audio_style", "children")
+            # ★ v1.4.3 — Nouvelle option resolution
+            resolution_v = params.get("resolution", "1080P")
 
             image_paths = params.get("image_paths") or params.get("reference_images")
             reference_images = None
@@ -291,13 +283,13 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                         mode = "keyframes"
                 reference_images = image_paths
                 logger.info(
-                    "[generate_video] %d image(s) de référence détectée(s) | mode=%s",
-                    len(image_paths), mode,
+                    "[generate_video] %d image(s) de référence | mode=%s | resolution=%s",
+                    len(image_paths), mode, resolution_v,
                 )
 
             logger.info(
-                "[generate_video] prompt=%r provider=%s model=%s duration=%s mode=%s",
-                prompt[:80], provider_v, model_v, duration_v, mode,
+                "[generate_video] prompt=%r provider=%s model=%s duration=%s mode=%s resolution=%s",
+                prompt[:80], provider_v, model_v, duration_v, mode, resolution_v,
             )
 
             if reference_images:
@@ -348,7 +340,9 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                         duration=int(duration_v),
                         aspect_ratio=aspect_ratio_v,
                         mode=mode,
-                        reference_images=resolved_refs,  # ★ chemins résolus
+                        reference_images=resolved_refs,
+                        # ★ v1.4.3 — resolution transmise
+                        resolution=resolution_v,
                     )
                     import os as _os2
                     from core.paths import GENERATED_DIR as _GD
@@ -366,6 +360,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                         "model_id": model_id,
                         "with_audio": bool(with_audio_v),
                         "mode_used": mode,
+                        "resolution_used": resolution_v,
                         "reference_images_count": len(resolved_refs),
                     }
                 except Exception as _exc:
@@ -386,12 +381,14 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                         audio_style=audio_style_v,
                         image_paths=refs,
                         style_preset=params.get("style_preset", "auto"),
+                        resolution=resolution_v,
                     )
             else:
                 _r = generate_video_with_provider(
                     prompt=prompt, provider=provider_v, model=model_v,
                     duration=int(duration_v), aspect_ratio=aspect_ratio_v,
                     with_audio=bool(with_audio_v), audio_style=audio_style_v,
+                    resolution=resolution_v,
                 )
 
             _log_episode_safe(
@@ -664,7 +661,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
 
 def get_actions_summary() -> dict:
     return {
-        "version": "1.4.2",
+        "version": "1.4.3",
         "functions": [
             "_extract_first_action", "_execute_action_unified",
             "_log_episode_safe", "_detect_web_sync_dag_usage",
@@ -675,10 +672,11 @@ def get_actions_summary() -> dict:
             "v1.4.1_targeted_clean": "✅ Nettoie UNIQUEMENT chemins",
             "v1.4.1_uuid_fix": "✅ '1c8a -4333' → '1c8a-4333'",
             "v1.4.2_resolve_before_agnes": "✅ Résout uploads/ AVANT appel direct Agnes",
+            "v1.4.3_resolution_passthrough": "✅ Transmet resolution (1080P/720P/480P)",
         },
         "handled_actions": [
             "generate_image", "edit_image",
-            "generate_video (avec image_paths)", "edit_video",
+            "generate_video (avec image_paths + resolution)", "edit_video",
             "extend_video", "extend_video_multiple",
             "generate_subtitles", "burn_subtitles",
             "headless_scrape", "web_sync",
