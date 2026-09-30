@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Streaming (v1.5.1 — Anti-hallucination post-action)
+# BEK-v18 — Chat Module : Streaming (v1.5.2 — Fix Python 3.14 f-strings)
 # ------------------------------------------------------------------------------
-# Version : 1.5.1
+# Version : 1.5.2
 # Date : 2026-09-30
 # ------------------------------------------------------------------------------
 # ★ v1.3.3 — HINDSIGHT (memorisation automatique)
 # ★ v1.4.0 — FIX : détection tolérante de la balise fermante
-# ★ v1.5.0 — MULTI-ACTIONS : exécute PLUSIEURS actions dans la même réponse
-# ★ v1.5.1 — ✂️ FIX ANTI-HALLUCINATION : stoppe le stream après une action
-#              (évite que Nemotron invente du texte après [ACTION:...][/ACTION])
+# ★ v1.5.0 — MULTI-ACTIONS
+# ★ v1.5.1 — Anti-hallucination post-action
+# ★ v1.5.2 — FIX Python 3.14 : retire les backslashes dans les f-strings
+#             (erreur au build Render : "f-string expression part cannot include a backslash")
 # ==============================================================================
 
 from __future__ import annotations
@@ -149,7 +150,6 @@ BEK_FIX_SPACING_ENABLED = _env_bool("BEK_FIX_SPACING_ENABLED", True)
 BEK_MULTI_ACTIONS_ENABLED = _env_bool("BEK_MULTI_ACTIONS_ENABLED", True)
 BEK_MAX_ACTIONS_PER_RESPONSE = _env_int("BEK_MAX_ACTIONS_PER_RESPONSE", 5)
 
-# ★ v1.5.1 — Anti-hallucination post-action
 BEK_ANTIHALLU_ENABLED = _env_bool("BEK_ANTIHALLU_ENABLED", True)
 BEK_POST_ACTION_GRACE_MAX = _env_int("BEK_POST_ACTION_GRACE_MAX", 50, minimum=10)
 
@@ -238,13 +238,8 @@ _MOT_PATTERN = _re.compile(
 
 
 def _fix_spacing(text: str) -> str:
-    """
-    ★ v1.5.1 — Fix ciblé : n'applique PAS la correction si le texte
-    ressemble à un payload JSON (contient : et {).
-    """
     if not text or len(text) < 3:
         return text
-    # Ne pas corriger si c'est un payload JSON
     if ('":' in text) or ('{' in text and '}' in text):
         return text
     text = _re.sub(r'([a-zà-ÿ])([A-ZÀ-Ý])', r'\1 \2', text)
@@ -295,12 +290,9 @@ async def stream_chat(
     from provider_manager import provider_manager
 
     full_text_accumulated: List[str] = []
+
     # ══════════════════════════════════════════════════════════════════
     # ★ v1.5.2 — PRÉ-PARSING : action utilisateur → exécution directe
-    # ------------------------------------------------------------------------------
-    # Si le message utilisateur contient une action complète [ACTION:xxx]{...}[/ACTION],
-    # on l'exécute SANS passer par le LLM. Robuste face aux petits modèles
-    # qui tronquent ou modifient le JSON.
     # ==========================================================================
     _user_part = last_user_query or ""
     _instr_pos = _user_part.find("(INSTRUCTION SYSTEME")
@@ -314,7 +306,9 @@ async def stream_chat(
             "[Streaming v1.5.2] %d action(s) utilisateur — exécution DIRECTE (bypass LLM)",
             len(_user_actions),
         )
-        yield f"data: {json.dumps({'chunk': '⚙️ *Exécution directe...*\\n\\n'})}\n\n"
+        # ★ v1.5.2 — Variables intermédiaires (f-string compatible Python 3.14)
+        _direct_msg = "\n\n⚙️ *Exécution directe...*\n\n"
+        yield f"data: {json.dumps({'chunk': _direct_msg})}\n\n"
 
         for _idx, _ua in enumerate(_user_actions, 1):
             _ua_name = _ua["name"]
@@ -328,7 +322,8 @@ async def stream_chat(
                 "[Streaming v1.5.2] 🎯 Action directe %d : %s | params=%s",
                 _idx, _ua_name, list(_ua_params.keys()),
             )
-            yield f"data: {json.dumps({'chunk': f'\\n\\n⚙️ *Exécution {_idx}...*\\n'})}\n\n"
+            _exec_msg = f"\n\n⚙️ *Exécution {_idx}...*\n"
+            yield f"data: {json.dumps({'chunk': _exec_msg})}\n\n"
 
             _t0 = time.monotonic()
             try:
@@ -339,13 +334,14 @@ async def stream_chat(
                     "[Streaming v1.5.2] ✅ Action %s terminée (%.0fms)",
                     _ua_name, _elapsed,
                 )
-                yield f"data: {json.dumps({'chunk': '\\n\\n' + str(_res_msg) + '\\n\\n'})}\n\n"
+                _res_chunk = "\n\n" + str(_res_msg) + "\n\n"
+                yield f"data: {json.dumps({'chunk': _res_chunk})}\n\n"
             except Exception as _err:
                 logger.exception("[Streaming v1.5.2] Action %s échouée", _ua_name)
-                _err_chunk = f"\\n\\n⚠️ Erreur action {_ua_name} : {_err}\\n\\n"
+                _err_chunk = f"\n\n⚠️ Erreur action {_ua_name} : {_err}\n\n"
                 yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
 
-        yield f"data: {json.dumps({'done': True})}\\n\\n"
+        yield f"data: {json.dumps({'done': True})}\n\n"
         return
     # ══════════════════════════════════════════════════════════════════
     # Fin du pré-parsing — suite normale ci-dessous
@@ -356,7 +352,6 @@ async def stream_chat(
 
     processed_actions: Set[int] = set()
 
-    # ★ v1.5.1 — Anti-hallucination
     _post_action_mode: bool = False
     _post_action_grace_chunks: int = 0
     _last_action_end_pos: int = 0
@@ -373,20 +368,20 @@ async def stream_chat(
 
     is_freshness_query = rt._bek_rex_is_freshness_query(last_user_query)
     if is_freshness_query:
-        logger.info("[Streaming v1.5.1] Requête de fraîcheur détectée")
+        logger.info("[Streaming v1.5.2] Requête de fraîcheur détectée")
 
     try:
         # BEK-REX
         try:
             _routing_result = rt._bek_rex_route(last_user_query)
             logger.info(
-                "[Streaming v1.5.1] BEK-REX tier=%s conf=%.2f source=%s",
+                "[Streaming v1.5.2] BEK-REX tier=%s conf=%.2f source=%s",
                 _routing_result.get("tier"),
                 _routing_result.get("confidence", 0.0),
                 _routing_result.get("source"),
             )
         except Exception as _rex_err:
-            logger.warning("[Streaming v1.5.1] BEK-REX échec : %s", _rex_err)
+            logger.warning("[Streaming v1.5.2] BEK-REX échec : %s", _rex_err)
             _routing_result = {"tier": "TIER_3", "confidence": 0.5}
 
         _tier = _routing_result.get("tier", "TIER_3")
@@ -398,7 +393,7 @@ async def stream_chat(
                 if _eco_result.get("cached") and _eco_result.get("cached_value"):
                     cached_response = _eco_result["cached_value"].get("response", "")
                     if cached_response:
-                        logger.info("[Streaming v1.5.1] ⚡ BEK-ECO cache HIT")
+                        logger.info("[Streaming v1.5.2] ⚡ BEK-ECO cache HIT")
                         _cached_response_served = True
                         cache_badge = "⚡ *[réponse en cache]*\n\n"
                         yield f"data: {json.dumps({'chunk': cache_badge}, ensure_ascii=False)}\n\n"
@@ -410,11 +405,11 @@ async def stream_chat(
                         return
                 else:
                     logger.info(
-                        "[Streaming v1.5.1] BEK-ECO cache MISS (hash=%s)",
+                        "[Streaming v1.5.2] BEK-ECO cache MISS (hash=%s)",
                         _eco_result.get("query_hash", "?"),
                     )
             except Exception as _eco_err:
-                logger.warning("[Streaming v1.5.1] BEK-ECO échec : %s", _eco_err)
+                logger.warning("[Streaming v1.5.2] BEK-ECO échec : %s", _eco_err)
 
         # ══════════════════════════════════════════════════════════════════
         # BOUCLE PRINCIPALE
@@ -428,7 +423,7 @@ async def stream_chat(
         ):
             _elapsed = time.monotonic() - _start_time
             if MAX_STREAM_DURATION_SEC and _elapsed > MAX_STREAM_DURATION_SEC:
-                logger.warning("[Streaming v1.5.1] ⏱️ Timeout dur atteint")
+                logger.warning("[Streaming v1.5.2] ⏱️ Timeout dur atteint")
                 yield f"data: {json.dumps({'chunk': _MSG_TIMEOUT_DUR})}\n\n"
                 _success = False
                 _error_type = "stream_timeout"
@@ -454,40 +449,33 @@ async def stream_chat(
                 continue
 
             # ══════════════════════════════════════════════════════════════
-            # ★ v1.5.1 — ANTI-HALLUCINATION POST-ACTION
+            # ANTI-HALLUCINATION POST-ACTION
             # ==========================================================================
             if BEK_ANTIHALLU_ENABLED and _post_action_mode:
                 _post_action_grace_chunks += 1
 
-                # Sécurité : sortir si trop de chunks sans nouvelle action
                 if _post_action_grace_chunks > BEK_POST_ACTION_GRACE_MAX:
                     logger.info(
-                        "[Streaming v1.5.1] ✂️ STOP post-action après %d chunks "
-                        "(aucune nouvelle action détectée)",
+                        "[Streaming v1.5.2] ✂️ STOP post-action après %d chunks",
                         _post_action_grace_chunks,
                     )
                     _success = True
                     _error_type = "post_action_stop"
                     break
 
-                # Accumuler pour permettre la détection d'une nouvelle action
                 full_text_accumulated.append(chunk)
                 current_text = "".join(full_text_accumulated)
 
-                # Y a-t-il une nouvelle [ACTION dans le texte après la dernière action ?
                 text_since_action = current_text[_last_action_end_pos:]
                 if not _has_opening_action(text_since_action):
-                    # Pas de nouvelle action → HALLUCINATION → skip yield
                     logger.debug(
-                        "[Streaming v1.5.1] Chunk ignoré (post-action) : %r",
+                        "[Streaming v1.5.2] Chunk ignoré (post-action) : %r",
                         chunk[:60],
                     )
                     continue
                 else:
-                    # Nouvelle action détectée → sortir du mode post-action
                     logger.info(
-                        "[Streaming v1.5.1] Nouvelle action détectée après exécution "
-                        "→ sortie du mode post-action",
+                        "[Streaming v1.5.2] Nouvelle action détectée → sortie post-action",
                     )
                     _post_action_mode = False
                     _post_action_grace_chunks = 0
@@ -504,7 +492,7 @@ async def stream_chat(
             if not action_detected and MAX_REASONING_CHARS:
                 _reasoning_chars += len(chunk)
                 if _reasoning_chars > MAX_REASONING_CHARS:
-                    logger.warning("[Streaming v1.5.1] 🧠 Réflexion excessive")
+                    logger.warning("[Streaming v1.5.2] 🧠 Réflexion excessive")
                     yield f"data: {json.dumps({'chunk': _MSG_REASONING_OVERFLOW})}\n\n"
                     _success = False
                     _error_type = "reasoning_overflow"
@@ -512,7 +500,7 @@ async def stream_chat(
 
             if _loop_detector is not None and not action_detected:
                 if _loop_detector.add(chunk):
-                    logger.warning("[Streaming v1.5.1] 🔁 Boucle détectée")
+                    logger.warning("[Streaming v1.5.2] 🔁 Boucle détectée")
                     yield f"data: {json.dumps({'chunk': _MSG_LOOP_DETECTED})}\n\n"
                     _success = False
                     _error_type = "loop_detected"
@@ -522,7 +510,7 @@ async def stream_chat(
                 chunks_without_close += 1
                 if chunks_without_close > cfg.MAX_CHUNKS_WITHOUT_CLOSE:
                     logger.warning(
-                        "[Streaming v1.5.1] Action incomplète après %d chunks — abandon.",
+                        "[Streaming v1.5.2] Action incomplète après %d chunks — abandon.",
                         chunks_without_close,
                     )
                     warn_incomplete = (
@@ -534,7 +522,6 @@ async def stream_chat(
                     _error_type = "incomplete_action"
                     break
 
-            # Yield le chunk au client
             yield f"data: {json.dumps({'chunk': chunk}, ensure_ascii=False)}\n\n"
 
             # ══════════════════════════════════════════════════════════════
@@ -550,7 +537,7 @@ async def stream_chat(
 
                     if total_actions_executed >= BEK_MAX_ACTIONS_PER_RESPONSE:
                         logger.warning(
-                            "[Streaming v1.5.1] Limite %d actions atteinte",
+                            "[Streaming v1.5.2] Limite %d actions atteinte",
                             BEK_MAX_ACTIONS_PER_RESPONSE,
                         )
                         break
@@ -559,22 +546,21 @@ async def stream_chat(
                     params = action["params"]
 
                     logger.info(
-                        "[Streaming v1.5.1] 🎯 Action %d : %s (end_pos=%d)",
+                        "[Streaming v1.5.2] 🎯 Action %d : %s (end_pos=%d)",
                         total_actions_executed + 1, act_name, end_pos,
                     )
 
-                    # Redirect headless_search
                     if act_name == "headless_search":
                         try:
                             _should_use_ws = rt._bek_rex_should_use_web_sync(
                                 last_user_query, _routing_result,
                             )
                             if _should_use_ws:
-                                logger.info("[Streaming v1.5.1] headless_search → web_sync")
+                                logger.info("[Streaming v1.5.2] headless_search → web_sync")
                                 act_name = "web_sync"
                                 params = {"query": params.get("query", last_user_query)}
                         except Exception as _rex_err:
-                            logger.warning("[Streaming v1.5.1] BEK-REX échec : %s", _rex_err)
+                            logger.warning("[Streaming v1.5.2] BEK-REX échec : %s", _rex_err)
 
                     if act_name not in cfg.MULTIMEDIA_ACTIONS:
                         params["provider"] = provider
@@ -605,12 +591,12 @@ async def stream_chat(
                         _last_action_end_pos = end_pos
 
                         logger.info(
-                            "[Streaming v1.5.1] ✅ Action %s terminée (%.0fms)",
+                            "[Streaming v1.5.2] ✅ Action %s terminée (%.0fms)",
                             act_name, _action_elapsed_ms,
                         )
 
                     except Exception as _act_err:
-                        logger.exception("[Streaming v1.5.1] Action %s échouée", act_name)
+                        logger.exception("[Streaming v1.5.2] Action %s échouée", act_name)
                         err_chunk = f"\n\n⚠️ Erreur action {act_name} : {_act_err}\n\n"
                         yield f"data: {json.dumps({'chunk': err_chunk})}\n\n"
                         processed_actions.add(end_pos)
@@ -618,21 +604,18 @@ async def stream_chat(
                         _success = False
                         _error_type = f"action_{act_name}_error"
 
-                # ★ v1.5.1 — Activer le mode post-action si on a exécuté quelque chose
                 if BEK_ANTIHALLU_ENABLED and total_actions_executed > 0:
                     _post_action_mode = True
                     _post_action_grace_chunks = 0
 
-        # Fin de boucle principale
-
         _total_elapsed = time.monotonic() - _start_time
         logger.info(
-            "[Streaming v1.5.1] ✓ Terminé en %.2fs | actions=%d | chunks=%d",
+            "[Streaming v1.5.2] ✓ Terminé en %.2fs | actions=%d | chunks=%d",
             _total_elapsed, total_actions_executed, len(full_text_accumulated),
         )
 
     except Exception as stream_err:
-        logger.error("[Streaming v1.5.1] Erreur : %s", stream_err, exc_info=True)
+        logger.error("[Streaming v1.5.2] Erreur : %s", stream_err, exc_info=True)
         err_msg = f"\n\n⚠️ Flux Error : {stream_err}\n"
         yield f"data: {json.dumps({'chunk': err_msg})}\n\n"
         _success = False
@@ -694,7 +677,7 @@ async def stream_chat(
                     pass
 
         except Exception as _loop_err:
-            logger.debug("[Streaming v1.5.1] Erreur finally : %s", _loop_err)
+            logger.debug("[Streaming v1.5.2] Erreur finally : %s", _loop_err)
 
         yield f"data: {json.dumps({'done': True})}\n\n"
 
@@ -705,7 +688,7 @@ async def stream_chat(
 
 def get_streaming_summary() -> dict:
     return {
-        "version": "1.5.1",
+        "version": "1.5.2",
         "functions": [
             "_sanitize_llm_output", "_strip_reasoning", "_fix_spacing",
             "_has_closing_action", "_has_opening_action",
@@ -719,6 +702,7 @@ def get_streaming_summary() -> dict:
             "nvidia_space_fix": True,
             "★ anti_hallucination_post_action": BEK_ANTIHALLU_ENABLED,
             "★ post_action_grace_max": BEK_POST_ACTION_GRACE_MAX,
+            "★ python_3_14_fstring_safe": True,
         },
         "env_flags": {
             "BEK_MULTI_ACTIONS_ENABLED": BEK_MULTI_ACTIONS_ENABLED,
