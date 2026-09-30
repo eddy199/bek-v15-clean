@@ -1,7 +1,7 @@
 # ==============================================================================
 # BEK-v16 — Dockerfile pour Render
 # ------------------------------------------------------------------------------
-# Python 3.11 + Playwright + dépendances BEK
+# Python 3.11 + Playwright + FFmpeg + dépendances BEK
 # ==============================================================================
 
 FROM python:3.11-slim
@@ -12,7 +12,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# Dépendances système (Playwright + psycopg2 + Pillow)
+# Dépendances système (Playwright + psycopg2 + Pillow + FFmpeg)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libjpeg-dev \
     zlib1g-dev \
     libffi-dev \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
