@@ -9,6 +9,7 @@
 # v18.5 (2026-09-29) : Feedback utilisateur (routes /api/feedback)
 # v18.6 (2026-09-29) : Pending feedbacks traités au boot + route async
 # v18.10 (2026-09-29) : ★ Route admin /api/admin/flush-redis
+# v18.11 (2026-09-29) : ★ Tool generate_video avec support images
 # ==============================================================================
 from __future__ import annotations
 
@@ -229,25 +230,115 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         risk_level="L1",
     )
 
-    hermes.register_tool(
-        "generate_video",
-        lambda prompt="", query="",
-               provider="gemini", model="veo-3.1-gene-prev",
-               duration=8, aspect_ratio="16:9", auto_stitch=True,
-               negative_prompt=None, person_generation="allow_all",
-               **kwargs:
-            generate_video_with_provider(
-                prompt=prompt or query,
-                provider=provider,
-                model=model,
-                duration=int(duration),
-                aspect_ratio=aspect_ratio,
-                auto_stitch=bool(auto_stitch),
-                negative_prompt=negative_prompt,
-                person_generation=person_generation,
-            ) if generate_video_with_provider else {"status": "error", "message": "Module vidéo manquant"},
-        risk_level="L1",
-    )
+    def _generate_video_handler(
+        prompt="", query="",
+        image_paths=None,
+        reference_images=None,
+        video_paths=None,
+        provider="agnes",
+        model="agnes-v2.0",
+        duration=8,
+        aspect_ratio="16:9",
+        auto_stitch=True,
+        with_audio=True,
+        audio_style="children",
+        negative_prompt=None,
+        person_generation="allow_all",
+        mode=None,
+        **kwargs
+    ):
+        """
+        Génère une vidéo.
+
+        ★ v18.11 : support des images de référence (mode multi_reference
+        d'Agnes) pour créer une vidéo à partir de photos uploadées.
+        """
+        if generate_video_with_provider is None:
+            return {"status": "error", "message": "Module vidéo manquant"}
+
+        refs = reference_images or image_paths
+
+        if refs and mode is None:
+            if isinstance(refs, list) and len(refs) > 1:
+                mode = "multi_reference"
+            else:
+                mode = "keyframes"
+
+        call_kwargs = {
+            "prompt": prompt or query,
+            "provider": provider,
+            "model": model,
+            "duration": int(duration),
+            "aspect_ratio": aspect_ratio,
+            "auto_stitch": bool(auto_stitch),
+            "with_audio": bool(with_audio),
+            "audio_style": audio_style,
+            "negative_prompt": negative_prompt,
+            "person_generation": person_generation,
+        }
+
+        if refs:
+            try:
+                from services.vision.agnes_client import _agnes_generate_single_clip
+                from provider_manager import provider_manager as _pm
+                model_id = _pm.resolve_agnes_model_id(model)
+                logger.info(
+                    "[generate_video] Mode %s avec %d image(s) de référence",
+                    mode, len(refs) if isinstance(refs, list) else 1,
+                )
+                clip = _agnes_generate_single_clip(
+                    prompt=prompt or query,
+                    model_id=model_id,
+                    duration=int(duration),
+                    aspect_ratio=aspect_ratio,
+                    mode=mode,
+                    reference_images=refs if isinstance(refs, list) else [refs],
+                )
+                import os as _os
+                from core.paths import GENERATED_DIR as _GD
+                import uuid as _uuid
+                out_name = f"gen_video_{_uuid.uuid4().hex[:8]}.mp4"
+                out_path = _os.path.join(_GD, out_name)
+                with open(out_path, "wb") as _f:
+                    _f.write(clip["bytes"])
+                return {
+                    "status": "success",
+                    "filepath": out_path,
+                    "filename": out_name,
+                    "duration": int(duration),
+                    "provider": "agnes",
+                    "model_id": model_id,
+                    "with_audio": bool(with_audio),
+                    "mode_used": mode,
+                    "reference_images_count": len(refs) if isinstance(refs, list) else 1,
+                }
+            except Exception as exc:
+                logger.warning(
+                    "[generate_video] Échec mode %s avec refs : %s — fallback",
+                    mode, exc,
+                )
+                try:
+                    return generate_video_with_provider(**call_kwargs)
+                except Exception as exc2:
+                    return {
+                        "status": "error",
+                        "message": f"Échec génération avec refs : {exc} | fallback : {exc2}",
+                    }
+
+        try:
+            return generate_video_with_provider(**call_kwargs)
+        except TypeError as te:
+            call_kwargs.pop("with_audio", None)
+            call_kwargs.pop("audio_style", None)
+            try:
+                return generate_video_with_provider(**call_kwargs)
+            except Exception as exc:
+                return {"status": "error", "message": f"Erreur generate_video : {exc}"}
+        except Exception as exc:
+            return {"status": "error", "message": f"Erreur generate_video : {exc}"}
+
+    hermes.register_tool("generate_video", _generate_video_handler, risk_level="L1")
+
     hermes.register_tool(
         "edit_video",
         lambda video_paths=None, prompt="", user_prompt="", query="",
@@ -475,7 +566,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="18.10",
+    version="18.11",
     lifespan=lifespan,
 )
 
@@ -679,16 +770,6 @@ async def api_list_feedback(limit: int = 50):
 async def api_flush_redis():
     """
     Vide tous les streams Redis.
-
-    À utiliser quand les logs montrent un flood de 'publish_success'
-    au démarrage (replay des 10000 derniers événements).
-
-    Effet :
-      - Supprime TOUS les streams Redis (web-cleaned, skills-index, etc.)
-      - Les offsets locaux .eventbus_offsets.json deviennent obsolètes
-      - Au prochain boot, plus aucun replay d'historique
-
-    ⚠️ À appeler uniquement depuis un contexte admin de confiance.
     """
     try:
         import redis as _redis_lib
@@ -714,14 +795,11 @@ async def api_flush_redis():
         )
         client.ping()
 
-        # Compte les clés avant
         keys_before = client.keys("*")
         count_before = len(keys_before)
 
-        # Vide tout
         client.flushall()
 
-        # Vérifie
         keys_after = client.keys("*")
         count_after = len(keys_after)
 

@@ -1,0 +1,43 @@
+{
+  "report_id": "reflex_20260929_183633",
+  "generated_at_utc": "2026-09-29T18:36:33.292924+00:00",
+  "duration_ms": 69.98,
+  "window_hours": 24,
+  "min_occurrences": 3,
+  "top_n": 20,
+  "summary": {
+    "total_episodes": 2,
+    "success_count": 0,
+    "error_count": 2,
+    "success_rate": 0.0,
+    "unique_actions": 1,
+    "unique_error_types": 1,
+    "patterns_total": 1,
+    "patterns_significant": 0
+  },
+  "top_patterns": [],
+  "action_breakdown": {
+    "read_file": {
+      "success": 0,
+      "error": 2,
+      "other": 0
+    }
+  },
+  "critic": {
+    "enabled": false,
+    "max_patterns": 10,
+    "analyzed": 0,
+    "succeeded": 0,
+    "failed": 0
+  },
+  "critiques": [],
+  "forge": {
+    "enabled": true,
+    "dry_run": true,
+    "auto_staging": false,
+    "analyzed": 0,
+    "proposed": 0,
+    "skipped": 0,
+    "proposals": []
+  }
+}

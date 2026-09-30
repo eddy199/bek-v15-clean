@@ -6,10 +6,11 @@
 # 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 1.1
-# Date : 2026-09-24
+# Version : 1.2
+# Date : 2026-09-29
 # ------------------------------------------------------------------------------
 # ★ v1.1 : MAX_ARCHITECTURE_CHARS 15000 → 25000 (accueillir plan d'action)
+# ★ v1.2 : MAX_CHUNKS_WITHOUT_CLOSE 150 → 500 (fix Kimi/Gemini lent)
 # ==============================================================================
 
 from __future__ import annotations
@@ -71,7 +72,13 @@ MAX_ARCHITECTURE_CHARS = _env_int("BEK_CHAT_MAX_ARCHITECTURE_CHARS", 25000)
 
 MAX_TOTAL_ACTIONS = _env_int("BEK_CHAT_MAX_TOTAL_ACTIONS", 2)
 POOR_RESULT_THRESHOLD = _env_int("BEK_CHAT_POOR_RESULT_THRESHOLD", 200)
-MAX_CHUNKS_WITHOUT_CLOSE = _env_int("BEK_CHAT_MAX_CHUNKS_NO_CLOSE", 150)
+
+# ★ v1.2 — 150 → 500
+# Certains LLMs (Kimi, Gemini) mettent du temps à générer la balise [/ACTION]
+# finale sur les longs JSON (vidéo avec image_paths). 500 chunks = marge de
+# sécurité suffisante pour ne plus abandonner une action en cours d'écriture.
+MAX_CHUNKS_WITHOUT_CLOSE = _env_int("BEK_CHAT_MAX_CHUNKS_NO_CLOSE", 500)
+
 MAX_QUERY_WORDS = _env_int("BEK_CHAT_MAX_QUERY_WORDS", 8)
 
 
@@ -173,10 +180,12 @@ BEK_REX_TIER_TO_SOURCES = {
 def get_config_summary() -> dict:
     """Retourne un résumé de la config pour debug."""
     return {
+        "version": "1.2",
         "history_window": HISTORY_WINDOW,
         "max_total_actions": MAX_TOTAL_ACTIONS,
         "auto_scrape_urls": AUTO_SCRAPE_MAX_URLS,
         "max_architecture_chars": MAX_ARCHITECTURE_CHARS,
+        "max_chunks_without_close": MAX_CHUNKS_WITHOUT_CLOSE,
         "headless_search_enabled": BEK_HEADLESS_SEARCH_ENABLED,
         "web_sync_primary": BEK_WEB_SYNC_AS_PRIMARY,
         "bek_lvc_ok": BEK_LVC_OK,

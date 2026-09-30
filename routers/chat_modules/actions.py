@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Actions
+# BEK-v18 — Chat Module : Actions (v1.4.2)
 # ------------------------------------------------------------------------------
 # 🏛️ Rôle : Exécution des actions (multimédia, web, skills, etc.)
 # 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
-# Auteur : BEK Project
-# Version : 1.2
-# Date : 2026-09-24
-# ------------------------------------------------------------------------------
-# ★ v1.2 — Connecteurs + patches :
-#   - Connecteur 1 : episode_logger (message tronqué à 500 chars)
-#   - Connecteur 3 : hermes.dispatch_dag() avec diagnostic ✓/✗
-#   - Patch A     : troncature message (évite pollution DuckDB)
-#   - Patch B     : diagnostic DAG visible dans les logs
-#   - Patch C     : détection DAG interne web_sync
+# ★ v1.2 — Connecteurs + patches
+# ★ v1.3 — Regex tolérante aux espaces parasites (bug NVIDIA NIM)
+# ★ v1.4 — Nettoyage des espaces parasites dans les params
+# ★ v1.4.1 — Fix _clean_str_param ciblé (prompts préservés)
+# ★ v1.4.2 — ★ Résolution des chemins AVANT appel direct Agnes
+#            (fix : uploads/xxx.jpg était envoyé tel quel → HTTP 400)
 # ==============================================================================
 
 from __future__ import annotations
@@ -37,16 +33,72 @@ logger = logging.getLogger("BEKApp")
 # REGEX D'ACTIONS
 # ══════════════════════════════════════════════════════════════════════════════
 
-ACTION_REGEX = re.compile(r"\x5bACTION:(\w+)\x5d(.*?)\x5b/ACTION\x5d", re.DOTALL)
+ACTION_REGEX = re.compile(
+    r"\[\s*ACTION\s*:\s*(\w+)\s*\]"
+    r"(.*?)"
+    r"\[\s*/\s*A\s*CTION\s*\]",
+    re.DOTALL,
+)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ CONNECTEUR 1 — EPISODE LOGGER (Reflex-Loop)
-# ------------------------------------------------------------------------------
-# Trace chaque action dans DuckDB pour alimenter Reflex-Loop.
-# Silencieux en cas d'échec (ne casse jamais le chat).
-#
-# ★ Patch A : message tronqué à 500 chars (évite pollution DuckDB).
+# NETTOYAGE DES ESPACES PARASITES (ciblé)
+# ==============================================================================
+
+_FILE_EXTENSIONS = (
+    "jpg|jpeg|png|gif|webp|bmp|svg|"
+    "mp4|mov|webm|avi|mkv|"
+    "srt|vtt|txt|json|md|csv|pdf|"
+    "py|js|ts|html|css|xml|yaml|yml"
+)
+
+_EXT_SPACE_RE = re.compile(
+    r"\s*\.\s*(" + _FILE_EXTENSIONS + r")\b",
+    re.IGNORECASE,
+)
+_SLASH_SPACE_RE = re.compile(r"(/\s+)([A-Za-z0-9_\-\.])")
+_BACKSLASH_SPACE_RE = re.compile(r"(\\\s+)([A-Za-z0-9_\-\.])")
+_UUID_SPACE_RE = re.compile(
+    r"([a-f0-9])\s+(-)\s*([a-f0-9])",
+    re.IGNORECASE,
+)
+
+
+def _clean_str_param(s: str) -> str:
+    """
+    Nettoie UNIQUEMENT les espaces parasites dans les chemins.
+    NE TOUCHE PAS aux phrases normales (prompts, descriptions).
+    """
+    if not isinstance(s, str):
+        return s
+
+    # 1. "x .jpg" ou "x. jpg" → "x.jpg"
+    s = _EXT_SPACE_RE.sub(r".\1", s)
+
+    # 2. "uploads/ x.jpg" → "uploads/x.jpg"
+    s = _SLASH_SPACE_RE.sub(r"/\2", s)
+
+    # 3. "dossier\ x.jpg" → "dossier\x.jpg"
+    s = _BACKSLASH_SPACE_RE.sub(r"\\\2", s)
+
+    # 4. "1c8a -4333" → "1c8a-4333"
+    s = _UUID_SPACE_RE.sub(r"\1\2\3", s)
+
+    return s.strip()
+
+
+def _clean_action_params(params: Any) -> Any:
+    if isinstance(params, str):
+        return _clean_str_param(params)
+    if isinstance(params, list):
+        return [_clean_action_params(item) for item in params]
+    if isinstance(params, dict):
+        return {k: _clean_action_params(v) for k, v in params.items()}
+    return params
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# EPISODE LOGGER
 # ==============================================================================
 
 _LOG_EPISODE_MAX_MESSAGE_CHARS = 500
@@ -61,21 +113,6 @@ def _log_episode_safe(
     extra: Optional[Dict[str, Any]] = None,
     message: Optional[str] = None,
 ) -> None:
-    """
-    Log un épisode dans DuckDB (via services.episode_logger).
-
-    Ne lève JAMAIS d'exception — silencieux en cas d'échec.
-
-    Args:
-        action: Nom de l'action (ex: "web_sync")
-        status: "success" ou "error"
-        latency_ms: Latence en millisecondes
-        error_type: Type d'erreur si status=error
-        source: Source de l'appel ("chat", "action_executor", etc.)
-        extra: Métadonnées additionnelles
-        message: Message de résultat (tronqué à 500 chars)
-    """
-    # ★ Patch A — Troncature du message
     _msg_truncated = None
     if message:
         _msg_str = str(message)
@@ -86,33 +123,20 @@ def _log_episode_safe(
 
     try:
         from services.episode_logger import log_episode
-
-        # Tentative 1 : signature complète
         try:
             log_episode(
-                action=action,
-                status=status,
-                latency_ms=latency_ms,
-                error_type=error_type,
-                source=source,
-                extra=extra or {},
-                message=_msg_truncated,
+                action=action, status=status, latency_ms=latency_ms,
+                error_type=error_type, source=source,
+                extra=extra or {}, message=_msg_truncated,
             )
         except TypeError:
-            # Tentative 2 : signature réduite (si message non supporté)
             log_episode(
-                action=action,
-                status=status,
-                latency_ms=latency_ms,
-                error_type=error_type,
-                source=source,
-                extra=extra or {},
+                action=action, status=status, latency_ms=latency_ms,
+                error_type=error_type, source=source, extra=extra or {},
             )
-
         logger.debug(
-            "[EpisodeLogger] ✓ %s | %s | %dms | msg=%d chars",
+            "[EpisodeLogger] ✓ %s | %s | %dms",
             action, status, latency_ms,
-            len(_msg_truncated) if _msg_truncated else 0,
         )
     except ImportError:
         logger.debug("[EpisodeLogger] Module non disponible — skip")
@@ -122,15 +146,9 @@ def _log_episode_safe(
 
 # ══════════════════════════════════════════════════════════════════════════════
 # EXTRACTION D'ACTION
-# ══════════════════════════════════════════════════════════════════════════════
+# ==============================================================================
 
 def _extract_first_action(text: str) -> Optional[Dict[str, Any]]:
-    """
-    Extrait la première action depuis le texte du LLM.
-
-    Returns:
-        {"name": "web_sync", "params": {...}} ou None
-    """
     if not text:
         return None
 
@@ -155,7 +173,8 @@ def _extract_first_action(text: str) -> Optional[Dict[str, Any]]:
         except Exception:
             pass
 
-    # Filtre stérile pour headless_scrape
+    params = _clean_action_params(params)
+
     if act_name == "headless_scrape":
         url = params.get("url") or ""
         if val._is_sterile_url(url):
@@ -166,42 +185,23 @@ def _extract_first_action(text: str) -> Optional[Dict[str, Any]]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ PATCH C — DÉTECTION DAG INTERNE WEB_SYNC
-# ------------------------------------------------------------------------------
-# Vérifie si le module web_sync utilise un DAG ou un ThreadPoolExecutor.
+# DÉTECTION DAG INTERNE WEB_SYNC
 # ==============================================================================
 
 def _detect_web_sync_dag_usage() -> Dict[str, Any]:
-    """
-    Détecte si web_sync utilise un DAG interne.
-
-    Returns:
-        dict: {
-            "uses_dag": bool,
-            "uses_threadpool": bool,
-            "module_found": bool,
-            "method": str
-        }
-    """
     result = {
-        "uses_dag": False,
-        "uses_threadpool": False,
-        "module_found": False,
-        "method": "unknown",
+        "uses_dag": False, "uses_threadpool": False,
+        "module_found": False, "method": "unknown",
     }
-
     try:
         import web_agent
         result["module_found"] = True
-
-        # Chercher des indices dans le module
         module_source = ""
         try:
             import inspect
             module_source = inspect.getsource(web_agent)
         except Exception:
             pass
-
         if "dispatch_dag" in module_source or "dispatch_parallel" in module_source:
             result["uses_dag"] = True
             result["method"] = "dispatch_dag ou dispatch_parallel"
@@ -211,45 +211,27 @@ def _detect_web_sync_dag_usage() -> Dict[str, Any]:
         elif "asyncio.gather" in module_source:
             result["method"] = "asyncio.gather"
         else:
-            result["method"] = "séquentiel (aucun parallélisme détecté)"
-
+            result["method"] = "séquentiel"
     except ImportError:
         result["method"] = "module web_agent introuvable"
-
     return result
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 # DISPATCHER PRINCIPAL
-# ══════════════════════════════════════════════════════════════════════════════
+# ==============================================================================
 
 def _execute_action_unified(act_name: str, params: dict) -> dict:
-    """
-    Exécute une action unifiée.
-
-    Gère :
-        - Multimédia (image, vidéo, sous-titres)
-        - headless_scrape
-        - web_sync (via Hermes + DAG Engine)
-        - Autres (via Hermes + CRM)
-
-    ★ v1.2 : log automatique dans DuckDB (episode_logger) + diagnostic DAG.
-    """
     _t0 = time.time()
     _original_action = act_name
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # ★ DÉCISION ARCHITECTURALE — headless_search RETIRÉ
-    # ==========================================================================
     if act_name == "headless_search":
-        logger.warning(
-            "[ActionFilter] headless_search détecté — redirection forcée vers web_sync"
-        )
+        logger.warning("[ActionFilter] headless_search → web_sync")
         act_name = "web_sync"
 
     # ══════════════════════════════════════════════════════════════════════════
-    # MULTIMÉDIA — IMAGES
-    # ══════════════════════════════════════════════════════════════════════════
+    # MULTIMÉDIA
+    # ==========================================================================
     try:
         if act_name == "generate_image":
             from services.vision import generate_image_with_provider
@@ -283,26 +265,135 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             return _r
 
         # ══════════════════════════════════════════════════════════════════════
-        # MULTIMÉDIA — VIDÉO
-        # ══════════════════════════════════════════════════════════════════════
+        # ★ v1.4.2 — VIDÉO AVEC IMAGES DE RÉFÉRENCE
+        # ==========================================================================
         elif act_name == "generate_video":
             from services.vision import generate_video_with_provider
             prompt = params.get("prompt") or params.get("query") or ""
             provider_v = params.get("provider", "agnes")
             model_v = params.get("model", "agnes-v2.0")
-            duration_v = params.get("duration", 5)
+            duration_v = params.get("duration", 8)
             aspect_ratio_v = params.get("aspect_ratio", "16:9")
             with_audio_v = params.get("with_audio", True)
             audio_style_v = params.get("audio_style", "children")
+
+            image_paths = params.get("image_paths") or params.get("reference_images")
+            reference_images = None
+            mode = params.get("mode")
+
+            if image_paths:
+                if isinstance(image_paths, str):
+                    image_paths = [image_paths]
+                if not mode:
+                    if len(image_paths) > 1:
+                        mode = "multi_reference"
+                    else:
+                        mode = "keyframes"
+                reference_images = image_paths
+                logger.info(
+                    "[generate_video] %d image(s) de référence détectée(s) | mode=%s",
+                    len(image_paths), mode,
+                )
+
             logger.info(
-                "[generate_video] prompt=%r provider=%s model=%s duration=%s",
-                prompt[:80], provider_v, model_v, duration_v,
+                "[generate_video] prompt=%r provider=%s model=%s duration=%s mode=%s",
+                prompt[:80], provider_v, model_v, duration_v, mode,
             )
-            _r = generate_video_with_provider(
-                prompt=prompt, provider=provider_v, model=model_v,
-                duration=int(duration_v), aspect_ratio=aspect_ratio_v,
-                with_audio=bool(with_audio_v), audio_style=audio_style_v,
-            )
+
+            if reference_images:
+                # ★ v1.4.2 — Résoudre les chemins AVANT d'envoyer à Agnes
+                try:
+                    from services.vision.video_generation import _resolve_existing_media_paths
+                    resolved_refs = _resolve_existing_media_paths(
+                        reference_images, (".png", ".jpg", ".jpeg", ".webp")
+                    )
+                except Exception as _res_err:
+                    logger.warning(
+                        "[generate_video] Résolution chemins échouée : %s — on garde les bruts",
+                        _res_err,
+                    )
+                    resolved_refs = reference_images
+
+                import os as _os
+                logger.info(
+                    "[generate_video] Chemins résolus : %d/%d | %s",
+                    len(resolved_refs), len(reference_images),
+                    [_os.path.basename(p) for p in resolved_refs],
+                )
+
+                if not resolved_refs:
+                    logger.error(
+                        "[generate_video] Aucun fichier trouvé ! Bruts=%s",
+                        reference_images,
+                    )
+                    _r = {
+                        "status": "error",
+                        "message": f"Images introuvables : {reference_images}",
+                    }
+                    _log_episode_safe(
+                        action=_original_action, status="error",
+                        latency_ms=int((time.time() - _t0) * 1000),
+                        error_type="images_not_found",
+                        message=_r["message"],
+                    )
+                    return _r
+
+                try:
+                    from services.vision.agnes_client import _agnes_generate_single_clip
+                    from provider_manager import provider_manager as _pm
+                    model_id = _pm.resolve_agnes_model_id(model_v)
+                    clip = _agnes_generate_single_clip(
+                        prompt=prompt,
+                        model_id=model_id,
+                        duration=int(duration_v),
+                        aspect_ratio=aspect_ratio_v,
+                        mode=mode,
+                        reference_images=resolved_refs,  # ★ chemins résolus
+                    )
+                    import os as _os2
+                    from core.paths import GENERATED_DIR as _GD
+                    import uuid as _uuid
+                    out_name = f"gen_video_{_uuid.uuid4().hex[:8]}.mp4"
+                    out_path = _os2.path.join(_GD, out_name)
+                    with open(out_path, "wb") as _f:
+                        _f.write(clip["bytes"])
+                    _r = {
+                        "status": "success",
+                        "filepath": out_path,
+                        "filename": out_name,
+                        "duration": int(duration_v),
+                        "provider": "agnes",
+                        "model_id": model_id,
+                        "with_audio": bool(with_audio_v),
+                        "mode_used": mode,
+                        "reference_images_count": len(resolved_refs),
+                    }
+                except Exception as _exc:
+                    logger.warning(
+                        "[generate_video] Échec mode %s avec refs : %s — fallback sans refs",
+                        mode, _exc,
+                    )
+                    refs = params.get("image_paths") or params.get("reference_images")
+                    if isinstance(refs, str):
+                        refs = [refs]
+                    _r = generate_video_with_provider(
+                        prompt=prompt,
+                        provider=provider_v,
+                        model=model_v,
+                        duration=int(duration_v),
+                        aspect_ratio=aspect_ratio_v,
+                        with_audio=bool(with_audio_v),
+                        audio_style=audio_style_v,
+                        image_paths=refs,
+                        style_preset=params.get("style_preset", "auto"),
+                    )
+            else:
+                _r = generate_video_with_provider(
+                    prompt=prompt, provider=provider_v, model=model_v,
+                    duration=int(duration_v), aspect_ratio=aspect_ratio_v,
+                    with_audio=bool(with_audio_v), audio_style=audio_style_v,
+                )
+
             _log_episode_safe(
                 action=_original_action,
                 status="success" if _r.get("status") == "success" else "error",
@@ -410,11 +501,9 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                 if srt_result.get("status") == "error":
                     _r = {"status": "error", "message": f"Échec .srt : {srt_result.get('message')}"}
                     _log_episode_safe(
-                        action=_original_action,
-                        status="error",
+                        action=_original_action, status="error",
                         latency_ms=int((time.time() - _t0) * 1000),
-                        error_type=_r["message"][:100],
-                        message=_r["message"],
+                        error_type=_r["message"][:100], message=_r["message"],
                     )
                     return _r
                 srt_path = srt_result.get("srt_path")
@@ -432,27 +521,22 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
         logger.error("Erreur Vision (%s) : %s", act_name, exc, exc_info=True)
         _err = {"status": "error", "message": f"Erreur multimédia : {exc}"}
         _log_episode_safe(
-            action=_original_action,
-            status="error",
+            action=_original_action, status="error",
             latency_ms=int((time.time() - _t0) * 1000),
             error_type=f"vision_exception: {exc}"[:100],
             message=_err["message"],
         )
         return _err
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # HEADLESS_SCRAPE (unique URL)
-    # ══════════════════════════════════════════════════════════════════════════
+    # HEADLESS_SCRAPE
     if act_name == "headless_scrape":
         url = params.get("url") or params.get("query") or ""
         if not url:
             _err = {"status": "error", "message": "URL manquante pour headless_scrape"}
             _log_episode_safe(
-                action=_original_action,
-                status="error",
+                action=_original_action, status="error",
                 latency_ms=int((time.time() - _t0) * 1000),
-                error_type="url_missing",
-                message=_err["message"],
+                error_type="url_missing", message=_err["message"],
             )
             return _err
 
@@ -460,17 +544,12 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             logger.warning("[headless_scrape] URL stérile rejetée : %s", url)
             _err = {
                 "status": "error",
-                "message": (
-                    f"URL stérile rejetée (page de recherche, home ou login). "
-                    f"Utilise une URL DIRECTE de contenu."
-                ),
+                "message": "URL stérile rejetée (page de recherche, home ou login).",
             }
             _log_episode_safe(
-                action=_original_action,
-                status="error",
+                action=_original_action, status="error",
                 latency_ms=int((time.time() - _t0) * 1000),
-                error_type="sterile_url",
-                message=_err["message"],
+                error_type="sterile_url", message=_err["message"],
             )
             return _err
 
@@ -481,13 +560,11 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             worker = HeadlessWorker(headless=True)
             result = run_async_safely(worker.fetch_page_content(url))
             if result is None:
-                _err = {"status": "error", "message": f"headless_scrape : impossible de charger {url}."}
+                _err = {"status": "error", "message": f"Impossible de charger {url}."}
                 _log_episode_safe(
-                    action=_original_action,
-                    status="error",
+                    action=_original_action, status="error",
                     latency_ms=int((time.time() - _t0) * 1000),
-                    error_type="fetch_none",
-                    message=_err["message"],
+                    error_type="fetch_none", message=_err["message"],
                 )
                 return _err
             preview = str(result)[:200] if result else ""
@@ -496,8 +573,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                 url, len(str(result)), preview,
             )
             _log_episode_safe(
-                action=_original_action,
-                status="success",
+                action=_original_action, status="success",
                 latency_ms=int((time.time() - _t0) * 1000),
                 message=f"Scraped {url} ({len(str(result))} chars)",
             )
@@ -506,52 +582,30 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             logger.error("Erreur headless_scrape : %s", exc, exc_info=True)
             _err = {"status": "error", "message": f"headless_scrape échoué : {exc}"}
             _log_episode_safe(
-                action=_original_action,
-                status="error",
+                action=_original_action, status="error",
                 latency_ms=int((time.time() - _t0) * 1000),
                 error_type=f"scrape_exception: {exc}"[:100],
                 message=_err["message"],
             )
             return _err
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # ★ CONNECTEUR 3 + PATCH B — HERMES DISPATCHER + DAG ENGINE + DIAGNOSTIC
-    # --------------------------------------------------------------------------
-    # Pour web_sync et orchestrate → utilise dispatch_dag() (parallélisation).
-    # Pour les autres → dispatch() standard.
-    #
-    # ★ Patch B : log explicite ✓/✗ pour savoir si le DAG est utilisé.
-    # ==========================================================================
+    # HERMES DISPATCHER
     try:
         from hermes_core import hermes
-
         if act_name in hermes.tools:
             _use_dag = (
                 act_name in ("web_sync", "orchestrate")
                 and hasattr(hermes, "dispatch_dag")
             )
-
-            # ★ Patch B — Diagnostic DAG
             if _use_dag:
-                logger.info(
-                    "[DAG Engine] ✓ Dispatch parallèle pour '%s' (DAG utilisé)",
-                    act_name,
-                )
+                logger.info("[DAG Engine] ✓ Dispatch parallèle pour '%s'", act_name)
                 try:
-                    h_disp = hermes.dispatch_dag([
-                        {"tool": act_name, "params": params},
-                    ])
+                    h_disp = hermes.dispatch_dag([{"tool": act_name, "params": params}])
                 except Exception as _dag_err:
-                    logger.warning(
-                        "[DAG Engine] ✗ Échec dispatch_dag : %s — fallback dispatch()",
-                        _dag_err,
-                    )
+                    logger.warning("[DAG Engine] ✗ Échec : %s — fallback", _dag_err)
                     h_disp = hermes.dispatch(act_name, params)
             else:
-                logger.info(
-                    "[DAG Engine] ✗ Non utilisé pour '%s' (act_name pas dans web_sync/orchestrate)",
-                    act_name,
-                )
+                logger.info("[DAG Engine] ✗ Non utilisé pour '%s'", act_name)
                 h_disp = hermes.dispatch(act_name, params)
 
             if h_disp.get("status") == "SUCCESS" and h_disp.get("results"):
@@ -559,36 +613,26 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                 if task_res.get("success"):
                     data = task_res.get("data")
                     _r = data if isinstance(data, dict) else {"status": "success", "message": str(data)}
-
-                    # ★ Patch C — Diagnostic DAG interne web_sync
                     _dag_internal_info = None
                     if act_name == "web_sync":
                         _dag_internal_info = _detect_web_sync_dag_usage()
                         logger.info(
                             "[DAG Interne web_sync] %s (méthode: %s)",
                             "✓ DAG détecté" if _dag_internal_info.get("uses_dag") else
-                            ("⚠ ThreadPool détecté" if _dag_internal_info.get("uses_threadpool") else
-                             "✗ Séquentiel"),
+                            ("⚠ ThreadPool" if _dag_internal_info.get("uses_threadpool") else "✗ Séquentiel"),
                             _dag_internal_info.get("method"),
                         )
-
                     _log_episode_safe(
-                        action=_original_action,
-                        status="success",
+                        action=_original_action, status="success",
                         latency_ms=int((time.time() - _t0) * 1000),
                         message=_r.get("message", "") or str(data)[:500],
-                        extra={
-                            "dag_used": _use_dag,
-                            "dag_internal": _dag_internal_info,
-                        },
+                        extra={"dag_used": _use_dag, "dag_internal": _dag_internal_info},
                     )
                     return _r
     except Exception as exc:
         logger.debug("[Hermes] Dispatch échec : %s", exc)
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # FALLBACK — CRM / Autres
-    # ══════════════════════════════════════════════════════════════════════════
+    # FALLBACK CRM
     try:
         from services.action_executor import execute_agent_crm_tool
         exec_res = execute_agent_crm_tool(act_name, params)
@@ -606,8 +650,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
         logger.error("[Action] Fallback CRM échec : %s", exc)
         _err = {"status": "error", "message": f"Erreur critique : {exc}"}
         _log_episode_safe(
-            action=_original_action,
-            status="error",
+            action=_original_action, status="error",
             latency_ms=int((time.time() - _t0) * 1000),
             error_type=f"crm_exception: {exc}"[:100],
             message=_err["message"],
@@ -617,40 +660,31 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
 
 # ══════════════════════════════════════════════════════════════════════════════
 # RÉSUMÉ POUR DEBUG
-# ══════════════════════════════════════════════════════════════════════════════
+# ==============================================================================
 
 def get_actions_summary() -> dict:
-    """Résumé des actions disponibles."""
     return {
-        "version": "1.2",
+        "version": "1.4.2",
         "functions": [
-            "_extract_first_action",
-            "_execute_action_unified",
-            "_log_episode_safe",
-            "_detect_web_sync_dag_usage",
+            "_extract_first_action", "_execute_action_unified",
+            "_log_episode_safe", "_detect_web_sync_dag_usage",
+            "_clean_str_param", "_clean_action_params",
         ],
-        "connecteurs": {
-            "episode_logger": "✅ branché (message tronqué 500 chars)",
-            "dag_engine": "✅ branché (web_sync + orchestrate)",
-            "dag_diagnostic": "✅ actif (✓/✗ dans les logs)",
-        },
         "patches": {
-            "patch_a_troncature": "✅ message limité à 500 chars",
-            "patch_b_diagnostic_dag": "✅ logs explicites ✓/✗",
-            "patch_c_detection_dag_interne": "✅ détection auto web_sync",
+            "v1.4.0_clean_spaces": "✅ 'x. jpg' → 'x.jpg'",
+            "v1.4.1_targeted_clean": "✅ Nettoie UNIQUEMENT chemins",
+            "v1.4.1_uuid_fix": "✅ '1c8a -4333' → '1c8a-4333'",
+            "v1.4.2_resolve_before_agnes": "✅ Résout uploads/ AVANT appel direct Agnes",
         },
         "handled_actions": [
             "generate_image", "edit_image",
-            "generate_video", "edit_video",
+            "generate_video (avec image_paths)", "edit_video",
             "extend_video", "extend_video_multiple",
             "generate_subtitles", "burn_subtitles",
-            "headless_scrape",
-            "web_sync",
-            "headless_search → web_sync (redirection automatique)",
+            "headless_scrape", "web_sync",
             "orchestrate", "create_dynamic_skill",
             "run_script", "execute_command",
             "save_memory", "search_memory",
             "write_file", "read_file",
         ],
-        "headless_search_status": "déprécié — redirigé vers web_sync",
     }

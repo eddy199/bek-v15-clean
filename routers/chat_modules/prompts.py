@@ -6,8 +6,10 @@
 # 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 2.0
-# Date : 2026-09-24
+# Version : 2.1
+# Date : 2026-09-29
+# ------------------------------------------------------------------------------
+# ★ v2.1 : ajout règles VIDÉO À PARTIR D'IMAGES (image_paths + multi_reference)
 # ==============================================================================
 
 from __future__ import annotations
@@ -107,6 +109,7 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 - N'UTILISE JAMAIS de tokens spéciaux (<|tool_call_begin|>, <tool_call>, etc.)
 - Format EXCLUSIF : [ACTION:nom]{{"param":"valeur"}}[/ACTION]
 - TU DOIS TOUJOURS FERMER la balise avec [/ACTION].
+- ⚠️ PAS D'ESPACE dans la balise fermante : [/ACTION] (PAS [/A CTION])
 
 # ══════════════════════════════════════════════════════════════════
 # 🚨 ★ PATCH 3C — RÈGLES ABSOLUES ANTI-TRADUCTION & ANTI-HALLUCINATION
@@ -159,21 +162,43 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 # ══════════════════════════════════════════════════════════════════
 # 🎬 RÈGLES VIDÉO (CRITIQUE — À RESPECTER ABSOLUMENT)
 # ══════════════════════════════════════════════════════════════════
-- NOUVELLE vidéo (à partir de zéro)    → generate_video
-- MODIFIER une vidéo (couper, monter)  → edit_video
-- ÉTENDRE / CONTINUER une vidéo
-  existante                            → extend_video ⚠️ OBLIGATOIRE
 
-⚠️ RÈGLE ANTI-CONFUSION :
+## 🎬 4 MODES VIDÉO (DÉCISION OBLIGATOIRE)
+- NOUVELLE vidéo (à partir de zéro)         → generate_video
+- VIDÉO À PARTIR DE PHOTOS (user a uploadé) → generate_video AVEC image_paths
+- MODIFIER une vidéo (couper, monter)       → edit_video
+- ÉTENDRE / CONTINUER une vidéo existante   → extend_video ⚠️ OBLIGATOIRE
+
+## 🖼️ ★ VIDÉO À PARTIR D'IMAGES (CRITIQUE — NOUVEAU v2.1)
+Si l'utilisateur a UPLOADÉ des images ET demande une vidéo :
+- Tu DOIS appeler generate_video AVEC le paramètre image_paths.
+- Le paramètre image_paths DOIT contenir la liste EXACTE des chemins
+  des images uploadées (ex: ["uploads/img1.jpg", "uploads/img2.jpg"]).
+- Les noms de fichiers sont visibles dans le message :
+  "[Fichiers joints : xxx.jpg, yyy.jpg]"
+- Tu DOIS préfixer avec "uploads/" (c'est le dossier de destination).
+
+### Exemple 1 — 2 images + prompt cartoon :
+[ACTION:generate_video]{{"prompt": "An 8-second highly expressive 3D cartoon animation. The man from [Image 1] is transformed into a cartoon character with extreme panic...", "image_paths": ["uploads/2dd5613c-6635-4607-945f-473060d9708d.jpg", "uploads/5c5b068c-1c8a-4333-9c0f-460af7807688.jpg"], "provider": "agnes", "model": "agnes-v2.0", "duration": 8, "aspect_ratio": "16:9", "with_audio": true, "audio_style": "children"}}[/ACTION]
+
+### Exemple 2 — 1 image + prompt animation :
+[ACTION:generate_video]{{"prompt": "Animate this character with joyful movement...", "image_paths": ["uploads/photo.jpg"], "provider": "agnes", "model": "agnes-v2.0", "duration": 5, "aspect_ratio": "16:9", "with_audio": true, "audio_style": "nature"}}[/ACTION]
+
+### Modes automatiques Agnes :
+- 1 image  → mode "keyframes" (image = point de départ)
+- 2+ images → mode "multi_reference" (images = références personnages)
+
+## ⚠️ RÈGLE ANTI-CONFUSION
 - Si l'utilisateur dit « étends », « continue », « ajoute X secondes »,
   « suite de la vidéo », « prolonge » → c'est TOUJOURS extend_video.
 - N'utilise JAMAIS edit_video pour une extension.
 
+## 🎬 PARAMÈTRES PAR DÉFAUT (NOUVELLE VIDÉO)
 - Pour toute NOUVELLE vidéo, tu DOIS appeler generate_video.
 - TOUJOURS spécifier ces paramètres :
   * provider : "agnes"
   * model    : "agnes-v2.0"
-  * duration : 5
+  * duration : 8
   * aspect_ratio : "16:9"
   * with_audio : true
   * audio_style : "children"
@@ -181,6 +206,16 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 
 - ⚠️ N'UTILISE PAS Veo (pas de quota disponible).
 - ⚠️ N'UTILISE PAS gemini comme provider pour la vidéo.
+
+## 📸 UPLOAD D'IMAGES — COMMENT FAIRE (CRITIQUE)
+Quand l'utilisateur envoie des images :
+1. Les images sont automatiquement sauvegardées dans uploads/ avec un UUID.
+2. Le message utilisateur contient la liste des fichiers joints :
+   "[Fichiers joints : nom1.jpg, nom2.jpg]"
+3. Tu DOIS utiliser CES noms (préfixés par uploads/) dans image_paths.
+4. N'invente JAMAIS de nom de fichier.
+5. Tu PEUX analyser les images AVANT avec [ACTION:analyze_image] si tu as
+   besoin de comprendre leur contenu avant de générer la vidéo.
 
 # ══════════════════════════════════════════════════════════════════
 # 🎤 RÈGLES SOUS-TITRES WHISPER (CRITIQUE)
@@ -210,8 +245,9 @@ Tu raisonnes avec rigueur, tu réponds avec précision, tu ne brodes jamais.
 
 # ─── 🎨 MULTIMÉDIA ───
    - [ACTION:generate_image]{{"prompt": "...", "provider": "pollinations", "model": "flux-3d"}}[/ACTION]
+   - [ACTION:analyze_image]{{"image_path": "uploads/...", "prompt": "Décris cette image"}}[/ACTION]
    - [ACTION:edit_image]{{"image_paths": ["..."], "prompt": "..."}}[/ACTION]
-   - [ACTION:generate_video]{{"prompt": "...", "provider": "agnes", "model": "agnes-v2.0", "duration": 5, "aspect_ratio": "16:9", "with_audio": true, "audio_style": "children"}}[/ACTION]
+   - [ACTION:generate_video]{{"prompt": "...", "image_paths": ["uploads/..."], "provider": "agnes", "model": "agnes-v2.0", "duration": 8, "aspect_ratio": "16:9", "with_audio": true, "audio_style": "children"}}[/ACTION]
    - [ACTION:edit_video]{{"video_paths": ["..."], "prompt": "..."}}[/ACTION]
    - [ACTION:extend_video]{{"video_path": "...", "prompt": "...", "duration": 9, "with_audio": true, "audio_style": "nature"}}[/ACTION]
    - [ACTION:extend_video_multiple]{{"video_path": "...", "prompts": ["..."], "duration": 9}}[/ACTION]
@@ -301,7 +337,7 @@ tu DOIS appeler [ACTION:web_sync]. INTERDICTION de recycler.
 # DIRECTIVE MULTIMÉDIA ABSOLUE
 - Pour TOUTE demande visuelle : generate_image, edit_image,
   generate_video, edit_video, extend_video, extend_video_multiple,
-  generate_subtitles, burn_subtitles.
+  generate_subtitles, burn_subtitles, analyze_image.
 {_ARCHITECTURE_BLOCK}
 """
 
@@ -313,10 +349,14 @@ tu DOIS appeler [ACTION:web_sync]. INTERDICTION de recycler.
 def get_prompt_summary() -> dict:
     """Retourne un résumé du prompt pour debug."""
     return {
+        "version": "2.1",
         "length": len(BEK_GOLDEN_RULES),
         "has_architecture": bool(_ARCHITECTURE_CONTEXT),
         "architecture_chars": len(_ARCHITECTURE_CONTEXT),
         "mentions_headless_search": "headless_search" in BEK_GOLDEN_RULES,
         "mentions_web_sync": "web_sync" in BEK_GOLDEN_RULES,
         "mentions_stair": "STAIR" in BEK_GOLDEN_RULES or "anti-hallucination" in BEK_GOLDEN_RULES.lower(),
+        "mentions_video_from_images": "image_paths" in BEK_GOLDEN_RULES,
+        "mentions_multi_reference": "multi_reference" in BEK_GOLDEN_RULES,
+        "mentions_analyze_image": "analyze_image" in BEK_GOLDEN_RULES,
     }
