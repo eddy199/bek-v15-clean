@@ -1,11 +1,18 @@
 # ==============================================================================
-# BEK-v16 — Vision / Agnes Client (v32.4 — Limites frames par résolution)
+# BEK-v16 — Vision / Agnes Client (v32.5 — Fix dimensions par résolution)
 # ------------------------------------------------------------------------------
-# v32.4 (2026-10-01) : ★ Fix limite 1080P
-#   - 1080P : max 241 frames (10s)  ← AVANT : plantait si > 241
+# v32.4 (2026-10-01) : ★ Limites frames par résolution
+#   - 1080P : max 241 frames (10s)
 #   - 720P  : max 481 frames (20s)
 #   - 480P  : max 961 frames (40s)
-#   - Le code ajuste automatiquement à la limite de la résolution choisie
+#
+# v32.5 (2026-10-01) : ★ FIX DIMENSIONS (BUG CRITIQUE)
+#   - Le payload envoie maintenant width/height adaptés à la résolution :
+#     * 720P  → 1280x720
+#     * 480P  → 854x480
+#     * 1080P → 1920x1080
+#   - AVANT : width/height étaient TOUJOURS 1920x1080, donc Agnes croyait
+#     qu'on était en 1080P et refusait > 241 frames même si on demandait 720P.
 # ==============================================================================
 from __future__ import annotations
 
@@ -75,7 +82,7 @@ def _agnes_seconds_to_frames_optimal(
         return AGNES_V2_MIN_FRAMES
 
     if target_frames >= max_frames:
-        # ★ Ajuster au max de la grille 8n+1 <= max_frames
+        # Ajuster au max de la grille 8n+1 <= max_frames
         n_max = (max_frames - 1) // 8
         frames = 8 * n_max + 1
         if frames > max_frames:
@@ -93,6 +100,28 @@ def _agnes_seconds_to_frames_optimal(
     frames = 8 * n_max + 1
     frames = max(AGNES_V2_MIN_FRAMES, min(max_frames, frames))
     return frames
+
+
+def _get_dimensions_for_resolution(resolution: str, aspect_ratio: str) -> tuple:
+    """
+    ★ v32.5 — Retourne (width, height) selon résolution + aspect_ratio.
+    """
+    res_upper = resolution.upper()
+    if res_upper == "720P":
+        base_w, base_h = 1280, 720
+    elif res_upper == "480P":
+        base_w, base_h = 854, 480
+    else:  # 1080P par défaut
+        base_w, base_h = 1920, 1080
+
+    if aspect_ratio == "16:9":
+        return base_w, base_h
+    elif aspect_ratio == "9:16":
+        return base_h, base_w
+    elif aspect_ratio == "1:1":
+        return base_h, base_h
+    else:
+        return base_w, base_h
 
 
 def _enrich_prompt_with_audio(prompt, with_audio, audio_style="default"):
@@ -169,7 +198,7 @@ def _load_image_as_base64_pure(image_path_or_data: str) -> str:
 
 
 # ==============================================================================
-# ★ v32.4 — CRÉATION DE TÂCHE avec limite par résolution
+# ★ v32.5 — CRÉATION DE TÂCHE (dimensions + limite par résolution)
 # ==============================================================================
 def _agnes_create_task(
     prompt: str,
@@ -186,10 +215,10 @@ def _agnes_create_task(
     """
     Crée une tâche Agnes.
 
-    ★ v32.4 — La limite de frames est calculée selon la résolution :
-      - 1080P : max 241 frames (10s)
-      - 720P  : max 481 frames (20s)
-      - 480P  : max 961 frames (40s)
+    ★ v32.5 — Les dimensions width/height sont maintenant ajustées :
+      - 1080P : 1920x1080 (max 241 frames)
+      - 720P  : 1280x720  (max 481 frames)
+      - 480P  : 854x480   (max 961 frames)
     """
     ep = _get_agnes_endpoints(model_id)
     url = ep["create_url"]
@@ -198,7 +227,7 @@ def _agnes_create_task(
     is_v25 = _is_agnes_v25(model_id)
 
     logger.info(
-        "[vision.agnes] v32.4 create_task model=%s is_v25=%s mode=%s resolution=%s",
+        "[vision.agnes] v32.5 create_task model=%s is_v25=%s mode=%s resolution=%s",
         model_id, is_v25, mode, resolution,
     )
 
@@ -218,18 +247,15 @@ def _agnes_create_task(
 
     # ─── Agnes V2.0 : width/height + num_frames ───
     if ep.get("is_v2", False):
-        if aspect_ratio == "16:9":
-            payload["width"] = 1920
-            payload["height"] = 1080
-        elif aspect_ratio == "9:16":
-            payload["width"] = 1080
-            payload["height"] = 1920
-        elif aspect_ratio == "1:1":
-            payload["width"] = 1080
-            payload["height"] = 1080
-        else:
-            payload["width"] = 1920
-            payload["height"] = 1080
+        # ★ v32.5 — Dimensions adaptées à la résolution
+        width, height = _get_dimensions_for_resolution(resolution, aspect_ratio)
+        payload["width"] = width
+        payload["height"] = height
+
+        logger.info(
+            "[vision.agnes] Dimensions : %dx%d @ %s (%s)",
+            width, height, resolution, aspect_ratio,
+        )
 
         # ★ v32.4 — Calcul intelligent selon résolution
         num_frames = _agnes_seconds_to_frames_optimal(
