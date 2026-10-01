@@ -120,4 +120,13 @@ test_*.png
 test_*.mp4
 # Local backups
 *.backup-*
-*.backupdata/analytics.duckdb.wal 
+
+# ★ BEK-v18 additions (2026-10-01)
+data/analytics.duckdb.wal
+data/analytics.duckdb
+data/bek_eco_cache.json
+data/bek_eco_cache.json.bak
+logs_video.txt
+run_logs.txt
+test.txt
+*.duckdb.wal

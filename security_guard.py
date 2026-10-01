@@ -82,7 +82,7 @@ class SecurityGuard:
         "create_zip": ("folder_path", "output_zip", "provider", "model"),
         "analyze_zip_content": ("zip_path", "provider", "model"),
 
-        # Multimédia
+                # Multimédia
         "analyze_image": ("image_path", "prompt", "provider", "model"),
         "generate_image": ("prompt", "filename", "provider", "model"),
         "merge_and_edit_images": (
@@ -90,6 +90,35 @@ class SecurityGuard:
             "prompt",
             "provider",
             "model",
+        ),
+
+        # ★ PATCH — Vidéo (Agnes 2.0)
+        "generate_video": (
+            "prompt", "image_paths", "reference_images",
+            "provider", "model", "duration", "aspect_ratio",
+            "with_audio", "audio_style", "resolution",
+            "negative_prompt", "style_preset", "filename",
+        ),
+        "edit_video": (
+            "video_path", "prompt", "provider", "model",
+            "with_audio", "audio_style", "filename",
+        ),
+        "extend_video": (
+            "video_path", "prompt", "provider", "model",
+            "duration", "with_audio", "audio_style",
+            "resolution", "filename",
+        ),
+        "extend_video_multiple": (
+            "video_path", "prompts", "provider", "model",
+            "duration", "with_audio", "audio_style",
+            "resolution", "filename",
+        ),
+        "generate_subtitles": (
+            "video_path", "provider", "model", "filename",
+        ),
+        "burn_subtitles": (
+            "video_path", "subtitle_path", "provider", "model",
+            "filename",
         ),
 
         # Terminal / Background

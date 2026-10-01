@@ -37,7 +37,7 @@ logger = logging.getLogger("bek.hermes")
 # CONFIGURATION
 # ==============================================================================
 DEFAULT_MAX_WORKERS = 10
-DEFAULT_TASK_TIMEOUT = 15
+DEFAULT_TASK_TIMEOUT = 300   # ★ v4.1 — 5 min (Agnes vidéo = 2-3 min)
 MIN_WORKERS = 1
 MAX_WORKERS = 64
 MIN_TASK_TIMEOUT = 1
