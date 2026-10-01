@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# NERF 3 — UNIFICATION EVENTBUS (v18.7)
+# NERF 3 — UNIFICATION EVENTBUS (v18.8)
 # nerves/event_bus_nerves.py
 # ------------------------------------------------------------------------------
 # Pont EventBusKafka (sync) <-> EventBusClient (async)
@@ -8,6 +8,7 @@
 # Corrections :
 #   - Anti-boucle robuste par bridge_id persistant.
 #   - ★ v18.7 : Pont Async→Kafka DÉSACTIVÉ (cause de boucle infinie).
+#   - ★ v18.8 : Cache de dédup par correlation_id (anti-flood).
 #   - FIFO borné pour les événements traités.
 #   - Topics dérivés de EventBusKafka.VALID_TOPICS.
 #   - Propagation correcte de correlation_id.
@@ -50,6 +51,10 @@ _MAX_ASYNC_WORKERS = 4
 _MAX_PROCESSED_IDS = 10000
 _BRIDGE_TIMEOUT_SEC = 5.0
 
+# ★ v18.8 — Anti-flood par correlation_id
+_DEDUP_WINDOW_SEC = 5.0
+_MAX_DEDUP_ENTRIES = 2000
+
 _DEFAULT_KAFKA_TOPICS: Set[str] = {
     "web-cleaned",
     "skills-index",
@@ -84,6 +89,10 @@ class EventBusBridge:
         self._processed_keys_order: Deque[str] = deque()
         self._processed_lock = threading.Lock()
 
+        # ★ v18.8 — Cache de dédup par correlation_id
+        self._recent_publishes: Dict[str, float] = {}
+        self._dedup_lock = threading.Lock()
+
         self._kafka_bus: Any = None
         self._async_bus: Any = None
 
@@ -101,6 +110,7 @@ class EventBusBridge:
             "async_to_kafka_count": 0,
             "dropped_count": 0,
             "error_count": 0,
+            "dedup_skipped_count": 0,   # ★ v18.8
         }
         self._stats_lock = threading.Lock()
 
@@ -134,6 +144,38 @@ class EventBusBridge:
             self._processed_keys_order.append(key)
             self._processed_keys_set.add(key)
             return True
+
+    # --------------------------------------------------------------------------
+    # ★ v18.8 — DÉDUP PAR CORRELATION_ID (anti-flood)
+    # --------------------------------------------------------------------------
+
+    def _is_duplicate_publish(self, correlation_id: str) -> bool:
+        """
+        Retourne True si le même correlation_id a déjà été publié
+        dans les _DEDUP_WINDOW_SEC dernières secondes.
+        """
+        if not correlation_id:
+            return False
+
+        now = time.time()
+        with self._dedup_lock:
+            last = self._recent_publishes.get(correlation_id, 0.0)
+            if now - last < _DEDUP_WINDOW_SEC:
+                self._stats["dedup_skipped_count"] = (
+                    self._stats.get("dedup_skipped_count", 0) + 1
+                )
+                return True
+
+            self._recent_publishes[correlation_id] = now
+
+            # Nettoyage périodique
+            if len(self._recent_publishes) > _MAX_DEDUP_ENTRIES:
+                cutoff = now - _DEDUP_WINDOW_SEC
+                self._recent_publishes = {
+                    k: v for k, v in self._recent_publishes.items()
+                    if v > cutoff
+                }
+            return False
 
     # --------------------------------------------------------------------------
     # STATS
@@ -249,12 +291,9 @@ class EventBusBridge:
                         )
 
             # ★ v18.7 — Async -> Kafka DÉSACTIVÉ (boucle infinie)
-            # Le pont Async→Kafka provoquait une boucle infinie sur
-            # 'skills-index' car asyncio.run() dans _publish_async_safely
-            # crée une nouvelle event loop qui perd le bridge_id.
             async_subscribers_registered = 0
             logger.info(
-                "🔇 [Nerf 3] Pont Async→Kafka DÉSACTIVÉ (anti-boucle v18.7)"
+                "[Nerf 3] Pont Async->Kafka DESACTIVE (anti-boucle v18.7)"
             )
 
             # MODE
@@ -266,11 +305,12 @@ class EventBusBridge:
             self._activated = True
 
             logger.info(
-                "🌉 [Nerf 3] EventBus activé | mode=%s | "
-                "Kafka→Async=%d | Async→Kafka=%d",
+                "[Nerf 3] EventBus active | mode=%s | "
+                "Kafka->Async=%d | Async->Kafka=%d | dedup_window=%.1fs",
                 self._mode,
                 kafka_subscribers_registered,
                 async_subscribers_registered,
+                _DEDUP_WINDOW_SEC,
             )
 
             return {
@@ -282,7 +322,8 @@ class EventBusBridge:
                 "topics": sorted(self._active_topics),
                 "max_workers": _MAX_ASYNC_WORKERS,
                 "bridge_id": self._bridge_id,
-                "note": "Async→Kafka disabled (anti-loop v18.7)",
+                "dedup_window_sec": _DEDUP_WINDOW_SEC,
+                "note": "Async->Kafka disabled + dedup correlation_id (v18.8)",
             }
 
     # --------------------------------------------------------------------------
@@ -361,7 +402,7 @@ class EventBusBridge:
 
             except Exception as exc:
                 self._increment_stat("error_count")
-                logger.debug("[Nerf 3] Kafka→Async erreur : %s", exc)
+                logger.debug("[Nerf 3] Kafka->Async erreur : %s", exc)
 
         return _callback
 
@@ -409,7 +450,7 @@ class EventBusBridge:
             logger.debug("[Nerf 3] Async publish échoué : %s", exc)
 
     # --------------------------------------------------------------------------
-    # API UNIFIÉE
+    # ★ API UNIFIÉE (avec dédup v18.8)
     # --------------------------------------------------------------------------
 
     def publish_unified(
@@ -421,6 +462,14 @@ class EventBusBridge:
             payload = {}
 
         correlation_id = str(payload.get("correlation_id") or "")
+
+        # ★ v18.8 — Dédup : skip si même correlation_id dans les 5s
+        if self._is_duplicate_publish(correlation_id):
+            logger.debug(
+                "[Nerf 3] Dedup skip | topic=%s | corr=%s",
+                topic, correlation_id[:20],
+            )
+            return correlation_id
 
         # Kafka
         try:
@@ -471,6 +520,9 @@ class EventBusBridge:
         with self._processed_lock:
             processed_count = len(self._processed_keys_set)
 
+        with self._dedup_lock:
+            dedup_entries = len(self._recent_publishes)
+
         return {
             "activated": self._activated,
             "mode": self._mode,
@@ -480,6 +532,9 @@ class EventBusBridge:
             "processed_keys_count": processed_count,
             "max_processed_keys": _MAX_PROCESSED_IDS,
             "max_async_workers": _MAX_ASYNC_WORKERS,
+            "dedup_window_sec": _DEDUP_WINDOW_SEC,
+            "dedup_entries": dedup_entries,
+            "max_dedup_entries": _MAX_DEDUP_ENTRIES,
             "bridge_id": self._bridge_id,
             "stats": stats,
         }
@@ -501,7 +556,7 @@ class EventBusBridge:
                 self._async_executor = None
 
             self._activated = False
-            logger.info("🌉 [Nerf 3] EventBus bridge arrêté")
+            logger.info("[Nerf 3] EventBus bridge arrêté")
 
 
 # ------------------------------------------------------------------------------
@@ -537,7 +592,7 @@ def activate_event_bus_nerves() -> Dict[str, Any]:
     try:
         bridge = get_event_bus_bridge()
         result = bridge.activate()
-        logger.info("✅ [Nerf 3] Activation : %s", result.get("status"))
+        logger.info("[Nerf 3] Activation : %s", result.get("status"))
         return result
     except Exception as exc:
         logger.error("[Nerf 3] Activation échouée : %s", exc)
