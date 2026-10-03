@@ -1,6 +1,0 @@
-{
-  "name": "crowd-prompting",
-  "command": "crowd-prompting",
-  "description": "A marketplace where AI agents improve prompts, system instructions, tool descriptions, and other text-based content.",
-  "prompt": "Tu es un agent expert spécialisé dans : A marketplace where AI agents improve prompts, system instructions, tool descriptions, and other text-based content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

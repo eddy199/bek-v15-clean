@@ -6,14 +6,19 @@
 # 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 1.0
-# Date : 2026-09-24
+# Version : 1.2
+# Date : 2026-10-03
+# ------------------------------------------------------------------------------
+# ★ v1.1 — FIX web_sync : cherche le contenu dans plusieurs clés possibles
+# ★ v1.2 — Compteur de sources + avertissement si < 3 sources
+#           Tri par fraîcheur (détection "2026", "aujourd'hui", "récent")
 # ==============================================================================
 
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Optional
+import re
+from typing import Any, Dict, List, Optional, Tuple
 
 from . import config as cfg
 
@@ -25,14 +30,7 @@ logger = logging.getLogger("BEKApp")
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _is_poor_result(exec_res: Optional[dict], act_name: str) -> bool:
-    """
-    Détecte si un résultat est "pauvre" (nécessite un fallback).
-
-    Règles :
-        - headless_search : pauvre si 0 leads
-        - headless_scrape : pauvre si HTML < 200 chars
-        - web_sync : pauvre si rapport < 200 chars
-    """
+    """Détecte si un résultat est "pauvre" (nécessite un fallback)."""
     if not isinstance(exec_res, dict):
         return True
     if exec_res.get("status") != "success":
@@ -47,10 +45,144 @@ def _is_poor_result(exec_res: Optional[dict], act_name: str) -> bool:
         return len(html) < cfg.POOR_RESULT_THRESHOLD
 
     if act_name == "web_sync":
-        report = exec_res.get("report", "") or ""
-        return len(str(report)) < cfg.POOR_RESULT_THRESHOLD
+        content = _extract_web_sync_content(exec_res)
+        return len(content) < cfg.POOR_RESULT_THRESHOLD
 
     return False
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v1.1 — EXTRACTION TOLÉRANTE DU CONTENU WEB_SYNC
+# ══════════════════════════════════════════════════════════════════════════════
+
+_WEB_SYNC_CONTENT_KEYS = (
+    "report", "synthesis", "summary", "content",
+    "result", "text", "message", "data", "answer", "response", "output",
+)
+
+
+def _extract_web_sync_content(exec_res: dict) -> str:
+    """Extrait le contenu exploitable d'un résultat web_sync."""
+    if not isinstance(exec_res, dict):
+        return ""
+
+    best_content = ""
+    best_key = ""
+
+    for key in _WEB_SYNC_CONTENT_KEYS:
+        val = exec_res.get(key)
+        if val is None:
+            continue
+        val_str = str(val).strip()
+        if len(val_str) > len(best_content):
+            best_content = val_str
+            best_key = key
+
+    if not best_content or len(best_content) < 100:
+        for key, val in exec_res.items():
+            if val is None:
+                continue
+            val_str = str(val).strip()
+            if len(val_str) > len(best_content):
+                best_content = val_str
+                best_key = key
+
+    if best_content:
+        logger.info(
+            "[Formatter web_sync] Contenu extrait : clé=%r | %d chars",
+            best_key, len(best_content),
+        )
+
+    return best_content
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v1.2 — ANALYSE DES SOURCES
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Regex pour détecter les URLs dans le rapport web_sync
+_URL_REGEX = re.compile(r"<(https?://[^\s>]+)>", re.IGNORECASE)
+
+# Mots-clés de fraîcheur
+_FRESHNESS_KEYWORDS = (
+    "aujourd'hui", "aujourd", "récent", "récente",
+    "2026", "2025", "ce matin", "cette semaine",
+    "il y a", "dernière", "dernier", "actuel",
+)
+
+# Seuil minimum de sources recommandé
+_MIN_SOURCES_RECOMMENDED = 3
+
+
+def _extract_sources_from_report(report_str: str) -> List[Tuple[str, str]]:
+    """
+    Extrait les URLs et leurs descriptions depuis le rapport web_sync.
+
+    Returns:
+        Liste de tuples (url, description_courte)
+    """
+    if not report_str:
+        return []
+
+    sources: List[Tuple[str, str]] = []
+
+    # Chercher les URLs au format <https://...>
+    for match in _URL_REGEX.finditer(report_str):
+        url = match.group(1).strip()
+        # Prendre 200 chars autour de l'URL pour la description
+        start = max(0, match.start() - 100)
+        end = min(len(report_str), match.end() + 200)
+        context = report_str[start:end].replace("\n", " ").strip()
+        sources.append((url, context))
+
+    # Dédupliquer par URL
+    seen = set()
+    unique_sources = []
+    for url, desc in sources:
+        if url not in seen:
+            seen.add(url)
+            unique_sources.append((url, desc))
+
+    return unique_sources
+
+
+def _has_freshness_indicators(text: str) -> bool:
+    """Détecte si le texte contient des indicateurs de fraîcheur."""
+    if not text:
+        return False
+    text_lower = text.lower()
+    return any(kw in text_lower for kw in _FRESHNESS_KEYWORDS)
+
+
+def _build_sources_warning(nb_sources: int, has_freshness: bool) -> str:
+    """Construit un avertissement si le nombre de sources est faible."""
+    if nb_sources >= _MIN_SOURCES_RECOMMENDED:
+        return ""
+
+    if nb_sources == 0:
+        return (
+            "\n\n⚠️ **Aucune source détectée dans le rapport.**\n"
+            "Les informations peuvent être incomplètes.\n"
+        )
+
+    warning = (
+        f"\n\n⚠️ **Peu de sources ({nb_sources})** — "
+        f"recommandé : {_MIN_SOURCES_RECOMMENDED} minimum.\n"
+    )
+    if not has_freshness:
+        warning += "⚠️ **Aucun indicateur de fraîcheur détecté.**\n"
+
+    return warning
+
+
+def _build_sources_header(nb_sources: int, has_freshness: bool) -> str:
+    """Construit l'en-tête avec le compteur de sources."""
+    freshness_icon = "🟢" if has_freshness else "🟡"
+    return (
+        f"🌐 **Veille web approfondie** "
+        f"({nb_sources} source{'s' if nb_sources != 1 else ''} analysée"
+        f"{'s' if nb_sources != 1 else ''}) {freshness_icon}\n\n"
+    )
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -58,23 +190,19 @@ def _is_poor_result(exec_res: Optional[dict], act_name: str) -> bool:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _format_execution_result(act_name: str, exec_res: dict) -> str:
-    """
-    Formate le résultat d'une action pour injection dans le prompt.
-    """
+    """Formate le résultat d'une action pour injection dans le prompt."""
     if not isinstance(exec_res, dict):
         return str(exec_res)
 
     fn = exec_res.get("filename", "")
     srt_fn = exec_res.get("srt_filename", "")
 
-    # ─── SOUS-TITRES ───
     if act_name == "generate_subtitles" and exec_res.get("status") == "success":
         return _format_subtitles(exec_res, srt_fn)
 
     if act_name == "burn_subtitles" and exec_res.get("status") == "success" and fn:
         return _format_burned_subtitles(exec_res, fn)
 
-    # ─── IMAGE / VIDÉO ───
     if exec_res.get("status") == "success" and fn:
         if any(fn.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"]):
             return f"🎨 **Image générée !**\n\n![{fn}](/api/download/{fn})"
@@ -82,19 +210,15 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
         if any(fn.lower().endswith(ext) for ext in [".mp4", ".webm", ".mov", ".avi"]):
             return _format_video(exec_res, act_name, fn)
 
-    # ─── HEADLESS_SCRAPE ───
     if act_name == "headless_scrape":
         return _format_headless_scrape(exec_res)
 
-    # ─── HEADLESS_SEARCH (conservé pour compatibilité) ───
     if act_name == "headless_search":
         return _format_headless_search(exec_res)
 
-    # ─── WEB_SYNC ───
     if act_name == "web_sync":
         return _format_web_sync(exec_res)
 
-    # ─── FALLBACK ───
     return exec_res.get("message", "Opération OK")
 
 
@@ -103,11 +227,9 @@ def _format_execution_result(act_name: str, exec_res: dict) -> str:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _format_subtitles(exec_res: dict, srt_fn: str) -> str:
-    """Formate le résultat de generate_subtitles."""
     language = exec_res.get("language", "?")
     segments = exec_res.get("segments_count", 0)
     text_preview = exec_res.get("text", "")[:300]
-
     return (
         f"🎤 **Sous-titres générés !**\n"
         f"- Langue détectée : `{language}`\n"
@@ -119,9 +241,7 @@ def _format_subtitles(exec_res: dict, srt_fn: str) -> str:
 
 
 def _format_burned_subtitles(exec_res: dict, fn: str) -> str:
-    """Formate le résultat de burn_subtitles."""
     size_mb = exec_res.get("size_bytes", 0) / (1024 * 1024)
-
     return (
         f"🎬 **Vidéo sous-titrée !**\n"
         f"- Fichier : `{fn}`\n"
@@ -133,7 +253,6 @@ def _format_burned_subtitles(exec_res: dict, fn: str) -> str:
 
 
 def _format_video(exec_res: dict, act_name: str, fn: str) -> str:
-    """Formate le résultat de génération/édition/extension vidéo."""
     duration = exec_res.get("actual_duration") or exec_res.get("duration") or ""
     provider = exec_res.get("provider", "")
     model = exec_res.get("model_id", "")
@@ -189,7 +308,6 @@ def _format_video(exec_res: dict, act_name: str, fn: str) -> str:
 
 
 def _format_headless_scrape(exec_res: dict) -> str:
-    """Formate le résultat de headless_scrape."""
     if exec_res.get("status") != "success":
         return exec_res.get("message", "❌ headless_scrape a échoué")
 
@@ -220,7 +338,6 @@ def _format_headless_scrape(exec_res: dict) -> str:
 
 
 def _format_headless_search(exec_res: dict) -> str:
-    """Formate le résultat de headless_search (compatibilité)."""
     if not isinstance(exec_res, dict):
         return f"Résultat brut : {exec_res}"
 
@@ -255,12 +372,20 @@ def _format_headless_search(exec_res: dict) -> str:
 
 
 def _format_web_sync(exec_res: dict) -> str:
-    """Formate le résultat de web_sync (WebAgent profond)."""
+    """
+    Formate le résultat de web_sync (WebAgent profond).
+
+    ★ v1.1 — Tolérant : cherche le contenu dans plusieurs clés possibles
+    ★ v1.2 — Compteur de sources + avertissement si < 3 sources
+    """
+    if not isinstance(exec_res, dict):
+        return f"Résultat brut : {exec_res}"
+
     if exec_res.get("status") != "success":
         return exec_res.get("message", "❌ web_sync a échoué")
 
-    report = exec_res.get("report", "") or ""
-    report_str = str(report).strip()
+    # Extraction tolérante du contenu
+    report_str = _extract_web_sync_content(exec_res)
 
     if not report_str or len(report_str) < 100:
         return (
@@ -271,7 +396,24 @@ def _format_web_sync(exec_res: dict) -> str:
             "→ N'INVENTE AUCUNE actualité."
         )
 
-    return f"🌐 **Veille web approfondie** :\n\n{report_str[:5000]}"
+    # ★ v1.2 — Analyser les sources
+    sources = _extract_sources_from_report(report_str)
+    nb_sources = len(sources)
+    has_freshness = _has_freshness_indicators(report_str)
+
+    logger.info(
+        "[Formatter web_sync] Analyse : %d sources | fraîcheur=%s",
+        nb_sources, has_freshness,
+    )
+
+    # Construire la réponse avec header + avertissements
+    header = _build_sources_header(nb_sources, has_freshness)
+    warning = _build_sources_warning(nb_sources, has_freshness)
+
+    # Corps du rapport (tronqué à 5000 chars)
+    body = report_str[:5000]
+
+    return f"{header}{body}{warning}"
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -279,10 +421,15 @@ def _format_web_sync(exec_res: dict) -> str:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def get_formatters_summary() -> dict:
-    """Résumé des formateurs disponibles."""
     return {
+        "version": "1.2",
         "functions": [
             "_is_poor_result",
+            "_extract_web_sync_content",
+            "_extract_sources_from_report",
+            "_has_freshness_indicators",
+            "_build_sources_warning",
+            "_build_sources_header",
             "_format_execution_result",
             "_format_subtitles",
             "_format_burned_subtitles",
@@ -291,17 +438,14 @@ def get_formatters_summary() -> dict:
             "_format_headless_search",
             "_format_web_sync",
         ],
+        "min_sources_recommended": _MIN_SOURCES_RECOMMENDED,
+        "freshness_keywords": list(_FRESHNESS_KEYWORDS),
         "handled_actions": [
-            "generate_subtitles",
-            "burn_subtitles",
-            "generate_image",
-            "edit_image",
-            "generate_video",
-            "edit_video",
-            "extend_video",
-            "extend_video_multiple",
-            "headless_scrape",
-            "headless_search",
+            "generate_subtitles", "burn_subtitles",
+            "generate_image", "edit_image",
+            "generate_video", "edit_video",
+            "extend_video", "extend_video_multiple",
+            "headless_scrape", "headless_search",
             "web_sync",
         ],
     }

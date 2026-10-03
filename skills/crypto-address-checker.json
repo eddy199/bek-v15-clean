@@ -1,6 +1,0 @@
-{
-  "name": "crypto-address-checker",
-  "command": "crypto-address-checker",
-  "description": "Real-time cryptocurrency scam detection with database-first architecture.",
-  "prompt": "Tu es un agent expert spécialisé dans : Real-time cryptocurrency scam detection with database-first architecture..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

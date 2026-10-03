@@ -1,6 +1,0 @@
-{
-  "name": "terabox-link-extractor",
-  "command": "terabox-link-extractor",
-  "description": "Direct link extraction from TeraBox URLs using the XAPIverse protocol.",
-  "prompt": "Tu es un agent expert spécialisé dans : Direct link extraction from TeraBox URLs using the XAPIverse protocol..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

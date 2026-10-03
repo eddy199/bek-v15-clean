@@ -379,13 +379,19 @@ class HeadlessWorker:
         """
         Vérifie si le résultat est pertinent pour la requête.
 
-        Politique assouplie v17 :
-        - Si AUCUN keyword n'est trouvé → on GARDE quand même (mieux que 0)
-        - Un keyword suffit
-        - Si query a 1 seul keyword → on accepte plus large
+        Politique ASSOUPLIE v18.9 :
+        - Mots-clés forts (bitcoin, btc, news, etc.) → acceptation directe
+        - Split camelCase : "actualitésBitcoin" → ["actualités", "bitcoin"]
+        - Si 0 match mais query courte → acceptation (mieux que 0 résultat)
         """
+        # ★ v18.9 — Split camelCase et mots collés
+        raw_query = query or ""
+        # Insère un espace entre minuscule→majuscule et chiffre→lettre
+        spaced_query = re.sub(r"([a-zà-ÿ])([A-ZÀ-Ý])", r"\1 \2", raw_query)
+        spaced_query = re.sub(r"([A-Za-zÀ-ÿ])(\d)", r"\1 \2", spaced_query)
+
         keywords = [
-            w.lower() for w in re.findall(r"\w+", query or "")
+            w.lower() for w in re.findall(r"\w+", spaced_query)
             if len(w) >= 2 and w.lower() not in self._STOPWORDS
         ]
         if not keywords:
@@ -393,6 +399,22 @@ class HeadlessWorker:
 
         haystack = f"{title or ''} {url or ''}".lower()
 
+        # ★ v18.9 — Mots-clés forts : acceptation IMMÉDIATE
+        STRONG_KEYWORDS = {
+            "bitcoin", "btc", "crypto", "cryptomonnaie", "blockchain",
+            "news", "actualité", "actualités", "récent", "dernières",
+            "prix", "price", "market", "marché", "cours", "ethereum", "eth",
+            "bourse", "stock", "action", "finance", "economie", "économie",
+        }
+        title_lower = (title or "").lower()
+        if any(kw in title_lower for kw in STRONG_KEYWORDS):
+            logger.debug(
+                "[_is_relevant] Fort keyword détecté : '%s'",
+                title[:60]
+            )
+            return True
+
+        # Recherche de match standard
         matched = 0
         for kw in keywords:
             if re.search(rf"\b{re.escape(kw)}\b", haystack):
@@ -401,15 +423,15 @@ class HeadlessWorker:
         if matched >= 1:
             return True
 
-        if len(keywords) == 1 and len(title or "") > 30:
+        # ★ v18.9 — Assouplissement : query courte + titre long = OK
+        if len(keywords) <= 2 and len(title or "") > 15:
             logger.debug(
-                "[_is_relevant] Assoupli : '%s' accepté malgré 0 match (query 1 mot)",
-                title[:60]
+                "[_is_relevant] Assoupli (query %d mots) : '%s'",
+                len(keywords), title[:60]
             )
             return True
 
         return False
-
     @staticmethod
     def _is_noisy_content(text: str) -> bool:
         if not text or len(text) < 200:

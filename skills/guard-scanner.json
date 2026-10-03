@@ -1,6 +1,0 @@
-{
-  "name": "guard-scanner",
-  "command": "guard-scanner",
-  "description": "Security scanner for AI agent skills.",
-  "prompt": "Tu es un agent expert spécialisé dans : Security scanner for AI agent skills..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

@@ -1,6 +1,0 @@
-{
-  "name": "finance-news",
-  "command": "finance-news",
-  "description": "Market news briefings with AI summaries.",
-  "prompt": "Tu es un agent expert spécialisé dans : Market news briefings with AI summaries..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

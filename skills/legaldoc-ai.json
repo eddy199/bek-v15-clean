@@ -1,6 +1,0 @@
-{
-  "name": "legaldoc-ai",
-  "command": "legaldoc-ai",
-  "description": "**Category:** Legal / Professional Services.",
-  "prompt": "Tu es un agent expert spécialisé dans : **Category:** Legal / Professional Services..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

@@ -1,6 +1,0 @@
-{
-  "name": "3d-model-generation",
-  "command": "3d-model-generation",
-  "description": "Generate 3D models using each::sense AI.",
-  "prompt": "Tu es un agent expert spécialisé dans : Generate 3D models using each::sense AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

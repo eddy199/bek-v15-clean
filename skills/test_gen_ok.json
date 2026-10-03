@@ -1,7 +1,0 @@
-{
-  "name": "test_gen_ok",
-  "description": "Skill de test valide",
-  "entrypoint": "test_gen_ok.py",
-  "risk_level": "L2",
-  "hash_sha256": "fb36771c72c7ef0edc833e8944d25533a3f23c51df5b1212fcfe8e06eab84090"
-}

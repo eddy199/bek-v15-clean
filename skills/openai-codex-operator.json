@@ -1,6 +1,0 @@
-{
-  "name": "openai-codex-operator",
-  "command": "openai-codex-operator",
-  "description": "Run OpenAI Codex CLI from OpenClaw for coding tasks in a target project directory.",
-  "prompt": "Tu es un agent expert spécialisé dans : Run OpenAI Codex CLI from OpenClaw for coding tasks in a target project directory..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

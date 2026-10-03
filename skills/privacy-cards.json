@@ -1,6 +1,0 @@
-{
-  "name": "privacy-cards",
-  "command": "privacy-cards",
-  "description": "Create and manage Privacy.com virtual cards.",
-  "prompt": "Tu es un agent expert spécialisé dans : Create and manage Privacy.com virtual cards..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

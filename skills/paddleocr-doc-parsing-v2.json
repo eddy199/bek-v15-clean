@@ -1,6 +1,0 @@
-{
-  "name": "paddleocr-doc-parsing-v2",
-  "command": "paddleocr-doc-parsing-v2",
-  "description": "Parse documents using PaddleOCR's API.",
-  "prompt": "Tu es un agent expert spécialisé dans : Parse documents using PaddleOCR's API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

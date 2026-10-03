@@ -1,6 +1,0 @@
-{
-  "name": "loopuman-human-tasks",
-  "command": "loopuman-human-tasks",
-  "description": "Give your AI agent access to real human workers.",
-  "prompt": "Tu es un agent expert spécialisé dans : Give your AI agent access to real human workers..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

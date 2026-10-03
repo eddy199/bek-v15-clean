@@ -1,6 +1,0 @@
-{
-  "name": "gevety",
-  "command": "gevety",
-  "description": "Access your Gevety health data - biomarkers, healthspan scores, biological.",
-  "prompt": "Tu es un agent expert spécialisé dans : Access your Gevety health data - biomarkers, healthspan scores, biological..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

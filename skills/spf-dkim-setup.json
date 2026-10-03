@@ -1,6 +1,0 @@
-{
-  "name": "spf-dkim-setup",
-  "command": "spf-dkim-setup",
-  "description": "Manage DNS records via the Cloudflare API.",
-  "prompt": "Tu es un agent expert spécialisé dans : Manage DNS records via the Cloudflare API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

@@ -3,6 +3,11 @@ BEK-v15.2 HYBRID - Dynamic Skill Registry
 -----------------------------------------
 Module d'indexation, de scoring et de gestion des compétences (Skills)
 pour l'orchestrateur GOAP, Hermes Core V2 et SecurityGuard.
+
+v18.11 (2026-10-03) : Nettoyage
+  - SKILLS_DIR pointe UNIQUEMENT sur ./skills
+  - Suppression du dossier parasite awesome-openclaw-skills
+  - Filtre strict des extensions (.json, .md, .txt)
 """
 
 from __future__ import annotations
@@ -11,17 +16,19 @@ import json
 import logging
 import os
 import re
-import sys
 import threading
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger("bek.skill_registry")
 
+# ── Dossiers ────────────────────────────────────────────────────────────────
 WORKSPACE_DIR = Path(__file__).resolve().parent
-SKILLS_DIR = WORKSPACE_DIR / "awesome-openclaw-skills"
-FALLBACK_SKILLS_DIR = WORKSPACE_DIR / "skills"
+SKILLS_DIR = WORKSPACE_DIR / "skills"
+
+# Extensions autorisées pour les skills
+_ALLOWED_EXTENSIONS = {".json", ".md", ".txt"}
 
 
 @dataclass
@@ -68,11 +75,26 @@ class SkillRegistry:
     """
 
     def __init__(self, directories: Optional[List[Path]] = None):
-        self.directories = directories or [SKILLS_DIR, FALLBACK_SKILLS_DIR]
+        if directories is None:
+            dirs: List[Path] = [SKILLS_DIR]
+        else:
+            dirs = list(directories)
+
+        # Créer le dossier skills/ s'il n'existe pas
+        for d in dirs:
+            try:
+                d.mkdir(parents=True, exist_ok=True)
+            except Exception as exc:
+                logger.warning("Impossible de créer %s : %s", d, exc)
+
+        self.directories = dirs
         self.skills: Dict[str, Skill] = {}
         self._lock = threading.RLock()
         self._initialized = False
 
+    # ────────────────────────────────────────────────────────────────────────
+    # CHARGEMENT
+    # ────────────────────────────────────────────────────────────────────────
     def load_skills(self) -> int:
         """Scanne les répertoires et charge les skills avec leurs scores Neon DB."""
         scores_db = self._fetch_db_scores()
@@ -93,6 +115,10 @@ class SkillRegistry:
                 if not filepath.is_file() or filename.startswith("."):
                     continue
 
+                # Filtre strict par extension
+                if filepath.suffix.lower() not in _ALLOWED_EXTENSIONS:
+                    continue
+
                 try:
                     skill = self._parse_skill_file(filepath, scores_db)
                     if skill and skill.skill_id not in loaded_skills:
@@ -107,11 +133,14 @@ class SkillRegistry:
         logger.info("Skill Registry initialisé | %d skills chargées.", len(loaded_skills))
         return len(loaded_skills)
 
+    # ────────────────────────────────────────────────────────────────────────
+    # SCORES NEON DB
+    # ────────────────────────────────────────────────────────────────────────
     def _fetch_db_scores(self) -> Dict[str, Tuple[int, int, float]]:
         """Récupère les statistiques de performance depuis Neon DB si disponible."""
         scores: Dict[str, Tuple[int, int, float]] = {}
         try:
-            from memory import get_db_connection
+            from memory import get_db_connection  # type: ignore
             conn = get_db_connection()
             if not conn:
                 return scores
@@ -131,10 +160,17 @@ class SkillRegistry:
 
         return scores
 
+    # ────────────────────────────────────────────────────────────────────────
+    # PARSING
+    # ────────────────────────────────────────────────────────────────────────
     def _parse_skill_file(
         self, filepath: Path, scores_db: Dict[str, Tuple[int, int, float]]
     ) -> Optional[Skill]:
         """Convertit un fichier JSON, MD ou TXT en objet Skill unifié."""
+        # Double sécurité : vérifier l'extension
+        if filepath.suffix.lower() not in _ALLOWED_EXTENSIONS:
+            return None
+
         name = filepath.stem
         skill_id = re.sub(r"[^a-zA-Z0-9_]+", "_", name).lower().strip("_")
         if not skill_id:
@@ -188,11 +224,17 @@ class SkillRegistry:
 
         return None
 
+    # ────────────────────────────────────────────────────────────────────────
+    # API PUBLIQUE
+    # ────────────────────────────────────────────────────────────────────────
     def register_custom_skill(self, skill: Skill) -> None:
         """Enregistre ou met à jour dynamiquement une compétence à chaud."""
         with self._lock:
             self.skills[skill.skill_id] = skill
-            logger.info("Compétence manuelle enregistrée | id=%s | score=%.2f", skill.skill_id, skill.score)
+            logger.info(
+                "Compétence manuelle enregistrée | id=%s | score=%.2f",
+                skill.skill_id, skill.score,
+            )
 
     def get_skill(self, skill_id: str) -> Optional[Skill]:
         with self._lock:
@@ -228,7 +270,10 @@ class SkillRegistry:
         with self._lock:
             if not self._initialized:
                 self.load_skills()
-            return [s.to_dict() for s in sorted(self.skills.values(), key=lambda x: x.score, reverse=True)]
+            return [
+                s.to_dict()
+                for s in sorted(self.skills.values(), key=lambda x: x.score, reverse=True)
+            ]
 
     def record_feedback(self, skill_id: str, success: bool) -> None:
         """Met à jour le score en mémoire et persiste dans Neon DB."""
@@ -243,7 +288,7 @@ class SkillRegistry:
                     skill.score = max(0.1, skill.score - 0.2)
 
         try:
-            from app import record_skill_feedback
+            from app import record_skill_feedback  # type: ignore
             record_skill_feedback(skill_id, success)
         except Exception:
             pass

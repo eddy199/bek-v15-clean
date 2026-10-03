@@ -1,6 +1,0 @@
-{
-  "name": "agentmemory",
-  "command": "agentmemory",
-  "description": "End-to-end encrypted cloud memory for AI agents.",
-  "prompt": "Tu es un agent expert spécialisé dans : End-to-end encrypted cloud memory for AI agents..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

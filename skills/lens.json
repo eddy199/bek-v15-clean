@@ -1,6 +1,0 @@
-{
-  "name": "lens",
-  "command": "lens",
-  "description": "Use when you need your agent to see the world through your LENS.",
-  "prompt": "Tu es un agent expert spécialisé dans : Use when you need your agent to see the world through your LENS..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

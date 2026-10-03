@@ -1,6 +1,0 @@
-{
-  "name": "intomd",
-  "command": "intomd",
-  "description": "Fetch and convert any documentation URL to Markdown using into.md service.",
-  "prompt": "Tu es un agent expert spécialisé dans : Fetch and convert any documentation URL to Markdown using into.md service..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

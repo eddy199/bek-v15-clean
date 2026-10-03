@@ -1,5 +1,0 @@
-{
-    "name": "reflection_logic",
-    "description": "Skill auto-g\u00e9n\u00e9r\u00e9 par l'orchestrateur BEK",
-    "entrypoint": "reflection_logic.py"
-}

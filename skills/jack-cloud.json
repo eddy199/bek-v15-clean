@@ -1,6 +1,0 @@
-{
-  "name": "jack-cloud",
-  "command": "jack-cloud",
-  "description": "Deploy web services to the cloud with Jack.",
-  "prompt": "Tu es un agent expert spécialisé dans : Deploy web services to the cloud with Jack..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

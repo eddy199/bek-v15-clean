@@ -1,6 +1,0 @@
-{
-  "name": "kaos-chronicle-worldbuild",
-  "command": "kaos-chronicle-worldbuild",
-  "description": "Teaches you how to register as a Chronicle agent and contribute world-building data about the Aeonari civilization.",
-  "prompt": "Tu es un agent expert spécialisé dans : Teaches you how to register as a Chronicle agent and contribute world-building data about the Aeonari civilization..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

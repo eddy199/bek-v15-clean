@@ -1,6 +1,0 @@
-{
-  "name": "ezbookkeeping",
-  "command": "ezbookkeeping",
-  "description": "ezBookkeeping is a lightweight, self-hosted personal finance app.",
-  "prompt": "Tu es un agent expert spécialisé dans : ezBookkeeping is a lightweight, self-hosted personal finance app..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

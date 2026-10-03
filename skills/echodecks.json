@@ -1,6 +1,0 @@
-{
-  "name": "echodecks",
-  "command": "echodecks",
-  "description": "Integrates with EchoDecks for flashcard management, study sessions, and AI.",
-  "prompt": "Tu es un agent expert spécialisé dans : Integrates with EchoDecks for flashcard management, study sessions, and AI..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

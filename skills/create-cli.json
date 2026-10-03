@@ -1,6 +1,0 @@
-{
-  "name": "create-cli",
-  "command": "create-cli",
-  "description": "Design CLI arguments, flags, subcommands.",
-  "prompt": "Tu es un agent expert spécialisé dans : Design CLI arguments, flags, subcommands..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

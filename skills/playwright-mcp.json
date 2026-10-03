@@ -1,6 +1,0 @@
-{
-  "name": "playwright-mcp",
-  "command": "playwright-mcp",
-  "description": "Browser automation via Playwright MCP server.",
-  "prompt": "Tu es un agent expert spécialisé dans : Browser automation via Playwright MCP server..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

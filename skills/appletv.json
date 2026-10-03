@@ -1,6 +1,0 @@
-{
-  "name": "appletv",
-  "command": "appletv",
-  "description": "Control Apple TV via pyatv.",
-  "prompt": "Tu es un agent expert spécialisé dans : Control Apple TV via pyatv..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

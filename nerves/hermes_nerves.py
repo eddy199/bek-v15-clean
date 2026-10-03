@@ -216,7 +216,8 @@ def _handler_headless_scrape(url: str = "", **kwargs: Any) -> Dict[str, Any]:
 # ------------------------------------------------------------------------------
 
 NERVES_TABLE: Dict[str, tuple] = {
-    "web_sync":        (_handler_web_sync,        "L3"),
+    # ★ v18.9 — web_sync passe de L3 à L2 (auto-approuvé, plus rapide)
+    "web_sync":        (_handler_web_sync,        "L2"),
     "orchestrate":     (_handler_orchestrate,     "L2"),
     "neon_audit":      (_handler_neon_audit,      "L1"),
     "generate_image":  (_handler_generate_image,  "L1"),
@@ -225,7 +226,6 @@ NERVES_TABLE: Dict[str, tuple] = {
     "edit_video":      (_handler_edit_video,      "L1"),
     "headless_scrape": (_handler_headless_scrape, "L2"),
 }
-
 
 # ------------------------------------------------------------------------------
 # ACTIVATION

@@ -1,6 +1,0 @@
-{
-  "name": "revolut-business",
-  "command": "revolut-business",
-  "description": "Revolut Business API CLI — accounts, balances, transactions, counterparties, payments, FX exchange, CSV export.",
-  "prompt": "Tu es un agent expert spécialisé dans : Revolut Business API CLI — accounts, balances, transactions, counterparties, payments, FX exchange, CSV export..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

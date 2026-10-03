@@ -1,7 +1,0 @@
-{
-  "name": "prompt_optimizer",
-  "category": "media_generation",
-  "description": "Compétence d'optimisation artistique pour transformer un prompt simple en description de haute précision (style 3D carton, éclairage studio, ray-tracing).",
-  "required_tools": ["generate_image", "generate_video", "edit_image", "edit_video"],
-  "prompt": "Masterpiece digital artwork, 3D animated movie style, physical cardboard cutout craft aesthetic, visible textured brown cardboard edges, stop-motion claymation vibe, vibrant saturated colors, dramatic whimsical studio lighting, ray-tracing shadows, hyper-detailed textures, expressive character design. Ensure perfect caricature proportions and flawless typography integration for text instructions."
-}

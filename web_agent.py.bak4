@@ -1,0 +1,414 @@
+# ==============================================================================
+# web_agent.py — AGENT DE RECHERCHE PROFONDE (BEK-v19.4)
+# ------------------------------------------------------------------------------
+# v19.4 (2026-10-03) : ★ Fix définitif limite Groq 8000 TPM
+#   - max 2 pages scrapées (au lieu de 3)
+#   - corpus LLM : 1000 chars TOTAL (au lieu de 2500)
+#   - appel DIRECT à Groq (bypass historique)
+# ==============================================================================
+
+from __future__ import annotations
+
+import asyncio
+import os
+import re
+import time
+import logging
+import urllib.parse
+from typing import List, Dict, Any, Optional
+from urllib.parse import urlparse
+
+from memory import save_to_memory
+
+try:
+    from meta_cortex_swarm import ReflexionSwarm
+except ImportError:
+    ReflexionSwarm = None
+
+try:
+    from fast_math import MinHashSimilarity
+except ImportError:
+    MinHashSimilarity = None
+
+try:
+    from provider_manager import provider_manager
+except ImportError:
+    provider_manager = None
+
+try:
+    from nerves._async_utils import run_async_safely
+except ImportError:
+    def run_async_safely(coro):
+        return asyncio.get_event_loop().run_until_complete(coro)
+
+logger = logging.getLogger("WebAgent")
+
+
+def _normalize_query(query: str) -> str:
+    if not query:
+        return query
+    normalized = re.sub(r"([a-zà-ÿ])([A-ZÀ-Ý])", r"\1 \2", query)
+    normalized = re.sub(r"([A-Za-zÀ-ÿ])(\d)", r"\1 \2", normalized)
+    normalized = re.sub(r"(\d)([A-Za-zÀ-ÿ])", r"\1 \2", normalized)
+    normalized = re.sub(r"\s+", " ", normalized).strip()
+    if normalized != query:
+        logger.info("[WebAgent] Query normalisée : '%s' → '%s'", query, normalized)
+    return normalized
+
+
+try:
+    from worker_headless import _is_sterile_url  # type: ignore
+except ImportError:
+    _STERILE_LOCAL = re.compile(
+        r"^https?://(www\.)?(google|bing|duckduckgo|qwant|mojeek|startpage|yahoo|msn)\.[a-z]{2,3}/?$"
+        r"|/login|/signin|/auth/|/search\?|[?&]q=|[?&]query="
+        r"|news\.google\.com|news\.yahoo\.com/?$|fr\.news\.yahoo\.com",
+        re.IGNORECASE,
+    )
+
+    def _is_sterile_url(url: str) -> bool:  # type: ignore
+        if not url:
+            return True
+        try:
+            parsed = urlparse(url)
+        except Exception:
+            return True
+        if parsed.scheme not in ("http", "https") or not parsed.netloc:
+            return True
+        path = (parsed.path or "").strip("/")
+        if not path or path in ("index.html", "index.htm", "index.php", "home"):
+            return True
+        return bool(_STERILE_LOCAL.search(url))
+
+
+class WebAgent:
+    """Agent Web v19.4 — ddgs + Playwright + appel Groq direct."""
+
+    _HTTP_HEADERS = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        ),
+        "Accept": (
+            "text/html,application/xhtml+xml,application/xml;"
+            "q=0.9,image/avif,image/webp,*/*;q=0.8"
+        ),
+        "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
+    }
+
+    def __init__(self):
+        self.minhash = MinHashSimilarity() if MinHashSimilarity else None
+        self._url_cache: set = set()
+
+    def _fetch_with_playwright(self, url: str) -> Dict[str, Any]:
+        try:
+            from worker_headless import HeadlessWorker
+            worker = HeadlessWorker(headless=True, timeout_ms=25000)
+            result = run_async_safely(worker.fetch_page_content(url))
+            return result or {"status": "error", "error": "Résultat vide"}
+        except Exception as exc:
+            logger.warning("[WebAgent] fetch_playwright échec %s : %s", url, exc)
+            return {"status": "error", "error": str(exc)}
+
+    def scrape_url_deep(self, url: str, max_chars: int = 1000) -> Dict[str, str]:
+        if _is_sterile_url(url):
+            return {"url": url, "content": "", "error": "URL stérile"}
+        if url in self._url_cache:
+            return {"url": url, "content": "", "error": "URL déjà visitée"}
+        self._url_cache.add(url)
+
+        # 1. requests d'abord
+        try:
+            import requests
+            from bs4 import BeautifulSoup
+            r = requests.get(url, headers=self._HTTP_HEADERS, timeout=10, allow_redirects=True)
+            if r.status_code == 200 and len(r.text) > 500:
+                soup = BeautifulSoup(r.text, "html.parser")
+                for tag in soup(["script", "style", "nav", "footer", "header",
+                                 "noscript", "svg", "aside", "form"]):
+                    tag.decompose()
+                extracted = []
+                for el in soup.find_all(["h1", "h2", "h3", "p", "li"]):
+                    text = el.get_text(separator=" ", strip=True)
+                    if len(text) > 35:
+                        extracted.append(text)
+                clean_text = re.sub(r"\s+", " ", "\n\n".join(extracted)).strip()
+                if len(clean_text) > 200:
+                    logger.info("[WebAgent] ✅ Scraped %s (%d chars)", url[:60], len(clean_text))
+                    return {"url": url, "content": clean_text[:max_chars], "error": None}
+        except Exception as exc:
+            logger.debug("[WebAgent] requests scraping échec : %s", exc)
+
+        # 2. Playwright fallback
+        page = self._fetch_with_playwright(url)
+        if page.get("status") != "success":
+            return {"url": url, "content": "", "error": page.get("error", "Échec fetch")}
+        html = page.get("html", "") or ""
+        if not html:
+            return {"url": url, "content": "", "error": "HTML vide"}
+        try:
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(html, "html.parser")
+            for tag in soup(["script", "style", "nav", "footer", "header",
+                             "noscript", "svg", "aside", "form"]):
+                tag.decompose()
+            extracted_blocks = []
+            for element in soup.find_all(["h1", "h2", "h3", "p", "li"]):
+                text = element.get_text(separator=" ", strip=True)
+                if len(text) > 35:
+                    extracted_blocks.append(text)
+            clean_text = re.sub(r"\s+", " ", "\n\n".join(extracted_blocks)).strip()
+            if len(clean_text) > 200:
+                return {"url": url, "content": clean_text[:max_chars], "error": None}
+            return {"url": url, "content": "", "error": "Contenu trop court"}
+        except Exception as exc:
+            return {"url": url, "content": "", "error": str(exc)}
+
+    def _search_ddgs(self, query: str, limit: int) -> List[Dict[str, str]]:
+        try:
+            from ddgs import DDGS
+            t0 = time.monotonic()
+            raw = DDGS().text(query, max_results=limit * 2)
+            elapsed_ms = (time.monotonic() - t0) * 1000
+            if not raw:
+                logger.warning("[WebAgent/ddgs] 0 résultat (%.0fms)", elapsed_ms)
+                return []
+            results = []
+            for item in raw:
+                url = item.get("href", "") or item.get("url", "")
+                title = item.get("title", "")
+                snippet = item.get("body", "") or item.get("snippet", "")
+                if not url or not title:
+                    continue
+                if _is_sterile_url(url):
+                    continue
+                results.append({"title": title, "url": url, "snippet": snippet})
+                if len(results) >= limit:
+                    break
+            logger.info("[WebAgent/ddgs] ✅ %d résultats (%.0fms)", len(results), elapsed_ms)
+            return results
+        except Exception as exc:
+            logger.warning("[WebAgent/ddgs] échec : %s", exc)
+            return []
+
+    def _search_playwright(self, query: str, limit: int) -> List[Dict[str, str]]:
+        try:
+            from worker_headless import HeadlessWorker
+            worker = HeadlessWorker(headless=True, timeout_ms=15000)
+            leads = run_async_safely(worker.search_and_extract_leads(query, limit=limit * 2))
+            if not leads:
+                return []
+            results = []
+            for lead in leads:
+                url = lead.get("source_url", "")
+                title = lead.get("title", "")
+                snippet = lead.get("snippet", "")
+                if url and title and not _is_sterile_url(url):
+                    results.append({"title": title, "url": url, "snippet": snippet})
+                    if len(results) >= limit:
+                        break
+            return results
+        except Exception:
+            return []
+
+    def search_candidate_links(self, query: str, limit: int = 4) -> List[Dict[str, str]]:
+        normalized = _normalize_query(query)
+        logger.info("[WebAgent] Recherche pour : '%s'", normalized)
+        all_results: List[Dict[str, str]] = []
+        seen_urls: set = set()
+        partial = self._search_ddgs(normalized, limit)
+        for r in partial:
+            url = r.get("url", "")
+            if url and url not in seen_urls:
+                seen_urls.add(url)
+                all_results.append(r)
+        if len(all_results) < 2:
+            partial2 = self._search_playwright(normalized, limit)
+            for r in partial2:
+                url = r.get("url", "")
+                if url and url not in seen_urls:
+                    seen_urls.add(url)
+                    all_results.append(r)
+        final = all_results[:limit]
+        logger.info("[WebAgent] ✅ TOTAL : %d résultats uniques", len(final))
+        return final
+
+    def _search_wikipedia_fallback(self, query: str, limit: int = 3) -> List[Dict[str, str]]:
+        try:
+            import requests
+            url = (
+                f"https://fr.wikipedia.org/w/api.php?action=opensearch"
+                f"&search={urllib.parse.quote(query)}&limit={limit}"
+                f"&namespace=0&format=json"
+            )
+            res = requests.get(url, timeout=8, headers={
+                "User-Agent": "BEK-WebAgent/1.9",
+                "Accept": "application/json",
+            })
+            if res.status_code == 200:
+                data = res.json()
+                titles = data[1] if len(data) > 1 else []
+                snippets = data[2] if len(data) > 2 else []
+                urls = data[3] if len(data) > 3 else []
+                results = [
+                    {"title": t, "snippet": s, "url": u}
+                    for t, s, u in zip(titles, snippets, urls)
+                ]
+                return [r for r in results if not _is_sterile_url(r["url"])]
+        except Exception:
+            pass
+        return []
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # ★ v19.4 — Synthèse avec appel DIRECT à Groq (pas de provider_manager)
+    # ══════════════════════════════════════════════════════════════════════════
+    def synthesize_with_swarm(self, query: str, deep_corpus: str) -> str:
+        if not deep_corpus.strip():
+            return "Aucun contenu textuel suffisant."
+
+        # ★ v19.4 — Corpus réduit à 1000 chars max
+        corpus_short = deep_corpus[:1000]
+
+        # Récupérer la clé Groq
+        groq_key = os.environ.get("GROQ_API_KEY", "")
+        if not groq_key and provider_manager:
+            groq_key = provider_manager.get_api_key("GROQ_API_KEY")
+
+        if not groq_key:
+            logger.warning("[WebAgent] GROQ_API_KEY absente")
+            return f"**Extrait du corpus** :\n\n{corpus_short}"
+
+        # ★ v19.4 — Appel DIRECT à Groq (contourne le provider_manager)
+        try:
+            import requests as _rq
+            payload = {
+                "model": "openai/gpt-oss-120b",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "Tu es un analyste. Résume l'actualité en français en 3-4 phrases."
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Sujet : {query}\n\n{corpus_short}"
+                    },
+                ],
+                "temperature": 0.3,
+                "max_tokens": 400,
+                "stream": False,
+            }
+            r = _rq.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {groq_key}",
+                    "Content-Type": "application/json",
+                },
+                json=payload,
+                timeout=60,
+            )
+            if r.status_code == 200:
+                data = r.json()
+                result = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+                if result.strip():
+                    logger.info("[WebAgent] ✅ Synthèse Groq direct OK (%d chars)", len(result))
+                    return result
+            else:
+                logger.warning("[WebAgent] Groq direct HTTP %s : %s", r.status_code, r.text[:200])
+        except Exception as exc:
+            logger.warning("[WebAgent] Groq direct échec : %s", exc)
+
+        # Fallback : retourner le corpus brut
+        return f"**Extrait du corpus** :\n\n{corpus_short}"
+
+    def persist_extracted_knowledge(self, pages: List[Dict[str, Any]], query: str):
+        for page in pages:
+            if not page.get("content"):
+                continue
+            vector_payload = (
+                f"Étude Web sur '{query}' | {page['title']} ({page['url']})\n"
+                f"Extrait : {page['content'][:400]}"
+            )
+            try:
+                save_to_memory(vector_payload)
+            except Exception as err:
+                logger.warning("Erreur indexation : %s", err)
+
+    def run_pipeline(self, query: str = "Architectures multi-agents 2026") -> str:
+        logger.info("[WebAgent] Pipeline démarré pour : '%s'", query)
+        self._url_cache = set()
+
+        # ★ v19.4 — 2 pages max
+        candidates = self.search_candidate_links(query, limit=2)
+
+        if len(candidates) < 1:
+            logger.info("[WebAgent] 0 candidat → Wikipedia fallback")
+            wiki = self._search_wikipedia_fallback(query, limit=2)
+            candidates.extend(wiki)
+
+        if not candidates:
+            return f"ℹ️ Aucune source trouvée pour : '{query}'."
+
+        # Scraping parallèle
+        scraped_pages = []
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            future_to_url = {
+                executor.submit(self.scrape_url_deep, item["url"]): item
+                for item in candidates if item.get("url")
+            }
+            for future in as_completed(future_to_url):
+                meta = future_to_url[future]
+                try:
+                    res = future.result()
+                    if res.get("content"):
+                        scraped_pages.append({
+                            "title": meta["title"],
+                            "url": meta["url"],
+                            "snippet": meta.get("snippet", ""),
+                            "content": res["content"],
+                        })
+                except Exception as exc:
+                    logger.warning("Erreur scraping : %s", exc)
+
+        if not scraped_pages:
+            report_sections = [
+                f"## 🌐 Résultats : *{query}*",
+                f"*{len(candidates)} source(s)*\n",
+                "### 📑 Sources",
+            ]
+            for idx, c in enumerate(candidates, 1):
+                report_sections.append(f"**{idx}. {c.get('title', 'Sans titre')}**")
+                report_sections.append(f"- **URL :** <{c.get('url', '')}>")
+                if c.get("snippet"):
+                    report_sections.append(f"- **Résumé :** {c['snippet']}\n")
+            return "\n".join(report_sections)
+
+        self.persist_extracted_knowledge(scraped_pages, query)
+
+        # ★ v19.4 — Corpus ULTRA compact (1000 chars total)
+        corpus_builder = []
+        for page in scraped_pages[:2]:
+            corpus_builder.append(
+                f"[{page['title'][:50]}]\n{page['content'][:400]}"
+            )
+        full_corpus = "\n\n".join(corpus_builder)
+
+        report_sections = [
+            f"## 🌐 Rapport : *{query}*",
+            f"*{len(scraped_pages)} source(s)*\n",
+            "### 📑 Sources",
+        ]
+        for idx, page in enumerate(scraped_pages, 1):
+            report_sections.append(f"**{idx}. {page['title']}**")
+            report_sections.append(f"- <{page['url']}>")
+            report_sections.append(f"- {page['content'][:200]}...\n")
+
+        report_sections.append("### ⚔️ Synthèse")
+        verdict = self.synthesize_with_swarm(query, full_corpus)
+        report_sections.append(verdict)
+
+        return "\n".join(report_sections)
+
+
+web_agent_instance = WebAgent()

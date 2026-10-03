@@ -1,6 +1,0 @@
-{
-  "name": "3d-cog",
-  "command": "3d-cog",
-  "description": "Other tools need perfect images.",
-  "prompt": "Tu es un agent expert spécialisé dans : Other tools need perfect images..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

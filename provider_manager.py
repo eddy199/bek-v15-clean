@@ -503,7 +503,7 @@ class ProviderManager:
             selected_model = model
 
         # ★ v25.2 — TPM Guard CORRIGÉ : ne route PLUS vers nvidia (mort)
-        if total_chars > 100000:
+        if total_chars > 50000:
             logger.warning(
                 "[TPM Guard] Requête GÉANTE (%d chars) — troncature à 100k chars.",
                 total_chars,
@@ -524,8 +524,8 @@ class ProviderManager:
                 current_model = selected_model
             else:
                 # ★ v25.2 — Modèles vivants (nvidia retiré)
-                if current_prov == "groq":             current_model = "openai/gpt-oss-120b"
-                elif current_prov == "gemini":         current_model = "gemini-2.5-flash"
+                if current_prov == "groq":             current_model = "openai/gpt-oss-20b"   # ★ Plus léger (moins de TPM)
+                elif current_prov == "gemini":         current_model = "gemini-3.8-flash"     # ★ Vrais modèles vivants
                 elif current_prov == "openrouter":     current_model = "auto"
                 elif current_prov == "aisa":           current_model = "qwen-flash"
                 elif current_prov == "kimi":           current_model = "kimi-k3"

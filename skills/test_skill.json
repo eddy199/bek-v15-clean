@@ -1,7 +1,0 @@
-{
-  "name": "test_skill",
-  "description": "Skill de test",
-  "entrypoint": "test_skill.py",
-  "risk_level": "L2",
-  "hash_sha256": "7610941f6f72c1b2ee4fbde89f9ea0ac7f1c5314d140061257ce5e479f332c60"
-}

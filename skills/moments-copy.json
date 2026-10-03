@@ -1,6 +1,0 @@
-{
-  "name": "moments-copy",
-  "command": "moments-copy",
-  "description": "Generate viral WeChat Moments content.",
-  "prompt": "Tu es un agent expert spécialisé dans : Generate viral WeChat Moments content..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

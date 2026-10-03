@@ -1,6 +1,0 @@
-{
-  "name": "recipe-finder",
-  "command": "recipe-finder",
-  "description": "Find recipes by ingredients, cuisine, or dietary preferences using TheMealDB free API.",
-  "prompt": "Tu es un agent expert spécialisé dans : Find recipes by ingredients, cuisine, or dietary preferences using TheMealDB free API..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

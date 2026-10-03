@@ -1,5 +1,0 @@
-{
-    "name": "safe_test",
-    "description": "Test OK",
-    "entrypoint": "safe_test.py"
-}

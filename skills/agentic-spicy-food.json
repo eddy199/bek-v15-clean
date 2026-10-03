@@ -1,6 +1,0 @@
-{
-  "name": "agentic-spicy-food",
-  "command": "agentic-spicy-food",
-  "description": "The premier Agent-ready food delivery skill.",
-  "prompt": "Tu es un agent expert spécialisé dans : The premier Agent-ready food delivery skill..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

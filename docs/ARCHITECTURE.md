@@ -123,7 +123,7 @@ Format EXCLUSIF :
 ## 📊 ÉTAT RÉEL DU SYSTÈME (généré automatiquement)
 ═══════════════════════════════════════════════════════════════════════════════
 
-> *Dernière synchronisation : 2026-10-01 12:50:30 UTC*
+> *Dernière synchronisation : 2026-10-03 20:16:44 UTC*
 
 ### 🔧 Outils Hermes enregistrés (47)
 
@@ -131,7 +131,7 @@ Format EXCLUSIF :
 |---|---|---|
 | `default_llm` | **L1** | ✅ Auto |
 | `neon_audit` | **L1** | ✅ Auto |
-| `web_sync` | **L3** | ⚠️ Humain requis |
+| `web_sync` | **L2** | ✅ Auto |
 | `generate_image` | **L1** | ✅ Auto |
 | `edit_image` | **L1** | ✅ Auto |
 | `generate_video` | **L1** | ✅ Auto |

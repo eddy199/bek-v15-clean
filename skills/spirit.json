@@ -1,6 +1,0 @@
-{
-  "name": "spirit",
-  "command": "spirit",
-  "description": "State Preservation & Identity Resurrection Infrastructure Tool (SPIRIT)",
-  "prompt": "Tu es un agent expert spécialisé dans : State Preservation & Identity Resurrection Infrastructure Tool (SPIRIT).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

@@ -1,6 +1,0 @@
-{
-    "name": "test_echo",
-    "description": "Skill de test",
-    "entrypoint": "test_echo.py",
-    "risk_level": "L1"
-}

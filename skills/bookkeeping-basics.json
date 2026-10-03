@@ -1,6 +1,0 @@
-{
-  "name": "bookkeeping-basics",
-  "command": "bookkeeping-basics",
-  "description": "Set up and maintain basic bookkeeping for a solopreneur.",
-  "prompt": "Tu es un agent expert spécialisé dans : Set up and maintain basic bookkeeping for a solopreneur..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

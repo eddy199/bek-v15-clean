@@ -1,6 +1,0 @@
-{
-  "name": "apple-music",
-  "command": "apple-music",
-  "description": "Search Apple Music, add songs to library, manage playlists, control.",
-  "prompt": "Tu es un agent expert spécialisé dans : Search Apple Music, add songs to library, manage playlists, control..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

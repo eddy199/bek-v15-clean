@@ -1,6 +1,0 @@
-{
-  "name": "enzoldhazam",
-  "command": "enzoldhazam",
-  "description": "NGBS iCON Smart Home thermostat control.",
-  "prompt": "Tu es un agent expert spécialisé dans : NGBS iCON Smart Home thermostat control..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

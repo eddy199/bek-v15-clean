@@ -1,6 +1,0 @@
-{
-  "name": "insta-cog",
-  "command": "insta-cog",
-  "description": "Full video production from a single prompt.",
-  "prompt": "Tu es un agent expert spécialisé dans : Full video production from a single prompt..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

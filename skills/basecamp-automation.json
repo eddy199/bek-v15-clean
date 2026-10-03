@@ -1,6 +1,0 @@
-{
-  "name": "basecamp-automation",
-  "command": "basecamp-automation",
-  "description": "Automate Basecamp project management, to-dos.",
-  "prompt": "Tu es un agent expert spécialisé dans : Automate Basecamp project management, to-dos..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

@@ -1,6 +1,0 @@
-{
-  "name": "bamboohr-automation",
-  "command": "bamboohr-automation",
-  "description": "Automate BambooHR tasks via Rube MCP (Composio)",
-  "prompt": "Tu es un agent expert spécialisé dans : Automate BambooHR tasks via Rube MCP (Composio).\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

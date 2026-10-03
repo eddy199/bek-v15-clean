@@ -1,6 +1,0 @@
-{
-  "name": "api-gateway",
-  "command": "api-gateway",
-  "description": "API gateway for calling third-party APIs with managed auth.",
-  "prompt": "Tu es un agent expert spécialisé dans : API gateway for calling third-party APIs with managed auth..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}

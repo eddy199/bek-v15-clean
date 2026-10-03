@@ -1,6 +1,0 @@
-{
-  "name": "agent-contact-card",
-  "command": "agent-contact-card",
-  "description": "Discover and create Agent Contact Cards - a vCard-like.",
-  "prompt": "Tu es un agent expert spécialisé dans : Discover and create Agent Contact Cards - a vCard-like..\nApplique tes compétences de manière rigoureuse à la demande suivante :\n{input}"
-}
