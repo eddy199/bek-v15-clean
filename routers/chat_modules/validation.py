@@ -6,8 +6,11 @@
 # 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 1.0
-# Date : 2026-09-24
+# Version : 1.1
+# Date : 2026-10-03
+# ------------------------------------------------------------------------------
+# ★ v1.1 — Ajout patterns URLs génériques (BBC Home, NPR Home, etc.)
+#           pour éviter les faux positifs qui causent des hallucinations
 # ==============================================================================
 
 from __future__ import annotations
@@ -49,6 +52,35 @@ _STERILE_URL_PATTERNS = (
     r"^https?://(www\.)?msn\.com/?$",
     r"^https?://(www\.)?bing\.com/?$",
     r"^https?://(www\.)?google\.[a-z]{2,3}/?$",
+
+    # ★ v1.1 — Pages d'accueil de médias généralistes (parasites)
+    r"^https?://(www\.)?bbc\.com/news/?$",
+    r"^https?://(www\.)?bbc\.co\.uk/news/?$",
+    r"^https?://(www\.)?bbc\.com/?$",
+    r"^https?://(www\.)?bbc\.co\.uk/?$",
+    r"^https?://(www\.)?bbc\.com/news/world/?$",
+    r"^https?://(www\.)?bbc\.co\.uk/news/world/?$",
+    r"^https?://(www\.)?npr\.org/?$",
+    r"^https?://(www\.)?npr\.org/sections/news/?$",
+    r"^https?://(www\.)?cnn\.com/?$",
+    r"^https?://(www\.)?reuters\.com/?$",
+    r"^https?://(www\.)?apnews\.com/?$",
+    r"^https?://(www\.)?lemonde\.fr/?$",
+    r"^https?://(www\.)?lefigaro\.fr/?$",
+    r"^https?://(www\.)?france24\.com/(fr|en)/?$",
+    r"^https?://(www\.)?rfi\.fr/?$",
+    r"^https?://(www\.)?nytimes\.com/?$",
+    r"^https?://(www\.)?washingtonpost\.com/?$",
+    r"^https?://(www\.)?theguardian\.com/?$",
+    r"^https?://(www\.)?lequipe\.fr/?$",
+    r"^https?://(www\.)?20minutes\.fr/?$",
+    r"^https?://(www\.)?huffingtonpost\.fr/?$",
+    r"^https?://(www\.)?boursorama\.com/?$",
+    r"^https?://(www\.)?lesechos\.fr/?$",
+    r"^https?://(www\.)?latribune\.fr/?$",
+
+    # ★ v1.1 — Pages racines génériques (aucun chemin spécifique)
+    r"^https?://[^/]+/?$",
 )
 _STERILE_URL_REGEX = re.compile("|".join(_STERILE_URL_PATTERNS), re.IGNORECASE)
 
@@ -57,11 +89,8 @@ def _is_sterile_url(url: str) -> bool:
     """
     Vrai si l'URL est une home/login/recherche générique sans contenu éditorial.
 
-    Rejette :
-      - https://fr.news.yahoo.com/         (home portail)
-      - https://www.google.com/            (home moteur)
-      - https://site.com/login             (login)
-      - https://site.com/                  (aucun path)
+    ★ v1.1 — Filtre renforcé : rejette aussi les pages racines
+             de médias généralistes (BBC Home, NPR Home, etc.)
     """
     if not url:
         return False
@@ -261,6 +290,7 @@ def _detect_user_response(query: str) -> str:
 def get_validation_summary() -> dict:
     """Résumé des validateurs disponibles."""
     return {
+        "version": "1.1",
         "sterile_patterns_count": len(_STERILE_URL_PATTERNS),
         "stopwords_count": len(_QUERY_STOPWORDS),
         "en_markers": len(_EN_MARKERS),

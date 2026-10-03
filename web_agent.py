@@ -1,11 +1,10 @@
 # ==============================================================================
-# web_agent.py — AGENT DE RECHERCHE PROFONDE (BEK-v19.5)
+# web_agent.py — AGENT DE RECHERCHE PROFONDE (BEK-v19.6)
 # ------------------------------------------------------------------------------
-# v19.5 (2026-10-03) : ★ Plus de sources (6 au lieu de 2)
-#   - limit=6 dans search_candidate_links
-#   - 6 workers parallèles
-#   - corpus LLM : 2000 chars (6 × 350)
-#   - Synthèse Groq direct (limite 8000 TPM respectée)
+# v19.6 (2026-10-03) : ★ Anti-hallucination
+#   - Vérification de pertinence AVANT synthèse
+#   - Prompt renforcé (interdiction d'inventer)
+#   - Refus de synthétiser si sources non pertinentes
 # ==============================================================================
 
 from __future__ import annotations
@@ -45,6 +44,24 @@ except ImportError:
 logger = logging.getLogger("WebAgent")
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v19.6 — STOPWORDS POUR VÉRIFICATION DE PERTINENCE
+# ══════════════════════════════════════════════════════════════════════════════
+
+_PERTINENCE_STOPWORDS = {
+    "cherche", "chercher", "recherche", "rechercher", "trouve", "trouver",
+    "donne", "donner", "montre", "montrer", "résume", "résumer",
+    "news", "actualité", "actualités", "nouvelle", "nouvelles",
+    "aujourd'hui", "aujourd", "hui", "maintenant", "actuel", "actuelle",
+    "récent", "récente", "dernière", "dernier", "dernières", "derniers",
+    "les", "le", "la", "un", "une", "des", "du", "de", "d",
+    "et", "ou", "en", "au", "aux", "ce", "cette", "ces", "cet",
+    "sur", "sous", "dans", "par", "pour", "avec", "sans",
+    "est", "sont", "été", "être", "a", "à", "y",
+    "the", "of", "to", "in", "on", "at", "by", "for",
+}
+
+
 def _normalize_query(query: str) -> str:
     if not query:
         return query
@@ -55,6 +72,22 @@ def _normalize_query(query: str) -> str:
     if normalized != query:
         logger.info("[WebAgent] Query normalisée : '%s' → '%s'", query, normalized)
     return normalized
+
+
+def _extract_significant_keywords(query: str) -> List[str]:
+    """
+    ★ v19.6 — Extrait les mots-clés significatifs de la requête.
+    Utilisé pour vérifier la pertinence des sources.
+    """
+    if not query:
+        return []
+    
+    words = re.findall(r"\b[a-zà-ÿA-ZÀ-Ý0-9]{4,}\b", query.lower())
+    keywords = [
+        w for w in words
+        if w not in _PERTINENCE_STOPWORDS and len(w) >= 4
+    ]
+    return list(dict.fromkeys(keywords))  # dédupliqué, ordre préservé
 
 
 try:
@@ -83,7 +116,7 @@ except ImportError:
 
 
 class WebAgent:
-    """Agent Web v19.5 — ddgs + Playwright + appel Groq direct."""
+    """Agent Web v19.6 — ddgs + Playwright + appel Groq direct + anti-hallucination."""
 
     _HTTP_HEADERS = {
         "User-Agent": (
@@ -262,13 +295,60 @@ class WebAgent:
         return []
 
     # ══════════════════════════════════════════════════════════════════════════
-    # ★ v19.5 — Synthèse avec appel DIRECT à Groq
+    # ★ v19.6 — VÉRIFICATION DE PERTINENCE
     # ══════════════════════════════════════════════════════════════════════════
+
+    def _check_pertinence(self, query: str, corpus: str) -> tuple[bool, float]:
+        """
+        ★ v19.6 — Vérifie si le corpus est pertinent pour la requête.
+
+        Returns:
+            (pertinent: bool, ratio: float)
+        """
+        keywords = _extract_significant_keywords(query)
+        
+        if not keywords:
+            logger.info("[WebAgent] Aucun mot-clé significatif → pertinence par défaut")
+            return True, 1.0
+        
+        corpus_lower = corpus.lower()
+        matches = sum(1 for kw in keywords if kw in corpus_lower)
+        ratio = matches / len(keywords)
+        
+        logger.info(
+            "[WebAgent] Pertinence : %d/%d mots-clés trouvés (%.0f%%) | mots-clés=%s",
+            matches, len(keywords), ratio * 100, keywords[:5]
+        )
+        
+        # Seuil : 30% minimum
+        return ratio >= 0.3, ratio
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # ★ v19.6 — Synthèse avec appel DIRECT à Groq + anti-hallucination
+    # ══════════════════════════════════════════════════════════════════════════
+
     def synthesize_with_swarm(self, query: str, deep_corpus: str) -> str:
         if not deep_corpus.strip():
             return "Aucun contenu textuel suffisant."
 
-        # ★ v19.5 — Corpus réduit à 2000 chars max
+        # ★ v19.6 — Vérifier la pertinence AVANT synthèse
+        pertinent, ratio = self._check_pertinence(query, deep_corpus)
+        
+        if not pertinent:
+            logger.warning(
+                "[WebAgent] ⚠️ Sources NON PERTINENTES pour '%s' "
+                "(pertinence %.0f%%). Refus de synthétiser pour éviter l'hallucination.",
+                query, ratio * 100
+            )
+            return (
+                f"⚠️ **Aucune source pertinente trouvée** pour : *{query}*\n\n"
+                f"→ Les sources retournées ne mentionnent pas le sujet demandé "
+                f"(pertinence : {ratio * 100:.0f}%).\n"
+                f"→ L'agent refuse de synthétiser pour éviter d'inventer des informations.\n"
+                f"→ Reformule la requête ou réessaie plus tard."
+            )
+
+        # ★ v19.6 — Corpus réduit à 2000 chars max
         corpus_short = deep_corpus[:2000]
 
         groq_key = os.environ.get("GROQ_API_KEY", "")
@@ -279,21 +359,33 @@ class WebAgent:
             logger.warning("[WebAgent] GROQ_API_KEY absente")
             return f"**Extrait du corpus** :\n\n{corpus_short}"
 
+        # ★ v19.6 — Prompt RENFORCÉ anti-hallucination
+        system_prompt = (
+            "Tu es un analyste FACTUEL et RIGOUREUX.\n\n"
+            "RÈGLES ABSOLUES :\n"
+            "1. Utilise UNIQUEMENT les informations présentes dans le corpus fourni.\n"
+            "2. N'INVENTE AUCUN chiffre, AUCUNE date, AUCUN nom propre, AUCUNE source.\n"
+            "3. Si le corpus ne contient PAS d'information sur le sujet demandé, "
+            "réponds EXACTEMENT : 'Les sources ne contiennent pas d'information "
+            "pertinente sur ce sujet.'\n"
+            "4. N'utilise PAS tes connaissances générales. Base-toi uniquement "
+            "sur le corpus.\n"
+            "5. Cite les sources entre parenthèses quand tu donnes un fait.\n"
+            "6. Résume en 3-4 phrases MAXIMUM, en français."
+        )
+
         try:
             import requests as _rq
             payload = {
                 "model": "openai/gpt-oss-120b",
                 "messages": [
-                    {
-                        "role": "system",
-                        "content": "Tu es un analyste. Résume l'actualité en français en 3-4 phrases."
-                    },
+                    {"role": "system", "content": system_prompt},
                     {
                         "role": "user",
-                        "content": f"Sujet : {query}\n\n{corpus_short}"
+                        "content": f"Sujet : {query}\n\nCorpus :\n{corpus_short}"
                     },
                 ],
-                "temperature": 0.3,
+                "temperature": 0.1,
                 "max_tokens": 400,
                 "stream": False,
             }
@@ -310,7 +402,10 @@ class WebAgent:
                 data = r.json()
                 result = data.get("choices", [{}])[0].get("message", {}).get("content", "")
                 if result.strip():
-                    logger.info("[WebAgent] ✅ Synthèse Groq direct OK (%d chars)", len(result))
+                    logger.info(
+                        "[WebAgent] ✅ Synthèse Groq direct OK (%d chars)",
+                        len(result)
+                    )
                     return result
             else:
                 logger.warning("[WebAgent] Groq direct HTTP %s : %s", r.status_code, r.text[:200])
@@ -336,7 +431,7 @@ class WebAgent:
         logger.info("[WebAgent] Pipeline démarré pour : '%s'", query)
         self._url_cache = set()
 
-        # ★ v19.5 — 6 sources max (au lieu de 2)
+        # ★ v19.5 — 6 sources max
         candidates = self.search_candidate_links(query, limit=6)
 
         if len(candidates) < 1:
@@ -349,8 +444,7 @@ class WebAgent:
 
         # Scraping parallèle (6 workers)
         scraped_pages = []
-        from concurrent.futures import ThreadPoolExecutor, as_completed
-        with ThreadPoolExecutor(max_workers=6) as executor:
+        from concurrent.futures import ThreadPoolExecutor, as_completed        with ThreadPoolExecutor(max_workers=6) as executor:
             future_to_url = {
                 executor.submit(self.scrape_url_deep, item["url"]): item
                 for item in candidates if item.get("url")
