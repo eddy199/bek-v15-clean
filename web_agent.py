@@ -298,7 +298,7 @@ class WebAgent:
     # ★ v19.6 — VÉRIFICATION DE PERTINENCE
     # ══════════════════════════════════════════════════════════════════════════
 
-    def _check_pertinence(self, query: str, corpus: str) -> tuple[bool, float]:
+    def _check_pertinence(self, query: str, corpus: str) -> tuple:
         """
         ★ v19.6 — Vérifie si le corpus est pertinent pour la requête.
 
@@ -444,7 +444,8 @@ class WebAgent:
 
         # Scraping parallèle (6 workers)
         scraped_pages = []
-        from concurrent.futures import ThreadPoolExecutor, as_completed        with ThreadPoolExecutor(max_workers=6) as executor:
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        with ThreadPoolExecutor(max_workers=6) as executor:
             future_to_url = {
                 executor.submit(self.scrape_url_deep, item["url"]): item
                 for item in candidates if item.get("url")
