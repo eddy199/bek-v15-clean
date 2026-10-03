@@ -96,15 +96,18 @@ desktop.ini
 # 8. DIVERS
 # ==============================================================================
 *.bak
+*.bak2
+*.bak3
+*.bak4
 *.backup
 *.tmp
 tmp/
 temp/
 .cache/
-# Node portable (Windows uniquement, inutile pour Render Linux)
 node_portable/
 node_modules/
 package-lock.json
+
 # ==============================================================================
 # 9. ÉTAT RUNTIME EVENTBUS
 # ==============================================================================
@@ -118,10 +121,11 @@ test_agnes_extension.py
 test_veo.py
 test_*.png
 test_*.mp4
-# Local backups
 *.backup-*
 
-# ★ BEK-v18 additions (2026-10-01)
+# ==============================================================================
+# 11. BEK-v18 additions (2026-10-01)
+# ==============================================================================
 data/analytics.duckdb.wal
 data/analytics.duckdb
 data/bek_eco_cache.json
@@ -130,3 +134,9 @@ logs_video.txt
 run_logs.txt
 test.txt
 *.duckdb.wal
+
+# ==============================================================================
+# 12. FICHIERS PARASITES BEK (nettoyage 2026-10-03)
+# ==============================================================================
+300s
+appel
