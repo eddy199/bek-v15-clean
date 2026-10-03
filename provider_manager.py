@@ -1,22 +1,10 @@
 # ==============================================================================
 # BEK-v16 — Provider Manager (provider_manager.py)
 # ------------------------------------------------------------------------------
-# v24 (2026-09-20) :
-#   - AJOUT : Provider AGNES AI (vidéo gratuite)
-#   - AGNES_API_KEY + AGNES_BASE_URL dans PROVIDER_KEY_MAP
-#   - resolve_agnes_model_id() : conversion noms courts UI -> IDs officiels
-#   - get_agnes_endpoints() : URLs create + status prêtes à l'emploi
-#   - list_agnes_video_models() : liste des modèles Agnes disponibles
-#   - Mapping centralisé Veo 3.1 + Gemini image (v22 conservé)
-#   - Détection dynamique des modèles (v22 conservé)
-#   - Aucune régression : fallback chain texte inchangée
-#
-# v25 (2026-09-21) :
-#   - AJOUT : Provider HUGGING FACE IMAGE (via Inference API)
-#   - HF_IMAGE_MODELS : mapping noms courts UI -> IDs officiels
-#   - get_huggingface_image_endpoints() : URL predict prête à l'emploi
-#   - resolve_huggingface_image_model_id() : conversion noms courts
-#   - list_huggingface_image_models() : liste des modèles image HF
+# v25.2 (2026-10-03) : ★ Fix NVIDIA mort + TPM Guard
+#   - TPM Guard : ne route PLUS vers nvidia (mort), mais tronque à la place
+#   - FALLBACK_ORDER : nvidia retiré, groq en premier
+#   - Modèles NVIDIA remplacés par Groq gpt-oss-120b
 # ==============================================================================
 from __future__ import annotations
 
@@ -35,30 +23,19 @@ WORKSPACE_DIR = Path(__file__).resolve().parent
 
 class ProviderManager:
 
-    # ==========================================================================
-    # MAPPING CENTRALISÉ DES MODEL IDS OFFICIELS GOOGLE
-    # ==========================================================================
     MODEL_ID_MAPPING: Dict[str, str] = {
-        # --------- Veo 3.1 (vidéo) ---------
         "veo-3.1-gene-prev":            "veo-3.1-generate-preview",
         "veo-3.1-lite-gene-prev":       "veo-3.1-lite-generate-preview",
         "veo-3.1-fast-gene-prev":       "veo-3.1-fast-generate-preview",
         "veo-3.1":                      "veo-3.1-generate-preview",
         "veo-3.1-lite":                 "veo-3.1-lite-generate-preview",
         "veo-3.1-fast":                 "veo-3.1-fast-generate-preview",
-        # --------- Gemini Image ---------
         "gemini-3.1-flash-image":       "gemini-3.1-flash-image-preview",
         "gemini-3.1-flash-lite-image":  "gemini-3.1-flash-lite-image-preview",
         "gemini-2.5-flash-image":       "gemini-2.5-flash-image",
     }
 
-    # ==========================================================================
-    # ★ v24 — MAPPING AGNES VIDEO
-    # --------------------------------------------------------------------------
-    # Noms courts UI -> IDs officiels Agnes
-    # ==========================================================================
     AGNES_MODEL_MAPPING: Dict[str, str] = {
-        # Noms courts UI
         "agnes-v2":            "agnes-video-v2.0",
         "agnes-v2.0":          "agnes-video-v2.0",
         "agnes-video-v2":      "agnes-video-v2.0",
@@ -69,21 +46,13 @@ class ProviderManager:
         "agnes-video-2.5-flash": "agnes-video-2.5-flash",
     }
 
-    # ==========================================================================
-    # ★ v25 — MAPPING HUGGING FACE IMAGE
-    # --------------------------------------------------------------------------
-    # Noms courts UI -> IDs officiels HF
-    # ==========================================================================
     HF_IMAGE_MODELS: Dict[str, str] = {
-        # Noms courts UI (recommandés)
-        "hf-flux-schnell":  "black-forest-labs/FLUX.1-schnell",       # rapide, gratuit
-        "hf-flux-dev":      "black-forest-labs/FLUX.1-dev",           # qualité, payant
-        "hf-sdxl-turbo":    "stabilityai/sdxl-turbo",                  # rapide, gratuit
-        "hf-sd-3.5-large":  "stabilityai/stable-diffusion-3.5-large",  # qualité pro
-        "hf-sd-3.5-medium": "stabilityai/stable-diffusion-3.5-medium", # équilibré
-        "hf-sd-2.1":        "stabilityai/stable-diffusion-2-1",        # classique gratuit
-
-        # IDs officiels (si l'utilisateur les passe directement)
+        "hf-flux-schnell":  "black-forest-labs/FLUX.1-schnell",
+        "hf-flux-dev":      "black-forest-labs/FLUX.1-dev",
+        "hf-sdxl-turbo":    "stabilityai/sdxl-turbo",
+        "hf-sd-3.5-large":  "stabilityai/stable-diffusion-3.5-large",
+        "hf-sd-3.5-medium": "stabilityai/stable-diffusion-3.5-medium",
+        "hf-sd-2.1":        "stabilityai/stable-diffusion-2-1",
         "black-forest-labs/FLUX.1-schnell": "black-forest-labs/FLUX.1-schnell",
         "black-forest-labs/FLUX.1-dev":     "black-forest-labs/FLUX.1-dev",
         "stabilityai/sdxl-turbo":           "stabilityai/sdxl-turbo",
@@ -92,20 +61,14 @@ class ProviderManager:
         "stabilityai/stable-diffusion-2-1": "stabilityai/stable-diffusion-2-1",
     }
 
-    # Durées officiellement supportées par Veo 3.1 (en secondes)
     VEO_SUPPORTED_DURATIONS: List[int] = [4, 6, 8]
     VEO_MAX_SINGLE_CLIP: int = 8
     VEO_MIN_CLIP: int = 4
 
-    # Endpoints
     GEMINI_API_BASE: str = "https://generativelanguage.googleapis.com/v1beta"
     AGNES_DEFAULT_BASE_URL: str = "https://apihub.agnes-ai.com/v1"
-        # ★ v25.1 : endpoint déprécié api-inference → nouveau router
     HF_INFERENCE_BASE: str = "https://router.huggingface.co/hf-inference/models"
 
-    # ==========================================================================
-    # LIMITES AGNES VIDEO
-    # ==========================================================================
     AGNES_V2_MAX_FRAMES: int = 441
     AGNES_V2_MIN_FRAMES: int = 81
     AGNES_V2_DEFAULT_FPS: int = 24
@@ -113,47 +76,19 @@ class ProviderManager:
     AGNES_FLASH_MIN_SECONDS: int = 4
     AGNES_FLASH_MAX_SECONDS: int = 12
 
-    # ==========================================================================
-    # MODÈLES PAR FOURNISSEUR
-    # ==========================================================================
     PROVIDER_MODELS: Dict[str, List[str]] = {
-        # 1. Moonshot Kimi AI
         "kimi": [
-            "kimi-k3",
-            "kimi-k3-swarm",
-            "kimi-k3-instant",
-            "kimi-k2.7-code",
-            "kimi-k2.6",
-            "kimi-k2-0905",
-            "moonshot-v1-128k",
-            "moonshot-v1-32k",
-            "moonshot-v1-8k",
+            "kimi-k3", "kimi-k3-swarm", "kimi-k3-instant",
+            "kimi-k2.7-code", "kimi-k2.6", "kimi-k2-0905",
+            "moonshot-v1-128k", "moonshot-v1-32k", "moonshot-v1-8k",
         ],
-        # 2. AIsa — Unified Gateway (modèles GRATUITS uniquement)
-        "aisa": [
-            "qwen-flash",
-            "qwen-mt-flash",
-            "qwen-mt-lite",
-        ],
-        # 3. B.ai
-        "b_ai": [
-            "glm-5.3-flash",
-            "qwen3.8-flash",
-            "mimo-v2.5",
-            "hy3",
-        ],
-        # 4. Kilo Code
+        "aisa": ["qwen-flash", "qwen-mt-flash", "qwen-mt-lite"],
+        "b_ai": ["glm-5.3-flash", "qwen3.8-flash", "mimo-v2.5", "hy3"],
         "kilo_anonymous": [
-            "kilo-nemotron-3-ultra-550b",
-            "kilo-step-3.7-flash",
-            "kilo-nemotron-3-super-120b",
-            "kilo-nemotron-3-nano-omni",
-            "kilo-laguna-s",
-            "kilo-laguna-xs",
-            "kilo-north-mini-code",
-            "kilo-openrouter-free",
-            "kilo-hy3",
-            "kilo-nemotron-lightning",
+            "kilo-nemotron-3-ultra-550b", "kilo-step-3.7-flash",
+            "kilo-nemotron-3-super-120b", "kilo-nemotron-3-nano-omni",
+            "kilo-laguna-s", "kilo-laguna-xs", "kilo-north-mini-code",
+            "kilo-openrouter-free", "kilo-hy3", "kilo-nemotron-lightning",
             "kilo-lfm-2.5",
             "nvidia/nemotron-3-ultra-550b-a55b:free",
             "stepfun/step-3.7-flash:free",
@@ -162,200 +97,99 @@ class ProviderManager:
             "poolside/laguna-s-2.1:free",
             "poolside/laguna-xs-2.1:free",
             "cohere/north-mini-code:free",
-            "openrouter/free",
-            "tencent/hy3:free",
+            "openrouter/free", "tencent/hy3:free",
             "nvidia/nemotron-3.5-lightning:free",
             "liquid/lfm-2.5-2.6b:free",
         ],
-        # 5. OVHcloud
         "ovh_anonymous": [
-            "ovh-qwen-3.5-397b",
-            "ovh-gpt-oss-120b",
-            "ovh-gpt-oss-20b",
-            "ovh-llama-3.3-70b",
-            "ovh-qwen-3.6-27b",
-            "ovh-qwen-3.5-9b",
-            "ovh-qwen-3-32b",
-            "ovh-qwen-coder-30b",
-            "ovh-qwen-vl-72b",
-            "ovh-mistral-small-3.2",
-            "ovh-mistral-nemo",
-            "ovh-mistral-7b",
+            "ovh-qwen-3.5-397b", "ovh-gpt-oss-120b", "ovh-gpt-oss-20b",
+            "ovh-llama-3.3-70b", "ovh-qwen-3.6-27b", "ovh-qwen-3.5-9b",
+            "ovh-qwen-3-32b", "ovh-qwen-coder-30b", "ovh-qwen-vl-72b",
+            "ovh-mistral-small-3.2", "ovh-mistral-nemo", "ovh-mistral-7b",
         ],
-        # 6. LLM7.io
         "llm7_anonymous": [
-            "llm7-gpt-oss-20b",
-            "llm7-mistral-nemo",
-            "llm7-minimax-m2.7",
+            "llm7-gpt-oss-20b", "llm7-mistral-nemo", "llm7-minimax-m2.7",
         ],
-        # 7. Groq
         "groq": [
             "openai/gpt-oss-120b",
             "openai/gpt-oss-20b",
             "qwen/qwen3.6-27b",
-            "llama-3.3-70b-versatile",
             "llama-3.1-8b-instant",
             "groq/compound",
             "groq/compound-mini",
         ],
-        # 8. NVIDIA NIM
         "nvidia": [
-            "z-ai/glm-5.3",
-            "moonshotai/kimi-k3",
-            "deepseek-ai/deepseek-v4-flash-0731",
-            "nvidia/nemotron-3.5-lightning-30b-a3b",
-            "meta/muse-glimmer-30b",
-            "nvidia/ising-calibration-1.5-31b",
-            "poolside/laguna-xs-2.1",
-            "nvidia/nemotron-3-ultra-550b-a55b",
-            "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+            # ★ v25.2 — Modèles NVIDIA morts retirés
+            # Gardé pour référence : les endpoints sont fermés (410)
+            "openai/gpt-oss-120b",
             "nvidia/nemotron-3-super-120b-a12b",
-            "mistralai/mistral-nemotron",
-            "meta/llama-3.2-11b-vision-instruct",
-            "meta/llama-3.2-90b-vision-instruct",
         ],
-        # 9. Google Gemini
         "gemini": [
-            "gemini-3.8-flash",
-            "gemini-3.7-flash",
-            "gemini-3.6-flash",
-            "gemini-3.5-flash",
-            "gemini-3.5-flash-lite",
-            "gemini-2.5-flash",
-            "gemini-2.5-flash-lite",
-            "gemini-2.5-pro",
-            "gemma-4-31b",
-            "gemma-4-26b-a4b",
-            "gemini-1.5-pro-preview",
-            "gemini-3-flash-preview",
+            "gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.6-flash",
+            "gemini-3.5-flash", "gemini-3.5-flash-lite",
+            "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro",
+            "gemma-4-31b", "gemma-4-26b-a4b",
+            "gemini-1.5-pro-preview", "gemini-3-flash-preview",
             "gemini-3.1-flash-lite",
-            "gemini-3.1-flash-image",
-            "gemini-3.1-flash-lite-image",
-            "gemini-3-pro-image",
-            "gemini-2.5-flash-image",
-            "gemini-3.5-live-translate-preview",
-            "gemini-3.1-flash-live-preview",
+            "gemini-3.1-flash-image", "gemini-3.1-flash-lite-image",
+            "gemini-3-pro-image", "gemini-2.5-flash-image",
+            "gemini-3.5-live-translate-preview", "gemini-3.1-flash-live-preview",
             "gemini-3.1-flash-tts-preview",
             "gemini-2.5-flash-native-audio-preview-12-2025",
-            "gemini-2.5-flash-preview-tts",
-            "gemini-2.5-pro-preview-tts",
+            "gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts",
             "gemini-omni-flash",
-            "veo-3.1-gene-prev",
-            "veo-3.1-lite-gene-prev",
-            "veo-3.1-fast-gene-prev",
-            "veo-3.1-generate-preview",
-            "veo-3.1-lite-generate-preview",
+            "veo-3.1-gene-prev", "veo-3.1-lite-gene-prev", "veo-3.1-fast-gene-prev",
+            "veo-3.1-generate-preview", "veo-3.1-lite-generate-preview",
             "veo-3.1-fast-generate-preview",
-            "lyria-3-pro-preview",
-            "lyria-3-clip-preview",
-            "lyria-realtime-preview",
+            "lyria-3-pro-preview", "lyria-3-clip-preview", "lyria-realtime-preview",
         ],
-
-        # ★ v24 — Agnes AI (vidéo gratuite) ★
-        "agnes": [
-            "agnes-v2.0",
-            "agnes-v2.5-flash",
-            "agnes-video-v2.0",
-            "agnes-video-2.5-flash",
-        ],
-
-        # 10. OpenRouter
+        "agnes": ["agnes-v2.0", "agnes-v2.5-flash", "agnes-video-v2.0", "agnes-video-2.5-flash"],
         "openrouter": [
-            "auto",
-            "gpt-oss-120b",
-            "claude-4-sonnet",
-            "dots3-note-preview",
-            "lfm2.5-2.6b",
-            "nemotron-3.5-lightning",
-            "laguna-s-2.1",
-            "laguna-xs-2.1",
-            "free-models-router",
+            "auto", "gpt-oss-120b", "claude-4-sonnet",
+            "dots3-note-preview", "lfm2.5-2.6b", "nemotron-3.5-lightning",
+            "laguna-s-2.1", "laguna-xs-2.1", "free-models-router",
         ],
-        # 11. Mistral AI
         "mistral": [
-            "mistral-medium-3.5",
-            "mistral-small-4",
-            "mistral-large-3",
-            "ministral-3-8b",
-            "codestral",
-            "ministral-3-3b",
-            "ministral-3-14b",
+            "mistral-medium-3.5", "mistral-small-4", "mistral-large-3",
+            "ministral-3-8b", "codestral", "ministral-3-3b", "ministral-3-14b",
         ],
-        # 12. Cohere
         "cohere": [
-            "cohere-command-a-plus",
-            "cohere-command-a",
-            "cohere-command-r-plus",
-            "cohere-command-r",
-            "cohere-command-r7b",
-            "cohere-aya-expanse-32b",
+            "cohere-command-a-plus", "cohere-command-a",
+            "cohere-command-r-plus", "cohere-command-r",
+            "cohere-command-r7b", "cohere-aya-expanse-32b",
         ],
-        # 13. Aion Labs
-        "aionlabs": [
-            "aion-2.0",
-            "aion-rp-llama-3.1-8b",
-            "aion-3.0",
-            "aion-3.0-mini",
-        ],
-        # 14. Zhipu AI
-        "zhipu": [
-            "glm-4.7-flash",
-            "glm-4.5-flash",
-            "glm-4.6v-flash",
-        ],
-        # 15. SiliconFlow
-        "siliconflow": [
-            "siliconflow-qwen3-8b",
-        ],
-        # 16. Hugging Face (texte + image)
+        "aionlabs": ["aion-2.0", "aion-rp-llama-3.1-8b", "aion-3.0", "aion-3.0-mini"],
+        "zhipu": ["glm-4.7-flash", "glm-4.5-flash", "glm-4.6v-flash"],
+        "siliconflow": ["siliconflow-qwen3-8b"],
         "huggingface": [
-            # Chat / Texte
-            "Meta-Llama-3.1-8B-Instruct",
-            "gemma-3-4b-it",
-            "phi-4",
-            "Qwen2.5-Coder-7B-Instruct",
-            "Qwen2.5-7B-Instruct",
-            # ★ v25 — Image ★
-            "hf-flux-schnell",
-            "hf-sdxl-turbo",
-            "hf-sd-3.5-large",
-            "hf-sd-3.5-medium",
-            "hf-sd-2.1",
+            "Meta-Llama-3.1-8B-Instruct", "gemma-3-4b-it", "phi-4",
+            "Qwen2.5-Coder-7B-Instruct", "Qwen2.5-7B-Instruct",
+            "hf-flux-schnell", "hf-sdxl-turbo",
+            "hf-sd-3.5-large", "hf-sd-3.5-medium", "hf-sd-2.1",
         ],
-        # 17. Ollama Cloud
         "ollama_cloud": [
-            "deepseek-v4-pro",
-            "deepseek-v4-flash",
-            "minimax-m3",
-            "kimi-k3",
-            "gpt-oss:120b",
-            "gpt-oss:20b",
-            "nemotron-3-ultra",
-            "mistral-large-3:675b",
-            "qwen3.5:397b",
+            "deepseek-v4-pro", "deepseek-v4-flash", "minimax-m3",
+            "kimi-k3", "gpt-oss:120b", "gpt-oss:20b",
+            "nemotron-3-ultra", "mistral-large-3:675b", "qwen3.5:397b",
         ],
     }
 
     # ==========================================================================
-    # CHAÎNE DE FALLBACK (texte/chat)
+    # ★ v25.2 — CHAÎNE DE FALLBACK (NVIDIA RETIRÉ)
     # ==========================================================================
     FALLBACK_ORDER: List[str] = [
-        "nvidia",
-        "aisa",
-        "groq",
-        "kimi",
-        # "b_ai",  # Désactivé 2026-09-28 : crédit épuisé (balance=0)
+        "groq",             # ★ provider principal (fonctionne)
         "gemini",
-        "kilo_anonymous",
-        "huggingface",
         "openrouter",
-        "ovh_anonymous",
-        "llm7_anonymous",
+        "ovh_anonymous",    # 0 clé
+        "kilo_anonymous",   # 0 clé
+        "llm7_anonymous",   # 0 clé
+        "aisa",
+        "kimi",
+        "huggingface",
+        # "nvidia",         # ★ RETIRÉ 2026-10-03 (API fermée)
     ]
 
-    # ==========================================================================
-    # CLÉS API PAR FOURNISSEUR
-    # ==========================================================================
     PROVIDER_KEY_MAP: Dict[str, str] = {
         "kimi":          "MOONSHOT_API_KEY",
         "aisa":          "AISA_API_KEY",
@@ -374,9 +208,6 @@ class ProviderManager:
         "agnes":         "AGNES_API_KEY",
     }
 
-    # ==========================================================================
-    # INITIALISATION
-    # ==========================================================================
     def __init__(self) -> None:
         self.env_cache: Dict[str, str] = {}
         self._models_cache: Dict[str, Any] = {}
@@ -400,9 +231,6 @@ class ProviderManager:
             except Exception as exc:
                 logger.warning("Erreur lecture %s : %s", filename, exc)
 
-    # ==========================================================================
-    # CLÉ API
-    # ==========================================================================
     def get_api_key(self, key_name: str) -> str:
         val = os.environ.get(key_name, "")
         if val:
@@ -426,9 +254,6 @@ class ProviderManager:
             return bool(self.get_api_key("KIMI_API_KEY"))
         return False
 
-    # ==========================================================================
-    # RÉSOLUTION DES ENDPOINTS (chat texte)
-    # ==========================================================================
     def resolve_provider_endpoint(
         self, provider: str, model: str
     ) -> Tuple[str, str, str]:
@@ -505,318 +330,159 @@ class ProviderManager:
             key = self.get_api_key("GROQ_API_KEY")
             return "groq", key, "https://api.groq.com/openai/v1/chat/completions"
 
-    # ==========================================================================
-    # RÉSOLUTION DES MODEL IDS (Veo 3.1 + Gemini image)
-    # ==========================================================================
     def resolve_model_id(self, model_name: str) -> str:
-        """Convertit un nom court UI vers le model ID officiel Google."""
         if not model_name:
             return model_name
-
         clean = model_name.replace("models/", "").strip()
-
         if clean in self.MODEL_ID_MAPPING:
             mapped = self.MODEL_ID_MAPPING[clean]
             logger.info("[provider_manager] resolve_model_id: %s -> %s", clean, mapped)
             return mapped
-
         if clean.startswith("veo-") and "generate" in clean:
             return clean
-
         if clean.startswith("gemini-") and "image" in clean:
             return clean
-
         if clean.startswith("veo-") and clean.endswith("-gene-prev"):
             normalized = clean.replace("-gene-prev", "-generate-preview")
-            logger.warning(
-                "[provider_manager] resolve_model_id fallback: %s -> %s",
-                clean, normalized,
-            )
+            logger.warning("[provider_manager] resolve_model_id fallback: %s -> %s", clean, normalized)
             return normalized
-
         return clean
 
     def resolve_veo_model_id(self, model: str) -> str:
-        """Raccourci sémantique pour Veo."""
         if not model:
             return "veo-3.1-generate-preview"
         resolved = self.resolve_model_id(model)
         if not resolved.startswith("veo-"):
-            logger.warning(
-                "[provider_manager] resolve_veo_model_id: '%s' n'est pas un modèle Veo, "
-                "fallback sur veo-3.1-generate-preview", model,
-            )
+            logger.warning("[provider_manager] resolve_veo_model_id: '%s' n'est pas un modèle Veo, fallback", model)
             return "veo-3.1-generate-preview"
         return resolved
 
-    # ==========================================================================
-    # ★ v24 — RÉSOLUTION DES MODEL IDS AGNES
-    # ==========================================================================
     def resolve_agnes_model_id(self, model: str) -> str:
-        """Convertit un nom court UI vers le model ID officiel Agnes."""
         if not model:
             return "agnes-video-v2.0"
-
         clean = model.replace("models/", "").strip()
-
         if clean in self.AGNES_MODEL_MAPPING:
             mapped = self.AGNES_MODEL_MAPPING[clean]
             logger.info("[provider_manager] resolve_agnes_model_id: %s -> %s", clean, mapped)
             return mapped
-
         if clean.startswith("agnes-video-"):
             return clean
-
-        logger.warning(
-            "[provider_manager] resolve_agnes_model_id: '%s' inconnu, fallback sur agnes-video-v2.0",
-            model,
-        )
+        logger.warning("[provider_manager] resolve_agnes_model_id: '%s' inconnu, fallback", model)
         return "agnes-video-v2.0"
 
-    # ==========================================================================
-    # ★ v25 — RÉSOLUTION DES MODEL IDS HUGGING FACE IMAGE
-    # ==========================================================================
     def resolve_huggingface_image_model_id(self, model: str) -> str:
-        """Convertit un nom court UI vers le model ID officiel HF (image)."""
         if not model:
             return "black-forest-labs/FLUX.1-schnell"
         clean = model.replace("models/", "").strip()
         return self.HF_IMAGE_MODELS.get(clean, clean)
 
-    # ==========================================================================
-    # ENDPOINTS VEO (predictLongRunning + polling)
-    # ==========================================================================
     def get_veo_endpoints(self, model: str) -> Dict[str, Any]:
-        """Retourne les URLs prêtes à l'emploi pour Veo 3.1."""
         model_id = self.resolve_veo_model_id(model)
         api_key = self.get_api_key("GEMINI_API_KEY")
-
         return {
             "model_id":         model_id,
             "predict_url":      f"{self.GEMINI_API_BASE}/models/{model_id}:predictLongRunning",
             "operations_base":  self.GEMINI_API_BASE,
             "api_key":          api_key,
-            "headers": {
-                "Content-Type":   "application/json",
-                "x-goog-api-key": api_key,
-            },
+            "headers": {"Content-Type": "application/json", "x-goog-api-key": api_key},
         }
 
-    # ==========================================================================
-    # ★ v24 — ENDPOINTS AGNES (create + status)
-    # ==========================================================================
     def get_agnes_endpoints(self, model: str = "agnes-v2.0") -> Dict[str, Any]:
-        """Retourne les URLs prêtes à l'emploi pour Agnes AI Video."""
         model_id = self.resolve_agnes_model_id(model)
         api_key = self.get_api_key("AGNES_API_KEY")
-        base_url = (
-            self.get_api_key("AGNES_BASE_URL")
-            or self.AGNES_DEFAULT_BASE_URL
-        ).rstrip("/")
-
+        base_url = (self.get_api_key("AGNES_BASE_URL") or self.AGNES_DEFAULT_BASE_URL).rstrip("/")
         is_v2 = model_id == "agnes-video-v2.0"
-
         return {
-            "model_id":     model_id,
-            "base_url":     base_url,
-            "create_url":   f"{base_url}/videos",
-            "status_url":   f"{base_url}/videos",
-            "api_key":      api_key,
-            "headers": {
-                "Content-Type":  "application/json",
-                "Authorization": f"Bearer {api_key}",
-            },
-            "is_v2":        is_v2,
-            "max_frames":   self.AGNES_V2_MAX_FRAMES,
-            "min_frames":   self.AGNES_V2_MIN_FRAMES,
-            "default_fps":  self.AGNES_V2_DEFAULT_FPS,
-            "min_seconds":  self.AGNES_FLASH_MIN_SECONDS,
-            "max_seconds":  self.AGNES_FLASH_MAX_SECONDS,
+            "model_id": model_id, "base_url": base_url,
+            "create_url": f"{base_url}/videos", "status_url": f"{base_url}/videos",
+            "api_key": api_key,
+            "headers": {"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"},
+            "is_v2": is_v2, "max_frames": self.AGNES_V2_MAX_FRAMES,
+            "min_frames": self.AGNES_V2_MIN_FRAMES, "default_fps": self.AGNES_V2_DEFAULT_FPS,
+            "min_seconds": self.AGNES_FLASH_MIN_SECONDS, "max_seconds": self.AGNES_FLASH_MAX_SECONDS,
         }
 
     def list_agnes_video_models(self) -> List[str]:
-        """Retourne la liste des modèles Agnes vidéo disponibles (IDs officiels)."""
-        return [
-            "agnes-video-v2.0",
-            "agnes-video-2.5-flash",
-        ]
+        return ["agnes-video-v2.0", "agnes-video-2.5-flash"]
 
-    # ==========================================================================
-    # ★ v25 — ENDPOINTS HUGGING FACE IMAGE
-    # ==========================================================================
     def get_huggingface_image_endpoints(self, model: str = "hf-flux-schnell") -> Dict[str, Any]:
-        """
-        Retourne les URLs prêtes à l'emploi pour Hugging Face Inference API (image).
-
-        Usage :
-            ep = provider_manager.get_huggingface_image_endpoints("hf-flux-schnell")
-            # ep = {
-            #   "model_id":     "black-forest-labs/FLUX.1-schnell",
-            #   "predict_url":  "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
-            #   "api_key":      "hf_...",
-            #   "headers":      { Authorization, Content-Type },
-            # }
-        """
         model_id = self.resolve_huggingface_image_model_id(model)
         api_key = self.get_api_key("HUGGINGFACE_API_KEY")
-
         return {
-            "model_id":    model_id,
-            "predict_url": f"{self.HF_INFERENCE_BASE}/{model_id}",
-            "api_key":     api_key,
-            "headers": {
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type":  "application/json",
-            },
+            "model_id": model_id, "predict_url": f"{self.HF_INFERENCE_BASE}/{model_id}",
+            "api_key": api_key,
+            "headers": {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
         }
 
     def list_huggingface_image_models(self) -> List[str]:
-        """Retourne la liste des modèles image HF disponibles (noms courts UI)."""
-        return [
-            "hf-flux-schnell",
-            "hf-sdxl-turbo",
-            "hf-sd-3.5-large",
-            "hf-sd-3.5-medium",
-            "hf-sd-2.1",
-        ]
+        return ["hf-flux-schnell", "hf-sdxl-turbo", "hf-sd-3.5-large", "hf-sd-3.5-medium", "hf-sd-2.1"]
 
-    # ==========================================================================
-    # DÉTECTION DYNAMIQUE DES MODÈLES DISPONIBLES
-    # ==========================================================================
-    def detect_available_models(
-        self,
-        provider: str = "gemini",
-        force_refresh: bool = False,
-        cache_ttl: int = 3600,
-    ) -> Dict[str, Any]:
-        """Détecte dynamiquement les modèles disponibles pour un fournisseur."""
+    def detect_available_models(self, provider: str = "gemini", force_refresh: bool = False, cache_ttl: int = 3600) -> Dict[str, Any]:
         p = provider.lower().strip()
         now = time.time()
-
         cache_key = f"models_{p}"
-        if (
-            not force_refresh
-            and cache_key in self._models_cache
-            and (now - self._models_cache_ts) < cache_ttl
-        ):
+        if not force_refresh and cache_key in self._models_cache and (now - self._models_cache_ts) < cache_ttl:
             cached = self._models_cache[cache_key]
-            return {
-                "provider":  p,
-                "source":    "cache",
-                "count":     len(cached.get("models", [])),
-                "models":    cached.get("models", []),
-                "raw":       cached.get("raw", {}),
-            }
-
+            return {"provider": p, "source": "cache", "count": len(cached.get("models", [])), "models": cached.get("models", []), "raw": cached.get("raw", {})}
         if p == "gemini":
             api_key = self.get_api_key("GEMINI_API_KEY")
             if not api_key:
-                logger.warning("[provider_manager] Pas de GEMINI_API_KEY, fallback statique")
                 return self._static_models_response(p)
-
             try:
                 url = f"{self.GEMINI_API_BASE}/models?key={api_key}&pageSize=200"
                 res = requests.get(url, timeout=30)
                 if res.status_code != 200:
-                    logger.warning(
-                        "[provider_manager] GET /models HTTP %s : %s",
-                        res.status_code, res.text[:300],
-                    )
                     return self._static_models_response(p)
-
                 data = res.json()
                 models: List[Dict[str, Any]] = []
                 for m in data.get("models", []):
                     name = m.get("name", "").replace("models/", "")
-                    if not name:
-                        continue
-                    models.append({
-                        "id":                name,
-                        "displayName":       m.get("displayName", name),
-                        "description":       m.get("description", ""),
-                        "inputTokenLimit":   m.get("inputTokenLimit"),
-                        "outputTokenLimit":  m.get("outputTokenLimit"),
-                        "supportedMethods":  m.get("supportedGenerationMethods", []),
-                    })
-
+                    if not name: continue
+                    models.append({"id": name, "displayName": m.get("displayName", name), "description": m.get("description", ""), "inputTokenLimit": m.get("inputTokenLimit"), "outputTokenLimit": m.get("outputTokenLimit"), "supportedMethods": m.get("supportedGenerationMethods", [])})
                 self._models_cache[cache_key] = {"models": models, "raw": data}
                 self._models_cache_ts = now
-
-                logger.info("[provider_manager] %d modèles Gemini détectés via API", len(models))
-                return {
-                    "provider":  p,
-                    "source":    "api",
-                    "count":     len(models),
-                    "models":    models,
-                    "raw":       data,
-                }
-
+                return {"provider": p, "source": "api", "count": len(models), "models": models, "raw": data}
             except requests.RequestException as e:
                 logger.warning("[provider_manager] Erreur détection Gemini : %s", e)
                 return self._static_models_response(p)
-
         return self._static_models_response(p)
 
     def _static_models_response(self, provider: str) -> Dict[str, Any]:
-        """Retourne la liste statique d'un fournisseur au même format."""
         static_list = self.PROVIDER_MODELS.get(provider, [])
         models = [{"id": m, "displayName": m, "supportedMethods": ["static"]} for m in static_list]
-        return {
-            "provider": provider,
-            "source":   "static",
-            "count":    len(models),
-            "models":   models,
-            "raw":      {},
-        }
+        return {"provider": provider, "source": "static", "count": len(models), "models": models, "raw": {}}
 
     def list_veo_models(self) -> List[str]:
-        """Retourne la liste des modèles Veo disponibles (IDs officiels)."""
-        return [
-            "veo-3.1-generate-preview",
-            "veo-3.1-fast-generate-preview",
-            "veo-3.1-lite-generate-preview",
-        ]
+        return ["veo-3.1-generate-preview", "veo-3.1-fast-generate-preview", "veo-3.1-lite-generate-preview"]
 
     def list_gemini_image_models(self) -> List[str]:
-        """Retourne les modèles image Gemini disponibles (IDs officiels)."""
-        return [
-            "gemini-3.1-flash-image-preview",
-            "gemini-3.1-flash-lite-image-preview",
-            "gemini-2.5-flash-image",
-        ]
+        return ["gemini-3.1-flash-image-preview", "gemini-3.1-flash-lite-image-preview", "gemini-2.5-flash-image"]
 
-    # ==========================================================================
-    # FORMATAGE DES MESSAGES
-    # ==========================================================================
     def format_messages(self, messages: List[Dict[str, Any]]) -> List[Dict[str, str]]:
         formatted = []
         for m in messages:
-            if not isinstance(m, dict):
-                continue
+            if not isinstance(m, dict): continue
             role = m.get("role", "user")
-            if role not in ["system", "user", "assistant"]:
-                role = "user"
+            if role not in ["system", "user", "assistant"]: role = "user"
             content = m.get("content", "")
             if isinstance(content, list):
                 parts = []
                 for item in content:
-                    if isinstance(item, dict) and "text" in item:
-                        parts.append(item["text"])
-                    elif isinstance(item, str):
-                        parts.append(item)
+                    if isinstance(item, dict) and "text" in item: parts.append(item["text"])
+                    elif isinstance(item, str): parts.append(item)
                 content = " ".join(parts)
             if isinstance(content, str) and content.strip():
                 formatted.append({"role": role, "content": content})
         return formatted
 
     # ==========================================================================
-    # EXÉCUTION CHAT EN STREAM
+    # ★ v25.2 — EXÉCUTION CHAT EN STREAM (TPM GUARD CORRIGÉ)
     # ==========================================================================
     def execute_chat_stream(
         self,
         messages: List[Dict[str, Any]],
-        provider: str = "nvidia",
-        model: str = "nvidia/nemotron-3-super-120b-a12b",
+        provider: str = "groq",
+        model: str = "openai/gpt-oss-120b",
         temperature: float = 0.7,
         max_tokens: int = 4096,
         top_p: float = 0.9,
@@ -836,12 +502,15 @@ class ProviderManager:
             selected_provider = provider
             selected_model = model
 
-        if selected_provider == "groq" and total_chars > 16000:
+        # ★ v25.2 — TPM Guard CORRIGÉ : ne route PLUS vers nvidia (mort)
+        if total_chars > 100000:
             logger.warning(
-                "[TPM Guard] Requête volumineuse (%d chars), routage vers nvidia.",
+                "[TPM Guard] Requête GÉANTE (%d chars) — troncature à 100k chars.",
                 total_chars,
             )
-            selected_provider = "nvidia"
+            # Garder les 5 derniers messages (le plus récent)
+            clean_msgs = clean_msgs[-5:]
+            total_chars = sum(len(m.get("content", "")) for m in clean_msgs)
 
         attempt_providers = [selected_provider] + [
             p for p in self.FALLBACK_ORDER if p != selected_provider
@@ -854,12 +523,16 @@ class ProviderManager:
             if current_prov == selected_provider:
                 current_model = selected_model
             else:
-                if current_prov == "nvidia":           current_model = "nvidia/nemotron-3-super-120b-a12b"
+                # ★ v25.2 — Modèles vivants (nvidia retiré)
+                if current_prov == "groq":             current_model = "openai/gpt-oss-120b"
+                elif current_prov == "gemini":         current_model = "gemini-2.5-flash"
+                elif current_prov == "openrouter":     current_model = "auto"
                 elif current_prov == "aisa":           current_model = "qwen-flash"
                 elif current_prov == "kimi":           current_model = "kimi-k3"
-                elif current_prov == "b_ai":           current_model = "glm-5.3-flash"
-                elif current_prov == "gemini":         current_model = "gemini-3.8-flash"
+                elif current_prov == "ovh_anonymous":  current_model = "ovh-gpt-oss-120b"
                 elif current_prov == "kilo_anonymous": current_model = "kilo-nemotron-3-ultra-550b"
+                elif current_prov == "llm7_anonymous": current_model = "llm7-gpt-oss-20b"
+                elif current_prov == "huggingface":    current_model = "Meta-Llama-3.1-8B-Instruct"
                 else:                                  current_model = available_models[0] if available_models else "default"
 
             resolved_p, api_key, api_url = self.resolve_provider_endpoint(current_prov, current_model)
@@ -886,33 +559,22 @@ class ProviderManager:
 
             try:
                 with requests.post(
-                    api_url,
-                    json=payload,
-                    headers=headers,
-                    stream=True,
-                    timeout=(10, 120),
+                    api_url, json=payload, headers=headers,
+                    stream=True, timeout=(10, 120),
                 ) as resp:
                     resp.encoding = "utf-8"
-
                     if resp.status_code != 200:
                         err_text = resp.text[:300]
-                        logger.warning(
-                            "Échec provider %s (HTTP %s) : %s",
-                            resolved_p, resp.status_code, err_text,
-                        )
+                        logger.warning("Échec provider %s (HTTP %s) : %s", resolved_p, resp.status_code, err_text)
                         last_error_message = f"HTTP {resp.status_code} ({resolved_p})"
                         continue
 
                     received_chunks = False
                     for raw_line in resp.iter_lines(decode_unicode=True):
-                        if not raw_line:
-                            continue
+                        if not raw_line: continue
                         line = raw_line.strip()
-                        if not line.startswith("data:"):
-                            continue
-                        if line in ("data: [DONE]", "data:[DONE]"):
-                            break
-
+                        if not line.startswith("data:"): continue
+                        if line in ("data: [DONE]", "data:[DONE]"): break
                         try:
                             payload_json = json.loads(line[5:].strip())
                             choices = payload_json.get("choices", [{}])
@@ -921,11 +583,7 @@ class ProviderManager:
                                 chunk = delta.get("content", "")
                                 if chunk:
                                     received_chunks = True
-                                    yield {
-                                        "chunk":    chunk,
-                                        "provider": resolved_p,
-                                        "model":    current_model,
-                                    }
+                                    yield {"chunk": chunk, "provider": resolved_p, "model": current_model}
                         except Exception:
                             continue
 
@@ -943,7 +601,4 @@ class ProviderManager:
         yield {"error": f"Tous les providers ont échoué. Dernière erreur : {last_error_message}"}
 
 
-# ==============================================================================
-# SINGLETON
-# ==============================================================================
 provider_manager = ProviderManager()
