@@ -81,3 +81,5 @@ hindsight-client>=0.10.0
 
 # --- ChromaDB (fallback local vectoriel) ---
 chromadb>=0.5.0,<1.0.0
+# --- Recherche Web (WebAgent) ---
+ddgs>=9.0.0
