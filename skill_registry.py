@@ -4,10 +4,11 @@ BEK-v15.2 HYBRID - Dynamic Skill Registry
 Module d'indexation, de scoring et de gestion des compétences (Skills)
 pour l'orchestrateur GOAP, Hermes Core V2 et SecurityGuard.
 
-v18.11 (2026-10-03) : Nettoyage
+v18.12 (2026-10-04) : ★ Ajout chargement alter egos
   - SKILLS_DIR pointe UNIQUEMENT sur ./skills
   - Suppression du dossier parasite awesome-openclaw-skills
   - Filtre strict des extensions (.json, .md, .txt)
+  - ★ v18.12 : load_alter_egos() pour charger skills/alter-egos/
 """
 
 from __future__ import annotations
@@ -74,13 +75,14 @@ class SkillRegistry:
     Thread-safe, synchronisé avec Neon DB et compatible SecurityGuard.
     """
 
+    ALTER_EGO_DIR_NAME = "alter-egos"
+
     def __init__(self, directories: Optional[List[Path]] = None):
         if directories is None:
             dirs: List[Path] = [SKILLS_DIR]
         else:
             dirs = list(directories)
 
-        # Créer le dossier skills/ s'il n'existe pas
         for d in dirs:
             try:
                 d.mkdir(parents=True, exist_ok=True)
@@ -89,6 +91,7 @@ class SkillRegistry:
 
         self.directories = dirs
         self.skills: Dict[str, Skill] = {}
+        self.alter_egos: Dict[str, str] = {}
         self._lock = threading.RLock()
         self._initialized = False
 
@@ -115,7 +118,6 @@ class SkillRegistry:
                 if not filepath.is_file() or filename.startswith("."):
                     continue
 
-                # Filtre strict par extension
                 if filepath.suffix.lower() not in _ALLOWED_EXTENSIONS:
                     continue
 
@@ -131,7 +133,96 @@ class SkillRegistry:
             self._initialized = True
 
         logger.info("Skill Registry initialisé | %d skills chargées.", len(loaded_skills))
+
+        # ★ v18.12 — Charger les alter egos séparément
+        self.load_alter_egos()
+
         return len(loaded_skills)
+
+    # ────────────────────────────────────────────────────────────────────────
+    # ★ v18.12 — CHARGEMENT DES ALTER EGOS
+    # ────────────────────────────────────────────────────────────────────────
+    def load_alter_egos(self) -> Dict[str, str]:
+        """
+        ★ v18.12 — Charge les alter egos spécialisés depuis skills/alter-egos/.
+
+        Structure attendue :
+            skills/alter-egos/suntzu/SKILL.md
+            skills/alter-egos/nova/SKILL.md
+            skills/alter-egos/atlas/SKILL.md
+            skills/alter-egos/belfort/SKILL.md
+            skills/alter-egos/mentor/SKILL.md
+            skills/alter-egos/oracle/SKILL.md
+
+        Returns:
+            dict: {"suntzu": "contenu complet", "nova": "...", ...}
+        """
+        alter_egos: Dict[str, str] = {}
+        alter_ego_dir = SKILLS_DIR / self.ALTER_EGO_DIR_NAME
+
+        if not alter_ego_dir.exists() or not alter_ego_dir.is_dir():
+            logger.info(
+                "[Alter Egos] Dossier %s non trouvé → skip",
+                alter_ego_dir
+            )
+            with self._lock:
+                self.alter_egos = alter_egos
+            return alter_egos
+
+        # Scanner les sous-dossiers (1 alter ego = 1 dossier)
+        for subdir in alter_ego_dir.iterdir():
+            if not subdir.is_dir() or subdir.name.startswith("."):
+                continue
+
+            skill_file = subdir / "SKILL.md"
+            if not skill_file.exists() or not skill_file.is_file():
+                logger.debug(
+                    "[Alter Egos] Pas de SKILL.md dans %s → skip",
+                    subdir.name
+                )
+                continue
+
+            try:
+                with skill_file.open("r", encoding="utf-8") as fh:
+                    content = fh.read().strip()
+
+                if not content:
+                    logger.warning(
+                        "[Alter Egos] Fichier vide : %s",
+                        skill_file
+                    )
+                    continue
+
+                alter_egos[subdir.name] = content
+                logger.info(
+                    "[Alter Egos] ✅ Chargé : %s (%d chars)",
+                    subdir.name, len(content)
+                )
+            except Exception as exc:
+                logger.warning(
+                    "[Alter Egos] Erreur lecture %s : %s",
+                    skill_file, exc
+                )
+
+        with self._lock:
+            self.alter_egos = alter_egos
+
+        logger.info(
+            "[Alter Egos] Total : %d alter egos chargés (%s)",
+            len(alter_egos),
+            ", ".join(alter_egos.keys()) if alter_egos else "aucun"
+        )
+        return alter_egos
+
+    def get_alter_ego(self, ego_name: str) -> Optional[str]:
+        """Retourne le prompt d'un alter ego par son nom."""
+        with self._lock:
+            return self.alter_egos.get(ego_name)
+
+    def list_alter_egos(self) -> List[str]:
+        """Liste les alter egos disponibles."""
+        with self._lock:
+            return list(self.alter_egos.keys())
 
     # ────────────────────────────────────────────────────────────────────────
     # SCORES NEON DB
@@ -167,7 +258,6 @@ class SkillRegistry:
         self, filepath: Path, scores_db: Dict[str, Tuple[int, int, float]]
     ) -> Optional[Skill]:
         """Convertit un fichier JSON, MD ou TXT en objet Skill unifié."""
-        # Double sécurité : vérifier l'extension
         if filepath.suffix.lower() not in _ALLOWED_EXTENSIONS:
             return None
 
