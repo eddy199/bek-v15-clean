@@ -369,6 +369,33 @@ async def stream_chat(
     is_freshness_query = rt._bek_rex_is_freshness_query(last_user_query)
     if is_freshness_query:
         logger.info("[Streaming v1.5.2] Requête de fraîcheur détectée")
+    # ══════════════════════════════════════════════════════════════════
+    # ★ v1.6.0 — DÉTECTION ALTER EGO
+    # ══════════════════════════════════════════════════════════════════
+    _detected_ego = rt._bek_rex_detect_alter_ego(last_user_query)
+    _alter_ego_prompt = ""
+
+    if _detected_ego and _detected_ego != "bek":
+        logger.info(
+            "[Streaming v1.6.0] 🎭 Alter ego activé : %s",
+            _detected_ego
+        )
+        _alter_ego_prompt = rt._bek_rex_get_alter_ego_prompt(_detected_ego)
+
+        if _alter_ego_prompt:
+            logger.info(
+                "[Streaming v1.6.0] Alter ego injecté (%d chars)",
+                len(_alter_ego_prompt)
+            )
+            # Injecter l'alter ego dans le dernier message système
+            for _msg in exec_messages:
+                if _msg.get("role") == "system":
+                    _msg["content"] = (
+                        _alter_ego_prompt
+                        + "\n\n"
+                        + _msg.get("content", "")
+                    )
+                    break
 
     try:
         # BEK-REX
