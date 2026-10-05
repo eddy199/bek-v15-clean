@@ -10,6 +10,7 @@
 # v18.6 (2026-09-29) : Pending feedbacks traités au boot + route async
 # v18.10 (2026-09-29) : ★ Route admin /api/admin/flush-redis
 # v18.11 (2026-09-29) : ★ Tool generate_video avec support images
+# v18.12 (2026-10-06) : ★ CRM DÉSACTIVÉ (Nerf 10 + router retirés)
 # ==============================================================================
 from __future__ import annotations
 
@@ -17,14 +18,18 @@ import signal as _signal
 import os as _os
 import sys as _sys
 
+
 def _bek_force_exit(signum, frame):
     try:
-        _sys.stdout.write("\n\033[91m🔴 BEK — Arrêt forcé (Ctrl+C). Nettoyage immédiat.\033[0m\n")
+        _sys.stdout.write(
+            "\n\033[91m🔴 BEK — Arrêt forcé (Ctrl+C). Nettoyage immédiat.\033[0m\n"
+        )
         _sys.stdout.flush()
         _sys.stderr.flush()
     except Exception:
         pass
     _os._exit(0)
+
 
 try:
     _signal.signal(_signal.SIGINT, _bek_force_exit)
@@ -58,6 +63,7 @@ from hermes_core import hermes, start_background_workers
 from memory import init_sync_log_table
 from state_synchronizer import init_state_tables
 
+# ─── VISION (image + vidéo) ───
 try:
     from services.vision import (
         generate_image_with_provider,
@@ -75,21 +81,26 @@ except ImportError:
     extend_video_with_agnes = None
     extend_video_multiple = None
 
-try:
-    from sub_crm_engine import SubCRMEngine
-except ImportError:
-    SubCRMEngine = None
+# ─── ★ v18.12 : SubCRMEngine n'est PLUS chargé (CRM désactivé) ───
+# try:
+#     from sub_crm_engine import SubCRMEngine
+# except ImportError:
+#     SubCRMEngine = None
+SubCRMEngine = None  # ★ Désactivé
 
+# ─── WEB AGENT ───
 try:
     from web_agent import web_agent_instance
 except ImportError:
     web_agent_instance = None
 
+# ─── ORCHESTRATEUR ───
 try:
     from bek_orchestrator import bek_orchestrator
 except ImportError:
     bek_orchestrator = None
 
+# ─── MCP GATEWAY ───
 try:
     from mcp_gateway import mcp_gateway
 except ImportError:
@@ -98,7 +109,7 @@ except ImportError:
         def get_mcp_manifests(self): return []
     mcp_gateway = MCPGatewayMock()
 
-# ★ v18.2 — HINDSIGHT
+# ─── ★ v18.2 — HINDSIGHT ───
 try:
     from hindsight_memory import (
         hindsight_reflect,
@@ -106,13 +117,14 @@ try:
         hindsight_status as _hindsight_status,
     )
     _HINDSIGHT_AVAILABLE = True
-except ImportError as _e:
+except ImportError:
     _HINDSIGHT_AVAILABLE = False
+
     def hindsight_reflect(q): return ""
     def hindsight_recall(q): return []
     def _hindsight_status(): return {"enabled": False, "connected": False}
 
-# ★ v18.5 — FEEDBACK
+# ─── ★ v18.5 — FEEDBACK ───
 try:
     from feedback_memory import (
         submit_feedback as _submit_feedback,
@@ -121,14 +133,16 @@ try:
         process_pending_feedbacks as _process_pending_feedbacks,
     )
     _FEEDBACK_AVAILABLE = True
-except ImportError as _e:
+except ImportError:
     _FEEDBACK_AVAILABLE = False
-    def _submit_feedback(**kwargs): return {"status": "error", "message": "feedback_memory indisponible"}
+
+    def _submit_feedback(**kwargs):
+        return {"status": "error", "message": "feedback_memory indisponible"}
     def _list_feedbacks(limit=50): return []
     def _feedback_stats(): return {"total": 0}
     def _process_pending_feedbacks(): return 0
 
-# ★ v18 — Régénérer ARCHITECTURE.md AVANT les routeurs
+# ─── ★ v18 — Régénérer ARCHITECTURE.md AVANT les routeurs ───
 try:
     from generate_architecture_doc import update_documentation_file
     if update_documentation_file():
@@ -138,7 +152,9 @@ try:
 except Exception as exc:
     print(f"[v18] ⚠️ Régénération pré-imports échouée : {exc}")
 
-from routers import admin, chat, crm, files, memory
+# ─── ROUTERS ───
+# ★ v18.12 : "crm" retiré de l'import et de l'inclusion
+from routers import admin, chat, files, memory
 from routers import openai_compat
 
 logger = logging.getLogger("BEKApp")
@@ -161,15 +177,18 @@ if not logger.handlers:
 _BEK_ALREADY_BOOTSTRAPPED = os.environ.get("BEK_BOOTSTRAPPED") == "1"
 
 if not _BEK_ALREADY_BOOTSTRAPPED:
+    # ─── INIT DB ───
     try:
         init_sync_log_table()
         init_state_tables()
-        if SubCRMEngine:
-            SubCRMEngine.initialize_matrix_schema()
-        logger.info("Tables PostgreSQL (Supabase) et schéma Matrix initialisés.")
+        # ★ v18.12 : SubCRMEngine désactivé
+        # if SubCRMEngine:
+        #     SubCRMEngine.initialize_matrix_schema()
+        logger.info("Tables PostgreSQL (Supabase) initialisées.")
     except Exception as exc:
         logger.warning("Initialisation DB partielle : %s", exc)
 
+    # ─── MCP : neon_audit ───
     mcp_gateway.register_mcp_tool(
         name="neon_audit",
         description="Audit des tables relationnelles PostgreSQL",
@@ -177,17 +196,19 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         handler=lambda: {
             "tables": [
                 "companies", "contacts", "opportunities",
-                "matrix_sub_crms", "bek_task_states", "sync_log",
+                "bek_task_states", "sync_log",
             ]
         },
     )
 
+    # ─── WORKERS HERMES ───
     try:
         start_background_workers()
         logger.info("Workers Hermes démarrés avec succès.")
     except Exception as exc:
         logger.error("Impossible de démarrer les workers Hermes : %s", exc)
 
+    # ─── PENDING FEEDBACKS ───
     try:
         n_pending = _process_pending_feedbacks()
         if n_pending > 0:
@@ -195,41 +216,72 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     except Exception as exc:
         logger.warning("Pending feedbacks : %s", exc)
 
+    # ─── PRE-PLAN HOOK ───
     def _bek_pre_plan_validator(objective: str, trace_id: str | None):
         return True, "Pre-Plan validé", None
 
     hermes.register_pre_plan_hook(_bek_pre_plan_validator)
 
+    # ══════════════════════════════════════════════════════════════════════
+    # ENREGISTREMENT DES OUTILS HERMES
+    # ══════════════════════════════════════════════════════════════════════
+
+    # ─── web_sync ───
     hermes.register_tool(
         "web_sync",
-        lambda query="", **kwargs: web_agent_instance.run_pipeline(query) if web_agent_instance else "WebAgent indisponible",
+        lambda query="", **kwargs: (
+            web_agent_instance.run_pipeline(query)
+            if web_agent_instance else "WebAgent indisponible"
+        ),
         risk_level="L3",
     )
+
+    # ─── orchestrate ───
     hermes.register_tool(
         "orchestrate",
-        lambda goal="", **kwargs: bek_orchestrator.run(goal) if bek_orchestrator else "Orchestrateur indisponible",
+        lambda goal="", **kwargs: (
+            bek_orchestrator.run(goal)
+            if bek_orchestrator else "Orchestrateur indisponible"
+        ),
         risk_level="L2",
     )
+
+    # ─── neon_audit ───
     hermes.register_tool(
         "neon_audit",
-        lambda **kwargs: {"status": "Audit DB demandé", "tables": ["companies", "contacts", "opportunities", "matrix_sub_crms", "sync_log"]},
+        lambda **kwargs: {
+            "status": "Audit DB demandé",
+            "tables": ["companies", "contacts", "opportunities", "sync_log"],
+        },
         risk_level="L1",
     )
 
+    # ─── generate_image ───
     hermes.register_tool(
         "generate_image",
-        lambda prompt="", query="", **kwargs: generate_image_with_provider(prompt=prompt or query) if generate_image_with_provider else {"status": "error", "message": "Module vision manquant"},
-        risk_level="L1",
-    )
-    hermes.register_tool(
-        "edit_image",
-        lambda image_paths=None, prompt="", user_prompt="", query="", **kwargs: merge_and_edit_images(
-            image_paths=image_paths,
-            user_prompt=user_prompt or prompt or query
-        ) if merge_and_edit_images else {"status": "error", "message": "Module vision manquant"},
+        lambda prompt="", query="", **kwargs: (
+            generate_image_with_provider(prompt=prompt or query)
+            if generate_image_with_provider
+            else {"status": "error", "message": "Module vision manquant"}
+        ),
         risk_level="L1",
     )
 
+    # ─── edit_image ───
+    hermes.register_tool(
+        "edit_image",
+        lambda image_paths=None, prompt="", user_prompt="", query="", **kwargs: (
+            merge_and_edit_images(
+                image_paths=image_paths,
+                user_prompt=user_prompt or prompt or query
+            )
+            if merge_and_edit_images
+            else {"status": "error", "message": "Module vision manquant"}
+        ),
+        risk_level="L1",
+    )
+
+    # ─── generate_video (handler complexe) ───
     def _generate_video_handler(
         prompt="", query="",
         image_paths=None,
@@ -247,12 +299,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         mode=None,
         **kwargs
     ):
-        """
-        Génère une vidéo.
-
-        ★ v18.11 : support des images de référence (mode multi_reference
-        d'Agnes) pour créer une vidéo à partir de photos uploadées.
-        """
+        """Génère une vidéo (★ v18.11 : support images de référence)."""
         if generate_video_with_provider is None:
             return {"status": "error", "message": "Module vidéo manquant"}
 
@@ -294,7 +341,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
                     mode=mode,
                     reference_images=refs if isinstance(refs, list) else [refs],
                 )
-                import os as _os
                 from core.paths import GENERATED_DIR as _GD
                 import uuid as _uuid
                 out_name = f"gen_video_{_uuid.uuid4().hex[:8]}.mp4"
@@ -327,7 +373,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
 
         try:
             return generate_video_with_provider(**call_kwargs)
-        except TypeError as te:
+        except TypeError:
             call_kwargs.pop("with_audio", None)
             call_kwargs.pop("audio_style", None)
             try:
@@ -339,12 +385,13 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
 
     hermes.register_tool("generate_video", _generate_video_handler, risk_level="L1")
 
+    # ─── edit_video ───
     hermes.register_tool(
         "edit_video",
         lambda video_paths=None, prompt="", user_prompt="", query="",
                provider="gemini", model="veo-3.1-gene-prev",
                duration=8, aspect_ratio="16:9", auto_stitch=True,
-               **kwargs:
+               **kwargs: (
             merge_and_edit_videos(
                 video_paths=video_paths,
                 user_prompt=user_prompt or prompt or query,
@@ -353,10 +400,14 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
                 duration=int(duration),
                 aspect_ratio=aspect_ratio,
                 auto_stitch=bool(auto_stitch),
-            ) if merge_and_edit_videos else {"status": "error", "message": "Module vidéo manquant"},
+            )
+            if merge_and_edit_videos
+            else {"status": "error", "message": "Module vidéo manquant"}
+        ),
         risk_level="L1",
     )
 
+    # ─── extend_video ───
     def _extend_video_handler(
         video_path="LAST", prompt="", new_prompt="",
         duration=9, with_audio=True, audio_style="nature", **kwargs
@@ -374,6 +425,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         except Exception as e:
             return {"status": "error", "message": f"extend_video échec : {e}"}
 
+    # ─── extend_video_multiple ───
     def _extend_video_multiple_handler(
         video_path="LAST", prompts=None,
         duration=9, with_audio=True, audio_style="nature", max_clips=5, **kwargs
@@ -395,6 +447,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     hermes.register_tool("extend_video", _extend_video_handler, risk_level="L1")
     hermes.register_tool("extend_video_multiple", _extend_video_multiple_handler, risk_level="L1")
 
+    # ─── generate_subtitles ───
     def _generate_subtitles_handler(
         video_path="LAST", language=None, model="base", **kwargs
     ):
@@ -408,6 +461,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         except Exception as e:
             return {"status": "error", "message": f"Whisper échec : {e}"}
 
+    # ─── burn_subtitles ───
     def _burn_subtitles_handler(
         video_path="LAST", srt_path=None, language=None,
         model="base", **kwargs
@@ -436,6 +490,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     hermes.register_tool("generate_subtitles", _generate_subtitles_handler, risk_level="L1")
     hermes.register_tool("burn_subtitles", _burn_subtitles_handler, risk_level="L1")
 
+    # ─── hindsight_query ───
     def _hindsight_query_handler(query: str = "", **kwargs):
         if not query:
             return {"status": "error", "message": "query obligatoire"}
@@ -448,6 +503,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
+    # ─── hindsight_recall ───
     def _hindsight_recall_handler(query: str = "", **kwargs):
         if not query:
             return {"status": "error", "message": "query obligatoire"}
@@ -460,6 +516,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     hermes.register_tool("hindsight_recall", _hindsight_recall_handler, risk_level="L1")
     logger.info("🧠 Outils Hindsight enregistrés : hindsight_query + hindsight_recall")
 
+    # ─── submit_feedback ───
     def _submit_feedback_handler(
         user_query: str = "", agent_response: str = "",
         correction: str = "", feedback_type: str = "correction",
@@ -480,11 +537,15 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     hermes.register_tool("submit_feedback", _submit_feedback_handler, risk_level="L1")
     logger.info("🧠 Outil Feedback enregistré : submit_feedback")
 
+    # ══════════════════════════════════════════════════════════════════════
+    # ACTIVATION DES NERFS
+    # ══════════════════════════════════════════════════════════════════════
     try:
         from nerves import (
             event_bus_nerves, hermes_nerves, skills_nerves, headless_nerves,
             tmux_nerves, web_agent_nerves, guardian_nerves, approval_nerves,
-            mcp_nerves, cognitive_nerves, router_nerves, crm_nerves,
+            mcp_nerves, cognitive_nerves, router_nerves,
+            # ★ v18.12 : crm_nerves retiré de l'import
         )
 
         _nerve_3_result = event_bus_nerves.activate_event_bus_nerves()
@@ -498,7 +559,12 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         _nerve_6_result = mcp_nerves.activate_mcp_nerves()
         _nerve_2_result = cognitive_nerves.activate_cognitive_nerves()
         _nerve_7_result = router_nerves.activate_router_nerves()
-        _nerve_10_result = crm_nerves.activate_crm_nerves()
+
+        # ★ v18.12 : Nerf 10 (CRM) désactivé définitivement
+        _nerve_10_result = {
+            "status": "disabled",
+            "reason": "CRM désactivé (inutile dans BEK-v18)",
+        }
 
         logger.info(
             "🧠 Système nerveux BEK activé | "
@@ -507,7 +573,7 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
             "Nerf 4 : %s (%d web) | Nerf 9 : %s (%d guardian) | "
             "Nerf 5 : %s (%d approval) | Nerf 6 : %s (%d mcp) | "
             "Nerf 2 : %s (%d cognitive) | Nerf 7 : %s (%d router) | "
-            "Nerf 10 : %s (%d crm)",
+            "Nerf 10 : %s (CRM désactivé)",
             _nerve_3_result.get("status"),
             _nerve_1_result.get("status"), _nerve_1_result.get("activated_count", 0),
             _nerve_8_result.get("status"), _nerve_8_result.get("skills_loaded", 0),
@@ -519,21 +585,35 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
             _nerve_6_result.get("status"), _nerve_6_result.get("activated_count", 0),
             _nerve_2_result.get("status"), _nerve_2_result.get("activated_count", 0),
             _nerve_7_result.get("status"), _nerve_7_result.get("activated_count", 0),
-            _nerve_10_result.get("status"), _nerve_10_result.get("activated_count", 0),
+            _nerve_10_result.get("status"),
         )
     except ImportError as _nerves_import_err:
-        logger.warning("⚠️ Paquet nerves/ introuvable (%s). Mode legacy conservé.", _nerves_import_err)
+        logger.warning(
+            "⚠️ Paquet nerves/ introuvable (%s). Mode legacy conservé.",
+            _nerves_import_err,
+        )
     except Exception as _nerves_err:
-        logger.error("❌ Activation des nerfs échouée : %s. Mode legacy conservé.", _nerves_err)
+        logger.error(
+            "❌ Activation des nerfs échouée : %s. Mode legacy conservé.",
+            _nerves_err,
+        )
 
     os.environ["BEK_BOOTSTRAPPED"] = "1"
 
+
+# ══════════════════════════════════════════════════════════════════════
+# SECURITY GUARD
+# ══════════════════════════════════════════════════════════════════════
 security_guard = hermes.security_guard
 if security_guard is None:
     raise RuntimeError("SecurityGuard Hermes indisponible. Vérifiez BEK_HSM_SECRET.")
 
 GLOBAL_SYSTEM_CONTEXT = load_project_documentation(DOCS_DIR)
 
+
+# ══════════════════════════════════════════════════════════════════════
+# LIFESPAN
+# ══════════════════════════════════════════════════════════════════════
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_json_logging()
@@ -563,16 +643,21 @@ async def lifespan(app: FastAPI):
         logger.debug("hindsight_close : %s", exc)
 
 
+# ══════════════════════════════════════════════════════════════════════
+# FASTAPI APP
+# ══════════════════════════════════════════════════════════════════════
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="18.11",
+    version="18.12",
     lifespan=lifespan,
 )
 
 CORS_ORIGINS = os.environ.get(
     "BEK_CORS_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:8765,http://127.0.0.1:8765,http://localhost:3001,http://127.0.0.1:3001",
+    "http://localhost:3000,http://127.0.0.1:3000,"
+    "http://localhost:8765,http://127.0.0.1:8765,"
+    "http://localhost:3001,http://127.0.0.1:3001",
 )
 cors_origins = [origin.strip() for origin in CORS_ORIGINS.split(",") if origin.strip()]
 
@@ -595,18 +680,23 @@ async def add_anti_cache_header(request: Request, call_next):
     return response
 
 
-from core.tracing import init_tracing, shutdown_tracing  # noqa: E402
+from core.tracing import init_tracing  # noqa: E402
 
 init_tracing(app)
 
+# ─── ROUTERS ───
+# ★ v18.12 : crm.router retiré
 app.include_router(admin.router)
 app.include_router(files.router)
 app.include_router(memory.router)
-app.include_router(crm.router)
+# app.include_router(crm.router)  # ★ Désactivé
 app.include_router(chat.router)
 app.include_router(openai_compat.router)
 
 
+# ══════════════════════════════════════════════════════════════════════
+# HELPERS
+# ══════════════════════════════════════════════════════════════════════
 def _provider_display_name(provider_id: str) -> str:
     names = {
         "agnes":          "Agnes AI (Video)",
@@ -631,6 +721,9 @@ def _provider_display_name(provider_id: str) -> str:
     return names.get(provider_id, provider_id.replace("_", " ").title())
 
 
+# ══════════════════════════════════════════════════════════════════════
+# ROUTES API
+# ══════════════════════════════════════════════════════════════════════
 @app.get("/api/config")
 async def get_config():
     from provider_manager import provider_manager
@@ -690,9 +783,9 @@ async def refresh_architecture():
         raise HTTPException(status_code=500, detail=str(exc))
 
 
-# ══════════════════════════════════════════════════════════════════
-# ★ v18.2 — ROUTES HINDSIGHT
-# ══════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════════
+# HINDSIGHT ROUTES
+# ══════════════════════════════════════════════════════════════════════
 @app.get("/api/hindsight/status")
 async def api_hindsight_status():
     return _hindsight_status()
@@ -719,9 +812,9 @@ async def api_hindsight_query(q: str = ""):
         raise HTTPException(status_code=500, detail=str(exc))
 
 
-# ══════════════════════════════════════════════════════════════════
-# ★ v18.5 — ROUTES FEEDBACK UTILISATEUR
-# ══════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════════
+# FEEDBACK ROUTES
+# ══════════════════════════════════════════════════════════════════════
 class FeedbackRequest(BaseModel):
     user_query: str
     agent_response: str = ""
@@ -763,14 +856,12 @@ async def api_list_feedback(limit: int = 50):
         raise HTTPException(status_code=500, detail=str(exc))
 
 
-# ══════════════════════════════════════════════════════════════════
-# ★ v18.10 — ROUTE ADMIN : vider Redis Streams
-# ══════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════════
+# ADMIN : FLUSH REDIS
+# ══════════════════════════════════════════════════════════════════════
 @app.post("/api/admin/flush-redis")
 async def api_flush_redis():
-    """
-    Vide tous les streams Redis.
-    """
+    """Vide tous les streams Redis."""
     try:
         import redis as _redis_lib
     except ImportError:
@@ -825,6 +916,9 @@ async def api_flush_redis():
         raise HTTPException(status_code=500, detail=str(exc))
 
 
+# ══════════════════════════════════════════════════════════════════════
+# HEALTH
+# ══════════════════════════════════════════════════════════════════════
 @app.get("/health/worker")
 async def health_worker():
     try:
@@ -834,6 +928,9 @@ async def health_worker():
         return {"status": "error", "detail": str(exc)}
 
 
+# ══════════════════════════════════════════════════════════════════════
+# STATIC FILES
+# ══════════════════════════════════════════════════════════════════════
 @app.get("/")
 async def index():
     return FileResponse(os.path.join(WORKSPACE_DIR, "index.html"))
@@ -847,6 +944,9 @@ async def serve_static(filename: str):
     raise HTTPException(status_code=404, detail="Fichier introuvable")
 
 
+# ══════════════════════════════════════════════════════════════════════
+# SKILLS
+# ══════════════════════════════════════════════════════════════════════
 class SkillExecutionRequest(BaseModel):
     skill_name: str
     payload: Optional[Dict[str, Any]] = {}
@@ -858,13 +958,16 @@ async def execute_skill_endpoint(request: SkillExecutionRequest):
     result = await skill_runner.execute_skill_async(
         skill_name=request.skill_name,
         payload=request.payload,
-        timeout_seconds=request.timeout
+        timeout_seconds=request.timeout,
     )
     if result.get("status") in ["error", "timeout"]:
         raise HTTPException(status_code=500, detail=result)
     return result
 
 
+# ══════════════════════════════════════════════════════════════════════
+# ENTRYPOINT
+# ══════════════════════════════════════════════════════════════════════
 if __name__ == "__main__":
     import uvicorn
 
