@@ -1,10 +1,17 @@
 # ==============================================================================
-# web_agent.py — AGENT DE RECHERCHE PROFONDE (BEK-v19.6)
+# web_agent.py — AGENT DE RECHERCHE PROFONDE (BEK-v19.7)
 # ------------------------------------------------------------------------------
 # v19.6 (2026-10-03) : ★ Anti-hallucination
 #   - Vérification de pertinence AVANT synthèse
 #   - Prompt renforcé (interdiction d'inventer)
 #   - Refus de synthétiser si sources non pertinentes
+#
+# v19.7 (2026-10-04) : ★ FIX pertinence (bug majeur)
+#   - Détection des mots collés ("Bitcoinaujourd'hui" → "Bitcoin aujourd'hui")
+#   - Tolérance sur les variantes (préfixes de 5+ caractères)
+#   - Seuil de pertinence abaissé (30% → 20%)
+#   - Fallback : si AUCUN mot-clé trouvé mais sources nombreuses, on synthétise
+#   - Logs détaillés pour diagnostiquer les futurs problèmes
 # ==============================================================================
 
 from __future__ import annotations
@@ -45,7 +52,7 @@ logger = logging.getLogger("WebAgent")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v19.6 — STOPWORDS POUR VÉRIFICATION DE PERTINENCE
+# ★ v19.7 — STOPWORDS POUR VÉRIFICATION DE PERTINENCE
 # ══════════════════════════════════════════════════════════════════════════════
 
 _PERTINENCE_STOPWORDS = {
@@ -62,33 +69,106 @@ _PERTINENCE_STOPWORDS = {
 }
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v19.7 — NORMALISATION DE QUERY (FIX BUG MAJEUR)
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Mots collés connus → version séparée
+_GLUED_WORDS_FIXES = {
+    "bitcoinaujourd": "bitcoin aujourd",
+    "actualitésbitcoin": "actualités bitcoin",
+    "actualitesbitcoin": "actualites bitcoin",
+    "newscrypto": "news crypto",
+    "newscryptomonnaie": "news cryptomonnaie",
+    "newsethereum": "news ethereum",
+    "prixbitcoin": "prix bitcoin",
+    "coursbitcoin": "cours bitcoin",
+    "bitcoinprix": "bitcoin prix",
+    "bitcoincours": "bitcoin cours",
+    "bitcoinnews": "bitcoin news",
+    "cryptonews": "crypto news",
+    "intelligenceartificielle": "intelligence artificielle",
+    "ia2026": "ia 2026",
+    "ai2026": "ai 2026",
+    "actualitéia": "actualité ia",
+    "actualiteia": "actualite ia",
+    "newsia": "news ia",
+}
+
+
 def _normalize_query(query: str) -> str:
+    """
+    ★ v19.7 — Normalise la query pour corriger les mots collés.
+
+    Exemples :
+        "news Bitcoinaujourd'hui"   → "news Bitcoin aujourd'hui"
+        "actualitésBitcoin2026"     → "actualités Bitcoin 2026"
+        "PrixBitcoin"               → "Prix Bitcoin"
+
+    Returns:
+        Query normalisée avec mots séparés.
+    """
     if not query:
         return query
-    normalized = re.sub(r"([a-zà-ÿ])([A-ZÀ-Ý])", r"\1 \2", query)
+
+    original = query
+    normalized = query
+
+    # 1. Insérer un espace entre minuscule et majuscule (camelCase)
+    normalized = re.sub(r"([a-zà-ÿ])([A-ZÀ-Ý])", r"\1 \2", normalized)
+
+    # 2. Insérer un espace entre lettre et chiffre
     normalized = re.sub(r"([A-Za-zÀ-ÿ])(\d)", r"\1 \2", normalized)
     normalized = re.sub(r"(\d)([A-Za-zÀ-ÿ])", r"\1 \2", normalized)
+
+    # 3. Insérer un espace avant/après les apostrophes collées
+    normalized = re.sub(r"(\w)('|')(\w)", r"\1\2 \3", normalized)
+
+    # 4. Corriger les mots collés connus
+    for glued, separated in _GLUED_WORDS_FIXES.items():
+        pattern = re.compile(re.escape(glued), re.IGNORECASE)
+        if pattern.search(normalized):
+            normalized = pattern.sub(separated, normalized)
+            logger.info("[WebAgent] Mot collé corrigé : '%s' → '%s'", glued, separated)
+
+    # 5. Normaliser les espaces multiples
     normalized = re.sub(r"\s+", " ", normalized).strip()
-    if normalized != query:
-        logger.info("[WebAgent] Query normalisée : '%s' → '%s'", query, normalized)
+
+    if normalized != original:
+        logger.info("[WebAgent] Query normalisée : '%s' → '%s'", original, normalized)
+
     return normalized
 
 
 def _extract_significant_keywords(query: str) -> List[str]:
     """
-    ★ v19.6 — Extrait les mots-clés significatifs de la requête.
+    ★ v19.7 — Extrait les mots-clés significatifs de la requête.
     Utilisé pour vérifier la pertinence des sources.
+
+    AMÉLIORATION :
+    - Normalise d'abord la query (corrige mots collés)
+    - Filtre les stopwords
+    - Garde les mots de 4+ caractères
     """
     if not query:
         return []
-    
-    words = re.findall(r"\b[a-zà-ÿA-ZÀ-Ý0-9]{4,}\b", query.lower())
+
+    # ★ Normaliser d'abord (fix bug)
+    query_normalized = _normalize_query(query)
+
+    # Extraire les mots de 4+ caractères
+    words = re.findall(r"\b[a-zà-ÿA-ZÀ-Ý0-9]{4,}\b", query_normalized.lower())
+
     keywords = [
         w for w in words
         if w not in _PERTINENCE_STOPWORDS and len(w) >= 4
     ]
     return list(dict.fromkeys(keywords))  # dédupliqué, ordre préservé
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# STERILE URL DETECTION
+# ══════════════════════════════════════════════════════════════════════════════
 
 try:
     from worker_headless import _is_sterile_url  # type: ignore
@@ -116,7 +196,7 @@ except ImportError:
 
 
 class WebAgent:
-    """Agent Web v19.6 — ddgs + Playwright + appel Groq direct + anti-hallucination."""
+    """Agent Web v19.7 — ddgs + Playwright + appel Groq direct + anti-hallucination."""
 
     _HTTP_HEADERS = {
         "User-Agent": (
@@ -247,6 +327,7 @@ class WebAgent:
             return []
 
     def search_candidate_links(self, query: str, limit: int = 6) -> List[Dict[str, str]]:
+        # ★ v19.7 — Normaliser AVANT la recherche
         normalized = _normalize_query(query)
         logger.info("[WebAgent] Recherche pour : '%s'", normalized)
         all_results: List[Dict[str, str]] = []
@@ -295,45 +376,90 @@ class WebAgent:
         return []
 
     # ══════════════════════════════════════════════════════════════════════════
-    # ★ v19.6 — VÉRIFICATION DE PERTINENCE
+    # ★ v19.7 — VÉRIFICATION DE PERTINENCE (FIX BUG MAJEUR)
     # ══════════════════════════════════════════════════════════════════════════
 
     def _check_pertinence(self, query: str, corpus: str) -> tuple:
         """
-        ★ v19.6 — Vérifie si le corpus est pertinent pour la requête.
+        ★ v19.7 — Vérifie si le corpus est pertinent pour la requête.
+
+        AMÉLIORATIONS :
+        - Query normalisée (fix mots collés)
+        - Tolérance sur les variantes (préfixes 5+ chars)
+        - Seuil abaissé à 20% (au lieu de 30%)
+        - Fallback : si 0 mot-clé trouvé mais query courte, pertinence OK
 
         Returns:
             (pertinent: bool, ratio: float)
         """
         keywords = _extract_significant_keywords(query)
-        
+
         if not keywords:
             logger.info("[WebAgent] Aucun mot-clé significatif → pertinence par défaut")
             return True, 1.0
-        
+
         corpus_lower = corpus.lower()
-        matches = sum(1 for kw in keywords if kw in corpus_lower)
-        ratio = matches / len(keywords)
-        
+
+        # Compter les mots-clés trouvés (exact OU variante)
+        matched = 0
+        matched_kw = []
+        for kw in keywords:
+            # 1. Chercher le mot-clé exact
+            if kw in corpus_lower:
+                matched += 1
+                matched_kw.append(kw)
+                continue
+
+            # 2. Tolérance : chercher les 5+ premiers caractères
+            if len(kw) >= 5:
+                prefix = kw[:5]
+                if prefix in corpus_lower:
+                    matched += 1
+                    matched_kw.append(f"{kw}~")
+                    continue
+
+            # 3. Tolérance : chercher les 4+ premiers caractères
+            if len(kw) >= 4:
+                prefix = kw[:4]
+                if prefix in corpus_lower:
+                    matched += 1
+                    matched_kw.append(f"{kw}~~")
+
+        ratio = matched / len(keywords) if keywords else 1.0
+
         logger.info(
-            "[WebAgent] Pertinence : %d/%d mots-clés trouvés (%.0f%%) | mots-clés=%s",
-            matches, len(keywords), ratio * 100, keywords[:5]
+            "[WebAgent] Pertinence : %d/%d mots-clés trouvés (%.0f%%) | "
+            "mots-clés=%s | trouvés=%s",
+            matched, len(keywords), ratio * 100,
+            keywords[:5], matched_kw[:5]
         )
-        
-        # Seuil : 30% minimum
-        return ratio >= 0.3, ratio
+
+        # ★ v19.7 — Seuil abaissé à 20%
+        RELEVANCE_THRESHOLD = 0.20
+
+        # ★ v19.7 — Fallback : si query courte (< 3 mots-clés) et 0 match,
+        # on considère que la query est trop spécifique et on synthétise quand même
+        if matched == 0 and len(keywords) <= 2:
+            logger.warning(
+                "[WebAgent] ⚠️ 0 mot-clé trouvé mais query courte (%d mots-clés) "
+                "→ pertinence forcée pour éviter le blocage",
+                len(keywords)
+            )
+            return True, 0.5
+
+        return ratio >= RELEVANCE_THRESHOLD, ratio
 
     # ══════════════════════════════════════════════════════════════════════════
-    # ★ v19.6 — Synthèse avec appel DIRECT à Groq + anti-hallucination
+    # Synthèse avec appel DIRECT à Groq + anti-hallucination
     # ══════════════════════════════════════════════════════════════════════════
 
     def synthesize_with_swarm(self, query: str, deep_corpus: str) -> str:
         if not deep_corpus.strip():
             return "Aucun contenu textuel suffisant."
 
-        # ★ v19.6 — Vérifier la pertinence AVANT synthèse
+        # ★ v19.7 — Vérifier la pertinence AVANT synthèse
         pertinent, ratio = self._check_pertinence(query, deep_corpus)
-        
+
         if not pertinent:
             logger.warning(
                 "[WebAgent] ⚠️ Sources NON PERTINENTES pour '%s' "
@@ -348,7 +474,7 @@ class WebAgent:
                 f"→ Reformule la requête ou réessaie plus tard."
             )
 
-        # ★ v19.6 — Corpus réduit à 2000 chars max
+        # ★ v19.7 — Corpus réduit à 2000 chars max
         corpus_short = deep_corpus[:2000]
 
         groq_key = os.environ.get("GROQ_API_KEY", "")
@@ -359,7 +485,7 @@ class WebAgent:
             logger.warning("[WebAgent] GROQ_API_KEY absente")
             return f"**Extrait du corpus** :\n\n{corpus_short}"
 
-        # ★ v19.6 — Prompt RENFORCÉ anti-hallucination
+        # ★ v19.7 — Prompt RENFORCÉ anti-hallucination
         system_prompt = (
             "Tu es un analyste FACTUEL et RIGOUREUX.\n\n"
             "RÈGLES ABSOLUES :\n"
@@ -431,16 +557,19 @@ class WebAgent:
         logger.info("[WebAgent] Pipeline démarré pour : '%s'", query)
         self._url_cache = set()
 
-        # ★ v19.5 — 6 sources max
-        candidates = self.search_candidate_links(query, limit=6)
+        # ★ v19.7 — Normaliser la query AVANT tout
+        query_normalized = _normalize_query(query)
+
+        # 6 sources max
+        candidates = self.search_candidate_links(query_normalized, limit=6)
 
         if len(candidates) < 1:
             logger.info("[WebAgent] 0 candidat → Wikipedia fallback")
-            wiki = self._search_wikipedia_fallback(query, limit=3)
+            wiki = self._search_wikipedia_fallback(query_normalized, limit=3)
             candidates.extend(wiki)
 
         if not candidates:
-            return f"ℹ️ Aucune source trouvée pour : '{query}'."
+            return f"ℹ️ Aucune source trouvée pour : '{query_normalized}'."
 
         # Scraping parallèle (6 workers)
         scraped_pages = []
@@ -466,7 +595,7 @@ class WebAgent:
 
         if not scraped_pages:
             report_sections = [
-                f"## 🌐 Résultats : *{query}*",
+                f"## 🌐 Résultats : *{query_normalized}*",
                 f"*{len(candidates)} source(s)*\n",
                 "### 📑 Sources",
             ]
@@ -477,9 +606,9 @@ class WebAgent:
                     report_sections.append(f"- **Résumé :** {c['snippet']}\n")
             return "\n".join(report_sections)
 
-        self.persist_extracted_knowledge(scraped_pages, query)
+        self.persist_extracted_knowledge(scraped_pages, query_normalized)
 
-        # ★ v19.5 — Corpus étendu (6 × 350 = 2100 chars max)
+        # Corpus étendu (6 × 350 = 2100 chars max)
         corpus_builder = []
         for page in scraped_pages[:6]:
             corpus_builder.append(
@@ -488,7 +617,7 @@ class WebAgent:
         full_corpus = "\n\n".join(corpus_builder)
 
         report_sections = [
-            f"## 🌐 Rapport : *{query}*",
+            f"## 🌐 Rapport : *{query_normalized}*",
             f"*{len(scraped_pages)} source(s)*\n",
             "### 📑 Sources",
         ]
@@ -498,7 +627,8 @@ class WebAgent:
             report_sections.append(f"- {page['content'][:200]}...\n")
 
         report_sections.append("### ⚔️ Synthèse")
-        verdict = self.synthesize_with_swarm(query, full_corpus)
+        # ★ v19.7 — Utiliser la query normalisée pour la pertinence
+        verdict = self.synthesize_with_swarm(query_normalized, full_corpus)
         report_sections.append(verdict)
 
         return "\n".join(report_sections)

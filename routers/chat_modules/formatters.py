@@ -6,12 +6,12 @@
 # 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 1.2
-# Date : 2026-10-03
+# Version : 1.3
+# Date : 2026-10-04
 # ------------------------------------------------------------------------------
 # ★ v1.1 — FIX web_sync : cherche le contenu dans plusieurs clés possibles
 # ★ v1.2 — Compteur de sources + avertissement si < 3 sources
-#           Tri par fraîcheur (détection "2026", "aujourd'hui", "récent")
+# ★ v1.3 — Log amélioré : affiche TOUTES les clés disponibles si rien trouvé
 # ==============================================================================
 
 from __future__ import annotations
@@ -52,12 +52,14 @@ def _is_poor_result(exec_res: Optional[dict], act_name: str) -> bool:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.1 — EXTRACTION TOLÉRANTE DU CONTENU WEB_SYNC
+# EXTRACTION TOLÉRANTE DU CONTENU WEB_SYNC
 # ══════════════════════════════════════════════════════════════════════════════
 
 _WEB_SYNC_CONTENT_KEYS = (
     "report", "synthesis", "summary", "content",
     "result", "text", "message", "data", "answer", "response", "output",
+    "web_report", "final_report", "final_answer", "analysis",
+    "synthesized_report", "web_synthesis",
 )
 
 
@@ -69,6 +71,7 @@ def _extract_web_sync_content(exec_res: dict) -> str:
     best_content = ""
     best_key = ""
 
+    # 1. Chercher dans les clés connues
     for key in _WEB_SYNC_CONTENT_KEYS:
         val = exec_res.get(key)
         if val is None:
@@ -78,9 +81,13 @@ def _extract_web_sync_content(exec_res: dict) -> str:
             best_content = val_str
             best_key = key
 
+    # 2. Fallback : chercher dans TOUTES les valeurs
     if not best_content or len(best_content) < 100:
         for key, val in exec_res.items():
             if val is None:
+                continue
+            # Ignorer les clés de métadonnées
+            if key in ("status", "error", "error_type", "duration_ms", "elapsed"):
                 continue
             val_str = str(val).strip()
             if len(val_str) > len(best_content):
@@ -92,16 +99,25 @@ def _extract_web_sync_content(exec_res: dict) -> str:
             "[Formatter web_sync] Contenu extrait : clé=%r | %d chars",
             best_key, len(best_content),
         )
+    else:
+        # ★ v1.3 — Log TOUTES les clés pour debug
+        logger.warning(
+            "[Formatter web_sync] Aucun contenu trouvé. "
+            "Clés disponibles : %s | Types : %s",
+            list(exec_res.keys()),
+            {k: type(v).__name__ for k, v in exec_res.items()},
+        )
 
     return best_content
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.2 — ANALYSE DES SOURCES
+# ANALYSE DES SOURCES
 # ══════════════════════════════════════════════════════════════════════════════
 
 # Regex pour détecter les URLs dans le rapport web_sync
 _URL_REGEX = re.compile(r"<(https?://[^\s>]+)>", re.IGNORECASE)
+_URL_RAW_REGEX = re.compile(r"https?://[^\s\)\]\>]+", re.IGNORECASE)
 
 # Mots-clés de fraîcheur
 _FRESHNESS_KEYWORDS = (
@@ -117,9 +133,6 @@ _MIN_SOURCES_RECOMMENDED = 3
 def _extract_sources_from_report(report_str: str) -> List[Tuple[str, str]]:
     """
     Extrait les URLs et leurs descriptions depuis le rapport web_sync.
-
-    Returns:
-        Liste de tuples (url, description_courte)
     """
     if not report_str:
         return []
@@ -129,11 +142,19 @@ def _extract_sources_from_report(report_str: str) -> List[Tuple[str, str]]:
     # Chercher les URLs au format <https://...>
     for match in _URL_REGEX.finditer(report_str):
         url = match.group(1).strip()
-        # Prendre 200 chars autour de l'URL pour la description
         start = max(0, match.start() - 100)
         end = min(len(report_str), match.end() + 200)
         context = report_str[start:end].replace("\n", " ").strip()
         sources.append((url, context))
+
+    # Fallback : chercher les URLs brutes
+    if not sources:
+        for match in _URL_RAW_REGEX.finditer(report_str):
+            url = match.group(0).strip()
+            start = max(0, match.start() - 100)
+            end = min(len(report_str), match.end() + 200)
+            context = report_str[start:end].replace("\n", " ").strip()
+            sources.append((url, context))
 
     # Dédupliquer par URL
     seen = set()
@@ -375,8 +396,7 @@ def _format_web_sync(exec_res: dict) -> str:
     """
     Formate le résultat de web_sync (WebAgent profond).
 
-    ★ v1.1 — Tolérant : cherche le contenu dans plusieurs clés possibles
-    ★ v1.2 — Compteur de sources + avertissement si < 3 sources
+    ★ v1.3 — Log amélioré + fallback étendu
     """
     if not isinstance(exec_res, dict):
         return f"Résultat brut : {exec_res}"
@@ -388,6 +408,12 @@ def _format_web_sync(exec_res: dict) -> str:
     report_str = _extract_web_sync_content(exec_res)
 
     if not report_str or len(report_str) < 100:
+        # ★ v1.3 — Log TOUTES les clés pour debug
+        logger.warning(
+            "[Formatter web_sync] Contenu insuffisant (%d chars). "
+            "Clés : %s",
+            len(report_str), list(exec_res.keys()),
+        )
         return (
             "⚠️ **Veille web sans résultat exploitable**\n\n"
             "→ Le pipeline WebAgent n'a pas pu extraire de contenu.\n"
@@ -396,14 +422,14 @@ def _format_web_sync(exec_res: dict) -> str:
             "→ N'INVENTE AUCUNE actualité."
         )
 
-    # ★ v1.2 — Analyser les sources
+    # Analyser les sources
     sources = _extract_sources_from_report(report_str)
     nb_sources = len(sources)
     has_freshness = _has_freshness_indicators(report_str)
 
     logger.info(
-        "[Formatter web_sync] Analyse : %d sources | fraîcheur=%s",
-        nb_sources, has_freshness,
+        "[Formatter web_sync] Analyse : %d sources | fraîcheur=%s | %d chars",
+        nb_sources, has_freshness, len(report_str),
     )
 
     # Construire la réponse avec header + avertissements
@@ -422,7 +448,7 @@ def _format_web_sync(exec_res: dict) -> str:
 
 def get_formatters_summary() -> dict:
     return {
-        "version": "1.2",
+        "version": "1.3",
         "functions": [
             "_is_poor_result",
             "_extract_web_sync_content",

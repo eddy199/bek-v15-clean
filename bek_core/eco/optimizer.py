@@ -7,8 +7,14 @@
 # 🎯 Rôle : Optimisation économique + cache + limites
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 1.0
-# Date : 2026-09-23
+# Version : 1.1
+# Date : 2026-10-04
+# ------------------------------------------------------------------------------
+# ★ v1.1 — FIX cache intelligent :
+#   - Ne cache plus les questions de clarification
+#   - Ne cache plus les échecs
+#   - Ne cache plus les réponses trop courtes
+#   - TTL différencié selon le type de réponse
 # ==============================================================================
 
 from __future__ import annotations
@@ -40,9 +46,122 @@ BEK_ECO_WEIGHTS = {
 }
 
 BEK_ECO_DEFAULT_TTL = 3600              # 1 heure
+BEK_ECO_CONVERSATIONAL_TTL = 300        # 5 minutes (réponses conversationnelles)
+BEK_ECO_FACTUAL_TTL = 7200              # 2 heures (réponses factuelles stables)
 BEK_ECO_DEFAULT_DAILY_LIMIT = 50
 BEK_ECO_CACHE_FILE = "data/bek_eco_cache.json"
 BEK_ECO_LIMITS_FILE = "data/bek_eco_limits.json"
+
+# ★ v1.1 — Marqueurs à ne PAS cacher
+_CLARIFICATION_STARTERS = (
+    "avant", "peux-tu", "peux tu", "quel", "quelle", "quels", "quelles",
+    "comment", "pourquoi", "où", "quand", "qui", "combien",
+    "j'ai besoin", "jai besoin", "précise", "precise",
+    "dis-moi", "dis moi", "pourrais-tu", "pourrais tu",
+)
+
+_FAILURE_MARKERS = (
+    "sans résultat", "sans resultat", "erreur", "échec", "echec",
+    "impossible", "pas pu", "aucune source", "non trouvé", "non trouve",
+    "je n'ai pas", "je nai pas", "je ne peux pas",
+    "aucun résultat", "aucun resultat",
+)
+
+_MIN_CACHEABLE_LENGTH = 200
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v1.1 — FONCTIONS DE FILTRAGE CACHE
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _is_clarification(response: str) -> bool:
+    """Détecte si la réponse est une question de clarification."""
+    if not response:
+        return False
+    r = response.lower().strip()
+    # Retirer les préfixes de cache éventuels
+    r = r.replace("⚡ *[réponse en cache]*", "").strip()
+    for starter in _CLARIFICATION_STARTERS:
+        if r.startswith(starter):
+            return True
+    return False
+
+
+def _is_failure(response: str) -> bool:
+    """Détecte si la réponse est un échec."""
+    if not response:
+        return True
+    r = response.lower()
+    for marker in _FAILURE_MARKERS:
+        if marker in r:
+            return True
+    return False
+
+
+def _should_cache_response(response: str, query: str) -> bool:
+    """
+    ★ v1.1 — Détermine si une réponse doit être mise en cache.
+
+    Ne pas cacher :
+    - Les questions de clarification (commencent par "Avant", "Peux-tu", etc.)
+    - Les échecs (contiennent "sans résultat", "erreur", "échec")
+    - Les réponses trop courtes (< 200 chars)
+    - Les réponses qui sont juste un placeholder
+
+    Returns:
+        True si la réponse peut être cachée, False sinon.
+    """
+    if not response:
+        return False
+
+    response_clean = response.strip()
+
+    # 1. Trop courte → ne pas cacher
+    if len(response_clean) < _MIN_CACHEABLE_LENGTH:
+        logger.debug(
+            "[BEK-ECO] Cache SKIP : réponse trop courte (%d chars < %d)",
+            len(response_clean), _MIN_CACHEABLE_LENGTH,
+        )
+        return False
+
+    # 2. Question de clarification → ne pas cacher
+    if _is_clarification(response_clean):
+        logger.info(
+            "[BEK-ECO] Cache SKIP : question de clarification détectée"
+        )
+        return False
+
+    # 3. Échec → ne pas cacher
+    if _is_failure(response_clean):
+        logger.info(
+            "[BEK-ECO] Cache SKIP : échec détecté"
+        )
+        return False
+
+    return True
+
+
+def _compute_ttl(response: str, query: str) -> int:
+    """
+    ★ v1.1 — Calcule le TTL approprié selon le type de réponse.
+
+    - Réponse factuelle (contient des URLs, dates) → TTL long
+    - Réponse conversationnelle → TTL court
+    """
+    if not response:
+        return BEK_ECO_DEFAULT_TTL
+
+    r = response.lower()
+
+    # Réponse factuelle : contient des sources/URLs
+    if "http://" in r or "https://" in r:
+        return BEK_ECO_FACTUAL_TTL
+
+    # Réponse conversationnelle : commence par une question
+    if _is_clarification(response):
+        return BEK_ECO_CONVERSATIONAL_TTL
+
+    return BEK_ECO_DEFAULT_TTL
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -149,14 +268,28 @@ class BekEcoOptimizer:
         cache_key = self._cache_key(query)
         cached = self.cache_get(cache_key)
         if cached:
-            return {
-                "decision": "cached",
-                "cached": True,
-                "cached_value": cached.get("value"),
-                "score": 1.0,
-                "cost_estimate": 0.0,
-                "limits": self.check_limits(),
-            }
+            # ★ v1.1 — Vérifier que la valeur cachée est toujours valide
+            cached_value = cached.get("value")
+            if cached_value and _should_cache_response(
+                str(cached_value), query
+            ):
+                return {
+                    "decision": "cached",
+                    "cached": True,
+                    "cached_value": cached_value,
+                    "score": 1.0,
+                    "cost_estimate": 0.0,
+                    "limits": self.check_limits(),
+                }
+            else:
+                # ★ v1.1 — Entrée cache invalide → supprimer et continuer
+                logger.info(
+                    "[BEK-ECO] Cache INVALIDÉ pour query_hash=%s "
+                    "(réponse non cacheable)",
+                    cache_key[:12],
+                )
+                del self._cache[cache_key]
+                self._save_cache()
 
         # 2. Vérification des limites
         limits = self.check_limits()
@@ -197,12 +330,11 @@ class BekEcoOptimizer:
         context: Dict[str, Any],
     ) -> Dict[str, float]:
         """Score les 7 facteurs."""
-        # Facteurs simples (0.0 à 1.0)
         return {
-            "conformite":   1.0,   # Par défaut : OK
-            "securite":     1.0,   # Par défaut : OK
+            "conformite":   1.0,
+            "securite":     1.0,
             "precision":    0.9 if tier in ("TIER_2", "TIER_3", "TIER_4") else 0.7,
-            "efficience":   0.5,   # Valeur moyenne
+            "efficience":   0.5,
             "rentabilite":  0.7 if tier in ("TIER_0", "TIER_1") else 0.5,
             "productivite": 0.5,
             "technologie":  0.5,
@@ -253,15 +385,44 @@ class BekEcoOptimizer:
         self,
         key: str,
         value: Any,
-        ttl: int = BEK_ECO_DEFAULT_TTL,
+        ttl: Optional[int] = None,
+        query: str = "",
     ) -> bool:
-        """Stocke dans le cache."""
+        """
+        ★ v1.1 — Stocke dans le cache AVEC filtrage intelligent.
+
+        Args:
+            key: Clé de cache
+            value: Valeur à cacher
+            ttl: TTL optionnel (calculé automatiquement si None)
+            query: Requête originale (pour le calcul du TTL)
+
+        Returns:
+            True si caché, False si rejeté par le filtre.
+        """
+        # ★ v1.1 — Vérifier si la réponse peut être cachée
+        value_str = str(value) if value else ""
+        if not _should_cache_response(value_str, query):
+            logger.info(
+                "[BEK-ECO] Cache SKIP pour key=%s (réponse non cacheable)",
+                key[:12],
+            )
+            return False
+
+        # ★ v1.1 — Calculer le TTL si non fourni
+        if ttl is None:
+            ttl = _compute_ttl(value_str, query)
+
         self._cache[key] = {
             "value": value,
             "timestamp": time.time(),
             "ttl": ttl,
         }
         self._save_cache()
+        logger.info(
+            "[BEK-ECO] Cache STORE pour key=%s (ttl=%ds)",
+            key[:12], ttl,
+        )
         return True
 
     def cache_clear(self) -> int:
@@ -276,15 +437,7 @@ class BekEcoOptimizer:
     # ──────────────────────────────────────────────────────────────────────────
 
     def check_limits(self, scope: str = "global") -> Dict[str, Any]:
-        """
-        Vérifie les limites quotidiennes.
-
-        Args:
-            scope: Périmètre (global, user, etc.)
-
-        Returns:
-            dict: {daily_limit, daily_used, daily_remaining}
-        """
+        """Vérifie les limites quotidiennes."""
         today = time.strftime("%Y-%m-%d")
         used = self._limits[scope].get(today, 0)
         limit = BEK_ECO_DEFAULT_DAILY_LIMIT
@@ -323,10 +476,17 @@ def bek_eco_cache_get(key: str) -> Optional[Dict[str, Any]]:
     return optimizer.cache_get(key)
 
 
-def bek_eco_cache_set(key: str, value: Any, ttl: int = BEK_ECO_DEFAULT_TTL) -> bool:
-    """Stocke dans le cache."""
+def bek_eco_cache_set(
+    key: str,
+    value: Any,
+    ttl: Optional[int] = None,
+    query: str = "",
+) -> bool:
+    """
+    ★ v1.1 — Stocke dans le cache avec filtrage intelligent.
+    """
     optimizer = BekEcoOptimizer()
-    return optimizer.cache_set(key, value, ttl)
+    return optimizer.cache_set(key, value, ttl, query)
 
 
 def bek_eco_check_limits(scope: str = "global") -> Dict[str, Any]:

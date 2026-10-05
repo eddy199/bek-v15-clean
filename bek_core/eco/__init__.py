@@ -7,8 +7,8 @@
 # 🎯 Rôle : Réflexion Économique
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 1.0
-# Date : 2026-09-23
+# Version : 1.1
+# Date : 2026-10-04
 # ==============================================================================
 
 """
@@ -25,15 +25,20 @@ Optimise chaque décision selon 7 facteurs pondérés :
 
 Gère aussi le cache multi-niveaux et les limites quotidiennes.
 
+★ v1.1 — Cache intelligent :
+    - Ne cache plus les questions de clarification
+    - Ne cache plus les échecs
+    - TTL différencié selon le type de réponse
+
 Usage :
     from bek_core.eco import BekEcoOptimizer
-    
+
     optimizer = BekEcoOptimizer()
     decision = optimizer.optimize(tier="TIER_2", query="Cherche Bitcoin")
     # → {"decision": "proceed", "cached": False, "score": 0.85}
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 # ══════════════════════════════════════════════════════════════════════════════
 # IMPORTS PUBLICS
@@ -47,7 +52,13 @@ from .optimizer import (
     bek_eco_check_limits,
     BEK_ECO_WEIGHTS,
     BEK_ECO_DEFAULT_TTL,
+    BEK_ECO_CONVERSATIONAL_TTL,
+    BEK_ECO_FACTUAL_TTL,
     BEK_ECO_DEFAULT_DAILY_LIMIT,
+    _should_cache_response,
+    _is_clarification,
+    _is_failure,
+    _compute_ttl,
 )
 
 __all__ = [
@@ -58,5 +69,11 @@ __all__ = [
     "bek_eco_check_limits",
     "BEK_ECO_WEIGHTS",
     "BEK_ECO_DEFAULT_TTL",
+    "BEK_ECO_CONVERSATIONAL_TTL",
+    "BEK_ECO_FACTUAL_TTL",
     "BEK_ECO_DEFAULT_DAILY_LIMIT",
+    "_should_cache_response",
+    "_is_clarification",
+    "_is_failure",
+    "_compute_ttl",
 ]
