@@ -6,17 +6,14 @@
 #
 #   NERF 10 : Hermes → SubCRMEngine (spawn/list/get/stats + bridge Tmux)
 #
-# PROBLÈME RÉSOLU :
-#   - Actuellement : sub_crm_engine.py existe et crée des sous-CRM en DB Neon,
-#     mais AUCUN outil Hermes ne permet de les piloter.
-#   - Résultat : les sous-CRM sont créés manuellement via l'UI, pas via l'IA.
-#
-# SOLUTION (ce nerf) :
-#   - 5 outils Hermes pour piloter les sous-CRM depuis le chat
-#   - Bridge Tmux : chaque sous-CRM peut lancer ses propres workers de fond
-#   - Traçabilité EventBus complète (correlation_id propagé)
-#
-# NOUVEAUX OUTILS HERMES (additifs) :
+# ★ v18.12 (2026-10-06) — DÉSACTIVÉ PAR DÉFAUT
+#   - Le CRM n'est PAS utilisé dans BEK-v18.
+#   - Raison : hallucinations + 50 MB de RAM gaspillés.
+#   - Pour réactiver (si besoin) : set BEK_ENABLE_CRM_NERVES=true
+#   - L'activation dans app.py est aussi commentée.
+#   - Le router /api/crm/* a été retiré.
+# ==============================================================================
+# OUTILS HERMES (si réactivé) :
 #   - sub_crm_spawn         → crée un nouveau sous-CRM
 #   - sub_crm_list          → liste tous les sous-CRM
 #   - sub_crm_get           → détail d'un sous-CRM par ID
@@ -31,7 +28,7 @@
 #   - Aucune modification de plugin_crm.py
 #   - Aucune modification de services/db.py
 #   - Aucune modification de hermes_core.py
-#   - Feature-flag : BEK_ENABLE_CRM_NERVES (défaut true)
+#   - Feature-flag : BEK_ENABLE_CRM_NERVES (défaut FALSE)
 #   - Ne bloque JAMAIS le flux principal
 # ==============================================================================
 
@@ -49,7 +46,18 @@ logger = logging.getLogger("bek.nerves.crm")
 # ------------------------------------------------------------------------------
 
 def _is_enabled() -> bool:
-    return os.getenv("BEK_ENABLE_CRM_NERVES", "true").lower() in ("true", "1", "yes")
+    """
+    ★ v18.12 — Désactivé par défaut.
+
+    Le CRM n'est pas utilisé dans BEK-v18. Il consomme ~50 MB de RAM
+    et provoque des hallucinations ("Vous avez 5 sous-agents CRM").
+
+    Pour le réactiver (si besoin) :
+        Windows :  set BEK_ENABLE_CRM_NERVES=true
+        Linux   :  export BEK_ENABLE_CRM_NERVES=true
+        Render  :  ajouter la variable d'env dans le dashboard
+    """
+    return os.getenv("BEK_ENABLE_CRM_NERVES", "false").lower() in ("true", "1", "yes")
 
 
 # ------------------------------------------------------------------------------
@@ -179,21 +187,29 @@ def _handler_sub_crm_opportunities(limit: int = 20, **kwargs: Any) -> Dict[str, 
 
 
 def _handler_sub_crm_stats(**kwargs: Any) -> Dict[str, Any]:
-    """Handler Hermes : sub_crm_stats → statistiques CRM globales (companies/contacts/opportunities)."""
+    """
+    Handler Hermes : sub_crm_stats → statistiques CRM globales
+    (companies/contacts/opportunities).
+    """
     try:
         from services.db import execute_database_sql
 
         companies = execute_database_sql('SELECT count(*)::int as c FROM "companies";')
         contacts = execute_database_sql('SELECT count(*)::int as c FROM "contacts";')
         opportunities = execute_database_sql(
-            'SELECT count(*)::int as c, COALESCE(SUM(amount), 0)::float as total FROM "opportunities";'
+            'SELECT count(*)::int as c, COALESCE(SUM(amount), 0)::float as total '
+            'FROM "opportunities";'
         )
 
         stats = {
-            "companies": companies.get("data", [{}])[0].get("c", 0) if companies.get("status") == "success" else 0,
-            "contacts": contacts.get("data", [{}])[0].get("c", 0) if contacts.get("status") == "success" else 0,
-            "deals": opportunities.get("data", [{}])[0].get("c", 0) if opportunities.get("status") == "success" else 0,
-            "pipeline_total": opportunities.get("data", [{}])[0].get("total", 0) if opportunities.get("status") == "success" else 0,
+            "companies": companies.get("data", [{}])[0].get("c", 0)
+                         if companies.get("status") == "success" else 0,
+            "contacts": contacts.get("data", [{}])[0].get("c", 0)
+                        if contacts.get("status") == "success" else 0,
+            "deals": opportunities.get("data", [{}])[0].get("c", 0)
+                     if opportunities.get("status") == "success" else 0,
+            "pipeline_total": opportunities.get("data", [{}])[0].get("total", 0)
+                              if opportunities.get("status") == "success" else 0,
         }
 
         # Traçabilité A2A
@@ -275,7 +291,8 @@ def activate_crm_nerves() -> Dict[str, Any]:
     """
     Active les nerfs CRM en enregistrant 5 outils Hermes.
 
-    Idempotent. Feature-flag BEK_ENABLE_CRM_NERVES.
+    ★ v18.12 — Désactivé par défaut (BEK_ENABLE_CRM_NERVES=false).
+    Idempotent.
     """
     if not _is_enabled():
         logger.warning("[Nerf 10] Désactivé via BEK_ENABLE_CRM_NERVES=false")
@@ -338,16 +355,22 @@ def activate_crm_nerves() -> Dict[str, Any]:
 # TEST DIRECT (optionnel)
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+    )
     result = activate_crm_nerves()
     print("Résultat activation Nerf 10 :", result)
 
-    # Test list
-    print()
-    print("Test sub_crm_list :")
-    print(_handler_sub_crm_list())
+    # Note : les tests ci-dessous ne s'exécutent QUE si le CRM est activé
+    if result.get("status") == "ok":
+        print()
+        print("Test sub_crm_list :")
+        print(_handler_sub_crm_list())
 
-    # Test stats
-    print()
-    print("Test sub_crm_stats :")
-    print(_handler_sub_crm_stats())
+        print()
+        print("Test sub_crm_stats :")
+        print(_handler_sub_crm_stats())
+    else:
+        print()
+        print("(Tests skippés — CRM désactivé)")
