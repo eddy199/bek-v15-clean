@@ -1,12 +1,14 @@
 /**
- * BEK-v15-HYBRID — Agent UI Controller (VERSION FINALE C6.3.3)
+ * BEK-v15-HYBRID — Agent UI Controller (VERSION FINALE C6.3.4)
  * ============================================================
  * Base : ta version GitHub fonctionnelle (v16.2)
  * Fix v6.3.1 : Remplace formatMarkdown par textContent pour préserver les espaces
  * Fix v6.3.2 : RENDU MARKDOWN FINAL (images/vidéos/code/tableaux)
  * Fix v6.3.3 : ★ INJECTION AUTOMATIQUE DES MÉDIAS GÉNÉRÉS
- *              - Détecte les nouveaux fichiers créés pendant la requête
- *              - Les injecte dans la réponse même si le LLM oublie le markdown
+ * Fix v6.3.4 : ★ FIX renderer.image (marked v5+ compatible)
+ *              - Avant : image(href, title, text) → href = token objet → "[object Object]"
+ *              - Après : détection auto v4/v5+ → URL string correcte
+ *              - Fix aussi : injection média skip UNIQUEMENT si URL valide
  * ============================================================
  */
 (function() {
@@ -1427,17 +1429,12 @@
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // ★ v6.3.3 — INJECTION AUTOMATIQUE DES MÉDIAS GÉNÉRÉS
-    // ------------------------------------------------------------------
-    // Détecte les nouveaux fichiers (images/vidéos) créés pendant la requête
-    // et les injecte dans la réponse, même si le LLM a "oublié" le markdown.
+    // ★ v6.3.3/4 — INJECTION AUTOMATIQUE DES MÉDIAS GÉNÉRÉS
     // ═══════════════════════════════════════════════════════════════
     async function injectNewMediaFiles(assistantDiv, filesBefore, fullResponse) {
         try {
-            // Attendre que les fichiers soient bien écrits sur disque
             await new Promise(r => setTimeout(r, 800));
 
-            // Récupérer la liste actuelle
             const res = await fetch(`${API_BASE}/api/files?t=${Date.now()}`);
             if (!res.ok) {
                 console.warn('[Media] Impossible de récupérer la liste des fichiers');
@@ -1446,11 +1443,9 @@
             const data = await res.json();
             const filesAfter = data.files || [];
 
-            // Identifier les nouveaux fichiers
             const beforeNames = new Set((filesBefore || []).map(f => f.name));
             const newFiles = filesAfter.filter(f => !beforeNames.has(f.name));
 
-            // Extensions supportées
             const imageExts = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
             const videoExts = ['mp4', 'webm', 'mov', 'avi', 'mkv'];
             const audioExts = ['mp3', 'wav', 'ogg', 'm4a'];
@@ -1460,10 +1455,8 @@
                 return [...imageExts, ...videoExts, ...audioExts].includes(ext);
             };
 
-            // Filtrer les nouveaux médias
             let mediaToInject = newFiles.filter(f => isMedia(f.name));
 
-            // Fallback : si aucun nouveau média détecté mais que la réponse mentionne une génération
             const responseLower = (fullResponse || '').toLowerCase();
             const mentionsImage = responseLower.includes('image générée') ||
                                   responseLower.includes('image generee') ||
@@ -1476,7 +1469,6 @@
 
             if (mediaToInject.length === 0 && (mentionsImage || mentionsVideo)) {
                 console.log('[Media] Fallback : recherche des derniers médias générés');
-                // Prendre les 3 derniers médias du dossier generated (pas uploads)
                 mediaToInject = filesAfter
                     .filter(f => isMedia(f.name) && (f.folder === 'generated' || f.folder?.includes('generated')))
                     .slice(0, 3);
@@ -1487,21 +1479,27 @@
                 return;
             }
 
-            // Vérifier si le markdown contient déjà un lien vers ces fichiers
-            const responseHasMarkdownImage = /!\[.*?\]\(.*?\)/.test(fullResponse || '');
-            const alreadyDisplayed = mediaToInject.some(f => {
-                const name = f.name || '';
-                return (fullResponse || '').includes(name);
-            });
+            // ═══════════════════════════════════════════════════════════════
+            // ★ FIX v6.3.4 — Skip UNIQUEMENT si l'URL markdown est VRAIMENT valide
+            // ═══════════════════════════════════════════════════════════════
+            const imageUrlRegex = /!\[[^\]]*\]\(([^)]+)\)/g;
+            let markdownHasValidUrl = false;
+            let regexMatch;
+            while ((regexMatch = imageUrlRegex.exec(fullResponse || '')) !== null) {
+                const urlInMd = String(regexMatch[1] || '').trim();
+                if (urlInMd.startsWith('http') || urlInMd.startsWith('/api/') || urlInMd.startsWith('/download/')) {
+                    markdownHasValidUrl = true;
+                    break;
+                }
+            }
 
-            if (responseHasMarkdownImage && alreadyDisplayed) {
-                console.log('[Media] Le markdown contient déjà les médias, skip injection');
+            if (markdownHasValidUrl) {
+                console.log('[Media] Markdown contient une URL valide → skip injection');
                 return;
             }
 
             console.log('[Media] ✅ Injection automatique de', mediaToInject.length, 'média(s)');
 
-            // Créer un conteneur pour les médias
             const mediaContainer = document.createElement('div');
             mediaContainer.style.cssText = 'margin-top: 16px; display: flex; flex-direction: column; gap: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);';
 
@@ -1593,7 +1591,6 @@
             }
         }
 
-        // ★ v6.3.3 — Snapshot AVANT d'envoyer pour détecter les nouveaux fichiers
         let filesBefore = [];
         try {
             const resBefore = await fetch(`${API_BASE}/api/files?t=${Date.now()}`);
@@ -1658,7 +1655,6 @@
                         const data = JSON.parse(dataStr);
                         if (data.chunk) {
                             fullResponse += data.chunk;
-                            // ★ Pendant le streaming : texte brut pour perf
                             assistantDiv.textContent = fullResponse;
                             DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
                         }
@@ -1678,14 +1674,9 @@
             isStreaming = false;
             activeController = null;
 
-            // ★ RENDU MARKDOWN FINAL (images/vidéos/code/tableaux)
             if (fullResponse) {
                 assistantDiv.innerHTML = formatMarkdown(fullResponse);
-
-                // Rendu des diagrammes Mermaid
                 renderMermaidIn(assistantDiv);
-
-                // Re-highlight des blocs de code
                 if (window.hljs) {
                     assistantDiv.querySelectorAll('pre code').forEach(el => {
                         if (!el.classList.contains('language-mermaid') &&
@@ -1698,15 +1689,12 @@
                 assistantDiv.innerHTML = '<span style="color:#ff6b6b;">⚠️ Réponse vide</span>';
             }
 
-            // ★ v6.3.3 — INJECTION AUTOMATIQUE DES NOUVEAUX MÉDIAS
             await injectNewMediaFiles(assistantDiv, filesBefore, fullResponse);
 
-            // Rafraîchir la liste des fichiers dans la sidebar
             if (window.loadFilesList) {
                 try { await window.loadFilesList(); } catch (e) {}
             }
 
-            // Scroll final en bas
             DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
 
             DOM.sendBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`;
@@ -1770,23 +1758,50 @@
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
 
-            // Rendu personnalisé des images ET vidéos
-            renderer.image = function(href, title, text) {
-                const url = href || '';
-                const cleanTitle = title || '';
-                const cleanAlt = (text || '').replace(/"/g, '&quot;');
+            // ═══════════════════════════════════════════════════════════════
+            // ★ FIX v6.3.4 — renderer.image COMPATIBLE marked v4 + v5+
+            // ------------------------------------------------------------------
+            // Bug corrigé : la signature de marked v5+ est `image(token)`
+            //                (token = {href, title, text}), PAS image(href, title, text).
+            //                Résultat avant fix : img.src = "[object Object]" → 404.
+            // ═══════════════════════════════════════════════════════════════
+            renderer.image = function(hrefOrToken, title, text) {
+                let url = "";
+                let cleanTitle = "";
+                let cleanAlt = "";
 
-                // Détection vidéo
+                // ─── Détection signature marked v5+ (token objet) ───
+                if (typeof hrefOrToken === 'object' && hrefOrToken !== null) {
+                    url = hrefOrToken.href || '';
+                    cleanTitle = hrefOrToken.title || '';
+                    cleanAlt = String(hrefOrToken.text || '').replace(/"/g, '&quot;');
+                } else {
+                    // ─── Signature marked v4 (href, title, text) ───
+                    url = hrefOrToken || '';
+                    cleanTitle = title || '';
+                    cleanAlt = String(text || '').replace(/"/g, '&quot;');
+                }
+
+                // ─── ★ Sécurité : forcer string et trim ───
+                url = String(url).trim();
+
+                // ─── ★ Sécurité : URL invalide ("[object Object]" ou vide) ───
+                if (!url || url === '[object Object]' || url.startsWith('[object')) {
+                    console.warn('[Markdown] URL image invalide détectée :', hrefOrToken);
+                    return '<div style="color:#f5a623;padding:8px 12px;border:1px solid rgba(245,166,35,0.3);border-radius:8px;font-size:12px;background:rgba(245,166,35,0.08);">🖼️ Image (URL manquante)</div>';
+                }
+
+                // ─── Détection vidéo ───
                 if (isVideoUrl(url)) {
                     return `<video controls loop muted playsinline preload="metadata" src="${url}" title="${cleanTitle}"></video>`;
                 }
 
-                // Détection audio
+                // ─── Détection audio ───
                 if (isAudioUrl(url)) {
                     return `<audio controls preload="metadata" src="${url}" title="${cleanTitle}"></audio>`;
                 }
 
-                // Image normale
+                // ─── Image normale ───
                 return `<img src="${url}" alt="${cleanAlt}" title="${cleanTitle}" loading="lazy">`;
             };
 
@@ -1878,7 +1893,6 @@
         loadConversation(id);
     }
 
-    // Chargement d'anciennes conversations avec rendu markdown complet
     window.loadConversation = function(id) {
         currentConvId = id;
         const conv = conversations.find(c => c.id === id);

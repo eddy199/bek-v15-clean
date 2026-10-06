@@ -75,9 +75,6 @@ Avant de répondre, tu te poses TOUJOURS ces 4 questions dans cet ordre :
 ## 🧠 BRIQUES COGNITIVES DISPONIBLES (utilisées AUTOMATIQUEMENT)
 ═══════════════════════════════════════════════════════════════════════════════
 
-Ces briques sont appelées AUTOMATIQUEMENT par le système après ton action.
-Tu n'as PAS besoin de les appeler toi-même.
-
 ### BEK-REX (routing intelligent)
 - Analyse ta requête
 - Décide quel tier (TIER_0 → TIER_4)
@@ -86,7 +83,6 @@ Tu n'as PAS besoin de les appeler toi-même.
 ### BEK-STAIR (anti-hallucination)
 - Valide tes réponses contre les sources réelles
 - Détecte les URLs inventées
-- Détecte les faits inventés
 
 ### BEK-LVC (6 briques cognitives)
 - **BEK-REX** : routage intelligent (5 tiers)
@@ -106,16 +102,14 @@ Tu n'as PAS besoin de les appeler toi-même.
 
 ### ReflexionSwarm
 - Débat multi-agents sur les sujets complexes
-- Utilisé automatiquement dans `web_sync`
 
 ═══════════════════════════════════════════════════════════════════════════════
 ## ⚙️ RAPPEL DU FORMAT D'ACTION
 ═══════════════════════════════════════════════════════════════════════════════
 
 Format EXCLUSIF :
-
 - TOUJOURS fermer avec `[/ACTION]`
-- INTERDIT d'utiliser des tokens spéciaux (`<|tool_call|>`, `<tool_call>`, etc.)
+- INTERDIT d'utiliser des tokens spéciaux
 - UNE seule action par réponse
 
 
@@ -123,7 +117,34 @@ Format EXCLUSIF :
 ## 📊 ÉTAT RÉEL DU SYSTÈME (généré automatiquement)
 ═══════════════════════════════════════════════════════════════════════════════
 
-> *Dernière synchronisation : 2026-10-06 02:23:37 UTC*
+> *Dernière synchronisation : 2026-10-06 04:24:52 UTC*
+> *Version BEK : **18.14***
+> *State hash : `b6f5416e5c7b`*
+> *Boot phase : **complete***
+
+═══════════════════════════════════════════════════════════════════════════════
+## 🩺 DIAGNOSTIC ARCHITECTURE
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️ **1 problème(s) détecté(s) :**
+
+- 🔴 **Critiques :** 0
+- 🟠 **Avertissements :** 0
+- 🔵 **Informations :** 1
+
+### 🔵 INFO (1)
+
+| Catégorie | Problème | Détail | Correction |
+|---|---|---|---|
+| `config` | **CRM désactivé** | Le Nerf 10 (CRM) est désactivé — comportement attendu. | Pour réactiver : `BEK_ENABLE_CRM_NERVES=true`. |
+
+
+### 🔌 API de diagnostic
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/architecture/status` | Statut complet + issues |
+| `POST /api/refresh-architecture` | Régénérer ARCHITECTURE.md |
 
 ### 🔧 Outils Hermes enregistrés (42)
 
@@ -172,27 +193,51 @@ Format EXCLUSIF :
 | `router_task_type` | **L1** | ✅ Auto |
 | `router_providers` | **L1** | ✅ Auto |
 
-### 🧠 Système nerveux (12 nerfs)
+### 🧠 Système nerveux (12 nerfs détectés)
 
-| Nerf | Module | Rôle |
+- ✅ **Actifs :** 11
+- ⛔ **Désactivés :** 1
+- ❌ **Manquants/erreurs :** 0
+
+| Nerf | Module | Rôle | Statut |
+|---|---|---|---|
+| Nerf 1 | `hermes_nerves` | Outils Hermes réels | ✅ available |
+| Nerf 2 | `cognitive_nerves` | Swarm + Grounding | ✅ available |
+| Nerf 3 | `event_bus_nerves` | Pont Kafka ↔ Async | ✅ available |
+| Nerf 4 | `web_agent_nerves` | WebAgent tracé | ✅ available |
+| Nerf 5 | `approval_nerves` | Approbation L3+ | ✅ available |
+| Nerf 6 | `mcp_nerves` | MCP ↔ Hermes | ✅ available |
+| Nerf 7 | `router_nerves` | SmartRouter sémantique | ✅ available |
+| Nerf 8 | `skills_nerves` | Skills chargés | ✅ available |
+| Nerf 9 | `guardian_nerves` | Guardian tracé | ✅ available |
+| Nerf 10 | `crm_nerves` | Sub-CRM → Hermes | ⛔ disabled |
+| Nerf 11-13 | `headless_nerves` | Playwright → Hermes | ✅ available |
+| Nerf 14-17 | `tmux_nerves` | Tmux → Hermes | ✅ available |
+
+### ★ Lazy Loading Status (v18.13)
+
+| Composant | Statut | Détail |
 |---|---|---|
-| Nerf 1 | `hermes_nerves` | Outils Hermes réels |
-| Nerf 2 | `cognitive_nerves` | Swarm + Grounding |
-| Nerf 3 | `event_bus_nerves` | Pont Kafka ↔ Async |
-| Nerf 4 | `web_agent_nerves` | WebAgent tracé |
-| Nerf 5 | `approval_nerves` | Approbation L3+ |
-| Nerf 6 | `mcp_nerves` | MCP ↔ Hermes |
-| Nerf 7 | `router_nerves` | SmartRouter sémantique |
-| Nerf 8 | `skills_nerves` | Skills chargés |
-| Nerf 9 | `guardian_nerves` | Guardian tracé |
-| Nerf 10 | `crm_nerves` | Sub-CRM → Hermes |
-| Nerf 11-13 | `headless_nerves` | Playwright → Hermes |
-| Nerf 14-17 | `tmux_nerves` | Tmux → Hermes |
+| `playwright` | 💤 **lazy** | ~200 MB économisés au boot |
+| `chromadb` | 💤 **lazy** | ~80 MB économisés au boot |
+| `duckdb_episode` | ✅ **duckdb** | Backend : duckdb |
+| `lancedb` | 💤 **lazy** | Chargé à la demande |
+| `duckdb_analytics` | 💤 **lazy** | Chargé à la demande |
 
-### 🏛️ BEK-LVC (6 briques)
+### 🏛️ BEK-LVC (6 briques cognitives)
 
 - **Statut :** ✅ Chargé
 - **Briques actives (6) :** BEK-ECO, BEK-FLUX, BEK-LOOP, BEK-MEM, BEK-REX, BEK-STAIR
+
+### 🎭 Skills & Alter Egos
+
+- **Skills chargés :** 0
+- **Alter Egos (1) :** suntzu
+
+### 🛠️ CRM Status (Nerf 10)
+
+- **Statut :** ⛔ **disabled**
+- **Raison :** BEK_ENABLE_CRM_NERVES=false
 
 ### 🌐 Providers LLM disponibles (18)
 
@@ -215,108 +260,216 @@ Format EXCLUSIF :
 - `huggingface`
 - `ollama_cloud`
 
+### ⚙️ Variables d'environnement BEK
+
+| Variable | Valeur |
+|---|---|
+| `BEK_LAZY_LOAD` | `true` |
+| `BEK_LAZY_LOAD_PLAYWRIGHT` | `true` |
+| `BEK_LAZY_LOAD_CHROMADB` | `true` |
+| `BEK_LAZY_LOAD_DUCKDB` | `true` |
+| `BEK_DISABLE_CHROMADB` | `false` |
+| `BEK_DISABLE_LANCEDB` | `false` |
+| `BEK_DISABLE_DUCKDB_ANALYTICS` | `false` |
+| `BEK_ENABLE_CRM_NERVES` | `false` |
+| `BEK_PROFILE` | `(non défini)` |
+
 ═══════════════════════════════════════════════════════════════════════════════
-## 🗂️ CARTOGRAPHIE DES MODULES
+## 🗂️ CARTOGRAPHIE DES MODULES (scannée dynamiquement)
 ═══════════════════════════════════════════════════════════════════════════════
 
-### Moteurs d'exécution
-- `worker_headless.py` — Workers Playwright headless
-- `hermes_core.py` — Planificateur GOAP + dispatcher
-- `core/execution_engine.py` — DAG Engine parallèle
-- `core/hermes_dag_adapter.py` — Adaptateur Hermes ↔ DAG
+### Moteurs d'exécution (7)
 
-### Communication inter-agents
-- `event_bus.py` — EventBus Redis Streams (sync)
-- `event_bus_client.py` — Client async unifié
-- `mcp_gateway.py` — Passerelle MCP
-- `meta_cortex_swarm.py` — Reflexion Swarm
-- `meta_cortex_grounding.py` — Ancrage factuel
+- `backup/hermes_core.py`
+- `backup/worker_headless.py`
+- `core/execution_engine.py`
+- `core/hermes_dag_adapter.py`
+- `hermes_core.py`
+- `tests/test_hermes_dag.py`
+- `worker_headless.py`
 
-### Mémoire (4 couches coordonnées)
-- `memory.py` — Pinecone (cloud) + ChromaDB (local) + Supabase (relationnel)
-- `hindsight_memory.py` — Mémoire structurée long-terme (Hindsight)
-- `memory_coordinator.py` — Orchestrateur des 4 couches + résolution conflits
-- `feedback_memory.py` — Apprentissage par feedback utilisateur
-- `services/memory_service.py` — LanceDB + DuckDB (analytique local)
+### Communication inter-agents (12)
 
-### Sécurité
-- `security_guard.py` — HMAC + Allowlist + DLP
-- `core/security/path_guard.py` — Anti-traversal
-- `core/security/skill_sandbox.py` — AST validation
-- `bek_eval_guard.py` — Quality gate
+- `backup/event_bus.py`
+- `backup/meta_cortex_grounding.py`
+- `backup/meta_cortex_swarm.py`
+- `backup/swarm_agent.py`
+- `backup/swarm_core.py`
+- `event_bus.py`
+- `event_bus_client.py`
+- `mcp_gateway.py`
+- `meta_cortex_grounding.py`
+- `meta_cortex_swarm.py`
+- `swarm_agent.py`
+- `swarm_core.py`
 
-### Intelligence
-- `bek_intelligence.py` — SmartRouter + AutoCorrect + SkillForge
-- `web_agent.py` — WebAgent profond (Playwright + MinHash)
-- `services/vision/` — Multimodal (12 modules)
-- `services/reflex_loop.py` — Reflex-Loop (SQLite fallback)
-- `services/critic.py` — Critic LLM
-- `services/episode_logger.py` — Tracing (DuckDB ou SQLite)
-- `services/forge.py` — Forge (propositions d'amélioration)
+### Mémoire (6)
 
-### Routage FastAPI
-- `routers/chat.py` — Chat orchestrateur (v18.9 — singleton event_bus)
-- `routers/chat_modules/` — 10 modules découpés :
-  - `config.py` — Constantes centralisées
-  - `prompts.py` — Prompt système (RÈGLE ZÉRO + 6 règles)
-  - `validation.py` — URLs stériles, traductions FR→EN
-  - `routing.py` — BEK-REX + BEK-ECO + BEK-MEM + BEK-LOOP
-  - `formatters.py` — Formatage résultats
-  - `actions.py` — Dispatcher unifié
-  - `scrape.py` — Auto-scrape BS4
-  - `stair.py` — Anti-hallucination ToC
-  - `streaming.py` — SSE v1.3.3 (4 leviers + Hindsight + garde-fous)
-- `routers/openai_compat.py` — Façade OpenAI-compatible
-- `routers/admin.py`, `routers/crm.py`, `routers/files.py`, `routers/memory.py`
+- `backup/memory.py`
+- `feedback_memory.py`
+- `gen_memory.py`
+- `hindsight_memory.py`
+- `memory.py`
+- `memory_coordinator.py`
 
-### CPU Logique Virtuel (`bek_core/`)
-- `bek_core/cpu.py` — BekCPU (point d'entrée)
-- `bek_core/registry.py` — BekRegistry
-- `bek_core/registry.json` — Catalogue des briques
-- `bek_core/translator.py` — BekTranslator
-- `bek_core/rex/` — BEK-REX (routing)
-- `bek_core/flux/` — BEK-FLUX (parallélisation)
-- `bek_core/mem/` — BEK-MEM (mémoire)
-- `bek_core/loop/` — BEK-LOOP (apprentissage)
-- `bek_core/eco/` — BEK-ECO (optimisation)
-- `bek_core/stair/` — BEK-STAIR (anti-hallucination)
+### Sécurité (6)
 
-### Système nerveux (`nerves/`)
-- `nerves/event_bus_nerves.py` — Nerf 3 (pont Kafka↔Async, v18.7 anti-boucle)
-- `nerves/hermes_nerves.py` — Nerf 1 (8 outils Hermes réels)
-- `nerves/cognitive_nerves.py` — Nerf 2 (3 outils cognitifs)
-- `nerves/web_agent_nerves.py` — Nerf 4 (2 outils WebAgent)
-- `nerves/approval_nerves.py` — Nerf 5 (5 outils approbation)
-- `nerves/mcp_nerves.py` — Nerf 6 (3 outils MCP)
-- `nerves/router_nerves.py` — Nerf 7 (3 outils Router)
-- `nerves/skills_nerves.py` — Nerf 8 (5194 skills)
-- `nerves/guardian_nerves.py` — Nerf 9 (3 outils Guardian)
-- `nerves/crm_nerves.py` — Nerf 10 (5 outils CRM)
-- `nerves/headless_nerves.py` — Nerfs 11-13 (3 outils Playwright)
-- `nerves/tmux_nerves.py` — Nerfs 14-17 (4 outils Tmux)
+- `backup/security_guard.py`
+- `bek_eval_guard.py`
+- `core/security/path_guard.py`
+- `core/security/skill_sandbox.py`
+- `security_guard.py`
+- `tests/test_action_executor_sandbox.py`
 
-### Intégration OpenAI / DSH
-- `POST /v1/chat/completions` — Format OpenAI
-- `GET  /v1/models` — Liste des modèles
-- Permet à DSH, LangChain, Cursor de parler à BEK
+### Intelligence (25)
 
-### Garde-fous streaming v1.3.3
-- `BEK_STREAM_TIMEOUT_SEC` — Timeout dur (défaut 300s)
-- `BEK_LOOP_DETECT_ENABLED` — Détection de répétition
-- `BEK_LOOP_WINDOW` — Fenêtre de détection (défaut 15)
-- `BEK_LOOP_THRESHOLD` — Seuil de déclenchement (défaut 4)
-- `BEK_MAX_REASONING_CHARS` — Limite de réflexion (défaut 6000)
-- **4 leviers d'accélération :** BEK-ECO cache, BEK-MEM prototypes, BEK-REX routing, BEK-LOOP feedback
-- **Hindsight retain** : mémorisation automatique des conversations
+- `services/action_executor.py`
+- `services/critic.py`
+- `services/critic_prompt.py`
+- `services/db.py`
+- `services/episode_logger.py`
+- `services/forge.py`
+- `services/huggingface_service.py`
+- `services/memory_service.py`
+- `services/prompt_optimizer.py`
+- `services/reflex_loop.py`
+- `services/tasks.py`
+- `services/vision/__init__.py`
+- `services/vision/agnes_client.py`
+- `services/vision/constants.py`
+- `services/vision/face_swap.py`
+- `services/vision/ffmpeg_utils.py`
+- `services/vision/huggingface_client.py`
+- `services/vision/image_analysis.py`
+- `services/vision/image_generation.py`
+- `services/vision/pollinations_client.py`
+- `services/vision/veo_client.py`
+- `services/vision/video_concat.py`
+- `services/vision/video_extension.py`
+- `services/vision/video_generation.py`
+- `services/vision/whisper_client.py`
 
-### Routes API principales
-- `POST /api/chat` — Chat principal (orchestrateur v18.9)
-- `GET  /api/chat/debug` — Debug complet
-- `POST /api/feedback` — Soumettre un feedback utilisateur
-- `GET  /api/feedback` — Liste + stats des feedbacks
-- `GET  /api/hindsight/status` — État Hindsight
-- `GET  /api/hindsight/query` — Interroger Hindsight
-- `POST /api/admin/flush-redis` — Vider Redis Streams (v18.10)
-- `POST /api/refresh-architecture` — Régénérer ce document
-- `GET  /api/config` — Config providers + skills
-- `POST /api/skills/execute` — Exécuter un skill
+### Routage FastAPI (16)
+
+- `routers/admin.py`
+- `routers/chat.py`
+- `routers/chat_modules/__init__.py`
+- `routers/chat_modules/actions.py`
+- `routers/chat_modules/config.py`
+- `routers/chat_modules/formatters.py`
+- `routers/chat_modules/prompts.py`
+- `routers/chat_modules/routing.py`
+- `routers/chat_modules/scrape.py`
+- `routers/chat_modules/stair.py`
+- `routers/chat_modules/streaming.py`
+- `routers/chat_modules/validation.py`
+- `routers/crm.py`
+- `routers/files.py`
+- `routers/memory.py`
+- `routers/openai_compat.py`
+
+### CPU Logique Virtuel (18)
+
+- `bek_core/__init__.py`
+- `bek_core/cpu.py`
+- `bek_core/eco/__init__.py`
+- `bek_core/eco/optimizer.py`
+- `bek_core/flux/__init__.py`
+- `bek_core/flux/executor.py`
+- `bek_core/loop/__init__.py`
+- `bek_core/loop/recorder.py`
+- `bek_core/mem/__init__.py`
+- `bek_core/mem/matcher.py`
+- `bek_core/registry.py`
+- `bek_core/rex/__init__.py`
+- `bek_core/rex/router.py`
+- `bek_core/security/__init__.py`
+- `bek_core/security/skill_sandbox.py`
+- `bek_core/stair/__init__.py`
+- `bek_core/stair/toc_builder.py`
+- `bek_core/translator.py`
+
+### Système nerveux (15)
+
+- `nerves/__init__.py`
+- `nerves/_async_utils.py`
+- `nerves/_health.py`
+- `nerves/approval_nerves.py`
+- `nerves/cognitive_nerves.py`
+- `nerves/crm_nerves.py`
+- `nerves/event_bus_nerves.py`
+- `nerves/guardian_nerves.py`
+- `nerves/headless_nerves.py`
+- `nerves/hermes_nerves.py`
+- `nerves/mcp_nerves.py`
+- `nerves/router_nerves.py`
+- `nerves/skills_nerves.py`
+- `nerves/tmux_nerves.py`
+- `nerves/web_agent_nerves.py`
+
+### Lazy Loading (1)
+
+- `core/lazy.py`
+
+### Autres modules racine (38)
+
+- `ai_service.py`
+- `app.py`
+- `approval_manager.py`
+- `bek_intelligence.py`
+- `bek_master.py`
+- `bek_model_hub.py`
+- `bek_orchestrator.py`
+- `bek_routing_config.py`
+- `bek_simulate.py`
+- `config.py`
+- `context_loader.py`
+- `demo.py`
+- `env_loader.py`
+- `fast_math.py`
+- `file_gen.py`
+- `find_connector_files.py`
+- `gen_cpu.py`
+- `gen_feedback.py`
+- `generate_architecture_doc.py`
+- `google_search.py`
+- `list_models.py`
+- `meta_cortex_sse_ui.py`
+- `plugins.py`
+- `port_scanner.py`
+- `provider_manager.py`
+- `reconciliation_job.py`
+- `run_enhance_architecture.py`
+- `run_hf_diagnose.py`
+- `run_tests.py`
+- `save_project_context.py`
+- `skill_generator.py`
+- `skill_registry.py`
+- `skill_runner.py`
+- `skills.py`
+- `state_synchronizer.py`
+- `sub_crm_engine.py`
+- `sync_manager.py`
+- `web_agent.py`
+
+═══════════════════════════════════════════════════════════════════════════════
+## 🛣️ ROUTES API PRINCIPALES
+═══════════════════════════════════════════════════════════════════════════════
+
+| Méthode | Route | Description |
+|---|---|---|
+| `POST` | `/api/chat` | Chat principal (orchestrateur) |
+| `GET`  | `/api/chat/debug` | Debug complet |
+| `GET`  | `/api/config` | Config providers + skills |
+| `GET`  | `/api/architecture/status` | **★ Diagnostic architecture** |
+| `POST` | `/api/refresh-architecture` | **★ Régénérer ce document** |
+| `POST` | `/api/feedback` | Soumettre un feedback |
+| `GET`  | `/api/feedback` | Liste + stats des feedbacks |
+| `GET`  | `/api/hindsight/status` | État Hindsight |
+| `GET`  | `/api/hindsight/query` | Interroger Hindsight |
+| `POST` | `/api/admin/flush-redis` | Vider Redis Streams |
+| `POST` | `/api/skills/execute` | Exécuter un skill |
+| `GET`  | `/health/worker` | Health check worker |
+| `GET`  | `/health/memory` | **★ Health check mémoire + lazy** |
+| `POST` | `/v1/chat/completions` | Façade OpenAI-compatible |
+| `GET`  | `/v1/models` | Liste des modèles OpenAI-compat |

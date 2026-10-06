@@ -5,7 +5,7 @@
 # 🏛️ Rôle : Générer docs/ARCHITECTURE.md avec un VRAI plan d'action
 # 📄 Appelé au boot par app.py + disponible en CLI + appelable à chaud via API
 # ------------------------------------------------------------------------------
-# Version : 4.2
+# Version : 4.3
 # Date : 2026-10-06
 # ------------------------------------------------------------------------------
 # v4.0 (2026-10-06) — DIAGNOSTIC & SIGNALEMENT :
@@ -13,18 +13,21 @@
 #   - Classification par sévérité (info/warning/critical)
 #   - Section "DIAGNOSTIC" dans ARCHITECTURE.md
 #   - Exposition via API : get_cached_diagnostics()
-#   - Signalement dans les logs (WARNING/ERROR si critique)
 #
-# ★ v4.1 (2026-10-06) — FIX PERFORMANCE (boot rapide) :
+# v4.1 (2026-10-06) — FIX PERFORMANCE (boot rapide) :
 #   - FIX : os.walk avec élagage (au lieu de rglob qui scanne venv/node_modules)
 #   - FIX : détection nerfs par lecture ENV directe (pas d'import de modules)
 #   - FIX : timeout de sécurité (5s max pour la génération)
 #   - FIX : skip diagnostic lourd au boot (force=False → fast)
-#   - Résultat : boot passe de >5 min à <2s
 #
-# ★ v4.2 (2026-10-06) — FIX DÉTECTION DUCKDB :
+# v4.2 (2026-10-06) — FIX DÉTECTION DUCKDB :
 #   - FIX : force _detect_backend() pour éviter "not_detected" au boot
-#   - FIX : affiche le vrai backend (duckdb/sqlite) dès le 1er scan
+#
+# ★ v4.3 (2026-10-06) — FIX FAUX POSITIF "Peu d'outils Hermes" :
+#   - Ajout _is_boot_early() : détecte si les nerfs ne sont pas encore activés
+#   - Le warning "Peu d'outils (7)" est ignoré si boot précoce
+#   - Nouveau champ "boot_phase" dans le state (early/complete)
+#   - Le warning "Peu de providers" idem
 # ==============================================================================
 
 from __future__ import annotations
@@ -78,6 +81,51 @@ _DIAGNOSTICS_CACHE: Dict[str, Any] = {
     "state_hash": None,
 }
 _DIAGNOSTICS_LOCK = threading.Lock()
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v4.3 — DÉTECTION BOOT PRÉCOCE
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _is_boot_early() -> bool:
+    """
+    Détecte si ArchiGen tourne AVANT l'activation des nerfs.
+
+    Au boot : ArchiGen est appelé par app.py AVANT `activate_*_nerves()`.
+    → Seulement 6-8 outils Hermes chargés à ce stade.
+    → Les warnings "Peu d'outils" sont des FAUX POSITIFS.
+
+    Une fois les nerfs activés (60s plus tard via le watcher), on aura 42 outils.
+
+    Returns:
+        True si boot précoce (nerfs pas encore activés)
+        False si les nerfs sont activés (état "stable")
+    """
+    try:
+        # Vérifier si le module nerf Hermes a été importé ET activé
+        if "nerves.hermes_nerves" not in sys.modules:
+            return True  # Module pas encore importé = boot précoce
+
+        hermes_nerves = sys.modules["nerves.hermes_nerves"]
+        # Chercher un marqueur d'activation (variable globale ou attribut)
+        if hasattr(hermes_nerves, "_ACTIVATED") and hermes_nerves._ACTIVATED:
+            return False
+        if hasattr(hermes_nerves, "activated") and hermes_nerves.activated:
+            return False
+
+        # Fallback : chercher dans hermes_core combien d'outils sont enregistrés
+        try:
+            from hermes_core import hermes
+            if hasattr(hermes, "tools"):
+                nb_tools = len(hermes.tools)
+                # Si >= 20 outils → les nerfs ont été activés
+                return nb_tools < 20
+        except Exception:
+            pass
+
+        return True  # Par défaut : boot précoce
+    except Exception:
+        return True  # En cas d'erreur : prudence, on considère boot précoce
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -257,7 +305,7 @@ _NERF_MODULES = [
 ]
 
 
-# ★ v4.1 — Mapping module → variable d'environnement (pour éviter les imports)
+# Mapping module → variable d'environnement (pour éviter les imports)
 _NERF_ENV_MAPPING = {
     "nerves.hermes_nerves":     "BEK_ENABLE_HERMES_NERVES",
     "nerves.cognitive_nerves":  "BEK_ENABLE_COGNITIVE_NERVES",
@@ -275,12 +323,7 @@ _NERF_ENV_MAPPING = {
 
 
 def _detect_nerf_status(module_name: str, func_name: str) -> Dict[str, Any]:
-    """
-    ★ v4.1 — FIX : ne fait PLUS d'import lourd.
-
-    Au lieu d'importer le module (lent, chaînes d'imports),
-    on lit directement la variable d'environnement correspondante.
-    """
+    """Détecte le statut d'un nerf (lecture ENV directe, pas d'import)."""
     result: Dict[str, Any] = {
         "status": "unknown",
         "reason": "",
@@ -288,7 +331,6 @@ def _detect_nerf_status(module_name: str, func_name: str) -> Dict[str, Any]:
     }
 
     try:
-        # 1. Vérifier que le fichier existe
         file_path = WORKSPACE_DIR / module_name.replace(".", os.sep)
         py_file = file_path.with_suffix(".py")
         if not py_file.exists():
@@ -297,14 +339,12 @@ def _detect_nerf_status(module_name: str, func_name: str) -> Dict[str, Any]:
             return result
         result["module_file"] = str(py_file.relative_to(WORKSPACE_DIR))
 
-        # 2. ★ v4.1 — Lire la variable d'env directement (PAS d'import)
         env_var = _NERF_ENV_MAPPING.get(module_name)
         if env_var is None:
             result["status"] = "available"
             result["reason"] = "Pas de feature-flag"
             return result
 
-        # CRM : défaut = false ; autres : défaut = true
         default_value = "false" if "CRM" in env_var else "true"
         env_value = os.getenv(env_var, default_value).lower()
 
@@ -388,10 +428,10 @@ def _collect_lazy_status() -> Dict[str, Dict[str, Any]]:
     except Exception as exc:
         lazy["chromadb"] = {"status": "unavailable", "detail": str(exc)[:60]}
 
-    # ─── ★ v4.2 — DuckDB (episode_logger) : FORCE la détection ───
+    # ─── DuckDB (episode_logger) ───
     try:
         from services.episode_logger import _detect_backend
-        backend = _detect_backend()  # ★ Force la détection du backend
+        backend = _detect_backend()
         lazy["duckdb_episode"] = {
             "status": backend,
             "detail": f"Backend : {backend}",
@@ -445,7 +485,7 @@ def _collect_skills() -> Dict[str, Any]:
 
 
 def _collect_crm_status() -> Dict[str, Any]:
-    """★ v4.1 — Lit directement la variable d'env (pas d'import)."""
+    """Lit directement la variable d'env (pas d'import)."""
     result: Dict[str, Any] = {"status": "unknown", "reason": ""}
     try:
         env_value = os.getenv("BEK_ENABLE_CRM_NERVES", "false").lower()
@@ -477,12 +517,7 @@ def _collect_environment() -> Dict[str, str]:
 
 
 def _collect_modules() -> Dict[str, List[str]]:
-    """
-    ★ v4.1 — FIX : utilise os.walk avec élagage (au lieu de rglob).
-
-    rglob traverse TOUT (venv, node_modules...) → très lent.
-    os.walk avec topdown=True permet d'exclure les dossiers AVANT de les parcourir.
-    """
+    """Scan des modules avec os.walk + élagage (rapide)."""
     modules: Dict[str, List[str]] = {
         "Moteurs d'exécution": [],
         "Communication inter-agents": [],
@@ -496,7 +531,6 @@ def _collect_modules() -> Dict[str, List[str]]:
         "Autres modules racine": [],
     }
 
-    # ★ Dossiers à exclure (jamais parcourus)
     exclude_dirs = {
         "venv", ".venv", "env", "ENV",
         "__pycache__", "node_modules", "data",
@@ -508,7 +542,6 @@ def _collect_modules() -> Dict[str, List[str]]:
 
     try:
         for root, dirs, files in os.walk(WORKSPACE_DIR, topdown=True):
-            # ★ Élaguer les dossiers exclus (empêche la descente)
             dirs[:] = [d for d in dirs if d not in exclude_dirs]
 
             for filename in files:
@@ -555,7 +588,7 @@ def _collect_modules() -> Dict[str, List[str]]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v4.0 — SECTION 2.5 : DÉTECTION DE PROBLÈMES (DIAGNOSTIC)
+# SECTION 2.5 — DÉTECTION DE PROBLÈMES (DIAGNOSTIC)
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _detect_issues(
@@ -568,6 +601,11 @@ def _detect_issues(
 ) -> List[ArchitectureIssue]:
     """Détecte tous les problèmes d'architecture."""
     issues: List[ArchitectureIssue] = []
+
+    # ★ v4.3 — Détecter le boot précoce
+    boot_early = _is_boot_early()
+    if boot_early:
+        logger.debug("[ArchiGen] Boot précoce détecté → warnings 'peu d'outils' ignorés")
 
     # ─── 1. Nerfs manquants ou en erreur ───
     for n in nerfs:
@@ -633,7 +671,7 @@ def _detect_issues(
             fix_hint="Vérifier `provider_manager.py` et les clés API.",
             source="provider_manager",
         ))
-    elif len(providers) < 5:
+    elif len(providers) < 5 and not boot_early:  # ★ v4.3
         issues.append(ArchitectureIssue(
             severity="warning",
             category="config",
@@ -653,7 +691,7 @@ def _detect_issues(
             fix_hint="Vérifier l'import de `hermes_core`.",
             source="hermes_core",
         ))
-    elif len(tools) < 20:
+    elif len(tools) < 20 and not boot_early:  # ★ v4.3 — ignore si boot précoce
         issues.append(ArchitectureIssue(
             severity="warning",
             category="config",
@@ -709,7 +747,7 @@ def _detect_issues(
                 source=rel_path,
             ))
 
-    # ─── Tri par sévérité (critical > warning > info) ───
+    # ─── Tri par sévérité ───
     severity_order = {"critical": 0, "warning": 1, "info": 2}
     issues.sort(key=lambda i: severity_order.get(i.severity, 3))
 
@@ -810,6 +848,10 @@ def generate_architecture_markdown() -> Tuple[str, List[ArchitectureIssue]]:
     environment = _collect_environment()
     modules_tree = _collect_modules()
 
+    # ─── ★ v4.3 — Boot phase ───
+    boot_early = _is_boot_early()
+    boot_phase = "early" if boot_early else "complete"
+
     # ─── Diagnostic ───
     issues = _detect_issues(
         nerfs=nerfs,
@@ -833,6 +875,7 @@ def generate_architecture_markdown() -> Tuple[str, List[ArchitectureIssue]]:
         "alter_egos": skills_info.get("alter_egos", []),
         "crm": crm_status.get("status"),
         "issues": [(i.severity, i.title) for i in issues],
+        "boot_phase": boot_phase,
     }
     state_hash = _compute_state_hash(state)
 
@@ -847,11 +890,12 @@ def generate_architecture_markdown() -> Tuple[str, List[ArchitectureIssue]]:
         f"> *Dernière synchronisation : {now_utc}*",
         f"> *Version BEK : **{bek_version}***",
         f"> *State hash : `{state_hash}`*",
+        f"> *Boot phase : **{boot_phase}***",
         "",
     ]
 
     # ═══════════════════════════════════════════════════════════════════════════
-    # ★ v4.0 — SECTION DIAGNOSTIC
+    # SECTION DIAGNOSTIC
     # ═══════════════════════════════════════════════════════════════════════════
     lines.append("═══════════════════════════════════════════════════════════════════════════════")
     lines.append("## 🩺 DIAGNOSTIC ARCHITECTURE")
@@ -1060,10 +1104,8 @@ def generate_architecture_markdown() -> Tuple[str, List[ArchitectureIssue]]:
 
 def update_documentation_file(force: bool = False) -> bool:
     """
-    ★ v4.1 — FIX : au boot, on fait une version RAPIDE.
-
-    Si `force=False` (boot), on saute les parties lentes.
-    Si `force=True`, on fait tout (déclenché manuellement via API).
+    Génère et écrit ARCHITECTURE.md.
+    Si force=False (boot), skip si le state n'a pas changé.
     """
     import time as _time
     t0 = _time.monotonic()
@@ -1136,7 +1178,7 @@ def refresh_if_stale(max_age_seconds: int = 300) -> bool:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v4.0 — SECTION 6 : API PUBLIQUE POUR FASTAPI
+# SECTION 6 — API PUBLIQUE POUR FASTAPI
 # ══════════════════════════════════════════════════════════════════════════════
 
 def get_cached_diagnostics() -> Dict[str, Any]:
@@ -1155,7 +1197,6 @@ def get_architecture_status() -> Dict[str, Any]:
     diag = get_cached_diagnostics()
     summary = diag.get("summary", {})
 
-    # Déterminer le statut global
     if summary.get("critical", 0) > 0:
         status = "broken"
     elif summary.get("warning", 0) > 0:
@@ -1163,7 +1204,6 @@ def get_architecture_status() -> Dict[str, Any]:
     else:
         status = "healthy"
 
-    # Collecter quelques stats rapides
     try:
         tools = _collect_hermes_tools()
         nerfs = _collect_nerfs()
@@ -1176,6 +1216,7 @@ def get_architecture_status() -> Dict[str, Any]:
         "version": _collect_bek_version(),
         "state_hash": diag.get("state_hash"),
         "last_check": diag.get("last_check"),
+        "boot_phase": "early" if _is_boot_early() else "complete",
         "summary": summary,
         "counts": {
             "tools": len(tools),
@@ -1244,7 +1285,7 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="BEK Architecture Generator v4.2 — Ultra dynamique + Diagnostic",
+        description="BEK Architecture Generator v4.3 — Ultra dynamique + Diagnostic",
     )
     parser.add_argument("--force", "-f", action="store_true", help="Force la régénération")
     parser.add_argument("--watch", "-w", action="store_true", help="Démarre le watcher")
@@ -1260,13 +1301,11 @@ def main() -> int:
         format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
     )
 
-    # Mode diagnostic uniquement
     if args.diagnostic:
         status = force_refresh()
         print(json.dumps(status, indent=2, ensure_ascii=False, default=str))
         return 0 if status.get("status") != "broken" else 1
 
-    # Génération
     success = update_documentation_file(force=args.force)
     if not success:
         print("❌ Échec de la génération")
@@ -1274,7 +1313,6 @@ def main() -> int:
 
     print(f"✅ ARCHITECTURE.md généré : {TARGET_FILE}")
 
-    # Afficher un résumé des issues
     diag = get_cached_diagnostics()
     summary = diag.get("summary", {})
     if summary.get("total", 0) > 0:
@@ -1289,7 +1327,6 @@ def main() -> int:
     else:
         print("\n✅ Aucun problème détecté")
 
-    # Mode watch
     if args.watch:
         print(f"\n👁️ Démarrage du watcher (interval={args.interval}s)")
         start_watcher(interval_sec=args.interval)

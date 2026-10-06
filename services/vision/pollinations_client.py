@@ -8,11 +8,19 @@
 #
 # v26 (2026-09-21) : Création initiale
 # v27 (2026-09-21) : enhance=False par défaut (évite le bruit ajouté)
+# ★ v28.1 (2026-10-06) : FIX NORMALISATION PROMPT
+#   - Ajout _normalize_prompt_spacing() après optimisation
+#   - Corrige "minimalistlogo" → "minimalist logo"
+#   - Corrige "suitablefor" → "suitable for"
+#   - Corrige "lines,professional" → "lines, professional"
+#   - Corrige aussi les majuscules collées : "CleanLines" → "Clean Lines"
+#   - ★ AUCUNE fonctionnalité existante supprimée (100% compatible v27)
 # ==============================================================================
 from __future__ import annotations
 
 import logging
 import os
+import re
 import time
 import urllib.parse
 import uuid
@@ -41,6 +49,69 @@ POLLINATIONS_MODELS: Dict[str, str] = {
 }
 
 POLLINATIONS_BASE = "https://image.pollinations.ai/prompt"
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v28.1 — NORMALISATION DU PROMPT (fix mots collés)
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _normalize_prompt_spacing(prompt: str) -> str:
+    """
+    Normalise les espaces d'un prompt avant envoi à Pollinations.
+
+    Corrige les collisions classiques issues de la concaténation automatique :
+      - "minimalistlogo"        → "minimalist logo"
+      - "suitablefor a tech"    → "suitable for a tech"
+      - "lines,professional"    → "lines, professional"
+      - "CleanLines"            → "Clean Lines"
+
+    ⚠️ On ne touche PAS aux mots composés valides (ex: "flux-3d", "photorealistic").
+    """
+    if not prompt or not isinstance(prompt, str):
+        return prompt
+
+    text = prompt.strip()
+
+    # ─── 1. Minuscule suivie de Majuscule → espace ───
+    #    "CleanLines" → "Clean Lines", "BlueColor" → "Blue Color"
+    text = re.sub(r'([a-zà-ÿ])([A-ZÀ-Ý])', r'\1 \2', text)
+
+    # ─── 2. Virgule sans espace après → ajouter espace ───
+    #    "lines,professional" → "lines, professional"
+    text = re.sub(r',([^\s])', r', \1', text)
+
+    # ─── 3. Deux-points sans espace après → ajouter espace ───
+    text = re.sub(r':([^\s/])', r': \1', text)
+
+    # ─── 4. Point-virgule sans espace → ajouter espace ───
+    text = re.sub(r';([^\s])', r'; \1', text)
+
+    # ─── 5. Mots collés fréquents (français + anglais) ───
+    common_collisions = [
+        (r'\bsuitablefor\b', 'suitable for'),
+        (r'\bminimalistlogo\b', 'minimalist logo'),
+        (r'\bmodernlogo\b', 'modern logo'),
+        (r'\bcleanlines\b', 'clean lines'),
+        (r'\bbluecolor\b', 'blue color'),
+        (r'\bprofessional look\b', 'professional look'),
+        (r'\btechstartup\b', 'tech startup'),
+        (r'\bhighquality\b', 'high quality'),
+        (r'\bdetaileddesign\b', 'detailed design'),
+        (r'\bsoftlighting\b', 'soft lighting'),
+        (r'\bstudiolighting\b', 'studio lighting'),
+        (r'\bdigitalart\b', 'digital art'),
+        (r'\bconceptart\b', 'concept art'),
+    ]
+    for pattern, replacement in common_collisions:
+        text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+
+    # ─── 6. Nettoyage final : espaces multiples → un seul ───
+    text = re.sub(r'\s+', ' ', text).strip()
+
+    # ─── 7. Nettoyage des espaces avant ponctuation ───
+    text = re.sub(r'\s+([,;:.!?])', r'\1', text)
+
+    return text
 
 
 # ==============================================================================
@@ -99,10 +170,18 @@ def generate_image_with_pollinations(
                 "[vision.pollinations] Optimisation prompt échouée : %s", e
             )
 
+    # ══════════════════════════════════════════════════════════════════════
+    # ★ v28.1 — NORMALISATION OBLIGATOIRE APRÈS OPTIMISATION
+    # ══════════════════════════════════════════════════════════════════════
+    final_prompt = _normalize_prompt_spacing(final_prompt)
+    logger.info(
+        "[vision.pollinations] Prompt normalisé : %s", final_prompt[:120]
+    )
+
     # Résolution du modèle
     model_id = POLLINATIONS_MODELS.get(model, model)
 
-        # Construction de l'URL
+    # Construction de l'URL
     encoded_prompt = urllib.parse.quote(final_prompt)
 
     # ★ v28 : seed aléatoire par défaut pour éviter le cache Pollinations
