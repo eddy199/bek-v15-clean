@@ -1,11 +1,11 @@
 # ==============================================================================
-# BEK-v16 — Vision / Image Analysis (v31)
+# BEK-v16 — Vision / Image Analysis (v32)
 # ------------------------------------------------------------------------------
-# ★ v31 (2026-10-07) : FIX PERMISSION DENIED + RÉSOLUTION ROBUSTE
-#   - _resolve_image_path() gère maintenant [Errno 13] Permission denied
-#   - Fallback ultime sur uploads/ (là où sont les fichiers attachés)
-#   - Logs détaillés pour diagnostiquer les chemins
-#   - Fix hallucinations agent (voir prompts.py v2.5)
+# ★ v32 (2026-10-07) : FORCE LA LANGUE FRANÇAISE
+#   - Détection auto de la langue du prompt (FR/EN)
+#   - Ajout d'un suffixe "Réponds en français" pour forcer NVIDIA à répondre FR
+#   - Fix : NVIDIA répondait en anglais par défaut
+# ★ v31 : Fix Permission denied + résolution robuste
 # ==============================================================================
 from __future__ import annotations
 
@@ -30,8 +30,68 @@ NVIDIA_VISION_MODEL = "meta/llama-3.2-11b-vision-instruct"
 NVIDIA_VISION_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 GEMINI_VISION_MODEL = "gemini-2.5-flash-image"
 
-# ★ v31 — Dossier uploads (là où les fichiers attachés sont stockés)
 UPLOADS_DIR = os.path.join(WORKSPACE_DIR, "uploads")
+
+
+# ==============================================================================
+# ★ v32 — DÉTECTION DE LANGUE
+# ==============================================================================
+
+_LANG_FR_MARKERS = [
+    "décris", "decris", "décrit", "décrire",
+    "cette", "cet", "ceci", "celle", "celui",
+    "image", "photo", "capture", "écran", "ecran",
+    "détail", "detail", "détaillé", "detaille",
+    "en français", "français", "francais",
+    "explique", "analyse", "analyser",
+    "que vois", "que vois-tu", "peux-tu", "peux tu",
+    "montre", "regarde", "vois", "voir",
+    "personnage", "homme", "femme", "visage", "couleur",
+    "arrière-plan", "arriere plan", "ambiance",
+]
+
+_LANG_EN_MARKERS = [
+    "describe", "this", "that", "the", "image", "photo", "picture",
+    "detail", "detailed", "explain", "analyze", "what",
+    "person", "man", "woman", "face", "color", "background",
+    "in english", "english",
+]
+
+
+def _detect_language(text: str) -> str:
+    """
+    ★ v32 — Détecte la langue dominante (fr/en) d'un prompt.
+
+    Retourne 'fr' ou 'en'.
+    Défaut : 'fr' (BEK est francophone).
+    """
+    if not text or not isinstance(text, str):
+        return "fr"
+
+    text_lower = text.lower()
+
+    fr_score = sum(1 for m in _LANG_FR_MARKERS if m in text_lower)
+    en_score = sum(1 for m in _LANG_EN_MARKERS if m in text_lower)
+
+    # Priorité au FR si égalité (BEK est francophone)
+    if fr_score >= en_score and fr_score > 0:
+        return "fr"
+    if en_score > fr_score:
+        return "en"
+    return "fr"  # défaut
+
+
+def _force_language_suffix(text: str, lang: str) -> str:
+    """
+    ★ v32 — Ajoute une instruction de langue au prompt pour forcer la réponse.
+    """
+    if lang == "fr":
+        return (
+            text
+            + "\n\n⚠️ IMPORTANT : Réponds UNIQUEMENT en français. "
+            + "Ne traduis pas en anglais. Toute ta réponse doit être en français."
+        )
+    return text + "\n\n⚠️ IMPORTANT: Respond ONLY in English."
 
 
 # ==============================================================================
@@ -43,10 +103,7 @@ def _get_api_key(key_name: str) -> str:
 
 
 def _safe_listdir(directory: str) -> list:
-    """
-    ★ v31 — listdir SÉCURISÉ qui ne crash pas sur permission denied.
-    Retourne [] au lieu de lever [Errno 13].
-    """
+    """listdir sécurisé qui ne crash pas sur permission denied."""
     if not directory or not os.path.exists(directory):
         return []
     try:
@@ -63,7 +120,7 @@ def _get_latest_media_file(
     directory: str,
     extensions: tuple = (".png", ".jpg", ".jpeg", ".webp", ".mp4"),
 ) -> Optional[str]:
-    """Retourne le fichier média le plus récent d'un dossier (version safe)."""
+    """Retourne le fichier média le plus récent d'un dossier."""
     entries = _safe_listdir(directory)
     if not entries:
         return None
@@ -86,24 +143,14 @@ def _get_latest_media_file(
 
 def _resolve_image_path(image_path: str) -> Optional[str]:
     """
-    ★ v31 — Résout le chemin absolu d'une image avec fallbacks robustes.
-
-    Ordre de recherche :
-      1. Chemin absolu direct (si commence par / ou C:\\ ou F:\\)
-      2. WORKSPACE_DIR / image_path
-      3. UPLOADS_DIR / basename(image_path)     ← ★ v31 NOUVEAU
-      4. GENERATED_DIR / basename(image_path)
-      5. FILES_DIR / basename(image_path)
-      6. Fallback : dernière image de UPLOADS_DIR ← ★ v31
-      7. Fallback : dernière image de GENERATED_DIR
+    Résout le chemin absolu d'une image avec fallbacks robustes.
     """
     if not image_path:
         return None
 
-    # Nettoie le chemin (supprime espaces parasites)
     image_path = str(image_path).strip().strip("\"'")
 
-    # ─── 1. Chemin absolu direct ───
+    # ─── 1. Chemin absolu ───
     if os.path.isabs(image_path) and os.path.exists(image_path):
         logger.info("[vision] Chemin absolu trouvé : %s", image_path)
         return image_path
@@ -111,14 +158,13 @@ def _resolve_image_path(image_path: str) -> Optional[str]:
     # ─── 2. WORKSPACE_DIR / image_path ───
     try:
         target_path = os.path.abspath(os.path.join(WORKSPACE_DIR, image_path))
-        # ⚠️ Ne PAS tester os.path.exists sur le dossier racine seul
         if target_path != WORKSPACE_DIR and os.path.exists(target_path):
             logger.info("[vision] Chemin workspace trouvé : %s", target_path)
             return target_path
     except (PermissionError, OSError) as e:
         logger.warning("[vision] Erreur resolution workspace : %s", e)
 
-    # ─── 3-5. Chercher dans uploads/, generated/, files/ ───
+    # ─── 3-5. uploads/, generated/, files/ ───
     basename = os.path.basename(image_path)
     if basename:
         for base_dir in (UPLOADS_DIR, GENERATED_DIR, FILES_DIR):
@@ -131,7 +177,7 @@ def _resolve_image_path(image_path: str) -> Optional[str]:
                 logger.warning("[vision] Erreur accès %s : %s", base_dir, e)
                 continue
 
-    # ─── 6. Fallback : dernière image d'uploads/ ───
+    # ─── 6. Fallback : dernière image uploads/ ───
     latest_uploads = _get_latest_media_file(
         UPLOADS_DIR, (".png", ".jpg", ".jpeg", ".webp")
     )
@@ -139,7 +185,7 @@ def _resolve_image_path(image_path: str) -> Optional[str]:
         logger.info("[vision] Fallback uploads/ : %s", latest_uploads)
         return latest_uploads
 
-    # ─── 7. Fallback : dernière image de generated/ ───
+    # ─── 7. Fallback : dernière image generated/ ───
     latest_generated = _get_latest_media_file(
         GENERATED_DIR, (".png", ".jpg", ".jpeg", ".webp")
     )
@@ -152,7 +198,6 @@ def _resolve_image_path(image_path: str) -> Optional[str]:
 
 
 def _get_mime_type(path: str) -> str:
-    """Retourne le mime type d'une image."""
     ext = path.split(".")[-1].lower()
     return {
         "png": "image/png",
@@ -164,7 +209,6 @@ def _get_mime_type(path: str) -> str:
 
 
 def _read_image_base64(path: str) -> str:
-    """Lit une image et la retourne en base64."""
     with open(path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode("utf-8")
 
@@ -228,7 +272,6 @@ def _analyze_with_nvidia(
                     )
                     return content.strip()
 
-        # ★ v31 — Log détaillé si erreur
         if res.status_code == 401:
             logger.error(
                 "[vision.nvidia] ❌ 401 Unauthorized — la clé NVIDIA_API_KEY est "
@@ -349,7 +392,7 @@ def _analyze_with_huggingface(
 
 
 # ==============================================================================
-# ANALYSE IMAGE — DISPATCHER PRINCIPAL
+# ★ v32 — DISPATCHER PRINCIPAL (avec force langue)
 # ==============================================================================
 def analyze_image_with_vision(
     image_path: str,
@@ -359,8 +402,10 @@ def analyze_image_with_vision(
 ) -> str:
     """
     Analyse une image avec un provider vision (NVIDIA → Gemini → HF).
+
+    ★ v32 — Force la langue de la réponse (FR par défaut).
     """
-    # 1. Résoudre le chemin (v31 robuste)
+    # 1. Résoudre le chemin
     target_path = _resolve_image_path(image_path)
     if not target_path or not os.path.exists(target_path):
         logger.warning("[vision] Image introuvable : %s", image_path)
@@ -370,11 +415,20 @@ def analyze_image_with_vision(
             f"Vérifiez que le fichier existe dans uploads/ ou generated/."
         )
 
-    # 2. Préparer le prompt
-    prompt_text = prompt or (
+    # 2. Prompt + détection langue
+    raw_prompt = prompt or (
         "Décris cette image en détail : identité des personnages, "
         "expressions faciales, couleurs de cheveux, yeux, barbe, vêtements, "
         "arrière-plan, ambiance générale."
+    )
+
+    # ★ v32 — Détection + forçage langue
+    detected_lang = _detect_language(raw_prompt)
+    prompt_text = _force_language_suffix(raw_prompt, detected_lang)
+
+    logger.info(
+        "[vision] Langue détectée : %s | prompt final (80 chars) : %r",
+        detected_lang, prompt_text[:80],
     )
 
     try:
@@ -386,7 +440,7 @@ def analyze_image_with_vision(
             os.path.basename(target_path), provider,
         )
 
-        # 3. Router selon le provider
+        # 3. Router selon provider
         if provider in ("auto", "nvidia"):
             result = _analyze_with_nvidia(
                 target_path, prompt_text, mime_type, encoded_image,
@@ -410,7 +464,7 @@ def analyze_image_with_vision(
             if result:
                 return result
 
-        # 4. Aucun provider n'a fonctionné
+        # 4. Aucun provider
         logger.warning("[vision] Tous les providers vision ont échoué")
         return (
             "❌ Aucun provider vision n'a pu analyser cette image.\n\n"

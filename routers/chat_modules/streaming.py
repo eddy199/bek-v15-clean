@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Streaming (v1.6.2)
+# BEK-v18 — Chat Module : Streaming (v1.6.3)
 # ------------------------------------------------------------------------------
+# ★ v1.6.3 (2026-10-07) : FIX "Décriscette" collé
+#   - Ajout patterns : décriscette, decriscette, expliquecette, analysecette,
+#     regardecette, montrecette, décriscetimage
+#   - Fix collages fréquents dans les prompts vision
 # ★ v1.6.2 (2026-10-06) : FIX REGEX QUI CASSAIT LES MOTS
-#   - SUPPRESSION des patterns \b(A)/\b(An)/\b(The)/\b(I) (corrompaient les mots)
-#   - AJOUT patterns précis : aistartup, aimodel, aicompany (pas \b(A))
-#   - Le fix v28.10 de pollinations_client.py peut maintenant réparer proprement
+#   - SUPPRESSION des patterns \b(A)/\b(An)/\b(The)/\b(I)
 # ==============================================================================
 
 from __future__ import annotations
@@ -99,17 +101,13 @@ def _find_all_complete_actions(text: str) -> List[Dict[str, Any]]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.6.2 — NORMALISATION DES STRINGS LLM (VERSION PROPRE)
+# ★ v1.6.3 — NORMALISATION DES STRINGS LLM (VERSION PROPRE + FIX VISION)
 # ══════════════════════════════════════════════════════════════════════════════
 
 _NORMALIZE_PATTERNS = [
     # ══════════════════════════════════════════════════════════════════════
-    # ★ v1.6.2 — SUPPRESSION des patterns \b(A)/\b(An)/\b(The)/\b(I)
-    #            Ces patterns cassaient "Abstract" → "A bstract"
-    #            On les remplace par des patterns PRÉCIS ci-dessous.
+    # ★ v1.6.2 — Collisions AI (au lieu de \b(A) qui cassait les mots)
     # ══════════════════════════════════════════════════════════════════════
-
-    # ─── Collisions AI (au lieu de \b(A)) ───
     (r'\baistartup\b', 'AI startup'),
     (r'\baimodel\b', 'AI model'),
     (r'\baicompany\b', 'AI company'),
@@ -117,6 +115,23 @@ _NORMALIZE_PATTERNS = [
     (r'\baiassistant\b', 'AI assistant'),
     (r'\baichat\b', 'AI chat'),
     (r'\baitool\b', 'AI tool'),
+
+    # ══════════════════════════════════════════════════════════════════════
+    # ★ v1.6.3 — FIX VISION (Décriscette, expliquecette, etc.)
+    # ══════════════════════════════════════════════════════════════════════
+    (r'\bdécriscette\b', 'décris cette'),
+    (r'\bdecriscette\b', 'decris cette'),
+    (r'\bdécriscetimage\b', 'décris cette image'),
+    (r'\bdecriscetimage\b', 'decris cette image'),
+    (r'\bdécriscetteimage\b', 'décris cette image'),
+    (r'\bdecriscetteimage\b', 'decris cette image'),
+    (r'\bexpliquecette\b', 'explique cette'),
+    (r'\banalysecette\b', 'analyse cette'),
+    (r'\banalysecet\b', 'analyse cet'),
+    (r'\bregardecette\b', 'regarde cette'),
+    (r'\bmontrecette\b', 'montre cette'),
+    (r'\bdécrisce\b', 'décris ce'),
+    (r'\bdecrisce\b', 'decris ce'),
 
     # ─── Autres mots collés fréquents ───
     (r'\bsleeklogo\b', 'sleek logo'),
@@ -168,18 +183,15 @@ _NORMALIZE_PATTERNS = [
 
 def _normalize_llm_string(text: str) -> str:
     """
-    ★ v1.6.2 — Normalise une string générée par le LLM.
+    ★ v1.6.3 — Normalise une string générée par le LLM.
 
     Corrige les mots collés SANS casser les mots valides :
+      - "Décriscette"        → "décris cette"
       - "Aistartup"          → "AI startup"
       - "minimalistlogo"     → "minimalist logo"
-      - "onadarkbackground"  → "on a dark background"
 
     ⚠️ NE CASSE PLUS :
-      - "Abstract"  (avant : "A bstract" ❌)
-      - "Apple"     (avant : "A pple" ❌)
-      - "Android"   (avant : "A ndroid" ❌)
-      - "Ideal"     (avant : "I deal" ❌)
+      - "Abstract", "Apple", "Android", "Ideal"
     """
     if not text or not isinstance(text, str):
         return text
@@ -191,17 +203,17 @@ def _normalize_llm_string(text: str) -> str:
 
     result = text
 
-    # ─── 1. Appliquer les patterns PRÉCIS ───
+    # ─── 1. Appliquer les patterns ───
     for pattern, replacement in _NORMALIZE_PATTERNS:
         result = _re.sub(pattern, replacement, result, flags=_re.IGNORECASE)
 
     # ─── 2. Virgule sans espace ───
     result = _re.sub(r',([^\s])', r', \1', result)
 
-    # ─── 3. CamelCase (sans toucher aux acronymes) ───
+    # ─── 3. CamelCase ───
     result = _re.sub(r'([a-zà-ÿ])([A-ZÀ-Ý])', r'\1 \2', result)
 
-    # ─── 4. Deux-points sans espace (mais pas http://) ───
+    # ─── 4. Deux-points sans espace ───
     result = _re.sub(r'([a-zA-Z]):([^\s/])', r'\1: \2', result)
 
     # ─── 5. Nettoyage final ───
@@ -401,7 +413,7 @@ async def stream_chat(
 
     if _user_actions:
         logger.info(
-            "[Streaming v1.6.2] %d action(s) utilisateur — exécution DIRECTE",
+            "[Streaming v1.6.3] %d action(s) utilisateur — exécution DIRECTE",
             len(_user_actions),
         )
         _direct_msg = "\n\n⚙️ *Exécution directe...*\n\n"
@@ -416,7 +428,7 @@ async def stream_chat(
                 _ua_params["model"] = model
 
             logger.info(
-                "[Streaming v1.6.2] 🎯 Action directe %d : %s",
+                "[Streaming v1.6.3] 🎯 Action directe %d : %s",
                 _idx, _ua_name,
             )
             _exec_msg = f"\n\n⚙️ *Exécution {_idx}...*\n"
@@ -428,13 +440,13 @@ async def stream_chat(
                 _elapsed = (time.monotonic() - _t0) * 1000
                 _res_msg = fmt._format_execution_result(_ua_name, _exec_res)
                 logger.info(
-                    "[Streaming v1.6.2] ✅ Action %s terminée (%.0fms)",
+                    "[Streaming v1.6.3] ✅ Action %s terminée (%.0fms)",
                     _ua_name, _elapsed,
                 )
                 _res_chunk = "\n\n" + str(_res_msg) + "\n\n"
                 yield f"data: {json.dumps({'chunk': _res_chunk})}\n\n"
             except Exception as _err:
-                logger.exception("[Streaming v1.6.2] Action %s échouée", _ua_name)
+                logger.exception("[Streaming v1.6.3] Action %s échouée", _ua_name)
                 _err_chunk = f"\n\n⚠️ Erreur action {_ua_name} : {_err}\n\n"
                 yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
 
@@ -460,11 +472,11 @@ async def stream_chat(
 
     is_freshness_query = rt._bek_rex_is_freshness_query(last_user_query)
     if is_freshness_query:
-        logger.info("[Streaming v1.6.2] Requête de fraîcheur détectée")
+        logger.info("[Streaming v1.6.3] Requête de fraîcheur détectée")
 
     _detected_ego = rt._bek_rex_detect_alter_ego(last_user_query)
     if _detected_ego and _detected_ego != "bek":
-        logger.info("[Streaming v1.6.2] 🎭 Alter ego activé : %s", _detected_ego)
+        logger.info("[Streaming v1.6.3] 🎭 Alter ego activé : %s", _detected_ego)
         _alter_ego_prompt = rt._bek_rex_get_alter_ego_prompt(_detected_ego)
         if _alter_ego_prompt:
             for _msg in exec_messages:
@@ -476,12 +488,12 @@ async def stream_chat(
         try:
             _routing_result = rt._bek_rex_route(last_user_query)
             logger.info(
-                "[Streaming v1.6.2] BEK-REX tier=%s conf=%.2f",
+                "[Streaming v1.6.3] BEK-REX tier=%s conf=%.2f",
                 _routing_result.get("tier"),
                 _routing_result.get("confidence", 0.0),
             )
         except Exception as _rex_err:
-            logger.warning("[Streaming v1.6.2] BEK-REX échec : %s", _rex_err)
+            logger.warning("[Streaming v1.6.3] BEK-REX échec : %s", _rex_err)
             _routing_result = {"tier": "TIER_3", "confidence": 0.5}
 
         _tier = _routing_result.get("tier", "TIER_3")
@@ -502,7 +514,7 @@ async def stream_chat(
                         yield f"data: {json.dumps({'done': True})}\n\n"
                         return
             except Exception as _eco_err:
-                logger.warning("[Streaming v1.6.2] BEK-ECO échec : %s", _eco_err)
+                logger.warning("[Streaming v1.6.3] BEK-ECO échec : %s", _eco_err)
 
         for item in provider_manager.execute_chat_stream(
             messages=exec_messages,
@@ -598,7 +610,7 @@ async def stream_chat(
                     params = _normalize_action_params(action["params"])
 
                     logger.info(
-                        "[Streaming v1.6.2] 🎯 Action %d : %s",
+                        "[Streaming v1.6.3] 🎯 Action %d : %s",
                         total_actions_executed + 1, act_name,
                     )
 
@@ -633,11 +645,11 @@ async def stream_chat(
                         _last_action_end_pos = end_pos
 
                         logger.info(
-                            "[Streaming v1.6.2] ✅ Action %s terminée (%.0fms)",
+                            "[Streaming v1.6.3] ✅ Action %s terminée (%.0fms)",
                             act_name, _action_elapsed_ms,
                         )
                     except Exception as _act_err:
-                        logger.exception("[Streaming v1.6.2] Action %s échouée", act_name)
+                        logger.exception("[Streaming v1.6.3] Action %s échouée", act_name)
                         err_chunk = f"\n\n⚠️ Erreur action {act_name} : {_act_err}\n\n"
                         yield f"data: {json.dumps({'chunk': err_chunk})}\n\n"
                         processed_actions.add(end_pos)
@@ -650,7 +662,7 @@ async def stream_chat(
                     _post_action_grace_chunks = 0
 
     except Exception as stream_err:
-        logger.error("[Streaming v1.6.2] Erreur : %s", stream_err, exc_info=True)
+        logger.error("[Streaming v1.6.3] Erreur : %s", stream_err, exc_info=True)
         err_msg = f"\n\n⚠️ Flux Error : {stream_err}\n"
         yield f"data: {json.dumps({'chunk': err_msg})}\n\n"
         _success = False
@@ -712,19 +724,20 @@ async def stream_chat(
                     pass
 
         except Exception as _loop_err:
-            logger.debug("[Streaming v1.6.2] Erreur finally : %s", _loop_err)
+            logger.debug("[Streaming v1.6.3] Erreur finally : %s", _loop_err)
 
         yield f"data: {json.dumps({'done': True})}\n\n"
 
 
 def get_streaming_summary() -> dict:
     return {
-        "version": "1.6.2",
+        "version": "1.6.3",
         "features": {
             "multi_actions": BEK_MULTI_ACTIONS_ENABLED,
             "closing_tag_tolerant": True,
             "★ llm_string_normalization": True,
             "★ regex_fix_v162": True,
+            "★ vision_typo_fix_v163": True,
             "★ python_3_14_fstring_safe": True,
         },
     }
