@@ -1,12 +1,12 @@
 /**
- * BEK-v15-HYBRID — Agent UI Controller (VERSION FINALE C6.3.2)
+ * BEK-v15-HYBRID — Agent UI Controller (VERSION FINALE C6.3.3)
  * ============================================================
  * Base : ta version GitHub fonctionnelle (v16.2)
  * Fix v6.3.1 : Remplace formatMarkdown par textContent pour préserver les espaces
- * Fix v6.3.2 : ★ RENDU MARKDOWN FINAL (images/vidéos/code/tableaux)
- *              - Correction de l'affichage des images générées
- *              - Support des vidéos MP4/WebM dans le chat
- *              - Rendu markdown lors du chargement d'anciennes conversations
+ * Fix v6.3.2 : RENDU MARKDOWN FINAL (images/vidéos/code/tableaux)
+ * Fix v6.3.3 : ★ INJECTION AUTOMATIQUE DES MÉDIAS GÉNÉRÉS
+ *              - Détecte les nouveaux fichiers créés pendant la requête
+ *              - Les injecte dans la réponse même si le LLM oublie le markdown
  * ============================================================
  */
 (function() {
@@ -59,7 +59,7 @@
     window.__codeSnippetsRegistry = window.__codeSnippetsRegistry || {};
 
     // ═══════════════════════════════════════════════════════════════
-    // ★ v6.3.2 — DÉTECTION FICHIERS VIDÉO
+    // DÉTECTION FICHIERS VIDÉO / AUDIO
     // ═══════════════════════════════════════════════════════════════
     function isVideoUrl(url) {
         if (!url) return false;
@@ -71,8 +71,13 @@
         return /\.(mp3|wav|ogg|flac|m4a|aac)(\?.*)?$/i.test(url);
     }
 
+    function isImageUrl(url) {
+        if (!url) return false;
+        return /\.(png|jpg|jpeg|gif|webp|bmp|svg)(\?.*)?$/i.test(url);
+    }
+
     // ═══════════════════════════════════════════════════════════════
-    // MERMAID — Sanitizer + Init + Rendu
+    // MERMAID
     // ═══════════════════════════════════════════════════════════════
     function sanitizeMermaid(code) {
         if (!code) return code;
@@ -454,7 +459,7 @@
             .file-preview-close:hover {
                 background: #ef4444;
             }
-            /* ★ v6.3.2 — Styles vidéo dans le chat */
+            /* Styles vidéo dans le chat */
             .msg-bubble video {
                 max-width: 100% !important;
                 max-height: 480px !important;
@@ -470,7 +475,7 @@
                 margin: 16px 0 !important;
                 display: block;
             }
-            /* Images plus larges dans le chat */
+            /* Images dans le chat */
             .msg-bubble img {
                 max-width: min(560px, 100%) !important;
                 max-height: 560px !important;
@@ -487,16 +492,6 @@
             .msg-bubble img:hover {
                 transform: scale(1.01);
                 box-shadow: 0 6px 24px rgba(0,0,0,0.4);
-            }
-            /* Placeholder pendant chargement image */
-            .msg-bubble img[data-loading="true"] {
-                background: linear-gradient(90deg, #1a1f26 0%, #232a33 50%, #1a1f26 100%);
-                background-size: 200% 100%;
-                animation: shimmer 1.5s infinite;
-            }
-            @keyframes shimmer {
-                0% { background-position: 200% 0; }
-                100% { background-position: -200% 0; }
             }
         `;
         document.head.appendChild(style);
@@ -778,7 +773,7 @@
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // ★ C6.3 — REFLEX UI
+    // REFLEX UI
     // ═══════════════════════════════════════════════════════════════
     async function refreshReflexBadge() {
         try {
@@ -1168,7 +1163,7 @@
             }
         }
 
-        // ★ v6.3.2 — Lightbox via délégation d'événements (images + vidéos)
+        // Lightbox via délégation d'événements (images)
         if (DOM.chatBox && DOM.lightbox && DOM.lightboxImg) {
             DOM.chatBox.addEventListener('click', (e) => {
                 const img = e.target.closest('img');
@@ -1431,6 +1426,145 @@
         if (DOM.sendBtn) DOM.sendBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`;
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // ★ v6.3.3 — INJECTION AUTOMATIQUE DES MÉDIAS GÉNÉRÉS
+    // ------------------------------------------------------------------
+    // Détecte les nouveaux fichiers (images/vidéos) créés pendant la requête
+    // et les injecte dans la réponse, même si le LLM a "oublié" le markdown.
+    // ═══════════════════════════════════════════════════════════════
+    async function injectNewMediaFiles(assistantDiv, filesBefore, fullResponse) {
+        try {
+            // Attendre que les fichiers soient bien écrits sur disque
+            await new Promise(r => setTimeout(r, 800));
+
+            // Récupérer la liste actuelle
+            const res = await fetch(`${API_BASE}/api/files?t=${Date.now()}`);
+            if (!res.ok) {
+                console.warn('[Media] Impossible de récupérer la liste des fichiers');
+                return;
+            }
+            const data = await res.json();
+            const filesAfter = data.files || [];
+
+            // Identifier les nouveaux fichiers
+            const beforeNames = new Set((filesBefore || []).map(f => f.name));
+            const newFiles = filesAfter.filter(f => !beforeNames.has(f.name));
+
+            // Extensions supportées
+            const imageExts = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
+            const videoExts = ['mp4', 'webm', 'mov', 'avi', 'mkv'];
+            const audioExts = ['mp3', 'wav', 'ogg', 'm4a'];
+
+            const isMedia = (name) => {
+                const ext = (name.split('.').pop() || '').toLowerCase();
+                return [...imageExts, ...videoExts, ...audioExts].includes(ext);
+            };
+
+            // Filtrer les nouveaux médias
+            let mediaToInject = newFiles.filter(f => isMedia(f.name));
+
+            // Fallback : si aucun nouveau média détecté mais que la réponse mentionne une génération
+            const responseLower = (fullResponse || '').toLowerCase();
+            const mentionsImage = responseLower.includes('image générée') ||
+                                  responseLower.includes('image generee') ||
+                                  responseLower.includes('logo généré') ||
+                                  responseLower.includes('image créée') ||
+                                  responseLower.includes('image cr��e');
+            const mentionsVideo = responseLower.includes('vidéo générée') ||
+                                  responseLower.includes('video generee') ||
+                                  responseLower.includes('vidéo créée');
+
+            if (mediaToInject.length === 0 && (mentionsImage || mentionsVideo)) {
+                console.log('[Media] Fallback : recherche des derniers médias générés');
+                // Prendre les 3 derniers médias du dossier generated (pas uploads)
+                mediaToInject = filesAfter
+                    .filter(f => isMedia(f.name) && (f.folder === 'generated' || f.folder?.includes('generated')))
+                    .slice(0, 3);
+            }
+
+            if (mediaToInject.length === 0) {
+                console.log('[Media] Aucun média à injecter');
+                return;
+            }
+
+            // Vérifier si le markdown contient déjà un lien vers ces fichiers
+            const responseHasMarkdownImage = /!\[.*?\]\(.*?\)/.test(fullResponse || '');
+            const alreadyDisplayed = mediaToInject.some(f => {
+                const name = f.name || '';
+                return (fullResponse || '').includes(name);
+            });
+
+            if (responseHasMarkdownImage && alreadyDisplayed) {
+                console.log('[Media] Le markdown contient déjà les médias, skip injection');
+                return;
+            }
+
+            console.log('[Media] ✅ Injection automatique de', mediaToInject.length, 'média(s)');
+
+            // Créer un conteneur pour les médias
+            const mediaContainer = document.createElement('div');
+            mediaContainer.style.cssText = 'margin-top: 16px; display: flex; flex-direction: column; gap: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);';
+
+            for (const f of mediaToInject) {
+                const name = f.name || '';
+                const ext = (name.split('.').pop() || '').toLowerCase();
+                const url = `${API_BASE}/api/download/${encodeURIComponent(name)}`;
+
+                if (imageExts.includes(ext)) {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = name;
+                    img.loading = 'lazy';
+                    img.style.cssText = `
+                        max-width: min(560px, 100%);
+                        max-height: 560px;
+                        width: auto;
+                        height: auto;
+                        object-fit: contain;
+                        border-radius: 12px;
+                        margin: 0;
+                        cursor: zoom-in;
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                        display: block;
+                        transition: transform 0.2s ease;
+                    `;
+                    img.onmouseenter = () => img.style.transform = 'scale(1.01)';
+                    img.onmouseleave = () => img.style.transform = 'scale(1)';
+                    mediaContainer.appendChild(img);
+                } else if (videoExts.includes(ext)) {
+                    const video = document.createElement('video');
+                    video.src = url;
+                    video.controls = true;
+                    video.loop = true;
+                    video.muted = true;
+                    video.playsInline = true;
+                    video.preload = 'metadata';
+                    video.style.cssText = `
+                        max-width: min(640px, 100%);
+                        max-height: 480px;
+                        border-radius: 12px;
+                        background: #000;
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+                        display: block;
+                    `;
+                    mediaContainer.appendChild(video);
+                } else if (audioExts.includes(ext)) {
+                    const audio = document.createElement('audio');
+                    audio.src = url;
+                    audio.controls = true;
+                    audio.preload = 'metadata';
+                    audio.style.cssText = 'width: 100%; max-width: 480px; display: block;';
+                    mediaContainer.appendChild(audio);
+                }
+            }
+
+            assistantDiv.appendChild(mediaContainer);
+
+        } catch (e) {
+            console.warn('[Media] Échec injection automatique :', e);
+        }
+    }
+
     async function sendMessage() {
         if (!DOM.userInput || !DOM.sendBtn || !DOM.chatBox) return;
         const text = DOM.userInput.value.trim();
@@ -1457,6 +1591,18 @@
                 const firstName = typeof zipFiles[0] === 'string' ? zipFiles[0] : zipFiles[0].filename;
                 fullTextContent += "\n(INSTRUCTION SYSTEME : Utilise [ACTION:analyze_zip_content]{\"zip_path\": \"uploads/" + firstName + "\"}[/ACTION]).";
             }
+        }
+
+        // ★ v6.3.3 — Snapshot AVANT d'envoyer pour détecter les nouveaux fichiers
+        let filesBefore = [];
+        try {
+            const resBefore = await fetch(`${API_BASE}/api/files?t=${Date.now()}`);
+            if (resBefore.ok) {
+                const dataBefore = await resBefore.json();
+                filesBefore = dataBefore.files || [];
+            }
+        } catch (e) {
+            console.warn('[Media] Snapshot avant échoué :', e);
         }
 
         appendUserMessage(fullTextContent);
@@ -1523,11 +1669,6 @@
             if (fullResponse) {
                 messageHistory.push({ role: 'assistant', content: fullResponse });
                 saveCurrentConversation();
-                if (fullResponse.includes('[Action Exécutée')) {
-                    if (window.loadFilesList) await window.loadFilesList();
-                    if (window.loadSubCRMsUI) window.loadSubCRMsUI();
-                    if (window.loadOpportunitiesUI) window.loadOpportunitiesUI();
-                }
             }
         } catch (err) {
             if (err.name !== 'AbortError') {
@@ -1537,7 +1678,7 @@
             isStreaming = false;
             activeController = null;
 
-            // ★ v6.3.2 — RENDU MARKDOWN FINAL (images/vidéos/code/tableaux)
+            // ★ RENDU MARKDOWN FINAL (images/vidéos/code/tableaux)
             if (fullResponse) {
                 assistantDiv.innerHTML = formatMarkdown(fullResponse);
 
@@ -1555,6 +1696,14 @@
                 }
             } else {
                 assistantDiv.innerHTML = '<span style="color:#ff6b6b;">⚠️ Réponse vide</span>';
+            }
+
+            // ★ v6.3.3 — INJECTION AUTOMATIQUE DES NOUVEAUX MÉDIAS
+            await injectNewMediaFiles(assistantDiv, filesBefore, fullResponse);
+
+            // Rafraîchir la liste des fichiers dans la sidebar
+            if (window.loadFilesList) {
+                try { await window.loadFilesList(); } catch (e) {}
             }
 
             // Scroll final en bas
@@ -1621,7 +1770,7 @@
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
 
-            // ★ v6.3.2 — Rendu personnalisé des images ET vidéos
+            // Rendu personnalisé des images ET vidéos
             renderer.image = function(href, title, text) {
                 const url = href || '';
                 const cleanTitle = title || '';
@@ -1637,7 +1786,7 @@
                     return `<audio controls preload="metadata" src="${url}" title="${cleanTitle}"></audio>`;
                 }
 
-                // Image normale (lightbox géré par délégation d'événements)
+                // Image normale
                 return `<img src="${url}" alt="${cleanAlt}" title="${cleanTitle}" loading="lazy">`;
             };
 
@@ -1729,7 +1878,7 @@
         loadConversation(id);
     }
 
-    // ★ v6.3.2 — Chargement d'anciennes conversations avec rendu markdown complet
+    // Chargement d'anciennes conversations avec rendu markdown complet
     window.loadConversation = function(id) {
         currentConvId = id;
         const conv = conversations.find(c => c.id === id);
@@ -1743,7 +1892,6 @@
             } else if (m.role === 'assistant') {
                 const div = appendAssistantMessage('');
                 if (m.content) {
-                    // ★ v6.3.2 — Rendu markdown (images/vidéos/code/tableaux)
                     div.innerHTML = formatMarkdown(m.content);
                     renderMermaidIn(div);
                     if (window.hljs) {
