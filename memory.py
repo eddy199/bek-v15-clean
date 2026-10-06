@@ -13,6 +13,18 @@ CORRECTIF v19 (2026-09-16) :
     retourne 2048. On garde les 1024 premières dimensions.
   - Si le vecteur est plus court que target_dim, complétion avec des zéros.
   - Élimine les erreurs "[400] Vector dimension 2048 does not match the index 1024".
+
+★ v18.13 (2026-10-06) — LAZY LOADING ChromaDB + Feature flag :
+  - ChromaDB est chargé à la demande (déjà le cas, amélioré avec lock).
+  - Ajout du flag BEK_DISABLE_CHROMADB pour désactiver complètement.
+  - Thread-safe : un seul client partagé entre threads.
+  - Fonction is_chromadb_loaded() pour le health check.
+
+★ v18.14 (2026-10-06) — FIX BUG ChromaDB upsert :
+  - Ajout de _CHROMA_COLLECTION (variable séparée).
+  - get_chroma_collection() retourne la COLLECTION (pas le client).
+  - Évite l'erreur "'Client' object has no attribute 'upsert'".
+  - Les appels upsert/query/delete utilisent maintenant la collection.
 """
 
 from __future__ import annotations
@@ -24,6 +36,7 @@ import logging
 import math
 import os
 import sys
+import threading
 import uuid
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -127,6 +140,21 @@ NVIDIA_EMBEDDING_MODEL = _env("NVIDIA_EMBEDDING_MODEL", "nvidia/nemotron-3-embed
 NVIDIA_EMBEDDING_URL = _env(
     "NVIDIA_EMBEDDING_URL",
     "https://integrate.api.nvidia.com/v1/embeddings",
+)
+
+
+# ============================================================
+# ★ v18.13 — FEATURE FLAGS LAZY LOADING
+# ============================================================
+
+# Désactiver ChromaDB complètement (utile sur Render Free)
+_DISABLE_CHROMADB = _env("BEK_DISABLE_CHROMADB", "false").lower() in (
+    "true", "1", "yes", "on"
+)
+
+# Activer le lazy loading (défaut: true)
+_LAZY_LOAD = _env("BEK_LAZY_LOAD", "true").lower() in (
+    "true", "1", "yes", "on"
 )
 
 
@@ -294,7 +322,6 @@ def get_embedding(
                 embedding = data[0].get("embedding")
                 if isinstance(embedding, list) and embedding:
                     vector = [float(v) for v in embedding]
-                    # CORRECTIF v19 : ajuster à target_dim
                     original_len = len(vector)
                     vector = _fit_dimension(vector, target_dim)
                     if original_len != target_dim:
@@ -316,34 +343,79 @@ def get_embedding(
 
 
 # ============================================================
-# CHROMADB (LOCAL HYBRID FALLBACK & PERSISTENCE)
+# ★ v18.13/14 — CHROMADB (LAZY + FEATURE FLAG + FIX BUG)
 # ============================================================
 
 _CHROMA_CLIENT = None
+_CHROMA_COLLECTION = None       # ★ v18.14 — FIX : stocker la collection
+_CHROMA_LOCK = threading.Lock()
+_CHROMA_LOADED = False
+
+
+def is_chromadb_loaded() -> bool:
+    """Retourne True si ChromaDB a déjà été chargé."""
+    return _CHROMA_LOADED
+
+
+def is_chromadb_disabled() -> bool:
+    """Retourne True si ChromaDB est désactivé via env var."""
+    return _DISABLE_CHROMADB
 
 
 def get_chroma_collection():
-    """Initialise et retourne la collection locale persistante ChromaDB."""
-    global _CHROMA_CLIENT
-    try:
-        import chromadb
-        from chromadb.config import Settings
+    """
+    Initialise et retourne la collection locale persistante ChromaDB.
 
-        if _CHROMA_CLIENT is None:
+    ★ v18.13 :
+      - Lazy loading : ChromaDB n'est chargé qu'au 1er appel réel.
+      - Feature flag : BEK_DISABLE_CHROMADB=true désactive complètement.
+      - Thread-safe : un seul client partagé.
+
+    ★ v18.14 (FIX) :
+      - La collection est stockée séparément du client dans _CHROMA_COLLECTION
+      - Retourne la COLLECTION (pas le client) → permet upsert/query/delete
+      - Évite l'erreur "'Client' object has no attribute 'upsert'"
+    """
+    global _CHROMA_CLIENT, _CHROMA_COLLECTION, _CHROMA_LOADED
+
+    # ★ Désactivé complètement ?
+    if _DISABLE_CHROMADB:
+        logger.debug("[memory] ChromaDB désactivé (BEK_DISABLE_CHROMADB=true)")
+        return None
+
+    # Déjà chargé ? → Retourner la COLLECTION (pas le client)
+    if _CHROMA_LOADED:
+        return _CHROMA_COLLECTION      # ★ v18.14 — FIX
+
+    with _CHROMA_LOCK:
+        if _CHROMA_LOADED:
+            return _CHROMA_COLLECTION  # ★ v18.14 — FIX
+
+        logger.info("[memory] Chargement ChromaDB (lazy)...")
+        try:
+            import chromadb
+            from chromadb.config import Settings
+
             _CHROMA_CLIENT = chromadb.PersistentClient(
                 path=str(CHROMA_DIR),
                 settings=Settings(anonymized_telemetry=False),
             )
-        return _CHROMA_CLIENT.get_or_create_collection(
-            name="bek_memory_local",
-            metadata={"hnsw:space": "cosine"},
-        )
-    except ImportError:
-        logger.debug("ChromaDB non installé localement.")
-        return None
-    except Exception as exc:
-        logger.error("Erreur initialisation ChromaDB local : %s", exc)
-        return None
+            # ★ v18.14 — FIX : stocker la COLLECTION séparément
+            _CHROMA_COLLECTION = _CHROMA_CLIENT.get_or_create_collection(
+                name="bek_memory_local",
+                metadata={"hnsw:space": "cosine"},
+            )
+            _CHROMA_LOADED = True
+            logger.info("[memory] ✅ ChromaDB chargé")
+            return _CHROMA_COLLECTION  # ★ v18.14 — FIX
+        except ImportError:
+            logger.warning("[memory] ChromaDB non installé.")
+            _CHROMA_LOADED = True
+            return None
+        except Exception as exc:
+            logger.error("[memory] Erreur initialisation ChromaDB : %s", exc)
+            _CHROMA_LOADED = True
+            return None
 
 
 # ============================================================
@@ -596,7 +668,7 @@ def search_memory(
         except Exception as exc:
             logger.warning("Erreur recherche Pinecone : %s. Bascule sur ChromaDB local.", exc)
 
-    # 2. Fallback ChromaDB Local
+    # 2. Fallback ChromaDB Local (★ v18.13 : lazy + flag)
     chroma_coll = get_chroma_collection()
     if chroma_coll is not None:
         try:
@@ -667,7 +739,8 @@ def save_to_memory(
     else:
         record_pending_sync(record_id, combined_text, "Pinecone index indisponible lors de l'appel.")
 
-    # 2. Upsert ChromaDB Local
+    # 2. Upsert ChromaDB Local (★ v18.13 : lazy + flag)
+    # ★ v18.14 — FIX : get_chroma_collection() retourne maintenant la COLLECTION
     chroma_coll = get_chroma_collection()
     if chroma_coll is not None:
         try:
@@ -703,7 +776,8 @@ def delete_from_memory(record_id: str = "", keyword: str = "") -> dict:
         except Exception as exc:
             logger.warning("Échec suppression Pinecone : %s", exc)
 
-    # 2. Suppression ChromaDB Local
+    # 2. Suppression ChromaDB Local (★ v18.13 : lazy + flag)
+    # ★ v18.14 — FIX : get_chroma_collection() retourne maintenant la COLLECTION
     chroma_coll = get_chroma_collection()
     if chroma_coll is not None:
         try:
@@ -743,3 +817,16 @@ def delete_from_memory(record_id: str = "", keyword: str = "") -> dict:
             conn.close()
 
     return result
+
+
+# ============================================================
+# ★ v18.13 — STATS LAZY LOADING
+# ============================================================
+
+def lazy_stats() -> dict:
+    """Retourne l'état du lazy loading pour le health check."""
+    return {
+        "chromadb_loaded": _CHROMA_LOADED,
+        "chromadb_disabled": _DISABLE_CHROMADB,
+        "lazy_enabled": _LAZY_LOAD,
+    }
