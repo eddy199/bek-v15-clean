@@ -1,10 +1,18 @@
 # ==============================================================================
 # BEK-v16 — Provider Manager (provider_manager.py)
 # ------------------------------------------------------------------------------
-# v25.3 (2026-10-04) : ★ Fix Provider Fiable pour les Outils
+# v25.3 (2026-10-04) : Fix Provider Fiable pour les Outils
 #   - Force Groq pour les providers "anonymous" (ovh, kilo, llm7)
-#     car ils sont instables pour comprendre le format [ACTION:...]
-#   - Bloc _RELIABLE_PROVIDERS inséré AVANT le TPM Guard
+#
+# ★ v25.4 (2026-10-06) : RÉINTÉGRATION DES MODÈLES VISION NVIDIA
+#   - Ajout des 5 modèles vision gratuits dans PROVIDER_MODELS["nvidia"] :
+#     * meta/llama-3.2-11b-vision-instruct  (défaut vision)
+#     * meta/llama-3.2-90b-vision-instruct
+#     * microsoft/phi-3.5-vision-instruct
+#     * google/paligemma
+#     * nvidia/vila
+#   - Utilisés par services/vision/image_analysis.py (analyse d'images)
+#   - Le provider "nvidia" reste hors FALLBACK_ORDER (chat texte)
 # ==============================================================================
 from __future__ import annotations
 
@@ -118,9 +126,27 @@ class ProviderManager:
             "groq/compound",
             "groq/compound-mini",
         ],
+        # ══════════════════════════════════════════════════════════════════
+        # ★ v25.4 — NVIDIA NIM (modèles texte + vision gratuits)
+        # ══════════════════════════════════════════════════════════════════
         "nvidia": [
+            # ─── Texte ───
             "openai/gpt-oss-120b",
             "nvidia/nemotron-3-super-120b-a12b",
+            "meta/llama-3.1-8b-instruct",
+            "meta/llama-3.1-70b-instruct",
+            "mistralai/mistral-7b-instruct-v0.3",
+            "mistralai/mixtral-8x7b-instruct-v0.1",
+            "microsoft/phi-3-medium-4k-instruct",
+            "google/gemma-2-9b-it",
+            "google/gemma-2-27b-it",
+            "qwen/qwen2.5-7b-instruct",
+            # ─── Vision (utilisés par services/vision/image_analysis.py) ───
+            "meta/llama-3.2-11b-vision-instruct",
+            "meta/llama-3.2-90b-vision-instruct",
+            "microsoft/phi-3.5-vision-instruct",
+            "google/paligemma",
+            "nvidia/vila",
         ],
         "gemini": [
             "gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.6-flash",
@@ -173,7 +199,11 @@ class ProviderManager:
     }
 
     # ==========================================================================
-    # ★ v25.3 — CHAÎNE DE FALLBACK (NVIDIA RETIRÉ)
+    # CHAÎNE DE FALLBACK (NVIDIA RETIRÉ — chat texte uniquement)
+    # --------------------------------------------------------------------------
+    # NVIDIA reste accessible via le dropdown manuel, mais il est retiré du
+    # fallback automatique car son API texte a été fermée fin 2025.
+    # Les modèles VISION NVIDIA restent disponibles (voir image_analysis.py).
     # ==========================================================================
     FALLBACK_ORDER: List[str] = [
         "groq",             # ★ provider principal (fonctionne)
@@ -185,7 +215,7 @@ class ProviderManager:
         "aisa",
         "kimi",
         "huggingface",
-        # "nvidia",         # ★ RETIRÉ 2026-10-03 (API fermée)
+        # "nvidia",         # ★ chat texte fermé (vision OK via image_analysis.py)
     ]
 
     PROVIDER_KEY_MAP: Dict[str, str] = {
@@ -474,7 +504,7 @@ class ProviderManager:
         return formatted
 
     # ==========================================================================
-    # ★ v25.3 — EXÉCUTION CHAT EN STREAM (PROVIDER FIABLE + TPM GUARD)
+    # EXÉCUTION CHAT EN STREAM (PROVIDER FIABLE + TPM GUARD)
     # ==========================================================================
     def execute_chat_stream(
         self,
@@ -491,8 +521,6 @@ class ProviderManager:
             return
 
         # ★ v25.3 — Priorité aux providers FIABLES pour l'exécution d'outils
-        # Les providers "anonymous" (ovh, kilo, llm7) sont souvent instables
-        # pour comprendre le format [ACTION:...]. On force Groq.
         _RELIABLE_PROVIDERS = ("groq", "mistral", "cohere", "openrouter")
 
         if provider.lower() not in _RELIABLE_PROVIDERS:
@@ -515,7 +543,7 @@ class ProviderManager:
             selected_provider = provider
             selected_model = model
 
-        # ★ v25.3 — TPM Guard : tronque les requêtes géantes
+        # TPM Guard : tronque les requêtes géantes
         if total_chars > 50000:
             logger.warning(
                 "[TPM Guard] Requête GÉANTE (%d chars) — troncature à 5 derniers messages.",
@@ -535,7 +563,6 @@ class ProviderManager:
             if current_prov == selected_provider:
                 current_model = selected_model
             else:
-                # ★ v25.3 — Modèles vivants (nvidia retiré)
                 if current_prov == "groq":             current_model = "openai/gpt-oss-20b"
                 elif current_prov == "gemini":         current_model = "gemini-3.8-flash"
                 elif current_prov == "openrouter":     current_model = "auto"

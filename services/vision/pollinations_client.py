@@ -8,13 +8,17 @@
 #
 # v26 (2026-09-21) : Création initiale
 # v27 (2026-09-21) : enhance=False par défaut (évite le bruit ajouté)
-# ★ v28.1 (2026-10-06) : FIX NORMALISATION PROMPT
+# v28.1 (2026-10-06) : FIX NORMALISATION PROMPT
 #   - Ajout _normalize_prompt_spacing() après optimisation
 #   - Corrige "minimalistlogo" → "minimalist logo"
 #   - Corrige "suitablefor" → "suitable for"
 #   - Corrige "lines,professional" → "lines, professional"
-#   - Corrige aussi les majuscules collées : "CleanLines" → "Clean Lines"
-#   - ★ AUCUNE fonctionnalité existante supprimée (100% compatible v27)
+#
+# ★ v28.2 (2026-10-06) : FIX HTTP 402 (rate limit Pollinations)
+#   - Ajout User-Agent identifiable (BEK-Agent/1.0)
+#   - Détection HTTP 402 → retry après 5s
+#   - Message d'erreur clair si échec définitif
+#   - ★ AUCUNE fonctionnalité existante supprimée (100% compatible v28.1)
 # ==============================================================================
 from __future__ import annotations
 
@@ -51,8 +55,25 @@ POLLINATIONS_MODELS: Dict[str, str] = {
 POLLINATIONS_BASE = "https://image.pollinations.ai/prompt"
 
 
+# ==============================================================================
+# ★ v28.2 — HEADERS IDENTIFIABLES (fix HTTP 402)
+# ==============================================================================
+def _build_headers() -> Dict[str, str]:
+    """
+    Construit les headers HTTP pour Pollinations.
+
+    ★ v28.2 — Pollinations renvoie HTTP 402 (Payment Required) quand le
+    User-Agent est vide ou suspecté bot. On s'identifie clairement.
+    """
+    return {
+        "User-Agent": "BEK-Agent/1.0 (+https://bek-v15-clean.onrender.com)",
+        "Accept": "image/png,image/jpeg,image/webp,image/*",
+        "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
+    }
+
+
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v28.1 — NORMALISATION DU PROMPT (fix mots collés)
+# NORMALISATION DU PROMPT (fix mots collés)
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _normalize_prompt_spacing(prompt: str) -> str:
@@ -64,6 +85,7 @@ def _normalize_prompt_spacing(prompt: str) -> str:
       - "suitablefor a tech"    → "suitable for a tech"
       - "lines,professional"    → "lines, professional"
       - "CleanLines"            → "Clean Lines"
+      - "Amodern"               → "A modern"
 
     ⚠️ On ne touche PAS aux mots composés valides (ex: "flux-3d", "photorealistic").
     """
@@ -86,29 +108,57 @@ def _normalize_prompt_spacing(prompt: str) -> str:
     # ─── 4. Point-virgule sans espace → ajouter espace ───
     text = re.sub(r';([^\s])', r'; \1', text)
 
-    # ─── 5. Mots collés fréquents (français + anglais) ───
+    # ─── 5. Préfixes collés (Amodern, Thelogo, Iwant...) ───
+    text = re.sub(r'\b(A)([a-z]{3,})', r'\1 \2', text)
+    text = re.sub(r'\b(An)([a-z]{3,})', r'\1 \2', text)
+    text = re.sub(r'\b(The)([a-z]{3,})', r'\1 \2', text)
+    text = re.sub(r'\b(I)([a-z]{3,})', r'\1 \2', text)
+
+    # ─── 6. Mots collés fréquents (français + anglais) ───
     common_collisions = [
-        (r'\bsuitablefor\b', 'suitable for'),
-        (r'\bminimalistlogo\b', 'minimalist logo'),
-        (r'\bmodernlogo\b', 'modern logo'),
-        (r'\bcleanlines\b', 'clean lines'),
-        (r'\bbluecolor\b', 'blue color'),
-        (r'\bprofessional look\b', 'professional look'),
-        (r'\btechstartup\b', 'tech startup'),
-        (r'\bhighquality\b', 'high quality'),
-        (r'\bdetaileddesign\b', 'detailed design'),
-        (r'\bsoftlighting\b', 'soft lighting'),
-        (r'\bstudiolighting\b', 'studio lighting'),
-        (r'\bdigitalart\b', 'digital art'),
-        (r'\bconceptart\b', 'concept art'),
+        (r'suitablefor', 'suitable for'),
+        (r'minimalistlogo', 'minimalist logo'),
+        (r'modernlogo', 'modern logo'),
+        (r'sleeklogo', 'sleek logo'),
+        (r'simplelogo', 'simple logo'),
+        (r'cleanlines', 'clean lines'),
+        (r'bluecolor', 'blue color'),
+        (r'bluecolour', 'blue colour'),
+        (r'professional look', 'professional look'),
+        (r'techstartup', 'tech startup'),
+        (r'startupcompany', 'startup company'),
+        (r'foratech', 'for a tech'),
+        (r'logofora', 'logo for a'),
+        (r'featuringabstract', 'featuring abstract'),
+        (r'circuitrypatterns', 'circuitry patterns'),
+        (r'circuitpatterns', 'circuit patterns'),
+        (r'formingastylized', 'forming a stylized'),
+        (r'withagradient', 'with a gradient'),
+        (r'ofelectricblue', 'of electric blue'),
+        (r'andneongreen', 'and neon green'),
+        (r'onelectricblue', 'on electric blue'),
+        (r'onadarkbackground', 'on a dark background'),
+        (r'onwhitebackground', 'on white background'),
+        (r'minimalisticand', 'minimalistic and'),
+        (r'futuristicdesign', 'futuristic design'),
+        (r'highcontrast', 'high contrast'),
+        (r'vectorstyle', 'vector style'),
+        (r'modernsleek', 'modern sleek'),
+        (r'highquality', 'high quality'),
+        (r'detaileddesign', 'detailed design'),
+        (r'softlighting', 'soft lighting'),
+        (r'studiolighting', 'studio lighting'),
+        (r'digitalart', 'digital art'),
+        (r'conceptart', 'concept art'),
+        (r'characterdesign', 'character design'),
     ]
     for pattern, replacement in common_collisions:
         text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
 
-    # ─── 6. Nettoyage final : espaces multiples → un seul ───
+    # ─── 7. Nettoyage final : espaces multiples → un seul ───
     text = re.sub(r'\s+', ' ', text).strip()
 
-    # ─── 7. Nettoyage des espaces avant ponctuation ───
+    # ─── 8. Nettoyage des espaces avant ponctuation ───
     text = re.sub(r'\s+([,;:.!?])', r'\1', text)
 
     return text
@@ -155,7 +205,7 @@ def generate_image_with_pollinations(
         os.path.join(GENERATED_DIR, secure_filename(output_filename))
     )
 
-    # Optimisation du prompt
+    # ─── Optimisation du prompt ───
     final_prompt = prompt
     if optimize_prompt:
         try:
@@ -178,10 +228,10 @@ def generate_image_with_pollinations(
         "[vision.pollinations] Prompt normalisé : %s", final_prompt[:120]
     )
 
-    # Résolution du modèle
+    # ─── Résolution du modèle ───
     model_id = POLLINATIONS_MODELS.get(model, model)
 
-    # Construction de l'URL
+    # ─── Construction de l'URL ───
     encoded_prompt = urllib.parse.quote(final_prompt)
 
     # ★ v28 : seed aléatoire par défaut pour éviter le cache Pollinations
@@ -206,11 +256,16 @@ def generate_image_with_pollinations(
         model_id, width, height, enhance, final_prompt[:80],
     )
 
-    # Retry (Pollinations peut timeout sur grosses images)
+    # ══════════════════════════════════════════════════════════════════════
+    # ★ v28.2 — HEADERS IDENTIFIABLES (fix HTTP 402)
+    # ══════════════════════════════════════════════════════════════════════
+    headers = _build_headers()
+
+    # ─── Retry (Pollinations peut timeout / 402 / 502 sur grosses images) ───
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            res = requests.get(url, timeout=120)
+            res = requests.get(url, headers=headers, timeout=120)
         except requests.Timeout:
             logger.warning(
                 "[vision.pollinations] Timeout (tentative %d/%d)",
@@ -229,6 +284,26 @@ def generate_image_with_pollinations(
                 "message": f"Erreur réseau Pollinations : {e}",
             }
 
+        # ══════════════════════════════════════════════════════════════════
+        # ★ v28.2 — GESTION HTTP 402 (Payment Required)
+        # ══════════════════════════════════════════════════════════════════
+        if res.status_code == 402:
+            logger.warning(
+                "[vision.pollinations] HTTP 402 (rate limit) — tentative %d/%d",
+                attempt + 1, max_retries,
+            )
+            if attempt < max_retries - 1:
+                time.sleep(5)
+                continue
+            return {
+                "status": "error",
+                "message": (
+                    "Pollinations HTTP 402 (rate limit atteint). "
+                    "Réessayez dans 30 secondes."
+                ),
+            }
+
+        # ─── Succès ───
         if res.status_code == 200 and len(res.content) > 1000:
             with open(save_path, "wb") as f:
                 f.write(res.content)
@@ -246,7 +321,7 @@ def generate_image_with_pollinations(
                 "url": url,
             }
 
-        # Erreur HTTP ou contenu trop petit (probablement vide)
+        # ─── Erreur HTTP ou contenu trop petit (probablement vide) ───
         if attempt < max_retries - 1:
             logger.warning(
                 "[vision.pollinations] HTTP %s (tentative %d/%d), retry...",
