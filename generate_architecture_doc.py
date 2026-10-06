@@ -5,7 +5,7 @@
 # 🏛️ Rôle : Générer docs/ARCHITECTURE.md avec un VRAI plan d'action
 # 📄 Appelé au boot par app.py + disponible en CLI + appelable à chaud via API
 # ------------------------------------------------------------------------------
-# Version : 4.1
+# Version : 4.2
 # Date : 2026-10-06
 # ------------------------------------------------------------------------------
 # v4.0 (2026-10-06) — DIAGNOSTIC & SIGNALEMENT :
@@ -21,6 +21,10 @@
 #   - FIX : timeout de sécurité (5s max pour la génération)
 #   - FIX : skip diagnostic lourd au boot (force=False → fast)
 #   - Résultat : boot passe de >5 min à <2s
+#
+# ★ v4.2 (2026-10-06) — FIX DÉTECTION DUCKDB :
+#   - FIX : force _detect_backend() pour éviter "not_detected" au boot
+#   - FIX : affiche le vrai backend (duckdb/sqlite) dès le 1er scan
 # ==============================================================================
 
 from __future__ import annotations
@@ -362,6 +366,7 @@ def _collect_providers() -> List[str]:
 def _collect_lazy_status() -> Dict[str, Dict[str, Any]]:
     lazy: Dict[str, Dict[str, Any]] = {}
 
+    # ─── Playwright ───
     try:
         from worker_headless import _playwright_loaded
         lazy["playwright"] = {
@@ -371,6 +376,7 @@ def _collect_lazy_status() -> Dict[str, Dict[str, Any]]:
     except Exception as exc:
         lazy["playwright"] = {"status": "unavailable", "detail": str(exc)[:60]}
 
+    # ─── ChromaDB ───
     try:
         from memory import is_chromadb_loaded, is_chromadb_disabled
         if is_chromadb_disabled():
@@ -382,16 +388,18 @@ def _collect_lazy_status() -> Dict[str, Dict[str, Any]]:
     except Exception as exc:
         lazy["chromadb"] = {"status": "unavailable", "detail": str(exc)[:60]}
 
+    # ─── ★ v4.2 — DuckDB (episode_logger) : FORCE la détection ───
     try:
-        from services.episode_logger import lazy_stats as el_stats
-        stats = el_stats()
+        from services.episode_logger import _detect_backend
+        backend = _detect_backend()  # ★ Force la détection du backend
         lazy["duckdb_episode"] = {
-            "status": stats.get("backend", "unknown"),
-            "detail": f"Backend : {stats.get('backend', '?')}",
+            "status": backend,
+            "detail": f"Backend : {backend}",
         }
     except Exception as exc:
         lazy["duckdb_episode"] = {"status": "unavailable", "detail": str(exc)[:60]}
 
+    # ─── LanceDB ───
     try:
         disable_lancedb = os.getenv("BEK_DISABLE_LANCEDB", "false").lower() in ("true", "1", "yes")
         lazy["lancedb"] = {
@@ -401,6 +409,7 @@ def _collect_lazy_status() -> Dict[str, Dict[str, Any]]:
     except Exception as exc:
         lazy["lancedb"] = {"status": "unavailable", "detail": str(exc)[:60]}
 
+    # ─── DuckDB Analytics ───
     try:
         disable_duckdb = os.getenv("BEK_DISABLE_DUCKDB_ANALYTICS", "false").lower() in ("true", "1", "yes")
         lazy["duckdb_analytics"] = {
@@ -1235,7 +1244,7 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="BEK Architecture Generator v4.1 — Ultra dynamique + Diagnostic",
+        description="BEK Architecture Generator v4.2 — Ultra dynamique + Diagnostic",
     )
     parser.add_argument("--force", "-f", action="store_true", help="Force la régénération")
     parser.add_argument("--watch", "-w", action="store_true", help="Démarre le watcher")
