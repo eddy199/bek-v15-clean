@@ -1,18 +1,16 @@
 # ==============================================================================
-# BEK-v16 — Vision / Pollinations Client (v28.9)
+# BEK-v16 — Vision / Pollinations Client
 # ------------------------------------------------------------------------------
-# ★ v28.9 (2026-10-06) : FIX HTTP 402/500 (rate limit Pollinations)
-#   - 5 retries (au lieu de 3) avec backoff exponentiel (2→32s)
-#   - Rotation User-Agent
-#   - Rotation endpoints (image.pollinations.ai + pollinations.ai/p)
-#   - Timeout 180s (au lieu de 120s)
-#   - Logs détaillés pour diagnostic
+# v28.10 (2026-10-06) : FIX DÉTECTION PLACEHOLDER D'ERREUR
+#   - Détecte les images d'erreur Pollinations (< 20 KB, header non-image)
+#   - Retry avec NOUVEAU seed à chaque tentative (bypass cache CDN)
+#   - Backoff plus long (3→30s)
+#   - 5 retries avec rotation endpoints + User-Agent
 # ==============================================================================
 from __future__ import annotations
 
 import logging
 import os
-import random
 import re
 import time
 import urllib.parse
@@ -28,6 +26,9 @@ from services.prompt_optimizer import optimize_prompt_for_media
 logger = logging.getLogger("bek.vision.pollinations")
 
 
+# ==============================================================================
+# MODÈLES POLLINATIONS
+# ==============================================================================
 POLLINATIONS_MODELS: Dict[str, str] = {
     "flux":         "flux",
     "flux-3d":      "flux-3d",
@@ -37,13 +38,15 @@ POLLINATIONS_MODELS: Dict[str, str] = {
     "turbo":        "turbo",
 }
 
-# ★ v28.9 — Endpoints alternatifs (rotation si l'un échoue)
+POLLINATIONS_BASE = "https://image.pollinations.ai/prompt"
+
+# ★ v28.10 — Endpoints alternatifs (rotation si l'un échoue)
 POLLINATIONS_ENDPOINTS: List[str] = [
     "https://image.pollinations.ai/prompt",
-    "https://pollinations.ai/p",              # Endpoint alternatif
+    "https://pollinations.ai/p",
 ]
 
-# ★ v28.9 — User-Agents variés (rotation)
+# ★ v28.10 — User-Agents variés (rotation anti-bot)
 _USER_AGENTS: List[str] = [
     "BEK-Agent/1.0 (+https://bek-v15-clean.onrender.com)",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -144,10 +147,9 @@ def _smart_split_all_long_words(text: str, min_len: int = 12) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# HEADERS avec rotation User-Agent (v28.9)
+# HEADERS avec rotation User-Agent
 # ══════════════════════════════════════════════════════════════════════════════
 def _build_headers(attempt: int = 0) -> Dict[str, str]:
-    """Construit les headers avec rotation User-Agent."""
     return {
         "User-Agent": _USER_AGENTS[attempt % len(_USER_AGENTS)],
         "Accept": "image/png,image/jpeg,image/webp,image/*",
@@ -241,6 +243,9 @@ _COMMON_COLLISIONS = [
 
 
 def _normalize_prompt_spacing(prompt: str) -> str:
+    """
+    Normalisation complète (v28.8).
+    """
     if not prompt or not isinstance(prompt, str):
         return prompt
     if prompt.startswith(("http://", "https://", "/", "./")):
@@ -250,21 +255,29 @@ def _normalize_prompt_spacing(prompt: str) -> str:
 
     text = prompt.strip()
 
+    # 1. Réparer les mots cassés
     for pattern, replacement in _BROKEN_WORD_REPAIRS:
         text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
 
+    # 2. Acronymes collés
     text = re.sub(r'([A-ZÀ-Ý]{2,})([a-zà-ÿ])', r'\1 \2', text)
+
+    # 3. CamelCase
     text = re.sub(r'([a-zà-ÿ])([A-ZÀ-Ý])', r'\1 \2', text)
+
+    # 4. Ponctuation
     text = re.sub(r',([^\s])', r', \1', text)
     text = re.sub(r'([a-zA-Z]):([^\s/])', r'\1: \2', text)
     text = re.sub(r';([^\s])', r'; \1', text)
 
+    # 5. Patterns de collisions
     for pattern, replacement in _COMMON_COLLISIONS:
         text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
 
+    # 6. Smart splitter
     text = _smart_split_all_long_words(text, min_len=12)
 
-    # Post-traitements v28.8
+    # 7. Post-traitements
     text = re.sub(r'\b([A-Z]) ([A-Z])\b', r'\1\2', text)
     text = re.sub(r'\ba nd(\w+)', r'and \1', text)
     text = re.sub(r'\ba nd\b', 'and', text)
@@ -282,6 +295,7 @@ def _normalize_prompt_spacing(prompt: str) -> str:
     text = re.sub(r'\bfu turistic\b', 'futuristic', text)
     text = re.sub(r'\bmi nimalistic\b', 'minimalistic', text)
 
+    # 8. Nettoyage final
     text = re.sub(r'\s+', ' ', text).strip()
     text = re.sub(r'\s+([,;:.!?])', r'\1', text)
 
@@ -289,7 +303,7 @@ def _normalize_prompt_spacing(prompt: str) -> str:
 
 
 # ==============================================================================
-# GÉNÉRATION D'IMAGE (v28.9 — 5 retries + rotation endpoints)
+# GÉNÉRATION D'IMAGE (v28.10)
 # ==============================================================================
 def generate_image_with_pollinations(
     prompt: str,
@@ -304,9 +318,11 @@ def generate_image_with_pollinations(
     optimize_prompt: bool = True,
 ) -> Dict[str, Any]:
     """
-    Génère une image via Pollinations.ai.
-
-    ★ v28.9 — 5 retries avec backoff exponentiel + rotation endpoints/UA.
+    ★ v28.10 — Détection automatique d'image d'erreur Pollinations.
+      - Les placeholders bruns/flous pèsent typiquement < 20 KB
+      - Les vraies images font > 20 KB
+      - Si placeholder détecté → retry avec NOUVEAU seed
+      - Backoff long (3→30s)
     """
     if not output_filename:
         output_filename = f"pollinations_{uuid.uuid4().hex[:8]}.png"
@@ -334,81 +350,90 @@ def generate_image_with_pollinations(
         "[vision.pollinations] Prompt normalisé : %s", final_prompt[:180]
     )
 
-    # ─── Préparer les params ───
     model_id = POLLINATIONS_MODELS.get(model, model)
     encoded_prompt = urllib.parse.quote(final_prompt)
 
-    if seed is None:
-        seed = int(time.time() * 1000) % (2 ** 31)
-
-    params = {
-        "width": width,
-        "height": height,
-        "model": model_id,
-        "nologo": str(nologo).lower(),
-        "private": str(private).lower(),
-        "enhance": str(enhance).lower(),
-        "seed": seed,
-    }
-
-    query_string = "&".join(f"{k}={v}" for k, v in params.items())
-
-    # ══════════════════════════════════════════════════════════════════════
-    # ★ v28.9 — 5 retries avec backoff exponentiel + rotation endpoints
-    # ══════════════════════════════════════════════════════════════════════
+    # ★ v28.10 — Seuil de taille pour détecter les placeholders d'erreur
+    MIN_VALID_SIZE = 20_000   # 20 KB minimum pour une vraie image 1024x1024
     max_retries = 5
-    last_error = "unknown"
 
     for attempt in range(max_retries):
         # Rotation endpoint
         base_url = POLLINATIONS_ENDPOINTS[attempt % len(POLLINATIONS_ENDPOINTS)]
+
+        # ★ v28.10 — Nouveau seed à chaque tentative (bypass cache CDN)
+        current_seed = (int(time.time() * 1000) + attempt * 7919) % (2 ** 31)
+
+        params = {
+            "width": width,
+            "height": height,
+            "model": model_id,
+            "nologo": str(nologo).lower(),
+            "private": str(private).lower(),
+            "enhance": str(enhance).lower(),
+            "seed": current_seed,
+        }
+
+        query_string = "&".join(f"{k}={v}" for k, v in params.items())
         url = f"{base_url}/{encoded_prompt}?{query_string}"
 
-        # Rotation User-Agent
         headers = _build_headers(attempt)
 
-        # Backoff exponentiel : 0s, 2s, 4s, 8s, 16s (avant tentative)
+        # Backoff plus long
         if attempt > 0:
-            backoff = min(2 ** attempt, 32)
+            backoff = min(3 * (2 ** (attempt - 1)), 30)
             logger.info(
-                "[vision.pollinations] Attente backoff %ds avant retry %d/%d",
+                "[vision.pollinations] Backoff %ds avant retry %d/%d",
                 backoff, attempt + 1, max_retries,
             )
             time.sleep(backoff)
 
         logger.info(
             "[vision.pollinations] generate : model=%s size=%dx%d "
-            "enhance=%s endpoint=%s attempt=%d/%d prompt=%r",
-            model_id, width, height, enhance,
+            "seed=%d endpoint=%s attempt=%d/%d",
+            model_id, width, height, current_seed,
             base_url.split("//")[1].split("/")[0],
             attempt + 1, max_retries,
-            final_prompt[:80],
         )
 
         try:
             res = requests.get(url, headers=headers, timeout=180)
         except requests.Timeout:
-            last_error = "Timeout"
-            logger.warning(
-                "[vision.pollinations] Timeout (tentative %d/%d)",
-                attempt + 1, max_retries,
-            )
+            logger.warning("[vision.pollinations] Timeout %d/%d", attempt + 1, max_retries)
             continue
         except requests.RequestException as e:
-            last_error = f"Réseau : {e}"
-            logger.warning(
-                "[vision.pollinations] Erreur réseau (tentative %d/%d) : %s",
-                attempt + 1, max_retries, e,
-            )
+            logger.warning("[vision.pollinations] Réseau %d/%d : %s", attempt + 1, max_retries, e)
             continue
 
-        # ─── HTTP 200 + contenu valide ───
-        if res.status_code == 200 and len(res.content) > 1000:
+        # ─── HTTP 200 : vérifier la qualité ───
+        if res.status_code == 200:
+            size = len(res.content)
+
+            # ★ v28.10 — Détection placeholder (trop petit)
+            if size < MIN_VALID_SIZE:
+                logger.warning(
+                    "[vision.pollinations] ⚠️ Image suspecte (%d bytes < %d seuil) "
+                    "— probablement placeholder d'erreur Pollinations, retry...",
+                    size, MIN_VALID_SIZE,
+                )
+                continue
+
+            # ★ v28.10 — Vérifier signature PNG ou JPEG
+            is_png = res.content.startswith(b'\x89PNG')
+            is_jpeg = res.content.startswith(b'\xff\xd8')
+            if not (is_png or is_jpeg):
+                logger.warning(
+                    "[vision.pollinations] ⚠️ Contenu non-image (%r) — retry",
+                    res.content[:8],
+                )
+                continue
+
+            # ✅ Vraie image valide
             with open(save_path, "wb") as f:
                 f.write(res.content)
             logger.info(
-                "[vision.pollinations] OK : %s (%d bytes) en %d tentative(s)",
-                output_filename, len(res.content), attempt + 1,
+                "[vision.pollinations] ✅ OK : %s (%d bytes) en %d tentative(s)",
+                output_filename, size, attempt + 1,
             )
             return {
                 "status": "success",
@@ -416,46 +441,36 @@ def generate_image_with_pollinations(
                 "filename": output_filename,
                 "model_id": model_id,
                 "provider": "pollinations",
-                "size_bytes": len(res.content),
+                "size_bytes": size,
                 "attempts": attempt + 1,
-                "url": url,
+                "seed": current_seed,
             }
 
-        # ─── HTTP 402 (rate limit) ───
-        if res.status_code == 402:
-            last_error = "HTTP 402 (rate limit)"
+        # ─── HTTP 402/429/5xx : retry ───
+        if res.status_code in (402, 429, 500, 502, 503, 504):
             logger.warning(
-                "[vision.pollinations] HTTP 402 rate limit (tentative %d/%d)",
-                attempt + 1, max_retries,
-            )
-            continue
-
-        # ─── HTTP 500 (server error) ───
-        if res.status_code >= 500:
-            last_error = f"HTTP {res.status_code} (server error)"
-            logger.warning(
-                "[vision.pollinations] HTTP %s server error (tentative %d/%d)",
+                "[vision.pollinations] HTTP %d (rate limit/server) — retry %d/%d",
                 res.status_code, attempt + 1, max_retries,
             )
             continue
 
         # ─── Autres erreurs ───
-        last_error = f"HTTP {res.status_code}"
         logger.warning(
-            "[vision.pollinations] HTTP %s (tentative %d/%d) : %s",
-            res.status_code, attempt + 1, max_retries, res.text[:200],
+            "[vision.pollinations] HTTP %d (%d bytes) — retry %d/%d",
+            res.status_code, len(res.content), attempt + 1, max_retries,
         )
 
-    # ─── Échec final ───
+    # ─── Échec définitif ───
     logger.error(
-        "[vision.pollinations] Échec après %d tentatives. Dernière erreur : %s",
-        max_retries, last_error,
+        "[vision.pollinations] ❌ Échec après %d tentatives",
+        max_retries,
     )
     return {
         "status": "error",
         "message": (
-            f"Pollinations indisponible après {max_retries} tentatives "
-            f"({last_error}). Réessayez dans 1 minute."
+            f"Pollinations surchargé (rate limit). "
+            f"Réessayez dans 30-60 secondes. "
+            f"({max_retries} tentatives échouées)"
         ),
     }
 
