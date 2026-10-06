@@ -13,6 +13,8 @@
 # v18.12 (2026-10-06) : ★ CRM DÉSACTIVÉ (Nerf 10 + router retirés)
 # v18.13 (2026-10-06) : ★ LAZY LOADING (Playwright, ChromaDB, DuckDB, LanceDB)
 #                       + Route /health/memory
+# v18.14 (2026-10-06) : ★ ArchiGen v4.0 - Diagnostic + Route /api/architecture/status
+#                       + Watcher au boot
 # ==============================================================================
 from __future__ import annotations
 
@@ -140,18 +142,33 @@ except ImportError:
     def _feedback_stats(): return {"total": 0}
     def _process_pending_feedbacks(): return 0
 
+# ─── ★ v18.14 — ArchiGen v4.0 (Diagnostic + Watcher) ───
+try:
+    from generate_architecture_doc import (
+        update_documentation_file,
+        get_architecture_status,
+        start_watcher as _archigen_start_watcher,
+        stop_watcher as _archigen_stop_watcher,
+    )
+    _ARCHIGEN_AVAILABLE = True
+except ImportError:
+    _ARCHIGEN_AVAILABLE = False
+    def update_documentation_file(force=False): return False
+    def get_architecture_status(): return {"status": "unavailable"}
+    def _archigen_start_watcher(interval_sec=60): return False
+    def _archigen_stop_watcher(): pass
+
 # ─── ★ v18 — Régénérer ARCHITECTURE.md AVANT les routeurs ───
 try:
-    from generate_architecture_doc import update_documentation_file
-    if update_documentation_file():
-        print("[v18] ✅ ARCHITECTURE.md régénéré AVANT imports routeurs.")
+    from generate_architecture_doc import update_documentation_file as _update_archi
+    if _update_archi(force=False):
+        print("[v18.14] ✅ ARCHITECTURE.md régénéré AVANT imports routeurs.")
     else:
-        print("[v18] ⚠️ Régénération ARCHITECTURE.md retournée False.")
+        print("[v18.14] ⚠️ Régénération ARCHITECTURE.md retournée False.")
 except Exception as exc:
-    print(f"[v18] ⚠️ Régénération pré-imports échouée : {exc}")
+    print(f"[v18.14] ⚠️ Régénération pré-imports échouée : {exc}")
 
 # ─── ROUTERS ───
-# ★ v18.12 : "crm" retiré de l'import et de l'inclusion
 from routers import admin, chat, files, memory
 from routers import openai_compat
 
@@ -591,6 +608,15 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
             _nerves_err,
         )
 
+    # ══════════════════════════════════════════════════════════════════════
+    # ★ v18.14 — DÉMARRAGE DU WATCHER ARCHIGEN
+    # ══════════════════════════════════════════════════════════════════════
+    try:
+        _archigen_start_watcher(interval_sec=60)
+        logger.info("[BEKApp] ✓ ArchiGen Watcher démarré (interval=60s)")
+    except Exception as exc:
+        logger.debug("[BEKApp] Watcher ArchiGen non démarré : %s", exc)
+
     os.environ["BEK_BOOTSTRAPPED"] = "1"
 
 
@@ -614,6 +640,14 @@ async def lifespan(app: FastAPI):
     yield
 
     logger.info("🛑 Arrêt de BEK — nettoyage explicite des services...")
+
+    # ★ v18.14 — Arrêt du watcher ArchiGen
+    try:
+        _archigen_stop_watcher()
+        logger.info("✓ ArchiGen Watcher arrêté proprement.")
+    except Exception as exc:
+        logger.debug("stop_watcher : %s", exc)
+
     try:
         from core.tracing import shutdown_tracing
         shutdown_tracing()
@@ -642,7 +676,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="18.13",
+    version="18.14",
     lifespan=lifespan,
 )
 
@@ -763,15 +797,64 @@ async def get_config():
 
 @app.post("/api/refresh-architecture")
 async def refresh_architecture():
+    """★ v18.14 — Force la régénération de ARCHITECTURE.md."""
     try:
-        from generate_architecture_doc import update_documentation_file
-        success = update_documentation_file()
-        return {
-            "status": "ok" if success else "error",
-            "message": "Architecture régénérée avec succès" if success else "Échec de la génération",
-        }
+        from generate_architecture_doc import force_refresh
+        return force_refresh()
     except Exception as exc:
         logger.error("[refresh-architecture] %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+# ══════════════════════════════════════════════════════════════════════
+# ★ v18.14 — ARCHITECTURE DIAGNOSTIC (ArchiGen v4.0)
+# ══════════════════════════════════════════════════════════════════════
+@app.get("/api/architecture/status")
+async def api_architecture_status():
+    """
+    ★ v18.14 — Statut complet de l'architecture + diagnostic.
+
+    Retourne :
+      - status : healthy / degraded / broken
+      - version : version BEK
+      - summary : résumé des issues (critical/warning/info)
+      - counts : outils, nerfs, providers
+      - issues : liste détaillée des problèmes
+
+    Utile pour :
+      - Monitoring externe (UptimeRobot, BetterStack, etc.)
+      - Dashboard de santé
+      - Alertes automatiques
+    """
+    try:
+        status = get_architecture_status()
+        # Ajouter des headers HTTP pour le monitoring
+        return status
+    except Exception as exc:
+        logger.error("[api/architecture/status] %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/api/architecture/issues")
+async def api_architecture_issues():
+    """★ v18.14 — Liste simplifiée des issues (pour alertes)."""
+    try:
+        from generate_architecture_doc import get_cached_diagnostics
+        diag = get_cached_diagnostics()
+        return {
+            "total": len(diag.get("issues", [])),
+            "critical": [
+                i for i in diag.get("issues", [])
+                if i.get("severity") == "critical"
+            ],
+            "warning": [
+                i for i in diag.get("issues", [])
+                if i.get("severity") == "warning"
+            ],
+            "last_check": diag.get("last_check"),
+        }
+    except Exception as exc:
+        logger.error("[api/architecture/issues] %s", exc, exc_info=True)
         raise HTTPException(status_code=500, detail=str(exc))
 
 
@@ -909,7 +992,7 @@ async def api_flush_redis():
 
 
 # ══════════════════════════════════════════════════════════════════════
-# ★ v18.13 — HEALTH CHECK
+# ★ v18.13/14 — HEALTH CHECK
 # ══════════════════════════════════════════════════════════════════════
 @app.get("/health/worker")
 async def health_worker():
@@ -982,17 +1065,47 @@ async def health_memory():
     # LanceDB + DuckDB analytics (memory_service)
     try:
         from services.memory_service import OptimizedMemoryService
-        # On ne crée pas d'instance, on vérifie juste que le module est importable
         components["memory_service"] = "available"
     except Exception:
         components["memory_service"] = "unavailable"
 
     return {
         "status": "ok",
-        "version": "18.13",
+        "version": "18.14",
         "memory_mb": memory_mb,
         "lazy_global": lazy_stats_data,
         "components": components,
+    }
+
+
+@app.get("/health/full")
+async def health_full():
+    """
+    ★ v18.14 — Health check COMPLET (worker + memory + architecture).
+    """
+    worker = await health_worker()
+    memory = await health_memory()
+    architecture = get_architecture_status()
+
+    # Statut global
+    global_status = "healthy"
+    if architecture.get("status") == "broken":
+        global_status = "broken"
+    elif architecture.get("status") == "degraded":
+        global_status = "degraded"
+    if worker.get("status") != "ok" or memory.get("status") != "ok":
+        global_status = "degraded"
+
+    return {
+        "status": global_status,
+        "version": "18.14",
+        "worker": worker,
+        "memory": memory,
+        "architecture": {
+            "status": architecture.get("status"),
+            "summary": architecture.get("summary", {}),
+            "counts": architecture.get("counts", {}),
+        },
     }
 
 
