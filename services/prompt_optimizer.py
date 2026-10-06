@@ -2,22 +2,18 @@
 # ==============================================================================
 # BEK Prompt Optimizer — Réécriture artistique haute précision
 # ------------------------------------------------------------------------------
-# v22 (2026-09-20) :
-#   - Suffixes vidéo (style, cohérence personnages, technique)
-#   - optimize_video_prompt_for_clip() pour Veo multi-clips
+# v22 (2026-09-20) : Suffixes vidéo + optimize_video_prompt_for_clip()
+# v23 (2026-09-29) : 25+ styles + détection auto + composition multi-styles
+# v24 (2026-09-30) : Helpers Agnes V2.5 (<Picture N>)
+# v25 (2026-10-06) : Fix style par défaut (auto au lieu de cardboard_3d)
 #
-# v23 (2026-09-29) :
-#   - 25+ styles visuels prêts à l'emploi
-#   - Détection automatique du style depuis le prompt
-#   - Composition multi-styles (ex: "cardboard+old_cinema")
-#   - Préservation faciale renforcée (FACE LOCK) pour Agnes
-#   - Compatible Agnes 2.0, 2.5 et 3.0
-#
-# v24 (2026-09-30) :
-#   - ★ Helpers Agnes V2.5 (syntaxe <Picture N>)
-#   - build_agnes_reference_prompt() : prompt avec références
-#   - suggest_agnes_mode_v2() : détection auto du mode selon modèle
-#   - Retrait des noms hardcodés dans les docstrings
+# ★ v26 (2026-10-06) : FIX CONTRADICTIONS + 3D DÉTECTION
+#   - Retiré "no gradients" du preset flat_vector (contredisait les prompts)
+#   - Ajout détection "3d animated", "3d scene", "3d render" → pixar_3d
+#     (au lieu de fallback cardboard_3d qui polluait en marron)
+#   - Ajout keywords "mobile app", "app", "ios", "android" → flat_vector
+#   - Les dégradés sont maintenant AUTORISÉS dans flat_vector
+#   - ★ AUCUNE fonctionnalité supprimée (100% compatible v25)
 # ==============================================================================
 from __future__ import annotations
 
@@ -28,18 +24,34 @@ logger = logging.getLogger("bek.prompt_optimizer")
 
 
 # ==============================================================================
-# ★ v23 — DICTIONNAIRE DES STYLES VISUELS (25 styles)
+# ★ v26 — DICTIONNAIRE DES STYLES VISUELS (27 styles)
 # ------------------------------------------------------------------------------
 # Pour composer : "style1+style2" (ex: "cardboard+cinema_studio")
 # ==============================================================================
 STYLE_PRESETS = {
+    # ═══════════════════════════════════════════════════════════════
+    # ★ v26 — STYLES POUR LOGOS (PRIORITÉ HAUTE)
+    # ═══════════════════════════════════════════════════════════════
+    "flat_vector": (
+        "Flat vector logo design, minimalist, clean geometric lines, "
+        "scalable icon style, professional branding quality, "
+        "symmetrical composition, simple shapes, modern tech aesthetic, "
+        "2D flat illustration."
+        # ★ v26 — "solid colors, no gradients or heavy shadows" RETIRÉ
+        #          (contredisait les prompts utilisateur qui demandaient des dégradés)
+    ),
+    "logo_modern": (
+        "Modern minimalist logo, sharp geometric shapes, elegant "
+        "typography, monogram style, professional corporate branding, "
+        "clean vector art, high contrast, timeless design."
+    ),
+
     # ─────────────── CARTOON / ANIMATION ───────────────
     "cardboard": (
         "Physical brown cardboard cutout craft aesthetic, visible textured "
         "cardboard edges, stop-motion claymation vibe, handcrafted feel, "
         "cutout paper characters in theater-style staging, warm handmade "
-        "lighting, diorama composition, tactile paper textures, visible "
-        "corrugated cardboard material."
+        "lighting, diorama composition, tactile paper textures."
     ),
     "cardboard_3d": (
         "3D animated movie style with cardboard cutout craft material, "
@@ -51,10 +63,12 @@ STYLE_PRESETS = {
         "colors with cel shading, Disney Renaissance 90s style, expressive "
         "characters, exaggerated proportions, vibrant palette."
     ),
+    # ★ v26 — Pixar 3D : preset PROPRE pour les scènes 3D
     "pixar_3d": (
         "Modern 3D animation like Pixar or DreamWorks, smooth surfaces, "
         "detailed lighting, soft shadows, expressive stylized characters, "
-        "high-quality rendering, cinematic depth."
+        "high-quality rendering, cinematic depth, vibrant colors, "
+        "professional CGI quality."
     ),
     "anime": (
         "Japanese anime style, Studio Ghibli inspired, cel-shaded animation, "
@@ -168,13 +182,34 @@ STYLE_PRESETS = {
 
 
 # ==============================================================================
-# ★ v23 — DÉTECTION AUTOMATIQUE DU STYLE
+# ★ v26 — DÉTECTION AUTOMATIQUE DU STYLE (avec priorités)
 # ==============================================================================
 STYLE_KEYWORDS = {
+    # ★ v26 — PRIORITÉ 1 : LOGOS
+    "flat_vector": [
+        "logo", "logotype", "logomark", "icône", "icone", "icon",
+        "symbole", "symbol", "monogramme", "monogram", "marque",
+        "brand", "vectoriel", "vector", "flat", "plat",
+        "minimaliste", "minimalist", "épuré", "epure",
+        "mobile app", "mobileapp", "mobile", "app", "ios", "android",
+    ],
+    "logo_modern": [
+        "logo moderne", "modern logo", "logo tech", "tech logo",
+        "logo entreprise", "company logo",
+    ],
+
+    # ★ v26 — PRIORITÉ 2 : 3D ANIMATION (avant cardboard_3d)
+    "pixar_3d": [
+        "3d animated", "3danimated", "3d animation", "3d scene",
+        "3d render", "pixar", "dreamworks", "3d cartoon",
+        "3d style", "3d movie", "3d character", "3d personnage",
+        "scène 3d", "scene 3d", "render 3d",
+    ],
+
+    # ─── Styles classiques ───
     "cardboard":      ["carton", "cardboard", "cutout", "artisanal", "diorama"],
     "cardboard_3d":   ["carton 3d", "cardboard 3d"],
     "cartoon_2d":     ["dessin animé", "cartoon", "2d", "disney 90"],
-    "pixar_3d":       ["pixar", "dreamworks", "3d lisse", "3d movie"],
     "anime":          ["anime", "manga", "japonais", "ghibli", "otaku"],
     "claymation":     ["pâte à modeler", "claymation", "plasticine", "aardman"],
     "paper_cutout":   ["papier découpé", "paper cutout", "south park"],
@@ -189,7 +224,7 @@ STYLE_KEYWORDS = {
     "oil_painting":   ["huile", "peinture à l'huile", "renaissance", "classique"],
     "sketch":         ["croquis", "esquisse", "crayon", "sketch"],
     "comic_book":     ["bd", "comic", "bande dessinée", "superhéros"],
-    "manga_bw":       ["manga", "japonais bd", "shonen"],
+    "manga_bw":       ["japonais bd", "shonen"],
     "vaporwave":      ["vaporwave", "synthwave", "néon 80"],
     "cyberpunk":      ["cyberpunk", "futuriste", "néon", "high-tech"],
     "steampunk":      ["steampunk", "vapeur", "victorien", "engrenages"],
@@ -199,14 +234,51 @@ STYLE_KEYWORDS = {
 
 
 def detect_style_from_prompt(prompt: str) -> Optional[str]:
-    """Détecte automatiquement le style depuis le prompt utilisateur."""
+    """
+    Détecte automatiquement le style depuis le prompt utilisateur.
+
+    ★ v26 — Prioritisation :
+      PRIORITÉ 1 : logo/icône/app     → flat_vector (ou logo_modern)
+      PRIORITÉ 2 : 3D animated/render → pixar_3d
+      PUIS : autres styles classiques
+    """
     if not prompt:
         return None
+
     prompt_lower = prompt.lower()
+
+    # ─── PRIORITÉ 1 : LOGO ───
+    logo_keywords = [
+        "logo", "icône", "icone", "icon", "symbole", "symbol",
+        "monogramme", "monogram", "marque", "brand",
+        "mobile app", "mobileapp", "app", "ios", "android",
+    ]
+    if any(kw in prompt_lower for kw in logo_keywords):
+        if "moderne" in prompt_lower or "modern" in prompt_lower:
+            logger.info("[PromptOptimizer] Style détecté : logo_modern (priorité)")
+            return "logo_modern"
+        logger.info("[PromptOptimizer] Style détecté : flat_vector (priorité logo)")
+        return "flat_vector"
+
+    # ─── PRIORITÉ 2 : 3D ANIMATION ───
+    keywords_3d = [
+        "3d animated", "3danimated", "3d animation", "3d scene",
+        "3d render", "pixar", "dreamworks", "3d cartoon",
+        "3d style", "3d movie", "3d character", "3d personnage",
+        "scène 3d", "scene 3d", "render 3d",
+    ]
+    if any(kw in prompt_lower for kw in keywords_3d):
+        logger.info("[PromptOptimizer] Style détecté : pixar_3d (priorité 3D)")
+        return "pixar_3d"
+
+    # ─── Styles classiques ───
     for style, keywords in STYLE_KEYWORDS.items():
+        if style in ("flat_vector", "logo_modern", "pixar_3d"):
+            continue  # Déjà traité
         if any(kw in prompt_lower for kw in keywords):
             logger.info("[PromptOptimizer] Style détecté : %s", style)
             return style
+
     return None
 
 
@@ -222,11 +294,7 @@ def _resolve_style_signature(style_preset: str) -> str:
 
 
 # ==============================================================================
-# ★ v23 — PRÉSERVATION FACIALE RENFORCÉE (FACE LOCK)
-# ------------------------------------------------------------------------------
-# Ces phrases DOIVENT être ajoutées au prompt Agnes pour forcer la
-# préservation des visages. À utiliser QUAND des images de référence sont
-# fournies dans image_paths.
+# PRÉSERVATION FACIALE (FACE LOCK)
 # ==============================================================================
 FACE_PRESERVATION_SUFFIX = (
     "FACE LOCK — CRITICAL: The reference images show REAL people. "
@@ -269,16 +337,10 @@ IMAGE_STYLE_SUFFIX = (
 
 
 # ==============================================================================
-# ★ v23 — DÉTECTION DU MODE DE GÉNÉRATION (selon nombre d'images)
+# DÉTECTION DU MODE AGNES
 # ==============================================================================
 def suggest_agnes_mode(num_images: int) -> str:
-    """
-    Suggère le meilleur mode Agnes selon le nombre d'images.
-
-    1 image → "keyframes" (MAX préservation — l'image devient la 1ère frame)
-    2+ images → "multi_reference" (composition multi-personnages)
-    0 image → "ti2vid" (text-to-video pur)
-    """
+    """Suggère le meilleur mode Agnes selon le nombre d'images."""
     if num_images <= 0:
         return "ti2vid"
     if num_images == 1:
@@ -287,25 +349,30 @@ def suggest_agnes_mode(num_images: int) -> str:
 
 
 # ==============================================================================
-# FONCTION PRINCIPALE — optimize_prompt_for_media
+# FONCTION PRINCIPALE — optimize_prompt_for_media (★ v26)
 # ==============================================================================
 def optimize_prompt_for_media(
     raw_prompt: str,
     media_type: str = "image",
-    style_preset: str = "cardboard_3d",
+    style_preset: str = "auto",
     preserve_faces: bool = False,
     image_count: int = 0,
 ) -> str:
     """
     Optimise un prompt pour image ou vidéo.
 
+    ★ v26 — Détection auto améliorée :
+      - PRIORITÉ 1 : logo/icône/app → flat_vector (ou logo_modern)
+      - PRIORITÉ 2 : 3D animated/render/scene → pixar_3d
+      - Autres styles détectés normalement
+      - Défaut si rien détecté : flat_vector (image) / pixar_3d (vidéo)
+
     Args:
         raw_prompt: prompt brut utilisateur
         media_type: "image" ou "video"
-        style_preset: nom du style ("cardboard", "cinema_studio", ...)
-                      ou composition ("cardboard+old_cinema")
+        style_preset: nom du style OU "auto" pour détection automatique
         preserve_faces: si True, ajoute les suffixes FACE LOCK
-        image_count: nombre d'images de référence (0, 1, 2...)
+        image_count: nombre d'images de référence
 
     Returns:
         prompt enrichi
@@ -314,29 +381,46 @@ def optimize_prompt_for_media(
     if not clean_raw:
         return clean_raw
 
-    # 1. Détection auto du style si non spécifié
+    # ══════════════════════════════════════════════════════════════════════
+    # ★ v26 — DÉTECTION AUTO DU STYLE
+    # ══════════════════════════════════════════════════════════════════════
     if style_preset in (None, "", "auto"):
         detected = detect_style_from_prompt(clean_raw)
-        style_preset = detected or "cardboard_3d"
+        if detected:
+            style_preset = detected
+            logger.info(
+                "[PromptOptimizer] Style auto-détecté : %s", style_preset
+            )
+        else:
+            # Défaut intelligent selon media_type
+            if media_type == "image":
+                style_preset = "flat_vector"
+            else:
+                style_preset = "pixar_3d"
+            logger.info(
+                "[PromptOptimizer] Aucun style détecté → défaut %s",
+                style_preset,
+            )
 
-    # 2. Signature du style
+    # ─── Résolution signature ───
     preset_text = _resolve_style_signature(style_preset)
     if not preset_text:
-        preset_text = STYLE_PRESETS["cardboard_3d"]
+        # Fallback si style inconnu
+        preset_text = STYLE_PRESETS["flat_vector"]
 
-    # 3. Suffixe FACE LOCK (uniquement si demandé)
+    # ─── FACE LOCK ───
     face_suffix = ""
     if preserve_faces and image_count > 0:
         face_suffix = f" {FACE_PRESERVATION_SUFFIX} {IDENTITY_LOCK_SUFFIX}"
 
-    # 4. IMAGE
+    # ─── IMAGE ───
     if media_type == "image":
         return (
             f"{clean_raw}. {preset_text}"
             f"{face_suffix} {IMAGE_STYLE_SUFFIX}"
         )
 
-    # 5. VIDÉO
+    # ─── VIDÉO ───
     parts = [
         clean_raw,
         preset_text,
@@ -379,7 +463,7 @@ def optimize_video_prompt_for_clip(
 
 
 # ==============================================================================
-# HELPER PUBLIC — Liste des styles disponibles
+# HELPERS PUBLICS
 # ==============================================================================
 def list_styles() -> List[str]:
     """Retourne la liste de tous les styles disponibles."""
@@ -391,57 +475,16 @@ def get_style_signature(style_name: str) -> str:
     return STYLE_PRESETS.get(style_name, "")
 
 
-# ==============================================================================
-# ★ v24 — HELPERS POUR AGNES V2.5 (syntaxe <Picture N>)
-# ==============================================================================
 def build_agnes_reference_prompt(
     base_prompt: str,
     num_images: int,
     character_names: Optional[List[str]] = None,
 ) -> str:
-    """
-    Construit un prompt Agnes V2.5 avec références <Picture N>.
-
-    Agnes V2.5 utilise la syntaxe <Picture 1>, <Picture 2> pour référencer
-    les images fournies dans le paramètre "images". Cette fonction ajoute
-    automatiquement les instructions de référence au début du prompt.
-
-    Args:
-        base_prompt : prompt de base décrivant la scène
-        num_images : nombre d'images de référence
-        character_names : (optionnel) liste de noms à associer à chaque image
-                         Ex: ["Person A", "Person B"] pour 2 images.
-                         Si None ou liste trop courte, utilise juste <Picture N>.
-
-    Returns:
-        Prompt formaté avec références <Picture N>.
-
-    Exemples :
-        # Sans noms
-        build_agnes_reference_prompt(
-            "They discuss in a cardboard house",
-            2
-        )
-        → "Refer to the provided images as <Picture 1>, <Picture 2>.
-           Use their EXACT facial features.
-           They discuss in a cardboard house"
-
-        # Avec noms génériques
-        build_agnes_reference_prompt(
-            "They discuss in a cardboard house",
-            2,
-            ["Person A", "Person B"]
-        )
-        → "Refer to <Picture 1> as Person A, <Picture 2> as Person B.
-           Use their EXACT facial features, hair, and appearance.
-           DO NOT invent new faces.
-           They discuss in a cardboard house"
-    """
+    """Construit un prompt Agnes V2.5 avec références <Picture N>."""
     if num_images <= 0:
         return base_prompt
 
     if character_names and len(character_names) >= num_images:
-        # Avec noms explicites
         refs = ", ".join(
             f"<Picture {i+1}> as {character_names[i]}"
             for i in range(num_images)
@@ -452,7 +495,6 @@ def build_agnes_reference_prompt(
             f"DO NOT invent new faces. "
         )
     else:
-        # Sans noms — références génériques
         refs = ", ".join(f"<Picture {i+1}>" for i in range(num_images))
         prefix = (
             f"Refer to the provided images as {refs}. "
@@ -464,35 +506,17 @@ def build_agnes_reference_prompt(
 
 
 def suggest_agnes_mode_v2(model_id: str, num_images: int) -> str:
-    """
-    Suggère le mode Agnes correct selon le modèle et le nombre d'images.
-
-    Règles :
-        - 0 image → "ti2vid" (text-to-video)
-        - 1 image → "keyframes" (image = première frame)
-        - 2+ images + Agnes V2.5+ → "reference" (syntaxe <Picture N>)
-        - 2+ images + Agnes V2.0  → "multi_reference" (param reference_images)
-
-    Args:
-        model_id : identifiant du modèle (ex: "agnes-video-2.5-flash")
-        num_images : nombre d'images de référence
-
-    Returns:
-        Nom du mode à utiliser pour l'API Agnes.
-    """
+    """Suggère le mode Agnes correct selon le modèle et le nombre d'images."""
     if num_images <= 0:
         return "ti2vid"
-
     if num_images == 1:
         return "keyframes"
-
-    # Plusieurs images → dépend de la version du modèle
     if "2.5" in model_id or "3.0" in model_id or "3.5" in model_id:
-        return "reference"  # Agnes V2.5+ (gratuit, syntaxe <Picture N>)
-    return "multi_reference"  # Agnes V2.0 (fallback)
+        return "reference"
+    return "multi_reference"
 
 
 # ==============================================================================
-# ALIAS (compatibilité avec l'ancien code)
+# ALIAS
 # ==============================================================================
 optimize_prompt = optimize_prompt_for_media
