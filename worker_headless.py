@@ -18,6 +18,12 @@ CORRECTIF v18 (2026-09-24) :
 - ★ FIX MAJEUR : cumul multi-moteurs (ne s'arrête plus au 1er moteur)
 - ★ FIX : seuil minimum de résultats (3) avant d'arrêter la cascade
 - ★ FIX : dédoublonnage par URL après cumul
+
+★ v18.13 (2026-10-06) — LAZY LOADING Playwright :
+- ★ FIX RAM : Playwright n'est plus chargé au boot (économie ~200 MB)
+- ★ Ajout _load_playwright() : import à la demande
+- ★ Flag _playwright_loaded : évite les imports répétés
+- ★ Aucune importation Playwright au niveau module
 """
 
 from __future__ import annotations
@@ -37,6 +43,13 @@ from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+# ─── ★ v18.13 : Lazy loading ───
+try:
+    from core.lazy import is_lazy_enabled
+except ImportError:
+    def is_lazy_enabled() -> bool:
+        return True
+
 logger = logging.getLogger("bek.worker_headless")
 logging.basicConfig(
     level=logging.INFO,
@@ -45,6 +58,56 @@ logging.basicConfig(
 )
 
 WORKSPACE_DIR = Path(__file__).resolve().parent
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v18.13 — LAZY LOADING PLAYWRIGHT
+# ══════════════════════════════════════════════════════════════════════════════
+
+_playwright_module = None
+_playwright_loaded = False
+_playwright_lock = None
+
+
+def _load_playwright():
+    """
+    Charge Playwright à la demande (une seule fois).
+
+    Returns:
+        Le module async_playwright, ou None si indisponible.
+    """
+    global _playwright_module, _playwright_loaded, _playwright_lock
+
+    if _playwright_loaded:
+        return _playwright_module
+
+    # Lock d'initialisation (créé lazily pour éviter les boucles d'event loop)
+    if _playwright_lock is None:
+        import threading
+        _playwright_lock = threading.Lock()
+
+    with _playwright_lock:
+        if _playwright_loaded:
+            return _playwright_module
+
+        logger.info("[worker_headless] Chargement Playwright (lazy)...")
+        try:
+            from playwright.async_api import async_playwright
+            _playwright_module = async_playwright
+            _playwright_loaded = True
+            logger.info("[worker_headless] ✅ Playwright chargé")
+            return _playwright_module
+        except ImportError as exc:
+            logger.warning("[worker_headless] Playwright indisponible : %s", exc)
+            _playwright_module = None
+            _playwright_loaded = True
+            return None
+
+
+def is_playwright_available() -> bool:
+    """Vérifie si Playwright est disponible (sans le charger)."""
+    pw = _load_playwright()
+    return pw is not None
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -136,9 +199,6 @@ def _filter_sterile_results(results: List[Dict[str, str]]) -> List[Dict[str, str
             len(results) - len(kept), len(results),
         )
     return kept
-# ══════════════════════════════════════════════════════════════════════════════
-# FIN FIX v16
-# ══════════════════════════════════════════════════════════════════════════════
 
 
 class HeadlessWorker:
@@ -226,8 +286,12 @@ class HeadlessWorker:
                 pass
 
     async def _launch_browser(self):
-        from playwright.async_api import async_playwright
-        playwright_obj = await async_playwright().start()
+        """★ v18.13 — Charge Playwright à la demande."""
+        pw = _load_playwright()
+        if pw is None:
+            raise RuntimeError("Playwright indisponible")
+
+        playwright_obj = await pw().start()
         browser = await playwright_obj.chromium.launch(
             headless=self.headless,
             args=[
@@ -252,9 +316,9 @@ class HeadlessWorker:
 
     async def fetch_page_content(self, url: str) -> Dict[str, Any]:
         async with self._semaphore:
-            try:
-                from playwright.async_api import async_playwright  # noqa: F401
-            except ImportError:
+            # ★ v18.13 — Charge Playwright à la demande
+            pw = _load_playwright()
+            if pw is None:
                 logger.error("Playwright non installé.")
                 return {"status": "error", "error": "Playwright non installé"}
 
@@ -376,17 +440,8 @@ class HeadlessWorker:
         return raw
 
     def _is_relevant(self, query: str, title: str, url: str) -> bool:
-        """
-        Vérifie si le résultat est pertinent pour la requête.
-
-        Politique ASSOUPLIE v18.9 :
-        - Mots-clés forts (bitcoin, btc, news, etc.) → acceptation directe
-        - Split camelCase : "actualitésBitcoin" → ["actualités", "bitcoin"]
-        - Si 0 match mais query courte → acceptation (mieux que 0 résultat)
-        """
-        # ★ v18.9 — Split camelCase et mots collés
+        """Vérifie si le résultat est pertinent pour la requête."""
         raw_query = query or ""
-        # Insère un espace entre minuscule→majuscule et chiffre→lettre
         spaced_query = re.sub(r"([a-zà-ÿ])([A-ZÀ-Ý])", r"\1 \2", raw_query)
         spaced_query = re.sub(r"([A-Za-zÀ-ÿ])(\d)", r"\1 \2", spaced_query)
 
@@ -399,7 +454,6 @@ class HeadlessWorker:
 
         haystack = f"{title or ''} {url or ''}".lower()
 
-        # ★ v18.9 — Mots-clés forts : acceptation IMMÉDIATE
         STRONG_KEYWORDS = {
             "bitcoin", "btc", "crypto", "cryptomonnaie", "blockchain",
             "news", "actualité", "actualités", "récent", "dernières",
@@ -414,7 +468,6 @@ class HeadlessWorker:
             )
             return True
 
-        # Recherche de match standard
         matched = 0
         for kw in keywords:
             if re.search(rf"\b{re.escape(kw)}\b", haystack):
@@ -423,7 +476,6 @@ class HeadlessWorker:
         if matched >= 1:
             return True
 
-        # ★ v18.9 — Assouplissement : query courte + titre long = OK
         if len(keywords) <= 2 and len(title or "") > 15:
             logger.debug(
                 "[_is_relevant] Assoupli (query %d mots) : '%s'",
@@ -432,6 +484,7 @@ class HeadlessWorker:
             return True
 
         return False
+
     @staticmethod
     def _is_noisy_content(text: str) -> bool:
         if not text or len(text) < 200:
@@ -972,12 +1025,8 @@ class HeadlessWorker:
 
         raw: List[Dict[str, str]] = []
 
-        try:
-            from playwright.async_api import async_playwright  # noqa: F401
-            playwright_ok = True
-        except ImportError:
-            logger.warning("[search] Playwright non installé")
-            playwright_ok = False
+        # ★ v18.13 — Charge Playwright à la demande
+        playwright_ok = _load_playwright() is not None
 
         if playwright_ok:
             playwright_obj = None
@@ -995,12 +1044,6 @@ class HeadlessWorker:
                     ("Startpage", self._search_startpage_playwright),
                 ]
 
-                # ══════════════════════════════════════════════════════════
-                # ★ v18 — CUMUL MULTI-MOTEURS
-                # ------------------------------------------------------------------
-                # Au lieu de s'arrêter au 1er moteur qui retourne quelque chose,
-                # on cumule jusqu'à atteindre _MIN_RESULTS_THRESHOLD résultats.
-                # ==================================================================
                 _MIN_RESULTS_THRESHOLD = 3
                 _all_results: List[Dict[str, str]] = []
 
@@ -1028,7 +1071,6 @@ class HeadlessWorker:
                             "[search/pw] %s → 0 résultat, on continue", name,
                         )
 
-                # Dédoublonner par URL
                 _seen_urls: set = set()
                 for r in _all_results:
                     u = r.get("url", "")

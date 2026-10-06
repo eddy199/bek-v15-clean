@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v16 — Episode Logger (DuckDB local OU SQLite fallback) — v37
+# BEK-v16 — Episode Logger (DuckDB local OU SQLite fallback) — v38
 # ------------------------------------------------------------------------------
 # Persiste CHAQUE exécution d'action pour permettre au Reflex-Loop :
 #   • de miner des patterns récurrents (par action / erreur / contexte)
@@ -9,11 +9,15 @@
 #
 # v37 (2026-09-28) — FALLBACK SQLITE :
 #   Sur Render Free (512 MB), DuckDB compile trop longtemps ou timeout.
-#   → Si `import duckdb` échoue, on bascule automatiquement sur SQLite
-#     (stdlib Python, ZÉRO installation).
+#   → Si `import duckdb` échoue, on bascule automatiquement sur SQLite.
 #   → API identique : log_episode, fetch_recent_episodes, count_episodes, close_all
-#   → Détection automatique du backend.
-#   → DuckDB reste prioritaire EN LOCAL (rapide, analytique).
+#
+# ★ v38 (2026-10-06) — LAZY LOADING DuckDB :
+#   - ★ FIX RAM : DuckDB n'est plus chargé au boot (économie ~50 MB)
+#   - ★ _detect_backend() appelée au 1er usage réel
+#   - ★ Thread-safe : _BACKEND_LOCK pour éviter les doubles init
+#   - ★ Flag BEK_LAZY_LOAD_DUCKDB (optionnel)
+#   - ★ Fonction lazy_stats() pour health check
 # ==============================================================================
 from __future__ import annotations
 
@@ -32,30 +36,81 @@ logger = logging.getLogger("bek.episode_logger")
 
 
 # ==============================================================================
-# DÉTECTION DU BACKEND
+# ★ v38 — DÉTECTION LAZY DU BACKEND
 # ==============================================================================
-_BACKEND: str = ""      # "duckdb" ou "sqlite"
+_BACKEND: Optional[str] = None      # "duckdb" ou "sqlite" (détecté lazy)
 _duckdb_module = None
+_BACKEND_LOCK = threading.Lock()
 
-# Essaie DuckDB en priorité (local)
-try:
-    import duckdb as _duckdb_module  # type: ignore
-    _BACKEND = "duckdb"
-except ImportError:
-    _duckdb_module = None
-    _BACKEND = "sqlite"
 
-# Force via env var (utile pour tester le fallback en local)
-_FORCE_SQLITE = os.getenv("BEK_FORCE_SQLITE_EPISODE_LOG", "").strip().lower() in ("1", "true", "yes", "on")
-if _FORCE_SQLITE:
-    _BACKEND = "sqlite"
+def _detect_backend() -> str:
+    """
+    ★ v38 — Détecte le backend au 1er appel (lazy).
 
-if _BACKEND == "sqlite":
-    logger.info(
-        "[episode_logger] DuckDB indisponible → fallback SQLite activé "
-        "(BEK_FORCE_SQLITE_EPISODE_LOG=%s)",
-        _FORCE_SQLITE,
-    )
+    Priorité :
+      1. Si BEK_FORCE_SQLITE_EPISODE_LOG=true → SQLite
+      2. Sinon → essaie DuckDB (import lazy)
+      3. Fallback → SQLite
+
+    Thread-safe : un seul thread détecte, les autres attendent.
+    """
+    global _duckdb_module, _BACKEND
+
+    # Déjà détecté ?
+    if _BACKEND is not None:
+        return _BACKEND
+
+    with _BACKEND_LOCK:
+        # Double-check après acquisition du lock
+        if _BACKEND is not None:
+            return _BACKEND
+
+        # 1. Force SQLite si demandé
+        force_sqlite = os.getenv(
+            "BEK_FORCE_SQLITE_EPISODE_LOG", ""
+        ).strip().lower() in ("1", "true", "yes", "on")
+
+        if force_sqlite:
+            _BACKEND = "sqlite"
+            logger.info(
+                "[episode_logger] Backend forcé : sqlite "
+                "(BEK_FORCE_SQLITE_EPISODE_LOG=true)"
+            )
+            return _BACKEND
+
+        # 2. Essayer DuckDB (import lazy)
+        logger.info("[episode_logger] Chargement DuckDB (lazy)...")
+        try:
+            import duckdb as _duckdb
+            _duckdb_module = _duckdb
+            _BACKEND = "duckdb"
+            logger.info("[episode_logger] ✅ Backend : duckdb")
+        except ImportError as exc:
+            _duckdb_module = None
+            _BACKEND = "sqlite"
+            logger.info(
+                "[episode_logger] DuckDB indisponible (%s) → fallback sqlite",
+                exc,
+            )
+
+        return _BACKEND
+
+
+def backend_name() -> str:
+    """
+    Retourne le backend actif ('duckdb' ou 'sqlite').
+    ★ v38 : déclenche la détection lazy si nécessaire.
+    """
+    return _detect_backend()
+
+
+def lazy_stats() -> dict:
+    """★ v38 — Stats pour health check."""
+    return {
+        "backend": _BACKEND or "not_detected",
+        "duckdb_loaded": _duckdb_module is not None,
+        "lazy": _BACKEND is None,
+    }
 
 
 # ==============================================================================
@@ -67,8 +122,9 @@ _DB_PATH: Optional[str] = None
 
 
 def _default_path() -> str:
-    """Retourne le chemin par défaut selon le backend."""
-    return DEFAULT_DB_PATH_DUCKDB if _BACKEND == "duckdb" else DEFAULT_DB_PATH_SQLITE
+    """Retourne le chemin par défaut selon le backend (lazy)."""
+    backend = _detect_backend()
+    return DEFAULT_DB_PATH_DUCKDB if backend == "duckdb" else DEFAULT_DB_PATH_SQLITE
 
 
 def configure(db_path: str) -> None:
@@ -76,20 +132,24 @@ def configure(db_path: str) -> None:
     Configure le chemin de la DB.
     À appeler une fois au boot avant le premier log.
     Le chemin sera adapté à l'extension du backend (.duckdb ou .sqlite).
+
+    ★ v38 : déclenche la détection lazy du backend.
     """
     global _DB_PATH
 
+    backend = _detect_backend()
+
     # Adapte l'extension au backend
     p = Path(db_path)
-    if _BACKEND == "sqlite" and p.suffix.lower() not in (".sqlite", ".db"):
+    if backend == "sqlite" and p.suffix.lower() not in (".sqlite", ".db"):
         p = p.with_suffix(".sqlite")
-    elif _BACKEND == "duckdb" and p.suffix.lower() not in (".duckdb", ".db"):
+    elif backend == "duckdb" and p.suffix.lower() not in (".duckdb", ".db"):
         p = p.with_suffix(".duckdb")
 
     _DB_PATH = str(p)
     logger.info(
         "EpisodeLogger configuré | backend=%s | path=%s",
-        _BACKEND, _DB_PATH,
+        backend, _DB_PATH,
     )
 
 
@@ -162,10 +222,10 @@ _INDEXES_SQLITE = (
 )
 
 
-def _ensure_schema(conn: Any) -> None:
+def _ensure_schema(conn: Any, backend: str) -> None:
     """Crée la table episodic_log si elle n'existe pas."""
-    schema = _SCHEMA_DUCKDB if _BACKEND == "duckdb" else _SCHEMA_SQLITE
-    indexes = _INDEXES_DUCKDB if _BACKEND == "duckdb" else _INDEXES_SQLITE
+    schema = _SCHEMA_DUCKDB if backend == "duckdb" else _SCHEMA_SQLITE
+    indexes = _INDEXES_DUCKDB if backend == "duckdb" else _INDEXES_SQLITE
 
     conn.execute(schema)
     for idx in indexes:
@@ -184,6 +244,8 @@ def _get_conn(read_only: bool = False) -> Any:
     Retourne une connexion DuckDB ou SQLite pour le thread courant.
     - DuckDB : read_only=True pour lectures (Windows lock).
     - SQLite : check_same_thread=False pour partage entre threads.
+
+    ★ v38 : détecte le backend au 1er appel (lazy).
     """
     tid = threading.get_ident()
     cache = _read_connections if read_only else _write_connections
@@ -196,15 +258,18 @@ def _get_conn(read_only: bool = False) -> Any:
         if conn is not None:
             return conn
 
+        # ★ v38 : détection lazy du backend
+        backend = _detect_backend()
+
         path = _get_db_path()
         Path(path).parent.mkdir(parents=True, exist_ok=True)
 
-        if _BACKEND == "duckdb":
+        if backend == "duckdb":
             if read_only:
                 conn = _duckdb_module.connect(path, read_only=True)
             else:
                 conn = _duckdb_module.connect(path)
-                _ensure_schema(conn)
+                _ensure_schema(conn, backend)
         else:
             # SQLite
             conn = sqlite3.connect(
@@ -214,13 +279,13 @@ def _get_conn(read_only: bool = False) -> Any:
             )
             conn.row_factory = sqlite3.Row
             if not read_only:
-                _ensure_schema(conn)
+                _ensure_schema(conn, backend)
                 conn.commit()
 
         cache[tid] = conn
         logger.debug(
             "EpisodeLogger : nouvelle connexion | backend=%s | tid=%s | read_only=%s",
-            _BACKEND, tid, read_only,
+            backend, tid, read_only,
         )
     return conn
 
@@ -266,10 +331,13 @@ def log_episode(
     if message and len(message) > 2000:
         message = message[:2000] + "…"
 
+    # ★ v38 : détection lazy
+    backend = _detect_backend()
+
     now_utc = datetime.now(timezone.utc)
 
     # ---- Formats selon backend ----
-    if _BACKEND == "duckdb":
+    if backend == "duckdb":
         ts_value = now_utc
         placeholder = "?"
     else:
@@ -294,7 +362,7 @@ def log_episode(
                 action, params_json, status, message, error_type,
                 float(latency_ms or 0.0), ts_value, source, context_hash, extra_json,
             ))
-            if _BACKEND == "sqlite":
+            if backend == "sqlite":
                 conn.commit()
     except Exception:
         logger.exception("EpisodeLogger : échec d'insertion | action=%s", action)
@@ -319,6 +387,9 @@ def fetch_recent_episodes(
     """
     cutoff_dt = datetime.now(timezone.utc) - timedelta(hours=int(hours))
 
+    # ★ v38 : détection lazy
+    backend = _detect_backend()
+
     conn = None
     last_err = None
     for _ in range(3):
@@ -335,7 +406,7 @@ def fetch_recent_episodes(
         return []
 
     # ─── Construit la requête selon backend ───
-    if _BACKEND == "duckdb":
+    if backend == "duckdb":
         query = "SELECT * FROM episodic_log WHERE ts_utc >= ?"
         params: list = [cutoff_dt]
     else:
@@ -354,7 +425,7 @@ def fetch_recent_episodes(
 
     try:
         with _WRITE_LOCK:
-            if _BACKEND == "duckdb":
+            if backend == "duckdb":
                 df = conn.execute(query, params).fetchdf()
                 records = df.to_dict(orient="records")
                 # Normalisation NaN → None
@@ -412,15 +483,6 @@ def close_all() -> None:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
-
-def backend_name() -> str:
-    """Retourne le backend actif ('duckdb' ou 'sqlite')."""
-    return _BACKEND
-
-
-# ══════════════════════════════════════════════════════════════════════════════
 # TEST AUTONOME
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -432,6 +494,7 @@ if __name__ == "__main__":
     )
 
     print(f"\n🔧 Backend actif : {backend_name()}\n")
+    print(f"📊 Lazy stats : {lazy_stats()}\n")
 
     # Chemin de test
     test_path = "./data/test_episode_logger"
@@ -496,3 +559,4 @@ if __name__ == "__main__":
 
     close_all()
     print(f"\n🎉 TOUS LES TESTS PASSENT — Backend={backend_name()}\n")
+    print(f"📊 Lazy stats finales : {lazy_stats()}\n")

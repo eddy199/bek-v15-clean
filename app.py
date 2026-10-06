@@ -11,6 +11,8 @@
 # v18.10 (2026-09-29) : ★ Route admin /api/admin/flush-redis
 # v18.11 (2026-09-29) : ★ Tool generate_video avec support images
 # v18.12 (2026-10-06) : ★ CRM DÉSACTIVÉ (Nerf 10 + router retirés)
+# v18.13 (2026-10-06) : ★ LAZY LOADING (Playwright, ChromaDB, DuckDB, LanceDB)
+#                       + Route /health/memory
 # ==============================================================================
 from __future__ import annotations
 
@@ -82,10 +84,6 @@ except ImportError:
     extend_video_multiple = None
 
 # ─── ★ v18.12 : SubCRMEngine n'est PLUS chargé (CRM désactivé) ───
-# try:
-#     from sub_crm_engine import SubCRMEngine
-# except ImportError:
-#     SubCRMEngine = None
 SubCRMEngine = None  # ★ Désactivé
 
 # ─── WEB AGENT ───
@@ -181,9 +179,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     try:
         init_sync_log_table()
         init_state_tables()
-        # ★ v18.12 : SubCRMEngine désactivé
-        # if SubCRMEngine:
-        #     SubCRMEngine.initialize_matrix_schema()
         logger.info("Tables PostgreSQL (Supabase) initialisées.")
     except Exception as exc:
         logger.warning("Initialisation DB partielle : %s", exc)
@@ -545,7 +540,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
             event_bus_nerves, hermes_nerves, skills_nerves, headless_nerves,
             tmux_nerves, web_agent_nerves, guardian_nerves, approval_nerves,
             mcp_nerves, cognitive_nerves, router_nerves,
-            # ★ v18.12 : crm_nerves retiré de l'import
         )
 
         _nerve_3_result = event_bus_nerves.activate_event_bus_nerves()
@@ -560,7 +554,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         _nerve_2_result = cognitive_nerves.activate_cognitive_nerves()
         _nerve_7_result = router_nerves.activate_router_nerves()
 
-        # ★ v18.12 : Nerf 10 (CRM) désactivé définitivement
         _nerve_10_result = {
             "status": "disabled",
             "reason": "CRM désactivé (inutile dans BEK-v18)",
@@ -649,7 +642,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="BEK v16 Hybrid FastAPI",
     description="Architecture cognitive modulaire asynchrone haute performance",
-    version="18.12",
+    version="18.13",
     lifespan=lifespan,
 )
 
@@ -685,11 +678,10 @@ from core.tracing import init_tracing  # noqa: E402
 init_tracing(app)
 
 # ─── ROUTERS ───
-# ★ v18.12 : crm.router retiré
 app.include_router(admin.router)
 app.include_router(files.router)
 app.include_router(memory.router)
-# app.include_router(crm.router)  # ★ Désactivé
+# app.include_router(crm.router)  # ★ Désactivé v18.12
 app.include_router(chat.router)
 app.include_router(openai_compat.router)
 
@@ -917,7 +909,7 @@ async def api_flush_redis():
 
 
 # ══════════════════════════════════════════════════════════════════════
-# HEALTH
+# ★ v18.13 — HEALTH CHECK
 # ══════════════════════════════════════════════════════════════════════
 @app.get("/health/worker")
 async def health_worker():
@@ -926,6 +918,82 @@ async def health_worker():
     except Exception as exc:
         logger.error("Health check du worker a échoué : %s", exc)
         return {"status": "error", "detail": str(exc)}
+
+
+@app.get("/health/memory")
+async def health_memory():
+    """
+    ★ v18.13 — Health check granulaire de la mémoire + lazy loading.
+
+    Permet de voir :
+      - RAM utilisée (si psutil installé)
+      - Composants lazy chargés (Playwright, ChromaDB, DuckDB, LanceDB)
+      - Stats globales du lazy loader
+    """
+    # ─── Stats lazy globales ───
+    try:
+        from core.lazy import lazy_stats as core_lazy_stats
+        lazy_stats_data = core_lazy_stats()
+    except Exception:
+        lazy_stats_data = {"enabled": None, "imports_loaded": [], "imports_count": 0}
+
+    # ─── RAM utilisée (optionnel) ───
+    memory_mb = -1
+    try:
+        import psutil
+        process = psutil.Process()
+        mem_info = process.memory_info()
+        memory_mb = round(mem_info.rss / 1024 / 1024, 1)
+    except ImportError:
+        pass
+    except Exception:
+        pass
+
+    # ─── Statut des composants ───
+    components: Dict[str, Any] = {}
+
+    # Playwright
+    try:
+        from worker_headless import _playwright_loaded
+        components["playwright"] = "loaded" if _playwright_loaded else "lazy"
+    except Exception:
+        components["playwright"] = "unavailable"
+
+    # ChromaDB
+    try:
+        from memory import is_chromadb_loaded, is_chromadb_disabled
+        if is_chromadb_disabled():
+            components["chromadb"] = "disabled"
+        elif is_chromadb_loaded():
+            components["chromadb"] = "loaded"
+        else:
+            components["chromadb"] = "lazy"
+    except Exception:
+        components["chromadb"] = "unavailable"
+
+    # DuckDB (episode_logger)
+    try:
+        from services.episode_logger import lazy_stats as _el_stats
+        el_stats = _el_stats()
+        components["duckdb_episode"] = el_stats.get("backend", "unknown")
+    except Exception:
+        components["duckdb_episode"] = "unavailable"
+
+    # LanceDB + DuckDB analytics (memory_service)
+    try:
+        from services.memory_service import OptimizedMemoryService
+        # On ne crée pas d'instance, on vérifie juste que le module est importable
+        components["memory_service"] = "available"
+    except Exception:
+        components["memory_service"] = "unavailable"
+
+    return {
+        "status": "ok",
+        "version": "18.13",
+        "memory_mb": memory_mb,
+        "lazy_global": lazy_stats_data,
+        "components": components,
+    }
 
 
 # ══════════════════════════════════════════════════════════════════════
