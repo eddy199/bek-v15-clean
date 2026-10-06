@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Configuration
+# BEK-v18 — Chat Module : Configuration (v1.3)
 # ------------------------------------------------------------------------------
-# 🏛️ Rôle : Centraliser constantes, env, init BEK-LVC
-# 📄 Doc : docs/BEK_LVC.md
-# ------------------------------------------------------------------------------
-# Auteur : BEK Project
-# Version : 1.2
-# Date : 2026-09-29
-# ------------------------------------------------------------------------------
-# ★ v1.1 : MAX_ARCHITECTURE_CHARS 15000 → 25000 (accueillir plan d'action)
-# ★ v1.2 : MAX_CHUNKS_WITHOUT_CLOSE 150 → 500 (fix Kimi/Gemini lent)
+# ★ v1.3 (2026-10-07) : RÉDUCTION POUR RESPECTER GROQ FREE (8000 TPM)
+#   - MAX_ARCHITECTURE_CHARS : 25000 → 3000 (réduction critique)
+#   - MAX_TOTAL_CHARS        : 32000 → 10000
+#   - MAX_CHARS_PER_MESSAGE  : 8000  → 3000
+#   - HISTORY_WINDOW         : 6     → 3
+#   - Cause : Groq Free tier refuse les requêtes > 8000 tokens/minute
+# ★ v1.2 : MAX_CHUNKS_WITHOUT_CLOSE 150 → 500
+# ★ v1.1 : MAX_ARCHITECTURE_CHARS 15000 → 25000
 # ==============================================================================
 
 from __future__ import annotations
@@ -18,10 +17,6 @@ from __future__ import annotations
 import logging
 import os
 from typing import Any, Optional
-
-# ══════════════════════════════════════════════════════════════════════════════
-# LOGGER
-# ══════════════════════════════════════════════════════════════════════════════
 
 logger = logging.getLogger("BEKApp")
 
@@ -31,7 +26,6 @@ logger = logging.getLogger("BEKApp")
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _env_int(name: str, default: int, minimum: int = 1) -> int:
-    """Lit une variable d'environnement entière."""
     try:
         return max(minimum, int(os.getenv(name, str(default))))
     except (TypeError, ValueError):
@@ -39,7 +33,6 @@ def _env_int(name: str, default: int, minimum: int = 1) -> int:
 
 
 def _env_float(name: str, default: float, minimum: float = 0.0) -> float:
-    """Lit une variable d'environnement flottante."""
     try:
         return max(minimum, float(os.getenv(name, str(default))))
     except (TypeError, ValueError):
@@ -47,7 +40,6 @@ def _env_float(name: str, default: float, minimum: float = 0.0) -> float:
 
 
 def _env_bool(name: str, default: bool = False) -> bool:
-    """Lit une variable d'environnement booléenne."""
     v = os.getenv(name, "").strip().lower()
     if not v:
         return default
@@ -55,15 +47,21 @@ def _env_bool(name: str, default: bool = False) -> bool:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CONSTANTES — HISTORIQUE
-# ══════════════════════════════════════════════════════════════════════════════
+# ★ v1.3 — CONSTANTES HISTORIQUE (RÉDUITES POUR GROQ FREE)
+# ==============================================================================
 
-HISTORY_WINDOW = _env_int("BEK_CHAT_HISTORY_WINDOW", 6)
-MAX_CHARS_PER_MESSAGE = _env_int("BEK_CHAT_MAX_CHARS_PER_MSG", 8000)
-MAX_TOTAL_CHARS = _env_int("BEK_CHAT_MAX_TOTAL_CHARS", 32000)
+# Réduit de 6 → 3 : moins d'historique injecté
+HISTORY_WINDOW = _env_int("BEK_CHAT_HISTORY_WINDOW", 3)
 
-# ★ v18 — Augmenté pour accueillir le plan d'action complet (~10000 chars)
-MAX_ARCHITECTURE_CHARS = _env_int("BEK_CHAT_MAX_ARCHITECTURE_CHARS", 25000)
+# Réduit de 8000 → 3000 : chaque message max 3000 chars (~1000 tokens)
+MAX_CHARS_PER_MESSAGE = _env_int("BEK_CHAT_MAX_CHARS_PER_MSG", 3000)
+
+# Réduit de 32000 → 10000 : total conversation max 10000 chars (~3300 tokens)
+MAX_TOTAL_CHARS = _env_int("BEK_CHAT_MAX_TOTAL_CHARS", 10000)
+
+# ★ CRITIQUE : Réduit de 25000 → 3000
+# 3000 chars ≈ 1000 tokens — laisse de la place pour user + historique
+MAX_ARCHITECTURE_CHARS = _env_int("BEK_CHAT_MAX_ARCHITECTURE_CHARS", 3000)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -73,10 +71,6 @@ MAX_ARCHITECTURE_CHARS = _env_int("BEK_CHAT_MAX_ARCHITECTURE_CHARS", 25000)
 MAX_TOTAL_ACTIONS = _env_int("BEK_CHAT_MAX_TOTAL_ACTIONS", 2)
 POOR_RESULT_THRESHOLD = _env_int("BEK_CHAT_POOR_RESULT_THRESHOLD", 200)
 
-# ★ v1.2 — 150 → 500
-# Certains LLMs (Kimi, Gemini) mettent du temps à générer la balise [/ACTION]
-# finale sur les longs JSON (vidéo avec image_paths). 500 chunks = marge de
-# sécurité suffisante pour ne plus abandonner une action en cours d'écriture.
 MAX_CHUNKS_WITHOUT_CLOSE = _env_int("BEK_CHAT_MAX_CHUNKS_NO_CLOSE", 500)
 
 MAX_QUERY_WORDS = _env_int("BEK_CHAT_MAX_QUERY_WORDS", 8)
@@ -91,10 +85,7 @@ AUTO_SCRAPE_MAX_CHARS_PER_PAGE = _env_int("BEK_CHAT_AUTO_SCRAPE_MAX_CHARS", 4000
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ DÉCISION ARCHITECTURALE — HEADLESS DÉSACTIVÉ
-# ------------------------------------------------------------------------------
-# `headless_search` est RETIRÉ. Toutes les recherches passent par `web_sync`.
-# Seul `headless_scrape` reste (pour scraper une URL unique).
+# HEADLESS
 # ==============================================================================
 
 BEK_HEADLESS_SEARCH_ENABLED = _env_bool("BEK_HEADLESS_SEARCH_ENABLED", False)
@@ -119,9 +110,7 @@ MULTIMEDIA_ACTIONS = (
 
 # ══════════════════════════════════════════════════════════════════════════════
 # INITIALISATION BEK-LVC
-# ------------------------------------------------------------------------------
-# État global partagé entre tous les modules.
-# ══════════════════════════════════════════════════════════════════════════════
+# ==============================================================================
 
 BEK_LVC_OK: bool = False
 BekCPU: Optional[Any] = None
@@ -129,12 +118,7 @@ BekStairToC: Optional[Any] = None
 
 
 def init_bek_lvc() -> bool:
-    """
-    Initialise BEK-LVC (CPU + STAIR).
-
-    Returns:
-        bool: True si BEK-LVC est chargé, False sinon
-    """
+    """Initialise BEK-LVC (CPU + STAIR)."""
     global BEK_LVC_OK, BekCPU, BekStairToC
 
     try:
@@ -160,34 +144,34 @@ def init_bek_lvc() -> bool:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CONFIGURATION — BEK-REX TIERS
-# ══════════════════════════════════════════════════════════════════════════════
+# BEK-REX TIERS
+# ==============================================================================
 
-# Mapping TIER → Nombre de sources web_sync
 BEK_REX_TIER_TO_SOURCES = {
-    "TIER_0": 0,   # Pas de recherche
-    "TIER_1": 3,   # Léger
-    "TIER_2": 5,   # Moyen
-    "TIER_3": 10,  # Profond
-    "TIER_4": 15,  # Expert
+    "TIER_0": 0,
+    "TIER_1": 3,
+    "TIER_2": 5,
+    "TIER_3": 10,
+    "TIER_4": 15,
 }
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# FONCTION D'INFO
-# ══════════════════════════════════════════════════════════════════════════════
+# INFO
+# ==============================================================================
 
 def get_config_summary() -> dict:
     """Retourne un résumé de la config pour debug."""
     return {
-        "version": "1.2",
+        "version": "1.3",
         "history_window": HISTORY_WINDOW,
-        "max_total_actions": MAX_TOTAL_ACTIONS,
-        "auto_scrape_urls": AUTO_SCRAPE_MAX_URLS,
+        "max_chars_per_message": MAX_CHARS_PER_MESSAGE,
+        "max_total_chars": MAX_TOTAL_CHARS,
         "max_architecture_chars": MAX_ARCHITECTURE_CHARS,
+        "max_total_actions": MAX_TOTAL_ACTIONS,
         "max_chunks_without_close": MAX_CHUNKS_WITHOUT_CLOSE,
         "headless_search_enabled": BEK_HEADLESS_SEARCH_ENABLED,
         "web_sync_primary": BEK_WEB_SYNC_AS_PRIMARY,
         "bek_lvc_ok": BEK_LVC_OK,
-        "tier_to_sources": BEK_REX_TIER_TO_SOURCES,
+        "★ groq_free_optimized": True,
     }

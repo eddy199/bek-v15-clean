@@ -1,18 +1,12 @@
 # ==============================================================================
 # BEK-v16 — Provider Manager (provider_manager.py)
 # ------------------------------------------------------------------------------
-# v25.3 (2026-10-04) : Fix Provider Fiable pour les Outils
-#   - Force Groq pour les providers "anonymous" (ovh, kilo, llm7)
-#
-# ★ v25.4 (2026-10-06) : RÉINTÉGRATION DES MODÈLES VISION NVIDIA
-#   - Ajout des 5 modèles vision gratuits dans PROVIDER_MODELS["nvidia"] :
-#     * meta/llama-3.2-11b-vision-instruct  (défaut vision)
-#     * meta/llama-3.2-90b-vision-instruct
-#     * microsoft/phi-3.5-vision-instruct
-#     * google/paligemma
-#     * nvidia/vila
-#   - Utilisés par services/vision/image_analysis.py (analyse d'images)
-#   - Le provider "nvidia" reste hors FALLBACK_ORDER (chat texte)
+# ★ v25.5 (2026-10-07) : FIX GROQ FREE TIER
+#   - Modèle Groq fallback : openai/gpt-oss-20b → llama-3.1-8b-instant
+#   - Cause : gpt-oss-120b/20b consomment trop de tokens (413 errors)
+#   - llama-3.1-8b-instant est plus économe et rapide
+# ★ v25.4 (2026-10-06) : Vision NVIDIA réintégrée
+# ★ v25.3 (2026-10-04) : Fix provider fiable pour outils
 # ==============================================================================
 from __future__ import annotations
 
@@ -126,11 +120,7 @@ class ProviderManager:
             "groq/compound",
             "groq/compound-mini",
         ],
-        # ══════════════════════════════════════════════════════════════════
-        # ★ v25.4 — NVIDIA NIM (modèles texte + vision gratuits)
-        # ══════════════════════════════════════════════════════════════════
         "nvidia": [
-            # ─── Texte ───
             "openai/gpt-oss-120b",
             "nvidia/nemotron-3-super-120b-a12b",
             "meta/llama-3.1-8b-instruct",
@@ -141,7 +131,6 @@ class ProviderManager:
             "google/gemma-2-9b-it",
             "google/gemma-2-27b-it",
             "qwen/qwen2.5-7b-instruct",
-            # ─── Vision (utilisés par services/vision/image_analysis.py) ───
             "meta/llama-3.2-11b-vision-instruct",
             "meta/llama-3.2-90b-vision-instruct",
             "microsoft/phi-3.5-vision-instruct",
@@ -198,24 +187,16 @@ class ProviderManager:
         ],
     }
 
-    # ==========================================================================
-    # CHAÎNE DE FALLBACK (NVIDIA RETIRÉ — chat texte uniquement)
-    # --------------------------------------------------------------------------
-    # NVIDIA reste accessible via le dropdown manuel, mais il est retiré du
-    # fallback automatique car son API texte a été fermée fin 2025.
-    # Les modèles VISION NVIDIA restent disponibles (voir image_analysis.py).
-    # ==========================================================================
     FALLBACK_ORDER: List[str] = [
-        "groq",             # ★ provider principal (fonctionne)
+        "groq",
         "gemini",
         "openrouter",
-        "ovh_anonymous",    # 0 clé
-        "kilo_anonymous",   # 0 clé
-        "llm7_anonymous",   # 0 clé
+        "ovh_anonymous",
+        "kilo_anonymous",
+        "llm7_anonymous",
         "aisa",
         "kimi",
         "huggingface",
-        # "nvidia",         # ★ chat texte fermé (vision OK via image_analysis.py)
     ]
 
     PROVIDER_KEY_MAP: Dict[str, str] = {
@@ -504,15 +485,15 @@ class ProviderManager:
         return formatted
 
     # ==========================================================================
-    # EXÉCUTION CHAT EN STREAM (PROVIDER FIABLE + TPM GUARD)
+    # EXÉCUTION CHAT EN STREAM
     # ==========================================================================
     def execute_chat_stream(
         self,
         messages: List[Dict[str, Any]],
         provider: str = "groq",
-        model: str = "openai/gpt-oss-120b",
+        model: str = "llama-3.1-8b-instant",
         temperature: float = 0.7,
-        max_tokens: int = 4096,
+        max_tokens: int = 2048,
         top_p: float = 0.9,
     ) -> Generator[Dict[str, Any], None, None]:
         clean_msgs = self.format_messages(messages)
@@ -520,22 +501,22 @@ class ProviderManager:
             yield {"error": "Aucun message valide à envoyer."}
             return
 
-        # ★ v25.3 — Priorité aux providers FIABLES pour l'exécution d'outils
+        # ★ v25.5 — Priorité aux providers FIABLES
         _RELIABLE_PROVIDERS = ("groq", "mistral", "cohere", "openrouter")
 
         if provider.lower() not in _RELIABLE_PROVIDERS:
             _original_provider = provider
             provider = "groq"
-            model = "openai/gpt-oss-120b"
+            model = "llama-3.1-8b-instant"
             logger.warning(
                 "[ProviderManager] Provider '%s' non fiable pour les outils → "
-                "bascule sur 'groq/openai/gpt-oss-120b'",
+                "bascule sur 'groq/llama-3.1-8b-instant'",
                 _original_provider
             )
 
         total_chars = sum(len(m.get("content", "")) for m in clean_msgs)
 
-        if ":" in model:
+        if ":" in model and not model.startswith("http"):
             parts = model.split(":", 1)
             selected_provider = parts[0]
             selected_model = parts[1]
@@ -543,10 +524,10 @@ class ProviderManager:
             selected_provider = provider
             selected_model = model
 
-        # TPM Guard : tronque les requêtes géantes
-        if total_chars > 50000:
+        # TPM Guard
+        if total_chars > 30000:
             logger.warning(
-                "[TPM Guard] Requête GÉANTE (%d chars) — troncature à 5 derniers messages.",
+                "[TPM Guard] Requête géante (%d chars) — troncature à 5 messages.",
                 total_chars,
             )
             clean_msgs = clean_msgs[-5:]
@@ -563,12 +544,13 @@ class ProviderManager:
             if current_prov == selected_provider:
                 current_model = selected_model
             else:
-                if current_prov == "groq":             current_model = "openai/gpt-oss-20b"
+                # ★ v25.5 — Groq fallback = llama-3.1-8b-instant (léger)
+                if current_prov == "groq":             current_model = "llama-3.1-8b-instant"
                 elif current_prov == "gemini":         current_model = "gemini-3.8-flash"
                 elif current_prov == "openrouter":     current_model = "auto"
                 elif current_prov == "aisa":           current_model = "qwen-flash"
                 elif current_prov == "kimi":           current_model = "kimi-k3"
-                elif current_prov == "ovh_anonymous":  current_model = "ovh-gpt-oss-120b"
+                elif current_prov == "ovh_anonymous":  current_model = "ovh-qwen-3.5-397b"
                 elif current_prov == "kilo_anonymous": current_model = "kilo-nemotron-3-ultra-550b"
                 elif current_prov == "llm7_anonymous": current_model = "llm7-gpt-oss-20b"
                 elif current_prov == "huggingface":    current_model = "Meta-Llama-3.1-8B-Instruct"
