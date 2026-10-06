@@ -1,8 +1,12 @@
 /**
- * BEK-v15-HYBRID — Agent UI Controller (VERSION FINALE C6.3.1)
+ * BEK-v15-HYBRID — Agent UI Controller (VERSION FINALE C6.3.2)
  * ============================================================
  * Base : ta version GitHub fonctionnelle (v16.2)
  * Fix v6.3.1 : Remplace formatMarkdown par textContent pour préserver les espaces
+ * Fix v6.3.2 : ★ RENDU MARKDOWN FINAL (images/vidéos/code/tableaux)
+ *              - Correction de l'affichage des images générées
+ *              - Support des vidéos MP4/WebM dans le chat
+ *              - Rendu markdown lors du chargement d'anciennes conversations
  * ============================================================
  */
 (function() {
@@ -53,6 +57,19 @@
     let reflexProposals = [];
 
     window.__codeSnippetsRegistry = window.__codeSnippetsRegistry || {};
+
+    // ═══════════════════════════════════════════════════════════════
+    // ★ v6.3.2 — DÉTECTION FICHIERS VIDÉO
+    // ═══════════════════════════════════════════════════════════════
+    function isVideoUrl(url) {
+        if (!url) return false;
+        return /\.(mp4|webm|mov|avi|mkv|ogv|m4v)(\?.*)?$/i.test(url);
+    }
+
+    function isAudioUrl(url) {
+        if (!url) return false;
+        return /\.(mp3|wav|ogg|flac|m4a|aac)(\?.*)?$/i.test(url);
+    }
 
     // ═══════════════════════════════════════════════════════════════
     // MERMAID — Sanitizer + Init + Rendu
@@ -436,6 +453,50 @@
             }
             .file-preview-close:hover {
                 background: #ef4444;
+            }
+            /* ★ v6.3.2 — Styles vidéo dans le chat */
+            .msg-bubble video {
+                max-width: 100% !important;
+                max-height: 480px !important;
+                border-radius: 12px;
+                margin: 16px 0 !important;
+                display: block;
+                background: #000;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+            }
+            .msg-bubble audio {
+                width: 100%;
+                max-width: 480px;
+                margin: 16px 0 !important;
+                display: block;
+            }
+            /* Images plus larges dans le chat */
+            .msg-bubble img {
+                max-width: min(560px, 100%) !important;
+                max-height: 560px !important;
+                width: auto !important;
+                height: auto !important;
+                object-fit: contain !important;
+                border-radius: 12px;
+                margin: 16px 0 !important;
+                cursor: zoom-in;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                display: block;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            .msg-bubble img:hover {
+                transform: scale(1.01);
+                box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+            }
+            /* Placeholder pendant chargement image */
+            .msg-bubble img[data-loading="true"] {
+                background: linear-gradient(90deg, #1a1f26 0%, #232a33 50%, #1a1f26 100%);
+                background-size: 200% 100%;
+                animation: shimmer 1.5s infinite;
+            }
+            @keyframes shimmer {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
             }
         `;
         document.head.appendChild(style);
@@ -1107,10 +1168,12 @@
             }
         }
 
+        // ★ v6.3.2 — Lightbox via délégation d'événements (images + vidéos)
         if (DOM.chatBox && DOM.lightbox && DOM.lightboxImg) {
             DOM.chatBox.addEventListener('click', (e) => {
-                if (e.target.tagName === 'IMG' && e.target.closest('.msg-bubble')) {
-                    DOM.lightboxImg.src = e.target.src;
+                const img = e.target.closest('img');
+                if (img && img.closest('.msg-bubble')) {
+                    DOM.lightboxImg.src = img.src;
                     DOM.lightbox.classList.add('active');
                 }
             });
@@ -1449,6 +1512,7 @@
                         const data = JSON.parse(dataStr);
                         if (data.chunk) {
                             fullResponse += data.chunk;
+                            // ★ Pendant le streaming : texte brut pour perf
                             assistantDiv.textContent = fullResponse;
                             DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
                         }
@@ -1472,8 +1536,29 @@
         } finally {
             isStreaming = false;
             activeController = null;
-            // ★ FIX v6.3.1 : préserver les espaces avec textContent
-            assistantDiv.textContent = fullResponse;
+
+            // ★ v6.3.2 — RENDU MARKDOWN FINAL (images/vidéos/code/tableaux)
+            if (fullResponse) {
+                assistantDiv.innerHTML = formatMarkdown(fullResponse);
+
+                // Rendu des diagrammes Mermaid
+                renderMermaidIn(assistantDiv);
+
+                // Re-highlight des blocs de code
+                if (window.hljs) {
+                    assistantDiv.querySelectorAll('pre code').forEach(el => {
+                        if (!el.classList.contains('language-mermaid') &&
+                            !el.classList.contains('lang-mermaid')) {
+                            try { hljs.highlightElement(el); } catch (e) {}
+                        }
+                    });
+                }
+            } else {
+                assistantDiv.innerHTML = '<span style="color:#ff6b6b;">⚠️ Réponse vide</span>';
+            }
+
+            // Scroll final en bas
+            DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
 
             DOM.sendBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`;
         }
@@ -1535,6 +1620,27 @@
 
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
+
+            // ★ v6.3.2 — Rendu personnalisé des images ET vidéos
+            renderer.image = function(href, title, text) {
+                const url = href || '';
+                const cleanTitle = title || '';
+                const cleanAlt = (text || '').replace(/"/g, '&quot;');
+
+                // Détection vidéo
+                if (isVideoUrl(url)) {
+                    return `<video controls loop muted playsinline preload="metadata" src="${url}" title="${cleanTitle}"></video>`;
+                }
+
+                // Détection audio
+                if (isAudioUrl(url)) {
+                    return `<audio controls preload="metadata" src="${url}" title="${cleanTitle}"></audio>`;
+                }
+
+                // Image normale (lightbox géré par délégation d'événements)
+                return `<img src="${url}" alt="${cleanAlt}" title="${cleanTitle}" loading="lazy">`;
+            };
+
             renderer.code = function(codeObj, language) {
                 let actualCode = "";
                 let actualLang = language || 'text';
@@ -1623,17 +1729,34 @@
         loadConversation(id);
     }
 
+    // ★ v6.3.2 — Chargement d'anciennes conversations avec rendu markdown complet
     window.loadConversation = function(id) {
         currentConvId = id;
         const conv = conversations.find(c => c.id === id);
         if (!conv) return;
         messageHistory = conv.messages || [];
         if (DOM.chatBox) DOM.chatBox.innerHTML = '';
+
         messageHistory.forEach(m => {
-            if (m.role === 'user') appendUserMessage(m.content);
-            else if (m.role === 'assistant') {
+            if (m.role === 'user') {
+                appendUserMessage(m.content);
+            } else if (m.role === 'assistant') {
                 const div = appendAssistantMessage('');
-                div.textContent = m.content;
+                if (m.content) {
+                    // ★ v6.3.2 — Rendu markdown (images/vidéos/code/tableaux)
+                    div.innerHTML = formatMarkdown(m.content);
+                    renderMermaidIn(div);
+                    if (window.hljs) {
+                        div.querySelectorAll('pre code').forEach(el => {
+                            if (!el.classList.contains('language-mermaid') &&
+                                !el.classList.contains('lang-mermaid')) {
+                                try { hljs.highlightElement(el); } catch (e) {}
+                            }
+                        });
+                    }
+                } else {
+                    div.textContent = '';
+                }
             }
         });
         renderConversationsList();
