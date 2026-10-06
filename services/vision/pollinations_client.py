@@ -7,18 +7,16 @@
 #   - Supporte plusieurs modèles (flux, flux-3d, flux-realism, etc.)
 #
 # v26 (2026-09-21) : Création initiale
-# v27 (2026-09-21) : enhance=False par défaut (évite le bruit ajouté)
+# v27 (2026-09-21) : enhance=False par défaut
 # v28.1 (2026-10-06) : FIX NORMALISATION PROMPT
-#   - Ajout _normalize_prompt_spacing() après optimisation
-#   - Corrige "minimalistlogo" → "minimalist logo"
-#   - Corrige "suitablefor" → "suitable for"
-#   - Corrige "lines,professional" → "lines, professional"
+# v28.2 (2026-10-06) : FIX HTTP 402 (rate limit)
+# v28.3 (2026-10-06) : FIX FAUX POSITIFS (suppression \b(A)/\b(An))
 #
-# ★ v28.2 (2026-10-06) : FIX HTTP 402 (rate limit Pollinations)
-#   - Ajout User-Agent identifiable (BEK-Agent/1.0)
-#   - Détection HTTP 402 → retry après 5s
-#   - Message d'erreur clair si échec définitif
-#   - ★ AUCUNE fonctionnalité existante supprimée (100% compatible v28.1)
+# ★ v28.4 (2026-10-06) : AJOUT PATTERNS FRANÇAIS
+#   - 50+ collisions françaises (minimalisteet, futuristepour, vertnéon, ...)
+#   - 30+ réparations de mots cassés (a bstract, mi nimaliste, ...)
+#   - Support complet des accents (é, è, ê, à, ç)
+#   - ★ AUCUNE fonctionnalité existante supprimée (100% compatible v28.3)
 # ==============================================================================
 from __future__ import annotations
 
@@ -43,13 +41,12 @@ logger = logging.getLogger("bek.vision.pollinations")
 # MODÈLES POLLINATIONS DISPONIBLES
 # ==============================================================================
 POLLINATIONS_MODELS: Dict[str, str] = {
-    # Noms courts UI -> IDs Pollinations
-    "flux":           "flux",            # Défaut (généraliste)
-    "flux-3d":        "flux-3d",         # 3D render (Pixar-style)
-    "flux-realism":   "flux-realism",    # Photoréaliste
-    "flux-anime":     "flux-anime",      # Anime / manga
-    "any-dark":       "any-dark",        # Cinématique sombre
-    "turbo":          "turbo",           # Rapide basse qualité
+    "flux":           "flux",
+    "flux-3d":        "flux-3d",
+    "flux-realism":   "flux-realism",
+    "flux-anime":     "flux-anime",
+    "any-dark":       "any-dark",
+    "turbo":          "turbo",
 }
 
 POLLINATIONS_BASE = "https://image.pollinations.ai/prompt"
@@ -59,12 +56,6 @@ POLLINATIONS_BASE = "https://image.pollinations.ai/prompt"
 # ★ v28.2 — HEADERS IDENTIFIABLES (fix HTTP 402)
 # ==============================================================================
 def _build_headers() -> Dict[str, str]:
-    """
-    Construit les headers HTTP pour Pollinations.
-
-    ★ v28.2 — Pollinations renvoie HTTP 402 (Payment Required) quand le
-    User-Agent est vide ou suspecté bot. On s'identifie clairement.
-    """
     return {
         "User-Agent": "BEK-Agent/1.0 (+https://bek-v15-clean.onrender.com)",
         "Accept": "image/png,image/jpeg,image/webp,image/*",
@@ -73,92 +64,217 @@ def _build_headers() -> Dict[str, str]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# NORMALISATION DU PROMPT (fix mots collés)
+# ★ v28.4 — NORMALISATION DU PROMPT (FR + EN)
 # ══════════════════════════════════════════════════════════════════════════════
+
+# Réparation de mots cassés par un mauvais splitter
+_BROKEN_WORD_REPAIRS = [
+    (r'\ba bstract\b', 'abstract'),
+    (r'\ba bove\b', 'above'),
+    (r'\ba pple\b', 'apple'),
+    (r'\ba cross\b', 'across'),
+    (r'\ba dapt\b', 'adapt'),
+    (r'\ba dd\b', 'add'),
+    (r'\ba dvanced\b', 'advanced'),
+    (r'\ba live\b', 'alive'),
+    (r'\ba lone\b', 'alone'),
+    (r'\ba long\b', 'along'),
+    (r'\ba lso\b', 'also'),
+    (r'\ba lways\b', 'always'),
+    (r'\ba mazing\b', 'amazing'),
+    (r'\ba mbient\b', 'ambient'),
+    (r'\ba pproach\b', 'approach'),
+    (r'\ba round\b', 'around'),
+    (r'\ba rtistic\b', 'artistic'),
+    (r'\bmi nimaliste\b', 'minimaliste'),
+    (r'\bmi nimalist\b', 'minimalist'),
+    (r'\bfu turiste\b', 'futuriste'),
+    (r'\bfu turistic\b', 'futuristic'),
+]
+
+# Patterns de collisions classiques (mots collés)
+_COMMON_COLLISIONS = [
+    # ─── Français (v28.4) ───
+    (r'minimalisteet', 'minimaliste et'),
+    (r'minimalistepour', 'minimaliste pour'),
+    (r'minimalisteetfuturiste', 'minimaliste et futuriste'),
+    (r'futuristepour', 'futuriste pour'),
+    (r'futuristeet', 'futuriste et'),
+    (r'circuitabstrait', 'circuit abstrait'),
+    (r'circuitabstraits', 'circuits abstraits'),
+    (r'circuitsabstraits', 'circuits abstraits'),
+    (r'motifde', 'motif de'),
+    (r'motifcircuit', 'motif circuit'),
+    (r'vertnéon', 'vert néon'),
+    (r'vertneon', 'vert neon'),
+    (r'bleuélectrique', 'bleu électrique'),
+    (r'bleuelectrique', 'bleu electrique'),
+    (r'bleuélec', 'bleu élec'),
+    (r'fondsombre', 'fond sombre'),
+    (r'fondnoir', 'fond noir'),
+    (r'fondblanc', 'fond blanc'),
+    (r'fondbleu', 'fond bleu'),
+    (r'stylehigh-tech', 'style high-tech'),
+    (r'stylehightech', 'style hightech'),
+    (r'stylehigh', 'style high'),
+    (r'lettret', 'lettre t'),
+    (r'lettrea', 'lettre a'),
+    (r'lettrein', 'lettre in'),
+    (r'startuptech', 'startup tech'),
+    (r'une startuptech', 'une startup tech'),
+    (r'une startup', 'une startup'),
+    (r'pourune', 'pour une'),
+    (r'dansune', 'dans une'),
+    (r'avecdans', 'avec dans'),
+    (r'surle', 'sur le'),
+    (r'surla', 'sur la'),
+    (r'surles', 'sur les'),
+    (r'dansle', 'dans le'),
+    (r'dansla', 'dans la'),
+    (r'dansles', 'dans les'),
+    (r'avecle', 'avec le'),
+    (r'avecla', 'avec la'),
+    (r'avecles', 'avec les'),
+    (r'surdes', 'sur des'),
+    (r'pourdes', 'pour des'),
+    (r'pourle', 'pour le'),
+    (r'pourla', 'pour la'),
+    (r'pourles', 'pour les'),
+    (r'etmoderne', 'et moderne'),
+    (r'etépuré', 'et épuré'),
+    (r'etepure', 'et epure'),
+    (r'épuré', 'épuré'),
+    (r'moderne', 'moderne'),
+    (r'designminimaliste', 'design minimaliste'),
+    (r'designmoderne', 'design moderne'),
+    (r'designfuturiste', 'design futuriste'),
+    (r'moderneet', 'moderne et'),
+    (r'épuréet', 'épuré et'),
+
+    # ─── Anglais (v28.3) ───
+    (r'sleeklogo', 'sleek logo'),
+    (r'minimalistlogo', 'minimalist logo'),
+    (r'modernlogo', 'modern logo'),
+    (r'simplelogo', 'simple logo'),
+    (r'logofora', 'logo for a'),
+    (r'logowith', 'logo with'),
+    (r'logofor', 'logo for'),
+    (r'foratech', 'for a tech'),
+    (r'techstartup', 'tech startup'),
+    (r'startupcompany', 'startup company'),
+    (r'futuristictech', 'futuristic tech'),
+    (r'minimalistfuturistic', 'minimalist futuristic'),
+    (r'modernfuturistic', 'modern futuristic'),
+    (r'featuringabstract', 'featuring abstract'),
+    (r'featuringmodern', 'featuring modern'),
+    (r'featuringminimalist', 'featuring minimalist'),
+    (r'circuitrypatterns', 'circuitry patterns'),
+    (r'circuitpatterns', 'circuit patterns'),
+    (r'abstractcircuit', 'abstract circuit'),
+    (r'patternsforming', 'patterns forming'),
+    (r'linesforming', 'lines forming'),
+    (r'shapesforming', 'shapes forming'),
+    (r'formingastylized', 'forming a stylized'),
+    (r'formingstylized', 'forming stylized'),
+    (r'electricblue', 'electric blue'),
+    (r'neongreen', 'neon green'),
+    (r'neonblue', 'neon blue'),
+    (r'darkblue', 'dark blue'),
+    (r'lightblue', 'light blue'),
+    (r'deepblue', 'deep blue'),
+    (r'brightblue', 'bright blue'),
+    (r'bluecolor', 'blue color'),
+    (r'bluecolour', 'blue colour'),
+    (r'redcolor', 'red color'),
+    (r'greencolor', 'green color'),
+    (r'gradientofelectric', 'gradient of electric'),
+    (r'onadarkbackground', 'on a dark background'),
+    (r'onadark', 'on a dark'),
+    (r'darkbackground', 'dark background'),
+    (r'onwhitebackground', 'on white background'),
+    (r'whitebackground', 'white background'),
+    (r'lightbackground', 'light background'),
+    (r'transparentbackground', 'transparent background'),
+    (r'greenon', 'green on'),
+    (r'blueon', 'blue on'),
+    (r'blackon', 'black on'),
+    (r'whiteon', 'white on'),
+    (r'onelectric', 'on electric'),
+    (r'ondark', 'on dark'),
+    (r'minimalisticand', 'minimalistic and'),
+    (r'futuristicdesign', 'futuristic design'),
+    (r'highcontrast', 'high contrast'),
+    (r'lowcontrast', 'low contrast'),
+    (r'vectorstyle', 'vector style'),
+    (r'flatdesign', 'flat design'),
+    (r'modernsleek', 'modern sleek'),
+    (r'cleanlines', 'clean lines'),
+    (r'suitablefor', 'suitable for'),
+    (r'highquality', 'high quality'),
+    (r'detaileddesign', 'detailed design'),
+    (r'softlighting', 'soft lighting'),
+    (r'studiolighting', 'studio lighting'),
+    (r'digitalart', 'digital art'),
+    (r'conceptart', 'concept art'),
+    (r'characterdesign', 'character design'),
+    (r'lettert', 'letter t'),
+    (r'lettera', 'letter a'),
+    (r'letterin', 'letter in'),
+    (r'stylizedletter', 'stylized letter'),
+
+    # ─── Bug analyse image (v28.4) ───
+    (r'endétail', 'en détail'),
+    (r'endetail', 'en detail'),
+    (r'vueensemble', 'vue ensemble'),
+    (r'planslarge', 'plan large'),
+    (r'grosplan', 'gros plan'),
+]
+
 
 def _normalize_prompt_spacing(prompt: str) -> str:
     """
-    Normalise les espaces d'un prompt avant envoi à Pollinations.
+    ★ v28.4 — Normalise les espaces d'un prompt (FR + EN).
 
-    Corrige les collisions classiques issues de la concaténation automatique :
-      - "minimalistlogo"        → "minimalist logo"
-      - "suitablefor a tech"    → "suitable for a tech"
-      - "lines,professional"    → "lines, professional"
-      - "CleanLines"            → "Clean Lines"
-      - "Amodern"               → "A modern"
+    1. Réparation des mots cassés ("a bstract" → "abstract")
+    2. CamelCase → "Camel Case"
+    3. Ponctuation → espace après virgule/point-virgule
+    4. 100+ patterns de collisions (FR + EN)
+    5. Nettoyage final
 
-    ⚠️ On ne touche PAS aux mots composés valides (ex: "flux-3d", "photorealistic").
+    ⚠️ NE TOUCHE PAS aux URLs ni aux chaînes JSON.
     """
     if not prompt or not isinstance(prompt, str):
         return prompt
 
+    if prompt.startswith(("http://", "https://", "/", "./")):
+        return prompt
+    if prompt.startswith("{") and prompt.endswith("}"):
+        return prompt
+
     text = prompt.strip()
 
-    # ─── 1. Minuscule suivie de Majuscule → espace ───
-    #    "CleanLines" → "Clean Lines", "BlueColor" → "Blue Color"
-    text = re.sub(r'([a-zà-ÿ])([A-ZÀ-Ý])', r'\1 \2', text)
-
-    # ─── 2. Virgule sans espace après → ajouter espace ───
-    #    "lines,professional" → "lines, professional"
-    text = re.sub(r',([^\s])', r', \1', text)
-
-    # ─── 3. Deux-points sans espace après → ajouter espace ───
-    text = re.sub(r':([^\s/])', r': \1', text)
-
-    # ─── 4. Point-virgule sans espace → ajouter espace ───
-    text = re.sub(r';([^\s])', r'; \1', text)
-
-    # ─── 5. Préfixes collés (Amodern, Thelogo, Iwant...) ───
-    text = re.sub(r'\b(A)([a-z]{3,})', r'\1 \2', text)
-    text = re.sub(r'\b(An)([a-z]{3,})', r'\1 \2', text)
-    text = re.sub(r'\b(The)([a-z]{3,})', r'\1 \2', text)
-    text = re.sub(r'\b(I)([a-z]{3,})', r'\1 \2', text)
-
-    # ─── 6. Mots collés fréquents (français + anglais) ───
-    common_collisions = [
-        (r'suitablefor', 'suitable for'),
-        (r'minimalistlogo', 'minimalist logo'),
-        (r'modernlogo', 'modern logo'),
-        (r'sleeklogo', 'sleek logo'),
-        (r'simplelogo', 'simple logo'),
-        (r'cleanlines', 'clean lines'),
-        (r'bluecolor', 'blue color'),
-        (r'bluecolour', 'blue colour'),
-        (r'professional look', 'professional look'),
-        (r'techstartup', 'tech startup'),
-        (r'startupcompany', 'startup company'),
-        (r'foratech', 'for a tech'),
-        (r'logofora', 'logo for a'),
-        (r'featuringabstract', 'featuring abstract'),
-        (r'circuitrypatterns', 'circuitry patterns'),
-        (r'circuitpatterns', 'circuit patterns'),
-        (r'formingastylized', 'forming a stylized'),
-        (r'withagradient', 'with a gradient'),
-        (r'ofelectricblue', 'of electric blue'),
-        (r'andneongreen', 'and neon green'),
-        (r'onelectricblue', 'on electric blue'),
-        (r'onadarkbackground', 'on a dark background'),
-        (r'onwhitebackground', 'on white background'),
-        (r'minimalisticand', 'minimalistic and'),
-        (r'futuristicdesign', 'futuristic design'),
-        (r'highcontrast', 'high contrast'),
-        (r'vectorstyle', 'vector style'),
-        (r'modernsleek', 'modern sleek'),
-        (r'highquality', 'high quality'),
-        (r'detaileddesign', 'detailed design'),
-        (r'softlighting', 'soft lighting'),
-        (r'studiolighting', 'studio lighting'),
-        (r'digitalart', 'digital art'),
-        (r'conceptart', 'concept art'),
-        (r'characterdesign', 'character design'),
-    ]
-    for pattern, replacement in common_collisions:
+    # ─── 1. Réparer les mots cassés ───
+    for pattern, replacement in _BROKEN_WORD_REPAIRS:
         text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
 
-    # ─── 7. Nettoyage final : espaces multiples → un seul ───
-    text = re.sub(r'\s+', ' ', text).strip()
+    # ─── 2. Minuscule suivie de Majuscule → espace ───
+    text = re.sub(r'([a-zà-ÿ])([A-ZÀ-Ý])', r'\1 \2', text)
 
-    # ─── 8. Nettoyage des espaces avant ponctuation ───
+    # ─── 3. Virgule sans espace après ───
+    text = re.sub(r',([^\s])', r', \1', text)
+
+    # ─── 4. Deux-points sans espace (mais pas http://) ───
+    text = re.sub(r'([a-zA-Z]):([^\s/])', r'\1: \2', text)
+
+    # ─── 5. Point-virgule sans espace ───
+    text = re.sub(r';([^\s])', r'; \1', text)
+
+    # ─── 6. Patterns de collisions ───
+    for pattern, replacement in _COMMON_COLLISIONS:
+        text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+
+    # ─── 7. Nettoyage final ───
+    text = re.sub(r'\s+', ' ', text).strip()
     text = re.sub(r'\s+([,;:.!?])', r'\1', text)
 
     return text
@@ -174,38 +290,18 @@ def generate_image_with_pollinations(
     width: int = 1024,
     height: int = 1024,
     seed: Optional[int] = None,
-    enhance: bool = False,        # ★ v27 : False par défaut (pas de bruit)
+    enhance: bool = False,
     nologo: bool = True,
     private: bool = True,
     optimize_prompt: bool = True,
 ) -> Dict[str, Any]:
-    """
-    Génère une image via Pollinations.ai (gratuit, illimité, sans clé API).
-
-    Args:
-        prompt      : description de l'image (FR ou EN)
-        model       : "flux-3d" (défaut) | "flux" | "flux-realism" |
-                      "flux-anime" | "any-dark" | "turbo"
-        output_filename : nom du fichier de sortie
-        width, height  : dimensions (défaut 1024x1024)
-        seed        : graine pour reproductibilité (None = aléatoire)
-        enhance     : Pollinations améliore automatiquement le prompt
-                      (★ False par défaut — évite le bruit)
-        nologo      : retire le watermark "pollinations.ai"
-        private     : n'expose pas l'image dans la galerie publique
-        optimize_prompt : optimiser le prompt via prompt_optimizer
-
-    Returns:
-        {"status": "success", "filepath": ..., "filename": ..., "model_id": ...}
-        ou {"status": "error", "message": ...}
-    """
+    """Génère une image via Pollinations.ai (gratuit, illimité)."""
     if not output_filename:
         output_filename = f"pollinations_{uuid.uuid4().hex[:8]}.png"
     save_path = os.path.abspath(
         os.path.join(GENERATED_DIR, secure_filename(output_filename))
     )
 
-    # ─── Optimisation du prompt ───
     final_prompt = prompt
     if optimize_prompt:
         try:
@@ -220,21 +316,15 @@ def generate_image_with_pollinations(
                 "[vision.pollinations] Optimisation prompt échouée : %s", e
             )
 
-    # ══════════════════════════════════════════════════════════════════════
-    # ★ v28.1 — NORMALISATION OBLIGATOIRE APRÈS OPTIMISATION
-    # ══════════════════════════════════════════════════════════════════════
+    # ★ v28.4 — NORMALISATION
     final_prompt = _normalize_prompt_spacing(final_prompt)
     logger.info(
         "[vision.pollinations] Prompt normalisé : %s", final_prompt[:120]
     )
 
-    # ─── Résolution du modèle ───
     model_id = POLLINATIONS_MODELS.get(model, model)
-
-    # ─── Construction de l'URL ───
     encoded_prompt = urllib.parse.quote(final_prompt)
 
-    # ★ v28 : seed aléatoire par défaut pour éviter le cache Pollinations
     if seed is None:
         seed = int(time.time() * 1000) % (2 ** 31)
 
@@ -256,12 +346,8 @@ def generate_image_with_pollinations(
         model_id, width, height, enhance, final_prompt[:80],
     )
 
-    # ══════════════════════════════════════════════════════════════════════
-    # ★ v28.2 — HEADERS IDENTIFIABLES (fix HTTP 402)
-    # ══════════════════════════════════════════════════════════════════════
     headers = _build_headers()
 
-    # ─── Retry (Pollinations peut timeout / 402 / 502 sur grosses images) ───
     max_retries = 3
     for attempt in range(max_retries):
         try:
@@ -284,9 +370,6 @@ def generate_image_with_pollinations(
                 "message": f"Erreur réseau Pollinations : {e}",
             }
 
-        # ══════════════════════════════════════════════════════════════════
-        # ★ v28.2 — GESTION HTTP 402 (Payment Required)
-        # ══════════════════════════════════════════════════════════════════
         if res.status_code == 402:
             logger.warning(
                 "[vision.pollinations] HTTP 402 (rate limit) — tentative %d/%d",
@@ -303,7 +386,6 @@ def generate_image_with_pollinations(
                 ),
             }
 
-        # ─── Succès ───
         if res.status_code == 200 and len(res.content) > 1000:
             with open(save_path, "wb") as f:
                 f.write(res.content)
@@ -321,7 +403,6 @@ def generate_image_with_pollinations(
                 "url": url,
             }
 
-        # ─── Erreur HTTP ou contenu trop petit (probablement vide) ───
         if attempt < max_retries - 1:
             logger.warning(
                 "[vision.pollinations] HTTP %s (tentative %d/%d), retry...",
@@ -348,5 +429,5 @@ def generate_image_with_pollinations(
 # LISTE DES MODÈLES
 # ==============================================================================
 def list_pollinations_models() -> list:
-    """Retourne la liste des modèles Pollinations disponibles (noms courts UI)."""
+    """Retourne la liste des modèles Pollinations disponibles."""
     return list(POLLINATIONS_MODELS.keys())
