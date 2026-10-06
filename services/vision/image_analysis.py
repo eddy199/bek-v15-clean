@@ -1,13 +1,11 @@
 # ==============================================================================
-# BEK-v16 — Vision / Image Analysis
+# BEK-v16 — Vision / Image Analysis (v31)
 # ------------------------------------------------------------------------------
-# Analyse d'image via plusieurs providers vision :
-#   1. NVIDIA NIM (prioritaire — llama-3.2-11b-vision)
-#   2. Gemini (fallback — gemini-2.5-flash-image)
-#   3. Hugging Face (fallback final)
-#
-# v28 (2026-09-20) : Extraction depuis vision_legacy.py
-# v30 (2026-09-29) : Ajout NVIDIA Vision prioritaire + multi-fallback
+# ★ v31 (2026-10-07) : FIX PERMISSION DENIED + RÉSOLUTION ROBUSTE
+#   - _resolve_image_path() gère maintenant [Errno 13] Permission denied
+#   - Fallback ultime sur uploads/ (là où sont les fichiers attachés)
+#   - Logs détaillés pour diagnostiquer les chemins
+#   - Fix hallucinations agent (voir prompts.py v2.5)
 # ==============================================================================
 from __future__ import annotations
 
@@ -30,60 +28,126 @@ logger = logging.getLogger("bek.vision.image_analysis")
 
 NVIDIA_VISION_MODEL = "meta/llama-3.2-11b-vision-instruct"
 NVIDIA_VISION_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
-
 GEMINI_VISION_MODEL = "gemini-2.5-flash-image"
+
+# ★ v31 — Dossier uploads (là où les fichiers attachés sont stockés)
+UPLOADS_DIR = os.path.join(WORKSPACE_DIR, "uploads")
 
 
 # ==============================================================================
 # HELPERS
 # ==============================================================================
 def _get_api_key(key_name: str) -> str:
-    """Récupère une clé API via le provider_manager (import tardif)."""
     from provider_manager import provider_manager
     return provider_manager.get_api_key(key_name)
+
+
+def _safe_listdir(directory: str) -> list:
+    """
+    ★ v31 — listdir SÉCURISÉ qui ne crash pas sur permission denied.
+    Retourne [] au lieu de lever [Errno 13].
+    """
+    if not directory or not os.path.exists(directory):
+        return []
+    try:
+        return os.listdir(directory)
+    except PermissionError:
+        logger.warning("[vision] Permission denied sur %s — skip", directory)
+        return []
+    except Exception as e:
+        logger.warning("[vision] Erreur listdir %s : %s", directory, e)
+        return []
 
 
 def _get_latest_media_file(
     directory: str,
     extensions: tuple = (".png", ".jpg", ".jpeg", ".webp", ".mp4"),
 ) -> Optional[str]:
-    """Retourne le fichier média le plus récent d'un dossier."""
-    if not os.path.exists(directory):
+    """Retourne le fichier média le plus récent d'un dossier (version safe)."""
+    entries = _safe_listdir(directory)
+    if not entries:
         return None
+
     try:
         candidates = [
             os.path.join(directory, f)
-            for f in os.listdir(directory)
+            for f in entries
             if f.lower().endswith(extensions) and not f.startswith(".")
+            and not f.startswith("_temp_")
         ]
         if not candidates:
             return None
         candidates.sort(key=lambda x: os.path.getmtime(x), reverse=True)
         return candidates[0]
-    except Exception:
+    except Exception as e:
+        logger.warning("[vision] Erreur latest_media_file : %s", e)
         return None
 
 
 def _resolve_image_path(image_path: str) -> Optional[str]:
-    """Résout le chemin absolu d'une image."""
-    # 1. Chemin absolu direct
-    target_path = os.path.abspath(os.path.join(WORKSPACE_DIR, image_path))
-    if os.path.exists(target_path):
-        return target_path
+    """
+    ★ v31 — Résout le chemin absolu d'une image avec fallbacks robustes.
 
-    # 2. Chercher dans GENERATED_DIR et FILES_DIR
-    for d in [GENERATED_DIR, FILES_DIR]:
-        alt = os.path.join(d, os.path.basename(image_path))
-        if os.path.exists(alt):
-            return alt
+    Ordre de recherche :
+      1. Chemin absolu direct (si commence par / ou C:\\ ou F:\\)
+      2. WORKSPACE_DIR / image_path
+      3. UPLOADS_DIR / basename(image_path)     ← ★ v31 NOUVEAU
+      4. GENERATED_DIR / basename(image_path)
+      5. FILES_DIR / basename(image_path)
+      6. Fallback : dernière image de UPLOADS_DIR ← ★ v31
+      7. Fallback : dernière image de GENERATED_DIR
+    """
+    if not image_path:
+        return None
 
-    # 3. Fallback : dernière image générée
-    latest = _get_latest_media_file(
+    # Nettoie le chemin (supprime espaces parasites)
+    image_path = str(image_path).strip().strip("\"'")
+
+    # ─── 1. Chemin absolu direct ───
+    if os.path.isabs(image_path) and os.path.exists(image_path):
+        logger.info("[vision] Chemin absolu trouvé : %s", image_path)
+        return image_path
+
+    # ─── 2. WORKSPACE_DIR / image_path ───
+    try:
+        target_path = os.path.abspath(os.path.join(WORKSPACE_DIR, image_path))
+        # ⚠️ Ne PAS tester os.path.exists sur le dossier racine seul
+        if target_path != WORKSPACE_DIR and os.path.exists(target_path):
+            logger.info("[vision] Chemin workspace trouvé : %s", target_path)
+            return target_path
+    except (PermissionError, OSError) as e:
+        logger.warning("[vision] Erreur resolution workspace : %s", e)
+
+    # ─── 3-5. Chercher dans uploads/, generated/, files/ ───
+    basename = os.path.basename(image_path)
+    if basename:
+        for base_dir in (UPLOADS_DIR, GENERATED_DIR, FILES_DIR):
+            try:
+                candidate = os.path.join(base_dir, basename)
+                if os.path.exists(candidate):
+                    logger.info("[vision] Chemin trouvé dans %s : %s", base_dir, candidate)
+                    return candidate
+            except (PermissionError, OSError) as e:
+                logger.warning("[vision] Erreur accès %s : %s", base_dir, e)
+                continue
+
+    # ─── 6. Fallback : dernière image d'uploads/ ───
+    latest_uploads = _get_latest_media_file(
+        UPLOADS_DIR, (".png", ".jpg", ".jpeg", ".webp")
+    )
+    if latest_uploads:
+        logger.info("[vision] Fallback uploads/ : %s", latest_uploads)
+        return latest_uploads
+
+    # ─── 7. Fallback : dernière image de generated/ ───
+    latest_generated = _get_latest_media_file(
         GENERATED_DIR, (".png", ".jpg", ".jpeg", ".webp")
     )
-    if latest:
-        return latest
+    if latest_generated:
+        logger.info("[vision] Fallback generated/ : %s", latest_generated)
+        return latest_generated
 
+    logger.warning("[vision] ❌ Aucun chemin trouvé pour : %r", image_path)
     return None
 
 
@@ -106,7 +170,7 @@ def _read_image_base64(path: str) -> str:
 
 
 # ==============================================================================
-# PROVIDER 1 — NVIDIA NIM VISION (prioritaire)
+# PROVIDER 1 — NVIDIA NIM VISION
 # ==============================================================================
 def _analyze_with_nvidia(
     image_path: str,
@@ -114,12 +178,6 @@ def _analyze_with_nvidia(
     mime_type: str,
     encoded_image: str,
 ) -> Optional[str]:
-    """
-    Analyse une image avec NVIDIA NIM vision.
-
-    Returns:
-        str: description, ou None si échec
-    """
     api_key = _get_api_key("NVIDIA_API_KEY")
     if not api_key:
         logger.debug("[vision.nvidia] Pas de NVIDIA_API_KEY — skip")
@@ -170,10 +228,17 @@ def _analyze_with_nvidia(
                     )
                     return content.strip()
 
-        logger.warning(
-            "[vision.nvidia] HTTP %s : %s",
-            res.status_code, res.text[:300],
-        )
+        # ★ v31 — Log détaillé si erreur
+        if res.status_code == 401:
+            logger.error(
+                "[vision.nvidia] ❌ 401 Unauthorized — la clé NVIDIA_API_KEY est "
+                "EXPIRÉE. Régénère-la sur https://build.nvidia.com"
+            )
+        else:
+            logger.warning(
+                "[vision.nvidia] HTTP %s : %s",
+                res.status_code, res.text[:300],
+            )
         return None
 
     except requests.Timeout:
@@ -185,7 +250,7 @@ def _analyze_with_nvidia(
 
 
 # ==============================================================================
-# PROVIDER 2 — GEMINI VISION (fallback)
+# PROVIDER 2 — GEMINI VISION
 # ==============================================================================
 def _analyze_with_gemini(
     image_path: str,
@@ -193,12 +258,6 @@ def _analyze_with_gemini(
     mime_type: str,
     encoded_image: str,
 ) -> Optional[str]:
-    """
-    Analyse une image avec Gemini Vision.
-
-    Returns:
-        str: description, ou None si échec
-    """
     api_key = _get_api_key("GEMINI_API_KEY")
     if not api_key:
         logger.debug("[vision.gemini] Pas de GEMINI_API_KEY — skip")
@@ -235,9 +294,7 @@ def _analyze_with_gemini(
                     )
                     return content.strip()
             except (KeyError, IndexError) as e:
-                logger.warning(
-                    "[vision.gemini] Structure inattendue : %s", e,
-                )
+                logger.warning("[vision.gemini] Structure inattendue : %s", e)
 
         logger.warning(
             "[vision.gemini] HTTP %s : %s",
@@ -245,28 +302,18 @@ def _analyze_with_gemini(
         )
         return None
 
-    except requests.Timeout:
-        logger.warning("[vision.gemini] Timeout")
-        return None
     except Exception as e:
         logger.warning("[vision.gemini] Erreur : %s", e)
         return None
 
 
 # ==============================================================================
-# PROVIDER 3 — HUGGING FACE (fallback final)
+# PROVIDER 3 — HUGGING FACE
 # ==============================================================================
 def _analyze_with_huggingface(
     image_path: str,
     prompt_text: str,
 ) -> Optional[str]:
-    """
-    Analyse une image avec Hugging Face (BLIP-2).
-    Mode fallback uniquement.
-
-    Returns:
-        str: description, ou None si échec
-    """
     hf_key = _get_api_key("HUGGINGFACE_API_KEY")
     if not hf_key:
         return None
@@ -312,21 +359,16 @@ def analyze_image_with_vision(
 ) -> str:
     """
     Analyse une image avec un provider vision (NVIDIA → Gemini → HF).
-
-    Args:
-        image_path: chemin de l'image (relatif à WORKSPACE_DIR, ou nom de fichier)
-        prompt: question à poser sur l'image
-        provider: "auto" (défaut), "nvidia", "gemini", "huggingface"
-        model: modèle spécifique (ignoré si auto)
-
-    Returns:
-        Description textuelle ou message d'erreur
     """
-    # 1. Résoudre le chemin
+    # 1. Résoudre le chemin (v31 robuste)
     target_path = _resolve_image_path(image_path)
     if not target_path or not os.path.exists(target_path):
         logger.warning("[vision] Image introuvable : %s", image_path)
-        return f"Erreur analyse vision : image introuvable ({image_path})"
+        return (
+            f"Erreur analyse vision : image introuvable.\n"
+            f"Chemin tenté : {image_path}\n"
+            f"Vérifiez que le fichier existe dans uploads/ ou generated/."
+        )
 
     # 2. Préparer le prompt
     prompt_text = prompt or (
@@ -370,7 +412,14 @@ def analyze_image_with_vision(
 
         # 4. Aucun provider n'a fonctionné
         logger.warning("[vision] Tous les providers vision ont échoué")
-        return "Échec analyse image (tous les providers vision ont échoué)"
+        return (
+            "❌ Aucun provider vision n'a pu analyser cette image.\n\n"
+            "**Causes possibles :**\n"
+            "- Clé `NVIDIA_API_KEY` expirée (voir https://build.nvidia.com)\n"
+            "- Clé `GEMINI_API_KEY` révoquée\n"
+            "- Rate limit atteint\n\n"
+            "**Solution :** régénérer la clé NVIDIA puis redémarrer le serveur."
+        )
 
     except Exception as e:
         logger.exception("[vision] Erreur analyse")
