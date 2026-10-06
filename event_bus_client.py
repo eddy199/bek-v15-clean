@@ -12,7 +12,13 @@ CORRECTIF C6.1-bis (2026-09-22) :
   - Flag global _SHUTTING_DOWN : stoppe toute publication pendant l'arrêt
   - Méthode shutdown_event_bus_sync() pour scripts/CLI
   - Fermeture propre du client sync Redis
-  - Zéro spam de retry en fin de programme
+
+★ v18.10 (2026-10-06) — ANTI-BOUCLE GLOBALE :
+  - Dédup GLOBALE par (topic, correlation_id) dans publish()
+  - Empêche toute boucle infinie, quelle que soit la source
+  - Fenêtre configurable via BEK_EVENTBUS_DEDUP_WINDOW_SEC (défaut: 10s)
+  - Thread-safe : lock dédié + cache borné
+  - Log DEBUG si skip pour ne pas spammer
 """
 
 from __future__ import annotations
@@ -21,6 +27,7 @@ import asyncio
 import json
 import logging
 import os
+import threading
 import time
 from pathlib import Path
 from typing import Any, Awaitable, Callable, Dict, List, Optional
@@ -57,6 +64,91 @@ except ImportError:
 VALID_TOPICS = {"web-cleaned", "skills-index", "error-signals", "vector-context"}
 
 AsyncCallback = Callable[[Dict[str, Any]], Awaitable[None]]
+
+
+# ==============================================================================
+# ★ v18.10 — ANTI-BOUCLE GLOBALE (DÉDUP)
+# ==============================================================================
+# Toute publication avec un (topic, correlation_id) déjà vu dans les N
+# dernières secondes est SILENCIEUSEMENT ignorée.
+#
+# Cette dédup est la DERNIÈRE LIGNE DE DÉFENSE contre les boucles infinies,
+# qu'elles viennent du bridge, d'un subscriber qui re-publie, ou d'un bug.
+# ==============================================================================
+
+_GLOBAL_DEDUP_CACHE: Dict[str, float] = {}
+_GLOBAL_DEDUP_LOCK = threading.Lock()
+
+# Fenêtre de dédup (configurable)
+try:
+    _GLOBAL_DEDUP_WINDOW_SEC = float(
+        os.getenv("BEK_EVENTBUS_DEDUP_WINDOW_SEC", "10.0")
+    )
+except (TypeError, ValueError):
+    _GLOBAL_DEDUP_WINDOW_SEC = 10.0
+
+# Taille maximale du cache (bornée pour éviter la fuite mémoire)
+try:
+    _GLOBAL_DEDUP_MAX_ENTRIES = int(
+        os.getenv("BEK_EVENTBUS_DEDUP_MAX_ENTRIES", "5000")
+    )
+except (TypeError, ValueError):
+    _GLOBAL_DEDUP_MAX_ENTRIES = 5000
+
+# Stats de dédup (pour debug/monitoring)
+_GLOBAL_DEDUP_STATS = {
+    "total_checks": 0,
+    "skipped_count": 0,
+}
+
+
+def _check_and_mark_duplicate(topic: str, correlation_id: str) -> bool:
+    """
+    ★ v18.10 — Vérifie si (topic, correlation_id) a déjà été publié
+    dans la fenêtre de dédup.
+
+    Returns:
+        True si c'est un duplicata (à skipper)
+        False si c'est une première publication (à autoriser)
+    """
+    if not correlation_id:
+        return False
+
+    key = f"{topic}|{correlation_id}"
+    now = time.time()
+
+    with _GLOBAL_DEDUP_LOCK:
+        _GLOBAL_DEDUP_STATS["total_checks"] += 1
+
+        last = _GLOBAL_DEDUP_CACHE.get(key, 0.0)
+        if now - last < _GLOBAL_DEDUP_WINDOW_SEC:
+            _GLOBAL_DEDUP_STATS["skipped_count"] += 1
+            return True
+
+        _GLOBAL_DEDUP_CACHE[key] = now
+
+        # Nettoyage si le cache devient trop gros
+        if len(_GLOBAL_DEDUP_CACHE) > _GLOBAL_DEDUP_MAX_ENTRIES:
+            cutoff = now - _GLOBAL_DEDUP_WINDOW_SEC
+            expired = [
+                k for k, v in _GLOBAL_DEDUP_CACHE.items() if v < cutoff
+            ]
+            for k in expired:
+                del _GLOBAL_DEDUP_CACHE[k]
+
+        return False
+
+
+def get_dedup_stats() -> Dict[str, Any]:
+    """★ v18.10 — Retourne les stats de dédup (pour health check)."""
+    with _GLOBAL_DEDUP_LOCK:
+        return {
+            "window_sec": _GLOBAL_DEDUP_WINDOW_SEC,
+            "max_entries": _GLOBAL_DEDUP_MAX_ENTRIES,
+            "cache_size": len(_GLOBAL_DEDUP_CACHE),
+            "total_checks": _GLOBAL_DEDUP_STATS["total_checks"],
+            "skipped_count": _GLOBAL_DEDUP_STATS["skipped_count"],
+        }
 
 
 # ==============================================================================
@@ -375,8 +467,23 @@ class EventBusClient:
             await self._bus._start_pending_dispatchers()
 
     async def publish(self, topic: str, message: Dict[str, Any]) -> None:
+        """
+        ★ v18.10 — Publication avec dédup GLOBALE anti-boucle.
+
+        Avant toute opération, on vérifie si (topic, correlation_id) a déjà
+        été publié récemment. Si oui → skip silencieux.
+        """
         # C6.1-bis : ignorer si shutdown
         if _SHUTTING_DOWN:
+            return
+
+        # ★ v18.10 — ANTI-BOUCLE : dédup globale
+        correlation_id = str(message.get("correlation_id") or "")
+        if _check_and_mark_duplicate(topic, correlation_id):
+            logger.debug(
+                "[EventBusClient] Dedup skip | topic=%s | corr=%s",
+                topic, correlation_id[:20],
+            )
             return
 
         try:
