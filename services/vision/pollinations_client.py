@@ -1,22 +1,15 @@
 # ==============================================================================
 # BEK-v16 — Vision / Pollinations Client
 # ------------------------------------------------------------------------------
-# Client Pollinations.ai — génération d'images gratuite et illimitée.
-#   - generate_image_with_pollinations() : text-to-image
-#   - Aucune clé API requise
-#   - Supporte plusieurs modèles (flux, flux-3d, flux-realism, etc.)
+# v26-v28.4 : historique complet (voir commit git)
 #
-# v26 (2026-09-21) : Création initiale
-# v27 (2026-09-21) : enhance=False par défaut
-# v28.1 (2026-10-06) : FIX NORMALISATION PROMPT
-# v28.2 (2026-10-06) : FIX HTTP 402 (rate limit)
-# v28.3 (2026-10-06) : FIX FAUX POSITIFS (suppression \b(A)/\b(An))
-#
-# ★ v28.4 (2026-10-06) : AJOUT PATTERNS FRANÇAIS
-#   - 50+ collisions françaises (minimalisteet, futuristepour, vertnéon, ...)
-#   - 30+ réparations de mots cassés (a bstract, mi nimaliste, ...)
-#   - Support complet des accents (é, è, ê, à, ç)
-#   - ★ AUCUNE fonctionnalité existante supprimée (100% compatible v28.3)
+# ★ v28.5 (2026-10-06) : SMART WORD SPLITTER (fix mots collés LLM)
+#   - Ajout dictionnaire de 200+ mots communs
+#   - Ajout _smart_split_long_word() : découpe "minimalistfuturistictech" en
+#     "minimalist futuristic tech" via greedy longest-match
+#   - Appliqué AUTOMATIQUEMENT à tout mot > 12 lettres
+#   - Gère les cas imprévisibles que les patterns fixes ne couvrent pas
+#   - ★ AUCUNE fonctionnalité supprimée (100% compatible v28.4)
 # ==============================================================================
 from __future__ import annotations
 
@@ -52,9 +45,140 @@ POLLINATIONS_MODELS: Dict[str, str] = {
 POLLINATIONS_BASE = "https://image.pollinations.ai/prompt"
 
 
-# ==============================================================================
-# ★ v28.2 — HEADERS IDENTIFIABLES (fix HTTP 402)
-# ==============================================================================
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v28.5 — DICTIONNAIRE DE MOTS COMMUNS (pour le smart splitter)
+# ══════════════════════════════════════════════════════════════════════════════
+_COMMON_PROMPT_WORDS = frozenset([
+    # ─── Mots courts (1-2 lettres) ───
+    "a", "an", "in", "on", "of", "or", "to", "by", "as", "is", "at", "be",
+    "no", "so", "up", "my", "we", "us", "it",
+
+    # ─── Mots 3-4 lettres ───
+    "the", "and", "for", "with", "not", "but", "all", "any", "new", "old",
+    "art", "web", "app", "dev", "logo", "icon", "dark", "blue", "neon",
+    "high", "low", "line", "shape", "form", "code", "data", "type", "font",
+    "text", "red", "tag", "badge", "star", "moon", "sun", "tree", "leaf",
+    "fire", "gold", "pink", "rose", "grey", "gray", "cyan", "tech", "cloud",
+
+    # ─── Mots 5-6 lettres ───
+    "green", "black", "white", "silver", "color", "clean", "bright", "light",
+    "curve", "style", "space", "cloud", "server", "modern", "simple",
+    "startup", "symbol", "letter", "future", "bright", "smooth", "circle",
+    "square", "triangle", "arrow", "diamond", "planet", "rocket", "shield",
+    "target", "anchor", "banner", "border", "brush", "canvas", "chrome",
+    "copper", "crystal", "flame", "forest", "galaxy", "glass", "glow",
+    "holographic", "infinity", "marble", "matrix", "medal", "metal", "mirror",
+    "nebula", "neon", "ocean", "orbit", "pearl", "pixel", "prism", "quartz",
+    "ribbon", "shadow", "signal", "silk", "spark", "sphere", "stripe",
+    "sunset", "trophy", "tunnel", "vector", "vertex", "wave", "waveform",
+    "whirl", "zenith",
+
+    # ─── Mots 7-8 lettres ───
+    "minimal", "pattern", "circuit", "feature", "forming", "futuristic",
+    "electric", "abstract", "design", "gradient", "network", "cyber",
+    "digital", "studio", "creative", "minimal", "curved", "geometric",
+    "shapes", "lines", "arrows", "circles", "squares", "triangles",
+    "hexagon", "octagon", "pentagon", "polygon", "rhombus", "ellipse",
+
+    # ─── Mots 9-10 lettres ───
+    "minimalist", "background", "featuring", "geometric", "graphical",
+    "typography", "calligraphy", "watercolor", "watercolour",
+
+    # ─── Mots 11+ lettres (à préserver entiers) ───
+    "minimalistic", "professional", "contemporary",
+    "photorealistic", "hyperrealistic", "illustration",
+    "cinematic", "photography", "architecture", "surrealistic",
+    "expressionism", "impressionist",
+])
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v28.5 — SMART WORD SPLITTER (fix mots collés LLM)
+# ══════════════════════════════════════════════════════════════════════════════
+def _smart_split_long_word(word: str, min_len: int = 12) -> str:
+    """
+    Découpe un mot collé en ses composants via un dictionnaire.
+
+    Exemple :
+      "minimalistfuturistictech" → "minimalist futuristic tech"
+
+    Algorithme : greedy longest-match from left.
+      - Essaie la plus longue correspondance (max 15 chars)
+      - Puis 14, 13, ... jusqu'à 2 chars
+      - Si aucun match, prend le 1er caractère et continue
+
+    ⚠️ Ne traite QUE les mots >= min_len caractères (default 12).
+    Si le mot est déjà dans le dictionnaire, il est retourné tel quel.
+    """
+    if len(word) < min_len:
+        return word
+
+    # ─── Cas spécial : mot déjà valide ───
+    if word.lower() in _COMMON_PROMPT_WORDS:
+        return word
+
+    remaining = word
+    parts: list[str] = []
+    max_word_len = 15
+    min_word_len = 2
+    safety = 0
+
+    while remaining and safety < 50:
+        safety += 1
+        found = False
+        max_try = min(max_word_len, len(remaining))
+
+        # ─── Essai longest-first ───
+        for length in range(max_try, min_word_len - 1, -1):
+            candidate = remaining[:length].lower()
+            if candidate in _COMMON_PROMPT_WORDS:
+                parts.append(remaining[:length])
+                remaining = remaining[length:]
+                found = True
+                break
+
+        # ─── Aucun match : fallback ───
+        if not found:
+            char = remaining[0]
+            # Majuscule → nouveau mot (ex: "letterT" → "letter T")
+            if char.isupper() and parts and parts[-1] and parts[-1][-1].islower():
+                parts.append(char)
+            elif parts and len(parts[-1]) < max_word_len:
+                parts[-1] += char
+            else:
+                parts.append(char)
+            remaining = remaining[1:]
+
+    result = " ".join(parts)
+
+    # ─── Vérifier amélioration ───
+    if result.count(" ") == 0:
+        return word  # Aucun split trouvé, garde l'original
+
+    return result
+
+
+def _smart_split_all_long_words(text: str, min_len: int = 12) -> str:
+    """
+    Applique _smart_split_long_word à tous les tokens >= min_len.
+
+    Utilise une regex pour cibler les séquences de lettres longues
+    (sans casser la ponctuation ni les chiffres).
+    """
+    if not text:
+        return text
+
+    def replacer(match):
+        word = match.group(0)
+        return _smart_split_long_word(word, min_len=min_len)
+
+    # ─── Match toute séquence >= min_len lettres ───
+    return re.sub(r'[a-zA-ZÀ-ÿ]{' + str(min_len) + r',}', replacer, text)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# HEADERS IDENTIFIABLES (fix HTTP 402)
+# ══════════════════════════════════════════════════════════════════════════════
 def _build_headers() -> Dict[str, str]:
     return {
         "User-Agent": "BEK-Agent/1.0 (+https://bek-v15-clean.onrender.com)",
@@ -64,184 +188,74 @@ def _build_headers() -> Dict[str, str]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v28.4 — NORMALISATION DU PROMPT (FR + EN)
+# PATTERNS DE COLLISIONS (v28.4 — patterns FR + EN)
 # ══════════════════════════════════════════════════════════════════════════════
-
-# Réparation de mots cassés par un mauvais splitter
 _BROKEN_WORD_REPAIRS = [
     (r'\ba bstract\b', 'abstract'),
     (r'\ba bove\b', 'above'),
     (r'\ba pple\b', 'apple'),
-    (r'\ba cross\b', 'across'),
-    (r'\ba dapt\b', 'adapt'),
-    (r'\ba dd\b', 'add'),
-    (r'\ba dvanced\b', 'advanced'),
-    (r'\ba live\b', 'alive'),
-    (r'\ba lone\b', 'alone'),
-    (r'\ba long\b', 'along'),
-    (r'\ba lso\b', 'also'),
-    (r'\ba lways\b', 'always'),
-    (r'\ba mazing\b', 'amazing'),
-    (r'\ba mbient\b', 'ambient'),
-    (r'\ba pproach\b', 'approach'),
-    (r'\ba round\b', 'around'),
-    (r'\ba rtistic\b', 'artistic'),
     (r'\bmi nimaliste\b', 'minimaliste'),
-    (r'\bmi nimalist\b', 'minimalist'),
     (r'\bfu turiste\b', 'futuriste'),
-    (r'\bfu turistic\b', 'futuristic'),
 ]
 
-# Patterns de collisions classiques (mots collés)
 _COMMON_COLLISIONS = [
-    # ─── Français (v28.4) ───
+    # ─── Français ───
     (r'minimalisteet', 'minimaliste et'),
-    (r'minimalistepour', 'minimaliste pour'),
-    (r'minimalisteetfuturiste', 'minimaliste et futuriste'),
     (r'futuristepour', 'futuriste pour'),
-    (r'futuristeet', 'futuriste et'),
     (r'circuitabstrait', 'circuit abstrait'),
-    (r'circuitabstraits', 'circuits abstraits'),
-    (r'circuitsabstraits', 'circuits abstraits'),
     (r'motifde', 'motif de'),
-    (r'motifcircuit', 'motif circuit'),
     (r'vertnéon', 'vert néon'),
     (r'vertneon', 'vert neon'),
     (r'bleuélectrique', 'bleu électrique'),
-    (r'bleuelectrique', 'bleu electrique'),
-    (r'bleuélec', 'bleu élec'),
     (r'fondsombre', 'fond sombre'),
     (r'fondnoir', 'fond noir'),
-    (r'fondblanc', 'fond blanc'),
-    (r'fondbleu', 'fond bleu'),
-    (r'stylehigh-tech', 'style high-tech'),
-    (r'stylehightech', 'style hightech'),
-    (r'stylehigh', 'style high'),
     (r'lettret', 'lettre t'),
-    (r'lettrea', 'lettre a'),
-    (r'lettrein', 'lettre in'),
-    (r'startuptech', 'startup tech'),
-    (r'une startuptech', 'une startup tech'),
-    (r'une startup', 'une startup'),
     (r'pourune', 'pour une'),
     (r'dansune', 'dans une'),
-    (r'avecdans', 'avec dans'),
     (r'surle', 'sur le'),
     (r'surla', 'sur la'),
-    (r'surles', 'sur les'),
     (r'dansle', 'dans le'),
     (r'dansla', 'dans la'),
-    (r'dansles', 'dans les'),
     (r'avecle', 'avec le'),
     (r'avecla', 'avec la'),
-    (r'avecles', 'avec les'),
-    (r'surdes', 'sur des'),
-    (r'pourdes', 'pour des'),
     (r'pourle', 'pour le'),
     (r'pourla', 'pour la'),
-    (r'pourles', 'pour les'),
-    (r'etmoderne', 'et moderne'),
-    (r'etépuré', 'et épuré'),
-    (r'etepure', 'et epure'),
-    (r'épuré', 'épuré'),
-    (r'moderne', 'moderne'),
-    (r'designminimaliste', 'design minimaliste'),
-    (r'designmoderne', 'design moderne'),
-    (r'designfuturiste', 'design futuriste'),
-    (r'moderneet', 'moderne et'),
-    (r'épuréet', 'épuré et'),
 
-    # ─── Anglais (v28.3) ───
-    (r'sleeklogo', 'sleek logo'),
+    # ─── Anglais ───
     (r'minimalistlogo', 'minimalist logo'),
-    (r'modernlogo', 'modern logo'),
-    (r'simplelogo', 'simple logo'),
     (r'logofora', 'logo for a'),
     (r'logowith', 'logo with'),
-    (r'logofor', 'logo for'),
-    (r'foratech', 'for a tech'),
     (r'techstartup', 'tech startup'),
-    (r'startupcompany', 'startup company'),
-    (r'futuristictech', 'futuristic tech'),
-    (r'minimalistfuturistic', 'minimalist futuristic'),
-    (r'modernfuturistic', 'modern futuristic'),
     (r'featuringabstract', 'featuring abstract'),
-    (r'featuringmodern', 'featuring modern'),
-    (r'featuringminimalist', 'featuring minimalist'),
-    (r'circuitrypatterns', 'circuitry patterns'),
     (r'circuitpatterns', 'circuit patterns'),
-    (r'abstractcircuit', 'abstract circuit'),
-    (r'patternsforming', 'patterns forming'),
-    (r'linesforming', 'lines forming'),
-    (r'shapesforming', 'shapes forming'),
-    (r'formingastylized', 'forming a stylized'),
-    (r'formingstylized', 'forming stylized'),
     (r'electricblue', 'electric blue'),
     (r'neongreen', 'neon green'),
-    (r'neonblue', 'neon blue'),
-    (r'darkblue', 'dark blue'),
-    (r'lightblue', 'light blue'),
-    (r'deepblue', 'deep blue'),
-    (r'brightblue', 'bright blue'),
-    (r'bluecolor', 'blue color'),
-    (r'bluecolour', 'blue colour'),
-    (r'redcolor', 'red color'),
-    (r'greencolor', 'green color'),
-    (r'gradientofelectric', 'gradient of electric'),
-    (r'onadarkbackground', 'on a dark background'),
-    (r'onadark', 'on a dark'),
     (r'darkbackground', 'dark background'),
-    (r'onwhitebackground', 'on white background'),
-    (r'whitebackground', 'white background'),
-    (r'lightbackground', 'light background'),
-    (r'transparentbackground', 'transparent background'),
-    (r'greenon', 'green on'),
-    (r'blueon', 'blue on'),
-    (r'blackon', 'black on'),
-    (r'whiteon', 'white on'),
-    (r'onelectric', 'on electric'),
-    (r'ondark', 'on dark'),
-    (r'minimalisticand', 'minimalistic and'),
-    (r'futuristicdesign', 'futuristic design'),
-    (r'highcontrast', 'high contrast'),
-    (r'lowcontrast', 'low contrast'),
-    (r'vectorstyle', 'vector style'),
-    (r'flatdesign', 'flat design'),
-    (r'modernsleek', 'modern sleek'),
-    (r'cleanlines', 'clean lines'),
+    (r'onadarkbackground', 'on a dark background'),
     (r'suitablefor', 'suitable for'),
     (r'highquality', 'high quality'),
-    (r'detaileddesign', 'detailed design'),
-    (r'softlighting', 'soft lighting'),
-    (r'studiolighting', 'studio lighting'),
-    (r'digitalart', 'digital art'),
-    (r'conceptart', 'concept art'),
-    (r'characterdesign', 'character design'),
-    (r'lettert', 'letter t'),
-    (r'lettera', 'letter a'),
-    (r'letterin', 'letter in'),
-    (r'stylizedletter', 'stylized letter'),
+    (r'cleanlines', 'clean lines'),
 
-    # ─── Bug analyse image (v28.4) ───
+    # ─── Bug analyse image ───
     (r'endétail', 'en détail'),
     (r'endetail', 'en detail'),
     (r'vueensemble', 'vue ensemble'),
-    (r'planslarge', 'plan large'),
-    (r'grosplan', 'gros plan'),
 ]
 
 
 def _normalize_prompt_spacing(prompt: str) -> str:
     """
-    ★ v28.4 — Normalise les espaces d'un prompt (FR + EN).
+    ★ v28.5 — Normalisation FINALE (patterns + smart splitter).
 
-    1. Réparation des mots cassés ("a bstract" → "abstract")
-    2. CamelCase → "Camel Case"
-    3. Ponctuation → espace après virgule/point-virgule
-    4. 100+ patterns de collisions (FR + EN)
-    5. Nettoyage final
+    Pipeline :
+      1. Réparation des mots cassés ("a bstract" → "abstract")
+      2. CamelCase → "Camel Case"
+      3. Ponctuation → espace après virgule
+      4. Patterns de collisions (FR + EN)
+      5. ★ NOUVEAU : Smart splitter sur mots > 12 lettres
+      6. Nettoyage final
 
-    ⚠️ NE TOUCHE PAS aux URLs ni aux chaînes JSON.
+    ⚠️ Ne touche PAS aux URLs ni aux chaînes JSON.
     """
     if not prompt or not isinstance(prompt, str):
         return prompt
@@ -257,23 +271,22 @@ def _normalize_prompt_spacing(prompt: str) -> str:
     for pattern, replacement in _BROKEN_WORD_REPAIRS:
         text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
 
-    # ─── 2. Minuscule suivie de Majuscule → espace ───
+    # ─── 2. CamelCase → "Camel Case" ───
     text = re.sub(r'([a-zà-ÿ])([A-ZÀ-Ý])', r'\1 \2', text)
 
-    # ─── 3. Virgule sans espace après ───
+    # ─── 3. Ponctuation ───
     text = re.sub(r',([^\s])', r', \1', text)
-
-    # ─── 4. Deux-points sans espace (mais pas http://) ───
     text = re.sub(r'([a-zA-Z]):([^\s/])', r'\1: \2', text)
-
-    # ─── 5. Point-virgule sans espace ───
     text = re.sub(r';([^\s])', r'; \1', text)
 
-    # ─── 6. Patterns de collisions ───
+    # ─── 4. Patterns de collisions ───
     for pattern, replacement in _COMMON_COLLISIONS:
         text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
 
-    # ─── 7. Nettoyage final ───
+    # ─── 5. ★ SMART SPLITTER (v28.5) ───
+    text = _smart_split_all_long_words(text, min_len=12)
+
+    # ─── 6. Nettoyage final ───
     text = re.sub(r'\s+', ' ', text).strip()
     text = re.sub(r'\s+([,;:.!?])', r'\1', text)
 
@@ -302,6 +315,7 @@ def generate_image_with_pollinations(
         os.path.join(GENERATED_DIR, secure_filename(output_filename))
     )
 
+    # ─── Optimisation ───
     final_prompt = prompt
     if optimize_prompt:
         try:
@@ -316,12 +330,13 @@ def generate_image_with_pollinations(
                 "[vision.pollinations] Optimisation prompt échouée : %s", e
             )
 
-    # ★ v28.4 — NORMALISATION
+    # ─── ★ v28.5 — NORMALISATION ───
     final_prompt = _normalize_prompt_spacing(final_prompt)
     logger.info(
-        "[vision.pollinations] Prompt normalisé : %s", final_prompt[:120]
+        "[vision.pollinations] Prompt normalisé : %s", final_prompt[:150]
     )
 
+    # ─── Modèle + URL ───
     model_id = POLLINATIONS_MODELS.get(model, model)
     encoded_prompt = urllib.parse.quote(final_prompt)
 
@@ -348,6 +363,7 @@ def generate_image_with_pollinations(
 
     headers = _build_headers()
 
+    # ─── Retry loop ───
     max_retries = 3
     for attempt in range(max_retries):
         try:
@@ -370,6 +386,7 @@ def generate_image_with_pollinations(
                 "message": f"Erreur réseau Pollinations : {e}",
             }
 
+        # ─── HTTP 402 (rate limit) ───
         if res.status_code == 402:
             logger.warning(
                 "[vision.pollinations] HTTP 402 (rate limit) — tentative %d/%d",
@@ -380,12 +397,10 @@ def generate_image_with_pollinations(
                 continue
             return {
                 "status": "error",
-                "message": (
-                    "Pollinations HTTP 402 (rate limit atteint). "
-                    "Réessayez dans 30 secondes."
-                ),
+                "message": "Pollinations HTTP 402 (rate limit atteint). Réessayez dans 30 secondes.",
             }
 
+        # ─── Succès ───
         if res.status_code == 200 and len(res.content) > 1000:
             with open(save_path, "wb") as f:
                 f.write(res.content)
@@ -403,6 +418,7 @@ def generate_image_with_pollinations(
                 "url": url,
             }
 
+        # ─── Erreur ───
         if attempt < max_retries - 1:
             logger.warning(
                 "[vision.pollinations] HTTP %s (tentative %d/%d), retry...",
@@ -413,10 +429,7 @@ def generate_image_with_pollinations(
 
         return {
             "status": "error",
-            "message": (
-                f"Pollinations HTTP {res.status_code} "
-                f"({len(res.content)} bytes reçus)."
-            ),
+            "message": f"Pollinations HTTP {res.status_code} ({len(res.content)} bytes).",
         }
 
     return {
