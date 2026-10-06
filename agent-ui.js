@@ -1,9 +1,8 @@
 /**
- * BEK-v15-HYBRID — Agent UI Controller (VERSION FINALE C6.3)
+ * BEK-v15-HYBRID — Agent UI Controller (VERSION FINALE C6.3.1)
  * ============================================================
  * Base : ta version GitHub fonctionnelle (v16.2)
- * Ajout : onglet Reflex + boutons Approuver/Rejeter/Inspecter + Lancer cycle
- * Aucune suppression — tout ton code de 6 mois est intact.
+ * Fix v6.3.1 : Remplace formatMarkdown par textContent pour préserver les espaces
  * ============================================================
  */
 (function() {
@@ -257,6 +256,10 @@
             #chat-box, .message, .msg-bubble, pre, code {
                 user-select: text !important;
                 -webkit-user-select: text !important;
+            }
+            .msg-bubble {
+                white-space: pre-wrap !important;
+                word-wrap: break-word !important;
             }
             .gemini-cursor {
                 display: inline-block;
@@ -1446,7 +1449,7 @@
                         const data = JSON.parse(dataStr);
                         if (data.chunk) {
                             fullResponse += data.chunk;
-                            assistantDiv.innerHTML = formatMarkdown(fullResponse) + '<span class="gemini-cursor"></span>';
+                            assistantDiv.textContent = fullResponse;
                             DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;
                         }
                     } catch (err) {}
@@ -1469,10 +1472,8 @@
         } finally {
             isStreaming = false;
             activeController = null;
-            assistantDiv.innerHTML = formatMarkdown(fullResponse);
-
-            const parentMsg = assistantDiv.closest('.message');
-            if (parentMsg) renderMermaidIn(parentMsg);
+            // ★ FIX v6.3.1 : préserver les espaces avec textContent
+            assistantDiv.textContent = fullResponse;
 
             DOM.sendBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`;
         }
@@ -1631,9 +1632,8 @@
         messageHistory.forEach(m => {
             if (m.role === 'user') appendUserMessage(m.content);
             else if (m.role === 'assistant') {
-                const div = appendAssistantMessage(formatMarkdown(m.content));
-                const parentMsg = div.closest('.message');
-                if (parentMsg) renderMermaidIn(parentMsg);
+                const div = appendAssistantMessage('');
+                div.textContent = m.content;
             }
         });
         renderConversationsList();
@@ -1658,7 +1658,7 @@
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // CRM MATRIX BEK — Stubs remplacés plus tard si tu as les vraies API
+    // CRM MATRIX BEK
     // ═══════════════════════════════════════════════════════════════
     window.loadSubCRMsUI = async function() {
         const container = document.getElementById('subCrmsListContainer');

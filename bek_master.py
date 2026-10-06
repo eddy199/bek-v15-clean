@@ -74,7 +74,8 @@ def _activate_all_nerves() -> Dict[str, Any]:
         ("Nerf 6  MCP",         "nerves.mcp_nerves",         "activate_mcp_nerves"),
         ("Nerf 7  Router",      "nerves.router_nerves",      "activate_router_nerves"),
         ("Nerf 9  Guardian",    "nerves.guardian_nerves",    "activate_guardian_nerves"),
-        ("Nerf 10 CRM",         "nerves.crm_nerves",         "activate_crm_nerves"),
+        # ★ Désactivé — CRM non utilisé
+        # ("Nerf 10 CRM",         "nerves.crm_nerves",         "activate_crm_nerves"),
         ("Nerf 11-13 Headless", "nerves.headless_nerves",    "activate_headless_nerves"),
         ("Nerf 14-17 Tmux",     "nerves.tmux_nerves",        "activate_tmux_nerves"),
     ]

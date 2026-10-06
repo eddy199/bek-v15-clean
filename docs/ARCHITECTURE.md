@@ -123,9 +123,9 @@ Format EXCLUSIF :
 ## 📊 ÉTAT RÉEL DU SYSTÈME (généré automatiquement)
 ═══════════════════════════════════════════════════════════════════════════════
 
-> *Dernière synchronisation : 2026-10-03 20:16:44 UTC*
+> *Dernière synchronisation : 2026-10-06 02:01:30 UTC*
 
-### 🔧 Outils Hermes enregistrés (47)
+### 🔧 Outils Hermes enregistrés (42)
 
 | Outil | Risque | Exécution |
 |---|---|---|
@@ -171,11 +171,6 @@ Format EXCLUSIF :
 | `router_route` | **L1** | ✅ Auto |
 | `router_task_type` | **L1** | ✅ Auto |
 | `router_providers` | **L1** | ✅ Auto |
-| `sub_crm_spawn` | **L2** | ✅ Auto |
-| `sub_crm_list` | **L1** | ✅ Auto |
-| `sub_crm_get` | **L1** | ✅ Auto |
-| `sub_crm_opportunities` | **L1** | ✅ Auto |
-| `sub_crm_stats` | **L1** | ✅ Auto |
 
 ### 🧠 Système nerveux (12 nerfs)
 

@@ -1,10 +1,10 @@
 # ==============================================================================
 # BEK-v16 — Provider Manager (provider_manager.py)
 # ------------------------------------------------------------------------------
-# v25.2 (2026-10-03) : ★ Fix NVIDIA mort + TPM Guard
-#   - TPM Guard : ne route PLUS vers nvidia (mort), mais tronque à la place
-#   - FALLBACK_ORDER : nvidia retiré, groq en premier
-#   - Modèles NVIDIA remplacés par Groq gpt-oss-120b
+# v25.3 (2026-10-04) : ★ Fix Provider Fiable pour les Outils
+#   - Force Groq pour les providers "anonymous" (ovh, kilo, llm7)
+#     car ils sont instables pour comprendre le format [ACTION:...]
+#   - Bloc _RELIABLE_PROVIDERS inséré AVANT le TPM Guard
 # ==============================================================================
 from __future__ import annotations
 
@@ -119,8 +119,6 @@ class ProviderManager:
             "groq/compound-mini",
         ],
         "nvidia": [
-            # ★ v25.2 — Modèles NVIDIA morts retirés
-            # Gardé pour référence : les endpoints sont fermés (410)
             "openai/gpt-oss-120b",
             "nvidia/nemotron-3-super-120b-a12b",
         ],
@@ -175,7 +173,7 @@ class ProviderManager:
     }
 
     # ==========================================================================
-    # ★ v25.2 — CHAÎNE DE FALLBACK (NVIDIA RETIRÉ)
+    # ★ v25.3 — CHAÎNE DE FALLBACK (NVIDIA RETIRÉ)
     # ==========================================================================
     FALLBACK_ORDER: List[str] = [
         "groq",             # ★ provider principal (fonctionne)
@@ -476,7 +474,7 @@ class ProviderManager:
         return formatted
 
     # ==========================================================================
-    # ★ v25.2 — EXÉCUTION CHAT EN STREAM (TPM GUARD CORRIGÉ)
+    # ★ v25.3 — EXÉCUTION CHAT EN STREAM (PROVIDER FIABLE + TPM GUARD)
     # ==========================================================================
     def execute_chat_stream(
         self,
@@ -492,6 +490,21 @@ class ProviderManager:
             yield {"error": "Aucun message valide à envoyer."}
             return
 
+        # ★ v25.3 — Priorité aux providers FIABLES pour l'exécution d'outils
+        # Les providers "anonymous" (ovh, kilo, llm7) sont souvent instables
+        # pour comprendre le format [ACTION:...]. On force Groq.
+        _RELIABLE_PROVIDERS = ("groq", "mistral", "cohere", "openrouter")
+
+        if provider.lower() not in _RELIABLE_PROVIDERS:
+            _original_provider = provider
+            provider = "groq"
+            model = "openai/gpt-oss-120b"
+            logger.warning(
+                "[ProviderManager] Provider '%s' non fiable pour les outils → "
+                "bascule sur 'groq/openai/gpt-oss-120b'",
+                _original_provider
+            )
+
         total_chars = sum(len(m.get("content", "")) for m in clean_msgs)
 
         if ":" in model:
@@ -502,13 +515,12 @@ class ProviderManager:
             selected_provider = provider
             selected_model = model
 
-        # ★ v25.2 — TPM Guard CORRIGÉ : ne route PLUS vers nvidia (mort)
+        # ★ v25.3 — TPM Guard : tronque les requêtes géantes
         if total_chars > 50000:
             logger.warning(
-                "[TPM Guard] Requête GÉANTE (%d chars) — troncature à 100k chars.",
+                "[TPM Guard] Requête GÉANTE (%d chars) — troncature à 5 derniers messages.",
                 total_chars,
             )
-            # Garder les 5 derniers messages (le plus récent)
             clean_msgs = clean_msgs[-5:]
             total_chars = sum(len(m.get("content", "")) for m in clean_msgs)
 
@@ -523,9 +535,9 @@ class ProviderManager:
             if current_prov == selected_provider:
                 current_model = selected_model
             else:
-                # ★ v25.2 — Modèles vivants (nvidia retiré)
-                if current_prov == "groq":             current_model = "openai/gpt-oss-20b"   # ★ Plus léger (moins de TPM)
-                elif current_prov == "gemini":         current_model = "gemini-3.8-flash"     # ★ Vrais modèles vivants
+                # ★ v25.3 — Modèles vivants (nvidia retiré)
+                if current_prov == "groq":             current_model = "openai/gpt-oss-20b"
+                elif current_prov == "gemini":         current_model = "gemini-3.8-flash"
                 elif current_prov == "openrouter":     current_model = "auto"
                 elif current_prov == "aisa":           current_model = "qwen-flash"
                 elif current_prov == "kimi":           current_model = "kimi-k3"
