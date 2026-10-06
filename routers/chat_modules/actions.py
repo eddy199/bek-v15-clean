@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Actions (v1.4.3)
+# BEK-v18 — Chat Module : Actions (v1.4.4)
 # ------------------------------------------------------------------------------
 # 🏛️ Rôle : Exécution des actions (multimédia, web, skills, etc.)
 # 📄 Doc : docs/BEK_LVC.md
@@ -10,8 +10,12 @@
 # ★ v1.4 — Nettoyage des espaces parasites dans les params
 # ★ v1.4.1 — Fix _clean_str_param ciblé (prompts préservés)
 # ★ v1.4.2 — Résolution des chemins AVANT appel direct Agnes
-# ★ v1.4.3 — ★ Transmet `resolution` (1080P/720P/480P) au pipeline vidéo
-#             (permet des vidéos 12s en 720P, 20s en 720P, etc.)
+# ★ v1.4.3 — Transmet `resolution` (1080P/720P/480P) au pipeline vidéo
+# ★ v1.4.4 (2026-10-07) — GARDE-FOU ANTI-ORCHESTRATE (CRITIQUE)
+#   - Détecte orchestrate mal utilisé (questions meta)
+#   - Liste noire : "plan d'action", "explique", "conseil", "pourquoi", etc.
+#   - Retourne un message qui guide le LLM vers une réponse TEXTE
+#   - Évite le placeholder "Opération OK" pour des questions simples
 # ==============================================================================
 
 from __future__ import annotations
@@ -40,6 +44,98 @@ ACTION_REGEX = re.compile(
     r"\[\s*/\s*A\s*CTION\s*\]",
     re.DOTALL,
 )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v1.4.4 — GARDE-FOU ANTI-ORCHESTRATE
+# ==============================================================================
+
+# Patterns qui indiquent une question meta (déclenche garde-fou)
+_ORCHESTRATE_META_PATTERNS = [
+    # Plan / stratégie
+    r"\bplan\s+d[\'\s]?action",
+    r"\broadmap\b",
+    r"\bétapes?\s+clés?\b",
+    r"\bphases?\b.*\bdéveloppement\b",
+    # Conseil / avis / recommandation
+    r"\bconseil",
+    r"\bconseille",
+    r"\brecommandation",
+    r"\bton\s+avis\b",
+    r"\btu\s+penses\b",
+    r"\bque\s+penses[- ]tu\b",
+    # Explication / synthèse
+    r"\bexplique",
+    r"\bexplication",
+    r"\bdétaille",
+    r"\bsynthèse\b",
+    r"\brésumé\b",
+    r"\bbilan\b",
+    # Question meta
+    r"\bpourquoi\b",
+    r"\bcomment\s+faire\b",
+    r"\bprésente[- ]moi\b",
+    r"\bfournir\s+une?\s+réponse\b",
+    r"\bfournir\s+un\s+plan\b",
+    r"\bprésenter\s+un\s+plan\b",
+    # Réponse texte demandée
+    r"\bje\s+veux\s+une\s+réponse",
+    r"\bréponds[- ]moi\b",
+    r"\btu\s+peux\s+créer\s+ça",
+    r"\bpossible\s*\?",
+    # Analyse / création conceptuelle
+    r"\banalyser\s+les\s+fichiers",
+    r"\bconstruire\s+une\s+interface",
+    r"\bcréer\s+une\s+application",
+]
+
+_ORCHESTRATE_META_REGEX = re.compile(
+    "|".join(_ORCHESTRATE_META_PATTERNS),
+    re.IGNORECASE,
+)
+
+
+def _is_orchestrate_misused(goal: str) -> bool:
+    """
+    ★ v1.4.4 — Détecte si `orchestrate` est appelé pour une question meta.
+
+    Retourne True si le `goal` ressemble à une question conversationnelle
+    (plan d'action, conseil, explication) au lieu d'une vraie tâche
+    multi-étapes à exécuter.
+
+    Exemples de goal MAL utilisés :
+      - "Fournir un plan d'action détaillé pour..."
+      - "Présenter une synthèse détaillée..."
+      - "Expliquer l'architecture..."
+
+    Exemples de goal BIEN utilisés :
+      - "Automatiser l'envoi d'un email + archivage"
+      - "Chercher 5 articles sur X puis résumer"
+    """
+    if not goal or not isinstance(goal, str):
+        return False
+
+    return bool(_ORCHESTRATE_META_REGEX.search(goal))
+
+
+def _build_orchestrate_guard_message(goal: str) -> str:
+    """
+    ★ v1.4.4 — Message qui guide le LLM vers une réponse TEXTE.
+
+    Au lieu de retourner "Opération OK", on retourne un message qui
+    explique à l'utilisateur que `orchestrate` n'est pas approprié et
+    qui redirige vers une réponse conversationnelle.
+    """
+    return (
+        "⚠️ **L'outil `orchestrate` n'est pas adapté à cette demande.**\n\n"
+        "Cette question est **conversationnelle** et nécessite une "
+        "**réponse en texte**, pas une action multi-étapes.\n\n"
+        "**Reformulez votre réponse sans action** : donnez directement "
+        "l'explication, le plan, le conseil ou la synthèse que l'utilisateur "
+        "attend, en texte naturel structuré.\n\n"
+        f"_(Note technique : goal détecté comme meta = "
+        f"`{goal[:80]}{'...' if len(goal) > 80 else ''}`)_"
+    )
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -220,6 +316,35 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
         act_name = "web_sync"
 
     # ══════════════════════════════════════════════════════════════════════════
+    # ★ v1.4.4 — GARDE-FOU ANTI-ORCHESTRATE (CRITIQUE)
+    # ==========================================================================
+    if act_name == "orchestrate":
+        _goal = params.get("goal") or params.get("objective") or ""
+        if _is_orchestrate_misused(_goal):
+            logger.warning(
+                "[OrchestrateGuard] ❌ orchestrate mal utilisé pour une question meta : %r",
+                _goal[:120],
+            )
+            _guard_msg = _build_orchestrate_guard_message(_goal)
+            _log_episode_safe(
+                action=_original_action, status="error",
+                latency_ms=int((time.time() - _t0) * 1000),
+                error_type="orchestrate_misused_meta",
+                message=_guard_msg[:500],
+            )
+            return {
+                "status": "error",
+                "message": _guard_msg,
+                "guard": "orchestrate_misused_meta",
+                "suggestion": "Réponds en TEXTE naturel, sans action.",
+            }
+        else:
+            logger.info(
+                "[OrchestrateGuard] ✅ orchestrate légitime (tâche multi-étapes) : %r",
+                _goal[:120],
+            )
+
+    # ══════════════════════════════════════════════════════════════════════════
     # MULTIMÉDIA
     # ==========================================================================
     try:
@@ -254,9 +379,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             )
             return _r
 
-        # ══════════════════════════════════════════════════════════════════════
-        # ★ v1.4.3 — VIDÉO AVEC IMAGES DE RÉFÉRENCE + RESOLUTION
-        # ==========================================================================
         elif act_name == "generate_video":
             from services.vision import generate_video_with_provider
             prompt = params.get("prompt") or params.get("query") or ""
@@ -266,7 +388,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             aspect_ratio_v = params.get("aspect_ratio", "16:9")
             with_audio_v = params.get("with_audio", True)
             audio_style_v = params.get("audio_style", "children")
-            # ★ v1.4.3 — Nouvelle option resolution
             resolution_v = params.get("resolution", "1080P")
 
             image_paths = params.get("image_paths") or params.get("reference_images")
@@ -293,7 +414,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             )
 
             if reference_images:
-                # ★ v1.4.2 — Résoudre les chemins AVANT d'envoyer à Agnes
                 try:
                     from services.vision.video_generation import _resolve_existing_media_paths
                     resolved_refs = _resolve_existing_media_paths(
@@ -341,7 +461,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                         aspect_ratio=aspect_ratio_v,
                         mode=mode,
                         reference_images=resolved_refs,
-                        # ★ v1.4.3 — resolution transmise
                         resolution=resolution_v,
                     )
                     import os as _os2
@@ -609,6 +728,31 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                 task_res = list(h_disp["results"].values())[0]
                 if task_res.get("success"):
                     data = task_res.get("data")
+
+                    # ★ v1.4.4 — Détection du placeholder "Opération OK"
+                    if act_name == "orchestrate" and isinstance(data, str) and "Opération OK" in data:
+                        logger.warning(
+                            "[OrchestrateGuard] Placeholder 'Opération OK' détecté — "
+                            "retour enrichi pour forcer une réponse texte"
+                        )
+                        _r = {
+                            "status": "error",
+                            "message": (
+                                "⚠️ L'outil `orchestrate` a retourné un placeholder "
+                                "sans résultat exploitable. **Réponds en TEXTE** "
+                                "avec ta propre synthèse/conseil/plan."
+                            ),
+                            "guard": "orchestrate_placeholder_detected",
+                            "suggestion": "Réponds en TEXTE naturel, sans action.",
+                        }
+                        _log_episode_safe(
+                            action=_original_action, status="error",
+                            latency_ms=int((time.time() - _t0) * 1000),
+                            error_type="orchestrate_placeholder",
+                            message=_r["message"][:500],
+                        )
+                        return _r
+
                     _r = data if isinstance(data, dict) else {"status": "success", "message": str(data)}
                     _dag_internal_info = None
                     if act_name == "web_sync":
@@ -661,11 +805,12 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
 
 def get_actions_summary() -> dict:
     return {
-        "version": "1.4.3",
+        "version": "1.4.4",
         "functions": [
             "_extract_first_action", "_execute_action_unified",
             "_log_episode_safe", "_detect_web_sync_dag_usage",
             "_clean_str_param", "_clean_action_params",
+            "_is_orchestrate_misused", "_build_orchestrate_guard_message",
         ],
         "patches": {
             "v1.4.0_clean_spaces": "✅ 'x. jpg' → 'x.jpg'",
@@ -673,14 +818,17 @@ def get_actions_summary() -> dict:
             "v1.4.1_uuid_fix": "✅ '1c8a -4333' → '1c8a-4333'",
             "v1.4.2_resolve_before_agnes": "✅ Résout uploads/ AVANT appel direct Agnes",
             "v1.4.3_resolution_passthrough": "✅ Transmet resolution (1080P/720P/480P)",
+            "v1.4.4_anti_orchestrate_guard": "✅ Bloque orchestrate mal utilisé (questions meta)",
         },
+        "anti_orchestrate_patterns": len(_ORCHESTRATE_META_PATTERNS),
         "handled_actions": [
             "generate_image", "edit_image",
             "generate_video (avec image_paths + resolution)", "edit_video",
             "extend_video", "extend_video_multiple",
             "generate_subtitles", "burn_subtitles",
             "headless_scrape", "web_sync",
-            "orchestrate", "create_dynamic_skill",
+            "orchestrate ⚠️ (avec garde-fou)",
+            "create_dynamic_skill",
             "run_script", "execute_command",
             "save_memory", "search_memory",
             "write_file", "read_file",
