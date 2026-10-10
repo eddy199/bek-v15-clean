@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Streaming (v1.6.7)
+# BEK-v18 — Chat Module : Streaming (v1.6.8)
 # ------------------------------------------------------------------------------
-# ★ v1.6.7 (2026-10-10) : FORÇAGE D'ACTION CÔTÉ SERVEUR
-#   - Détecte quand le LLM refuse de générer une image (invente du SVG/code)
-#   - Force l'exécution de generate_image NOUS-MÊMES
-#   - Extrait le sujet du prompt utilisateur → prompt anglais propre
-#   - Remplace la réponse hallucinée par l'image générée
+# ★ v1.6.8 (2026-10-10) : FIX PYTHON 3.12 SYNTAX ERROR
+#   - Extraction du f-string imbriqué (backslash interdit dans {} en Py3.12)
+#   - Le reste est identique à v1.6.7
+# ★ v1.6.7 : forçage d'action si LLM refuse
 # ★ v1.6.6 : préservation des espaces
-# ★ v1.6.5 : anti-hallucination
-# ★ v1.6.4 : troncature sécurité
 # ==============================================================================
 
 from __future__ import annotations
@@ -93,9 +90,8 @@ def _find_all_complete_actions(text: str) -> List[Dict[str, Any]]:
 # ★ v1.6.7 — DÉTECTION "LLM A REFUSÉ DE GÉNÉRER UNE IMAGE"
 # ==============================================================================
 
-# Mots-clés qui indiquent que l'utilisateur veut une IMAGE
 _USER_IMAGE_INTENT_KEYWORDS = [
-    "logo", "image", "illustration", "visuel", "icône", "icone", "icone",
+    "logo", "image", "illustration", "visuel", "icône", "icone",
     "dessine", "dessin", "schéma", "schema", "graphique", "affiche",
     "génère une image", "genere une image", "créer une image", "creer une image",
     "fais-moi une image", "fais moi une image", "fais-moi un logo", "fais moi un logo",
@@ -103,14 +99,13 @@ _USER_IMAGE_INTENT_KEYWORDS = [
     "image de", "logo de", "logo pour",
 ]
 
-# Motifs qui indiquent que le LLM a inventé du code/SVG au lieu de générer
 _LLM_REFUSAL_PATTERNS = [
-    r"<svg[\s>]",                          # SVG inline
-    r"```\s*(svg|xml|html)",               # Bloc code svg/xml/html
-    r"rendu\s+vectoriel",                  # "Rendu vectoriel immédiat"
-    r"je\s+ne\s+peux\s+pas\s+générer",      # "je ne peux pas générer directement"
-    r"je\s+ne\s+peux\s+pas\s+creer",       # idem
-    r"en\s+tant\s+qu.intelligence\s+textuelle",  # Préambule refus classique
+    r"<svg[\s>]",
+    r"```\s*(svg|xml|html)",
+    r"rendu\s+vectoriel",
+    r"je\s+ne\s+peux\s+pas\s+générer",
+    r"je\s+ne\s+peux\s+pas\s+creer",
+    r"en\s+tant\s+qu.intelligence\s+textuelle",
     r"je\s+suis\s+une\s+ia\s+textuelle",
     r"je\s+ne\s+suis\s+pas\s+capable\s+de\s+générer",
     r"voici\s+un\s+code\s+svg",
@@ -122,7 +117,6 @@ _LLM_REFUSAL_RE = _re.compile("|".join(_LLM_REFUSAL_PATTERNS), _re.IGNORECASE)
 
 
 def _user_wants_image(query: str) -> bool:
-    """Détecte si l'utilisateur demande une image dans sa requête."""
     if not query:
         return False
     q_lower = query.lower()
@@ -130,36 +124,24 @@ def _user_wants_image(query: str) -> bool:
 
 
 def _llm_refused_to_generate(full_response: str) -> bool:
-    """Détecte si le LLM a refusé et inventé du code à la place."""
     if not full_response:
         return False
-    # Vérifier la présence d'un pattern de refus
     if _LLM_REFUSAL_RE.search(full_response):
         return True
-    # Vérifier présence de balises SVG/HTML
     if "<svg" in full_response.lower() or "<html" in full_response.lower():
         return True
     return False
 
 
 def _extract_image_subject(user_query: str) -> str:
-    """
-    Extrait le sujet principal d'une requête utilisateur pour construire
-    un prompt Pollinations propre.
-    """
     if not user_query:
         return "abstract AI logo, minimalist, modern"
-
     q = user_query.strip()
-    # Retirer les préambules courants
     q = _re.sub(
         r"^\s*(fais[- ]moi|cr[ée]e[rz]?|g[ée]n[èe]re[rz]?|dessine|je\s+veux|donne[- ]moi)\s+",
         "", q, flags=_re.IGNORECASE,
     )
-    # Nettoyer
     q = _re.sub(r"\s+", " ", q).strip(" .,!?;:")
-
-    # Traduction simple FR→EN (mots-clés fréquents)
     translations = {
         "logo": "logo", "logotype": "logotype",
         "entreprise": "company", "société": "company",
@@ -180,14 +162,10 @@ def _extract_image_subject(user_query: str) -> str:
     q_lower = q.lower()
     for fr, en in translations.items():
         q_lower = q_lower.replace(fr, en)
-
-    # Prompt final (anglais, court)
     prompt = f"{q_lower}, minimalist flat vector design, clean lines, professional logo"
-    # Limite 25 mots
     words = prompt.split()
     if len(words) > 25:
         prompt = " ".join(words[:25])
-
     return prompt
 
 
@@ -419,11 +397,10 @@ async def stream_chat(
     )
     _total_after = sum(len(m.get("content", "")) for m in exec_messages if isinstance(m, dict))
     logger.info(
-        "[Streaming v1.6.7] Requête : %d messages | %d → %d chars (limite %d)",
+        "[Streaming v1.6.8] Requête : %d messages | %d → %d chars (limite %d)",
         len(exec_messages), _total_before, _total_after, cfg.MAX_TOTAL_CHARS,
     )
 
-    # ─── Pré-parsing actions utilisateur ───
     _user_part = last_user_query or ""
     _instr_pos = _user_part.find("(INSTRUCTION SYSTEME")
     if _instr_pos > 0:
@@ -432,7 +409,7 @@ async def stream_chat(
 
     if _user_actions:
         logger.info(
-            "[Streaming v1.6.7] %d action(s) utilisateur — exécution DIRECTE",
+            "[Streaming v1.6.8] %d action(s) utilisateur — exécution DIRECTE",
             len(_user_actions),
         )
         _direct_msg = "\n\n⚙️ *Exécution directe...*\n\n"
@@ -450,11 +427,11 @@ async def stream_chat(
                 _exec_res = act._execute_action_unified(_ua_name, _ua_params)
                 _elapsed = (time.monotonic() - _t0) * 1000
                 _res_msg = fmt._format_execution_result(_ua_name, _exec_res)
-                logger.info("[Streaming v1.6.7] ✅ Action %s terminée (%.0fms)", _ua_name, _elapsed)
+                logger.info("[Streaming v1.6.8] ✅ Action %s terminée (%.0fms)", _ua_name, _elapsed)
                 _res_chunk = "\n\n" + str(_res_msg) + "\n\n"
                 yield f"data: {json.dumps({'chunk': _res_chunk})}\n\n"
             except Exception as _err:
-                logger.exception("[Streaming v1.6.7] Action %s échouée", _ua_name)
+                logger.exception("[Streaming v1.6.8] Action %s échouée", _ua_name)
                 _err_chunk = f"\n\n⚠️ Erreur action {_ua_name} : {_err}\n\n"
                 yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
         yield f"data: {json.dumps({'done': True})}\n\n"
@@ -479,7 +456,7 @@ async def stream_chat(
 
     is_freshness_query = rt._bek_rex_is_freshness_query(last_user_query)
     if is_freshness_query:
-        logger.info("[Streaming v1.6.7] Requête de fraîcheur détectée")
+        logger.info("[Streaming v1.6.8] Requête de fraîcheur détectée")
 
     _detected_ego = rt._bek_rex_detect_alter_ego(last_user_query)
     if _detected_ego and _detected_ego != "bek":
@@ -494,11 +471,11 @@ async def stream_chat(
         try:
             _routing_result = rt._bek_rex_route(last_user_query)
             logger.info(
-                "[Streaming v1.6.7] BEK-REX tier=%s conf=%.2f",
+                "[Streaming v1.6.8] BEK-REX tier=%s conf=%.2f",
                 _routing_result.get("tier"), _routing_result.get("confidence", 0.0),
             )
         except Exception as _rex_err:
-            logger.warning("[Streaming v1.6.7] BEK-REX échec : %s", _rex_err)
+            logger.warning("[Streaming v1.6.8] BEK-REX échec : %s", _rex_err)
             _routing_result = {"tier": "TIER_3", "confidence": 0.5}
 
         _tier = _routing_result.get("tier", "TIER_3")
@@ -508,7 +485,6 @@ async def stream_chat(
                 _eco_result = rt._bek_eco_check_cache(last_user_query, _tier)
                 if _eco_result.get("cached") and _eco_result.get("cached_value"):
                     cached_response = _eco_result["cached_value"].get("response", "")
-                    # ★ v1.6.7 — Ne PAS servir un cache contenant du SVG/refus
                     if cached_response and not _llm_refused_to_generate(cached_response):
                         _cached_response_served = True
                         cache_badge = "⚡ *[réponse en cache]*\n\n"
@@ -520,10 +496,10 @@ async def stream_chat(
                         return
                     else:
                         logger.warning(
-                            "[Streaming v1.6.7] Cache HIT mais réponse polluée (SVG/refus) → SKIP"
+                            "[Streaming v1.6.8] Cache HIT mais réponse polluée (SVG/refus) → SKIP"
                         )
             except Exception as _eco_err:
-                logger.warning("[Streaming v1.6.7] BEK-ECO échec : %s", _eco_err)
+                logger.warning("[Streaming v1.6.8] BEK-ECO échec : %s", _eco_err)
 
         for item in provider_manager.execute_chat_stream(
             messages=exec_messages,
@@ -613,7 +589,7 @@ async def stream_chat(
                     act_name = action["name"]
                     params = _normalize_action_params(action["params"])
                     logger.info(
-                        "[Streaming v1.6.7] 🎯 Action %d : %s",
+                        "[Streaming v1.6.8] 🎯 Action %d : %s",
                         total_actions_executed + 1, act_name,
                     )
                     if act_name == "headless_search":
@@ -639,11 +615,11 @@ async def stream_chat(
                         processed_actions.add(end_pos)
                         _last_action_end_pos = end_pos
                         logger.info(
-                            "[Streaming v1.6.7] ✅ Action %s terminée (%.0fms)",
+                            "[Streaming v1.6.8] ✅ Action %s terminée (%.0fms)",
                             act_name, _action_elapsed_ms,
                         )
                     except Exception as _act_err:
-                        logger.exception("[Streaming v1.6.7] Action %s échouée", act_name)
+                        logger.exception("[Streaming v1.6.8] Action %s échouée", act_name)
                         err_chunk = f"\n\n⚠️ Erreur action {act_name} : {_act_err}\n\n"
                         yield f"data: {json.dumps({'chunk': err_chunk})}\n\n"
                         processed_actions.add(end_pos)
@@ -655,15 +631,14 @@ async def stream_chat(
                     _post_action_grace_chunks = 0
 
     except Exception as stream_err:
-        logger.error("[Streaming v1.6.7] Erreur : %s", stream_err, exc_info=True)
-        yield f"data: {json.dumps({'chunk': f'\n\n⚠️ Flux Error : {stream_err}\n'})}\n\n"
+        # ★ v1.6.8 — FIX Python 3.12 : pas de backslash dans f-string imbriqué
+        logger.error("[Streaming v1.6.8] Erreur : %s", stream_err, exc_info=True)
+        _err_text = "\n\n⚠️ Flux Error : " + str(stream_err) + "\n"
+        yield f"data: {json.dumps({'chunk': _err_text})}\n\n"
         _success = False
         _error_type = type(stream_err).__name__
 
     finally:
-        # ══════════════════════════════════════════════════════════════════════
-        # ★ v1.6.7 — FORÇAGE D'ACTION SI LE LLM A REFUSÉ DE GÉNÉRER UNE IMAGE
-        # ======================================================================
         full_response = "".join(full_text_accumulated)
 
         _user_wants_img = _user_wants_image(last_user_query)
@@ -671,28 +646,25 @@ async def stream_chat(
         _no_action_executed = (total_actions_executed == 0)
 
         logger.info(
-            "[Streaming v1.6.7] FORCE-CHECK : user_wants_image=%s | llm_refused=%s | no_action=%s",
+            "[Streaming v1.6.8] FORCE-CHECK : user_wants_image=%s | llm_refused=%s | no_action=%s",
             _user_wants_img, _llm_refused, _no_action_executed,
         )
 
         if _user_wants_img and _no_action_executed and _llm_refused:
             logger.warning(
-                "[Streaming v1.6.7] 🚨 LLM A REFUSÉ → FORÇAGE de generate_image côté serveur"
+                "[Streaming v1.6.8] 🚨 LLM A REFUSÉ → FORÇAGE de generate_image côté serveur"
             )
 
-            # Notifier l'utilisateur qu'on reprend la main
             _force_msg = (
                 "\n\n⚙️ *Le modèle a refusé de générer — BEK prend le relais...*\n\n"
             )
             yield f"data: {json.dumps({'chunk': _force_msg}, ensure_ascii=False)}\n\n"
 
-            # Extraire le sujet du prompt utilisateur
             _forced_prompt = _extract_image_subject(last_user_query)
             logger.info(
-                "[Streaming v1.6.7] Prompt forcé extrait : %r", _forced_prompt[:120],
+                "[Streaming v1.6.8] Prompt forcé extrait : %r", _forced_prompt[:120],
             )
 
-            # Exécuter generate_image NOUS-MÊMES
             _force_t0 = time.monotonic()
             try:
                 _forced_res = act._execute_action_unified(
@@ -706,7 +678,7 @@ async def stream_chat(
                 _force_elapsed = (time.monotonic() - _force_t0) * 1000
                 _forced_msg = fmt._format_execution_result("generate_image", _forced_res)
                 logger.info(
-                    "[Streaming v1.6.7] ✅ FORCE generate_image terminée (%.0fms) → %s",
+                    "[Streaming v1.6.8] ✅ FORCE generate_image terminée (%.0fms) → %s",
                     _force_elapsed, _forced_res.get("filename", "?"),
                 )
                 _forced_chunk = "\n\n" + str(_forced_msg) + "\n\n"
@@ -716,11 +688,10 @@ async def stream_chat(
                 _success = True
 
             except Exception as _force_err:
-                logger.exception("[Streaming v1.6.7] FORCE generate_image échouée")
+                logger.exception("[Streaming v1.6.8] FORCE generate_image échouée")
                 _err_chunk = f"\n\n⚠️ Erreur forçage image : {_force_err}\n\n"
                 yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
 
-        # ─── Loop record ───
         try:
             _total_elapsed_final = time.monotonic() - _start_time
             if BEK_LOOP_ENABLED and not _cached_response_served and last_user_query:
@@ -737,12 +708,11 @@ async def stream_chat(
                 except Exception:
                     pass
 
-            # ─── Cache : ne PAS cacher si LLM a refusé ou si on a forcé ───
             _should_have_action = _user_wants_image(last_user_query)
             _is_hallucination = _should_have_action and not action_detected
             if _is_hallucination:
                 logger.warning(
-                    "[Streaming v1.6.7] ⚠️ Hallucination détectée. Cache SKIP."
+                    "[Streaming v1.6.8] ⚠️ Hallucination détectée. Cache SKIP."
                 )
 
             if (
@@ -795,22 +765,21 @@ async def stream_chat(
                     pass
 
         except Exception as _loop_err:
-            logger.debug("[Streaming v1.6.7] Erreur finally : %s", _loop_err)
+            logger.debug("[Streaming v1.6.8] Erreur finally : %s", _loop_err)
 
         yield f"data: {json.dumps({'done': True})}\n\n"
 
 
 def get_streaming_summary() -> dict:
     return {
-        "version": "1.6.7",
+        "version": "1.6.8",
         "features": {
             "multi_actions": BEK_MULTI_ACTIONS_ENABLED,
             "closing_tag_tolerant": True,
             "llm_string_normalization": True,
             "whitespace_preserved_v166": True,
-            "★ force_action_on_llm_refusal_v167": True,
-            "★ svg_detection": True,
-            "★ user_intent_detection": True,
+            "force_action_on_llm_refusal_v167": True,
+            "★ python_3_12_safe_v168": True,
             "max_tokens": BEK_MAX_TOKENS,
         },
     }
