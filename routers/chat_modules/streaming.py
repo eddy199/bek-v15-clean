@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Streaming (v1.6.4)
+# BEK-v18 — Chat Module : Streaming (v1.6.5)
 # ------------------------------------------------------------------------------
+# ★ v1.6.5 (2026-10-07) : ANTI-HALLUCINATION ACTION
+#   - Détecte quand l'utilisateur demande une action mais le LLM ne l'exécute pas
+#   - Bloque la mise en cache des réponses hallucinées
 # ★ v1.6.4 (2026-10-07) : RÉDUCTION TOKENS POUR GROQ FREE
-#   - max_tokens : 4096 → 2048 (réduit la taille de la réponse)
-#   - Troncature de sécurité des messages > 3000 chars avant envoi LLM
-#   - Log de la taille totale de la requête (diagnostic 413)
-#   - Fix préventif contre "Request too large for model openai/gpt-oss-120b"
+#   - max_tokens : 4096 → 2048
+#   - Troncature de sécurité des messages > 3000 chars
 # ★ v1.6.3 : Fix "Décriscette" collé
 # ★ v1.6.2 : Fix regex qui cassait les mots
 # ==============================================================================
@@ -110,17 +111,7 @@ def _truncate_messages_for_groq(
     max_chars_per_msg: int = 3000,
     max_total_chars: int = 10000,
 ) -> List[Dict[str, Any]]:
-    """
-    ★ v1.6.4 — Tronque les messages avant envoi au LLM.
-
-    Groq Free tier limite à 8000 tokens/minute (~24000 chars).
-    On garde une marge de sécurité en limitant à 10000 chars total.
-
-    Stratégie :
-      1. Tronque chaque message à `max_chars_per_msg`
-      2. Si le total dépasse `max_total_chars`, garde les derniers messages
-         (les plus récents) et drop les plus anciens
-    """
+    """Tronque les messages avant envoi au LLM."""
     if not messages:
         return messages
 
@@ -131,7 +122,6 @@ def _truncate_messages_for_groq(
             continue
         content = msg.get("content", "")
         if isinstance(content, str) and len(content) > max_chars_per_msg:
-            # Coupe le milieu pour préserver début + fin
             half = max_chars_per_msg // 2
             content = (
                 content[:half]
@@ -146,7 +136,6 @@ def _truncate_messages_for_groq(
     if total <= max_total_chars:
         return truncated
 
-    # Garde le system prompt + les derniers messages
     system_msgs = [m for m in truncated if m.get("role") == "system"]
     other_msgs = [m for m in truncated if m.get("role") != "system"]
 
@@ -351,7 +340,6 @@ BEK_MAX_ACTIONS_PER_RESPONSE = _env_int("BEK_MAX_ACTIONS_PER_RESPONSE", 5)
 BEK_ANTIHALLU_ENABLED = _env_bool("BEK_ANTIHALLU_ENABLED", True)
 BEK_POST_ACTION_GRACE_MAX = _env_int("BEK_POST_ACTION_GRACE_MAX", 50, minimum=10)
 
-# ★ v1.6.4 — max_tokens réduit pour Groq Free
 BEK_MAX_TOKENS = _env_int("BEK_MAX_TOKENS", 2048, minimum=256)
 
 
@@ -464,7 +452,7 @@ async def stream_chat(
     )
     _total_after = sum(len(m.get("content", "")) for m in exec_messages if isinstance(m, dict))
     logger.info(
-        "[Streaming v1.6.4] Requête : %d messages | %d → %d chars (limite %d)",
+        "[Streaming v1.6.5] Requête : %d messages | %d → %d chars (limite %d)",
         len(exec_messages), _total_before, _total_after, cfg.MAX_TOTAL_CHARS,
     )
 
@@ -480,7 +468,7 @@ async def stream_chat(
 
     if _user_actions:
         logger.info(
-            "[Streaming v1.6.4] %d action(s) utilisateur — exécution DIRECTE",
+            "[Streaming v1.6.5] %d action(s) utilisateur — exécution DIRECTE",
             len(_user_actions),
         )
         _direct_msg = "\n\n⚙️ *Exécution directe...*\n\n"
@@ -495,7 +483,7 @@ async def stream_chat(
                 _ua_params["model"] = model
 
             logger.info(
-                "[Streaming v1.6.4] 🎯 Action directe %d : %s",
+                "[Streaming v1.6.5] 🎯 Action directe %d : %s",
                 _idx, _ua_name,
             )
             _exec_msg = f"\n\n⚙️ *Exécution {_idx}...*\n"
@@ -507,13 +495,13 @@ async def stream_chat(
                 _elapsed = (time.monotonic() - _t0) * 1000
                 _res_msg = fmt._format_execution_result(_ua_name, _exec_res)
                 logger.info(
-                    "[Streaming v1.6.4] ✅ Action %s terminée (%.0fms)",
+                    "[Streaming v1.6.5] ✅ Action %s terminée (%.0fms)",
                     _ua_name, _elapsed,
                 )
                 _res_chunk = "\n\n" + str(_res_msg) + "\n\n"
                 yield f"data: {json.dumps({'chunk': _res_chunk})}\n\n"
             except Exception as _err:
-                logger.exception("[Streaming v1.6.4] Action %s échouée", _ua_name)
+                logger.exception("[Streaming v1.6.5] Action %s échouée", _ua_name)
                 _err_chunk = f"\n\n⚠️ Erreur action {_ua_name} : {_err}\n\n"
                 yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
 
@@ -539,11 +527,11 @@ async def stream_chat(
 
     is_freshness_query = rt._bek_rex_is_freshness_query(last_user_query)
     if is_freshness_query:
-        logger.info("[Streaming v1.6.4] Requête de fraîcheur détectée")
+        logger.info("[Streaming v1.6.5] Requête de fraîcheur détectée")
 
     _detected_ego = rt._bek_rex_detect_alter_ego(last_user_query)
     if _detected_ego and _detected_ego != "bek":
-        logger.info("[Streaming v1.6.4] 🎭 Alter ego activé : %s", _detected_ego)
+        logger.info("[Streaming v1.6.5] 🎭 Alter ego activé : %s", _detected_ego)
         _alter_ego_prompt = rt._bek_rex_get_alter_ego_prompt(_detected_ego)
         if _alter_ego_prompt:
             for _msg in exec_messages:
@@ -555,12 +543,12 @@ async def stream_chat(
         try:
             _routing_result = rt._bek_rex_route(last_user_query)
             logger.info(
-                "[Streaming v1.6.4] BEK-REX tier=%s conf=%.2f",
+                "[Streaming v1.6.5] BEK-REX tier=%s conf=%.2f",
                 _routing_result.get("tier"),
                 _routing_result.get("confidence", 0.0),
             )
         except Exception as _rex_err:
-            logger.warning("[Streaming v1.6.4] BEK-REX échec : %s", _rex_err)
+            logger.warning("[Streaming v1.6.5] BEK-REX échec : %s", _rex_err)
             _routing_result = {"tier": "TIER_3", "confidence": 0.5}
 
         _tier = _routing_result.get("tier", "TIER_3")
@@ -581,15 +569,14 @@ async def stream_chat(
                         yield f"data: {json.dumps({'done': True})}\n\n"
                         return
             except Exception as _eco_err:
-                logger.warning("[Streaming v1.6.4] BEK-ECO échec : %s", _eco_err)
+                logger.warning("[Streaming v1.6.5] BEK-ECO échec : %s", _eco_err)
 
-        # ★ v1.6.4 — max_tokens réduit
         for item in provider_manager.execute_chat_stream(
             messages=exec_messages,
             provider=provider,
             model=model,
             temperature=0.7,
-            max_tokens=BEK_MAX_TOKENS,  # 2048 au lieu de 4096
+            max_tokens=BEK_MAX_TOKENS,
         ):
             _elapsed = time.monotonic() - _start_time
             if MAX_STREAM_DURATION_SEC and _elapsed > MAX_STREAM_DURATION_SEC:
@@ -678,7 +665,7 @@ async def stream_chat(
                     params = _normalize_action_params(action["params"])
 
                     logger.info(
-                        "[Streaming v1.6.4] 🎯 Action %d : %s",
+                        "[Streaming v1.6.5] 🎯 Action %d : %s",
                         total_actions_executed + 1, act_name,
                     )
 
@@ -713,11 +700,11 @@ async def stream_chat(
                         _last_action_end_pos = end_pos
 
                         logger.info(
-                            "[Streaming v1.6.4] ✅ Action %s terminée (%.0fms)",
+                            "[Streaming v1.6.5] ✅ Action %s terminée (%.0fms)",
                             act_name, _action_elapsed_ms,
                         )
                     except Exception as _act_err:
-                        logger.exception("[Streaming v1.6.4] Action %s échouée", act_name)
+                        logger.exception("[Streaming v1.6.5] Action %s échouée", act_name)
                         err_chunk = f"\n\n⚠️ Erreur action {act_name} : {_act_err}\n\n"
                         yield f"data: {json.dumps({'chunk': err_chunk})}\n\n"
                         processed_actions.add(end_pos)
@@ -730,7 +717,7 @@ async def stream_chat(
                     _post_action_grace_chunks = 0
 
     except Exception as stream_err:
-        logger.error("[Streaming v1.6.4] Erreur : %s", stream_err, exc_info=True)
+        logger.error("[Streaming v1.6.5] Erreur : %s", stream_err, exc_info=True)
         err_msg = f"\n\n⚠️ Flux Error : {stream_err}\n"
         yield f"data: {json.dumps({'chunk': err_msg})}\n\n"
         _success = False
@@ -754,6 +741,32 @@ async def stream_chat(
                 except Exception:
                     pass
 
+            # ══════════════════════════════════════════════════════════════
+            # ★ v1.6.5 — ANTI-HALLUCINATION ACTION
+            # ------------------------------------------------------------------
+            # Détecte quand l'utilisateur demande une action mais qu'aucune
+            # n'a été exécutée → NE PAS CACHER la réponse.
+            # ══════════════════════════════════════════════════════════════
+            _should_have_action = False
+            if last_user_query:
+                _q_lower = last_user_query.lower()
+                _action_keywords = [
+                    "logo", "image", "génère", "genere", "crée", "cree",
+                    "dessine", "fais-moi", "fais moi", "générer", "generer",
+                    "vidéo", "video", "recherche", "cherche", "trouve",
+                    "actualité", "actualite", "news",
+                ]
+                _should_have_action = any(k in _q_lower for k in _action_keywords)
+
+            _is_hallucination = _should_have_action and not action_detected
+
+            if _is_hallucination:
+                logger.warning(
+                    "[Streaming v1.6.5] ⚠️ Hallucination détectée : "
+                    "l'utilisateur a demandé une action mais aucune n'a été exécutée. "
+                    "Cache SKIP."
+                )
+
             if (
                 BEK_ECO_CACHE_ENABLED
                 and _success
@@ -761,11 +774,11 @@ async def stream_chat(
                 and last_user_query
                 and full_text_accumulated
                 and not action_detected
+                and not _is_hallucination   # ★ v1.6.5
             ):
                 try:
                     final_response = "".join(full_text_accumulated)
                     if final_response and len(final_response) > 50:
-                        # ★ v1.6.4 — NE PAS cacher les réponses d'erreur
                         _lower = final_response.lower()
                         _error_markers = [
                             "erreur", "error", "échec", "failed",
@@ -781,7 +794,7 @@ async def stream_chat(
                             )
                         else:
                             logger.info(
-                                "[Streaming v1.6.4] Cache SKIP : réponse d'erreur détectée",
+                                "[Streaming v1.6.5] Cache SKIP : réponse d'erreur détectée",
                             )
                 except Exception:
                     pass
@@ -805,14 +818,14 @@ async def stream_chat(
                     pass
 
         except Exception as _loop_err:
-            logger.debug("[Streaming v1.6.4] Erreur finally : %s", _loop_err)
+            logger.debug("[Streaming v1.6.5] Erreur finally : %s", _loop_err)
 
         yield f"data: {json.dumps({'done': True})}\n\n"
 
 
 def get_streaming_summary() -> dict:
     return {
-        "version": "1.6.4",
+        "version": "1.6.5",
         "features": {
             "multi_actions": BEK_MULTI_ACTIONS_ENABLED,
             "closing_tag_tolerant": True,
@@ -820,6 +833,7 @@ def get_streaming_summary() -> dict:
             "★ regex_fix_v162": True,
             "★ vision_typo_fix_v163": True,
             "★ groq_free_optimized_v164": True,
+            "★ anti_hallucination_action_v165": True,
             "★ max_tokens": BEK_MAX_TOKENS,
             "★ truncate_security": True,
         },

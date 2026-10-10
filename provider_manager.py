@@ -1,10 +1,11 @@
 # ==============================================================================
 # BEK-v16 — Provider Manager (provider_manager.py)
 # ------------------------------------------------------------------------------
-# ★ v25.5 (2026-10-07) : FIX GROQ FREE TIER
-#   - Modèle Groq fallback : openai/gpt-oss-20b → llama-3.1-8b-instant
-#   - Cause : gpt-oss-120b/20b consomment trop de tokens (413 errors)
-#   - llama-3.1-8b-instant est plus économe et rapide
+# ★ v25.6 (2026-10-07) : FIX MODÈLE GROQ INVALIDE
+#   - Modèle Groq fallback : llama-3.1-8b-instant → openai/gpt-oss-20b
+#   - Cause : HTTP 404 "model not found" sur ce compte Groq
+#   - Ajout de llama-3.3-70b-versatile dans la liste des modèles Groq
+# ★ v25.5 (2026-10-07) : Fix Groq Free tier (413 errors)
 # ★ v25.4 (2026-10-06) : Vision NVIDIA réintégrée
 # ★ v25.3 (2026-10-04) : Fix provider fiable pour outils
 # ==============================================================================
@@ -112,11 +113,13 @@ class ProviderManager:
         "llm7_anonymous": [
             "llm7-gpt-oss-20b", "llm7-mistral-nemo", "llm7-minimax-m2.7",
         ],
+        # ★ v25.6 — Ajout de llama-3.3-70b-versatile (universellement supporté)
         "groq": [
+            "openai/gpt-oss-20b",            # ★ v25.6 — nouveau défaut
+            "llama-3.3-70b-versatile",       # ★ v25.6 — ajouté (stable)
             "openai/gpt-oss-120b",
-            "openai/gpt-oss-20b",
             "qwen/qwen3.6-27b",
-            "llama-3.1-8b-instant",
+            "llama-3.1-8b-instant",          # conservé (peut échouer selon compte)
             "groq/compound",
             "groq/compound-mini",
         ],
@@ -491,7 +494,7 @@ class ProviderManager:
         self,
         messages: List[Dict[str, Any]],
         provider: str = "groq",
-        model: str = "llama-3.1-8b-instant",
+        model: str = "openai/gpt-oss-20b",   # ★ v25.6
         temperature: float = 0.7,
         max_tokens: int = 2048,
         top_p: float = 0.9,
@@ -501,16 +504,16 @@ class ProviderManager:
             yield {"error": "Aucun message valide à envoyer."}
             return
 
-        # ★ v25.5 — Priorité aux providers FIABLES
+        # Priorité aux providers FIABLES pour l'exécution d'outils
         _RELIABLE_PROVIDERS = ("groq", "mistral", "cohere", "openrouter")
 
         if provider.lower() not in _RELIABLE_PROVIDERS:
             _original_provider = provider
             provider = "groq"
-            model = "llama-3.1-8b-instant"
+            model = "openai/gpt-oss-20b"   # ★ v25.6
             logger.warning(
                 "[ProviderManager] Provider '%s' non fiable pour les outils → "
-                "bascule sur 'groq/llama-3.1-8b-instant'",
+                "bascule sur 'groq/openai/gpt-oss-20b'",
                 _original_provider
             )
 
@@ -524,10 +527,10 @@ class ProviderManager:
             selected_provider = provider
             selected_model = model
 
-        # TPM Guard
+        # TPM Guard : tronque les requêtes géantes
         if total_chars > 30000:
             logger.warning(
-                "[TPM Guard] Requête géante (%d chars) — troncature à 5 messages.",
+                "[TPM Guard] Requête GÉANTE (%d chars) — troncature à 5 derniers messages.",
                 total_chars,
             )
             clean_msgs = clean_msgs[-5:]
@@ -544,8 +547,8 @@ class ProviderManager:
             if current_prov == selected_provider:
                 current_model = selected_model
             else:
-                # ★ v25.5 — Groq fallback = llama-3.1-8b-instant (léger)
-                if current_prov == "groq":             current_model = "llama-3.1-8b-instant"
+                # ★ v25.6 — Fallback par provider (avec modèles vérifiés)
+                if current_prov == "groq":             current_model = "openai/gpt-oss-20b"
                 elif current_prov == "gemini":         current_model = "gemini-3.8-flash"
                 elif current_prov == "openrouter":     current_model = "auto"
                 elif current_prov == "aisa":           current_model = "qwen-flash"
