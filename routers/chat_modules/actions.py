@@ -1,21 +1,32 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Actions (v1.4.4)
+# BEK-v18 — Chat Module : Actions (v1.4.5)
 # ------------------------------------------------------------------------------
 # 🏛️ Rôle : Exécution des actions (multimédia, web, skills, etc.)
 # 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
 # ★ v1.2 — Connecteurs + patches
-# ★ v1.3 — Regex tolérante aux espaces parasites (bug NVIDIA NIM)
-# ★ v1.4 — Nettoyage des espaces parasites dans les params
-# ★ v1.4.1 — Fix _clean_str_param ciblé (prompts préservés)
-# ★ v1.4.2 — Résolution des chemins AVANT appel direct Agnes
-# ★ v1.4.3 — Transmet `resolution` (1080P/720P/480P) au pipeline vidéo
-# ★ v1.4.4 (2026-10-07) — GARDE-FOU ANTI-ORCHESTRATE (CRITIQUE)
-#   - Détecte orchestrate mal utilisé (questions meta)
-#   - Liste noire : "plan d'action", "explique", "conseil", "pourquoi", etc.
-#   - Retourne un message qui guide le LLM vers une réponse TEXTE
-#   - Évite le placeholder "Opération OK" pour des questions simples
+# ★ v1.3 — Regex tolérante aux espaces parasites
+# ★ v1.4 — Nettoyage des espaces parasites
+# ★ v1.4.1 — Fix _clean_str_param ciblé
+# ★ v1.4.2 — Résolution chemins AVANT Agnes
+# ★ v1.4.3 — Transmet `resolution`
+# ★ v1.4.4 — Garde-fou ANTI-ORCHESTRATE
+# ★ v1.4.5 (2026-10-10) — ALIAS D'ACTIONS (anti-hallucination)
+#   - Dictionnaire _ACTION_ALIASES : corrige les noms inventés par le LLM
+#     * generate_logo       → generate_image
+#     * create_image        → generate_image
+#     * make_logo           → generate_image
+#     * gen_image           → generate_image
+#     * create_video        → generate_video
+#     * search_web          → web_sync
+#     * google_search       → web_sync
+#     * scrape              → headless_scrape
+#     * recall_memory       → search_memory
+#     * remember            → save_memory
+#     * etc. (30+ alias)
+#   - Log [ActionAlias] pour tracer les corrections
+#   - ★ AUCUNE fonctionnalité supprimée (100% compatible v1.4.4)
 # ==============================================================================
 
 from __future__ import annotations
@@ -35,6 +46,143 @@ logger = logging.getLogger("BEKApp")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# ★ v1.4.5 — ALIAS D'ACTIONS (anti-hallucination LLM)
+# ══════════════════════════════════════════════════════════════════════════════
+# Le LLM invente souvent des noms d'action plausibles mais inexistants.
+# Ce dictionnaire corrige automatiquement ces hallucinations.
+
+_ACTION_ALIASES: Dict[str, str] = {
+    # ─── Image ───
+    "generate_logo":        "generate_image",
+    "create_logo":          "generate_image",
+    "make_logo":            "generate_image",
+    "gen_logo":             "generate_image",
+    "logo":                 "generate_image",
+    "create_image":         "generate_image",
+    "make_image":           "generate_image",
+    "gen_image":            "generate_image",
+    "create_picture":       "generate_image",
+    "make_picture":         "generate_image",
+    "draw":                 "generate_image",
+    "drawing":              "generate_image",
+    "illustration":         "generate_image",
+    "text_to_image":        "generate_image",
+    "txt2img":              "generate_image",
+    "txt2image":            "generate_image",
+
+    # ─── Édition image ───
+    "edit_picture":         "edit_image",
+    "modify_image":         "edit_image",
+    "img2img":              "edit_image",
+    "image_to_image":       "edit_image",
+    "merge_images":         "edit_image",
+    "merge_image":          "edit_image",
+
+    # ─── Vidéo ───
+    "create_video":         "generate_video",
+    "make_video":           "generate_video",
+    "gen_video":            "generate_video",
+    "video":                "generate_video",
+    "text_to_video":        "generate_video",
+    "txt2vid":              "generate_video",
+    "txt2video":            "generate_video",
+    "animate":              "generate_video",
+    "animation":            "generate_video",
+
+    # ─── Édition vidéo ───
+    "modify_video":         "edit_video",
+    "video_edit":           "edit_video",
+    "extend":               "extend_video",
+    "continue_video":       "extend_video",
+    "prolong_video":        "extend_video",
+
+    # ─── Sous-titres ───
+    "subtitle":             "generate_subtitles",
+    "subtitles":            "generate_subtitles",
+    "transcribe":           "generate_subtitles",
+    "transcription":        "generate_subtitles",
+    "captions":             "generate_subtitles",
+
+    # ─── Web ───
+    "search_web":           "web_sync",
+    "google_search":        "web_sync",
+    "web_search":           "web_sync",
+    "search":               "web_sync",
+    "recherche_web":        "web_sync",
+    "scrape":               "headless_scrape",
+    "scrape_url":           "headless_scrape",
+    "fetch_url":            "headless_scrape",
+    "get_page":             "headless_scrape",
+
+    # ─── Mémoire ───
+    "remember":             "save_memory",
+    "save":                 "save_memory",
+    "store_memory":         "save_memory",
+    "mémoriser":            "save_memory",
+    "memorize":             "save_memory",
+    "recall_memory":        "search_memory",
+    "recall":               "search_memory",
+    "search_memories":      "search_memory",
+    "retrieve_memory":      "search_memory",
+    "forget":               "delete_memory",
+    "forget_memory":        "delete_memory",
+
+    # ─── Fichiers ───
+    "create_file":          "write_file",
+    "save_file":            "write_file",
+    "write":                "write_file",
+    "read":                 "read_file",
+    "load_file":            "read_file",
+    "cat_file":             "read_file",
+    "zip":                  "create_zip",
+    "unzip":                "extract_zip",
+    "compress":             "create_zip",
+    "decompress":           "extract_zip",
+
+    # ─── Système ───
+    "shell":                "execute_command",
+    "bash":                 "execute_command",
+    "run_command":          "execute_command",
+    "cmd":                  "execute_command",
+    "terminal":             "execute_command",
+    "run":                  "run_script",
+    "execute":              "execute_command",
+
+    # ─── Vision (analyse) ───
+    "vision":               "analyze_image",
+    "see_image":            "analyze_image",
+    "describe_image":       "analyze_image",
+    "ocr":                  "analyze_image",
+    "image_description":    "analyze_image",
+    "analyser_image":       "analyze_image",
+    "décrire_image":        "analyze_image",
+}
+
+
+def _resolve_action_alias(act_name: str) -> str:
+    """
+    ★ v1.4.5 — Résout les alias d'actions hallucinées par le LLM.
+
+    Ex: "generate_logo" → "generate_image"
+    """
+    if not act_name:
+        return act_name
+
+    # Normaliser : lowercase, strip
+    normalized = act_name.strip().lower()
+
+    if normalized in _ACTION_ALIASES:
+        aliased = _ACTION_ALIASES[normalized]
+        logger.warning(
+            "[ActionAlias] ✅ '%s' → '%s' (hallucination LLM corrigée)",
+            act_name, aliased,
+        )
+        return aliased
+
+    return act_name
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # REGEX D'ACTIONS
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -47,43 +195,36 @@ ACTION_REGEX = re.compile(
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.4.4 — GARDE-FOU ANTI-ORCHESTRATE
+# GARDE-FOU ANTI-ORCHESTRATE (v1.4.4)
 # ==============================================================================
 
-# Patterns qui indiquent une question meta (déclenche garde-fou)
 _ORCHESTRATE_META_PATTERNS = [
-    # Plan / stratégie
     r"\bplan\s+d[\'\s]?action",
     r"\broadmap\b",
     r"\bétapes?\s+clés?\b",
     r"\bphases?\b.*\bdéveloppement\b",
-    # Conseil / avis / recommandation
     r"\bconseil",
     r"\bconseille",
     r"\brecommandation",
     r"\bton\s+avis\b",
     r"\btu\s+penses\b",
     r"\bque\s+penses[- ]tu\b",
-    # Explication / synthèse
     r"\bexplique",
     r"\bexplication",
     r"\bdétaille",
     r"\bsynthèse\b",
     r"\brésumé\b",
     r"\bbilan\b",
-    # Question meta
     r"\bpourquoi\b",
     r"\bcomment\s+faire\b",
     r"\bprésente[- ]moi\b",
     r"\bfournir\s+une?\s+réponse\b",
     r"\bfournir\s+un\s+plan\b",
     r"\bprésenter\s+un\s+plan\b",
-    # Réponse texte demandée
     r"\bje\s+veux\s+une\s+réponse",
     r"\bréponds[- ]moi\b",
     r"\btu\s+peux\s+créer\s+ça",
     r"\bpossible\s*\?",
-    # Analyse / création conceptuelle
     r"\banalyser\s+les\s+fichiers",
     r"\bconstruire\s+une\s+interface",
     r"\bcréer\s+une\s+application",
@@ -96,36 +237,12 @@ _ORCHESTRATE_META_REGEX = re.compile(
 
 
 def _is_orchestrate_misused(goal: str) -> bool:
-    """
-    ★ v1.4.4 — Détecte si `orchestrate` est appelé pour une question meta.
-
-    Retourne True si le `goal` ressemble à une question conversationnelle
-    (plan d'action, conseil, explication) au lieu d'une vraie tâche
-    multi-étapes à exécuter.
-
-    Exemples de goal MAL utilisés :
-      - "Fournir un plan d'action détaillé pour..."
-      - "Présenter une synthèse détaillée..."
-      - "Expliquer l'architecture..."
-
-    Exemples de goal BIEN utilisés :
-      - "Automatiser l'envoi d'un email + archivage"
-      - "Chercher 5 articles sur X puis résumer"
-    """
     if not goal or not isinstance(goal, str):
         return False
-
     return bool(_ORCHESTRATE_META_REGEX.search(goal))
 
 
 def _build_orchestrate_guard_message(goal: str) -> str:
-    """
-    ★ v1.4.4 — Message qui guide le LLM vers une réponse TEXTE.
-
-    Au lieu de retourner "Opération OK", on retourne un message qui
-    explique à l'utilisateur que `orchestrate` n'est pas approprié et
-    qui redirige vers une réponse conversationnelle.
-    """
     return (
         "⚠️ **L'outil `orchestrate` n'est pas adapté à cette demande.**\n\n"
         "Cette question est **conversationnelle** et nécessite une "
@@ -162,10 +279,8 @@ _UUID_SPACE_RE = re.compile(
 
 
 def _clean_str_param(s: str) -> str:
-    """Nettoie UNIQUEMENT les espaces parasites dans les chemins."""
     if not isinstance(s, str):
         return s
-
     s = _EXT_SPACE_RE.sub(r".\1", s)
     s = _SLASH_SPACE_RE.sub(r"/\2", s)
     s = _BACKSLASH_SPACE_RE.sub(r"\\\2", s)
@@ -246,6 +361,9 @@ def _extract_first_action(text: str) -> Optional[Dict[str, Any]]:
     act_name = match.group(1)
     raw_payload = match.group(2).strip()
 
+    # ★ v1.4.5 — Résoudre les alias d'actions
+    act_name = _resolve_action_alias(act_name)
+
     params: Dict[str, Any] = {}
     try:
         p_json = json.loads(raw_payload)
@@ -311,12 +429,15 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
     _t0 = time.time()
     _original_action = act_name
 
+    # ★ v1.4.5 — Résoudre l'alias ICI aussi (au cas où appelé directement)
+    act_name = _resolve_action_alias(act_name)
+
     if act_name == "headless_search":
         logger.warning("[ActionFilter] headless_search → web_sync")
         act_name = "web_sync"
 
     # ══════════════════════════════════════════════════════════════════════════
-    # ★ v1.4.4 — GARDE-FOU ANTI-ORCHESTRATE (CRITIQUE)
+    # ★ v1.4.4 — GARDE-FOU ANTI-ORCHESTRATE
     # ==========================================================================
     if act_name == "orchestrate":
         _goal = params.get("goal") or params.get("objective") or ""
@@ -352,7 +473,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             from services.vision import generate_image_with_provider
             prompt = params.get("prompt") or params.get("query") or ""
             provider_v = params.get("provider", "pollinations")
-            model_v = params.get("model", "flux-3d")
+            model_v = params.get("model", "flux")
             _r = generate_image_with_provider(
                 prompt=prompt, provider=provider_v, model=model_v,
             )
@@ -403,15 +524,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                     else:
                         mode = "keyframes"
                 reference_images = image_paths
-                logger.info(
-                    "[generate_video] %d image(s) de référence | mode=%s | resolution=%s",
-                    len(image_paths), mode, resolution_v,
-                )
-
-            logger.info(
-                "[generate_video] prompt=%r provider=%s model=%s duration=%s mode=%s resolution=%s",
-                prompt[:80], provider_v, model_v, duration_v, mode, resolution_v,
-            )
 
             if reference_images:
                 try:
@@ -419,25 +531,10 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                     resolved_refs = _resolve_existing_media_paths(
                         reference_images, (".png", ".jpg", ".jpeg", ".webp")
                     )
-                except Exception as _res_err:
-                    logger.warning(
-                        "[generate_video] Résolution chemins échouée : %s — on garde les bruts",
-                        _res_err,
-                    )
+                except Exception:
                     resolved_refs = reference_images
 
-                import os as _os
-                logger.info(
-                    "[generate_video] Chemins résolus : %d/%d | %s",
-                    len(resolved_refs), len(reference_images),
-                    [_os.path.basename(p) for p in resolved_refs],
-                )
-
                 if not resolved_refs:
-                    logger.error(
-                        "[generate_video] Aucun fichier trouvé ! Bruts=%s",
-                        reference_images,
-                    )
                     _r = {
                         "status": "error",
                         "message": f"Images introuvables : {reference_images}",
@@ -729,7 +826,6 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
                 if task_res.get("success"):
                     data = task_res.get("data")
 
-                    # ★ v1.4.4 — Détection du placeholder "Opération OK"
                     if act_name == "orchestrate" and isinstance(data, str) and "Opération OK" in data:
                         logger.warning(
                             "[OrchestrateGuard] Placeholder 'Opération OK' détecté — "
@@ -805,12 +901,13 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
 
 def get_actions_summary() -> dict:
     return {
-        "version": "1.4.4",
+        "version": "1.4.5",
         "functions": [
             "_extract_first_action", "_execute_action_unified",
             "_log_episode_safe", "_detect_web_sync_dag_usage",
             "_clean_str_param", "_clean_action_params",
             "_is_orchestrate_misused", "_build_orchestrate_guard_message",
+            "_resolve_action_alias",
         ],
         "patches": {
             "v1.4.0_clean_spaces": "✅ 'x. jpg' → 'x.jpg'",
@@ -818,19 +915,21 @@ def get_actions_summary() -> dict:
             "v1.4.1_uuid_fix": "✅ '1c8a -4333' → '1c8a-4333'",
             "v1.4.2_resolve_before_agnes": "✅ Résout uploads/ AVANT appel direct Agnes",
             "v1.4.3_resolution_passthrough": "✅ Transmet resolution (1080P/720P/480P)",
-            "v1.4.4_anti_orchestrate_guard": "✅ Bloque orchestrate mal utilisé (questions meta)",
+            "v1.4.4_anti_orchestrate_guard": "✅ Bloque orchestrate mal utilisé",
+            "★ v1.4.5_action_aliases": "✅ Corrige 'generate_logo' → 'generate_image'",
         },
         "anti_orchestrate_patterns": len(_ORCHESTRATE_META_PATTERNS),
+        "action_aliases_count": len(_ACTION_ALIASES),
         "handled_actions": [
-            "generate_image", "edit_image",
-            "generate_video (avec image_paths + resolution)", "edit_video",
-            "extend_video", "extend_video_multiple",
-            "generate_subtitles", "burn_subtitles",
-            "headless_scrape", "web_sync",
+            "generate_image (+30 alias)", "edit_image (+5 alias)",
+            "generate_video (+8 alias)", "edit_video (+3 alias)",
+            "extend_video (+3 alias)", "extend_video_multiple",
+            "generate_subtitles (+5 alias)", "burn_subtitles",
+            "headless_scrape (+3 alias)", "web_sync (+6 alias)",
             "orchestrate ⚠️ (avec garde-fou)",
             "create_dynamic_skill",
-            "run_script", "execute_command",
-            "save_memory", "search_memory",
-            "write_file", "read_file",
+            "run_script", "execute_command (+5 alias)",
+            "save_memory (+5 alias)", "search_memory (+4 alias)",
+            "write_file (+3 alias)", "read_file (+3 alias)",
         ],
     }

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Streaming (v1.6.5)
+# BEK-v18 — Chat Module : Streaming (v1.6.6)
 # ------------------------------------------------------------------------------
-# ★ v1.6.5 (2026-10-07) : ANTI-HALLUCINATION ACTION
-#   - Détecte quand l'utilisateur demande une action mais le LLM ne l'exécute pas
-#   - Bloque la mise en cache des réponses hallucinées
-# ★ v1.6.4 (2026-10-07) : RÉDUCTION TOKENS POUR GROQ FREE
-#   - max_tokens : 4096 → 2048
-#   - Troncature de sécurité des messages > 3000 chars
-# ★ v1.6.3 : Fix "Décriscette" collé
-# ★ v1.6.2 : Fix regex qui cassait les mots
+# ★ v1.6.6 (2026-10-10) : FIX CRITIQUE ESPACES SUPPRIMÉS
+#   - _strip_reasoning() ne strip PLUS les chunks purement espaces
+#   - stream_chat() utilise `if not chunk:` au lieu de `if not chunk.strip():`
+#   - Résultat : "Bonjour!Voiciune" → "Bonjour! Voici une"
+# ★ v1.6.5 : anti-hallucination action
+# ★ v1.6.4 : réduction tokens Groq free
+# ★ v1.6.3 : fix "Décriscette" collé
+# ★ v1.6.2 : fix regex qui cassait les mots
 # ==============================================================================
 
 from __future__ import annotations
@@ -103,7 +103,7 @@ def _find_all_complete_actions(text: str) -> List[Dict[str, Any]]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.6.4 — TRONCATURE DE SÉCURITÉ (anti-413)
+# TRONCATURE DE SÉCURITÉ (anti-413)
 # ==============================================================================
 
 def _truncate_messages_for_groq(
@@ -111,11 +111,9 @@ def _truncate_messages_for_groq(
     max_chars_per_msg: int = 3000,
     max_total_chars: int = 10000,
 ) -> List[Dict[str, Any]]:
-    """Tronque les messages avant envoi au LLM."""
     if not messages:
         return messages
 
-    # ─── 1. Troncature par message ───
     truncated = []
     for msg in messages:
         if not isinstance(msg, dict):
@@ -131,7 +129,6 @@ def _truncate_messages_for_groq(
             msg = {**msg, "content": content}
         truncated.append(msg)
 
-    # ─── 2. Troncature globale (garde la fin) ───
     total = sum(len(m.get("content", "")) for m in truncated)
     if total <= max_total_chars:
         return truncated
@@ -152,20 +149,19 @@ def _truncate_messages_for_groq(
         running += msg_len
 
     result = system_msgs + kept
-
     logger.warning(
-        "[Streaming v1.6.4] Troncature : %d → %d messages | %d → %d chars",
-        len(messages), len(result), total, sum(len(m.get("content", "")) for m in result),
+        "[Streaming v1.6.6] Troncature : %d → %d messages | %d → %d chars",
+        len(messages), len(result), total,
+        sum(len(m.get("content", "")) for m in result),
     )
     return result
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.6.3 — NORMALISATION DES STRINGS LLM
+# NORMALISATION DES STRINGS LLM (params uniquement)
 # ══════════════════════════════════════════════════════════════════════════════
 
 _NORMALIZE_PATTERNS = [
-    # ─── Collisions AI ───
     (r'\baistartup\b', 'AI startup'),
     (r'\baimodel\b', 'AI model'),
     (r'\baicompany\b', 'AI company'),
@@ -173,8 +169,6 @@ _NORMALIZE_PATTERNS = [
     (r'\baiassistant\b', 'AI assistant'),
     (r'\baichat\b', 'AI chat'),
     (r'\baitool\b', 'AI tool'),
-
-    # ─── Fix vision ───
     (r'\bdécriscette\b', 'décris cette'),
     (r'\bdecriscette\b', 'decris cette'),
     (r'\bdécriscetimage\b', 'décris cette image'),
@@ -188,8 +182,6 @@ _NORMALIZE_PATTERNS = [
     (r'\bmontrecette\b', 'montre cette'),
     (r'\bdécrisce\b', 'décris ce'),
     (r'\bdecrisce\b', 'decris ce'),
-
-    # ─── Autres mots collés ───
     (r'\bsleeklogo\b', 'sleek logo'),
     (r'\bmodernlogo\b', 'modern logo'),
     (r'\bminimalistlogo\b', 'minimalist logo'),
@@ -238,17 +230,14 @@ _NORMALIZE_PATTERNS = [
 
 
 def _normalize_llm_string(text: str) -> str:
-    """Normalise une string générée par le LLM."""
     if not text or not isinstance(text, str):
         return text
-
     if text.startswith(("http://", "https://", "/", "./", "data:")):
         return text
     if text.startswith("{") and text.endswith("}"):
         return text
 
     result = text
-
     for pattern, replacement in _NORMALIZE_PATTERNS:
         result = _re.sub(pattern, replacement, result, flags=_re.IGNORECASE)
 
@@ -257,12 +246,10 @@ def _normalize_llm_string(text: str) -> str:
     result = _re.sub(r'([a-zA-Z]):([^\s/])', r'\1: \2', result)
     result = _re.sub(r'\s+', ' ', result).strip()
     result = _re.sub(r'\s+([,;:.!?])', r'\1', result)
-
     return result
 
 
 def _normalize_action_params(params: Dict[str, Any]) -> Dict[str, Any]:
-    """Normalise récursivement les params d'une action."""
     if not isinstance(params, dict):
         return params
 
@@ -381,14 +368,25 @@ _THINKING_LINE_PATTERNS = (
 
 
 def _strip_reasoning(text: str) -> str:
+    """
+    ★ v1.6.6 — Ne strip PLUS les chunks purement espaces.
+    """
     if not text:
         return text
+
+    # ★ v1.6.6 — CRITIQUE : si le chunk est uniquement des espaces,
+    #              on le retourne tel quel (pour préserver les espaces
+    #              entre les mots dans le streaming).
+    if text.strip() == "":
+        return text
+
     for pattern in _THINKING_PATTERNS:
         text = pattern.sub("", text)
     for pattern in _THINKING_LINE_PATTERNS:
         text = pattern.sub("", text)
     text = _re.sub(r"\n{3,}", "\n\n", text)
-    return text.strip()
+    # ★ v1.6.6 — Suppression du .strip() final qui tuait les espaces
+    return text
 
 
 def _sanitize_llm_output(text: str, strip_reasoning: bool = True) -> str:
@@ -441,9 +439,7 @@ async def stream_chat(
 
     full_text_accumulated: List[str] = []
 
-    # ══════════════════════════════════════════════════════════════════
-    # ★ v1.6.4 — TRONCATURE DE SÉCURITÉ AVANT ENVOI
-    # ==========================================================================
+    # ─── TRONCATURE DE SÉCURITÉ ───
     _total_before = sum(len(m.get("content", "")) for m in exec_messages if isinstance(m, dict))
     exec_messages = _truncate_messages_for_groq(
         exec_messages,
@@ -452,13 +448,11 @@ async def stream_chat(
     )
     _total_after = sum(len(m.get("content", "")) for m in exec_messages if isinstance(m, dict))
     logger.info(
-        "[Streaming v1.6.5] Requête : %d messages | %d → %d chars (limite %d)",
+        "[Streaming v1.6.6] Requête : %d messages | %d → %d chars (limite %d)",
         len(exec_messages), _total_before, _total_after, cfg.MAX_TOTAL_CHARS,
     )
 
-    # ══════════════════════════════════════════════════════════════════
-    # PRÉ-PARSING
-    # ==========================================================================
+    # ─── PRÉ-PARSING actions utilisateur ───
     _user_part = last_user_query or ""
     _instr_pos = _user_part.find("(INSTRUCTION SYSTEME")
     if _instr_pos > 0:
@@ -468,7 +462,7 @@ async def stream_chat(
 
     if _user_actions:
         logger.info(
-            "[Streaming v1.6.5] %d action(s) utilisateur — exécution DIRECTE",
+            "[Streaming v1.6.6] %d action(s) utilisateur — exécution DIRECTE",
             len(_user_actions),
         )
         _direct_msg = "\n\n⚙️ *Exécution directe...*\n\n"
@@ -483,7 +477,7 @@ async def stream_chat(
                 _ua_params["model"] = model
 
             logger.info(
-                "[Streaming v1.6.5] 🎯 Action directe %d : %s",
+                "[Streaming v1.6.6] 🎯 Action directe %d : %s",
                 _idx, _ua_name,
             )
             _exec_msg = f"\n\n⚙️ *Exécution {_idx}...*\n"
@@ -495,13 +489,13 @@ async def stream_chat(
                 _elapsed = (time.monotonic() - _t0) * 1000
                 _res_msg = fmt._format_execution_result(_ua_name, _exec_res)
                 logger.info(
-                    "[Streaming v1.6.5] ✅ Action %s terminée (%.0fms)",
+                    "[Streaming v1.6.6] ✅ Action %s terminée (%.0fms)",
                     _ua_name, _elapsed,
                 )
                 _res_chunk = "\n\n" + str(_res_msg) + "\n\n"
                 yield f"data: {json.dumps({'chunk': _res_chunk})}\n\n"
             except Exception as _err:
-                logger.exception("[Streaming v1.6.5] Action %s échouée", _ua_name)
+                logger.exception("[Streaming v1.6.6] Action %s échouée", _ua_name)
                 _err_chunk = f"\n\n⚠️ Erreur action {_ua_name} : {_err}\n\n"
                 yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
 
@@ -527,11 +521,11 @@ async def stream_chat(
 
     is_freshness_query = rt._bek_rex_is_freshness_query(last_user_query)
     if is_freshness_query:
-        logger.info("[Streaming v1.6.5] Requête de fraîcheur détectée")
+        logger.info("[Streaming v1.6.6] Requête de fraîcheur détectée")
 
     _detected_ego = rt._bek_rex_detect_alter_ego(last_user_query)
     if _detected_ego and _detected_ego != "bek":
-        logger.info("[Streaming v1.6.5] 🎭 Alter ego activé : %s", _detected_ego)
+        logger.info("[Streaming v1.6.6] 🎭 Alter ego activé : %s", _detected_ego)
         _alter_ego_prompt = rt._bek_rex_get_alter_ego_prompt(_detected_ego)
         if _alter_ego_prompt:
             for _msg in exec_messages:
@@ -543,12 +537,12 @@ async def stream_chat(
         try:
             _routing_result = rt._bek_rex_route(last_user_query)
             logger.info(
-                "[Streaming v1.6.5] BEK-REX tier=%s conf=%.2f",
+                "[Streaming v1.6.6] BEK-REX tier=%s conf=%.2f",
                 _routing_result.get("tier"),
                 _routing_result.get("confidence", 0.0),
             )
         except Exception as _rex_err:
-            logger.warning("[Streaming v1.6.5] BEK-REX échec : %s", _rex_err)
+            logger.warning("[Streaming v1.6.6] BEK-REX échec : %s", _rex_err)
             _routing_result = {"tier": "TIER_3", "confidence": 0.5}
 
         _tier = _routing_result.get("tier", "TIER_3")
@@ -569,7 +563,7 @@ async def stream_chat(
                         yield f"data: {json.dumps({'done': True})}\n\n"
                         return
             except Exception as _eco_err:
-                logger.warning("[Streaming v1.6.5] BEK-ECO échec : %s", _eco_err)
+                logger.warning("[Streaming v1.6.6] BEK-ECO échec : %s", _eco_err)
 
         for item in provider_manager.execute_chat_stream(
             messages=exec_messages,
@@ -598,9 +592,13 @@ async def stream_chat(
 
             chunk = item["chunk"]
             chunk = _sanitize_llm_output(chunk, strip_reasoning=True)
-            if not chunk.strip():
+
+            # ★ v1.6.6 — CRITIQUE : `if not chunk` au lieu de `if not chunk.strip()`
+            # Sinon les chunks d'espace " " sont supprimés → mots collés !
+            if not chunk:
                 continue
 
+            # ─── Anti-hallucination post-action ───
             if BEK_ANTIHALLU_ENABLED and _post_action_mode:
                 _post_action_grace_chunks += 1
                 if _post_action_grace_chunks > BEK_POST_ACTION_GRACE_MAX:
@@ -652,6 +650,7 @@ async def stream_chat(
 
             yield f"data: {json.dumps({'chunk': chunk}, ensure_ascii=False)}\n\n"
 
+            # ─── Extraction multi-actions ───
             if BEK_MULTI_ACTIONS_ENABLED and action_detected:
                 all_actions = _find_all_complete_actions(current_text)
                 for action in all_actions:
@@ -665,7 +664,7 @@ async def stream_chat(
                     params = _normalize_action_params(action["params"])
 
                     logger.info(
-                        "[Streaming v1.6.5] 🎯 Action %d : %s",
+                        "[Streaming v1.6.6] 🎯 Action %d : %s",
                         total_actions_executed + 1, act_name,
                     )
 
@@ -700,11 +699,11 @@ async def stream_chat(
                         _last_action_end_pos = end_pos
 
                         logger.info(
-                            "[Streaming v1.6.5] ✅ Action %s terminée (%.0fms)",
+                            "[Streaming v1.6.6] ✅ Action %s terminée (%.0fms)",
                             act_name, _action_elapsed_ms,
                         )
                     except Exception as _act_err:
-                        logger.exception("[Streaming v1.6.5] Action %s échouée", act_name)
+                        logger.exception("[Streaming v1.6.6] Action %s échouée", act_name)
                         err_chunk = f"\n\n⚠️ Erreur action {act_name} : {_act_err}\n\n"
                         yield f"data: {json.dumps({'chunk': err_chunk})}\n\n"
                         processed_actions.add(end_pos)
@@ -717,7 +716,7 @@ async def stream_chat(
                     _post_action_grace_chunks = 0
 
     except Exception as stream_err:
-        logger.error("[Streaming v1.6.5] Erreur : %s", stream_err, exc_info=True)
+        logger.error("[Streaming v1.6.6] Erreur : %s", stream_err, exc_info=True)
         err_msg = f"\n\n⚠️ Flux Error : {stream_err}\n"
         yield f"data: {json.dumps({'chunk': err_msg})}\n\n"
         _success = False
@@ -741,12 +740,7 @@ async def stream_chat(
                 except Exception:
                     pass
 
-            # ══════════════════════════════════════════════════════════════
-            # ★ v1.6.5 — ANTI-HALLUCINATION ACTION
-            # ------------------------------------------------------------------
-            # Détecte quand l'utilisateur demande une action mais qu'aucune
-            # n'a été exécutée → NE PAS CACHER la réponse.
-            # ══════════════════════════════════════════════════════════════
+            # ─── Anti-hallucination action ───
             _should_have_action = False
             if last_user_query:
                 _q_lower = last_user_query.lower()
@@ -762,7 +756,7 @@ async def stream_chat(
 
             if _is_hallucination:
                 logger.warning(
-                    "[Streaming v1.6.5] ⚠️ Hallucination détectée : "
+                    "[Streaming v1.6.6] ⚠️ Hallucination détectée : "
                     "l'utilisateur a demandé une action mais aucune n'a été exécutée. "
                     "Cache SKIP."
                 )
@@ -774,7 +768,7 @@ async def stream_chat(
                 and last_user_query
                 and full_text_accumulated
                 and not action_detected
-                and not _is_hallucination   # ★ v1.6.5
+                and not _is_hallucination
             ):
                 try:
                     final_response = "".join(full_text_accumulated)
@@ -794,7 +788,7 @@ async def stream_chat(
                             )
                         else:
                             logger.info(
-                                "[Streaming v1.6.5] Cache SKIP : réponse d'erreur détectée",
+                                "[Streaming v1.6.6] Cache SKIP : réponse d'erreur détectée",
                             )
                 except Exception:
                     pass
@@ -818,23 +812,23 @@ async def stream_chat(
                     pass
 
         except Exception as _loop_err:
-            logger.debug("[Streaming v1.6.5] Erreur finally : %s", _loop_err)
+            logger.debug("[Streaming v1.6.6] Erreur finally : %s", _loop_err)
 
         yield f"data: {json.dumps({'done': True})}\n\n"
 
 
 def get_streaming_summary() -> dict:
     return {
-        "version": "1.6.5",
+        "version": "1.6.6",
         "features": {
             "multi_actions": BEK_MULTI_ACTIONS_ENABLED,
             "closing_tag_tolerant": True,
-            "★ llm_string_normalization": True,
-            "★ regex_fix_v162": True,
-            "★ vision_typo_fix_v163": True,
-            "★ groq_free_optimized_v164": True,
-            "★ anti_hallucination_action_v165": True,
-            "★ max_tokens": BEK_MAX_TOKENS,
-            "★ truncate_security": True,
+            "llm_string_normalization": True,
+            "regex_fix_v162": True,
+            "vision_typo_fix_v163": True,
+            "groq_free_optimized_v164": True,
+            "anti_hallucination_action_v165": True,
+            "★ whitespace_preserved_v166": True,
+            "max_tokens": BEK_MAX_TOKENS,
         },
     }
