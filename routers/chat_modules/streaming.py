@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Chat Module : Streaming (v1.6.6)
+# BEK-v18 — Chat Module : Streaming (v1.6.7)
 # ------------------------------------------------------------------------------
-# ★ v1.6.6 (2026-10-10) : FIX CRITIQUE ESPACES SUPPRIMÉS
-#   - _strip_reasoning() ne strip PLUS les chunks purement espaces
-#   - stream_chat() utilise `if not chunk:` au lieu de `if not chunk.strip():`
-#   - Résultat : "Bonjour!Voiciune" → "Bonjour! Voici une"
-# ★ v1.6.5 : anti-hallucination action
-# ★ v1.6.4 : réduction tokens Groq free
-# ★ v1.6.3 : fix "Décriscette" collé
-# ★ v1.6.2 : fix regex qui cassait les mots
+# ★ v1.6.7 (2026-10-10) : FORÇAGE D'ACTION CÔTÉ SERVEUR
+#   - Détecte quand le LLM refuse de générer une image (invente du SVG/code)
+#   - Force l'exécution de generate_image NOUS-MÊMES
+#   - Extrait le sujet du prompt utilisateur → prompt anglais propre
+#   - Remplace la réponse hallucinée par l'image générée
+# ★ v1.6.6 : préservation des espaces
+# ★ v1.6.5 : anti-hallucination
+# ★ v1.6.4 : troncature sécurité
 # ==============================================================================
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ logger = logging.getLogger("BEKApp")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# REGEX UNIFIÉE POUR LES ACTIONS
+# REGEX ACTIONS
 # ==============================================================================
 
 _ACTION_FULL_RE = _re.compile(
@@ -53,11 +53,7 @@ _CLOSING_ACTION_LOOSE_RE = _re.compile(
 def _has_closing_action(text: str) -> bool:
     if not text:
         return False
-    if _CLOSING_ACTION_RE.search(text):
-        return True
-    if _CLOSING_ACTION_LOOSE_RE.search(text):
-        return True
-    return False
+    return bool(_CLOSING_ACTION_RE.search(text) or _CLOSING_ACTION_LOOSE_RE.search(text))
 
 
 def _has_opening_action(text: str) -> bool:
@@ -69,13 +65,11 @@ def _has_opening_action(text: str) -> bool:
 def _find_all_complete_actions(text: str) -> List[Dict[str, Any]]:
     if not text:
         return []
-
     results = []
     for match in _ACTION_FULL_RE.finditer(text):
         act_name = match.group(1)
         raw_payload = match.group(2).strip()
         end_pos = match.end()
-
         params: Dict[str, Any] = {}
         try:
             import json as _json
@@ -90,20 +84,115 @@ def _find_all_complete_actions(text: str) -> List[Dict[str, Any]]:
                     params = p_ast
             except Exception:
                 pass
-
         params = act._clean_action_params(params)
-
-        results.append({
-            "name": act_name,
-            "params": params,
-            "end_pos": end_pos,
-        })
-
+        results.append({"name": act_name, "params": params, "end_pos": end_pos})
     return results
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TRONCATURE DE SÉCURITÉ (anti-413)
+# ★ v1.6.7 — DÉTECTION "LLM A REFUSÉ DE GÉNÉRER UNE IMAGE"
+# ==============================================================================
+
+# Mots-clés qui indiquent que l'utilisateur veut une IMAGE
+_USER_IMAGE_INTENT_KEYWORDS = [
+    "logo", "image", "illustration", "visuel", "icône", "icone", "icone",
+    "dessine", "dessin", "schéma", "schema", "graphique", "affiche",
+    "génère une image", "genere une image", "créer une image", "creer une image",
+    "fais-moi une image", "fais moi une image", "fais-moi un logo", "fais moi un logo",
+    "crée une image", "cree une image", "crée un logo", "cree un logo",
+    "image de", "logo de", "logo pour",
+]
+
+# Motifs qui indiquent que le LLM a inventé du code/SVG au lieu de générer
+_LLM_REFUSAL_PATTERNS = [
+    r"<svg[\s>]",                          # SVG inline
+    r"```\s*(svg|xml|html)",               # Bloc code svg/xml/html
+    r"rendu\s+vectoriel",                  # "Rendu vectoriel immédiat"
+    r"je\s+ne\s+peux\s+pas\s+générer",      # "je ne peux pas générer directement"
+    r"je\s+ne\s+peux\s+pas\s+creer",       # idem
+    r"en\s+tant\s+qu.intelligence\s+textuelle",  # Préambule refus classique
+    r"je\s+suis\s+une\s+ia\s+textuelle",
+    r"je\s+ne\s+suis\s+pas\s+capable\s+de\s+générer",
+    r"voici\s+un\s+code\s+svg",
+    r"copiez\s+ce\s+code",
+    r"collez\s+ce\s+code",
+]
+
+_LLM_REFUSAL_RE = _re.compile("|".join(_LLM_REFUSAL_PATTERNS), _re.IGNORECASE)
+
+
+def _user_wants_image(query: str) -> bool:
+    """Détecte si l'utilisateur demande une image dans sa requête."""
+    if not query:
+        return False
+    q_lower = query.lower()
+    return any(kw in q_lower for kw in _USER_IMAGE_INTENT_KEYWORDS)
+
+
+def _llm_refused_to_generate(full_response: str) -> bool:
+    """Détecte si le LLM a refusé et inventé du code à la place."""
+    if not full_response:
+        return False
+    # Vérifier la présence d'un pattern de refus
+    if _LLM_REFUSAL_RE.search(full_response):
+        return True
+    # Vérifier présence de balises SVG/HTML
+    if "<svg" in full_response.lower() or "<html" in full_response.lower():
+        return True
+    return False
+
+
+def _extract_image_subject(user_query: str) -> str:
+    """
+    Extrait le sujet principal d'une requête utilisateur pour construire
+    un prompt Pollinations propre.
+    """
+    if not user_query:
+        return "abstract AI logo, minimalist, modern"
+
+    q = user_query.strip()
+    # Retirer les préambules courants
+    q = _re.sub(
+        r"^\s*(fais[- ]moi|cr[ée]e[rz]?|g[ée]n[èe]re[rz]?|dessine|je\s+veux|donne[- ]moi)\s+",
+        "", q, flags=_re.IGNORECASE,
+    )
+    # Nettoyer
+    q = _re.sub(r"\s+", " ", q).strip(" .,!?;:")
+
+    # Traduction simple FR→EN (mots-clés fréquents)
+    translations = {
+        "logo": "logo", "logotype": "logotype",
+        "entreprise": "company", "société": "company",
+        "intelligence artificielle": "AI",
+        "ia": "AI", "ai": "AI",
+        "noir": "black", "noire": "black",
+        "blanc": "white", "blanche": "white",
+        "rouge": "red", "jaune": "yellow", "bleu": "blue", "bleue": "blue",
+        "vert": "green", "verte": "green", "violet": "purple",
+        "clair": "light", "claire": "light",
+        "foncé": "dark", "fonce": "dark", "sombre": "dark",
+        "minimaliste": "minimalist", "moderne": "modern",
+        "futuriste": "futuristic", "tech": "tech", "technologie": "technology",
+        "carré": "square", "rond": "round", "circulaire": "circular",
+        "trait": "stroke", "ligne": "line", "trait noir": "black stroke",
+        "nom": "name", "texte": "text",
+    }
+    q_lower = q.lower()
+    for fr, en in translations.items():
+        q_lower = q_lower.replace(fr, en)
+
+    # Prompt final (anglais, court)
+    prompt = f"{q_lower}, minimalist flat vector design, clean lines, professional logo"
+    # Limite 25 mots
+    words = prompt.split()
+    if len(words) > 25:
+        prompt = " ".join(words[:25])
+
+    return prompt
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TRONCATURE
 # ==============================================================================
 
 def _truncate_messages_for_groq(
@@ -113,7 +202,6 @@ def _truncate_messages_for_groq(
 ) -> List[Dict[str, Any]]:
     if not messages:
         return messages
-
     truncated = []
     for msg in messages:
         if not isinstance(msg, dict):
@@ -121,24 +209,16 @@ def _truncate_messages_for_groq(
         content = msg.get("content", "")
         if isinstance(content, str) and len(content) > max_chars_per_msg:
             half = max_chars_per_msg // 2
-            content = (
-                content[:half]
-                + "\n\n[...tronqué...]\n\n"
-                + content[-half:]
-            )
+            content = content[:half] + "\n\n[...tronqué...]\n\n" + content[-half:]
             msg = {**msg, "content": content}
         truncated.append(msg)
-
     total = sum(len(m.get("content", "")) for m in truncated)
     if total <= max_total_chars:
         return truncated
-
     system_msgs = [m for m in truncated if m.get("role") == "system"]
     other_msgs = [m for m in truncated if m.get("role") != "system"]
-
     system_chars = sum(len(m.get("content", "")) for m in system_msgs)
     budget = max_total_chars - system_chars
-
     kept = []
     running = 0
     for msg in reversed(other_msgs):
@@ -147,85 +227,24 @@ def _truncate_messages_for_groq(
             break
         kept.insert(0, msg)
         running += msg_len
-
-    result = system_msgs + kept
-    logger.warning(
-        "[Streaming v1.6.6] Troncature : %d → %d messages | %d → %d chars",
-        len(messages), len(result), total,
-        sum(len(m.get("content", "")) for m in result),
-    )
-    return result
+    return system_msgs + kept
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# NORMALISATION DES STRINGS LLM (params uniquement)
-# ══════════════════════════════════════════════════════════════════════════════
+# NORMALISATION PARAMS
+# ==============================================================================
 
 _NORMALIZE_PATTERNS = [
-    (r'\baistartup\b', 'AI startup'),
-    (r'\baimodel\b', 'AI model'),
-    (r'\baicompany\b', 'AI company'),
-    (r'\baibusiness\b', 'AI business'),
-    (r'\baiassistant\b', 'AI assistant'),
-    (r'\baichat\b', 'AI chat'),
-    (r'\baitool\b', 'AI tool'),
-    (r'\bdécriscette\b', 'décris cette'),
-    (r'\bdecriscette\b', 'decris cette'),
-    (r'\bdécriscetimage\b', 'décris cette image'),
-    (r'\bdecriscetimage\b', 'decris cette image'),
+    (r'\baistartup\b', 'AI startup'), (r'\baimodel\b', 'AI model'),
+    (r'\baicompany\b', 'AI company'), (r'\baiassistant\b', 'AI assistant'),
+    (r'\bdécriscette\b', 'décris cette'), (r'\bdecriscette\b', 'decris cette'),
     (r'\bdécriscetteimage\b', 'décris cette image'),
     (r'\bdecriscetteimage\b', 'decris cette image'),
-    (r'\bexpliquecette\b', 'explique cette'),
-    (r'\banalysecette\b', 'analyse cette'),
-    (r'\banalysecet\b', 'analyse cet'),
-    (r'\bregardecette\b', 'regarde cette'),
-    (r'\bmontrecette\b', 'montre cette'),
-    (r'\bdécrisce\b', 'décris ce'),
-    (r'\bdecrisce\b', 'decris ce'),
-    (r'\bsleeklogo\b', 'sleek logo'),
-    (r'\bmodernlogo\b', 'modern logo'),
-    (r'\bminimalistlogo\b', 'minimalist logo'),
-    (r'\bsimplelogo\b', 'simple logo'),
-    (r'\blogofora\b', 'logo for a'),
-    (r'\blogofor\b', 'logo for'),
-    (r'\blogowith\b', 'logo with'),
-    (r'\bforatech\b', 'for a tech'),
-    (r'\btechstartup\b', 'tech startup'),
-    (r'\bstartupcompany\b', 'startup company'),
-    (r'\bmodernsleek\b', 'modern sleek'),
-    (r'\bfeaturingabstract\b', 'featuring abstract'),
-    (r'\bcircuitrypatterns\b', 'circuitry patterns'),
-    (r'\bcircuitpatterns\b', 'circuit patterns'),
-    (r'\bcircuitpattern\b', 'circuit pattern'),
-    (r'\bformingastylized\b', 'forming a stylized'),
-    (r'\bwithagradient\b', 'with a gradient'),
-    (r'\bofelectricblue\b', 'of electric blue'),
-    (r'\bandneongreen\b', 'and neon green'),
-    (r'\bneongreen\b', 'neon green'),
-    (r'\belectricblue\b', 'electric blue'),
-    (r'\bonelectricblue\b', 'on electric blue'),
-    (r'\bonadarkbackground\b', 'on a dark background'),
-    (r'\bdarkbackground\b', 'dark background'),
-    (r'\bonwhitebackground\b', 'on white background'),
-    (r'\bminimalisticand\b', 'minimalistic and'),
-    (r'\bfuturisticdesign\b', 'futuristic design'),
-    (r'\bhighcontrast\b', 'high contrast'),
-    (r'\bvectorstyle\b', 'vector style'),
+    (r'\bsleeklogo\b', 'sleek logo'), (r'\bmodernlogo\b', 'modern logo'),
+    (r'\bminimalistlogo\b', 'minimalist logo'), (r'\bsimplelogo\b', 'simple logo'),
+    (r'\blogofora\b', 'logo for a'), (r'\btechstartup\b', 'tech startup'),
+    (r'\belectricblue\b', 'electric blue'), (r'\bneongreen\b', 'neon green'),
     (r'\bcleanlines\b', 'clean lines'),
-    (r'\bbluecolor\b', 'blue color'),
-    (r'\bbluecolour\b', 'blue colour'),
-    (r'\bsuitablefor\b', 'suitable for'),
-    (r'\bhighquality\b', 'high quality'),
-    (r'\bdetaileddesign\b', 'detailed design'),
-    (r'\bsoftlighting\b', 'soft lighting'),
-    (r'\bstudiolighting\b', 'studio lighting'),
-    (r'\bdigitalart\b', 'digital art'),
-    (r'\bconceptart\b', 'concept art'),
-    (r'\bcharacterdesign\b', 'character design'),
-    (r'\bcolorson\b', 'colors on'),
-    (r'\bcolorsona\b', 'colors on a'),
-    (r'\bfora\b', 'for a'),
-    (r'\bforan\b', 'for an'),
 ]
 
 
@@ -236,30 +255,21 @@ def _normalize_llm_string(text: str) -> str:
         return text
     if text.startswith("{") and text.endswith("}"):
         return text
-
     result = text
     for pattern, replacement in _NORMALIZE_PATTERNS:
         result = _re.sub(pattern, replacement, result, flags=_re.IGNORECASE)
-
     result = _re.sub(r',([^\s])', r', \1', result)
     result = _re.sub(r'([a-zà-ÿ])([A-ZÀ-Ý])', r'\1 \2', result)
-    result = _re.sub(r'([a-zA-Z]):([^\s/])', r'\1: \2', result)
     result = _re.sub(r'\s+', ' ', result).strip()
-    result = _re.sub(r'\s+([,;:.!?])', r'\1', result)
     return result
 
 
 def _normalize_action_params(params: Dict[str, Any]) -> Dict[str, Any]:
     if not isinstance(params, dict):
         return params
-
-    skip_keys = {
-        "provider", "model", "url", "endpoint",
-        "image_path", "video_path", "file_path", "path",
-        "zip_path", "output_filename", "output_path",
-        "id", "record_id", "seed",
-    }
-
+    skip_keys = {"provider", "model", "url", "endpoint", "image_path",
+                 "video_path", "file_path", "path", "zip_path",
+                 "output_filename", "output_path", "id", "record_id", "seed"}
     normalized: Dict[str, Any] = {}
     for k, v in params.items():
         if k in skip_keys:
@@ -269,13 +279,9 @@ def _normalize_action_params(params: Dict[str, Any]) -> Dict[str, Any]:
         elif isinstance(v, dict):
             normalized[k] = _normalize_action_params(v)
         elif isinstance(v, list):
-            normalized[k] = [
-                _normalize_llm_string(item) if isinstance(item, str) else item
-                for item in v
-            ]
+            normalized[k] = [_normalize_llm_string(i) if isinstance(i, str) else i for i in v]
         else:
             normalized[k] = v
-
     return normalized
 
 
@@ -293,7 +299,7 @@ except ImportError:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CONFIGURATION
+# CONFIG
 # ==============================================================================
 
 def _env_int(name: str, default: int, minimum: int = 1) -> int:
@@ -319,14 +325,10 @@ MAX_REASONING_CHARS = _env_int("BEK_MAX_REASONING_CHARS", 6000, minimum=500)
 BEK_ECO_CACHE_ENABLED = _env_bool("BEK_ECO_CACHE_ENABLED", True)
 BEK_MEM_ENABLED = _env_bool("BEK_MEM_ENABLED", True)
 BEK_LOOP_ENABLED = _env_bool("BEK_LOOP_ENABLED", True)
-BEK_FIX_SPACING_ENABLED = _env_bool("BEK_FIX_SPACING_ENABLED", False)
-
 BEK_MULTI_ACTIONS_ENABLED = _env_bool("BEK_MULTI_ACTIONS_ENABLED", True)
 BEK_MAX_ACTIONS_PER_RESPONSE = _env_int("BEK_MAX_ACTIONS_PER_RESPONSE", 5)
-
 BEK_ANTIHALLU_ENABLED = _env_bool("BEK_ANTIHALLU_ENABLED", True)
 BEK_POST_ACTION_GRACE_MAX = _env_int("BEK_POST_ACTION_GRACE_MAX", 50, minimum=10)
-
 BEK_MAX_TOKENS = _env_int("BEK_MAX_TOKENS", 2048, minimum=256)
 
 
@@ -341,10 +343,8 @@ _LLM_NATIVE_TOKENS = (
     "<|tool_call|>", "<|tool_sep|>",
     "<|tool_calls_section_begin|>", "<|tool_calls_section_end|>",
 )
-
 _LLM_NATIVE_REGEX = _re.compile("|".join(_re.escape(t) for t in _LLM_NATIVE_TOKENS))
 _LLM_XML_TOOL_REGEX = _re.compile(r"<tool_call>.*?</tool_call>", _re.DOTALL)
-
 
 _THINKING_PATTERNS = (
     _re.compile(r"<think>.*?</think>", _re.DOTALL | _re.IGNORECASE),
@@ -352,40 +352,15 @@ _THINKING_PATTERNS = (
     _re.compile(r"<reasoning>.*?</reasoning>", _re.DOTALL | _re.IGNORECASE),
 )
 
-_THINKING_LINE_PATTERNS = (
-    _re.compile(
-        r"^\s*(?:Okay|OK|Alright|Let me|Let's|I need to|I should|"
-        r"I will|I'm going to|First,|Second,|Third,|Wait,|Hmm,)"
-        r"\s*,?\s*(?:the user|I|we).*$",
-        _re.IGNORECASE | _re.MULTILINE,
-    ),
-    _re.compile(
-        r"^\s*(?:Attends?|Attendez|Vérifions|Analysons|Réfléchissons)"
-        r"\s*,?\s+(?:je|on|nous|il|elle)\s+.*$",
-        _re.IGNORECASE | _re.MULTILINE,
-    ),
-)
-
 
 def _strip_reasoning(text: str) -> str:
-    """
-    ★ v1.6.6 — Ne strip PLUS les chunks purement espaces.
-    """
     if not text:
         return text
-
-    # ★ v1.6.6 — CRITIQUE : si le chunk est uniquement des espaces,
-    #              on le retourne tel quel (pour préserver les espaces
-    #              entre les mots dans le streaming).
     if text.strip() == "":
         return text
-
     for pattern in _THINKING_PATTERNS:
         text = pattern.sub("", text)
-    for pattern in _THINKING_LINE_PATTERNS:
-        text = pattern.sub("", text)
     text = _re.sub(r"\n{3,}", "\n\n", text)
-    # ★ v1.6.6 — Suppression du .strip() final qui tuait les espaces
     return text
 
 
@@ -420,9 +395,6 @@ class _LoopDetector:
         _, most_common_count = counts.most_common(1)[0]
         return most_common_count >= self.threshold
 
-    def reset(self):
-        self._buffer.clear()
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # STREAMING PRINCIPAL
@@ -439,7 +411,6 @@ async def stream_chat(
 
     full_text_accumulated: List[str] = []
 
-    # ─── TRONCATURE DE SÉCURITÉ ───
     _total_before = sum(len(m.get("content", "")) for m in exec_messages if isinstance(m, dict))
     exec_messages = _truncate_messages_for_groq(
         exec_messages,
@@ -448,57 +419,44 @@ async def stream_chat(
     )
     _total_after = sum(len(m.get("content", "")) for m in exec_messages if isinstance(m, dict))
     logger.info(
-        "[Streaming v1.6.6] Requête : %d messages | %d → %d chars (limite %d)",
+        "[Streaming v1.6.7] Requête : %d messages | %d → %d chars (limite %d)",
         len(exec_messages), _total_before, _total_after, cfg.MAX_TOTAL_CHARS,
     )
 
-    # ─── PRÉ-PARSING actions utilisateur ───
+    # ─── Pré-parsing actions utilisateur ───
     _user_part = last_user_query or ""
     _instr_pos = _user_part.find("(INSTRUCTION SYSTEME")
     if _instr_pos > 0:
         _user_part = _user_part[:_instr_pos]
-
     _user_actions = _find_all_complete_actions(_user_part)
 
     if _user_actions:
         logger.info(
-            "[Streaming v1.6.6] %d action(s) utilisateur — exécution DIRECTE",
+            "[Streaming v1.6.7] %d action(s) utilisateur — exécution DIRECTE",
             len(_user_actions),
         )
         _direct_msg = "\n\n⚙️ *Exécution directe...*\n\n"
         yield f"data: {json.dumps({'chunk': _direct_msg})}\n\n"
-
         for _idx, _ua in enumerate(_user_actions, 1):
             _ua_name = _ua["name"]
             _ua_params = _normalize_action_params(_ua["params"])
-
             if _ua_name not in cfg.MULTIMEDIA_ACTIONS:
                 _ua_params["provider"] = provider
                 _ua_params["model"] = model
-
-            logger.info(
-                "[Streaming v1.6.6] 🎯 Action directe %d : %s",
-                _idx, _ua_name,
-            )
             _exec_msg = f"\n\n⚙️ *Exécution {_idx}...*\n"
             yield f"data: {json.dumps({'chunk': _exec_msg})}\n\n"
-
             _t0 = time.monotonic()
             try:
                 _exec_res = act._execute_action_unified(_ua_name, _ua_params)
                 _elapsed = (time.monotonic() - _t0) * 1000
                 _res_msg = fmt._format_execution_result(_ua_name, _exec_res)
-                logger.info(
-                    "[Streaming v1.6.6] ✅ Action %s terminée (%.0fms)",
-                    _ua_name, _elapsed,
-                )
+                logger.info("[Streaming v1.6.7] ✅ Action %s terminée (%.0fms)", _ua_name, _elapsed)
                 _res_chunk = "\n\n" + str(_res_msg) + "\n\n"
                 yield f"data: {json.dumps({'chunk': _res_chunk})}\n\n"
             except Exception as _err:
-                logger.exception("[Streaming v1.6.6] Action %s échouée", _ua_name)
+                logger.exception("[Streaming v1.6.7] Action %s échouée", _ua_name)
                 _err_chunk = f"\n\n⚠️ Erreur action {_ua_name} : {_err}\n\n"
                 yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
-
         yield f"data: {json.dumps({'done': True})}\n\n"
         return
 
@@ -521,11 +479,10 @@ async def stream_chat(
 
     is_freshness_query = rt._bek_rex_is_freshness_query(last_user_query)
     if is_freshness_query:
-        logger.info("[Streaming v1.6.6] Requête de fraîcheur détectée")
+        logger.info("[Streaming v1.6.7] Requête de fraîcheur détectée")
 
     _detected_ego = rt._bek_rex_detect_alter_ego(last_user_query)
     if _detected_ego and _detected_ego != "bek":
-        logger.info("[Streaming v1.6.6] 🎭 Alter ego activé : %s", _detected_ego)
         _alter_ego_prompt = rt._bek_rex_get_alter_ego_prompt(_detected_ego)
         if _alter_ego_prompt:
             for _msg in exec_messages:
@@ -537,12 +494,11 @@ async def stream_chat(
         try:
             _routing_result = rt._bek_rex_route(last_user_query)
             logger.info(
-                "[Streaming v1.6.6] BEK-REX tier=%s conf=%.2f",
-                _routing_result.get("tier"),
-                _routing_result.get("confidence", 0.0),
+                "[Streaming v1.6.7] BEK-REX tier=%s conf=%.2f",
+                _routing_result.get("tier"), _routing_result.get("confidence", 0.0),
             )
         except Exception as _rex_err:
-            logger.warning("[Streaming v1.6.6] BEK-REX échec : %s", _rex_err)
+            logger.warning("[Streaming v1.6.7] BEK-REX échec : %s", _rex_err)
             _routing_result = {"tier": "TIER_3", "confidence": 0.5}
 
         _tier = _routing_result.get("tier", "TIER_3")
@@ -552,18 +508,22 @@ async def stream_chat(
                 _eco_result = rt._bek_eco_check_cache(last_user_query, _tier)
                 if _eco_result.get("cached") and _eco_result.get("cached_value"):
                     cached_response = _eco_result["cached_value"].get("response", "")
-                    if cached_response:
+                    # ★ v1.6.7 — Ne PAS servir un cache contenant du SVG/refus
+                    if cached_response and not _llm_refused_to_generate(cached_response):
                         _cached_response_served = True
                         cache_badge = "⚡ *[réponse en cache]*\n\n"
                         yield f"data: {json.dumps({'chunk': cache_badge}, ensure_ascii=False)}\n\n"
-                        CHUNK_SIZE = 80
-                        for i in range(0, len(cached_response), CHUNK_SIZE):
-                            piece = cached_response[i:i + CHUNK_SIZE]
+                        for i in range(0, len(cached_response), 80):
+                            piece = cached_response[i:i + 80]
                             yield f"data: {json.dumps({'chunk': piece}, ensure_ascii=False)}\n\n"
                         yield f"data: {json.dumps({'done': True})}\n\n"
                         return
+                    else:
+                        logger.warning(
+                            "[Streaming v1.6.7] Cache HIT mais réponse polluée (SVG/refus) → SKIP"
+                        )
             except Exception as _eco_err:
-                logger.warning("[Streaming v1.6.6] BEK-ECO échec : %s", _eco_err)
+                logger.warning("[Streaming v1.6.7] BEK-ECO échec : %s", _eco_err)
 
         for item in provider_manager.execute_chat_stream(
             messages=exec_messages,
@@ -592,20 +552,15 @@ async def stream_chat(
 
             chunk = item["chunk"]
             chunk = _sanitize_llm_output(chunk, strip_reasoning=True)
-
-            # ★ v1.6.6 — CRITIQUE : `if not chunk` au lieu de `if not chunk.strip()`
-            # Sinon les chunks d'espace " " sont supprimés → mots collés !
             if not chunk:
                 continue
 
-            # ─── Anti-hallucination post-action ───
             if BEK_ANTIHALLU_ENABLED and _post_action_mode:
                 _post_action_grace_chunks += 1
                 if _post_action_grace_chunks > BEK_POST_ACTION_GRACE_MAX:
                     _success = True
                     _error_type = "post_action_stop"
                     break
-
                 full_text_accumulated.append(chunk)
                 current_text = "".join(full_text_accumulated)
                 text_since_action = current_text[_last_action_end_pos:]
@@ -639,10 +594,7 @@ async def stream_chat(
             if action_detected and not _has_closing_action(current_text):
                 chunks_without_close += 1
                 if chunks_without_close > cfg.MAX_CHUNKS_WITHOUT_CLOSE:
-                    warn_incomplete = (
-                        "\n\n⚠️ **Action incomplète** détectée. "
-                        "Reformulez la demande.\n\n"
-                    )
+                    warn_incomplete = "\n\n⚠️ **Action incomplète** détectée.\n\n"
                     yield f"data: {json.dumps({'chunk': warn_incomplete})}\n\n"
                     _success = False
                     _error_type = "incomplete_action"
@@ -650,7 +602,6 @@ async def stream_chat(
 
             yield f"data: {json.dumps({'chunk': chunk}, ensure_ascii=False)}\n\n"
 
-            # ─── Extraction multi-actions ───
             if BEK_MULTI_ACTIONS_ENABLED and action_detected:
                 all_actions = _find_all_complete_actions(current_text)
                 for action in all_actions:
@@ -659,33 +610,24 @@ async def stream_chat(
                         continue
                     if total_actions_executed >= BEK_MAX_ACTIONS_PER_RESPONSE:
                         break
-
                     act_name = action["name"]
                     params = _normalize_action_params(action["params"])
-
                     logger.info(
-                        "[Streaming v1.6.6] 🎯 Action %d : %s",
+                        "[Streaming v1.6.7] 🎯 Action %d : %s",
                         total_actions_executed + 1, act_name,
                     )
-
                     if act_name == "headless_search":
                         try:
-                            _should_use_ws = rt._bek_rex_should_use_web_sync(
-                                last_user_query, _routing_result,
-                            )
-                            if _should_use_ws:
+                            if rt._bek_rex_should_use_web_sync(last_user_query, _routing_result):
                                 act_name = "web_sync"
                                 params = {"query": params.get("query", last_user_query)}
                         except Exception:
                             pass
-
                     if act_name not in cfg.MULTIMEDIA_ACTIONS:
                         params["provider"] = provider
                         params["model"] = model
-
                     msg_imm = f'\n\n⚙️ *Exécution {total_actions_executed + 1}...*\n'
                     yield f"data: {json.dumps({'chunk': msg_imm})}\n\n"
-
                     _action_start = time.monotonic()
                     try:
                         exec_res = act._execute_action_unified(act_name, params)
@@ -693,39 +635,94 @@ async def stream_chat(
                         res_msg = fmt._format_execution_result(act_name, exec_res)
                         res_chunk = "\n\n" + str(res_msg) + "\n\n"
                         yield f"data: {json.dumps({'chunk': res_chunk})}\n\n"
-
                         total_actions_executed += 1
                         processed_actions.add(end_pos)
                         _last_action_end_pos = end_pos
-
                         logger.info(
-                            "[Streaming v1.6.6] ✅ Action %s terminée (%.0fms)",
+                            "[Streaming v1.6.7] ✅ Action %s terminée (%.0fms)",
                             act_name, _action_elapsed_ms,
                         )
                     except Exception as _act_err:
-                        logger.exception("[Streaming v1.6.6] Action %s échouée", act_name)
+                        logger.exception("[Streaming v1.6.7] Action %s échouée", act_name)
                         err_chunk = f"\n\n⚠️ Erreur action {act_name} : {_act_err}\n\n"
                         yield f"data: {json.dumps({'chunk': err_chunk})}\n\n"
                         processed_actions.add(end_pos)
                         _last_action_end_pos = end_pos
                         _success = False
                         _error_type = f"action_{act_name}_error"
-
                 if BEK_ANTIHALLU_ENABLED and total_actions_executed > 0:
                     _post_action_mode = True
                     _post_action_grace_chunks = 0
 
     except Exception as stream_err:
-        logger.error("[Streaming v1.6.6] Erreur : %s", stream_err, exc_info=True)
-        err_msg = f"\n\n⚠️ Flux Error : {stream_err}\n"
-        yield f"data: {json.dumps({'chunk': err_msg})}\n\n"
+        logger.error("[Streaming v1.6.7] Erreur : %s", stream_err, exc_info=True)
+        yield f"data: {json.dumps({'chunk': f'\n\n⚠️ Flux Error : {stream_err}\n'})}\n\n"
         _success = False
         _error_type = type(stream_err).__name__
 
     finally:
+        # ══════════════════════════════════════════════════════════════════════
+        # ★ v1.6.7 — FORÇAGE D'ACTION SI LE LLM A REFUSÉ DE GÉNÉRER UNE IMAGE
+        # ======================================================================
+        full_response = "".join(full_text_accumulated)
+
+        _user_wants_img = _user_wants_image(last_user_query)
+        _llm_refused = _llm_refused_to_generate(full_response)
+        _no_action_executed = (total_actions_executed == 0)
+
+        logger.info(
+            "[Streaming v1.6.7] FORCE-CHECK : user_wants_image=%s | llm_refused=%s | no_action=%s",
+            _user_wants_img, _llm_refused, _no_action_executed,
+        )
+
+        if _user_wants_img and _no_action_executed and _llm_refused:
+            logger.warning(
+                "[Streaming v1.6.7] 🚨 LLM A REFUSÉ → FORÇAGE de generate_image côté serveur"
+            )
+
+            # Notifier l'utilisateur qu'on reprend la main
+            _force_msg = (
+                "\n\n⚙️ *Le modèle a refusé de générer — BEK prend le relais...*\n\n"
+            )
+            yield f"data: {json.dumps({'chunk': _force_msg}, ensure_ascii=False)}\n\n"
+
+            # Extraire le sujet du prompt utilisateur
+            _forced_prompt = _extract_image_subject(last_user_query)
+            logger.info(
+                "[Streaming v1.6.7] Prompt forcé extrait : %r", _forced_prompt[:120],
+            )
+
+            # Exécuter generate_image NOUS-MÊMES
+            _force_t0 = time.monotonic()
+            try:
+                _forced_res = act._execute_action_unified(
+                    "generate_image",
+                    {
+                        "prompt": _forced_prompt,
+                        "provider": "pollinations",
+                        "model": "flux",
+                    },
+                )
+                _force_elapsed = (time.monotonic() - _force_t0) * 1000
+                _forced_msg = fmt._format_execution_result("generate_image", _forced_res)
+                logger.info(
+                    "[Streaming v1.6.7] ✅ FORCE generate_image terminée (%.0fms) → %s",
+                    _force_elapsed, _forced_res.get("filename", "?"),
+                )
+                _forced_chunk = "\n\n" + str(_forced_msg) + "\n\n"
+                yield f"data: {json.dumps({'chunk': _forced_chunk}, ensure_ascii=False)}\n\n"
+                total_actions_executed += 1
+                action_detected = True
+                _success = True
+
+            except Exception as _force_err:
+                logger.exception("[Streaming v1.6.7] FORCE generate_image échouée")
+                _err_chunk = f"\n\n⚠️ Erreur forçage image : {_force_err}\n\n"
+                yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
+
+        # ─── Loop record ───
         try:
             _total_elapsed_final = time.monotonic() - _start_time
-
             if BEK_LOOP_ENABLED and not _cached_response_served and last_user_query:
                 try:
                     rt._bek_loop_record(
@@ -740,25 +737,12 @@ async def stream_chat(
                 except Exception:
                     pass
 
-            # ─── Anti-hallucination action ───
-            _should_have_action = False
-            if last_user_query:
-                _q_lower = last_user_query.lower()
-                _action_keywords = [
-                    "logo", "image", "génère", "genere", "crée", "cree",
-                    "dessine", "fais-moi", "fais moi", "générer", "generer",
-                    "vidéo", "video", "recherche", "cherche", "trouve",
-                    "actualité", "actualite", "news",
-                ]
-                _should_have_action = any(k in _q_lower for k in _action_keywords)
-
+            # ─── Cache : ne PAS cacher si LLM a refusé ou si on a forcé ───
+            _should_have_action = _user_wants_image(last_user_query)
             _is_hallucination = _should_have_action and not action_detected
-
             if _is_hallucination:
                 logger.warning(
-                    "[Streaming v1.6.6] ⚠️ Hallucination détectée : "
-                    "l'utilisateur a demandé une action mais aucune n'a été exécutée. "
-                    "Cache SKIP."
+                    "[Streaming v1.6.7] ⚠️ Hallucination détectée. Cache SKIP."
                 )
 
             if (
@@ -772,23 +756,22 @@ async def stream_chat(
             ):
                 try:
                     final_response = "".join(full_text_accumulated)
-                    if final_response and len(final_response) > 50:
+                    if (
+                        final_response
+                        and len(final_response) > 50
+                        and not _llm_refused_to_generate(final_response)
+                    ):
                         _lower = final_response.lower()
                         _error_markers = [
                             "erreur", "error", "échec", "failed",
                             "permission denied", "errno",
                             "tous les providers", "quota", "rate limit",
                         ]
-                        _is_error = any(m in _lower for m in _error_markers)
-                        if not _is_error:
+                        if not any(m in _lower for m in _error_markers):
                             rt._bek_eco_store_cache(
                                 query=last_user_query,
                                 tier=_routing_result.get("tier", "TIER_3"),
                                 response=final_response,
-                            )
-                        else:
-                            logger.info(
-                                "[Streaming v1.6.6] Cache SKIP : réponse d'erreur détectée",
                             )
                 except Exception:
                     pass
@@ -812,23 +795,22 @@ async def stream_chat(
                     pass
 
         except Exception as _loop_err:
-            logger.debug("[Streaming v1.6.6] Erreur finally : %s", _loop_err)
+            logger.debug("[Streaming v1.6.7] Erreur finally : %s", _loop_err)
 
         yield f"data: {json.dumps({'done': True})}\n\n"
 
 
 def get_streaming_summary() -> dict:
     return {
-        "version": "1.6.6",
+        "version": "1.6.7",
         "features": {
             "multi_actions": BEK_MULTI_ACTIONS_ENABLED,
             "closing_tag_tolerant": True,
             "llm_string_normalization": True,
-            "regex_fix_v162": True,
-            "vision_typo_fix_v163": True,
-            "groq_free_optimized_v164": True,
-            "anti_hallucination_action_v165": True,
-            "★ whitespace_preserved_v166": True,
+            "whitespace_preserved_v166": True,
+            "★ force_action_on_llm_refusal_v167": True,
+            "★ svg_detection": True,
+            "★ user_intent_detection": True,
             "max_tokens": BEK_MAX_TOKENS,
         },
     }
