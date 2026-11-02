@@ -1,0 +1,210 @@
+# ==============================================================================
+# 1. FICHIERS SECRETS & CLÉS D'ACCÈS (CRITIQUE SÉCURITÉ)
+# ==============================================================================
+.env
+.env.*
+*.env
+.env.txt
+env.txt
+.env.save
+google_accounts.json
+google_drive_index.json
+*.pem
+*.key
+*.cert
+*.pfx
+*.p12
+credentials.json
+token.pickle
+service_account.json
+
+# ==============================================================================
+# 2. ENVIRONNEMENT PYTHON & CACHES
+# ==============================================================================
+venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+tests/
+
+# ==============================================================================
+# 3. LOGS & RUNTIME
+# ==============================================================================
+*.log
+bek_agent.log
+bek_app.log
+logs/
+*.pid
+*.sock
+agent_output.txt
+rapport_bash.txt
+run_logs.txt
+
+# ==============================================================================
+# 4. BASES LOCALES & DONNÉES
+# ==============================================================================
+chroma_db/
+*.sqlite
+*.sqlite3
+*.db
+*.duckdb
+*.db-shm
+*.db-wal
+*.sqlite-shm
+*.sqlite-wal
+*.duckdb-wal
+*.duckdb-shm
+data/reflex_reports/
+data/critiques/
+data/forge_proposals/
+data/test_memory_temp/
+
+# ==============================================================================
+# 5. UPLOADS, GÉNÉRÉS, ARCHIVES, PROJETS AUTONOMES
+# ==============================================================================
+uploads/
+generated/
+outputs/
+downloads/
+projects/
+*.zip
+*.tar
+*.tar.gz
+*.rar
+project_backup.zip
+backups/
+backup/
+archive_old/
+bek-v15-clean/
+graft/
+
+# ==============================================================================
+# 6. IDE / ÉDITEURS
+# ==============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ==============================================================================
+# 7. SYSTÈME D'EXPLOITATION
+# ==============================================================================
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ==============================================================================
+# 8. DIVERS & NODE.JS (Poubelle)
+# ==============================================================================
+*.bak
+*.bak2
+*.bak3
+*.bak4
+*.backup
+*.tmp
+tmp/
+temp/
+.cache/
+node_portable/
+node_modules/
+frontend/
+package-lock.json
+package.json
+bun.lock
+skills-lock.json
+*.bak_code_tools
+*.py.bak
+test.txt
+500
+add.py
+calculator.py
+main.py
+patch_brain_routing.py
+local_provider.py
+sqlite_manager.py
+run_test_tools.py
+
+# ==============================================================================
+# 9. ÉTAT RUNTIME EVENTBUS & AUTRES
+# ==============================================================================
+.eventbus_client_offsets.json
+.eventbus_offsets.json
+docs/.archigen_state.json
+docs/.archigen_state.json.bak
+
+# ==============================================================================
+# 10. SCRIPTS DE DEBUG LOCAUX
+# ==============================================================================
+check_groq.py
+probe_agnes.py
+routers/chat_modules/test_validation.py
+# DuckDB WAL temporaires
+*.wal
+*.duckdb.wal
+data/analytics.duckdb*
+
+# ==============================================================================
+# 11. SPÉCIFIQUE BEK v19 (SkillAgent + LVC)
+# ==============================================================================
+# Cache BEK-ECO (contient l'historique des requêtes → confidentiel)
+data/bek_eco_cache.json
+data/bek_limits.json
+
+# Registre des skills généré dynamiquement (doit être régénéré par build_skill_index.py)
+skills_index.json
+
+# Rapports générés par les outils MCP (analyse_bek_core.md, rapport_auto.md, etc.)
+generated/*.md
+generated/*.json
+
+# ★ MODIFICATION : Skills publiés sur GitHub, mais caches Python ignorés
+skills.json
+skills/**/__pycache__/
+skills/*.pyc
+skills/*.pyo
+skills/.DS_Store
+
+# État ReflexLoop (épisodes confidentiels)
+data/bek_loop_episodes.db
+data/bek_loop_episodes.db-wal
+data/bek_loop_episodes.db-shm
+
+# Rapports d'analyse Python générés automatiquement
+analyse_*.md
+analyse_*.json
+rapport_*.md
+rapport_*.json
+
+# ==============================================================================
+# 12. TESTS & SANDBOX (si tu en ajoutes)
+# ==============================================================================
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+.tox/
+
+# ==============================================================================
+# 13. FICHIERS CONFIDENTIELS DÉTECTÉS À LA RACINE (v19.48)
+# ==============================================================================
+audit_logger.py
+example.db

@@ -1,0 +1,65 @@
+{
+  "abreviation": "BEK-MEM",
+  "nom_complet": "Methodological Evolution Memory",
+  "sous_titre": "Evolutionary Prototype Memory",
+  "version": "1.0",
+  "date": "2026-09-23",
+  "author": "BEK Project",
+  "license": "BEK-LVC-v1.0",
+
+  "description": "Mémoire associative par prototypes évolutifs. Stocke des méthodologies de résolution, pas juste des réponses.",
+
+  "brevet": "docs/brevets/BREVET_MEM.md",
+  "module": "bek_core.mem.matcher",
+  "package": "bek_core.mem",
+
+  "functions": {
+    "match": {
+      "params": ["query"],
+      "optional": ["threshold", "top_k"],
+      "returns": "dict",
+      "description": "Trouve un prototype correspondant à la requête"
+    },
+    "store": {
+      "params": ["query", "tier", "result"],
+      "returns": "str",
+      "description": "Stocke un nouveau prototype"
+    },
+    "update": {
+      "params": ["prototype_id", "success", "time_ms"],
+      "returns": "bool",
+      "description": "Met à jour les statistiques d'un prototype"
+    }
+  },
+
+  "classes": {
+    "BekMemMatcher": {
+      "description": "Matcher principal de prototypes",
+      "methods": ["match", "store", "update", "list_all", "count", "get", "clear"]
+    }
+  },
+
+  "constants": {
+    "BEK_MEM_DEFAULT_THRESHOLD": 0.85,
+    "BEK_MEM_DEFAULT_TOP_K": 3,
+    "BEK_MEM_STORAGE_FILE": "data/bek_mem_prototypes.json"
+  },
+
+  "storage": {
+    "type": "json_local",
+    "path": "data/bek_mem_prototypes.json",
+    "fallback_pinecone": true
+  },
+
+  "performance": {
+    "match_time_ms": 5,
+    "store_time_ms": 10,
+    "cache_hit_target": 0.40
+  },
+
+  "dependencies": ["BEK-ECO"],
+  "used_by": ["BEK-LOOP", "BEK-AGENT-v18"],
+
+  "status": "active",
+  "priority": "critical"
+}

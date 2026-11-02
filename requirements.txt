@@ -1,0 +1,80 @@
+# ==============================================================================
+# BEK-v19 — Requirements pour Render Free (512 Mo RAM)
+# ------------------------------------------------------------------------------
+# Version OPTIMISÉE v6 (2026-10-30) :
+#   - Retiré : duckdb (compilation C++ trop lourde pour Render Free 512 MB)
+#   - Fixé : opentelemetry-instrumentation-* en versions STABLES (==)
+#   - Gardé : networkx (DAG Engine), Playwright (WebAgent), Langchain
+#   - Ajout : ddgs, python-socketio, hindsight-client
+# ==============================================================================
+
+# --- Core Web / API ---
+fastapi>=0.115.0,<0.120.0
+uvicorn>=0.32.0,<0.35.0
+python-multipart>=0.0.9
+aiofiles>=24.0.0
+pydantic>=2.9.0,<3.0.0
+pydantic-settings>=2.5.0
+
+# --- HTTP ---
+requests>=2.32.0,<3.0.0
+httpx>=0.27.0,<0.29.0
+aiohttp>=3.10.0,<4.0.0
+websockets>=13.0,<15.0
+
+# --- Bases de données ---
+psycopg2-binary>=2.9.9,<3.0.0
+pinecone>=5.0.0,<7.0.0
+numpy>=1.26.0,<3.0.0
+
+# --- LLM Providers ---
+groq>=0.13.0,<1.0.0
+
+# --- Redis (EventBus) ---
+redis>=5.0.0,<6.0.0
+
+# --- Parsing / fichiers ---
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+PyYAML>=6.0.0
+openpyxl>=3.1.0
+pillow>=10.0.0
+
+# --- Headless browser (headless_* tools) ---
+playwright>=1.45.0,<2.0.0
+
+# --- Langchain (meta_cortex_swarm + swarm_core) ---
+langchain-core>=0.3.0,<0.4.0
+langchain-groq>=0.2.0,<0.3.0
+langchain-google-genai>=2.0.0,<3.0.0
+langchain-openai>=0.2.0,<0.4.0
+
+# --- DAG Engine (BEK-FLUX + Hermes DAG Adapter) ---
+networkx>=3.3.0,<4.0.0
+
+# --- OpenTelemetry (tracing) — versions STABLES fixées ---
+opentelemetry-api==1.27.0
+opentelemetry-sdk==1.27.0
+opentelemetry-exporter-otlp-proto-grpc==1.27.0
+opentelemetry-instrumentation-fastapi==0.48b0
+opentelemetry-instrumentation-httpx==0.48b0
+opentelemetry-instrumentation-requests==0.48b0
+opentelemetry-instrumentation-logging==0.48b0
+
+# --- Utils ---
+tenacity>=8.2.0
+tiktoken>=0.7.0
+python-dotenv>=1.0.0
+psutil>=5.9.0,<7.0.0
+werkzeug>=3.0.0,<4.0.0
+
+# --- Hindsight (mémoire long-terme structurée) ---
+hindsight-client>=0.10.0
+
+# --- ChromaDB (fallback local vectoriel) ---
+chromadb>=0.5.0,<1.0.0
+
+# --- Recherche Web (WebAgent) ---
+ddgs>=9.0.0
+python-socketio[asyncio]>=5.10.0
+python-engineio>=4.8.0

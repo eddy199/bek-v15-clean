@@ -1,0 +1,23 @@
+{
+    "provider": "B.ai",
+    "base_url": "https://api.b.ai/v1/chat/completions",
+    "api_key": "sk-1jxap19uxogiyci5y4etlh2psshbttkz",
+    "models": [
+        {
+            "name": "glm-5.3-flash",
+            "description": "Modèle rapide et optimisé pour le traitement général et le code."
+        },
+        {
+            "name": "qwen3.8-flash",
+            "description": "Modèle multilingue ultra-rapide axé sur la logique et la synthèse."
+        },
+        {
+            "name": "mimo-v2.5",
+            "description": "Modèle compact orienté agent et appels d'outils."
+        },
+        {
+            "name": "hy3",
+            "description": "Modèle hybride expérimental de raisonnement contextuel."
+        }
+    ]
+}

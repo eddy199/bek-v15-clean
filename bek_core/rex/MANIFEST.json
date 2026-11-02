@@ -1,0 +1,85 @@
+{
+  "abreviation": "BEK-REX",
+  "nom_complet": "Reflective EXecution",
+  "sous_titre": "Tiered Cognitive Routing",
+  "version": "1.0",
+  "date": "2026-09-23",
+  "author": "BEK Project",
+  "license": "BEK-LVC-v1.0",
+
+  "description": "Route une requête vers le tier optimal (LOCAL, FAST, DEEP, EXPERT, SPECIALIZED).",
+
+  "brevet": "docs/brevets/BREVET_REX.md",
+  "module": "bek_core.rex.router",
+  "package": "bek_core.rex",
+
+  "functions": {
+    "route": {
+      "params": ["query"],
+      "optional": ["options"],
+      "returns": "dict",
+      "description": "Route une requête vers le tier optimal"
+    },
+    "list_tiers": {
+      "params": [],
+      "returns": "list",
+      "description": "Liste les 5 tiers disponibles"
+    },
+    "escalate": {
+      "params": ["current_tier"],
+      "returns": "str",
+      "description": "Retourne le tier supérieur"
+    }
+  },
+
+  "classes": {
+    "BekRexRouter": {
+      "description": "Routeur cognitif principal",
+      "methods": ["route", "list_tiers", "escalate"]
+    }
+  },
+
+  "constants": {
+    "BEK_REX_TIERS": ["TIER_0", "TIER_1", "TIER_2", "TIER_3", "TIER_4"],
+    "BEK_REX_DEFAULT_CONFIDENCE": 0.6
+  },
+
+  "tiers": {
+    "TIER_0": {
+      "nom": "LOCAL",
+      "description": "Salutations, conversations",
+      "temps_ms": 500,
+      "cout": 0.0
+    },
+    "TIER_1": {
+      "nom": "FAST",
+      "description": "Questions factuelles simples",
+      "temps_ms": 12000,
+      "cout": 0.001
+    },
+    "TIER_2": {
+      "nom": "DEEP",
+      "description": "News, analyses moyennes",
+      "temps_ms": 35000,
+      "cout": 0.01
+    },
+    "TIER_3": {
+      "nom": "EXPERT",
+      "description": "Analyses complexes",
+      "temps_ms": 75000,
+      "cout": 0.05
+    },
+    "TIER_4": {
+      "nom": "SPECIALIZED",
+      "description": "Recherche spécialisée",
+      "temps_ms": 90000,
+      "cout": 0.08
+    }
+  },
+
+  "dependencies": [],
+  "used_by": ["BEK-FLUX", "BEK-HERMES", "BEK-AGENT-v18"],
+
+  "status": "active",
+  "priority": "critical"
+}
