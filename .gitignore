@@ -39,7 +39,6 @@ dist/
 .ruff_cache/
 .coverage
 htmlcov/
-tests/
 
 # ==============================================================================
 # 3. LOGS & RUNTIME
@@ -194,7 +193,7 @@ rapport_*.md
 rapport_*.json
 
 # ==============================================================================
-# 12. TESTS & SANDBOX (si tu en ajoutes)
+# 12. TESTS & SANDBOX (caches uniquement — le dossier tests/ est tracké)
 # ==============================================================================
 .pytest_cache/
 .coverage
