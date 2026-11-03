@@ -11,6 +11,15 @@
 # Date : 2026-09-28
 # ==============================================================================
 
+# ─────────────────────────────────────────────────────────────────────────────
+# RÔLE : Sandbox d'exécution isolé (2ème ligne de défense).
+# - Isolation par sous-processus + limites OS (RAM 50 MB, CPU 10s)
+# - ⚠️ NON BRANCHÉ actuellement (orphelin — à brancher dans une prochaine itération)
+# - Prévu pour les skills qui nécessitent une exécution isolée (ML, traitement)
+# - Fonction publique : bek_execute_skill_sandboxed()
+# - VOIR AUSSI : core/security/skill_sandbox.py (1ère ligne, actif)
+# ─────────────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import ast

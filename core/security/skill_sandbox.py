@@ -13,6 +13,15 @@
 #   • tailles et complexité excessives
 # ==============================================================================
 
+# ─────────────────────────────────────────────────────────────────────────────
+# RÔLE : Validateur AST statique (1ère ligne de défense).
+# - Rapide, fonctionne partout (Windows inclus)
+# - Ne fait PAS d'exécution isolée (pas de sous-processus)
+# - Utilisé par : services/action_executor.py, skill_generator.py
+# - Fonction publique : validate_skill_code()
+# - VOIR AUSSI : bek_core/security/skill_sandbox.py (2ème ligne, non branché)
+# ─────────────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import ast
