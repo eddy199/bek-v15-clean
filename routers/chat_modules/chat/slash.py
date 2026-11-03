@@ -22,7 +22,7 @@ logger = logging.getLogger("BEKApp")
 
 async def _dispatch_slash(query: str):
     """Exécute une commande slash sans bloquer directement la boucle async."""
-    from skills import dispatch_command
+    from skill_runner import dispatch_command
 
     if inspect.iscoroutinefunction(dispatch_command):
         result = await dispatch_command(query)

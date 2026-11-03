@@ -587,7 +587,7 @@ async def get_config():
 
     skills_data = []
     try:
-        from skills import list_skills as _list_skills
+        from skill_runner import list_skills as _list_skills
         skills_data = _list_skills()
         print(f"[DEBUG API CONFIG] {len(skills_data)} compétences envoyées : {[s['name'] for s in skills_data]}")
     except Exception as e:
