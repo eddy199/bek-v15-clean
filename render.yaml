@@ -1,21 +1,20 @@
 services:
   - type: web
-    name: bek-v16-core
+    name: bek-v19-hybrid
     runtime: python
     region: frankfurt
     plan: free
     branch: main
     autoDeploy: true
-    healthCheckPath: /health/worker
+    healthCheckPath: /
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
       playwright install chromium
-    startCommand: python app.py
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
     envVars:
-      # --- Python ---
       - key: PYTHON_VERSION
-        value: "3.11.8"
+        value: "3.12.0"
 
       # --- Flags BEK ---
       - key: BEK_BOOTSTRAPPED
@@ -46,7 +45,6 @@ services:
         value: "true"
 
       # --- Variables SECRÈTES (à renseigner dans l'UI Render) ---
-      # NE PAS METTRE DE VALEUR ICI. sync: false = défini dans le dashboard.
       - key: BEK_HSM_SECRET
         sync: false
       - key: NVIDIA_API_KEY
