@@ -1,12 +1,36 @@
-# 🧠 BEK Hybrid Agent v19
+<div align="center">
+  <img src="assets/logo.png" alt="BEK Hybrid Logo" width="150"/>
+  <h1>🧠 BEK Hybrid Agent v19</h1>
+  <p><strong>L'agent IA hybride, souverain, économe en tokens et sans hallucination.</strong></p>
+  
+  [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+  [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
+  
+  <p>Créé par <strong>BEKKARA Mohamed</strong> — Oran, Algérie.</p>
+</div>
 
-> **L'agent IA hybride, souverain, économe en tokens et sans hallucination.**
->
-> *Créé par BEKKARA Mohamed — Oran, Algérie.*
->
-> [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-> [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-> [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
+---
+
+## 📸 Aperçu de l'Interface
+
+Voici à quoi ressemble BEK Hybrid Agent en action :
+
+| 💬 Chat & Raisonnement | 🧠 329 Compétences Actives |
+| :---: | :---: |
+| <img src="assets/chat.png" width="400"/> | <img src="assets/skills.png" width="400"/> |
+
+| 🗄️ Mémoire Vectorielle (Pinecone) | 🔌 Connecteurs Système |
+| :---: | :---: |
+| <img src="assets/memory.png" width="400"/> | <img src="assets/connectors.png" width="400"/> |
+
+| 🤖 Fournisseurs d'IA Connectés | 🎨 Génération d'Images (Vision) |
+| :---: | :---: |
+| <img src="assets/providers.png" width="400"/> | <img src="assets/generation.png" width="400"/> |
+
+| 🔁 Reflex Loop (Auto-Correction) | 📁 Gestion de Fichiers |
+| :---: | :---: |
+| <img src="assets/reflex.png" width="400"/> | <img src="assets/files.png" width="400"/> |
 
 ---
 
