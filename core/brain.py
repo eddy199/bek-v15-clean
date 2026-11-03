@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.48 (LVC Forced + Economic Pause + SkillAgent)
+# BEK Hybrid Agent v19 — core/brain.py — v19.49 (FIX Tools Injection + ReflexLoop)
 # ==============================================================================
 from __future__ import annotations
 
@@ -207,6 +207,7 @@ class SkillAgent:
         matched.sort(key=lambda x: x[0], reverse=True)
         return {"skills": [m[1] for m in matched[:3]]}
 
+    # ★ FIX : Cette fonction est maintenant correctement exposée
     def get_available_tools_prompt(self, intent: str) -> str:
         try:
             from hermes_core import hermes
@@ -291,7 +292,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.48 (LVC Forced)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.49 (FIX Tools)")
         logger.info("[BEK Brain] Analyse : %s/%s (fallback: %s/%s)", ANALYSIS_PROVIDER, ANALYSIS_MODEL, FALLBACK_PROVIDER, FALLBACK_MODEL)
 
     async def shutdown(self):
@@ -703,7 +704,7 @@ class BEKBrain:
         return {"status": "ok", "intent": intent, "bricks_used": bricks, "response": response}
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.48 (LVC Forced)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
+        return {"app": "BEK Hybrid Agent v19.49 (FIX Tools)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
 
 _brain_instance: Optional[BEKBrain] = None
 

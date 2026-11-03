@@ -38,7 +38,7 @@ class ReflexLoop:
             try: await self.sio.emit("reflex:stream", {"message": msg, "level": level})
             except Exception: pass
 
-    async def run_cycle(self, hours: Optional[int] = None, with_critic: bool = True, critic_max_patterns: int = 3, with_code_analysis: bool = True, with_alter_egos: bool = True, with_skills: bool = True, auto_fix: bool = False) -> Dict[str, Any]:
+    async def run_cycle(self, hours: Optional[int] = None, with_critic: bool = True, critic_max_patterns: int = 3, with_code_analysis: bool = True, with_alter_egos: bool = True, with_skills: bool = True, auto_fix: bool = False, **kwargs) -> Dict[str, Any]:
         h = hours if hours is not None else self.hours
         started_at = datetime.now(timezone.utc)
         await self._stream("🧠 [ReflexLoop] Démarrage du cycle...", "start")
