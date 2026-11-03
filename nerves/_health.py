@@ -109,12 +109,6 @@ NERVES_CARTOGRAPHY: Dict[str, Dict[str, Any]] = {
         "label": "Nerf 9 — Guardian tracé",
         "has_status": False,
     },
-    "crm_nerves": {
-        "module": "nerves.crm_nerves",
-        "flag": "BEK_ENABLE_CRM_NERVES",
-        "label": "Nerf 10 — Sub-CRM Engine",
-        "has_status": False,
-    },
     "headless_nerves": {
         "module": "nerves.headless_nerves",
         "flag": "BEK_ENABLE_HEADLESS_NERVES",

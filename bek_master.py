@@ -6,6 +6,9 @@
 #   - Détection vidéo → timeout étendu (300s au lieu de 15s)
 # v2.2 (2026-10-01) : Activation des 12 nerfs au démarrage
 # ==============================================================================
+
+from __future__ import annotations
+
 # ★ FIX ENCODAGE WINDOWS — DOIT ÊTRE AVANT TOUS LES IMPORTS
 import sys
 import io
@@ -17,8 +20,7 @@ if sys.platform == "win32":
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
-from __future__ import annotations
-
+# ─── Imports standards (APRÈS le bloc if) ───
 import asyncio
 import logging
 import time
@@ -30,6 +32,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] [Master] %(message)s",
 )
+
 
 
 # ══════════════════════════════════════════════════════════════════════════════

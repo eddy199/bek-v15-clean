@@ -227,7 +227,8 @@ _NERF_MODULES = [
     ("Nerf 7",      "nerves.router_nerves",     "activate_router_nerves",     "SmartRouter sémantique"),
     ("Nerf 8",      "nerves.skills_nerves",     "activate_skills_nerves",     "Skills chargés"),
     ("Nerf 9",      "nerves.guardian_nerves",   "activate_guardian_nerves",   "Guardian tracé"),
-    ("Nerf 10",     "nerves.crm_nerves",        "activate_crm_nerves",        "Sub-CRM → Hermes"),
+    # ★ Désactivé — CRM retiré de l'architecture
+    # ("Nerf 10",   "nerves.crm_nerves",        "activate_crm_nerves",        "Sub-CRM → Hermes"),
     ("Nerf 11-13",  "nerves.headless_nerves",   "activate_headless_nerves",   "Playwright → Hermes"),
     ("Nerf 14-17",  "nerves.tmux_nerves",       "activate_tmux_nerves",       "Tmux → Hermes"),
 ]
@@ -242,7 +243,6 @@ _NERF_ENV_MAPPING = {
     "nerves.router_nerves":     "BEK_ENABLE_ROUTER_NERVES",
     "nerves.skills_nerves":     "BEK_ENABLE_SKILLS_NERVES",
     "nerves.guardian_nerves":   "BEK_ENABLE_GUARDIAN_NERVES",
-    "nerves.crm_nerves":        "BEK_ENABLE_CRM_NERVES",
     "nerves.headless_nerves":   "BEK_ENABLE_HEADLESS_NERVES",
     "nerves.tmux_nerves":       "BEK_ENABLE_TMUX_NERVES",
 }
@@ -404,20 +404,6 @@ def _collect_skills() -> Dict[str, Any]:
         logger.debug("[ArchiGen] Skills indisponibles : %s", exc)
     return result
 
-def _collect_crm_status() -> Dict[str, Any]:
-    result: Dict[str, Any] = {"status": "unknown", "reason": ""}
-    try:
-        env_value = os.getenv("BEK_ENABLE_CRM_NERVES", "false").lower()
-        if env_value in ("true", "1", "yes", "on"):
-            result["status"] = "active"
-            result["reason"] = f"BEK_ENABLE_CRM_NERVES={env_value}"
-        else:
-            result["status"] = "disabled"
-            result["reason"] = f"BEK_ENABLE_CRM_NERVES={env_value}"
-    except Exception as exc:
-        result["status"] = "unavailable"
-        result["reason"] = str(exc)[:60]
-    return result
 
 def _collect_environment() -> Dict[str, str]:
     keys = [
@@ -428,7 +414,6 @@ def _collect_environment() -> Dict[str, str]:
         "BEK_DISABLE_CHROMADB",
         "BEK_DISABLE_LANCEDB",
         "BEK_DISABLE_DUCKDB_ANALYTICS",
-        "BEK_ENABLE_CRM_NERVES",
         "BEK_PROFILE",
     ]
     return {k: os.getenv(k, "(non défini)") for k in keys}
@@ -505,11 +490,11 @@ def _collect_modules() -> Dict[str, List[str]]:
 def _detect_issues(
     nerfs: List[Dict[str, Any]],
     lazy_status: Dict[str, Dict[str, Any]],
-    crm_status: Dict[str, Any],
     providers: List[str],
     tools: List[Dict[str, Any]],
     bek_lvc: Dict[str, Any],
 ) -> List[ArchitectureIssue]:
+
     issues: List[ArchitectureIssue] = []
 
     boot_early = _is_boot_early()
@@ -518,24 +503,14 @@ def _detect_issues(
 
     for n in nerfs:
         if n["status"] == "missing":
-            if "crm" in n["name"].lower() and crm_status.get("status") == "disabled":
-                issues.append(ArchitectureIssue(
-                    severity="info",
-                    category="nerf",
-                    title=f"{n['id']} désactivé (normal)",
-                    detail=f"Le module `{n['name']}` n'est pas installé et son flag est à false.",
-                    fix_hint="Pour l'activer : créer `nerves/crm_nerves.py` et définir `BEK_ENABLE_CRM_NERVES=true`.",
-                    source=n["name"],
-                ))
-            else:
-                issues.append(ArchitectureIssue(
-                    severity="critical",
-                    category="nerf",
-                    title=f"{n['id']} manquant",
-                    detail=f"Le fichier du module `{n['name']}` est introuvable.",
-                    fix_hint=f"Vérifier que le fichier `nerves/{n['name']}.py` existe.",
-                    source=n["name"],
-                ))
+            issues.append(ArchitectureIssue(
+                severity="critical",
+                category="nerf",
+                title=f"{n['id']} manquant",
+                detail=f"Le fichier du module `{n['name']}` est introuvable.",
+                fix_hint=f"Vérifier que le fichier `nerves/{n['name']}.py` existe.",
+                source=n["name"],
+            ))
         elif n["status"] == "import_error":
             issues.append(ArchitectureIssue(
                 severity="critical",
@@ -566,16 +541,6 @@ def _detect_issues(
                 fix_hint=f"Vérifier que `{comp_name}` est installé et importable.",
                 source=comp_name,
             ))
-
-    if crm_status.get("status") == "disabled":
-        issues.append(ArchitectureIssue(
-            severity="info",
-            category="config",
-            title="CRM désactivé",
-            detail="Le Nerf 10 (CRM) est désactivé — comportement attendu.",
-            fix_hint="Pour réactiver : `BEK_ENABLE_CRM_NERVES=true`.",
-            source="crm_nerves",
-        ))
 
     if len(providers) == 0:
         issues.append(ArchitectureIssue(
@@ -738,7 +703,6 @@ def generate_architecture_markdown() -> Tuple[str, List[ArchitectureIssue]]:
     providers = _collect_providers()
     lazy_status = _collect_lazy_status()
     skills_info = _collect_skills()
-    crm_status = _collect_crm_status()
     environment = _collect_environment()
     modules_tree = _collect_modules()
 
@@ -748,14 +712,12 @@ def generate_architecture_markdown() -> Tuple[str, List[ArchitectureIssue]]:
     issues = _detect_issues(
         nerfs=nerfs,
         lazy_status=lazy_status,
-        crm_status=crm_status,
         providers=providers,
         tools=tools,
         bek_lvc=bek_lvc,
     )
     _log_issues(issues)
 
-    # ─── Hash ───
     state = {
         "version": bek_version,
         "tools": [t.get("name") for t in tools],
@@ -765,7 +727,6 @@ def generate_architecture_markdown() -> Tuple[str, List[ArchitectureIssue]]:
         "lazy": {k: v.get("status") for k, v in lazy_status.items()},
         "skills": skills_info.get("skills_count", 0),
         "alter_egos": skills_info.get("alter_egos", []),
-        "crm": crm_status.get("status"),
         "issues": [(i.severity, i.title) for i in issues],
         "boot_phase": boot_phase,
     }
@@ -900,7 +861,6 @@ def generate_architecture_markdown() -> Tuple[str, List[ArchitectureIssue]]:
     else:
         lines.append("- **Statut :** ❌ Non chargé")
     lines.append("")
-
     lines.append("### 🎭 Skills & Alter Egos")
     lines.append("")
     lines.append(f"- **Skills chargés :** {skills_info.get('skills_count', 0)}")
@@ -909,13 +869,6 @@ def generate_architecture_markdown() -> Tuple[str, List[ArchitectureIssue]]:
         lines.append(f"- **Alter Egos ({len(alter_egos)}) :** {', '.join(alter_egos)}")
     else:
         lines.append("- **Alter Egos :** aucun")
-    lines.append("")
-
-    lines.append("### 🛠️ CRM Status (Nerf 10)")
-    lines.append("")
-    crm_icon = {"active": "✅", "disabled": "⛔", "unavailable": "❌"}.get(crm_status.get("status"), "❓")
-    lines.append(f"- **Statut :** {crm_icon} **{crm_status.get('status', 'unknown')}**")
-    lines.append(f"- **Raison :** {crm_status.get('reason', '')}")
     lines.append("")
 
     lines.append(f"### 🌐 Providers LLM disponibles ({len(providers)})")

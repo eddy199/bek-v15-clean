@@ -15,10 +15,10 @@
 #
 # Chantier 1 : Nerf 1 (Hermes réel) + Nerf 8 (Skills chargés au boot)
 # Chantier 2 : Nerf 11-13 (Headless relié à Hermes + WebAgent + EventBus)
-# Chantier 3 : Nerf 14-17 (Tmux relié à Hermes + EventBus + Guardian + Sub-CRM)
+# Chantier 3 : Nerf 14-17 (Tmux relié à Hermes + EventBus + Guardian)
 # Chantier 4 : Nerf 3 (EventBus unifié) + Nerf 4 (WebAgent tracé) + Nerf 9 (Guardian tracé)
 # Chantier 5 : Nerf 5 (Approval Manager) + Nerf 6 (MCP Gateway ↔ Hermes)
-# Chantier 6 : Nerf 2 (Cortex cognitif) + Nerf 7 (SmartRouter) + Nerf 10 (Sub-CRM → Hermes)
+# Chantier 6 : Nerf 2 (Cortex cognitif) + Nerf 7 (SmartRouter)
 # ==============================================================================
 
 __version__ = "16.0-nerves"
@@ -42,5 +42,4 @@ __all__ = [
     # Chantier 6 — Couche AGI cognitive
     "cognitive_nerves",
     "router_nerves",
-    "crm_nerves",
 ]
