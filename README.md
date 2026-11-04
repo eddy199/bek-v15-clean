@@ -171,7 +171,7 @@ cp env.example env.txt
 # 6. Lancer l'agent
 uvicorn app:app --host 0.0.0.0 --port 8000 --reload
 
----
+```
 
 ## 🧬 Un Organisme Vivant : Auto-Évolution & Neurones Génétiques
 
@@ -226,7 +226,7 @@ La véritable puissance d'un agent ne réside pas dans le matériel, mais dans s
 
 ### 💻 0 VRAM / 0 Carte Graphique Requise
 Le calcul du moteur génétique (BEK-GA), du routage (REX) et de la compression (LVC) s'effectue en **pure logique mathématique** (microsecondes sur CPU). 
-**Pas besoin d'une RTX 4090.** Ton agent peut tourner et évoluer sur un simple VPS, un vieux PC ou même une Raspberry Pi, sans jamais saturer la mémoire vidéo.
+**Pas besoin d'une RTX 4090.** Ton agent peut tourner et évoluer sur un simple VPS, un vieux PC ou même une Raspberry Pi, sans jamais saturer la mémoire vidéo (0 VRAM sur ta machine).
 
 ### 🗜️ Compression Maximale (LVC)
 Le système trouve de lui-même la **limite exacte de compression** via le cache LVC. Il maintient un code parfait, une compréhension totale du contexte, tout en éliminant **100% de la facture de tokens inutiles**. L'agent optimise ses propres appels pour ne payer que le strict nécessaire.
@@ -235,7 +235,7 @@ Le système trouve de lui-même la **limite exacte de compression** via le cache
 BEK n'est pas un simple wrapper autour d'une API. C'est un organisme qui **apprend, évolue et s'auto-améliore en continu directement sur tes machines**. 
 Tes données, tes neurones, tes règles de routage, tes algorithmes génétiques : tout reste chez toi. Zéro dépendance à un cloud externe pour le cœur de l'intelligence.
 
-> **Résultat garanti :** Un agent souverain, ultra-rapide, économe en tokens, qui évolue de lui-même à coût zéro.
+> **Résultats optimisés :** Un agent souverain, ultra-rapide, économe en tokens, qui évolue de lui-même à coût zéro.
 
 ---
 
