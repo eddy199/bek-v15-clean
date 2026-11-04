@@ -16,7 +16,7 @@
 | :---: | :---: |
 | <img src="assets/chat.png" width="400"/> | <img src="assets/skills.png" width="400"/> |
 
-| 🗄️ Mémoire Vectorielle & Base de Données | 🔌 Connecteurs Système |
+| 🗄️ Mémoire Vectorielle (Pinecone, Chroma, Hindsight) | 🔌 Connecteurs Système |
 | :---: | :---: |
 | <img src="assets/memory.png" width="400"/> | <img src="assets/connectors.png" width="400"/> |
 
