@@ -277,22 +277,6 @@ Notre investissement dans l'algorithme génétique (BEK-GA) ne remplace pas cett
 En injectant les gènes directement dans le système actuel, nous créons une **boucle d'auto-amélioration autonome** qui optimise les prompts, le routage et la consommation de tokens, **sans jamais nécessiter de VRAM hors de prix**.
 
 > **Conclusion :** Le benchmark a prouvé que BEK est déjà robuste. Le BEK-GA est la touche finale qui le rendra imbattable, sur tous les plans, même sur un simple terminal avec 4 Go de RAM.
----
-
----
-
-## 🗄️ Stockage & Mémoire Long Terme
-
-BEK Hybrid Agent unifie **4 couches de mémoire** pour une intelligence sans faille :
-
-| Composant | Rôle | Type |
-| :---: | :---: | :---: |
-| **Pinecone** | Mémoire vectorielle cloud (recherche sémantique rapide) | Vectoriel |
-| **ChromaDB** | Mémoire vectorielle locale (fallback hors-ligne) | Vectoriel |
-| **Hindsight** | Base temporelle vectorielle (vectorize.io) | Vectoriel |
-| **Supabase / Neon** | PostgreSQL pour la synchronisation SQL | Relationnel |
-
----
 
 ---
 
