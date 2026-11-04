@@ -2,7 +2,7 @@
   <img src="./assets/logo.png" alt="BEK Hybrid Logo" width="250"/>
   <h1>🧠 BEK Hybrid Agent v19</h1>
   <p><strong>L'écosystème d'IA agentique souverain, économe en tokens et sans hallucination.</strong></p>
-  <p>Créé par <strong>BEKKARA Mohamed</strong> - Oran, Algérie.</p>
+  <p>Développé par <strong>Mohamed BEKKARA</strong> - Algérie.</p>
   <p><img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg?style=for-the-badge" alt="License" /><img src="https://img.shields.io/badge/Python-3.12+-3776AB.svg?style=for-the-badge" alt="Python" /><img src="https://img.shields.io/badge/FastAPI-005571.svg?style=for-the-badge" alt="FastAPI" /><img src="https://img.shields.io/badge/Brevets-16%20D%C3%A9pos%C3%A9s-critical?style=for-the-badge" alt="Brevets" /><img src="https://img.shields.io/badge/S%C3%A9curit%C3%A9-Token%20Guard-red?style=for-the-badge" alt="Security" /></p>
   <p><img src="https://img.shields.io/badge/BEK--CPU-Logique%20Virtuel-purple?style=for-the-badge" /><img src="https://img.shields.io/badge/BEK--LVC-10x%20%C3%89conomie-orange?style=for-the-badge" /><img src="https://img.shields.io/badge/Nerves-12-success?style=for-the-badge" /><img src="https://img.shields.io/badge/Hermes-62-blueviolet?style=for-the-badge" /></p>
   <p><img src="https://img.shields.io/badge/Skills-329-brightgreen?style=for-the-badge" /><img src="https://img.shields.io/badge/Alter--Egos-6-9cf?style=for-the-badge" /><img src="https://img.shields.io/badge/Vision-Multim%C3%A9dia-informational?style=for-the-badge" /><img src="https://img.shields.io/badge/Vid%C3%A9o-Agnes-yellow?style=for-the-badge" /></p>
@@ -16,7 +16,7 @@
 | :---: | :---: |
 | <img src="assets/chat.png" width="400"/> | <img src="assets/skills.png" width="400"/> |
 
-| 🗄️ Mémoire Vectorielle | 🔌 Connecteurs Système |
+| 🗄️ Mémoire Vectorielle & Base de Données | 🔌 Connecteurs Système |
 | :---: | :---: |
 | <img src="assets/memory.png" width="400"/> | <img src="assets/connectors.png" width="400"/> |
 
@@ -264,5 +264,21 @@ Notre investissement dans l'algorithme génétique (BEK-GA) ne remplace pas cett
 En injectant les gènes directement dans le système actuel, nous créons une **boucle d'auto-amélioration autonome** qui optimise les prompts, le routage et la consommation de tokens, **sans jamais nécessiter de VRAM hors de prix**.
 
 > **Conclusion :** Le benchmark a prouvé que BEK est déjà robuste. Le BEK-GA est la touche finale qui le rendra imbattable, sur tous les plans, même sur un simple terminal avec 4 Go de RAM.
+---
+
+## 🗄️ Stockage & Mémoire Long Terme
+
+BEK Hybrid Agent unifie 3 couches de mémoire pour une intelligence sans faille :
+- **Pinecone** : Mémoire vectorielle cloud (recherche sémantique rapide).
+- **ChromaDB** : Mémoire vectorielle locale (fallback hors-ligne, confidentialité).
+- **Hindsight** : Base de données temporelle vectorielle (vectorize.io) pour la mémoire à long terme.
+- **Supabase / Neon** : Base de données PostgreSQL pour la synchronisation et les états (SQL).
+
+---
+
+## ⚠️ Disclaimer & Licence
+
+Ce projet est sous licence **MIT** (voir le fichier `LICENSE`). 
+Les auteurs de ce dépôt ne sont pas responsables de toute mauvaise utilisation de ces prompts. Les utilisateurs sont seuls responsables de leurs actions et doivent se conformer à toutes les lois et conditions d'utilisation applicables.
 
 
