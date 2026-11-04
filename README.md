@@ -28,6 +28,7 @@
 | :---: | :---: |
 | <img src="assets/reflex.png" width="400"/> | <img src="assets/files.png" width="400"/> |
 
+
 ---
 
 ## 🗄️ Stockage & Mémoire Long Terme
@@ -39,7 +40,7 @@ BEK Hybrid Agent unifie **4 couches de mémoire** pour une intelligence sans fai
 | **Pinecone** | Mémoire vectorielle cloud (recherche sémantique rapide) | Vectoriel |
 | **ChromaDB** | Mémoire vectorielle locale (fallback hors-ligne) | Vectoriel |
 | **Hindsight** | Base temporelle vectorielle (vectorize.io) | Vectoriel |
-| **Supabase / Neon** | PostgreSQL pour la synchronisation SQL | Relationnel |
+| **Supabase / Neon** |  PostgreSQL pour la synchronisation SQL | Relationnel |
 
 ---
 
@@ -284,5 +285,4 @@ En injectant les gènes directement dans le système actuel, nous créons une **
 
 Ce projet est sous licence **MIT** (voir le fichier `LICENSE`). 
 Les auteurs de ce dépôt ne sont pas responsables de toute mauvaise utilisation de ces prompts. Les utilisateurs sont seuls responsables de leurs actions et doivent se conformer à toutes les lois et conditions d'utilisation applicables.
-
 
