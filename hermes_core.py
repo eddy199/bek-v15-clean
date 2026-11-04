@@ -100,7 +100,7 @@ class HermesCore:
 
     def _register_default_tools(self) -> None:
         self.register_tool("default_llm", lambda query="", **kwargs: {"response": f"Exécution terminée pour : {query}"})
-        self.register_tool("neon_audit", lambda **kwargs: {"status": "Neon DB audit demandé", "tables": ["companies", "contacts", "opportunities", "matrix_sub_crms", "sync_log"]})
+        self.register_tool("neon_audit", lambda **kwargs: {"status": "Neon DB audit demandé", "tables": ["companies", "contacts", "opportunities", "sync_log"]})
         self.register_tool("web_sync", lambda query="", **kwargs: {"status": "success", "synced_query": query}, "L3")
         self.register_tool("generate_image", lambda prompt="", **kwargs: {"status": "error", "message": "En attente de montage"})
         self.register_tool("edit_image", lambda image_paths=None, prompt="", **kwargs: {"status": "error", "message": "En attente de montage"})

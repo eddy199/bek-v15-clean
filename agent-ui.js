@@ -700,21 +700,5 @@ import { API_BASE, DOM, state } from './ui/state.js';
         saveConversationsToStorage();
     }
 
-        window.loadSubCRMsUI = async function() {
-        // CRM désactivé
-    };
-
-        window.loadOpportunitiesUI = async function() {
-        // CRM désactivé
-    };
-
-    window.deleteOpportunityRecord = async function(id) {
-        if (!confirm("Supprimer cette opportunité du CRM ?")) return;
-        await fetch(`${API_BASE}/api/crm/execute`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sql: `DELETE FROM opportunities WHERE id = ${id};` }) });
-        if (window.loadOpportunitiesUI) window.loadOpportunitiesUI();
-    };
-
-    window.promptSpawnNewSubCRM = function() {}; window.promptCreateOpportunity = function() {}; window.closeSubCRMModal = function() {}; window.switchModalTab = function() {}; window.promptAddEntity = function() {}; window.promptAddOperation = function() {}; window.openSubCRMModal = function() {};
-
     document.addEventListener('DOMContentLoaded', init);
 })();
