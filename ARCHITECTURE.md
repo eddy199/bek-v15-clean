@@ -1,76 +1,234 @@
-# ARCHITECTURE COMPLÈTE & CARTOGRAPHIE DES MODULES BEK-v16
+# 🏛️ ARCHITECTURE BEK-v19 — Document Technique
 
-Ce document recense l'ensemble des modules sources, moteurs d'exécution et briques cognitives actifs dans le projet.
-
-## 1. Moteurs d'Exécution Asynchrones & Headless
-- **`worker_headless.py` / `services/tasks.py` (Tmux & Headless Workers)** : Gestion des processus d'arrière-plan, exécution de tâches asynchrones, compatibilité Windows/Linux multi-OS via `psutil`.
-- **`hermes_core.py` (Hermes V3 Engine)** : Moteur de planification GOAP (Goal-Oriented Action Planning), dispatcher d'outils, gestionnaire des niveaux de risque (L1 à L5) et hooks de pré-planification.
-
-## 2. Protocoles d'Interopérabilité & Communication Inter-Agents
-- **`event_bus.py` (A2A EventBus Kafka Mock)** : Pipeline d'ingestion et d'échange de messages asynchrones Agent-to-Agent (A2A).
-- **`mcp_gateway.py` (Model Context Protocol Gateway)** : Passerelle d'outils standardisés MCP pour l'interopérabilité (Neon DB audit, etc.).
-- **`meta_cortex_swarm.py` & `meta_cortex_sse_ui.py`** : Moteur de réflexion en essaim (Reflexion Swarm) et streaming SSE des étapes de réflexion.
-- **`meta_cortex_grounding.py`** : Validation de l'ancrage factuel et contrôle qualité des sorties LLM.
-
-## 3. Données, Mémoire & Matrice CRM
-- **`memory.py`** : Triple ancrage vectoriel et persistant (Pinecone Cloud, ChromaDB local, compensation SQL `sync_log` sur Neon DB).
-- **`sub_crm_engine.py` / `plugin_crm.py`** : Moteur de synchronisation multi-CRM et schéma Matrix Neon DB.
-- **`services/db.py`** : Exécuteur SQL direct et sécurisé pour Neon DB.
-
-## 4. Sécurité & Contrôle des Chemins
-- **`core/security/path_guard.py` (`PathGuard`)** : Protection anti-traversal stricte confinant les accès aux répertoires autorisés (`uploads/`, `generated/`, racine).
-- **`security_guard.py`** : Signature HMAC et vérification d'intégrité des payloads.
-- **`bek_eval_guard.py`** : Garde d'évaluation des réponses et détection d'hallucinations.
-- **`core/security/skill_sandbox.py`** : Analyseur de syntaxe abstraite (AST) pour valider et sécuriser le code des compétences générées dynamiquement avant leur injection.
-
-## 5. Hub de Modèles & Compétences
-- **`provider_manager.py`** : Hub universel multi-fournisseurs (Groq, Gemini, NVIDIA, Mistral, B.ai, etc.) avec cascade de fallback automatique.
-- **`skill_generator.py` & `skill_registry.py`** : Registre dynamique et auto-génération de compétences Python à la volée.
-- **`web_agent.py`** : Navigation, scraping et recherche web autonome.
-- **`services/vision.py`** : Moteur multimodal de génération et analyse d'images.
-
-## 6. Couche d'Intelligence Additive (BEK-Intelligence)
-- **`bek_intelligence.py`** : Module intégrant un `SmartRouter` (routage sémantique dynamique), un `AutoCorrectEngine` (garde qualité et auto-correction), et `SkillForge` (génération de skills avec réinjection des erreurs au LLM).
-
-## 7. Architecture Modulaire FastAPI (Batch 1-3)
-- **`app.py`** : Point d'entrée bootstrap épuré (~100 lignes).
-- **`routers/`** : `admin.py`, `chat.py`, `crm.py`, `files.py`, `memory.py`.
-- **`services/`** : `action_executor.py`, `vision.py`, `tasks.py`, `db.py`.
-- **`core/`** : `paths.py`, `utils.py`, `security/`.
+> **Dernière mise à jour** : 2026-11-04
+> **Version** : BEK Hybrid Agent v19
+> **Auteur** : BEKKARA Mohamed — Oran, Algérie
 
 ---
 
-## 8. Système Nerveux Additif (`nerves/`)
+## 🎯 Vue d'ensemble
 
-Couche **additive, non-invasive** qui relie les briques existantes de BEK **sans les modifier**.
-Chaque nerf est :
-- **activé/désactivé** par un feature-flag (`BEK_ENABLE_*_NERVES`, défaut `true`),
-- **idempotent** (appel multiple sans effet de bord),
-- **isolé** (échec d'un nerf n'empêche pas les autres de fonctionner),
-- **traçable** (publication d'événements A2A via le pont unifié du Nerf 3).
+BEK est un **agent IA hybride** qui unifie :
 
-### 8.1 Cartographie des 12 modules `nerves/`
+| Composant | Quantité | Rôle |
+|---|---|---|
+| **Nerfs** (système nerveux) | 12 modules | Connexion additive des briques |
+| **Briques cognitives** (BEK-LVC) | 6 modules | Raisonnement, mémoire, anti-hallucination |
+| **Outils Hermes** | 62 outils | Dispatcher d'actions (L1 → L5) |
+| **Providers LLM** | 17 providers | Cascade de fallback automatique |
+| **Skills** | 329 compétences | Sélection sémantique par SkillAgent |
+| **Alter-egos** | 6 personas | atlas, belfort, mentor, nova, oracle, suntzu |
+| **Routers FastAPI** | 6 + 42 sous-modules | API modulaire |
+| **Services vision** | 15 modules | Images, vidéos, sous-titres, face swap |
 
-| Nerf | Module | Rôle | Outils Hermes | Bridges |
+---
+
+## 🏗️ Architecture en couches
+
+```text
++-------------------------------------------------------------+
+|                    UTILISATEUR (Navigateur)                 |
++-----------------------------+-------------------------------+
+                              | HTTP / SSE
++-----------------------------v-------------------------------+
+|                      FastAPI (app.py)                       |
+|  routers/ : chat, admin, files, memory, openai_compat       |
++-----------------------------+-------------------------------+
+                              |
++-----------------------------v-------------------------------+
+|                  CERVEAU (core/brain.py)                    |
+|  - SkillAgent (329 skills)                                  |
+|  - BEK-REX (routing 5 tiers)                                |
+|  - BEK-LVC (cache + compression)                            |
+|  - Anti-Hallucination (Critic + Grounding)                  |
++-----------------------------+-------------------------------+
+                              |
++-----------------------------v-------------------------------+
+|                  SYSTÈME NERVEUX (nerves/)                  |
+|  12 nerfs additifs, activables par feature-flag             |
++-----------------------------+-------------------------------+
+                              |
++-----------------------------v-------------------------------+
+|               HERMES CORE (hermes_core.py)                  |
+|  62 outils, dispatcher GOAP, niveaux L1->L5                 |
++-----------------------------+-------------------------------+
+                              |
++-----------------------------v-------------------------------+
+|                  BRIQUES COGNITIVES (bek_core/)             |
+|  BEK-REX, BEK-FLUX, BEK-MEM, BEK-LOOP, BEK-ECO, BEK-STAIR   |
++-------------------------------------------------------------+
+
+```
+
+## 🧠 Les 6 briques BEK-LVC (CPU Logique Virtuel)
+
+| Brique | Module | Rôle |
+|---|---|---|
+| **BEK-REX** | `bek_core/rex/router.py` | Routage cognitif 5 tiers (LOCAL → FAST → DEEP → EXPERT → SPECIALIZED) |
+| **BEK-FLUX** | `bek_core/flux/executor.py` | DAG engine dual-mode (thread I/O + process CPU, contournement GIL) |
+| **BEK-MEM** | `bek_core/mem/matcher.py` | Mémoire associative par prototypes évolutifs (Jaccard, seuil 0.75) |
+| **BEK-LOOP** | `bek_core/loop/recorder.py` | Apprentissage réflexif en boucle fermée (épisodes, patterns) |
+| **BEK-ECO** | `bek_core/eco/optimizer.py` | Optimisation économique à 7 facteurs (cache, tokens, latence) |
+| **BEK-STAIR** | `bek_core/stair/toc_builder.py` | Anti-hallucination par ToC (méthode IBM) |
+
+Ces 6 briques sont orchestrées par `bek_core/cpu.py` (le CPU logique virtuel) qui permet de les appeler via une abréviation : `BekCPU.execute("BEK-REX", "route", query="...")`.
+
+---
+
+## 🧬 Les 12 nerfs (système nerveux additif)
+
+| Nerf | Module | Rôle | Outils | Statut |
 |---|---|---|---|---|
-| **1** | `hermes_nerves.py` | Remplace les stubs Hermes par les vrais handlers | 8 outils (`web_sync`, `orchestrate`, `neon_audit`, `generate_image`, `edit_image`, `generate_video`, `edit_video`, `headless_scrape`) | — |
-| **2** | `cognitive_nerves.py` | Cortex cognitif : Swarm critique + Grounding SQL | `cognitive_critique`, `cognitive_ground`, `cognitive_full_check` | `run_critique_swarm`, `run_grounding`, `run_cognitive_pipeline` |
-| **3** | `event_bus_nerves.py` | Pont bidirectionnel EventBusKafka ↔ EventBusClient | — | `publish_event_unified`, `get_event_bus_bridge` |
-| **4** | `web_agent_nerves.py` | WebAgent tracé sur EventBus unifié | `web_agent_traced`, `web_agent_scrape` | `pipeline_and_trace`, `scrape_and_trace` |
-| **5** | `approval_nerves.py` | Interception L3+ → ApprovalManager (monkey-patch réversible) | `approval_submit`, `approval_list`, `approval_get`, `approval_approve`, `approval_reject` | `submit_for_human_approval` |
-| **6** | `mcp_nerves.py` | Sync bidirectionnelle MCP Gateway ↔ Hermes | `mcp_list_tools`, `mcp_execute`, `mcp_register` | `register_mcp_tool_into_hermes`, `sync_hermes_tools_to_mcp` |
-| **7** | `router_nerves.py` | SmartRouter sémantique réel (7 types de tâches) | `router_route`, `router_task_type`, `router_providers` | `route_semantic`, `detect_task_type` |
-| **8** | `skills_nerves.py` | Charge le SkillRegistry au boot | — | — |
-| **9** | `guardian_nerves.py` | Guardian tracé sur EventBus unifié | `guardian_status`, `guardian_audit_log`, `guardian_trigger_audit` | `notify_guardian_audit_start/done/error` |
-| **10** | `crm_nerves.py` | Sub-CRM Engine branché à Hermes (5 outils) | `sub_crm_spawn`, `sub_crm_list`, `sub_crm_get`, `sub_crm_opportunities`, `sub_crm_stats` | `spawn_sub_crm_with_worker` |
-| **11-13** | `headless_nerves.py` | Playwright branché (search, render, leads) | `headless_search`, `headless_extract_leads`, `headless_render` | `headless_scrape_for_web_agent` |
-| **14-17** | `tmux_nerves.py` | Tâches de fond multi-OS + bridges Guardian/Sub-CRM | `tmux_start_task`, `tmux_stop_task`, `tmux_list_tasks`, `tmux_task_status` | `tmux_start_for_guardian`, `tmux_start_for_sub_crm` |
+| **1** | `hermes_nerves.py` | Remplace les stubs Hermes par les vrais handlers | 9 outils | ✅ Actif |
+| **2** | `cognitive_nerves.py` | Cortex cognitif (Swarm critique + Grounding) | 3 outils | ✅ Actif |
+| **3** | `event_bus_nerves.py` | Pont EventBusKafka ↔ EventBusClient | — (bridge) | ✅ Actif |
+| **4** | `web_agent_nerves.py` | WebAgent tracé sur EventBus unifié | 4 outils | ✅ Actif |
+| **5** | `approval_nerves.py` | Interception L3+ → ApprovalManager | 5 outils | ✅ Actif |
+| **6** | `mcp_nerves.py` | Sync bidirectionnelle MCP Gateway ↔ Hermes | 3 + 5 outils | ✅ Actif |
+| **7** | `router_nerves.py` | SmartRouter sémantique (7 types de tâches) | 3 outils | ✅ Actif |
+| **8** | `skills_nerves.py` | Charge le SkillRegistry au boot (329 skills) | — | ✅ Actif |
+| **9** | `guardian_nerves.py` | Guardian tracé sur EventBus unifié | 3 outils | ✅ Actif |
+| **11-13** | `headless_nerves.py` | Playwright branché (search, leads, render) | 3 outils | ✅ Actif |
+| **14-17** | `tmux_nerves.py` | Tâches de fond multi-OS (Tmux/Wimux) | 4 outils | ✅ Actif |
+| **18** | `coder_nerves.py` | Codex + 11 code_tools | 3 + 11 outils | ✅ Actif |
+| **19** | `project_creator_nerves.py` | Création de projets autonomes | 3 outils | ✅ Actif |
 
-### 8.2 Modules utilitaires internes
+> ⚠️ **Note** : Le Nerf 10 (CRM) a été **supprimé de l'architecture**. Le fichier `nerves/crm_nerves.py` et `plugins/plugin_crm.py` ont été retirés.
 
-- **`_async_utils.py`** : `run_async_safely(coro, timeout=60)` — exécution sûre d'une coroutine, quel que soit le contexte (thread ou event loop actif). Utilisé par `headless_nerves.py` et `hermes_nerves.py`.
-- **`_health.py`** : `get_all_nerves_status()` + `get_nerves_summary()` — health check complet du système nerveux (voir section 9).
+### Modules utilitaires internes
 
-### 8.3 Ordre d'activation (dans `app.py`)
+- **`_async_utils.py`** : `run_async_safely(coro, timeout=60)` — exécution sûre d'une coroutine quel que soit le contexte (thread ou event loop actif).
+- **`_health.py`** : `get_all_nerves_status()` + `get_nerves_summary()` — health check complet du système nerveux.
 
-L'ordre est **critique** : le pont EventBus (Nerf 3) doit être activé en premier car il est la fondation pour tous les nerfs tracés.
+---
+
+## 🛠️ Les 62 outils Hermes (par catégorie)
+
+### Outils par défaut (7)
+`default_llm`, `neon_audit`, `web_sync`, `generate_image`, `edit_image`, `generate_video`, `edit_video`
+
+### Outils fichiers (11)
+`read_file`, `read_file_map`, `write_file`, `append_file`, `edit_file`, `create_dir`, `grep`, `glob_files`, `ls`, `bash`, `search_skills`
+
+### Outils mémoire (5)
+`save_memory`, `hindsight_query`, `hindsight_recall`, `submit_feedback`, `orchestrate`
+
+### Outils vidéo avancés (4)
+`extend_video`, `extend_video_multiple`, `generate_subtitles`, `burn_subtitles`
+
+### Outils headless (4)
+`headless_scrape`, `headless_search`, `headless_extract_leads`, `headless_render`
+
+### Outils tmux (4)
+`tmux_start_task`, `tmux_stop_task`, `tmux_list_tasks`, `tmux_task_status`
+
+### Outils web agent (4)
+`web_agent_traced`, `web_agent_scrape`, `web_search`, `web_search_docs`
+
+### Outils guardian (3)
+`guardian_status`, `guardian_audit_log`, `guardian_trigger_audit`
+
+### Outils MCP (3)
+`mcp_list_tools`, `mcp_execute`, `mcp_register`
+
+### Outils cognitifs (3)
+`cognitive_critique`, `cognitive_ground`, `cognitive_full_check`
+
+### Outils router (3)
+`router_route`, `router_task_type`, `router_providers`
+
+### Outils Codex (3)
+`codex_agent`, `codex_editor`, `codex_loop`
+
+### Outils projet (3)
+`create_project`, `list_projects`, `project_status`
+
+### Outils MCP importés (5)
+`mcp_rea_analyze_binary`, `mcp_rea_analyze_javascript`, `mcp_python_analyze_file`, `mcp_python_analyze_directory`, `mcp_python_save_report`
+
+---
+
+## 🌐 Les 17 providers LLM (cascade de fallback)
+
+`groq`, `nvidia`, `gemini`, `openrouter`, `mistral`, `cohere`, `aionlabs`, `zhipu`, `siliconflow`, `huggingface`, `ollama_cloud`, `kimi`, `aisa`, `b_ai`, `beatapi`, `agnes`, `local`
+
+Chaque provider est géré par `provider_manager.py` avec :
+- Circuit breaker
+- Protection TPM (tokens par minute)
+- Cascade de fallback automatique
+
+---
+
+## 🎭 Skills & Alter-Egos
+
+- **329 skills** dans `skills/` (dossiers avec `SKILL.md` + fichiers `.py` éventuels)
+- **6 alter-egos** : `atlas`, `belfort`, `mentor`, `nova`, `oracle`, `suntzu`
+- **SkillAgent** (`skill_agent.py`) : sélectionne les skills pertinentes par catégorie (CODE, SECURITY, DATA, AGENT)
+- **SkillRegistry** (`skill_registry.py`) : registre central (métadonnées, alter-egos)
+- **SkillRunner** (`skill_runner.py`) : scan et chargement des skills
+
+---
+
+## 🔐 Sécurité (4 couches)
+
+| Couche | Module | Rôle |
+|---|---|---|
+| **PathGuard** | `core/security/path_guard.py` | Anti-traversal, confinement aux répertoires autorisés |
+| **Validateur AST** | `core/security/skill_sandbox.py` | Analyse statique du code des skills (blacklist + whitelist) |
+| **Sandbox d'exécution** | `bek_core/security/skill_sandbox.py` | Isolation sous-processus + limites RAM/CPU (non branché, en attente) |
+| **SecurityGuard** | `security_guard.py` | Signature HMAC-SHA256, niveaux L1→L5, détection d'injections |
+
+---
+
+## 🛣️ Routes API principales
+
+| Méthode | Route | Description |
+|---|---|---|
+| `POST` | `/api/chat` | Chat principal (orchestrateur SSE) |
+| `POST` | `/api/brain/chat` | Chat avec routage Brain |
+| `GET` | `/api/config` | Config providers + skills |
+| `GET` | `/api/files` | Liste des fichiers de session |
+| `POST` | `/api/upload` | Upload de fichiers |
+| `GET` | `/api/memory` | État de la mémoire vectorielle |
+| `GET` | `/api/connectors` | État des connecteurs |
+| `GET` | `/api/reflex/stats` | Stats Reflex Loop |
+| `GET` | `/api/reflex/history` | Historique des propositions |
+| `POST` | `/api/reflex/run-cycle` | Lance un cycle Reflex |
+| `GET` | `/api/architecture/status` | Diagnostic architecture |
+| `POST` | `/api/refresh-architecture` | Régénère `docs/ARCHITECTURE.md` |
+| `GET` | `/health/worker` | Health check worker |
+| `GET` | `/health/memory` | Health check mémoire + lazy loading |
+| `POST` | `/v1/chat/completions` | Façade OpenAI-compatible |
+| `GET` | `/v1/models` | Liste des modèles OpenAI-compat |
+
+---
+
+## 📊 État du système (dernière exécution)
+
+- **Version** : 19.11
+- **Nerfs actifs** : 11/12 (le CRM est supprimé)
+- **Outils Hermes** : 62
+- **Skills chargés** : 329
+- **Alter-egos** : 6
+- **Providers LLM** : 17
+- **Issues ArchiGen** : 0
+
+---
+
+## 📚 Documentation complémentaire
+
+- `docs/ARCHITECTURE.md` — Diagnostic auto-généré par ArchiGen (mis à jour à chaque boot)
+- `docs/ADDING_A_BRICK.md` — Comment ajouter une brique
+- `docs/BEK_LVC.md` — Référentiel du CPU logique virtuel
+- `docs/brevets/` — 16 brevets (REX, FLUX, MEM, LOOP, ECO, STAIR, MCP, etc.)
+- `docs/programming/` — Conventions de code
+
+---
+
+## 📜 Licence
+
+AGPL-3.0 — voir `LICENSE`
+
+---
+
+> **Note** : ce document est maintenu manuellement. La version auto-générée est dans `docs/ARCHITECTURE.md`.
