@@ -266,13 +266,20 @@ En injectant les gènes directement dans le système actuel, nous créons une **
 > **Conclusion :** Le benchmark a prouvé que BEK est déjà robuste. Le BEK-GA est la touche finale qui le rendra imbattable, sur tous les plans, même sur un simple terminal avec 4 Go de RAM.
 ---
 
+---
+
 ## 🗄️ Stockage & Mémoire Long Terme
 
-BEK Hybrid Agent unifie 3 couches de mémoire pour une intelligence sans faille :
-- **Pinecone** : Mémoire vectorielle cloud (recherche sémantique rapide).
-- **ChromaDB** : Mémoire vectorielle locale (fallback hors-ligne, confidentialité).
-- **Hindsight** : Base de données temporelle vectorielle (vectorize.io) pour la mémoire à long terme.
-- **Supabase / Neon** : Base de données PostgreSQL pour la synchronisation et les états (SQL).
+BEK Hybrid Agent unifie **4 couches de mémoire** pour une intelligence sans faille :
+
+| Composant | Rôle | Type |
+| :---: | :---: | :---: |
+| **Pinecone** | Mémoire vectorielle cloud (recherche sémantique rapide) | Vectoriel |
+| **ChromaDB** | Mémoire vectorielle locale (fallback hors-ligne) | Vectoriel |
+| **Hindsight** | Base temporelle vectorielle (vectorize.io) | Vectoriel |
+| **Supabase / Neon** | PostgreSQL pour la synchronisation SQL | Relationnel |
+
+---
 
 ---
 
