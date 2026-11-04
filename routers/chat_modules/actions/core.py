@@ -241,7 +241,7 @@ def _execute_action_unified(act_name: str, params: dict) -> dict:
             return _r
 
         elif act_name in ("edit_video", "extend_video", "extend_video_multiple", "generate_subtitles", "burn_subtitles", "analyze_image"):
-            from services.action_executor import execute_agent_crm_tool
+            from services.action_executor import execute_agent_tool
             norm_params = dict(params)
             if act_name == "edit_video":
                 if "video_paths" not in norm_params and ("video_path" in norm_params or "path" in norm_params):

@@ -34,8 +34,8 @@ def _handler_web_sync(query: str = "", **kwargs: Any) -> Dict[str, Any]:
     if not query:
         return {"status": "error", "message": "La requête web_sync est vide."}
     try:
-        from services.action_executor import execute_agent_crm_tool
-        return execute_agent_crm_tool("web_sync", {"query": query, **kwargs})
+        from services.action_executor import execute_agent_action
+        return execute_agent_action("web_sync", {"query": query, **kwargs})
     except Exception as exc:
         logger.error("[Nerf web_sync] Erreur : %s", exc)
         return {"status": "error", "message": f"web_sync échoué : {exc}"}

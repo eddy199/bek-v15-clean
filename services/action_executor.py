@@ -171,7 +171,7 @@ def _resolve_default_video_model(model_val: str | None) -> str:
 # ==============================================================================
 # DISPATCHER PRINCIPAL (implémentation réelle)
 # ==============================================================================
-def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
+def _execute_action_impl(action_name: str, parameters: dict) -> dict:
     correlation_id = f"corr_{uuid.uuid4().hex[:12]}"
     task_id = f"task_{uuid.uuid4().hex[:8]}"
     update_task_state(task_id, "RUNNING", correlation_id, f"Action: {action_name}")
@@ -1038,7 +1038,7 @@ def _execute_agent_crm_tool_impl(action_name: str, parameters: dict) -> dict:
 # ==============================================================================
 # WRAPPER PUBLIC : trace chaque appel dans episodic_log
 # ==============================================================================
-def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
+def execute_agent_action(action_name: str, parameters: dict) -> dict:
     """
     Wrapper public qui :
       1. mesure la latence de l'appel
@@ -1052,7 +1052,7 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
     error_type = None
 
     try:
-        result = _execute_agent_crm_tool_impl(action_name, parameters)
+        result = _execute_action_impl(action_name, parameters)
         status_for_log = (result or {}).get("status", "unknown")
         if status_for_log == "error":
             error_type = (result or {}).get("error_type") or "ActionError"
@@ -1079,3 +1079,5 @@ def execute_agent_crm_tool(action_name: str, parameters: dict) -> dict:
             )
         except Exception:
             pass
+# Alias de compatibilité (ancien nom encore utilisé par certains modules)
+execute_agent_crm_tool = execute_agent_action
