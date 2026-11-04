@@ -37,7 +37,7 @@ Voici à quoi ressemble BEK Hybrid Agent en action :
 ## 🚀 Qu'est-ce que BEK ?
 
 **BEK** (Bekkara Hybrid Agent) est un **agent autonome multi-fonction** qui unifie :
-- 🧠 **18 modules cognitifs** (SkillAgent, LVC, Anti-Hallucination, ReflexLoop, etc.)
+- 🧠 **6 briques cognitives** (BEK-LVC : REX, FLUX, MEM, LOOP, ECO, STAIR) et **12 modules nerveux** additifs.
 - 🔌 **Le protocole MCP** (Model Context Protocol) pour connecter des outils externes
 - 💻 **La génération de code** (Python, JavaScript, C++, etc.)
 - 🔍 **L'analyse de code** (REA pour le reverse engineering, analyseur Python AST)
@@ -90,7 +90,7 @@ graph TD
     A[Utilisateur] -->|Prompt| B[FastAPI BEK]
     B --> C{SkillAgent Router}
     C -->|Filtre 329 skills| D[BEK-LVC Cache]
-    D --> E[Hermes Core & 18 Nerves]
+    D --> E[Hermes Core & 12 Nerves]
     E -->|Appel Outils| F[MCP Gateway]
     F --> G[REA - Reverse Engineering]
     F --> H[Python Analyzer]
@@ -98,3 +98,4 @@ graph TD
     E --> J[Codex - Génération Code]
     B --> K[Anti-Hallucination]
     K -->|Réponse Finale| A
+```
