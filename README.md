@@ -16,7 +16,7 @@
 | :---: | :---: |
 | <img src="assets/chat.png" width="400"/> | <img src="assets/skills.png" width="400"/> |
 
-| 🗄️ Mémoire Vectorielle (Pinecone, Chroma, Hindsight) | 🔌 Connecteurs Système |
+| 🗄️ Mémoire Vectorielle | 🔌 Connecteurs Système |
 | :---: | :---: |
 | <img src="assets/memory.png" width="400"/> | <img src="assets/connectors.png" width="400"/> |
 
@@ -27,6 +27,19 @@
 | 🔁 Reflex Loop | 📁 Gestion de Fichiers |
 | :---: | :---: |
 | <img src="assets/reflex.png" width="400"/> | <img src="assets/files.png" width="400"/> |
+
+---
+
+## 🗄️ Stockage & Mémoire Long Terme
+
+BEK Hybrid Agent unifie **4 couches de mémoire** pour une intelligence sans faille :
+
+| Composant | Rôle | Type |
+| :---: | :---: | :---: |
+| **Pinecone** | Mémoire vectorielle cloud (recherche sémantique rapide) | Vectoriel |
+| **ChromaDB** | Mémoire vectorielle locale (fallback hors-ligne) | Vectoriel |
+| **Hindsight** | Base temporelle vectorielle (vectorize.io) | Vectoriel |
+| **Supabase / Neon** | PostgreSQL pour la synchronisation SQL | Relationnel |
 
 ---
 
