@@ -1,14 +1,6 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Module d'integration HINDSIGHT — v1.5 (async + sync)
-# ==============================================================================
-# v1.5 (2026-10-17) :
-#   - Ajout hindsight_retain_conversation_async() pour usage dans FastAPI
-#   - Évite l'erreur "This event loop is already running" lors du retain
-# v1.4 (2026-10-17) :
-#   - Ajout hindsight_build_context_async() pour usage dans FastAPI
-# v1.3 (2026-09-29) :
-#   - Ajout hindsight_recall_async() / hindsight_reflect_async()
+# BEK-v18 — Module d'integration HINDSIGHT — v1.7 (async + sync + fallback)
 # ==============================================================================
 from __future__ import annotations
 
@@ -82,7 +74,7 @@ def _get_client():
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# VERSION SYNC (pour scripts standalone)
+# VERSION SYNC
 # ══════════════════════════════════════════════════════════════════════════════
 
 def hindsight_retain(content: str, context: Optional[str] = None) -> bool:
@@ -146,7 +138,7 @@ def hindsight_reflect(query: str, budget: str = "low") -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# VERSION ASYNC (pour FastAPI)
+# VERSION ASYNC
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _parse_recall_response(response) -> List[Dict[str, Any]]:
@@ -167,24 +159,52 @@ async def hindsight_recall_async(
     max_tokens: int = 4096,
     budget: str = "mid",
 ) -> List[Dict[str, Any]]:
-    """Version ASYNC — utilise arecall() pour FastAPI."""
+    """
+    Version ASYNC — utilise arecall() pour FastAPI.
+    ★ v1.7 : Si arecall() échoue, fallback sur recall() sync en thread.
+    """
     if not query or not query.strip():
         return []
     client = _get_client()
     if client is None:
         return []
+
+    # Tentative 1 : arecall() natif
     try:
-        response = await client.arecall(
-            bank_id=HINDSIGHT_BANK_ID,
-            query=query,
-            budget=budget,
-            max_tokens=max_tokens,
+        response = await asyncio.wait_for(
+            client.arecall(
+                bank_id=HINDSIGHT_BANK_ID,
+                query=query,
+                budget=budget,
+                max_tokens=max_tokens,
+            ),
+            timeout=3.0,
         )
         results = _parse_recall_response(response)
         logger.info("[Hindsight] arecall OK | %d resultats", len(results))
         return results
+    except asyncio.TimeoutError:
+        logger.warning("[Hindsight] arecall timeout (3s), fallback thread")
     except Exception as exc:
-        logger.warning("[Hindsight] arecall echec : %s", exc)
+        logger.debug("[Hindsight] arecall échoué (%s), fallback thread", exc)
+
+    # Tentative 2 : fallback en thread séparé
+    try:
+        loop = asyncio.get_running_loop()
+        results = await asyncio.wait_for(
+            loop.run_in_executor(
+                None,
+                lambda: hindsight_recall(query, max_tokens=max_tokens, budget=budget),
+            ),
+            timeout=3.0,
+        )
+        logger.info("[Hindsight] recall (thread) OK | %d resultats", len(results))
+        return results
+    except asyncio.TimeoutError:
+        logger.warning("[Hindsight] recall (thread) timeout (3s)")
+        return []
+    except Exception as exc:
+        logger.warning("[Hindsight] recall fallback échoué : %s", exc)
         return []
 
 
@@ -251,7 +271,6 @@ def hindsight_retain_conversation(
     return hindsight_retain(content, context=context or "conversation")
 
 
-# ★ v1.5 — Version async de retain_conversation
 async def hindsight_retain_conversation_async(
     user_message: str,
     agent_response: str,
@@ -285,7 +304,6 @@ def hindsight_build_context(query: str, max_results: int = 3) -> str:
     return "\n".join(lines)
 
 
-# ★ v1.4 — Version async de build_context
 async def hindsight_build_context_async(
     query: str,
     max_results: int = 3,
@@ -324,29 +342,3 @@ def hindsight_status() -> Dict[str, Any]:
         "bank_id": HINDSIGHT_BANK_ID,
         "api_key_set": bool(HINDSIGHT_API_KEY),
     }
-
-
-if __name__ == "__main__":
-    import logging as _logging
-    _logging.basicConfig(
-        level=_logging.INFO,
-        format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
-    )
-
-    async def _test_async():
-        print("\n=== TEST ASYNC ===")
-        results = await hindsight_recall_async("Qui est Eddy ?")
-        print(f"recall_async : {len(results)} resultats")
-
-    print("\n=== Etat Hindsight ===")
-    for k, v in hindsight_status().items():
-        print(f"   {k} = {v}")
-
-    print("\n=== TEST SYNC (retain) ===")
-    ok = hindsight_retain("Test sync BEK", context="test")
-    print(f"retain sync : {'OK' if ok else 'ECHEC'}")
-
-    asyncio.run(_test_async())
-
-    hindsight_close()
-    print("\nTests termines.\n")

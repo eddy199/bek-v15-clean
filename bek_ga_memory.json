@@ -1,0 +1,36 @@
+{
+  "population": [
+    {
+      "gene_id": "gene_base_v1",
+      "prompt_template": "Ex\u00e9cute la t\u00e2che de mani\u00e8re concise et directe.",
+      "max_tokens": 256,
+      "temperature": 0.1,
+      "fitness": 64.6868,
+      "success_rate": 0.75
+    },
+    {
+      "gene_id": "gene_analytic_v1",
+      "prompt_template": "Analyse \u00e9tape par \u00e9tape puis donne la solution JSON.",
+      "max_tokens": 384,
+      "temperature": 0.2,
+      "fitness": 6.5795,
+      "success_rate": 0.0
+    },
+    {
+      "gene_id": "gene_mut_132_2",
+      "prompt_template": "Analyse \u00e9tape par \u00e9tape puis donne la solution JSON.",
+      "max_tokens": 384,
+      "temperature": 0.13,
+      "fitness": 0.0,
+      "success_rate": 0.0
+    },
+    {
+      "gene_id": "gene_mut_132_3",
+      "prompt_template": "Analyse \u00e9tape par \u00e9tape puis donne la solution JSON. Valide chaque \u00e9tape avant d'\u00e9mettre le r\u00e9sultat.",
+      "max_tokens": 192,
+      "temperature": 0.15,
+      "fitness": 0.0,
+      "success_rate": 0.0
+    }
+  ]
+}

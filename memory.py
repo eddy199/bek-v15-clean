@@ -596,6 +596,84 @@ def record_pending_sync(record_id: str, content: str, error_msg: str = "") -> No
         _release_db_connection(conn)
 
 
+def replay_pending_syncs(limit: int = 20) -> int:
+    """
+    Rejoue les synchronisations Pinecone en attente (table sync_log).
+    Retourne le nombre de synchronisations réussies.
+    """
+    index = get_pinecone_index()
+    if index is None:
+        return 0
+
+    conn = get_db_connection()
+    if not conn:
+        return 0
+
+    cur = None
+    replayed_count = 0
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT id, content, retry_count
+            FROM sync_log
+            WHERE status = 'PENDING_PINECONE' AND retry_count < 5
+            ORDER BY created_at ASC
+            LIMIT %s;
+            """,
+            (limit,),
+        )
+        rows = cur.fetchall()
+        for record_id, content, retries in rows:
+            clean_txt = clean_string(content)
+            vector = get_embedding(clean_txt, input_type="passage")
+            if not vector:
+                continue
+
+            try:
+                now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+                index.upsert(
+                    vectors=[{
+                        "id": record_id,
+                        "values": vector,
+                        "metadata": {"text": clean_txt, "date": now_iso, "type": "conversation"}
+                    }]
+                )
+                cur.execute(
+                    "UPDATE sync_log SET status = 'SYNCED', updated_at = CURRENT_TIMESTAMP WHERE id = %s;",
+                    (record_id,),
+                )
+                conn.commit()
+                replayed_count += 1
+                logger.info("Compensation réussie pour le vecteur %s", record_id)
+            except Exception as sync_err:
+                cur.execute(
+                    """
+                    UPDATE sync_log
+                    SET retry_count = retry_count + 1, last_error = %s, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = %s;
+                    """,
+                    (clean_string(str(sync_err))[:500], record_id),
+                )
+                conn.commit()
+    except Exception as exc:
+        logger.error("Erreur lors du rejeu de synchronisation : %s", exc)
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
+    finally:
+        if cur:
+            try:
+                cur.close()
+            except Exception:
+                pass
+        _release_db_connection(conn)
+
+    return replayed_count
+
+
 # ==========================================
 # ★ v19.1 — MEMORY SEARCH (Pinecone ET ChromaDB EN PARALLÈLE)
 # ==========================================

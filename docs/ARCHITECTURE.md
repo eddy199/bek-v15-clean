@@ -117,9 +117,9 @@ Format EXCLUSIF :
 ## 📊 ÉTAT RÉEL DU SYSTÈME (généré automatiquement)
 ═══════════════════════════════════════════════════════════════════════════════
 
-> *Dernière synchronisation : 2026-11-04 22:27:06 UTC*
+> *Dernière synchronisation : 2026-11-05 20:41:11 UTC*
 > *Version BEK : **19.11***
-> *State hash : `08693d0ff6ec`*
+> *State hash : `73d778c6a9a1`*
 > *Boot phase : **complete***
 
 ═══════════════════════════════════════════════════════════════════════════════
@@ -230,7 +230,7 @@ Format EXCLUSIF :
 | Composant | Statut | Détail |
 |---|---|---|
 | `playwright` | 💤 **lazy** | ~200 MB économisés au boot |
-| `chromadb` | 💤 **lazy** | ~80 MB économisés au boot |
+| `chromadb` | ✅ **loaded** | Chargé à la demande |
 | `duckdb_episode` | ✅ **duckdb** | Backend : duckdb |
 | `lancedb` | 💤 **lazy** | Chargé à la demande |
 | `duckdb_analytics` | 💤 **lazy** | Chargé à la demande |
@@ -299,8 +299,9 @@ Format EXCLUSIF :
 - `swarm_agent.py`
 - `swarm_core.py`
 
-### Mémoire (5)
+### Mémoire (6)
 
+- `benchmark_memory.py`
 - `feedback_memory.py`
 - `gen_memory.py`
 - `hindsight_memory.py`
@@ -439,7 +440,7 @@ Format EXCLUSIF :
 
 - `core/lazy.py`
 
-### Autres modules racine (40)
+### Autres modules racine (41)
 
 - `ai_service.py`
 - `app.py`
@@ -450,6 +451,7 @@ Format EXCLUSIF :
 - `bek_orchestrator.py`
 - `bek_routing_config.py`
 - `bek_simulate.py`
+- `benchmark_ga.py`
 - `build_skill_index.py`
 - `context_loader.py`
 - `env_loader.py`

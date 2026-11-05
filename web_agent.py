@@ -252,8 +252,24 @@ class WebAgent:
         if not deep_corpus.strip():
             return "Aucun contenu textuel pertinent n'a pu être extrait du web."
 
+        tools_list = """
+=== OUTILS DISPONIBLES (à utiliser si nécessaire) ===
+Tu peux invoquer ces outils en utilisant [ACTION:nom_outil]{json}[/ACTION] :
+- web_search : recherche web
+- headless_scrape : scrape une URL
+- codex_loop : génère du code
+- save_memory : enregistre en mémoire
+- cognitive_critique : critique ton propre travail
+- ga_get_best : récupère le meilleur gène GA
+- ga_record_result : enregistre un feedback
+- ga_evolve : fait muter le GA
+
+INSTRUCTION : Si l'utilisateur te demande d'exécuter plusieurs étapes complexes, tu es autorisé à invoquer ces outils pour les accomplir.
+"""
+
         prompt = (
             f"Tu es l'analyste de recherche expert de BEK v22.\n"
+            f"{tools_list}\n"
             f"QUESTION : {query}\n\n"
             f"CORPUS DE SOURCES VÉRIFIÉES :\n{deep_corpus}\n\n"
             f"INSTRUCTIONS STRICTES :\n"
