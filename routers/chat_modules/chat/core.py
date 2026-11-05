@@ -364,8 +364,8 @@ async def _chat_impl(request: Request):
     
     # 1. Liste dynamique des outils
     try:
-        from core.brain import get_available_tools_prompt
-        tools_section = get_available_tools_prompt()
+        from core.brain import get_brain
+        tools_section = get_brain().skill_agent.get_available_tools_prompt("chat")
         dynamic_system_prompt += (
             "\n\n## OUTILS DISPONIBLES\n"
             "Utilise le format `[ACTION:nom_outil]{json}[/ACTION]`.\n"

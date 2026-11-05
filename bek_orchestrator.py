@@ -2,15 +2,10 @@
 # bek_orchestrator.py — ORCHESTRATEUR MULTI-AGENTS HYBRIDE UNIFIÉ (BEK-v15.3)
 # ARCHITECTURE TRIADIQUE (PLANIFICATEUR - WORKERS - CRITIQUE), A2A, MCP & SELF-HEALING
 # ------------------------------------------------------------------------------
-# CORRECTIF v2 (2026-09-20) :
-#   - plan_objective() : détection STRICTE des tâches web vs shell.
-#     Interdiction de router vers code_executor si l'objectif est une
-#     phrase en langage naturel (news, fetch, find, search, article, etc.).
-#   - worker_code_execution() : WHITELIST de commandes autorisées.
-#     Aucune commande arbitraire n'est exécutée. Seules les commandes
-#     explicitement listées (ls, dir, python, pytest, git status) passent.
-#   - Anti-injection : détection des phrases longues en anglais qui
-#     ressemblent à des ordres shell mais n'en sont pas.
+# v19.51 (2026-11-05) : ★ BEK-GA intégré
+#   - Récupération du prompt évolutif via ga_get_best
+#   - Enregistrement du fitness après chaque run()
+#   - Évolution automatique en cas d'échec
 # ==============================================================================
 
 from __future__ import annotations
@@ -49,55 +44,26 @@ logger.setLevel(logging.INFO)
 # ══════════════════════════════════════════════════════════════════
 # 🛡️ WHITELIST DE COMMANDES SHELL AUTORISÉES (v2)
 # ══════════════════════════════════════════════════════════════════
-# Seules ces commandes peuvent être exécutées via code_executor.
-# Toute autre commande est REJETÉE par sécurité.
 _ALLOWED_SHELL_PREFIXES = (
-    "ls",
-    "dir",
-    "pwd",
-    "cd",
-    "echo",
-    "cat",
-    "type",
-    "python ",
-    "python3 ",
-    "pytest",
-    "git status",
-    "git log",
-    "git diff",
-    "git branch",
-    "pip list",
-    "pip show",
-    "find ",
-    "grep ",
-    "wc ",
-    "head ",
-    "tail ",
+    "ls", "dir", "pwd", "cd", "echo", "cat", "type",
+    "python ", "python3 ", "pytest",
+    "git status", "git log", "git diff", "git branch",
+    "pip list", "pip show",
+    "find ", "grep ", "wc ", "head ", "tail ",
 )
 
 
 def _is_safe_shell_command(command: str) -> bool:
-    """
-    Vérifie qu'une commande est dans la whitelist.
-    Rejette toute commande hors whitelist, y compris les phrases
-    en langage naturel qui ressemblent à des ordres shell.
-    """
+    """Vérifie qu'une commande est dans la whitelist."""
     if not command or not command.strip():
         return False
 
     cmd = command.strip()
 
-    # ── Blocage des phrases longues (> 60 chars) en langage naturel ──
-    # Une vraie commande shell est généralement courte et ciblée.
     if len(cmd) > 200:
-        logger.warning(
-            "[Shell Guard] Commande trop longue (%d chars) — rejetée",
-            len(cmd),
-        )
+        logger.warning("[Shell Guard] Commande trop longue (%d chars) — rejetée", len(cmd))
         return False
 
-    # ── Détection des phrases en langage naturel (contient des verbes anglais) ──
-    # Ex: "Fetch the five latest IA news articles from..."
     natural_language_markers = (
         " the ", " from ", " for ", " and ", " with ", " articles ",
         " summarize ", " fetch ", " please ", " then ", " that ",
@@ -105,21 +71,14 @@ def _is_safe_shell_command(command: str) -> bool:
     cmd_lower = cmd.lower()
     nl_hits = sum(1 for m in natural_language_markers if m in cmd_lower)
     if nl_hits >= 2:
-        logger.warning(
-            "[Shell Guard] Phrase en langage naturel détectée — rejetée : %s",
-            cmd[:80],
-        )
+        logger.warning("[Shell Guard] Phrase en langage naturel détectée — rejetée : %s", cmd[:80])
         return False
 
-    # ── Vérification whitelist ──
     for prefix in _ALLOWED_SHELL_PREFIXES:
         if cmd.startswith(prefix):
             return True
 
-    # ── Blocage par défaut ──
-    logger.warning(
-        "[Shell Guard] Commande hors whitelist — rejetée : %s", cmd[:80]
-    )
+    logger.warning("[Shell Guard] Commande hors whitelist — rejetée : %s", cmd[:80])
     return False
 
 
@@ -152,10 +111,7 @@ class AgentHandoff:
             f"- **Synthèse :**\n{self.summary}",
         ]
         if self.citations:
-            sections.append(
-                "- **Sources & Preuves :**\n"
-                + "\n".join(f"  * {c}" for c in self.citations)
-            )
+            sections.append("- **Sources & Preuves :**\n" + "\n".join(f"  * {c}" for c in self.citations))
         if self.error_message:
             sections.append(f"- **Dernière Erreur Notée :** {self.error_message}")
         return "\n".join(sections)
@@ -181,9 +137,7 @@ class AgentMesh:
 
     def register_capability(self, manifest: CapabilityManifest):
         self.registry[manifest.agent_id] = manifest
-        logger.info(
-            f"⚡ [Mesh] Agent enregistré : {manifest.agent_id} ({manifest.role_type})"
-        )
+        logger.info(f"⚡ [Mesh] Agent enregistré : {manifest.agent_id} ({manifest.role_type})")
 
     def route_deterministic(self, task_type: str) -> Optional[CapabilityManifest]:
         for manifest in self.registry.values():
@@ -231,40 +185,25 @@ def worker_web_research(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def worker_code_execution(params: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Processing Agent : Exécution locale sécurisée (v2).
-    Toute commande hors whitelist est REJETÉE.
-    """
+    """Processing Agent : Exécution locale sécurisée (v2)."""
     import subprocess
 
     command = params.get("command", "").strip()
     if not command:
         return {"status": "error", "message": "Commande vide."}
 
-    # ── v2 : vérification whitelist stricte ──
     if not _is_safe_shell_command(command):
-        logger.warning(
-            "[code_executor] Commande rejetée par sécurité : %s", command[:80]
-        )
+        logger.warning("[code_executor] Commande rejetée par sécurité : %s", command[:80])
         return {
             "status": "error",
-            "message": (
-                "Commande rejetée par sécurité (hors whitelist). "
-                "Commandes autorisées : ls, dir, cat, python, pytest, git status, etc."
-            ),
+            "message": "Commande rejetée par sécurité (hors whitelist).",
             "returncode": -1,
         }
 
     workspace_dir = os.path.dirname(os.path.abspath(__file__))
     try:
-        res = subprocess.run(
-            command,
-            shell=True,
-            cwd=workspace_dir,
-            capture_output=True,
-            text=True,
-            timeout=45,
-        )
+        res = subprocess.run(command, shell=True, cwd=workspace_dir,
+                             capture_output=True, text=True, timeout=45)
         output = (res.stdout + "\n" + res.stderr).strip()
         return {
             "status": "success" if res.returncode == 0 else "error",
@@ -303,10 +242,7 @@ class QualityCritic:
 
         error_signatures = [
             "Traceback (most recent call last)",
-            "SyntaxError",
-            "HTTP 404",
-            "Client Error",
-            "FAILED",
+            "SyntaxError", "HTTP 404", "Client Error", "FAILED",
         ]
         for err in error_signatures:
             if err in worker_output:
@@ -319,7 +255,6 @@ class QualityCritic:
 # 6. ORCHESTRATEUR MAÎTRE UNIFIÉ (v2)
 # ==============================================================================
 
-# Mots-clés qui indiquent une tâche WEB (jamais shell)
 _WEB_TASK_KEYWORDS = (
     "cherche", "recherche", "trouve", "veille",
     "web", "scrape", "article", "news", "actualité",
@@ -327,60 +262,71 @@ _WEB_TASK_KEYWORDS = (
     "https", "http", "url", "site",
 )
 
-# Mots-clés qui indiquent une tâche SHELL (vraies commandes)
 _SHELL_TASK_KEYWORDS = (
-    "execute la commande",
-    "lance la commande",
-    "exécute la commande",
-    "run command",
-    "shell command",
-    "$ ",
-    "cmd>",
+    "execute la commande", "lance la commande", "exécute la commande",
+    "run command", "shell command", "$ ", "cmd>",
 )
 
 
 class BEKOrchestrator:
-    """Planificateur GOAP / Superviseur Triadique universel (v2)."""
+    """Planificateur GOAP / Superviseur Triadique universel (v2 + BEK-GA)."""
 
     def __init__(self):
         self.mesh = AgentMesh()
         self._init_mesh_capabilities()
 
+    # ─── BEK-GA : Récupération du prompt évolutif ───
+    def _get_ga_prompt(self) -> str:
+        """Demande au moteur génétique le meilleur prompt évolutif."""
+        try:
+            from nerves.ga_nerves import get_ga_engine
+            best = get_ga_engine().select_best_gene()
+            logger.debug("[BEK-GA] Gène actif : %s (fitness=%s)", best.gene_id, best.fitness)
+            return best.prompt_template
+        except Exception:
+            return "Exécute la tâche de manière concise et directe."
+
+    # ─── BEK-GA : Enregistrement du fitness ───
+    def _record_ga_fitness(self, objective: str, result: str, elapsed_ms: float):
+        """Enregistre le fitness du gène actif dans le moteur génétique."""
+        try:
+            from nerves.ga_nerves import get_ga_engine
+            engine = get_ga_engine()
+            best_gene = engine.select_best_gene()
+            tokens_est = len(str(objective)) // 4 + len(str(result)) // 4
+            success = bool(result and len(str(result)) > 20)
+            engine.calculate_fitness(best_gene, success, elapsed_ms, tokens_est)
+            if not success:
+                engine.evolve()
+                logger.info("[BEK-GA] ⚡ Évolution déclenchée (échec orchestrateur)")
+        except Exception as ga_exc:
+            logger.debug("[BEK-GA] Enregistrement fitness ignoré : %s", ga_exc)
+
     def _init_mesh_capabilities(self):
         self.mesh.register_capability(CapabilityManifest(
-            agent_id="web_researcher",
-            role_type="processing",
+            agent_id="web_researcher", role_type="processing",
             description="Agent dédié à la veille web et au deep scraping.",
             tags=["web", "scrape", "search", "docs"],
             handler=worker_web_research,
         ))
         self.mesh.register_capability(CapabilityManifest(
-            agent_id="code_executor",
-            role_type="processing",
+            agent_id="code_executor", role_type="processing",
             description="Agent d'exécution système local, terminal et tests.",
             tags=["shell", "command", "code", "run", "test"],
             handler=worker_code_execution,
         ))
         self.mesh.register_capability(CapabilityManifest(
-            agent_id="memory_service",
-            role_type="service",
+            agent_id="memory_service", role_type="service",
             description="Agent de synchronisation et rappel de connaissances.",
             tags=["memory", "vector", "sql", "db"],
             handler=worker_memory_vault,
         ))
 
     def plan_objective(self, user_goal: str) -> List[Dict[str, str]]:
-        """
-        Décompose déterministement l'objectif en sous-tâches ordonnées.
-        CORRECTIF v2 : détection STRICTE des tâches web vs shell.
-        """
         plan = []
         goal_lower = user_goal.lower()
 
-        # ── v2 : détection WEB prioritaire ──
         is_web_task = any(w in goal_lower for w in _WEB_TASK_KEYWORDS)
-
-        # ── v2 : détection SHELL uniquement si mots-clés EXPLICITES ──
         is_shell_task = any(w in goal_lower for w in _SHELL_TASK_KEYWORDS)
 
         if is_web_task:
@@ -390,10 +336,8 @@ class BEKOrchestrator:
             plan.append({"agent": "code_executor", "task": user_goal})
 
         if not plan:
-            # Fallback : toujours router vers web (jamais shell par défaut)
             plan.append({"agent": "web_researcher", "task": user_goal})
 
-        # Toujours conclure par l'ancrage mémoire
         plan.append({
             "agent": "memory_service",
             "task": f"Persistance de la synthèse pour : {user_goal[:50]}",
@@ -401,7 +345,13 @@ class BEKOrchestrator:
         return plan
 
     def run(self, objective: str) -> str:
-        """Exécution complète du pipeline avec supervision et auto-réparation."""
+        """Exécution complète du pipeline avec supervision, auto-réparation et BEK-GA."""
+        start_time = time.time()
+
+        # ★ BEK-GA : Récupération du prompt évolutif
+        ga_prompt = self._get_ga_prompt()
+        logger.info("[BEK-GA] Prompt actif : %s...", ga_prompt[:80])
+
         state = OrchestratorState(objective)
         state.plan = self.plan_objective(objective)
 
@@ -413,61 +363,40 @@ class BEKOrchestrator:
 
         for step in state.plan:
             if state.iteration_count >= state.max_iterations:
-                logger.warning(
-                    "🛑 Disjoncteur activé : Limite maximale d'itérations atteinte."
-                )
+                logger.warning("🛑 Disjoncteur activé : Limite maximale d'itérations atteinte.")
                 break
 
             agent_manifest = self.mesh.route_deterministic(step["agent"])
             if not agent_manifest:
                 continue
 
-            # ── v2 : construire les params selon l'agent ──
             if agent_manifest.agent_id == "web_researcher":
                 handler_params = {"query": step["task"]}
             elif agent_manifest.agent_id == "code_executor":
                 handler_params = {"command": step["task"]}
             elif agent_manifest.agent_id == "memory_service":
-                handler_params = {
-                    "action": "save",
-                    "content": step["task"],
-                }
+                handler_params = {"action": "save", "content": step["task"]}
             else:
                 handler_params = {"query": step["task"]}
 
             worker_res = agent_manifest.handler(handler_params)
             raw_output = str(
-                worker_res.get("result")
-                or worker_res.get("output")
-                or worker_res.get("message")
-                or ""
+                worker_res.get("result") or worker_res.get("output")
+                or worker_res.get("message") or ""
             )
 
-            # Évaluation Juge Critique
-            is_valid, critic_feedback, score = QualityCritic.evaluate(
-                step["task"], raw_output
-            )
+            is_valid, critic_feedback, score = QualityCritic.evaluate(step["task"], raw_output)
 
-            # Auto-réparation (Self-Healing) si échec
             if not is_valid and state.iteration_count < state.max_iterations:
-                logger.warning(
-                    f"⚠️ [Critic Alert] Échec ({critic_feedback}). Self-Healing..."
-                )
+                logger.warning(f"⚠️ [Critic Alert] Échec ({critic_feedback}). Self-Healing...")
                 if agent_manifest.agent_id == "web_researcher":
                     repair_params = {"query": f"{step['task']} guide"}
                 else:
                     repair_params = handler_params
                 worker_res = agent_manifest.handler(repair_params)
-                raw_output = str(
-                    worker_res.get("result")
-                    or worker_res.get("output")
-                    or ""
-                )
-                is_valid, critic_feedback, score = QualityCritic.evaluate(
-                    step["task"], raw_output
-                )
+                raw_output = str(worker_res.get("result") or worker_res.get("output") or "")
+                is_valid, critic_feedback, score = QualityCritic.evaluate(step["task"], raw_output)
 
-            # Contrat de transfert A2A
             handoff = AgentHandoff(
                 task_id=f"step_{state.iteration_count + 1}",
                 source_agent=agent_manifest.agent_id,
@@ -482,13 +411,19 @@ class BEKOrchestrator:
             state.checkpoint(handoff)
             final_syntheses.append(raw_output)
 
-        return (
+        final_result = (
             f"## ⚡ Rapport d'Exécution Multi-Agents Orchestré\n"
             f"*Session : `{state.session_id}` | "
             f"Itérations validées : {state.iteration_count}/{state.max_iterations}*\n\n"
             f"### 🛡️ Synthèse Arbitrée par la Triade :\n\n"
             + "\n\n---\n\n".join(final_syntheses)
         )
+
+        # ★ BEK-GA : Enregistrement du fitness
+        elapsed_ms = (time.time() - start_time) * 1000
+        self._record_ga_fitness(objective, final_result, elapsed_ms)
+
+        return final_result
 
 
 # Instance globale

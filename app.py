@@ -297,6 +297,9 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         cognitive_nerves.activate_cognitive_nerves()
         router_nerves.activate_router_nerves()
         coder_nerves.activate_coder_nerves()
+        # ★ NERF 20 — BEK-GA (Moteur Génétique)
+        from nerves.ga_nerves import activate_ga_nerves
+        activate_ga_nerves()
         project_creator_nerves.activate_project_creator_nerves()
     except Exception as _nerves_err: logger.error("❌ Activation des nerfs échouée : %s", _nerves_err)
 

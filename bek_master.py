@@ -1,9 +1,11 @@
 # ==============================================================================
-# BEK-v18 — MASTER ORCHESTRATOR v2.3
+# BEK-v19.51 — MASTER ORCHESTRATOR v2.4
 # ------------------------------------------------------------------------------
+# v2.4 (2026-11-05) : ★ BEK-GA intégré
+#   - Récupération du prompt évolutif via ga_get_best
+#   - Enregistrement du fitness après chaque process()
+#   - Évolution automatique en cas d'échec
 # v2.3 (2026-10-01) : ★ Fix encodage UTF-8 + Timeout vidéo
-#   - Fix UnicodeEncodeError Windows cp1252 (emojis)
-#   - Détection vidéo → timeout étendu (300s au lieu de 15s)
 # v2.2 (2026-10-01) : Activation des 12 nerfs au démarrage
 # ==============================================================================
 
@@ -34,7 +36,6 @@ logging.basicConfig(
 )
 
 
-
 # ══════════════════════════════════════════════════════════════════════════════
 # Mots-clés de détection AVANT BEK-REX
 # ══════════════════════════════════════════════════════════════════════════════
@@ -61,10 +62,7 @@ SHELL_TRIGGERS = (
 # ★ ACTIVATION DES NERFS (avant tout le reste)
 # ══════════════════════════════════════════════════════════════════════════════
 def _activate_all_nerves() -> Dict[str, Any]:
-    """
-    Active tous les nerfs BEK dans le bon ordre de dépendances.
-    Chaque nerf échoue indépendamment (pas de cascade).
-    """
+    """Active tous les nerfs BEK dans le bon ordre de dépendances."""
     report: Dict[str, Any] = {"ok": [], "failed": [], "skipped": []}
 
     NERFS_ORDER = [
@@ -81,6 +79,7 @@ def _activate_all_nerves() -> Dict[str, Any]:
         # ("Nerf 10 CRM",         "nerves.crm_nerves",         "activate_crm_nerves"),
         ("Nerf 11-13 Headless", "nerves.headless_nerves",    "activate_headless_nerves"),
         ("Nerf 14-17 Tmux",     "nerves.tmux_nerves",        "activate_tmux_nerves"),
+        ("Nerf 20 BEK-GA",      "nerves.ga_nerves",          "activate_ga_nerves"),
     ]
 
     print("=" * 70)
@@ -126,11 +125,10 @@ _NERF_ACTIVATION_REPORT: Dict[str, Any] = _activate_all_nerves()
 
 
 class BEKMasterOrchestrator:
-    """CERVEAU CENTRAL de BEK — 6 briques core + 7 externes + 12 nerfs."""
+    """CERVEAU CENTRAL de BEK — 6 briques core + 7 externes + 13 nerfs."""
 
-    # ★ Timeouts adaptés par type d'action
-    TIMEOUT_DEFAULT = 30          # 30s pour LLM/web
-    TIMEOUT_VISION = 300          # ★ 5 min pour Agnes vidéo (génération lourde)
+    TIMEOUT_DEFAULT = 30
+    TIMEOUT_VISION = 300
     TIMEOUT_SHELL = 60
 
     def __init__(self):
@@ -182,6 +180,33 @@ class BEKMasterOrchestrator:
             return "shell"
         return None
 
+    # ─── BEK-GA : Récupération du prompt évolutif ───
+    def _get_ga_prompt(self) -> str:
+        """Demande au moteur génétique le meilleur prompt évolutif."""
+        try:
+            from nerves.ga_nerves import get_ga_engine
+            best = get_ga_engine().select_best_gene()
+            logger.debug("[BEK-GA] Gène actif : %s (fitness=%s)", best.gene_id, best.fitness)
+            return best.prompt_template
+        except Exception:
+            return "Exécute la tâche de manière concise et directe."
+
+    # ─── BEK-GA : Enregistrement du fitness ───
+    def _record_ga_fitness(self, query: str, result: dict, elapsed_ms: float):
+        """Enregistre le fitness du gène actif dans le moteur génétique."""
+        try:
+            from nerves.ga_nerves import get_ga_engine
+            engine = get_ga_engine()
+            best_gene = engine.select_best_gene()
+            tokens_est = len(str(query)) // 4 + len(str(result.get("response", ""))) // 4
+            success = result.get("status") == "success"
+            engine.calculate_fitness(best_gene, success, elapsed_ms, tokens_est)
+            if not success:
+                engine.evolve()
+                logger.info("[BEK-GA] ⚡ Évolution déclenchée (échec master)")
+        except Exception as ga_exc:
+            logger.debug("[BEK-GA] Enregistrement fitness ignoré : %s", ga_exc)
+
     # ═════════════════════════════════════════════════════════════════════════
     # POINT D'ENTRÉE
     # ═════════════════════════════════════════════════════════════════════════
@@ -194,6 +219,10 @@ class BEKMasterOrchestrator:
         t0 = time.monotonic()
         self._ensure_initialized()
         from bek_core import BekCPU
+
+        # ★ BEK-GA : Récupération du prompt évolutif
+        ga_prompt = self._get_ga_prompt()
+        logger.debug("[BEK-GA] Prompt actif : %s...", ga_prompt[:80])
 
         result = {
             "status": "success",
@@ -229,8 +258,11 @@ class BEKMasterOrchestrator:
         try:
             limits = BekCPU.execute("BEK-ECO", "bek_eco_check_limits")
             if limits.get("daily_remaining", 0) <= 0:
-                return {**result, "status": "error",
-                        "message": "Quota BEK-ECO atteint."}
+                result["status"] = "error"
+                result["message"] = "Quota BEK-ECO atteint."
+                elapsed_ms = (time.monotonic() - t0) * 1000
+                self._record_ga_fitness(user_query, result, elapsed_ms)
+                return result
 
             cached = BekCPU.execute("BEK-ECO", "bek_eco_cache_get", key=cache_key)
             if cached and cached.get("value"):
@@ -243,6 +275,10 @@ class BEKMasterOrchestrator:
                 result["duration_ms"] = int((time.monotonic() - t0) * 1000)
                 result["cached"] = True
                 logger.info("[Master] BEK-ECO CACHE HIT")
+
+                # ★ BEK-GA : Enregistrement du fitness
+                elapsed_ms = (time.monotonic() - t0) * 1000
+                self._record_ga_fitness(user_query, result, elapsed_ms)
                 return result
             result["bricks_used"].append("BEK-ECO")
         except Exception as e:
@@ -257,8 +293,7 @@ class BEKMasterOrchestrator:
 
         # ─── DECISION ───
         if tier == "TIER_0" and not intent:
-            response = await self._llm_direct(user_query, memory_context,
-                                              provider, model)
+            response = await self._llm_direct(user_query, memory_context, provider, model)
             result["bricks_used"].append("LLM_DIRECT")
         elif intent == "vision":
             response = await self._execute_vision(user_query)
@@ -270,9 +305,7 @@ class BEKMasterOrchestrator:
             response = await self._execute_shell(user_query)
             result["bricks_used"].append("HERMES_SHELL")
         else:
-            response = await self._pipeline_full(
-                user_query, memory_context, tier, provider, model
-            )
+            response = await self._pipeline_full(user_query, memory_context, tier, provider, model)
             result["bricks_used"].append("PIPELINE_FULL")
 
         result["response"] = response
@@ -281,13 +314,12 @@ class BEKMasterOrchestrator:
         try:
             BekCPU.execute("BEK-LOOP", "bek_loop_record",
                            episode={"query": user_query[:200], "tier": tier,
-                                    "intent": intent,
-                                    "response_len": len(response)})
+                                    "intent": intent, "response_len": len(response)})
             result["bricks_used"].append("BEK-LOOP")
         except Exception:
             pass
 
-        # ─── Cache (skip si vision : la vidéo est lourde et unique) ───
+        # ─── Cache ───
         if intent != "vision":
             try:
                 BekCPU.execute("BEK-ECO", "bek_eco_cache_set",
@@ -297,6 +329,11 @@ class BEKMasterOrchestrator:
                 pass
 
         result["duration_ms"] = int((time.monotonic() - t0) * 1000)
+
+        # ★ BEK-GA : Enregistrement du fitness
+        elapsed_ms = (time.monotonic() - t0) * 1000
+        self._record_ga_fitness(user_query, result, elapsed_ms)
+
         return result
 
     # ═════════════════════════════════════════════════════════════════════════
@@ -324,33 +361,19 @@ class BEKMasterOrchestrator:
         return "\n\n".join(parts)
 
     async def _execute_vision(self, query: str) -> str:
-        """
-        ★ v2.3 — Appel direct au nerf Hermes AVEC timeout étendu pour la vidéo.
-
-        Le nerf Hermes a un timeout de 15s par défaut (task_timeout).
-        Pour la vidéo Agnes (2-3 min), on appelle directement le handler
-        réel via services.vision pour éviter le timeout.
-        """
         q = query.lower()
         is_video = any(k in q for k in ("vidéo", "video", "film"))
 
-        # ─── VIDÉO : appel direct à services.vision (pas de timeout 15s) ───
         if is_video:
             logger.info("[Master] VIDEO via services.vision (timeout etendu)")
             try:
                 from services.vision import generate_video_with_provider
-                logger.info("[Master] Appel generate_video_with_provider...")
-
-                # Appel SYNCHRONE mais dans un thread pour ne pas bloquer
                 loop = asyncio.get_event_loop()
                 result = await loop.run_in_executor(
-                    None,
-                    lambda: generate_video_with_provider(prompt=query)
+                    None, lambda: generate_video_with_provider(prompt=query)
                 )
-
                 if not isinstance(result, dict):
                     return f"(resultat invalide : {type(result).__name__})"
-
                 status = result.get("status", "")
                 if status == "success" and result.get("filepath"):
                     return (
@@ -365,14 +388,11 @@ class BEKMasterOrchestrator:
                 if result.get("message"):
                     return f"(echec video) {result['message']}"
                 return f"(resultat vide) {result}"
-
             except Exception as e:
                 logger.error("[Master] Vision echec : %s", e)
-                import traceback
                 traceback.print_exc()
                 return f"(erreur vision : {e})"
 
-        # ─── IMAGE : passe par Hermes normalement (rapide) ───
         hermes = self._external_bricks.get("hermes")
         if not hermes:
             return "(Hermes indisponible)"
@@ -380,24 +400,19 @@ class BEKMasterOrchestrator:
         try:
             logger.info("[Master] IMAGE via Hermes")
             result = hermes.dispatch("generate_image", {"prompt": query})
-
             if not result or result.get("status") == "FAILED":
                 return "(echec generate_image)"
-
             task_data = None
             results_dict = result.get("results", {})
             for task_id, task_res in results_dict.items():
                 if isinstance(task_res, dict):
                     task_data = task_res.get("data", task_res)
                     break
-
             if not task_data:
                 task_data = result.get("data", result)
-
             if isinstance(task_data, dict):
                 if task_data.get("message"):
                     return str(task_data["message"])
-
             return str(task_data) if task_data else "(resultat vide pour image)"
         except Exception as e:
             logger.error("[Master] Image echec : %s", e)
@@ -456,8 +471,7 @@ class BEKMasterOrchestrator:
             return f"(erreur LLM : {e})"
         return "".join(chunks) or "(pas de reponse)"
 
-    async def _pipeline_full(self, query, memory_context, tier,
-                             provider, model) -> str:
+    async def _pipeline_full(self, query, memory_context, tier, provider, model) -> str:
         if tier == "TIER_4":
             swarm = self._external_bricks.get("swarm")
             if swarm:
@@ -465,9 +479,7 @@ class BEKMasterOrchestrator:
                     pm = self._external_bricks.get("provider_manager")
                     api_key = "dummy"
                     if pm:
-                        api_key = pm.get_api_key(
-                            f"{provider.upper()}_API_KEY"
-                        ) or "dummy"
+                        api_key = pm.get_api_key(f"{provider.upper()}_API_KEY") or "dummy"
                     result = await swarm(user_query=query, api_key=api_key,
                                         provider=provider, model=model)
                     if result and len(result) > 20:
@@ -488,7 +500,6 @@ class BEKMasterOrchestrator:
         return await self._llm_direct(query, memory_context, provider, model)
 
     async def close(self):
-        """Ferme les sessions HTTP proprement."""
         for closer_name, module_name in [
             ("hindsight_close", "hindsight_memory"),
             ("shutdown_event_bus_sync", "event_bus_client"),
@@ -523,16 +534,13 @@ if __name__ == "__main__":
     async def _test():
         master = BEKMasterOrchestrator()
         print("=" * 70)
-        print("TEST BEK MASTER v2.3 (UTF-8 + timeout video etendu)")
+        print("TEST BEK MASTER v2.4 (BEK-GA intégré)")
         print("=" * 70)
         print("\n[Stats]")
         for k, v in master.stats().items():
             print(f"  {k}: {v}")
 
-        tests = [
-            "bonjour",
-            "génère une vidéo de chat",
-        ]
+        tests = ["bonjour", "génère une vidéo de chat"]
 
         try:
             for q in tests:

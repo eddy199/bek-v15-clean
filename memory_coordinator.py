@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v19 — MEMORY COORDINATOR (v1.4 — Async-Safe + Tri pertinence)
+# BEK-v19.1 — MEMORY COORDINATOR (v2.0 — Parallélisation totale + Timeouts courts)
 # ------------------------------------------------------------------------------
-# v1.4 (2026-10-30) — Fix :
-#   - Fonction coordinate_memories_async unique et robuste (plus de doublon)
-#   - Ajout de asyncio.wait_for pour éviter les blocages infinis
-#   - Tri par pertinence dans _build_unified_context (limite 10 faits)
-#   - Timeout conservé à 15s
+# v2.0 (2026-11-05) — OPTIMISATION MAJEURE :
+#   - FETCH_TIMEOUT réduit à 5s (au lieu de 15s)
+#   - Hindsight en PARALLÈLE avec Pinecone/ChromaDB/Supabase
+#     (au lieu d'être séquentiel et bloquant)
+#   - asyncio.gather() avec return_exceptions=True pour une parallélisation réelle
+#   - Timeout global réduit à FETCH_TIMEOUT + 1
+#   - Gain attendu : 11s → 3s
 # ==============================================================================
 
 from __future__ import annotations
@@ -74,8 +76,8 @@ NEGATION_WORDS = {
     "no", "not", "never", "none", "nothing",
 }
 
-# ★ Timeout global par source
-FETCH_TIMEOUT = 15.0
+# ★ v2.0 : Timeout réduit de 15s à 5s
+FETCH_TIMEOUT = 5.0
 
 SIMILARITY_DUPLICATE_THRESHOLD = 0.92
 SIMILARITY_CONTRADICTION_THRESHOLD = 0.70
@@ -84,7 +86,7 @@ MIN_COMMON_WORDS = 4
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# FETCH
+# FETCH (chaque fonction isolée, appelable en parallèle)
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _fetch_pinecone(query: str) -> List[MemoryFact]:
@@ -225,14 +227,33 @@ def _fetch_supabase(query: str) -> List[MemoryFact]:
                     pass
 
         cur.close()
-        conn.close()
+        # ★ v2.0 : utiliser _release_db_connection si dispo (pool), sinon close
+        try:
+            from memory import _release_db_connection
+            _release_db_connection(conn)
+        except Exception:
+            try:
+                conn.close()
+            except Exception:
+                pass
         return facts
     except Exception as exc:
         logger.debug("[Coordinator] Supabase échec : %s", exc)
         return []
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v2.0 — FETCH ALL : Parallélisation totale (Hindsight inclus)
+# ══════════════════════════════════════════════════════════════════════════════
+
 async def fetch_all_memories_async(query: str) -> Dict[str, List[MemoryFact]]:
+    """
+    ★ v2.0 : Parallélisation TOTALE.
+    - Hindsight (async) lancé en tâche de fond
+    - Pinecone, ChromaDB, Supabase (sync) lancés en threads
+    - asyncio.gather() attend tous les résultats EN MÊME TEMPS
+    - Gain attendu : 11s → 3s
+    """
     results: Dict[str, List[MemoryFact]] = {
         "pinecone": [],
         "chromadb": [],
@@ -240,26 +261,44 @@ async def fetch_all_memories_async(query: str) -> Dict[str, List[MemoryFact]]:
         "supabase": [],
     }
 
-    try:
-        results["hindsight"] = await _fetch_hindsight_async(query)
-    except Exception as exc:
-        logger.debug("[Coordinator] Hindsight async échec : %s", exc)
-
     loop = asyncio.get_running_loop()
+
+    # ★ v2.0 : Lancer TOUTES les tâches en parallèle
+    # Hindsight est déjà async → on le lance directement
+    # Les 3 autres sont sync → on les lance en threads
     with ThreadPoolExecutor(max_workers=3) as executor:
-        futures = {
-            loop.run_in_executor(executor, _fetch_pinecone, query): "pinecone",
-            loop.run_in_executor(executor, _fetch_chromadb, query): "chromadb",
-            loop.run_in_executor(executor, _fetch_supabase, query): "supabase",
-        }
-        # On attend chaque future avec un timeout individuel
-        for fut, src in futures.items():
-            try:
-                results[src] = await asyncio.wait_for(fut, timeout=FETCH_TIMEOUT)
-            except asyncio.TimeoutError:
-                logger.warning("[Coordinator] %s timeout (%ss)", src, FETCH_TIMEOUT)
-            except Exception as exc:
-                logger.debug("[Coordinator] %s échec : %s", src, exc)
+        future_pinecone = loop.run_in_executor(executor, _fetch_pinecone, query)
+        future_chromadb = loop.run_in_executor(executor, _fetch_chromadb, query)
+        future_supabase = loop.run_in_executor(executor, _fetch_supabase, query)
+
+        # ★ v2.1 : Hindsight en thread séparé (évite le conflit d'event loop)
+        future_hindsight = loop.run_in_executor(
+            executor,
+            lambda: asyncio.run(_fetch_hindsight_async(query)),
+        )
+
+        # ★ v2.0 : asyncio.gather avec return_exceptions=True
+        # pour attendre TOUTES les tâches en parallèle
+        gathered = await asyncio.gather(
+        future_pinecone,
+        future_chromadb,
+        future_supabase,
+        future_hindsight,
+        return_exceptions=True,
+    )
+       
+
+    # Mapping des résultats
+    sources = ["pinecone", "chromadb", "supabase", "hindsight"]
+    for i, src in enumerate(sources):
+        result = gathered[i]
+        if isinstance(result, Exception):
+            logger.debug("[Coordinator] %s échec : %s", src, result)
+            results[src] = []
+        elif isinstance(result, list):
+            results[src] = result
+        else:
+            results[src] = []
 
     return results
 
@@ -436,26 +475,27 @@ def _build_unified_context(facts: List[MemoryFact], max_chars: int = 2000) -> st
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# API PUBLIQUE (v1.4 — async-safe)
+# API PUBLIQUE (v2.0 — Parallélisation totale)
 # ══════════════════════════════════════════════════════════════════════════════
 
 async def coordinate_memories_async(query: str, max_chars: int = 2000) -> UnifiedMemory:
     """
     Version ASYNC — utilisée par FastAPI / uvicorn.
-    Ne crée JAMAIS de nouvelle boucle, s'intègre à celle qui existe.
+    ★ v2.0 : Parallélisation totale + timeout réduit.
     """
     t0 = time.monotonic()
 
     if not query or not query.strip():
         return UnifiedMemory("", [], [], [], 0.0)
 
+    # ★ v2.0 : Timeout global = FETCH_TIMEOUT + 1 (au lieu de + 5)
     try:
         raw_by_source = await asyncio.wait_for(
             fetch_all_memories_async(query),
-            timeout=FETCH_TIMEOUT + 5,  # marge de sécurité globale
+            timeout=FETCH_TIMEOUT + 1,
         )
     except asyncio.TimeoutError:
-        logger.warning("[Coordinator] ⏱️ Timeout global (%ss)", FETCH_TIMEOUT + 5)
+        logger.warning("[Coordinator] ⏱️ Timeout global (%ss)", FETCH_TIMEOUT + 1)
         return UnifiedMemory("", [], [], [], (time.monotonic() - t0) * 1000)
 
     all_facts: List[MemoryFact] = []
@@ -520,7 +560,7 @@ def coordinate_memories(query: str, max_chars: int = 2000) -> UnifiedMemory:
             lambda: asyncio.run(coordinate_memories_async(query, max_chars))
         )
         try:
-            return future.result(timeout=FETCH_TIMEOUT + 10)
+            return future.result(timeout=FETCH_TIMEOUT + 5)
         except concurrent.futures.TimeoutError:
             logger.warning("[Coordinator] Timeout en mode sync-threaded")
             return UnifiedMemory("", [], [], [], 0.0)
@@ -537,7 +577,7 @@ if __name__ == "__main__":
         format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
     )
 
-    print("\n=== TEST Coordinator v1.4 ===\n")
+    print("\n=== TEST Coordinator v2.0 ===\n")
     result = coordinate_memories("Qui est Eddy ?")
     print(f"Sources : {result.sources_used}")
     print(f"Faits : {len(result.facts)}")

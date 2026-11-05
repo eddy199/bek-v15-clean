@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.49 (FIX Tools Injection + ReflexLoop)
+# BEK Hybrid Agent v19 — core/brain.py — v19.50 (BEK-GA intégré)
 # ==============================================================================
 from __future__ import annotations
 
@@ -110,7 +110,6 @@ def _detect_explicit_tool(query: str) -> Optional[Tuple[str, Optional[str]]]:
     if not m: return None
     prefix = (m.group(1) or "").lower()
     name = m.group(2).lower()
-    tool_name = ("mcp_" + name) if prefix != "mcp_" and not name.startswith("mcp_") else name
     if m.group(0).lower().startswith("mcp_"):
         tool_name = m.group(0).lower()
     else:
@@ -167,6 +166,7 @@ def _detect_phase(query: str) -> tuple:
     if any(k in q for k in _PHASE_STEP_KEYWORDS): return "step", -1
     return "auto", 0
 
+
 class SkillAgent:
     def __init__(self, index_paths: List[str] = None):
         self.index_paths = index_paths or [r"F:\workspacekimi\skills_index.json"]
@@ -197,17 +197,14 @@ class SkillAgent:
         category = self._detect_category(query)
         q_words = query.lower().split()
         matched = []
-        
         for skill in self.skills_db:
             if skill.get("category") != category: continue
             text = f"{skill.get('name', '')} {skill.get('description', '')}".lower()
             score = sum(1 for w in q_words if w in text)
             if score > 0: matched.append((score, skill))
-            
         matched.sort(key=lambda x: x[0], reverse=True)
         return {"skills": [m[1] for m in matched[:3]]}
 
-    # ★ FIX : Cette fonction est maintenant correctement exposée
     def get_available_tools_prompt(self, intent: str) -> str:
         try:
             from hermes_core import hermes
@@ -219,18 +216,17 @@ class SkillAgent:
                 desc = ""
                 if "rea_analyze_javascript" in name: desc = ' - Analyse un fichier/dossier JavaScript local avec REA. Paramètre OBLIGATOIRE : path'
                 elif "rea_analyze_binary" in name: desc = ' - Analyse un binaire local. Paramètre OBLIGATOIRE : path'
-                elif "rea_analyze_repo" in name: desc = ' - Analyse un dépôt GitHub. Paramètre OBLIGATOIRE : repo_url'
-                elif "rea_read_file" in name: desc = ' - Lit un fichier GitHub. Paramètres : repo_url, file_path'
                 elif "python_analyze_file" in name: desc = ' - Analyse un fichier Python (AST). Paramètre : file_path'
                 elif "python_analyze_directory" in name: desc = ' - Analyse tous les .py d\'un dossier. Paramètre : dir_path'
-                elif "python_save_report" in name: desc = ' - Analyse un dossier Python et sauve le rapport MD+JSON. Paramètre : dir_path'
                 elif "web_search" in name: desc = " - Cherche sur le web"
                 elif "generate_image" in name: desc = " - Génère une image"
                 elif "save_memory" in name: desc = " - Mémorise une information"
+                elif "ga_get_best" in name: desc = " - Récupère le meilleur prompt évolutif"
                 tools_list.append(f"- {name} (risque: {risk}){desc}")
             if not tools_list: return "Aucun outil spécifique disponible."
             return "\n".join(tools_list)
         except Exception: return "Liste des outils indisponible."
+
 
 class BEKBrain:
     def __init__(self):
@@ -243,6 +239,31 @@ class BEKBrain:
         self._nerfs_status: Dict[str, Any] = {}
         self._session_states: Dict[str, Dict[str, Any]] = {}
         self.skill_agent = SkillAgent()
+
+    def _get_ga_prompt(self) -> str:
+        """Demande au moteur génétique le meilleur prompt évolutif."""
+        try:
+            from nerves.ga_nerves import get_ga_engine
+            best = get_ga_engine().select_best_gene()
+            logger.debug("[BEK-GA] Gène actif : %s (fitness=%s)", best.gene_id, best.fitness)
+            return best.prompt_template
+        except Exception:
+            return "Exécute la tâche de manière concise et directe."
+
+    def _record_ga_fitness(self, query: str, res: Dict[str, Any], elapsed_ms: float):
+        """Enregistre le fitness du gène actif dans le moteur génétique."""
+        try:
+            from nerves.ga_nerves import get_ga_engine
+            engine = get_ga_engine()
+            best_gene = engine.select_best_gene()
+            tokens_est = len(str(query)) // 4 + len(str(res.get("response", ""))) // 4
+            success = res.get("status") == "ok"
+            engine.calculate_fitness(best_gene, success, elapsed_ms, tokens_est)
+            if not success:
+                engine.evolve()
+                logger.info("[BEK-GA] ⚡ Évolution déclenchée (échec détecté)")
+        except Exception as ga_exc:
+            logger.debug("[BEK-GA] Enregistrement fitness ignoré : %s", ga_exc)
 
     def _observe_economics(self, query: str, intent: str) -> Optional[str]:
         try:
@@ -292,7 +313,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.49 (FIX Tools)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.50 (BEK-GA intégré)")
         logger.info("[BEK Brain] Analyse : %s/%s (fallback: %s/%s)", ANALYSIS_PROVIDER, ANALYSIS_MODEL, FALLBACK_PROVIDER, FALLBACK_MODEL)
 
     async def shutdown(self):
@@ -341,15 +362,18 @@ class BEKBrain:
         start_time = time.perf_counter()
         if not self._initialized: await self.boot()
 
+        # ─── Cas 1 : Fichiers joints ───
         if files and len(files) > 0:
             res = await self._process_files(query, files, provider, model)
-            res["latency_ms"] = round((time.perf_counter() - start_time) * 1000, 2)
+            elapsed = (time.perf_counter() - start_time) * 1000
+            res["latency_ms"] = round(elapsed, 2)
+            self._record_ga_fitness(query, res, elapsed)
             return res
 
+        # ─── Cas 2 : Chat normal ───
         intent = _detect_intent(query)
         logger.info(f"[Brain] Intent détecté : {intent} (session: {session_id})")
 
-        # ★ SkillAgent : Analyse cognitive AVANT tout
         plan = self.skill_agent.get_action_plan(query)
         skills_context = ""
         if plan["skills"]:
@@ -358,7 +382,7 @@ class BEKBrain:
             for s in plan["skills"]:
                 skills_context += f"--- Skill : {s['name']} ---\n{s.get('prompt', s.get('description', ''))}\n\n"
             query = f"{query}\n{skills_context}"
-            
+
         cached_response = self._observe_economics(query, intent)
         if cached_response:
             res = self._wrap(cached_response, intent, ["bek_eco_cache"])
@@ -385,7 +409,7 @@ class BEKBrain:
                     alt = tool_name[4:] if tool_name.startswith("mcp_") else "mcp_" + tool_name
                     tool = self._hermes.tools.get(alt)
                     if tool is not None: tool_name = alt
-                
+
                 if tool is None:
                     available = [n for n in self._hermes.tools.keys() if n.startswith(("mcp_", "rea_", "python_"))]
                     res = self._wrap(f"❌ Outil '{tool_name}' introuvable dans Hermes.\nOutils MCP disponibles : {', '.join(available) if available else 'aucun'}", "chat", ["hermes.dispatch"])
@@ -397,8 +421,6 @@ class BEKBrain:
                         logger.info("[Brain] 🎯 Appel DIRECT outil MCP : %s args=%s", tool_name, args)
                         try:
                             result = await asyncio.to_thread(self._call_hermes_tool, tool_name, args)
-                            
-                            # ★ BOUCLE D'OUTILS + SYNTHÈSE COGNITIVE (avec Pré-Résumé Économique)
                             result_str = str(result)
                             if "INSTRUCTION:" in result_str or "INSTRUCTION :" in result_str:
                                 logger.info("[Brain] 🔁 Boucle d'outils : lecture du rapport généré...")
@@ -413,49 +435,30 @@ class BEKBrain:
                                             inner_data = json.loads(raw_json[start_idx:end_idx+1])
                                             md_path = inner_data.get("markdown")
                                     except Exception: pass
-                                
                                 if not md_path:
                                     md_match = re.search(r'([A-Za-z]:\\[^"\']+?\.md)', result_str)
                                     if md_match: md_path = md_match.group(1)
-                                
                                 if md_path:
                                     md_path = md_path.replace("\\\\", "\\")
                                     logger.info("[Brain] 📄 Lecture automatique de : %s", md_path)
-                                    
                                     if os.path.exists(md_path):
                                         try:
                                             def _read_sync():
                                                 with open(md_path, "r", encoding="utf-8") as f: return f.read()
                                             content = await asyncio.to_thread(_read_sync)
-                                            
-                                            # ★ BEK-LVC : Pause économique forcée avant l'appel LLM
                                             logger.info("[BEK-LVC] ⏳ Pause de 3s pour réguler la consommation de tokens...")
                                             await asyncio.sleep(3.0)
-                                            
-                                            logger.info("[Brain] 🧠 Analyse cognitive du rapport (Étape 1 : Pré-Résumé)...")
                                             synthesis_prompt = f"""
-                                            Tu es BEK, un architecte logiciel senior. 
-                                            
-                                            === ÉTAPE 1 : COMPRESSION (BEK-LVC) ===
-                                            Résume le rapport d'analyse ci-dessous en 5 lignes maximum (format JSON strict). 
-                                            N'inclus QUE les données critiques (nombre de fichiers, anomalies, fichiers > 200 lignes).
-                                            
+                                            Tu es BEK, un architecte logiciel senior.
                                             === RAPPORT BRUT ===
                                             {content}
-                                            
-                                            === ÉTAPE 2 : SOLUTIONS ===
-                                            Sur la base de ce résumé et de la demande initiale, propose des solutions robustes pour corriger les fichiers problématiques (ex: optimizer.py).
-                                            
                                             === DEMANDE INITIALE ===
                                             {query}
-                                            
-                                            === CONSIGNES STRICTES ===
-                                            1. Ne te base QUE sur les données du rapport. N'invente rien.
-                                            2. Sois concis et professionnel.
-                                            3. Ne t'arrête pas au milieu d'une phrase.
+                                            === CONSIGNES ===
+                                            Propose des solutions robustes.
                                             """
                                             synthesis = await self._call_with_fallback(synthesis_prompt, provider or DEFAULT_CHAT_PROVIDER, model or DEFAULT_CHAT_MODEL)
-                                            result = f"=== RAPPORT BRUT ===\n{content}\n\n=== SYNTHÈSE ET SOLUTIONS PROPOSÉES PAR BEK ===\n{synthesis}"
+                                            result = f"=== RAPPORT BRUT ===\n{content}\n\n=== SYNTHÈSE ===\n{synthesis}"
                                         except Exception as e:
                                             result = f"{result_str}\n\n⚠️ Impossible d'analyser le fichier : {e}"
                                     else:
@@ -477,7 +480,9 @@ class BEKBrain:
                     optimizer.cache_set(cache_key, response_text, query=query)
             except Exception: pass
 
-        res["latency_ms"] = round((time.perf_counter() - start_time) * 1000, 2)
+        elapsed = (time.perf_counter() - start_time) * 1000
+        res["latency_ms"] = round(elapsed, 2)
+        self._record_ga_fitness(query, res, elapsed)
         return res
 
     def _handle_coder_intent(self, query: str, provider: Optional[str] = None, model: Optional[str] = None, session_id: str = "default") -> Dict[str, Any]:
@@ -550,7 +555,6 @@ class BEKBrain:
             elif is_analysis: prov = provider or ANALYSIS_PROVIDER; mdl = ANALYSIS_MODEL
             else: prov = provider or DEFAULT_CHAT_PROVIDER; mdl = DEFAULT_CHAT_MODEL
 
-            # ★ BEK-LVC : Vérification économique AVANT l'appel LLM
             try:
                 from bek_core.eco.optimizer import BekEcoOptimizer
                 eco = BekEcoOptimizer()
@@ -568,7 +572,6 @@ class BEKBrain:
                         if isinstance(optimized_messages, list) and optimized_messages: messages = optimized_messages
                 except Exception: pass
                 chunks: List[str] = []
-                # ★ max_tokens=4096 pour économiser les tokens
                 for item in pm.execute_chat_stream(messages=messages, provider=prov, model=mdl, disable_internal_fallback=True, max_tokens=4096):
                     if "chunk" in item: chunks.append(item["chunk"])
                     elif "error" in item: return f"Erreur LLM: {item['error']}"
@@ -653,10 +656,11 @@ class BEKBrain:
             elif is_analysis: prov = provider or ANALYSIS_PROVIDER; mdl = ANALYSIS_MODEL
             else: prov = provider or DEFAULT_CHAT_PROVIDER; mdl = DEFAULT_CHAT_MODEL
             tools_prompt = self.skill_agent.get_available_tools_prompt(_detect_intent(query))
-            system_extra = "\n\n=== OUTILS DISPONIBLES (à utiliser AVANT de générer du code) ===\n" + f"{tools_prompt}\n\nRÈGLE ABSOLUE : si l'utilisateur nomme un outil (ex: rea_analyze_javascript, mcp_rea_*), APPELLE l'outil via [ACTION:nom_outil]{{...}}[/ACTION] et NE GÉNÈRE PAS de code Python/JS à la place. Pour rea_analyze_javascript, le JSON doit contenir {{\"path\": \"<chemin absolu>\"}}."
+            ga_prompt = self._get_ga_prompt()
+            system_extra = f"{ga_prompt}\n\n=== OUTILS DISPONIBLES (à utiliser AVANT de générer du code) ===\n{tools_prompt}\n\nRÈGLE ABSOLUE : si l'utilisateur nomme un outil (ex: rea_analyze_javascript, mcp_rea_*), APPELLE l'outil via [ACTION:nom_outil]{{...}}[/ACTION] et NE GÉNÈRE PAS de code Python/JS à la place. Pour rea_analyze_javascript, le JSON doit contenir {{\"path\": \"<chemin absolu>\"}}."
             port = os.environ.get("PORT", "3001"); url = f"http://127.0.0.1:{port}/api/chat"
             payload = {"messages": [{"role": "system", "content": system_extra}, {"role": "user", "content": query}], "provider": prov, "model": mdl, "use_memory": False, "use_reflection": False, "max_tokens": 8192}
-            async with httpx.AsyncClient(timeout=REA_TIMEOUT_SEC + 300) as client: # ★ Timeout 300s
+            async with httpx.AsyncClient(timeout=REA_TIMEOUT_SEC + 300) as client:
                 async with client.stream("POST", url, json=payload, headers={"Content-Type": "application/json"}) as resp:
                     if resp.status_code != 200: return f"[Erreur pipeline HTTP {resp.status_code}]"
                     full_text = ""
@@ -704,7 +708,7 @@ class BEKBrain:
         return {"status": "ok", "intent": intent, "bricks_used": bricks, "response": response}
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.49 (FIX Tools)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
+        return {"app": "BEK Hybrid Agent v19.50 (BEK-GA intégré)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
 
 _brain_instance: Optional[BEKBrain] = None
 
