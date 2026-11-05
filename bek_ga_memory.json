@@ -5,8 +5,8 @@
       "prompt_template": "Ex\u00e9cute la t\u00e2che de mani\u00e8re concise et directe.",
       "max_tokens": 256,
       "temperature": 0.1,
-      "fitness": 64.6868,
-      "success_rate": 0.75
+      "fitness": 85.45,
+      "success_rate": 1.0
     },
     {
       "gene_id": "gene_analytic_v1",

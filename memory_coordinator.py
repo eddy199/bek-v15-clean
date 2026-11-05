@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v19.1 — MEMORY COORDINATOR (v2.0 — Parallélisation totale + Timeouts courts)
+# BEK-v19.2 — MEMORY COORDINATOR (v2.2 — Hindsight async direct)
 # ------------------------------------------------------------------------------
-# v2.0 (2026-11-05) — OPTIMISATION MAJEURE :
-#   - FETCH_TIMEOUT réduit à 5s (au lieu de 15s)
-#   - Hindsight en PARALLÈLE avec Pinecone/ChromaDB/Supabase
-#     (au lieu d'être séquentiel et bloquant)
-#   - asyncio.gather() avec return_exceptions=True pour une parallélisation réelle
-#   - Timeout global réduit à FETCH_TIMEOUT + 1
-#   - Gain attendu : 11s → 3s
+# v2.2 (2026-11-05) — FIX CRITIQUE :
+#   - Hindsight est maintenant appelé via asyncio.create_task() dans le MÊME
+#     event loop (plus de run_in_executor + asyncio.run)
+#   - Évite l'erreur "This event loop is already running"
+#   - Gain : plus de timeout global sur Hindsight
 # ==============================================================================
 
 from __future__ import annotations
@@ -76,8 +74,8 @@ NEGATION_WORDS = {
     "no", "not", "never", "none", "nothing",
 }
 
-# ★ v2.0 : Timeout réduit de 15s à 5s
-FETCH_TIMEOUT = 2.0
+# Timeout global pour le fetch (Pinecone+Chroma+Supabase+Hindsight)
+FETCH_TIMEOUT = 3.0
 
 SIMILARITY_DUPLICATE_THRESHOLD = 0.92
 SIMILARITY_CONTRADICTION_THRESHOLD = 0.70
@@ -156,11 +154,11 @@ async def _fetch_hindsight_async(query: str) -> List[MemoryFact]:
             return []
         facts = []
         for r in raw:
-            text = r.get("text", "").strip()
+            text = r.get("text", "").strip() if isinstance(r, dict) else str(r).strip()
             if not text:
                 continue
-            score = r.get("score", 0.0) or 0.0
-            confidence = max(score, 0.8) if score > 0 else SOURCE_WEIGHTS["hindsight"]
+            score = r.get("score", 0.0) if isinstance(r, dict) else 0.0
+            confidence = max(score, 0.8) if score and score > 0 else SOURCE_WEIGHTS["hindsight"]
             facts.append(MemoryFact(
                 text=text,
                 source="hindsight",
@@ -227,7 +225,6 @@ def _fetch_supabase(query: str) -> List[MemoryFact]:
                     pass
 
         cur.close()
-        # ★ v2.0 : utiliser _release_db_connection si dispo (pool), sinon close
         try:
             from memory import _release_db_connection
             _release_db_connection(conn)
@@ -243,16 +240,16 @@ def _fetch_supabase(query: str) -> List[MemoryFact]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v2.0 — FETCH ALL : Parallélisation totale (Hindsight inclus)
+# ★ v2.2 — FETCH ALL : Hindsight DIRECT dans l'event loop (fix "This event loop is running")
 # ══════════════════════════════════════════════════════════════════════════════
 
 async def fetch_all_memories_async(query: str) -> Dict[str, List[MemoryFact]]:
     """
-    ★ v2.0 : Parallélisation TOTALE.
-    - Hindsight (async) lancé en tâche de fond
-    - Pinecone, ChromaDB, Supabase (sync) lancés en threads
-    - asyncio.gather() attend tous les résultats EN MÊME TEMPS
-    - Gain attendu : 11s → 3s
+    ★ v2.2 : Parallélisation TOTALE avec Hindsight natif.
+
+    - Pinecone, ChromaDB, Supabase → threads (I/O bloquants OK)
+    - Hindsight → asyncio.create_task() DANS le même event loop
+      (corrige "This event loop is already running")
     """
     results: Dict[str, List[MemoryFact]] = {
         "pinecone": [],
@@ -263,32 +260,22 @@ async def fetch_all_memories_async(query: str) -> Dict[str, List[MemoryFact]]:
 
     loop = asyncio.get_running_loop()
 
-    # ★ v2.0 : Lancer TOUTES les tâches en parallèle
-    # Hindsight est déjà async → on le lance directement
-    # Les 3 autres sont sync → on les lance en threads
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        future_pinecone = loop.run_in_executor(executor, _fetch_pinecone, query)
-        future_chromadb = loop.run_in_executor(executor, _fetch_chromadb, query)
-        future_supabase = loop.run_in_executor(executor, _fetch_supabase, query)
+    # Pinecone, ChromaDB, Supabase → threads séparés
+    future_pinecone = loop.run_in_executor(None, _fetch_pinecone, query)
+    future_chromadb = loop.run_in_executor(None, _fetch_chromadb, query)
+    future_supabase = loop.run_in_executor(None, _fetch_supabase, query)
 
-        # ★ v2.1 : Hindsight en thread séparé (évite le conflit d'event loop)
-        future_hindsight = loop.run_in_executor(
-            executor,
-            lambda: asyncio.run(_fetch_hindsight_async(query)),
-        )
+    # Hindsight → appel async natif dans le MÊME event loop
+    task_hindsight = asyncio.create_task(_fetch_hindsight_async(query))
 
-        # ★ v2.0 : asyncio.gather avec return_exceptions=True
-        # pour attendre TOUTES les tâches en parallèle
-        gathered = await asyncio.gather(
-            future_pinecone,
-            future_chromadb,
-            future_supabase,
-            future_hindsight,
-            return_exceptions=True,
-        )
-       
+    gathered = await asyncio.gather(
+        future_pinecone,
+        future_chromadb,
+        future_supabase,
+        task_hindsight,
+        return_exceptions=True,
+    )
 
-    # Mapping des résultats
     sources = ["pinecone", "chromadb", "supabase", "hindsight"]
     for i, src in enumerate(sources):
         result = gathered[i]
@@ -475,20 +462,19 @@ def _build_unified_context(facts: List[MemoryFact], max_chars: int = 2000) -> st
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# API PUBLIQUE (v2.0 — Parallélisation totale)
+# API PUBLIQUE
 # ══════════════════════════════════════════════════════════════════════════════
 
 async def coordinate_memories_async(query: str, max_chars: int = 2000) -> UnifiedMemory:
     """
     Version ASYNC — utilisée par FastAPI / uvicorn.
-    ★ v2.0 : Parallélisation totale + timeout réduit.
+    ★ v2.2 : Hindsight natif, pas de timeout inutile.
     """
     t0 = time.monotonic()
 
     if not query or not query.strip():
         return UnifiedMemory("", [], [], [], 0.0)
 
-    # ★ v2.0 : Timeout global = FETCH_TIMEOUT + 1 (au lieu de + 5)
     try:
         raw_by_source = await asyncio.wait_for(
             fetch_all_memories_async(query),
@@ -550,10 +536,8 @@ def coordinate_memories(query: str, max_chars: int = 2000) -> UnifiedMemory:
     try:
         asyncio.get_running_loop()
     except RuntimeError:
-        # Aucune boucle active → on peut en créer une
         return asyncio.run(coordinate_memories_async(query, max_chars))
 
-    # Une boucle tourne déjà → on utilise un thread séparé
     import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
         future = pool.submit(
@@ -577,7 +561,7 @@ if __name__ == "__main__":
         format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
     )
 
-    print("\n=== TEST Coordinator v2.0 ===\n")
+    print("\n=== TEST Coordinator v2.2 ===\n")
     result = coordinate_memories("Qui est Eddy ?")
     print(f"Sources : {result.sources_used}")
     print(f"Faits : {len(result.facts)}")

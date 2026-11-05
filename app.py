@@ -309,7 +309,14 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
             # ★ AJOUT : Pré-initialisation de Hindsight
             from hindsight_memory import _get_client as _get_hindsight_client
             _ = _get_hindsight_client()
-            logger.info("✅ [Boot] Clients mémoire pré-initialisés (Pinecone + PostgreSQL + Hindsight)")
+            # ★ AJOUT : Pré-initialisation de ChromaDB (évite 1.6s de lazy load au 1er chat)
+            try:
+                from memory import _get_chroma_collection
+                _ = _get_chroma_collection()
+                logger.info("✅ [Boot] ChromaDB pré-initialisé")
+            except ImportError:
+                logger.info("ℹ️ [Boot] ChromaDB lazy (module optionnel)")
+            logger.info("✅ [Boot] Clients mémoire pré-initialisés (Pinecone + PostgreSQL + Hindsight + ChromaDB)")
         except Exception as exc:
             logger.warning("⚠️ [Boot] Pré-init mémoire partielle : %s", exc)
         project_creator_nerves.activate_project_creator_nerves()

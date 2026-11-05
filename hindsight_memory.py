@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Module d'integration HINDSIGHT — v1.7 (async + sync + fallback)
+# BEK-v19 — Module d'integration HINDSIGHT — v1.8
+# ------------------------------------------------------------------------------
+# v1.8 (2026-11-05) — FIX CRITIQUE :
+#   - hindsight_recall_async est maintenant 100% natif asyncio
+#   - Plus de fallback thread (source du "This event loop is already running")
+#   - Compatible avec memory_coordinator v2.2
 # ==============================================================================
 from __future__ import annotations
 
@@ -45,6 +50,7 @@ _CLIENT_INIT_DONE = False
 
 
 def _get_client():
+    """Retourne un singleton du client Hindsight."""
     global _CLIENT, _CLIENT_INIT_DONE
     if _CLIENT_INIT_DONE:
         return _CLIENT
@@ -71,6 +77,19 @@ def _get_client():
     except Exception as exc:
         logger.error("[Hindsight] Echec initialisation : %s", exc)
         return None
+
+
+def _parse_recall_response(response) -> List[Dict[str, Any]]:
+    """Parse la réponse RecallResponse en liste de dicts."""
+    results: List[Dict[str, Any]] = []
+    raw_results = getattr(response, "results", None) or []
+    for r in raw_results:
+        text = getattr(r, "text", "") or ""
+        score = getattr(r, "score", 0.0) or 0.0
+        metadata = getattr(r, "metadata", {}) or {}
+        if text:
+            results.append({"text": text, "score": score, "metadata": metadata})
+    return results
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -138,21 +157,8 @@ def hindsight_reflect(query: str, budget: str = "low") -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# VERSION ASYNC
+# VERSION ASYNC (native — pas de fallback thread)
 # ══════════════════════════════════════════════════════════════════════════════
-
-def _parse_recall_response(response) -> List[Dict[str, Any]]:
-    """Parse la réponse RecallResponse."""
-    results: List[Dict[str, Any]] = []
-    raw_results = getattr(response, "results", None) or []
-    for r in raw_results:
-        text = getattr(r, "text", "") or ""
-        score = getattr(r, "score", 0.0) or 0.0
-        metadata = getattr(r, "metadata", {}) or {}
-        if text:
-            results.append({"text": text, "score": score, "metadata": metadata})
-    return results
-
 
 async def hindsight_recall_async(
     query: str,
@@ -160,8 +166,8 @@ async def hindsight_recall_async(
     budget: str = "mid",
 ) -> List[Dict[str, Any]]:
     """
-    Version ASYNC — utilise arecall() pour FastAPI.
-    ★ v1.7 : Si arecall() échoue, fallback sur recall() sync en thread.
+    Version ASYNC native — utilise arecall().
+    ★ v1.8 : Plus de fallback thread. L'appel est 100% natif asyncio.
     """
     if not query or not query.strip():
         return []
@@ -169,7 +175,6 @@ async def hindsight_recall_async(
     if client is None:
         return []
 
-    # Tentative 1 : arecall() natif
     try:
         response = await asyncio.wait_for(
             client.arecall(
@@ -184,27 +189,10 @@ async def hindsight_recall_async(
         logger.info("[Hindsight] arecall OK | %d resultats", len(results))
         return results
     except asyncio.TimeoutError:
-        logger.warning("[Hindsight] arecall timeout (3s), fallback thread")
-    except Exception as exc:
-        logger.debug("[Hindsight] arecall échoué (%s), fallback thread", exc)
-
-    # Tentative 2 : fallback en thread séparé
-    try:
-        loop = asyncio.get_running_loop()
-        results = await asyncio.wait_for(
-            loop.run_in_executor(
-                None,
-                lambda: hindsight_recall(query, max_tokens=max_tokens, budget=budget),
-            ),
-            timeout=3.0,
-        )
-        logger.info("[Hindsight] recall (thread) OK | %d resultats", len(results))
-        return results
-    except asyncio.TimeoutError:
-        logger.warning("[Hindsight] recall (thread) timeout (3s)")
+        logger.warning("[Hindsight] arecall timeout (3s)")
         return []
     except Exception as exc:
-        logger.warning("[Hindsight] recall fallback échoué : %s", exc)
+        logger.warning("[Hindsight] arecall echec : %s", exc)
         return []
 
 
@@ -251,6 +239,10 @@ async def hindsight_retain_async(
         return False
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# CONVERSATION
+# ══════════════════════════════════════════════════════════════════════════════
+
 def hindsight_retain_conversation(
     user_message: str,
     agent_response: str,
@@ -265,9 +257,7 @@ def hindsight_retain_conversation(
     elif not user_message:
         content = f"L'agent a repondu : {agent_response[:500]}"
     else:
-        content = (
-            f"Echange : user = {user_message} | agent = {agent_response[:500]}"
-        )
+        content = f"Echange : user = {user_message} | agent = {agent_response[:500]}"
     return hindsight_retain(content, context=context or "conversation")
 
 
@@ -286,11 +276,13 @@ async def hindsight_retain_conversation_async(
     elif not user_message:
         content = f"L'agent a repondu : {agent_response[:500]}"
     else:
-        content = (
-            f"Echange : user = {user_message} | agent = {agent_response[:500]}"
-        )
+        content = f"Echange : user = {user_message} | agent = {agent_response[:500]}"
     return await hindsight_retain_async(content, context=context or "conversation")
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CONTEXT BUILDERS
+# ══════════════════════════════════════════════════════════════════════════════
 
 def hindsight_build_context(query: str, max_results: int = 3) -> str:
     results = hindsight_recall(query)
@@ -318,6 +310,10 @@ async def hindsight_build_context_async(
             lines.append(f"- {text}")
     return "\n".join(lines)
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CYCLE DE VIE
+# ══════════════════════════════════════════════════════════════════════════════
 
 def hindsight_close() -> None:
     global _CLIENT, _CLIENT_INIT_DONE
