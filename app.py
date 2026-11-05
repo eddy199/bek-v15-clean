@@ -300,6 +300,18 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         # ★ NERF 20 — BEK-GA (Moteur Génétique)
         from nerves.ga_nerves import activate_ga_nerves
         activate_ga_nerves()
+        
+        # ★ v19.1 : Initialiser les clients mémoire au boot
+        try:
+            from memory import get_pinecone_index, _init_pg_pool
+            _ = get_pinecone_index()
+            _ = _init_pg_pool()
+            # ★ AJOUT : Pré-initialisation de Hindsight
+            from hindsight_memory import _get_client as _get_hindsight_client
+            _ = _get_hindsight_client()
+            logger.info("✅ [Boot] Clients mémoire pré-initialisés (Pinecone + PostgreSQL + Hindsight)")
+        except Exception as exc:
+            logger.warning("⚠️ [Boot] Pré-init mémoire partielle : %s", exc)
         project_creator_nerves.activate_project_creator_nerves()
     except Exception as _nerves_err: logger.error("❌ Activation des nerfs échouée : %s", _nerves_err)
 

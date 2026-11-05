@@ -77,7 +77,7 @@ NEGATION_WORDS = {
 }
 
 # ★ v2.0 : Timeout réduit de 15s à 5s
-FETCH_TIMEOUT = 5.0
+FETCH_TIMEOUT = 2.0
 
 SIMILARITY_DUPLICATE_THRESHOLD = 0.92
 SIMILARITY_CONTRADICTION_THRESHOLD = 0.70
@@ -280,12 +280,12 @@ async def fetch_all_memories_async(query: str) -> Dict[str, List[MemoryFact]]:
         # ★ v2.0 : asyncio.gather avec return_exceptions=True
         # pour attendre TOUTES les tâches en parallèle
         gathered = await asyncio.gather(
-        future_pinecone,
-        future_chromadb,
-        future_supabase,
-        future_hindsight,
-        return_exceptions=True,
-    )
+            future_pinecone,
+            future_chromadb,
+            future_supabase,
+            future_hindsight,
+            return_exceptions=True,
+        )
        
 
     # Mapping des résultats
