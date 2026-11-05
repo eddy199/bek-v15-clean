@@ -117,9 +117,9 @@ Format EXCLUSIF :
 ## 📊 ÉTAT RÉEL DU SYSTÈME (généré automatiquement)
 ═══════════════════════════════════════════════════════════════════════════════
 
-> *Dernière synchronisation : 2026-11-05 20:41:11 UTC*
+> *Dernière synchronisation : 2026-11-05 21:02:28 UTC*
 > *Version BEK : **19.11***
-> *State hash : `73d778c6a9a1`*
+> *State hash : `828f1ad52ddd`*
 > *Boot phase : **complete***
 
 ═══════════════════════════════════════════════════════════════════════════════
@@ -135,7 +135,7 @@ Format EXCLUSIF :
 | `GET /api/architecture/status` | Statut complet + issues |
 | `POST /api/refresh-architecture` | Régénérer ARCHITECTURE.md |
 
-### 🔧 Outils Hermes enregistrés (65)
+### 🔧 Outils Hermes enregistrés (70)
 
 | Outil | Risque | Exécution |
 |---|---|---|
@@ -181,6 +181,11 @@ Format EXCLUSIF :
 | `guardian_status` | **L1** | ✅ Auto |
 | `guardian_audit_log` | **L1** | ✅ Auto |
 | `guardian_trigger_audit` | **L2** | ✅ Auto |
+| `approval_submit` | **L1** | ✅ Auto |
+| `approval_list` | **L1** | ✅ Auto |
+| `approval_get` | **L1** | ✅ Auto |
+| `approval_approve` | **L2** | ✅ Auto |
+| `approval_reject` | **L2** | ✅ Auto |
 | `mcp_list_tools` | **L1** | ✅ Auto |
 | `mcp_execute` | **L2** | ✅ Auto |
 | `mcp_register` | **L2** | ✅ Auto |
@@ -230,7 +235,7 @@ Format EXCLUSIF :
 | Composant | Statut | Détail |
 |---|---|---|
 | `playwright` | 💤 **lazy** | ~200 MB économisés au boot |
-| `chromadb` | ✅ **loaded** | Chargé à la demande |
+| `chromadb` | 💤 **lazy** | ~80 MB économisés au boot |
 | `duckdb_episode` | ✅ **duckdb** | Backend : duckdb |
 | `lancedb` | 💤 **lazy** | Chargé à la demande |
 | `duckdb_analytics` | 💤 **lazy** | Chargé à la demande |
