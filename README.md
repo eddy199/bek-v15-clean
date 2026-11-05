@@ -338,6 +338,8 @@ Preuve que l'agent peut muter **en direct** depuis une requête utilisateur.
 [Streaming] ✅ Action ga_record_result terminée (fitness=46.51, success=false)
 [Streaming] 🎯 Action 3 : ga_evolve
 [BEK-GA] ⚡ Évolution terminée : Nouvelle génération prête.
+```
+
 ## ⚠️ Disclaimer & Licence
 
 Ce projet est sous licence **MIT** (voir le fichier `LICENSE`). 
