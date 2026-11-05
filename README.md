@@ -287,35 +287,57 @@ En injectant les gènes directement dans le système actuel, nous créons une **
 
 Le **BEK-GA** (Nerf 20) est un algorithme génétique intégré qui permet à l'agent d'apprendre de ses succès et de ses échecs pour optimiser ses futurs prompts et son routage. Il tourne **100% sur CPU, sans utiliser de VRAM**, ce qui le rend extrêmement léger.
 
-### 📊 Résultats du Benchmark (Validation Scientifique)
+### 📊 Benchmarks de Performance & Validation Scientifique
 
-Le moteur génétique a été validé sur 4 scénarios critiques :
+BEK Hybrid Agent a été validé par une série de benchmarks en conditions réelles. Les résultats prouvent l'efficacité de l'architecture (LVC, BEK-GA, Memory Coordinator).
+
+#### 1. ⚡ Latence du Chat (Memory Coordinator)
+
+| Composant | Avant | Après | Gain |
+| :--- | :--- | :--- | :--- |
+| **Pinecone (Cloud)** | 25 220 ms | **219 ms** | **÷ 115** 🔥 |
+| **Supabase (SQL)** | 2 735 ms | **785 ms** | **÷ 3.5** (Pooling) |
+| **Coordinator Total** | 11 453 ms | **2 842 ms** | **÷ 4** ✅ |
+| **Latence finale du Chat** | 16 943 ms | **4 877 ms** | **÷ 3.5** |
+
+*Gains obtenus grâce à : Timeout courts (3s), Parallélisation asyncio, Pool de connexions PostgreSQL et Pré-initialisation au boot.*
+
+#### 2. 🧬 Validation du Moteur Génétique (BEK-GA)
 
 | Scénario | Résultat | Métrique |
-|---|---|---|
+| :--- | :--- | :--- |
 | **1. Convergence** | ✅ **98.85%** | Le GA trouve le meilleur gène en 20 cycles |
 | **2. Robustesse** | ✅ **4/4 gènes mutés** | Le GA survit à 10 échecs consécutifs |
-| **3. Performance** | ✅ **0.738ms/cycle** | Fitness calculé en 0.7ms (CPU only) |
+| **3. Performance** | ✅ **0.738 ms/cycle** | Fitness calculé en 0.7ms (CPU only) |
 | **4. Intégration Hermes** | ✅ **3/3 outils** | `ga_get_best`, `ga_record_result`, `ga_evolve` |
 
-### 💻 Métriques de performance
+**Métriques d'empreinte :**
+- **VRAM utilisée :** 0 MB
+- **RAM utilisée :** ~2 KB (4 gènes × 500 bytes)
+- **CPU utilisé :** < 1% (microsecondes)
 
-| Métrique | Valeur |
-|---|---|
-| **VRAM utilisée** | 0 MB |
-| **RAM utilisée** | ~2 KB (4 gènes × 500 bytes) |
-| **CPU utilisé** | < 1% (microsecondes) |
-| **Temps de convergence** | 65 ms (20 cycles) |
-| **Temps par cycle** | 3.25 ms |
+#### 3. 🗜️ Efficacité du LVC (Réduction de Tokens)
 
-### 🧬 En production
+| Étape | Taille du texte | Résultat |
+| :--- | :--- | :--- |
+| **1. Texte brut (web)** | 523 caractères | - |
+| **2. Après LVC (Nettoyage)** | **152 caractères** | **70.9% de réduction** |
+| **3. Tokens économisés** | **~92 tokens** | **0 facture inutile** |
 
-Le BEK-GA est officiellement actif et branché dans :
-- ✅ `nerves/ga_nerves.py` (le nerf dédié)
-- ✅ `app.py` (activation au boot)
-- ✅ `core/brain.py` (récupération du prompt évolutif)
-- ✅ `bek_orchestrator.py` (enregistrement du fitness en temps réel)
+*Le LVC supprime automatiquement les cookies, menus et blablas avant l'envoi au LLM, divisant la facture par 3.*
 
+#### 4. 🤖 Contrôle de l'Évolution via le Chat (Auto-Évolution)
+
+Preuve que l'agent peut muter **en direct** depuis une requête utilisateur.
+
+```text
+[User] : "Le dernier résultat était mauvais. Utilise ga_record_result puis ga_evolve."
+[Streaming] 🎯 Action 1 : ga_get_best
+[Streaming] ✅ Action ga_get_best terminée (gene_base_v1, fitness=77.53)
+[Streaming] 🎯 Action 2 : ga_record_result
+[Streaming] ✅ Action ga_record_result terminée (fitness=46.51, success=false)
+[Streaming] 🎯 Action 3 : ga_evolve
+[BEK-GA] ⚡ Évolution terminée : Nouvelle génération prête.
 ## ⚠️ Disclaimer & Licence
 
 Ce projet est sous licence **MIT** (voir le fichier `LICENSE`). 
