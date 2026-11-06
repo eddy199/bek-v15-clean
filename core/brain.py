@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.50 (BEK-GA intégré)
+# BEK Hybrid Agent v19 — core/brain.py — v19.53 (fix réentrance brain)
 # ==============================================================================
 from __future__ import annotations
 
@@ -28,6 +28,8 @@ _PHASE_STEP_KEYWORDS = ("exécute l'étape", "execute l'etape", "exécute etape"
 _STEP_NUM_RE = re.compile(r"\b(?:étape|etape|step)\s*(\d+)\b", re.IGNORECASE)
 _TOOL_NAME_RE = re.compile(r"\b(mcp_)?((?:rea|python)_[a-z_]+)\b", re.IGNORECASE)
 _PATH_RE = re.compile(r'([A-Za-z]:[\\/][^\s"\'<>|]+|/[^\s"\'<>|]+)')
+
+_GITHUB_URL_RE = re.compile(r'https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+?)(?=[\s.,;:!?"\'<>]|$)')
 
 MAX_TOTAL_FILE_CONTEXT_CHARS = int(os.getenv("BEK_MAX_TOTAL_FILE_CONTEXT_CHARS", "200000"))
 MAX_INDIVIDUAL_FILE_CHARS = int(os.getenv("BEK_MAX_INDIVIDUAL_FILE_CHARS", "60000"))
@@ -205,27 +207,155 @@ class SkillAgent:
         matched.sort(key=lambda x: x[0], reverse=True)
         return {"skills": [m[1] for m in matched[:3]]}
 
-    def get_available_tools_prompt(self, intent: str) -> str:
+    def get_available_tools_prompt(self, intent: str, query: str = "") -> str:
+        """Retourne le prompt complet des outils, groupés par catégorie."""
         try:
             from hermes_core import hermes
-            tools_list = []
-            skip = {"default_llm", "neon_audit", "read_file", "write_file", "append_file", "edit_file", "create_dir", "grep", "glob_files", "ls", "bash"}
-            for name, tool in hermes.tools.items():
-                if name in skip: continue
-                risk = getattr(tool, "risk_level", "L1")
-                desc = ""
-                if "rea_analyze_javascript" in name: desc = ' - Analyse un fichier/dossier JavaScript local avec REA. Paramètre OBLIGATOIRE : path'
-                elif "rea_analyze_binary" in name: desc = ' - Analyse un binaire local. Paramètre OBLIGATOIRE : path'
-                elif "python_analyze_file" in name: desc = ' - Analyse un fichier Python (AST). Paramètre : file_path'
-                elif "python_analyze_directory" in name: desc = ' - Analyse tous les .py d\'un dossier. Paramètre : dir_path'
-                elif "web_search" in name: desc = " - Cherche sur le web"
-                elif "generate_image" in name: desc = " - Génère une image"
-                elif "save_memory" in name: desc = " - Mémorise une information"
-                elif "ga_get_best" in name: desc = " - Récupère le meilleur prompt évolutif"
-                tools_list.append(f"- {name} (risque: {risk}){desc}")
-            if not tools_list: return "Aucun outil spécifique disponible."
-            return "\n".join(tools_list)
-        except Exception: return "Liste des outils indisponible."
+        except Exception:
+            return "Liste des outils indisponible."
+
+        TOOL_DESCRIPTIONS = {
+            "read_file":            ("Lire un fichier (avec start_line/end_line)", "FILE"),
+            "read_file_map":        ("Retourne la carte (classes/fonctions) d'un fichier", "FILE"),
+            "write_file":           ("Écrire/écraser un fichier complet (param: path, content)", "FILE"),
+            "append_file":          ("Ajouter du contenu à la fin d'un fichier (param: path, content)", "FILE"),
+            "edit_file":            ("Remplacer old_string par new_string (toutes occurrences)", "FILE"),
+            "create_dir":           ("Créer un dossier (param: path)", "FILE"),
+            "grep":                 ("Chercher une regex dans les fichiers (param: pattern, path)", "FILE"),
+            "glob_files":           ("Lister les fichiers par motif (param: pattern)", "FILE"),
+            "ls":                   ("Lister le contenu d'un dossier (param: path)", "FILE"),
+            "bash":                 ("Exécuter une commande autorisée (python, pytest, git...) (param: cmd)", "FILE"),
+            "search_skills":        ("Chercher dans les 329 skills (param: query)", "SKILLS"),
+            "git_clone":            ("Cloner un dépôt GitHub dans le workspace (param: url)", "FILE"),
+            "analyze_architecture": ("Analyser l'architecture d'un projet (param: dir_path)", "ANALYZE"),
+            "python_analyze_file":      ("Analyser l'AST d'un fichier .py (param: file_path)", "ANALYZE"),
+            "python_analyze_directory": ("Analyser tous les .py d'un dossier (param: dir_path)", "ANALYZE"),
+            "python_save_report":       ("Générer un rapport d'audit Markdown dans generated/ (param: dir_path, output_name)", "ANALYZE"),
+            "rea_analyze_binary":       ("Analyser un binaire .exe/.dll/.so/.elf (param: path)", "REA"),
+            "rea_analyze_javascript":   ("Analyser un dossier JS/Electron (param: path)", "REA"),
+            "web_search":           ("Recherche web avec nettoyage LVC (param: query)", "WEB"),
+            "web_search_docs":      ("Recherche documentation technique (param: query)", "WEB"),
+            "web_agent_scrape":     ("Scraper une URL (param: url)", "WEB"),
+            "web_agent_traced":     ("Pipeline web complet (search + scrape + synthèse) (param: query)", "WEB"),
+            "headless_render":      ("Rendre une page avec JS (Playwright) (param: url)", "WEB"),
+            "headless_scrape":      ("Scraper après exécution JS (param: url)", "WEB"),
+            "headless_search":      ("Recherche headless (param: query)", "WEB"),
+            "ga_get_best":          ("Récupérer le meilleur gène (prompt + config)", "GA"),
+            "ga_record_result":     ("Enregistrer un fitness (succès/échec) (param: success, score, feedback)", "GA"),
+            "ga_evolve":            ("Forcer une nouvelle génération GA", "GA"),
+            "cognitive_critique":   ("Critiquer un draft de réponse (param: draft)", "COGNITIVE"),
+            "cognitive_ground":     ("Vérifier les faits (grounding) (param: text)", "COGNITIVE"),
+            "guardian_status":      ("Statut du gardien système", "SECURITY"),
+            "guardian_audit_log":   ("Logs d'audit sécurité", "SECURITY"),
+            "router_route":         ("Router une requête vers un tier BEK-REX (param: query)", "ROUTER"),
+            "mcp_list_tools":       ("Lister tous les outils MCP disponibles", "MCP"),
+            "mcp_execute":          ("Exécuter un outil MCP par nom (param: tool_name, args)", "MCP"),
+            "generate_image":       ("Générer une image (param: prompt)", "VISION"),
+            "edit_image":           ("Éditer une image existante (param: image_paths, user_prompt)", "VISION"),
+            "generate_video":       ("Générer une vidéo (param: prompt)", "VISION"),
+            "edit_video":           ("Éditer une vidéo (param: video_paths, user_prompt)", "VISION"),
+            "extend_video":         ("Étendre une vidéo (param: prompt)", "VISION"),
+            "extend_video_multiple":("Étendre en plusieurs clips (param: prompts)", "VISION"),
+            "generate_subtitles":   ("Générer des sous-titres (Whisper) (param: video_path)", "VISION"),
+            "burn_subtitles":       ("Incruster les sous-titres dans la vidéo (param: video_path, srt_path)", "VISION"),
+            "save_memory":          ("Mémoriser une information (param: content)", "MEMORY"),
+            "hindsight_query":      ("Interroger Hindsight (réflexion) (param: query)", "MEMORY"),
+            "hindsight_recall":     ("Récupérer des souvenirs bruts (param: query)", "MEMORY"),
+            "submit_feedback":      ("Enregistrer une correction utilisateur (param: user_query, correction)", "MEMORY"),
+            "codex_agent":          ("Générer du code (1 passe) (param: task_description)", "CODEX"),
+            "codex_editor":         ("Corriger un fichier ciblé (param: task_description, target_file)", "CODEX"),
+            "codex_loop":           ("Boucle autonome multi-étapes (param: task_description, max_steps)", "CODEX"),
+            "orchestrate":          ("Orchestrer plusieurs agents (param: goal)", "ORCH"),
+            "tmux_start_task":      ("Lancer une tâche en arrière-plan (param: command)", "ORCH"),
+        }
+
+        CATEGORY_LABELS = {
+            "FILE":      "🗂️ FICHIERS & CODE",
+            "ANALYZE":   "🐍 ANALYSE PYTHON",
+            "REA":       "🔍 REVERSE ENGINEERING",
+            "WEB":       "🌐 WEB",
+            "SKILLS":    "📚 SKILLS",
+            "GA":        "🧬 BEK-GA (MOTEUR GÉNÉTIQUE)",
+            "COGNITIVE": "🛡️ COGNITIF / ANTI-HALLUCINATION",
+            "SECURITY":  "🔒 SÉCURITÉ",
+            "ROUTER":    "🔀 ROUTER",
+            "MCP":       "🔌 MCP GATEWAY",
+            "VISION":    "🎨 VISION / GÉNÉRATION",
+            "MEMORY":    "🧠 MÉMOIRE",
+            "CODEX":     "🤖 CODEX AGENTS",
+            "ORCH":      "🎼 ORCHESTRATION",
+        }
+
+        available = set(hermes.tools.keys())
+        grouped: Dict[str, List[str]] = {cat: [] for cat in CATEGORY_LABELS}
+
+        for name in available:
+            canonical = name[4:] if name.startswith("mcp_") else name
+            desc_cat = TOOL_DESCRIPTIONS.get(canonical)
+            if desc_cat:
+                desc, cat = desc_cat
+                risk = getattr(hermes.tools[name], "risk_level", "L1")
+                grouped[cat].append(f"  - `{name}` (risque:{risk}) : {desc}")
+            else:
+                risk = getattr(hermes.tools[name], "risk_level", "L1")
+                grouped.setdefault("OTHER", []).append(
+                    f"  - `{name}` (risque:{risk}) : (outil branché, pas de description)"
+                )
+
+        lines = [
+            "=== ⚠️ OUTILS DISPONIBLES — TU DOIS LES UTILISER POUR AGIR ⚠️ ===",
+            "",
+            "RÈGLE ABSOLUE :",
+            "1. Si l'utilisateur demande une action (analyser, lire, écrire, chercher, générer),",
+            "   tu DOIS appeler l'outil correspondant. NE JAMAIS inventer de nom d'outil.",
+            "2. Format d'appel STRICT :",
+            '   [ACTION:nom_exact_de_l_outil]{"param1": "valeur1", "param2": "valeur2"}[/ACTION]',
+            "3. Si aucun outil ne correspond, réponds en texte naturel sans inventer.",
+            "",
+        ]
+
+        for cat, label in CATEGORY_LABELS.items():
+            tools = grouped.get(cat, [])
+            if tools:
+                lines.append(f"=== {label} ===")
+                lines.extend(tools)
+                lines.append("")
+
+        if grouped.get("OTHER"):
+            lines.append("=== 🔧 AUTRES OUTILS BRANCHÉS ===")
+            lines.extend(grouped["OTHER"])
+            lines.append("")
+
+        lines.append("=== 🎯 RACCOURCIS CONTEXTUELS ===")
+        q_lower = (query or "").lower()
+        if intent == "coder":
+            lines.append("- Pour écrire du code : `codex_agent` ou `codex_loop`")
+            lines.append("- Pour corriger un fichier : `edit_file` ou `codex_editor`")
+        elif any(k in q_lower for k in ("analyse mon repo", "analyse mon dépôt", "analyse mon projet",
+                                          "analyse le repo", "audit mon code", "audit du repo",
+                                          "structure de mon projet")):
+            lines.append("- Pour analyser le repo : `python_save_report` avec dir_path")
+        elif intent == "web":
+            lines.append("- Pour chercher sur le web : `web_search` ou `web_agent_traced`")
+        elif intent == "analyze_image":
+            lines.append("- Pour analyser une image : `vision_analyze` (via uploads/)")
+        elif intent == "memory":
+            lines.append("- Pour la mémoire : `hindsight_query` ou `hindsight_recall`")
+        lines.append("")
+
+        return "\n".join(lines)
+
+
+def _normalize_github_repo(owner: str, repo_raw: str) -> Tuple[str, str]:
+    """
+    Nettoie le nom de repo retourné par une regex LLM.
+    Ex: 'bek-v15-clean.' → ('eddy199', 'bek-v15-clean')
+    """
+    repo_name = (repo_raw or "").strip().strip('.').strip()
+    repo_name = re.sub(r'[^A-Za-z0-9._-]', '-', repo_name).strip('.-_')
+    if not repo_name:
+        repo_name = "repo"
+    return owner, repo_name
 
 
 class BEKBrain:
@@ -241,7 +371,6 @@ class BEKBrain:
         self.skill_agent = SkillAgent()
 
     def _get_ga_prompt(self) -> str:
-        """Demande au moteur génétique le meilleur prompt évolutif."""
         try:
             from nerves.ga_nerves import get_ga_engine
             best = get_ga_engine().select_best_gene()
@@ -251,7 +380,6 @@ class BEKBrain:
             return "Exécute la tâche de manière concise et directe."
 
     def _record_ga_fitness(self, query: str, res: Dict[str, Any], elapsed_ms: float):
-        """Enregistre le fitness du gène actif dans le moteur génétique."""
         try:
             from nerves.ga_nerves import get_ga_engine
             engine = get_ga_engine()
@@ -313,7 +441,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.50 (BEK-GA intégré)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.53 (fix réentrance brain)")
         logger.info("[BEK Brain] Analyse : %s/%s (fallback: %s/%s)", ANALYSIS_PROVIDER, ANALYSIS_MODEL, FALLBACK_PROVIDER, FALLBACK_MODEL)
 
     async def shutdown(self):
@@ -362,7 +490,6 @@ class BEKBrain:
         start_time = time.perf_counter()
         if not self._initialized: await self.boot()
 
-        # ─── Cas 1 : Fichiers joints ───
         if files and len(files) > 0:
             res = await self._process_files(query, files, provider, model)
             elapsed = (time.perf_counter() - start_time) * 1000
@@ -370,7 +497,6 @@ class BEKBrain:
             self._record_ga_fitness(query, res, elapsed)
             return res
 
-        # ─── Cas 2 : Chat normal ───
         intent = _detect_intent(query)
         logger.info(f"[Brain] Intent détecté : {intent} (session: {session_id})")
 
@@ -391,15 +517,195 @@ class BEKBrain:
             return res
 
         res = {}
-        if intent == "fix_self": res = await self._handle_fix_self()
-        elif intent == "analyze_image": res = await self._process_analyze_without_attachment(query, provider, model)
+
+        if any(k in query.lower() for k in [
+            "analyse mon repo", "analyse mon dépôt", "analyse mon projet",
+            "analyse le repo", "analyse le dépôt", "analyze repo",
+            "analyse mon code", "audit mon code", "structure de mon projet",
+            "audit de mon projet", "audit du repo",
+        ]):
+            if self._hermes and "python_save_report" in self._hermes.tools:
+                logger.info("[Brain] 🎯 Demande d'analyse de repo détectée → python_save_report")
+                path_match = re.search(r'([A-Za-z]:\\[^\s"\']+|/[\w/]+)', query)
+                if path_match:
+                    target_path = path_match.group(1).replace("\\\\", "\\")
+                else:
+                    from core.paths import WORKSPACE_DIR
+                    target_path = str(WORKSPACE_DIR)
+
+                try:
+                    result = await asyncio.to_thread(
+                        self._call_hermes_tool,
+                        "python_save_report",
+                        {"dir_path": target_path, "output_name": "audit_repo"}
+                    )
+                    result_str = str(result)
+                    md_match = re.search(r'([A-Za-z]:\\[^"\']+?\.md)', result_str)
+                    md_path = md_match.group(1).replace("\\\\", "\\") if md_match else None
+
+                    if md_path and os.path.exists(md_path):
+                        def _read_sync_report():
+                            with open(md_path, "r", encoding="utf-8") as f:
+                                return f.read()
+                        report_text = await asyncio.to_thread(_read_sync_report)
+
+                        synthesis_prompt = (
+                            f"Voici le rapport d'analyse de mon projet :\n\n{report_text}\n\n"
+                            f"=== TA MISSION ===\n"
+                            f"1. Les 3 plus gros problèmes de structure.\n"
+                            f"2. Les 3 fichiers à refactoriser en priorité.\n"
+                            f"3. Une recommandation prioritaire.\n"
+                            f"Sois direct et concret. "
+                            f"N'invente AUCUN chiffre : cite uniquement ceux du rapport."
+                        )
+                        synthesis = await self._call_with_fallback(
+                            synthesis_prompt,
+                            provider or DEFAULT_CHAT_PROVIDER,
+                            model or DEFAULT_CHAT_MODEL,
+                        )
+                        synthesis = self._validate_synthesis_numbers(synthesis, result)
+                        res = self._wrap(
+                            f"📊 **Rapport généré**\n\n{synthesis}\n\n---\n*Fichier : `{md_path}`*",
+                            "analyze_repo",
+                            ["python_save_report", "provider_manager", "bek_eval_guard"],
+                        )
+                    else:
+                        res = self._wrap(
+                            f"⚠️ Rapport généré mais fichier introuvable.\nSortie : {result_str[:500]}",
+                            "analyze_repo",
+                            ["python_save_report"],
+                        )
+                except Exception as e:
+                    logger.error("[Brain] Erreur analyse repo : %s", e, exc_info=True)
+                    res = self._wrap(
+                        f"❌ Erreur analyse repo : {e}",
+                        "analyze_repo",
+                        ["python_save_report"],
+                    )
+            else:
+                res = self._wrap(
+                    "⚠️ Outil `python_save_report` indisponible. Vérifie le Nerf 6 (MCP).",
+                    "analyze_repo",
+                    [],
+                )
+        elif _GITHUB_URL_RE.search(query):
+            github_url_match = _GITHUB_URL_RE.search(query)
+            owner_raw = github_url_match.group(1)
+            repo_raw = github_url_match.group(2)
+            owner, repo_name = _normalize_github_repo(owner_raw, repo_raw)
+            repo_url = f"https://github.com/{owner}/{repo_name}"
+            logger.info("[Brain] 🎯 URL GitHub détectée → clone + analyse (repo=%s)", repo_name)
+
+            try:
+                clone_result = await asyncio.to_thread(
+                    self._call_hermes_tool, "git_clone", {"url": repo_url}
+                )
+                clone_str = str(clone_result)
+                logger.info("[Brain] Clonage : %s", clone_str[:150])
+
+                from core.paths import WORKSPACE_DIR
+                repo_dir = None
+                if isinstance(clone_result, dict) and clone_result.get("status") == "success":
+                    repo_dir = clone_result.get("path")
+                if not repo_dir:
+                    external_dir = os.path.join(str(WORKSPACE_DIR), "external")
+                    candidates = []
+                    if os.path.isdir(external_dir):
+                        for d in os.listdir(external_dir):
+                            if d.rstrip(".").strip() == repo_name and os.path.isdir(os.path.join(external_dir, d)):
+                                candidates.append(d)
+                    repo_dir = f"external/{candidates[0]}" if candidates else f"external/{repo_name}"
+
+                full_repo_path = os.path.join(str(WORKSPACE_DIR), repo_dir)
+
+                if os.path.exists(full_repo_path):
+                    logger.info("[Brain] 📂 Repo trouvé : %s", repo_dir)
+
+                    report_result = await asyncio.to_thread(
+                        self._call_hermes_tool, "mcp_python_save_report",
+                        {"dir_path": repo_dir, "output_name": f"audit_{repo_name}"}
+                    )
+
+                    arch_result = await asyncio.to_thread(
+                        self._call_hermes_tool, "analyze_architecture",
+                        {"dir_path": repo_dir}
+                    )
+
+                    audit_numbers_block = ""
+                    audit_numbers_dict = {}
+                    try:
+                        _rr = report_result if isinstance(report_result, dict) else {}
+                        _files_n = _rr.get("files_analyzed") or _rr.get("files") or "?"
+                        _lines_n = _rr.get("total_lines") or "?"
+                        _warn_list = _rr.get("warnings", [])
+                        _warn_n = len(_warn_list) if isinstance(_warn_list, list) else "?"
+                        audit_numbers_dict = {
+                            "files_analyzed": _files_n if isinstance(_files_n, int) else 0,
+                            "total_lines": _lines_n if isinstance(_lines_n, int) else 0,
+                            "warnings": _warn_n if isinstance(_warn_n, int) else 0,
+                        }
+                        audit_numbers_block = (
+                            "\n=== 🔢 CHIFFRES OFFICIELS DE L'AUDIT (NE PAS MODIFIER) ===\n"
+                            f"- fichiers analysés : {_files_n}\n"
+                            f"- lignes totales : {_lines_n}\n"
+                            f"- anomalies détectées : {_warn_n}\n"
+                            "RÈGLE STRICTE : si tu cites un chiffre, il DOIT venir de cette liste. "
+                            "Sinon écris « non mesuré » au lieu d'inventer.\n"
+                        )
+                    except Exception as _ne:
+                        logger.debug("[Brain] Extraction chiffres audit échouée : %s", _ne)
+
+                    synthesis_prompt = (
+                        f"Tu es BEK, un architecte logiciel senior. Voici les données d'analyse du repo {repo_url} :\n\n"
+                        f"=== RAPPORT TECHNIQUE ===\n{report_result}\n\n"
+                        f"=== RAPPORT STRATÉGIQUE ===\n{arch_result}\n\n"
+                        f"{audit_numbers_block}\n"
+                        f"=== TA MISSION ===\n"
+                        f"Fais-moi une synthèse structurée avec :\n"
+                        f"1. Les 3 points forts majeurs du projet.\n"
+                        f"2. Les 3 points faibles critiques à corriger en priorité.\n"
+                        f"3. Un plan d'action détaillé en 5 étapes pour corriger les problèmes.\n"
+                        f"Sois direct, concret, et utilise le format Markdown.\n"
+                        f"IMPORTANT : ne cite AUCUN chiffre (nombre de fichiers, de lignes, de doublons) "
+                        f"qui ne soit pas explicitement dans les rapports ci-dessus. "
+                        f"Si tu n'es pas sûr, dis « non mesuré »."
+                    )
+
+                    logger.info("[Brain] 🧠 Synthèse LLM via pipeline (active LVC, GA, Skills, Anti-Hallucination)")
+                    synthesis = await self._call_chat_pipeline(
+                        synthesis_prompt, provider, model, None
+                    )
+
+                    synthesis = self._validate_synthesis_numbers(synthesis, audit_numbers_dict)
+
+                    res = self._wrap(
+                        f"📊 **Analyse Stratégique du Repo**\n\n{synthesis}",
+                        "analyze_repo",
+                        ["git_clone", "python_save_report", "analyze_architecture",
+                         "provider_manager", "bek_ga", "bek_lvc", "skill_agent",
+                         "cognitive_nerves", "bek_eval_guard"]
+                    )
+                else:
+                    logger.warning("[Brain] Échec : dossier %s absent", repo_dir)
+                    res = self._wrap(f"⚠️ Le dépôt n'a pas pu être cloné : {clone_str}", "analyze_repo", ["git_clone"])
+            except Exception as e:
+                logger.error("[Brain] Erreur analyse GitHub : %s", e)
+                res = self._wrap(f"❌ Erreur : {e}", "analyze_repo", ["git_clone"])
+        elif intent == "fix_self":
+            res = await self._handle_fix_self()
+        elif intent == "analyze_image":
+            res = await self._process_analyze_without_attachment(query, provider, model)
         elif intent == "generate_image" and self._hermes:
             refined_prompt = await self._refine_image_prompt(query)
             res = self._wrap(self._call_hermes_tool("generate_image", {"prompt": refined_prompt}), "vision_generate", ["hermes.generate_image", "prompt_refiner"])
-        elif intent == "coder" and self._hermes: res = await asyncio.to_thread(self._handle_coder_intent, query, provider, model, session_id)
-        elif intent == "web" and self._web_agent: res = self._wrap(self._web_agent.run_pipeline(query), "web", ["web_agent"])
-        elif intent == "orchestrate" and self._orchestrator: res = self._wrap(self._orchestrator.run(query), "orchestrate", ["bek_orchestrator"])
-        elif intent == "memory": res = self._wrap(await self._handle_memory(query), "memory", ["hindsight_memory"])
+        elif intent == "coder" and self._hermes:
+            res = await asyncio.to_thread(self._handle_coder_intent, query, provider, model, session_id)
+        elif intent == "web" and self._web_agent:
+            res = self._wrap(self._web_agent.run_pipeline(query), "web", ["web_agent"])
+        elif intent == "orchestrate" and self._orchestrator:
+            res = self._wrap(self._orchestrator.run(query), "orchestrate", ["bek_orchestrator"])
+        elif intent == "memory":
+            res = self._wrap(await self._handle_memory(query), "memory", ["hindsight_memory"])
         else:
             explicit = _detect_explicit_tool(query)
             if explicit and self._hermes:
@@ -484,6 +790,55 @@ class BEKBrain:
         res["latency_ms"] = round(elapsed, 2)
         self._record_ga_fitness(query, res, elapsed)
         return res
+
+    def _validate_synthesis_numbers(self, synthesis: str, source: Any) -> str:
+        try:
+            from bek_eval_guard import evaluate_response_quality, validate_cited_numbers
+        except ImportError:
+            logger.debug("[Brain] bek_eval_guard indisponible, validation chiffrée ignorée")
+            return synthesis
+
+        try:
+            guard = evaluate_response_quality("synthèse audit repo", synthesis)
+            if not guard.get("passed"):
+                logger.warning("[Brain] ⚠️ bek_eval_guard a rejeté la synthèse : %s", guard.get("reason"))
+                synthesis += f"\n\n⚠️ *Vérification partielle : {guard.get('reason')}*"
+
+            if isinstance(source, dict):
+                official = source
+            else:
+                official = {}
+                try:
+                    import json as _json
+                    if isinstance(source, str):
+                        start = source.find('{')
+                        end = source.rfind('}')
+                        if start != -1 and end != -1:
+                            parsed = _json.loads(source[start:end+1])
+                            if isinstance(parsed, dict):
+                                official = {
+                                    "files_analyzed": parsed.get("files_analyzed", 0),
+                                    "total_lines": parsed.get("total_lines", 0),
+                                    "warnings": len(parsed.get("warnings", [])) if isinstance(parsed.get("warnings"), list) else 0,
+                                }
+                except Exception:
+                    pass
+
+            if official:
+                num_check = validate_cited_numbers(synthesis, official)
+                if not num_check.get("passed"):
+                    logger.warning(
+                        "[Brain] ⚠️ Chiffres suspects dans la synthèse : %s (officiels : %s)",
+                        num_check["suspicious_numbers"], num_check["official_numbers"]
+                    )
+                    synthesis += (
+                        f"\n\n⚠️ *Chiffres non vérifiés dans cette synthèse : "
+                        f"{num_check['suspicious_numbers']} (absents de l'audit source)*"
+                    )
+        except Exception as _ge:
+            logger.debug("[Brain] Validation chiffrée échouée : %s", _ge)
+
+        return synthesis
 
     def _handle_coder_intent(self, query: str, provider: Optional[str] = None, model: Optional[str] = None, session_id: str = "default") -> Dict[str, Any]:
         q_lower = query.lower()
@@ -655,11 +1010,26 @@ class BEKBrain:
             if model: prov = provider or DEFAULT_CHAT_PROVIDER; mdl = model
             elif is_analysis: prov = provider or ANALYSIS_PROVIDER; mdl = ANALYSIS_MODEL
             else: prov = provider or DEFAULT_CHAT_PROVIDER; mdl = DEFAULT_CHAT_MODEL
-            tools_prompt = self.skill_agent.get_available_tools_prompt(_detect_intent(query))
+
+            tools_prompt = self.skill_agent.get_available_tools_prompt(_detect_intent(query), query=query)
             ga_prompt = self._get_ga_prompt()
+
             system_extra = f"{ga_prompt}\n\n=== OUTILS DISPONIBLES (à utiliser AVANT de générer du code) ===\n{tools_prompt}\n\nRÈGLE ABSOLUE : si l'utilisateur nomme un outil (ex: rea_analyze_javascript, mcp_rea_*), APPELLE l'outil via [ACTION:nom_outil]{{...}}[/ACTION] et NE GÉNÈRE PAS de code Python/JS à la place. Pour rea_analyze_javascript, le JSON doit contenir {{\"path\": \"<chemin absolu>\"}}."
             port = os.environ.get("PORT", "3001"); url = f"http://127.0.0.1:{port}/api/chat"
-            payload = {"messages": [{"role": "system", "content": system_extra}, {"role": "user", "content": query}], "provider": prov, "model": mdl, "use_memory": False, "use_reflection": False, "max_tokens": 8192}
+
+            # ★ FIX v19.53 : use_brain=False pour casser la réentrance infinie
+            payload = {
+                "messages": [
+                    {"role": "system", "content": system_extra},
+                    {"role": "user", "content": query},
+                ],
+                "provider": prov,
+                "model": mdl,
+                "use_memory": False,
+                "use_reflection": False,
+                "use_brain": False,   # ★ CASSE LA BOUCLE : le brain ne doit pas re-router vers lui-même
+                "max_tokens": 8192,
+            }
             async with httpx.AsyncClient(timeout=REA_TIMEOUT_SEC + 300) as client:
                 async with client.stream("POST", url, json=payload, headers={"Content-Type": "application/json"}) as resp:
                     if resp.status_code != 200: return f"[Erreur pipeline HTTP {resp.status_code}]"
@@ -708,7 +1078,7 @@ class BEKBrain:
         return {"status": "ok", "intent": intent, "bricks_used": bricks, "response": response}
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.50 (BEK-GA intégré)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
+        return {"app": "BEK Hybrid Agent v19.53 (fix réentrance)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
 
 _brain_instance: Optional[BEKBrain] = None
 

@@ -501,15 +501,174 @@ def search_skills(query: str = "", **kwargs: Any) -> Dict[str, Any]:
     return {"status": "success", "skills": results, "count": len(results)}
 
 
+# ==============================================================================
+# ★ NOUVEL OUTIL : git_clone (Clone un dépôt GitHub dans le workspace)
+# ==============================================================================
+def git_clone(url: str = "", dest: str = "", **kwargs: Any) -> Dict[str, Any]:
+    """Clone un dépôt GitHub dans le workspace pour l'analyser ensuite."""
+    actual_url = _first_text(url, kwargs, ("repo_url", "link", "uri"))
+    if not actual_url or "github.com" not in actual_url.lower():
+        return {"status": "error", "message": "URL GitHub invalide. Format attendu : https://github.com/user/repo"}
+
+    # Nettoyer l'URL (retirer /tree/main, /blob/, etc.)
+    clean_url = re.sub(r'/(tree|blob)/[^/]+.*$', '', actual_url).rstrip('/')
+    
+    # ★ FIX : Nettoyer les points résiduels AVANT d'ajouter .git
+    clean_url = clean_url.rstrip('.')
+    
+    if not clean_url.endswith('.git'):
+        clean_url += '.git'
+
+    # ★ FIX : Extraire le nom du repo de manière robuste
+    repo_name = clean_url.split('/')[-1]  # ex: bek-v15-clean.git
+    repo_name = repo_name.replace('.git', '')  # ex: bek-v15-clean
+    repo_name = repo_name.strip('.').strip('/')  # ★ NOUVEAU : Enlève les points résiduels
+
+    target_dir = dest or f"external/{repo_name}"
+
+    try:
+        target = _safe_resolve(target_dir)
+        if target.exists():
+            return {
+                "status": "success", 
+                "path": _relative(target), 
+                "message": f"Le dépôt {repo_name} est déjà cloné dans {_relative(target)}."
+            }
+
+        target.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Exécution de git clone avec timeout
+        result = subprocess.run(
+            ["git", "clone", "--depth", "1", clean_url, str(target)],
+            capture_output=True, text=True, timeout=120,
+            cwd=str(WORKSPACE), env=_sanitized_env()
+        )
+        
+        if result.returncode != 0:
+            return {
+                "status": "error", 
+                "message": f"Échec du clonage Git : {result.stderr or result.stdout}"
+            }
+
+        return {
+            "status": "success",
+            "path": _relative(target),
+            "message": f"✅ Dépôt cloné avec succès dans {_relative(target)}",
+            "hint": f"Utilise l'outil 'python_save_report' avec dir_path='{_relative(target)}' pour analyser ce dépôt."
+        }
+    except subprocess.TimeoutExpired:
+        return {"status": "error", "message": "Le clonage a dépassé le temps limite (120s)."}
+    except Exception as exc:
+        return {"status": "error", "message": str(exc)}
+
+
+# ==============================================================================
+# ★ NOUVEL OUTIL : analyze_architecture (Génère un rapport stratégique)
+# ==============================================================================
+def analyze_architecture(dir_path: str = "", **kwargs: Any) -> Dict[str, Any]:
+    """Analyse l'architecture d'un projet : points forts, points faibles, plan d'action."""
+    raw = _first_text(dir_path, kwargs, ("path", "file", "target_file"))
+    if not raw:
+        return {"status": "error", "message": "Paramètre 'dir_path' requis."}
+
+    try:
+        target = _safe_resolve(raw, allow_root=True)
+        if not target.is_dir():
+            return {"status": "error", "message": f"Dossier introuvable : {raw}"}
+
+        # 1. Scanner les fichiers .py
+        py_files = list(target.rglob("*.py"))
+        total_lines = 0
+        big_files = []
+        for f in py_files:
+            try:
+                with open(f, "r", encoding="utf-8", errors="ignore") as fh:
+                    lines = fh.readlines()
+                    total_lines += len(lines)
+                    if len(lines) > 300:
+                        big_files.append(f"{_relative(f)} ({len(lines)} lignes)")
+            except Exception:
+                pass
+
+        # 2. Chercher les doublons
+        import hashlib
+        file_hashes = {}
+        for f in py_files:
+            try:
+                h = hashlib.md5(f.read_bytes()).hexdigest()
+                file_hashes.setdefault(h, []).append(_relative(f))
+            except Exception:
+                pass
+        duplicates = [files for files in file_hashes.values() if len(files) > 1]
+
+        # 3. Chercher les TODO/FIXME
+        todos = 0
+        for f in py_files:
+            try:
+                content = f.read_text(encoding="utf-8", errors="ignore")
+                todos += content.count("TODO") + content.count("FIXME")
+            except Exception:
+                pass
+
+        # 4. Chercher les tests
+        test_files = list(target.rglob("test_*.py"))
+        test_files.extend(target.rglob("*_test.py"))
+
+        # 5. Synthèse
+        report = f"""
+# 📊 Analyse d'Architecture
+
+## 🎯 Indicateurs
+- **Fichiers Python** : {len(py_files)}
+- **Lignes totales** : {total_lines}
+- **Fichiers > 300 lignes** : {len(big_files)}
+- **Groupes de doublons** : {len(duplicates)}
+- **TODO/FIXME** : {todos}
+- **Fichiers de tests** : {len(test_files)}
+
+## ✅ Points forts (à déduire de vos métriques)
+- Architecture modulaire ({len(py_files)} fichiers Python)
+- Présence de tests ({len(test_files)} fichiers)
+- Complexité contrôlée ({len(big_files)} fichiers volumineux)
+
+## ⚠️ Points faibles (à corriger)
+- **{len(big_files)} fichiers trop volumineux** :
+"""
+        for f in big_files[:10]:
+            report += f"  - `{f}`\n"
+
+        report += f"\n- **{len(duplicates)} groupes de doublons** détectés :\n"
+        for dup in duplicates[:5]:
+            report += f"  - {', '.join(dup)}\n"
+
+        report += f"\n- **{todos} TODO/FIXME** en attente\n"
+
+        report += f"""
+## 🚀 Plan d'action prioritaire
+1. **Refactoriser les {len(big_files)} fichiers volumineux** en modules plus petits.
+2. **Éliminer les {len(duplicates)} groupes de doublons** en créant des modules partagés.
+3. **Résoudre les {todos} TODO/FIXME**.
+4. **Augmenter la couverture de test** ({len(test_files)} fichiers de test actuellement).
+"""
+        return {"status": "success", "report": report.strip()}
+
+    except Exception as exc:
+        return {"status": "error", "message": str(exc)}
+
+
 CODE_TOOLS_TABLE = {
     "read_file": read_file, "read_file_map": read_file_map, "write_file": write_file, "append_file": append_file,
     "edit_file": edit_file, "create_dir": create_dir, "grep": grep,
     "glob_files": glob_files, "ls": ls, "bash": bash, "search_skills": search_skills,
+    "git_clone": git_clone,  # ★ Ajouté ici
+    "analyze_architecture": analyze_architecture,  # ★ Ajouté ici
 }
 CODE_TOOLS_RISK = {
     "read_file": "L1", "read_file_map": "L1", "write_file": "L1", "append_file": "L1", "edit_file": "L1",
     "create_dir": "L1", "grep": "L1", "glob_files": "L1", "ls": "L1",
     "bash": "L2", "search_skills": "L1",
+    "git_clone": "L2",  # ★ Ajouté ici
+    "analyze_architecture": "L1",  # ★ Ajouté ici
 }
 
 
