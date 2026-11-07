@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v19 — CODEX LOOP (v7.23-NVGROQ — NVIDIA + Groq only, ReflexLoop, LVC-Facture)
+# BEK-v19 — CODEX LOOP (v7.28 — Workflow Claude Code / Codex + Plan tolérant)
+# ★ FIX v7.24 : propagation du provider/model choisi par l'utilisateur
+# ★ FIX v7.25 : auto-correction JSON renforcée (6 tentatives + feedback ciblé)
+# ★ ADD v7.26 : validation syntaxique multi-langages (Python + Godot .gd/.tscn)
+# ★ ADD v7.27 : Workflow étape-par-étape (1 fichier = 1 étape + pause 6s)
+# ★ ADD v7.28 : Extraction tolérante des étapes du plan (_extract_plan_steps)
+#               - Accepte : args.steps, steps, plan, etapes, actions
+#               - Prompt PLAN plus strict sur le format
 # ==============================================================================
 from __future__ import annotations
 
@@ -46,9 +53,7 @@ def _log_facture(label: str) -> None:
     in_tok = _LVC_STATS["in_tok"]
     lvc_calls = _LVC_STATS["lvc_calls"]
     if in_tok > 0:
-        # 1. Estimation de la taille sans LVC (compression native estimée à 1.35x)
         base_tok = int(in_tok * 1.35)
-        # 2. Économie liée aux outils compressés (w -> write_file)
         lvc_savings = lvc_calls * 250
         total_savings = (base_tok - in_tok) + lvc_savings
         pct = int((total_savings / max(1, base_tok)) * 100) if base_tok else 0
@@ -128,6 +133,8 @@ def _load_relevant_skills_lvc(goal: str, budget: Dict[str, int]) -> str:
     domain_priority = []
     if any(k in goal_lower for k in ["python", "script", "api", "backend"]):
         domain_priority = ["python", "backend", "software-engineering"]
+    elif any(k in goal_lower for k in ["godot", "gdscript", "unity", "unreal"]):
+        domain_priority = ["game-development", "godot", "gdscript", "gamedev"]
 
     foundational = ["architecture", "debugging", "software-engineering"]
     candidates = []
@@ -231,9 +238,11 @@ BEK_LVC_TOOLS = set(BEK_TO_HERMES.keys())
 TERMINAL_ACTIONS = {"done", "none", "finish", "complete", "terminate", "end", "d1"}
 
 MAX_TOKENS_LLM = 8192
-MAX_ACTIONS_PER_STEP = 15
-MAX_RESULT_CHARS = 4000  # ★ Optimisé : 4k chars max au lieu de 12k
-MAX_INVALID_JSON_STREAK = 3
+# ★ FIX v7.27 : 5 actions max par étape (1 fichier = 1 étape)
+MAX_ACTIONS_PER_STEP = 5
+MAX_RESULT_CHARS = 4000
+# ★ FIX v7.25 : 6 tentatives au lieu de 3
+MAX_INVALID_JSON_STREAK = 6
 
 PATH_ALIASES = ("path", "file", "filename", "target_file", "name", "f")
 CONTENT_ALIASES = ("content", "text", "data", "code", "body", "value", "c")
@@ -268,28 +277,70 @@ TOOL_ARG_SCHEMA: Dict[str, Tuple[Tuple[str, Tuple[str, ...]], ...]] = {
     "bek-search.web": (("query", ("query", "search", "text", "prompt", "q")),),
 }
 
-ENGINEER_PROMPT = """Tu es BEK Codex. Agent autonome.
-RÈGLES:
-- Chemins relatifs au workspace.
-- Ne JAMAIS utiliser "cd", "mkdir -p", "grep" ou "ls" en bash. Utilise les outils dédiés (d, g, ls).
-- Lis avant de modifier. Cherche avec 'g', lis avec 'r' (si >200 lignes -> 'rm').
-- Après un 'w', ne fais pas de 'ls' de vérification, passe direct à 'done'.
-- TESTS: utilise 'b' (pytest). Si échec, lis l'erreur et corrige via 'e'. Ne réécris pas avec 'w'."""
+# ★ FIX v7.28 : Prompt PLAN encore plus strict sur le format
+PLAN_SYSTEM_PROMPT = """Tu es BEK Codex, un Agent de Développement Autonome Senior.
 
-BASE_SYSTEM_PROMPT = ENGINEER_PROMPT + """
+=== MODE PLAN (WORKFLOW CLAUDE CODE / CODEX) ===
+Tu dois générer un plan ULTRA-GRANULAIRE pour construire le projet.
+RÈGLE ABSOLUE : 1 ÉTAPE = 1 FICHIER (ou 1 action très simple).
+Ne regroupe JAMAIS plusieurs fichiers dans une seule étape.
 
-FORMAT DE RÉPONSE : JSON STRICT uniquement.
-{"thought":"1 phrase","tool":"x","args":{}}
-OUTILS :
+=== FORMAT DE RÉPONSE STRICT ===
+Tu dois répondre UNIQUEMENT avec ce JSON (pas de Markdown, pas de texte avant/après) :
+
+{"thought":"Planification du projet","tool":"plan","args":{"steps":[
+  {"step":1,"action":"d","file":"bek_workspace/projet/src","description":"Créer le dossier src/"},
+  {"step":2,"action":"w","file":"bek_workspace/projet/src/__init__.py","description":"Créer __init__.py vide"},
+  {"step":3,"action":"w","file":"bek_workspace/projet/src/config.py","description":"Créer config.py"},
+  {"step":4,"action":"w","file":"bek_workspace/projet/src/player.py","description":"Créer player.py"},
+  {"step":5,"action":"w","file":"bek_workspace/projet/src/enemy.py","description":"Créer enemy.py"},
+  {"step":6,"action":"w","file":"bek_workspace/projet/src/boss.py","description":"Créer boss.py"},
+  {"step":7,"action":"w","file":"bek_workspace/projet/main.py","description":"Créer main.py"},
+  {"step":8,"action":"w","file":"bek_workspace/projet/README.md","description":"Créer le README"}
+]}}
+
+RÈGLES ABSOLUES :
+- La clé "steps" DOIT contenir une LISTE d'objets JSON.
+- Chaque objet DOIT avoir "step" (numéro), "action" (d=create_dir, w=write_file), "file" (chemin), "description".
+- Ne mets AUCUN fichier en dehors de "steps".
+- Ne mets AUCUN texte avant ou après le JSON.
+"""
+
+BASE_SYSTEM_PROMPT = """Tu es BEK Codex. Agent autonome.
+
+=== RÈGLES CRITIQUES ===
+1. Tu réponds UNIQUEMENT en JSON strict. JAMAIS de Markdown.
+2. Format : {"thought":"1 phrase","tool":"nom_outil","args":{...}}
+3. Tu exécutes UNE SEULE action à la fois.
+4. Quand tu as fini l'étape en cours, tu réponds {"thought":"Étape terminée","tool":"done","args":{}}
+5. Si tu as un doute, tu clôtures avec "done" et tu passes à l'étape suivante.
+
+=== OUTILS ===
 w=write_file a=append_file r=read_file rm=read_file_map e=edit_file
 d=create_dir g=grep f=glob_files ls=ls b=bash sw=web_search hs=headless_scrape
+
+=== INTERDICTIONS ===
+- Pas de "cd", "mkdir -p", "grep", "ls" via bash.
+- Pas de commandes destructrices.
+- NE LANCE JAMAIS pytest sur un jeu.
 """
 
-PLAN_SYSTEM_PROMPT = ENGINEER_PROMPT + """
+# ==============================================================================
+# ★ NOUVEAU : résolution du provider/model — RESPECTE le choix utilisateur
+# ==============================================================================
+_DEFAULT_PROVIDER = "nvidia"
+_DEFAULT_PLAN_MODEL = "nvidia/nemotron-3.5-super-vl-120b-a12b"
+_DEFAULT_STEP_MODEL = "nvidia/nemotron-3.5-super-vl-120b-a12b"
 
-MODE PLAN : Produis un JSON STRICT.
-{"thought":"...","tool":"plan","args":{"steps":[{"step":1,"action":"w","file":"chemin","description":"..."}],"notes":"..."}}
-"""
+def _resolve_target(provider: Optional[str], model: Optional[str]) -> Tuple[str, str]:
+    prov = provider or _DEFAULT_PROVIDER
+    mdl = model or _DEFAULT_PLAN_MODEL
+    if model and not provider:
+        if "/" in model:
+            prov = model.split("/", 1)[0]
+        else:
+            prov = _DEFAULT_PROVIDER
+    return prov, mdl
 
 # ==============================================================================
 # BUDGET PAR PROVIDER (Memory Shield inclus)
@@ -305,8 +356,8 @@ def _budget(provider: Optional[str]) -> Dict[str, int]:
             "request_tpm_limit": 6000 if p == "groq" else 16000,
         }
     return {
-        "skills_count": 2, "skill_chars": 3000, "total_skill_chars": 6000,  # ★ Réduit de 10k à 6k
-        "memory_chars": 150,  # ★ Réduit de 300 à 150
+        "skills_count": 2, "skill_chars": 3000, "total_skill_chars": 6000,
+        "memory_chars": 150,
         "max_tokens_llm": MAX_TOKENS_LLM,
         "max_history_messages": 20, "request_tpm_limit": 200000,
     }
@@ -316,6 +367,7 @@ def _estimate_tokens(text: str) -> int:
 
 def _estimate_request_tokens(messages: List[Dict[str, Any]]) -> int:
     return sum(_estimate_tokens(m.get("content", "")) for m in messages)
+
 # ==============================================================================
 # PARSING
 # ==============================================================================
@@ -369,6 +421,159 @@ def _missing_required(tool: str, args: Dict[str, Any]) -> List[str]:
     ]
 
 # ==============================================================================
+# ★ NOUVEAU v7.28 : Extraction tolérante des étapes du plan
+# Accepte : args.steps, steps, plan, etapes, actions (quel que soit le format du LLM)
+# ==============================================================================
+def _extract_plan_steps(parsed: dict) -> List[Dict[str, Any]]:
+    """
+    Extrait les étapes du plan quel que soit le format du LLM.
+    Accepte : args.steps, steps, plan, etapes, actions.
+    Retourne une liste de dicts (vide si rien trouvé).
+    """
+    if not isinstance(parsed, dict):
+        return []
+
+    # Format 1 : {"tool":"plan","args":{"steps":[...]}}
+    args = parsed.get("args", {})
+    if isinstance(args, dict):
+        for key in ("steps", "plan", "etapes", "actions", "taches"):
+            steps = args.get(key)
+            if isinstance(steps, list) and len(steps) > 0:
+                return [s for s in steps if isinstance(s, dict)]
+
+    # Format 2 : {"steps":[...]} (sans args)
+    for key in ("steps", "plan", "etapes", "actions", "taches"):
+        steps = parsed.get(key)
+        if isinstance(steps, list) and len(steps) > 0:
+            return [s for s in steps if isinstance(s, dict)]
+
+    return []
+
+# ==============================================================================
+# ★ NOUVEAU v7.25 : détection du type d'erreur JSON pour feedback ciblé
+# ==============================================================================
+def _diagnose_json_failure(raw: str) -> str:
+    if not raw or not raw.strip():
+        return (
+            "ERR JSON: Ta réponse est VIDE. Tu DOIS répondre avec un JSON. "
+            'Exemple : {"thought":"...","tool":"write_file","args":{"path":"...","content":"..."}}'
+        )
+
+    text = raw.strip()
+    lower = text.lower()
+
+    if text.startswith("#") or "```markdown" in lower or "```md" in lower:
+        return (
+            "ERR JSON: Tu as écrit du MARKDOWN au lieu de JSON. "
+            "INTERDIT. Pour écrire un fichier Markdown (README), tu DOIS utiliser write_file : "
+            '{"thought":"écrire README","tool":"write_file","args":{"path":"...","content":"# Titre\\n..."}} '
+            "Le contenu Markdown va DANS args.content, PAS dans ta réponse brute."
+        )
+
+    if (text.startswith("import ") or text.startswith("def ") or text.startswith("class ") 
+        or text.startswith("function ") or text.startswith("const ") or text.startswith("<!DOCTYPE")
+        or text.startswith("extends ") or text.startswith("func ") or text.startswith("var ")):
+        lang = "Python"
+        if "def " in text[:200] or "import " in text[:200]: lang = "Python"
+        elif "extends " in text[:200] or "func " in text[:200]: lang = "GDScript (Godot)"
+        elif "function " in text[:200] or "const " in text[:200]: lang = "JavaScript"
+        
+        return (
+            f"ERR JSON: Tu as écrit du CODE {lang} brut au lieu de JSON. "
+            "INTERDIT. Pour écrire du code dans un fichier, tu DOIS utiliser write_file : "
+            '{"thought":"écrire fichier","tool":"write_file","args":{"path":"...","content":"<ton code ici>"}} '
+            "Le code va DANS args.content (avec des \\n pour les retours à la ligne)."
+        )
+
+    if not text.startswith("{") and ("je vais" in lower or "voici" in lower or "je peux" in lower or "pour " in lower[:50]):
+        return (
+            "ERR JSON: Tu as répondu en TEXTE NATUREL au lieu de JSON. "
+            "INTERDIT. Tu dois UNIQUEMENT produire un objet JSON. "
+            'Exemple : {"thought":"...","tool":"create_dir","args":{"path":"..."}}'
+        )
+
+    if text.startswith("{") and not text.rstrip().endswith("}"):
+        return (
+            "ERR JSON: Ton JSON est TRONQUÉ (il ne se termine pas par }). "
+            "Réduis la taille du content (max 3000 chars par write_file). "
+            "Si le fichier est trop gros, découpe-le en plusieurs write_file/append_file. "
+            'Format : {"thought":"...","tool":"write_file","args":{"path":"...","content":"..."}}'
+        )
+
+    if text.startswith("{"):
+        return (
+            "ERR JSON: Ton JSON est mal formé ou il manque 'tool'/'args'. "
+            'Format EXACT requis : {"thought":"1 phrase","tool":"nom_outil","args":{"param":"valeur"}} '
+            "Vérifie les guillemets et les accolades."
+        )
+
+    return (
+        "ERR JSON: Format invalide. Tu DOIS répondre UNIQUEMENT avec un objet JSON valide. "
+        'Exemple : {"thought":"...","tool":"write_file","args":{"path":"...","content":"..."}} '
+        "Aucun texte avant ou après le JSON."
+    )
+
+# ==============================================================================
+# ★ NOUVEAU v7.26 : validation syntaxique multi-langages (Python + Godot)
+# ==============================================================================
+def _validate_syntax(file_path: str, content: str) -> Tuple[bool, str]:
+    path = Path(file_path)
+    ext = path.suffix.lower()
+
+    if ext == ".py":
+        try:
+            import ast
+            ast.parse(content)
+            return True, "Syntaxe Python validée"
+        except SyntaxError as e:
+            return False, f"SYNTAX ERROR ligne {e.lineno}: {e.msg}"
+
+    elif ext == ".gd":
+        stripped = content.strip()
+        if not stripped:
+            return True, "Fichier GDScript vide"
+        
+        first_lines = stripped.split("\n")[:5]
+        has_extends = any(l.strip().startswith(("extends ", "class_name ")) for l in first_lines)
+        if not has_extends:
+            return False, "GDScript invalide : le fichier doit commencer par 'extends' ou 'class_name'"
+        
+        open_braces = content.count("{")
+        close_braces = content.count("}")
+        open_parens = content.count("(")
+        close_parens = content.count(")")
+        
+        if open_braces != close_braces:
+            return False, f"GDScript invalide : accolades déséquilibrées ({open_braces} vs {close_braces})"
+        if open_parens != close_parens:
+            return False, f"GDScript invalide : parenthèses déséquilibrées ({open_parens} vs {close_parens})"
+        
+        return True, "Syntaxe GDScript validée (basique)"
+
+    elif ext == ".tscn":
+        stripped = content.strip()
+        if not stripped:
+            return False, "Fichier .tscn vide"
+        if not (stripped.startswith("[gd_scene") or stripped.startswith("[gd_resource")):
+            return False, "Fichier .tscn invalide : doit commencer par [gd_scene ...] ou [gd_resource ...]"
+        
+        open_brackets = content.count("[")
+        close_brackets = content.count("]")
+        if open_brackets != close_brackets:
+            return False, f"Fichier .tscn invalide : crochets déséquilibrés"
+        
+        return True, "Syntaxe .tscn validée (basique)"
+
+    elif ext == ".json":
+        try:
+            json.loads(content)
+            return True, "Syntaxe JSON validée"
+        except json.JSONDecodeError as e:
+            return False, f"JSON invalide : {e.msg}"
+
+    return True, ""
+
+# ==============================================================================
 # APPEL LLM
 # ==============================================================================
 def _call_llm_safe(messages: List[Dict[str, Any]], provider: str, model: str,
@@ -390,7 +595,7 @@ def _call_llm_safe(messages: List[Dict[str, Any]], provider: str, model: str,
         b = _budget(current_prov)
         mt = min(max_tokens or MAX_TOKENS_LLM, b["max_tokens_llm"])
         if current_prov == "groq":
-            mt = min(mt, 1024)  # ★ Sécurité : max 1024 tokens pour Groq
+            mt = min(mt, 1024)
         est_in = _estimate_request_tokens(messages)
         if est_in + mt > b["request_tpm_limit"]:
             mt = max(500, b["request_tpm_limit"] - est_in - 300)
@@ -438,14 +643,12 @@ def _call_llm_safe(messages: List[Dict[str, Any]], provider: str, model: str,
             logger.warning("[Codex Loop] ⚠️ Exception %s : %s. Fallback...",
                            current_prov, last_err_msg)
 
-    # ★ ReflexLoop — graver la leçon si TOUS les providers ont échoué
     try:
         from memory import save_to_memory
         save_to_memory(
             f"[LECON CODEX] Échec providers : {last_err_msg[:200]}",
             f"Objectif '{messages[-1].get('content', '')[:100]}' a échoué sur tous les providers. "
-            f"Dernière erreur : {last_err_msg[:300]}. "
-            f"Éviter ce modèle/provider pour ce type de tâche.",
+            f"Dernière erreur : {last_err_msg[:300]}.",
         )
         logger.info("[ReflexLoop] 🧠 Leçon gravée en mémoire après échec provider")
     except Exception:
@@ -470,7 +673,6 @@ def _dispatch_tool(tool: str, args: Dict[str, Any]) -> Dict[str, Any]:
     try:
         from hermes_core import hermes
 
-        # ★ LVC-TEST INTERCEPTOR
         if native_tool == "bash" and "pytest" in str(args.get("cmd", "")):
             logger.info("[LVC-Test] 🧪 Interception de pytest...")
             tool_res = hermes.dispatch({"tool": native_tool, "args": args})
@@ -488,7 +690,6 @@ def _dispatch_tool(tool: str, args: Dict[str, Any]) -> Dict[str, Any]:
             clean_msg = _parse_pytest_output(raw_stdout, raw_stderr)
             return {"status": "success" if "PASSED" in clean_msg else "error", "message": clean_msg}
 
-        # Comportement normal
         tool_res = hermes.dispatch({"tool": native_tool, "args": args})
 
         if hasattr(tool_res, "success"):
@@ -511,6 +712,13 @@ def _prune_history(messages, max_kept):
         return messages
     return [messages[0], messages[1]] + messages[-max_kept:]
 
+def _prune_history_for_json_retry(messages, max_kept=4):
+    if len(messages) <= 2:
+        return messages
+    system_msg = messages[0]
+    tail = messages[-(max_kept * 2):] if len(messages) > max_kept * 2 else messages[1:]
+    return [system_msg] + tail
+
 # ==============================================================================
 # PHASES
 # ==============================================================================
@@ -528,14 +736,11 @@ def _run_plan_phase(goal: str, prov: str, mdl: str, ego_prompt: str,
                   + (f"\n\nMÉMOIRE:\n{mem}" if mem else ""))
     messages = [
         {"role": "system", "content": sys_prompt},
-        {"role": "user", "content": f"OBJECTIF : {goal}\n\nProduis un PLAN JSON."},
+        {"role": "user", "content": f"OBJECTIF : {goal}\n\nProduis un PLAN JSON granulaire (1 étape = 1 fichier)."},
     ]
 
     for attempt in range(1, 3):
-        # ★ NVIDIA → Groq uniquement (openai/gpt-oss-20b = modèle qui répond chez toi)
-        fallback_plan = [
-            ("groq", "openai/gpt-oss-20b"),
-        ]
+        fallback_plan = [("groq", "openai/gpt-oss-20b")]
         raw, err = _call_llm_safe(messages, prov, mdl,
                                   max_tokens=b["max_tokens_llm"],
                                   fallback_chain=fallback_plan)
@@ -543,23 +748,31 @@ def _run_plan_phase(goal: str, prov: str, mdl: str, ego_prompt: str,
             return {"status": "error", "phase": "plan", "message": err}
 
         parsed = _extract_json(raw or "")
-        args = parsed.get("args", {})
-        raw_steps = args.get("steps", [])
+        # ★ FIX v7.28 : extraction tolérante des étapes
+        raw_steps = _extract_plan_steps(parsed)
 
-        if isinstance(raw_steps, list) and len(raw_steps) > 0:
+        if raw_steps:
             _log_lvc_stats("PLAN")
-            _log_facture("PLAN")  # ★ FACTURE visible en mode PLAN
+            _log_facture("PLAN")
             return {
                 "status": "plan_ready",
                 "phase": "plan",
-                "plan": [s for s in raw_steps if isinstance(s, dict)],
-                "notes": args.get("notes", ""),
+                "plan": raw_steps,
+                "notes": parsed.get("notes", "") or (parsed.get("args", {}) or {}).get("notes", ""),
                 "steps_count": len(raw_steps),
                 "lvc_stats": dict(_LVC_STATS),
             }
 
         _LVC_STATS["retries"] += 1
-        _feedback(messages, raw or "", "ERR JSON: Format 'args.steps'.")
+        # ★ FIX v7.28 : feedback explicite sur le format attendu
+        _feedback(
+            messages, raw or "",
+            "ERR JSON: Tu dois fournir un plan avec une clé 'steps' contenant une LISTE d'objets. "
+            'Format EXACT : {"thought":"planification","tool":"plan","args":{"steps":['
+            '{"step":1,"action":"d","file":"...","description":"..."},'
+            '{"step":2,"action":"w","file":"...","description":"..."}'
+            ']}}'
+        )
 
     return {"status": "error", "phase": "plan", "message": "Plan invalide."}
 
@@ -586,11 +799,12 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
         + (f"\n\n{ego_prompt}" if ego_prompt else "")
         + (f"\n\n{skills}" if skills else "")
         + (f"\n\nMÉMOIRE:\n{mem}" if mem else "")
-        + "\n\nÉTAPE:\n" + json.dumps(step, ensure_ascii=False)
+        + "\n\nÉTAPE ACTUELLE :\n" + json.dumps(step, ensure_ascii=False)
+        + "\n\nRAPPEL : Tu dois faire UNE SEULE action pour cette étape, puis répondre {\"tool\":\"done\"}."
     )
     messages = [
         {"role": "system", "content": sys_prompt},
-        {"role": "user", "content": f"Exécute l'étape {step_num + 1}. JSON unique."},
+        {"role": "user", "content": f"Exécute l'étape {step_num + 1}. JSON unique. Fais UNE action, puis 'done'."},
     ]
 
     start = time.time()
@@ -619,12 +833,18 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
         if not parsed or "tool" not in parsed:
             invalid_count += 1
             _LVC_STATS["retries"] += 1
+            diagnosis = _diagnose_json_failure(raw or "")
+            logger.warning(
+                "[Codex Loop] ⚠️ JSON invalide (%d/%d) — diagnostic : %s",
+                invalid_count, MAX_INVALID_JSON_STREAK, diagnosis[:120]
+            )
             if invalid_count >= MAX_INVALID_JSON_STREAK:
                 _log_lvc_stats(f"STEP {step_num + 1} (JSON×{MAX_INVALID_JSON_STREAK})")
                 return {"status": "error", "phase": "step", "step_num": step_num,
-                        "message": "JSON invalide max.", "history": history}
-            _feedback(messages, raw or "", "ERR JSON: Clés 'tool' & 'args'.")
-            messages = _prune_history(messages, b["max_history_messages"])
+                        "message": f"JSON invalide max ({MAX_INVALID_JSON_STREAK} tentatives).",
+                        "history": history}
+            _feedback(messages, raw or "", diagnosis)
+            messages = _prune_history_for_json_retry(messages, max_kept=4)
             continue
 
         tool = str(parsed.get("tool") or "").strip().lower()
@@ -632,7 +852,7 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
 
         if tool in TERMINAL_ACTIONS:
             _log_lvc_stats(f"STEP {step_num + 1} (LLM DONE)")
-            _log_facture(f"STEP {step_num + 1} (LLM DONE)")  # ★ FACTURE visible en STEP
+            _log_facture(f"STEP {step_num + 1} (LLM DONE)")
             summary = _auto_summary(
                 history,
                 raw_args.get("summary") if isinstance(raw_args, dict) else None
@@ -666,7 +886,6 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
             messages = _prune_history(messages, b["max_history_messages"])
             continue
 
-        # HARDCORE LOOP BREAKER
         action_str = f"{tool}:{str(args.get('cmd', '') or args.get('path', '') or args.get('query', '') or args.get('url', ''))}"
         recent_actions.append(action_str)
         if len(recent_actions) > 5:
@@ -684,7 +903,6 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
         if not isinstance(res_dict, dict):
             res_dict = {"result": str(res_dict)}
 
-        # ★ ReflexLoop : graver la leçon sur échec de test
         if res_dict.get("status") == "error" and tool in ("b", "bash"):
             try:
                 from memory import save_to_memory
@@ -705,43 +923,27 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
             chars = res_dict.get("chars") or res_dict.get("total_size") or 0
             last_verification = f"{last_file} OK ({chars} chars)" if chars else f"{last_file} OK"
 
-            if last_file.endswith(".py") and res_dict.get("status") == "success":
+            if res_dict.get("status") == "success":
                 try:
-                    import ast
                     from tools.code_tools import _safe_resolve
                     fp = _safe_resolve(last_file)
                     if fp and fp.exists():
-                        ast.parse(fp.read_text(encoding="utf-8", errors="replace"))
-                        res_dict["syntax_check"] = "OK"
-                        last_verification = f"{last_file} OK (syntaxe Python validée)"
-                        logger.info("[Codex Loop] 🛡️ Syntaxe Python validée pour %s", last_file)
-                except SyntaxError as e:
-                    res_dict["syntax_check"] = f"SYNTAX ERROR ligne {e.lineno}: {e.msg}"
-                    last_verification = f"{last_file} SYNTAX ERROR ligne {e.lineno}"
-                    _LVC_STATS["retries"] += 1
-                    logger.warning("[Codex Loop] ❌ Syntaxe Python invalide : %s", e)
-                    _feedback(messages, raw or "", f"ERR SYNTAX L{e.lineno}: {e.msg}. Fix et réécris.")
-                    messages = _prune_history(messages, b["max_history_messages"])
-                    continue
-                except Exception:
-                    pass
-
-            if res_dict.get("status") == "success" and step_num == len(plan) - 1:
-                _log_lvc_stats(f"STEP {step_num + 1} (AUTO-DONE)")
-                _log_facture(f"STEP {step_num + 1} (AUTO-DONE)")
-                summary = _auto_summary(history + [{"step": substep, "tool": tool, "result": json.dumps(res_dict)}], None)
-                return {
-                    "status": "step_done",
-                    "phase": "step",
-                    "step_num": step_num,
-                    "step_description": step_description,
-                    "total_steps": len(plan),
-                    "next_step": None,
-                    "verify": last_verification,
-                    "summary": summary,
-                    "history": history + [{"step": substep, "tool": tool, "result": json.dumps(res_dict)}],
-                    "lvc_stats": dict(_LVC_STATS),
-                }
+                        content = fp.read_text(encoding="utf-8", errors="replace")
+                        is_valid, msg = _validate_syntax(last_file, content)
+                        if is_valid:
+                            res_dict["syntax_check"] = "OK"
+                            last_verification = f"{last_file} OK ({msg})"
+                            logger.info("[Codex Loop] 🛡️ %s pour %s", msg, last_file)
+                        else:
+                            res_dict["syntax_check"] = msg
+                            last_verification = f"{last_file} ERROR: {msg}"
+                            _LVC_STATS["retries"] += 1
+                            logger.warning("[Codex Loop] ❌ %s", msg)
+                            _feedback(messages, raw or "", f"ERR {msg}. Fix et réécris.")
+                            messages = _prune_history(messages, b["max_history_messages"])
+                            continue
+                except Exception as e:
+                    logger.debug("[Codex Loop] Validation ignorée : %s", e)
 
         res_str = _compress_tool_result(tool, res_dict)
         history.append({"step": substep, "tool": tool, "result": json.dumps(res_dict, ensure_ascii=False)[:MAX_RESULT_CHARS]})
@@ -765,7 +967,13 @@ def run_codex_loop(
 
     skill_goal = goal_context or goal
 
-    # ★ Chercher l'info en mémoire d'abord (memory_coordinator)
+    target_provider, target_model = _resolve_target(provider, model)
+    logger.info(
+        "[Codex Loop] 🎯 Cible LLM : provider=%s model=%s (choix utilisateur=%s)",
+        target_provider, target_model,
+        "explicite" if (provider or model) else "défaut",
+    )
+
     if memory_context is None:
         try:
             from memory_coordinator import coordinate_memories_async
@@ -813,7 +1021,7 @@ def run_codex_loop(
 
         res_plan = _run_plan_phase(
             skill_goal,
-            "nvidia", "nvidia/nemotron-3.5-lightning-30b-a3b",
+            target_provider, target_model,
             _get_ego_prompt(alter_ego), memory_context
         )
         if res_plan.get("status") != "plan_ready":
@@ -824,23 +1032,27 @@ def run_codex_loop(
         logger.info("[Codex Loop] 📋 Plan de %d étapes.", len(plan_steps))
 
         all_history = []
-        step_fallback = [
-            ("groq", "openai/gpt-oss-20b"),
-        ]
+        step_fallback = [("groq", "openai/gpt-oss-20b")]
         for i in range(len(plan_steps)):
             step_res = _run_step_phase(
                 skill_goal, plan_steps, i,
-                "nvidia", "nvidia/nemotron-3.5-super-vl-120b-a12b",
+                target_provider, target_model,
                 _get_ego_prompt(alter_ego), time_budget_s,
                 step_fallback,
                 memory_context
             )
             all_history.extend(step_res.get("history", []))
+            
             if step_res.get("status") == "error":
                 _log_lvc_stats(f"AUTO (step {i+1} failed)")
                 return {"status": "error",
                         "message": f"Étape {i+1} échouée : {step_res.get('message')}",
                         "history": all_history}
+            
+            # ★ FIX v7.27 : Pause de 6s entre chaque étape (repos CPU/RAM)
+            logger.info("[Codex Loop] ✅ Étape %d/%d terminée. Fichier sur le disque. Pause de 6s...", 
+                        i+1, len(plan_steps))
+            time.sleep(6.0)
 
         _log_lvc_stats("AUTO TOTAL")
         _log_facture("Codex AUTO")
@@ -856,7 +1068,7 @@ def run_codex_loop(
         logger.info("[Codex Loop] 🧠 Planification.")
         return _run_plan_phase(
             skill_goal,
-            "nvidia", "nvidia/nemotron-3.5-super-vl-120b-a12b",
+            target_provider, target_model,
             _get_ego_prompt(alter_ego), memory_context
         )
 
@@ -866,11 +1078,9 @@ def run_codex_loop(
         logger.info("[Codex Loop] ⚡ Exécution.")
         return _run_step_phase(
             skill_goal, plan, int(step_num),
-            "nvidia", "nvidia/nemotron-3.5-super-vl-120b-a12b",
+            target_provider, target_model,
             _get_ego_prompt(alter_ego), int(time_budget_s),
-            [
-                ("groq", "openai/gpt-oss-20b"),
-            ],
+            [("groq", "openai/gpt-oss-20b")],
             memory_context
         )
 

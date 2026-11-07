@@ -1,5 +1,7 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.53 (fix réentrance brain)
+# BEK Hybrid Agent v19 — core/brain.py — v19.55 (respect strict du modèle user + routage codex_loop auto)
+# ★ FIX v19.54 : propagation garantie du provider/model choisi par l'utilisateur
+# ★ FIX v19.55 : Routage codex_loop : si pas de plan explicite, force "auto"
 # ==============================================================================
 from __future__ import annotations
 
@@ -162,10 +164,16 @@ def _detect_intent(query: str) -> str:
 
 def _detect_phase(query: str) -> tuple:
     q = query.lower()
+    # ★ FIX v19.55 : Si "plan" est présent, on le détecte. Sinon, si "boucle" ou "auto" est présent, on force "auto".
     if any(k in q for k in _PHASE_PLAN_KEYWORDS): return "plan", 0
     m = _STEP_NUM_RE.search(q)
     if m: return "step", max(0, int(m.group(1)) - 1)
     if any(k in q for k in _PHASE_STEP_KEYWORDS): return "step", -1
+    
+    # Si on utilise codex_loop (boucle autonome), on force "auto" (pas de plan mémoire)
+    if any(k in q for k in ["codex_loop", "boucle autonome", "agent autonome"]):
+        return "auto", 0
+        
     return "auto", 0
 
 
@@ -441,7 +449,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.53 (fix réentrance brain)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.55 (respect strict du modèle user + routage codex_loop auto)")
         logger.info("[BEK Brain] Analyse : %s/%s (fallback: %s/%s)", ANALYSIS_PROVIDER, ANALYSIS_MODEL, FALLBACK_PROVIDER, FALLBACK_MODEL)
 
     async def shutdown(self):
@@ -848,24 +856,51 @@ class BEKBrain:
         state = self._get_session_state(session_id)
         if phase == "step" and step_num == -1: step_num = state["step"]
 
+        # ★ FIX v19.55 : Correction du routage codex_loop
         if phase in ("plan", "step"):
             tool_to_use = "codex_loop"
-            params: Dict[str, Any] = {"task_description": query, "max_steps": 20, "phase": phase}
-            if phase == "plan":
+            # Si on est en mode "plan" mais qu'on n'a pas demandé explicitement un plan, on force "auto"
+            forced_phase = phase
+            if phase == "plan" and not any(k in q_lower for k in ["fais un plan", "mode plan", "structure du plan", "commence par un plan"]):
+                forced_phase = "auto"
+            
+            params: Dict[str, Any] = {"task_description": query, "max_steps": 25, "phase": forced_phase}
+            
+            if forced_phase == "plan":
                 state["plan"] = []; state["step"] = 0; state["goal"] = query; state["completed"] = False
-            elif phase == "step":
+            elif forced_phase == "step":
                 if state["completed"]: return self._wrap({"status": "error", "message": "✅ Ce plan est déjà terminé. Lance un nouveau plan."}, "coder", ["hermes.codex_loop"])
-                if not state["plan"]: return self._wrap({"status": "error", "message": "❌ Aucun plan en mémoire pour cette session."}, "coder", ["hermes.codex_loop"])
-                params["plan"] = state["plan"]; params["step_num"] = step_num; params["goal_context"] = state["goal"]
-        elif any(k in q_lower for k in ["codex_loop", "boucle", "agent autonome"]):
-            tool_to_use = "codex_loop"; params = {"task_description": query, "max_steps": 20, "phase": "auto"}
+                if not state["plan"]: 
+                    # Si aucun plan en mémoire, on force "auto" pour ne pas bloquer
+                    logger.warning("[Brain/Coder] ⚠️ Aucun plan en mémoire. Bascule forcée en mode 'auto'.")
+                    params["phase"] = "auto"
+                else:
+                    params["plan"] = state["plan"]; params["step_num"] = step_num; params["goal_context"] = state["goal"]
         elif "codex_editor" in q_lower or "corrige" in q_lower or "modifie" in q_lower:
             tool_to_use = "codex_editor"; params = {"task_description": query, "target_file": target_file}
         else:
-            tool_to_use = "codex_agent"; params = {"task_description": query, "target_file": target_file}
+            # ★ FORCE CODEX_LOOP : On utilise le mode autonome (LVC + GA + ReflexLoop) pour TOUTE création de code
+            tool_to_use = "codex_loop"; params = {"task_description": query, "max_steps": 25, "phase": "auto"}
 
-        if provider: params["provider"] = provider
-        if model: params["model"] = model
+        # ★ FIX v19.54 : propager EXPLICITEMENT le provider/model choisi par l'utilisateur.
+        user_provider = provider
+        user_model = model
+        if user_model and not user_provider and "/" in user_model:
+            user_provider = user_model.split("/", 1)[0]
+
+        if user_provider:
+            params["provider"] = user_provider
+        if user_model:
+            params["model"] = user_model
+
+        if user_provider or user_model:
+            logger.info(
+                "[Brain/Coder] 🎯 LLM choisi par l'utilisateur : provider=%s model=%s (outil=%s)",
+                user_provider or "auto", user_model or "auto", tool_to_use
+            )
+        else:
+            logger.info("[Brain/Coder] ⚠️ Aucun LLM fourni par l'utilisateur, codex_loop utilisera ses défauts historiques.")
+
         if tool_to_use == "codex_loop":
             try:
                 memory_context = asyncio.run(self._handle_memory(query))
@@ -879,10 +914,10 @@ class BEKBrain:
             inner_data = self._normalize_hermes_result(raw_hermes_res)
         except Exception as e: return self._wrap({"status": "error", "message": str(e)}, "coder", [f"hermes.{tool_to_use}"])
 
-        if phase == "plan" and inner_data:
+        if params.get("phase") == "plan" and inner_data:
             new_plan = inner_data.get("plan", [])
             if new_plan: state["plan"] = new_plan; state["step"] = 0
-        if phase == "step" and inner_data and inner_data.get("status") == "success" and inner_data.get("phase") == "step":
+        if params.get("phase") == "step" and inner_data and inner_data.get("status") == "success" and inner_data.get("phase") == "step":
             next_step = inner_data.get("next_step")
             if next_step is not None: state["step"] = next_step
             else: state["completed"] = True
@@ -1011,13 +1046,16 @@ class BEKBrain:
             elif is_analysis: prov = provider or ANALYSIS_PROVIDER; mdl = ANALYSIS_MODEL
             else: prov = provider or DEFAULT_CHAT_PROVIDER; mdl = DEFAULT_CHAT_MODEL
 
+            # ★ FIX v19.54 : tracer explicitement le modèle cible
+            logger.info("[Brain/ChatPipeline] 🎯 LLM cible : provider=%s model=%s (choix user=%s)",
+                        prov, mdl, "explicite" if model else "défaut")
+
             tools_prompt = self.skill_agent.get_available_tools_prompt(_detect_intent(query), query=query)
             ga_prompt = self._get_ga_prompt()
 
             system_extra = f"{ga_prompt}\n\n=== OUTILS DISPONIBLES (à utiliser AVANT de générer du code) ===\n{tools_prompt}\n\nRÈGLE ABSOLUE : si l'utilisateur nomme un outil (ex: rea_analyze_javascript, mcp_rea_*), APPELLE l'outil via [ACTION:nom_outil]{{...}}[/ACTION] et NE GÉNÈRE PAS de code Python/JS à la place. Pour rea_analyze_javascript, le JSON doit contenir {{\"path\": \"<chemin absolu>\"}}."
             port = os.environ.get("PORT", "3001"); url = f"http://127.0.0.1:{port}/api/chat"
 
-            # ★ FIX v19.53 : use_brain=False pour casser la réentrance infinie
             payload = {
                 "messages": [
                     {"role": "system", "content": system_extra},
@@ -1027,7 +1065,7 @@ class BEKBrain:
                 "model": mdl,
                 "use_memory": False,
                 "use_reflection": False,
-                "use_brain": False,   # ★ CASSE LA BOUCLE : le brain ne doit pas re-router vers lui-même
+                "use_brain": False,
                 "max_tokens": 8192,
             }
             async with httpx.AsyncClient(timeout=REA_TIMEOUT_SEC + 300) as client:
@@ -1078,7 +1116,7 @@ class BEKBrain:
         return {"status": "ok", "intent": intent, "bricks_used": bricks, "response": response}
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.53 (fix réentrance)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
+        return {"app": "BEK Hybrid Agent v19.55 (respect strict du modèle user + routage codex_loop auto)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
 
 _brain_instance: Optional[BEKBrain] = None
 

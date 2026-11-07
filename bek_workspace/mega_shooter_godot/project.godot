@@ -1,0 +1,30 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+config_name="4.0"
+
+[application]
+
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7")
+name="Mega Shooter"
+
+[display]
+
+window/stretch/mode=2
+window/stretch/aspect=1
+window/videodriver/driver_name="opengl3"
+window/size/width=256
+window/size/height=224
+window/stretch/shrink=1
+
+[rendering]
+
+textures/default_filters/2d_filter_nearest=true

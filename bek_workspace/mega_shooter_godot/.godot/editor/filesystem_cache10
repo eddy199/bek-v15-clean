@@ -1,0 +1,8 @@
+78098b89c88a74ebe8c20117b8754620
+::res://::1793992235
+README.md::TextFile::-1::1793988268::0::1::::<><><>0<>0<><>::
+::res://scenes/::1793990829
+main.tscn::PackedScene::-1::1793990829::0::1::::<><><>0<>0<><>::res://scenes/player.tscn
+player.tscn::PackedScene::-1::1793990798::0::1::::<><><>0<>0<><>::
+::res://scripts/::1793990374
+player.gd::GDScript::4270035773258434269::1793990374::0::1::::Player<>CharacterBody2D<><>0<>0<><>::

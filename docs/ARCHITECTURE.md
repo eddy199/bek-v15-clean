@@ -117,9 +117,9 @@ Format EXCLUSIF :
 ## 📊 ÉTAT RÉEL DU SYSTÈME (généré automatiquement)
 ═══════════════════════════════════════════════════════════════════════════════
 
-> *Dernière synchronisation : 2026-11-05 21:02:28 UTC*
+> *Dernière synchronisation : 2026-11-06 14:28:22 UTC*
 > *Version BEK : **19.11***
-> *State hash : `828f1ad52ddd`*
+> *State hash : `59ed162c8b78`*
 > *Boot phase : **complete***
 
 ═══════════════════════════════════════════════════════════════════════════════
@@ -135,7 +135,7 @@ Format EXCLUSIF :
 | `GET /api/architecture/status` | Statut complet + issues |
 | `POST /api/refresh-architecture` | Régénérer ARCHITECTURE.md |
 
-### 🔧 Outils Hermes enregistrés (70)
+### 🔧 Outils Hermes enregistrés (73)
 
 | Outil | Risque | Exécution |
 |---|---|---|
@@ -157,6 +157,9 @@ Format EXCLUSIF :
 | `ls` | **L1** | ✅ Auto |
 | `bash` | **L2** | ✅ Auto |
 | `search_skills` | **L1** | ✅ Auto |
+| `git_clone` | **L2** | ✅ Auto |
+| `analyze_architecture` | **L1** | ✅ Auto |
+| `security_scan_python` | **L1** | ✅ Auto |
 | `orchestrate` | **L2** | ✅ Auto |
 | `save_memory` | **L1** | ✅ Auto |
 | `extend_video` | **L1** | ✅ Auto |
@@ -445,7 +448,7 @@ Format EXCLUSIF :
 
 - `core/lazy.py`
 
-### Autres modules racine (41)
+### Autres modules racine (44)
 
 - `ai_service.py`
 - `app.py`
@@ -458,6 +461,8 @@ Format EXCLUSIF :
 - `bek_simulate.py`
 - `benchmark_ga.py`
 - `build_skill_index.py`
+- `codex_py_2e1751.py`
+- `codex_py_cbdca4.py`
 - `context_loader.py`
 - `env_loader.py`
 - `fast_math.py`
@@ -466,6 +471,7 @@ Format EXCLUSIF :
 - `gen_cpu.py`
 - `gen_feedback.py`
 - `generate_architecture_doc.py`
+- `generer_readme.py`
 - `google_search.py`
 - `list_models.py`
 - `lvc_smart.py`

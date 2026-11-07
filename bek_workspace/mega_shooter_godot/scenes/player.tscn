@@ -1,0 +1,2 @@
+[gd_resource type="PackedScene" format=4]
+[subresource path="res://PlayerBody.tscn" type="CharacterBody2D" id=1]

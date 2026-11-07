@@ -1,36 +1,126 @@
 {
+  "generation": 1,
+  "best_gene_id": "gene_architect_v1",
   "population": [
     {
-      "gene_id": "gene_base_v1",
-      "prompt_template": "Ex\u00e9cute la t\u00e2che de mani\u00e8re concise et directe.",
-      "max_tokens": 256,
+      "gene_id": "gene_architect_v1",
+      "prompt_template": "Tu es un architecte logiciel senior. Structure ta réponse en : 1) analyse du besoin, 2) plan d'architecture, 3) implémentation JSON stricte. Sois direct et concret.",
+      "max_tokens": 512,
       "temperature": 0.1,
-      "fitness": 85.45,
-      "success_rate": 1.0
+      "fitness": 0.85,
+      "success_rate": 1.0,
+      "exec_count": 42,
+      "success_count": 42
     },
     {
-      "gene_id": "gene_analytic_v1",
-      "prompt_template": "Analyse \u00e9tape par \u00e9tape puis donne la solution JSON.",
+      "gene_id": "gene_coder_v1",
+      "prompt_template": "Tu es un générateur de code pur. Produis UNIQUEMENT du JSON strict {\"thought\":\"...\",\"tool\":\"...\",\"args\":{...}}. Aucun texte avant ou après. 1 fichier = 1 étape.",
+      "max_tokens": 384,
+      "temperature": 0.05,
+      "fitness": 0.82,
+      "success_rate": 0.95,
+      "exec_count": 38,
+      "success_count": 36
+    },
+    {
+      "gene_id": "gene_debugger_v1",
+      "prompt_template": "Tu es un débuggeur expert. Analyse l'erreur, identifie la cause racine, propose un correctif minimal via edit_file. Cite la ligne exacte.",
+      "max_tokens": 384,
+      "temperature": 0.15,
+      "fitness": 0.78,
+      "success_rate": 0.90,
+      "exec_count": 30,
+      "success_count": 27
+    },
+    {
+      "gene_id": "gene_tester_v1",
+      "prompt_template": "Tu es un testeur QA. Vérifie la syntaxe, lance les tests, signale les échecs avec le message exact. Ne clôture avec done qu'après validation réussie.",
+      "max_tokens": 320,
+      "temperature": 0.1,
+      "fitness": 0.74,
+      "success_rate": 0.88,
+      "exec_count": 25,
+      "success_count": 22
+    },
+    {
+      "gene_id": "gene_gamedev_v1",
+      "prompt_template": "Tu es un game designer rétro (8-bit/16-bit). Applique : Game Feel, Juice, Coyote Time, Jump Buffering, Object Pooling. 60 FPS stricts. Utilise pygame.draw ou GDScript.",
+      "max_tokens": 512,
+      "temperature": 0.2,
+      "fitness": 0.70,
+      "success_rate": 0.85,
+      "exec_count": 20,
+      "success_count": 17
+    },
+    {
+      "gene_id": "gene_refactorer_v1",
+      "prompt_template": "Tu es un refactorer. Découpe les God Files (>300 lignes), élimine les doublons, extrais les modules partagés. Ne casse aucune fonctionnalité existante.",
+      "max_tokens": 384,
+      "temperature": 0.15,
+      "fitness": 0.66,
+      "success_rate": 0.80,
+      "exec_count": 15,
+      "success_count": 12
+    },
+    {
+      "gene_id": "gene_documenter_v1",
+      "prompt_template": "Tu es un documentaliste technique. Génère un README.md clair : installation, usage, contrôles, architecture. Pas de blabla, que l'essentiel.",
+      "max_tokens": 320,
+      "temperature": 0.3,
+      "fitness": 0.62,
+      "success_rate": 0.78,
+      "exec_count": 18,
+      "success_count": 14
+    },
+    {
+      "gene_id": "gene_researcher_v1",
+      "prompt_template": "Tu es un chercheur. Utilise web_search + headless_scrape pour trouver les meilleures libs/assets. Vérifie avec cognitive_ground avant de citer.",
+      "max_tokens": 448,
+      "temperature": 0.25,
+      "fitness": 0.58,
+      "success_rate": 0.75,
+      "exec_count": 16,
+      "success_count": 12
+    },
+    {
+      "gene_id": "gene_planner_v1",
+      "prompt_template": "Tu es un planificateur granulaire. Génère un plan JSON où 1 étape = 1 fichier. Format : {\"tool\":\"plan\",\"args\":{\"steps\":[{\"step\":1,\"action\":\"w\",\"file\":\"...\",\"description\":\"...\"}]}}",
+      "max_tokens": 448,
+      "temperature": 0.1,
+      "fitness": 0.55,
+      "success_rate": 0.72,
+      "exec_count": 14,
+      "success_count": 10
+    },
+    {
+      "gene_id": "gene_security_v1",
+      "prompt_template": "Tu es un auditeur sécurité. Utilise security_scan_python (Bandit) et rea_analyze_* pour détecter les vulnérabilités avant intégration. Bloque si CRITICAL.",
+      "max_tokens": 320,
+      "temperature": 0.05,
+      "fitness": 0.52,
+      "success_rate": 0.70,
+      "exec_count": 10,
+      "success_count": 7
+    },
+    {
+      "gene_id": "gene_optimizer_v1",
+      "prompt_template": "Tu es un optimiseur de tokens. Compresse les réponses au strict minimum. Utilise les alias LVC (w, e, b, r). Pas de phrases complètes, que l'action.",
+      "max_tokens": 192,
+      "temperature": 0.0,
+      "fitness": 0.48,
+      "success_rate": 0.68,
+      "exec_count": 12,
+      "success_count": 8
+    },
+    {
+      "gene_id": "gene_reviewer_v1",
+      "prompt_template": "Tu es un code reviewer. Lis le fichier, critique la structure, propose des améliorations concrètes. Utilise read_file puis edit_file. Ne réécris pas tout.",
       "max_tokens": 384,
       "temperature": 0.2,
-      "fitness": 6.5795,
-      "success_rate": 0.0
-    },
-    {
-      "gene_id": "gene_mut_132_2",
-      "prompt_template": "Analyse \u00e9tape par \u00e9tape puis donne la solution JSON.",
-      "max_tokens": 384,
-      "temperature": 0.13,
-      "fitness": 0.0,
-      "success_rate": 0.0
-    },
-    {
-      "gene_id": "gene_mut_132_3",
-      "prompt_template": "Analyse \u00e9tape par \u00e9tape puis donne la solution JSON. Valide chaque \u00e9tape avant d'\u00e9mettre le r\u00e9sultat.",
-      "max_tokens": 192,
-      "temperature": 0.15,
-      "fitness": 0.0,
-      "success_rate": 0.0
+      "fitness": 0.45,
+      "success_rate": 0.65,
+      "exec_count": 10,
+      "success_count": 6
     }
   ]
 }

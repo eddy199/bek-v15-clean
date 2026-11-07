@@ -61,6 +61,7 @@ ALLOWED_EXECUTABLES = {
     "git", "git.exe", "ruff", "mypy", "black", "go", "cargo", "rustc",
     "dotnet", "java", "javac", "php", "ruby", "bundle", "rspec",
     "pwd", "whoami", "where", "which",
+    "bandit", "bandit.exe",  # ★ NOUVEAU : Bandit pour security_scan_python
 }
 
 
@@ -502,6 +503,46 @@ def search_skills(query: str = "", **kwargs: Any) -> Dict[str, Any]:
 
 
 # ==============================================================================
+# ★ NOUVEL OUTIL : security_scan_python (Bandit — vulnérabilités Python)
+# ==============================================================================
+def security_scan_python(path: str = "", **kwargs: Any) -> Dict[str, Any]:
+    """Lance Bandit pour analyser la sécurité du code Python."""
+    try:
+        raw = _first_text(path, kwargs, ("file", "filename", "target_file", "dir_path"))
+        target = _safe_resolve(raw, allow_root=True)
+        if not target.exists():
+            return {"status": "error", "message": f"Fichier/dossier introuvable : {raw}"}
+
+        result = subprocess.run(
+            ["bandit", "-r", str(target), "-f", "json"],
+            capture_output=True, text=True, timeout=60,
+            cwd=str(WORKSPACE), env=_sanitized_env()
+        )
+
+        # Bandit retourne 1 quand il trouve des vulnérabilités (ce n'est pas une erreur)
+        if result.returncode not in (0, 1):
+            return {"status": "error", "message": f"Bandit a échoué : {result.stderr[:500]}"}
+
+        # Parse le JSON pour extraire les métriques
+        import json as _json
+        try:
+            report = _json.loads(result.stdout)
+            issues_count = len(report.get("results", []))
+            return {
+                "status": "success",
+                "issues_count": issues_count,
+                "report": report,
+                "message": f"✅ Scan terminé : {issues_count} problème(s) détecté(s)."
+            }
+        except Exception:
+            return {"status": "success", "report": result.stdout[:5000]}
+    except FileNotFoundError:
+        return {"status": "error", "message": "Bandit n'est pas installé. Lance : pip install bandit"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
+# ==============================================================================
 # ★ NOUVEL OUTIL : git_clone (Clone un dépôt GitHub dans le workspace)
 # ==============================================================================
 def git_clone(url: str = "", dest: str = "", **kwargs: Any) -> Dict[str, Any]:
@@ -656,19 +697,41 @@ def analyze_architecture(dir_path: str = "", **kwargs: Any) -> Dict[str, Any]:
         return {"status": "error", "message": str(exc)}
 
 
+# ==============================================================================
+# ENREGISTREMENT DANS HERMES
+# ==============================================================================
 CODE_TOOLS_TABLE = {
-    "read_file": read_file, "read_file_map": read_file_map, "write_file": write_file, "append_file": append_file,
-    "edit_file": edit_file, "create_dir": create_dir, "grep": grep,
-    "glob_files": glob_files, "ls": ls, "bash": bash, "search_skills": search_skills,
-    "git_clone": git_clone,  # ★ Ajouté ici
-    "analyze_architecture": analyze_architecture,  # ★ Ajouté ici
+    "read_file": read_file,
+    "read_file_map": read_file_map,
+    "write_file": write_file,
+    "append_file": append_file,
+    "edit_file": edit_file,
+    "create_dir": create_dir,
+    "grep": grep,
+    "glob_files": glob_files,
+    "ls": ls,
+    "bash": bash,
+    "search_skills": search_skills,
+    "git_clone": git_clone,
+    "analyze_architecture": analyze_architecture,
+    "security_scan_python": security_scan_python,  # ★ NOUVEAU
 }
+
 CODE_TOOLS_RISK = {
-    "read_file": "L1", "read_file_map": "L1", "write_file": "L1", "append_file": "L1", "edit_file": "L1",
-    "create_dir": "L1", "grep": "L1", "glob_files": "L1", "ls": "L1",
-    "bash": "L2", "search_skills": "L1",
-    "git_clone": "L2",  # ★ Ajouté ici
-    "analyze_architecture": "L1",  # ★ Ajouté ici
+    "read_file": "L1",
+    "read_file_map": "L1",
+    "write_file": "L1",
+    "append_file": "L1",
+    "edit_file": "L1",
+    "create_dir": "L1",
+    "grep": "L1",
+    "glob_files": "L1",
+    "ls": "L1",
+    "bash": "L2",
+    "search_skills": "L1",
+    "git_clone": "L2",
+    "analyze_architecture": "L1",
+    "security_scan_python": "L1",  # ★ NOUVEAU
 }
 
 

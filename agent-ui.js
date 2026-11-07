@@ -88,6 +88,20 @@ import { API_BASE, DOM, state } from './ui/state.js';
             .msg-bubble audio { width: 100%; max-width: 480px; margin: 16px 0 !important; display: block; }
             .msg-bubble img { max-width: min(560px, 100%) !important; max-height: 560px !important; width: auto !important; height: auto !important; object-fit: contain !important; border-radius: 12px; margin: 16px 0 !important; cursor: zoom-in; box-shadow: 0 4px 20px rgba(0,0,0,0.3); display: block; transition: transform 0.2s ease, box-shadow 0.2s ease; }
             .msg-bubble img:hover { transform: scale(1.01); box-shadow: 0 6px 24px rgba(0,0,0,0.4); }
+            /* ★ NOUVEAU : bannière "change de modèle" */
+            .model-error-banner {
+                margin-top: 12px; padding: 12px 16px; border-radius: 10px;
+                background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.5);
+                color: #fecaca; font-size: 13px; line-height: 1.5;
+            }
+            .model-error-banner strong { color: #ef4444; }
+            .model-error-banner .suggestions { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; }
+            .model-error-banner .suggestions button {
+                background: rgba(92, 156, 230, 0.2); border: 1px solid rgba(92, 156, 230, 0.6);
+                color: #93c5fd; padding: 6px 12px; border-radius: 6px; cursor: pointer;
+                font-size: 12px; font-weight: 600; transition: 0.15s;
+            }
+            .model-error-banner .suggestions button:hover { background: rgba(92, 156, 230, 0.35); }
         `;
         document.head.appendChild(style);
     }
@@ -166,6 +180,7 @@ import { API_BASE, DOM, state } from './ui/state.js';
             populateSkillsView(state.globalSkills);
             DOM.providerSelect.value = 'nvidia';
             updateModelSelect();
+            state.configReady = true; // <--- AJOUTE JUSTE CETTE LIGNE ICI
             await loadFilesList();
         } catch (e) { console.warn('Erreur config :', e); }
     }
@@ -378,14 +393,42 @@ import { API_BASE, DOM, state } from './ui/state.js';
         try { const res = await fetch(`${API_BASE}/api/reflex/inspect/${encodeURIComponent(proposalId)}`); if (!res.ok) { alert(`Erreur : HTTP ${res.status}`); return; } const data = await res.json(); const content = data.proposal?.content_parsed || data.proposal || {}; alert(`Proposition ${proposalId} :\n\n${JSON.stringify(content, null, 2)}`); } catch (e) { alert(`Erreur réseau : ${e}`); }
     };
 
+    // ★ FIX : updateModelSelect ne doit pas écraser le modèle choisi si le provider n'a pas changé.
+    //   Il ne force models[0] QUE si le provider courant n'a pas déjà un modèle valide.
     function updateModelSelect() {
         if (!DOM.providerSelect || !DOM.modelSelect) return;
+        const previousProvider = state.currentProvider;
         state.currentProvider = DOM.providerSelect.value;
         const models = state.availableModels[state.currentProvider] || [];
+
         DOM.modelSelect.innerHTML = '';
-        models.forEach(m => { const opt = document.createElement('option'); opt.value = m; opt.textContent = m.split('/').pop(); DOM.modelSelect.appendChild(opt); });
-        if (models.length > 0) { state.currentModel = models[0]; DOM.modelSelect.value = state.currentModel; }
-        if (DOM.modelBadge) DOM.modelBadge.innerText = `● ${state.currentProvider.toUpperCase()} / ${state.currentModel.split('/').pop()}`;
+        models.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m.split('/').pop();
+            DOM.modelSelect.appendChild(opt);
+        });
+
+        // ★ Si on change de provider, on peut garder l'ancien modèle seulement s'il existe chez le nouveau provider.
+        //   Sinon on prend le premier dispo. Si le provider n'a pas changé, on conserve le modèle courant.
+        if (models.length > 0) {
+            if (previousProvider === state.currentProvider && state.currentModel && models.includes(state.currentModel)) {
+                // Provider inchangé + modèle toujours valide → on ne touche à rien
+            } else if (state.currentModel && models.includes(state.currentModel)) {
+                // Nouveau provider mais le modèle existe aussi → on le garde
+            } else {
+                state.currentModel = models[0];
+            }
+            DOM.modelSelect.value = state.currentModel;
+        } else {
+            state.currentModel = '';
+        }
+
+        if (DOM.modelBadge) {
+            DOM.modelBadge.innerText = state.currentModel
+                ? `● ${state.currentProvider.toUpperCase()} / ${state.currentModel.split('/').pop()}`
+                : `● ${state.currentProvider.toUpperCase()} / (aucun modèle)`;
+        }
     }
 
     function setupNavigationTabs() {
@@ -404,7 +447,11 @@ import { API_BASE, DOM, state } from './ui/state.js';
 
     function setupEventListeners() {
         if (DOM.providerSelect) DOM.providerSelect.addEventListener('change', updateModelSelect);
-        if (DOM.modelSelect) DOM.modelSelect.addEventListener('change', (e) => { state.currentModel = e.target.value; if (DOM.modelBadge) DOM.modelBadge.innerText = `● ${state.currentProvider.toUpperCase()} / ${state.currentModel.split('/').pop()}`; });
+        // ★ FIX : le changement de modèle doit juste mettre à jour l'état + le badge, sans re-render le select.
+        if (DOM.modelSelect) DOM.modelSelect.addEventListener('change', (e) => {
+            state.currentModel = e.target.value;
+            if (DOM.modelBadge) DOM.modelBadge.innerText = `● ${state.currentProvider.toUpperCase()} / ${state.currentModel.split('/').pop()}`;
+        });
 
         if (DOM.brainToggleBtn) {
             DOM.brainToggleBtn.addEventListener('click', () => {
@@ -548,10 +595,47 @@ import { API_BASE, DOM, state } from './ui/state.js';
         } catch (e) {}
     }
 
+    // ★ NOUVEAU : affiche une bannière "change de modèle" quand le backend renvoie une erreur LLM
+    function renderModelErrorBanner(assistantDiv, errorText, provider, model) {
+        const banner = document.createElement('div');
+        banner.className = 'model-error-banner';
+        const otherModels = (state.availableModels[provider] || []).filter(m => m !== model).slice(0, 3);
+        const buttonsHtml = otherModels.map(m =>
+            `<button onclick="switchModelAndRetry('${escapeHtml(provider)}','${escapeHtml(m)}')">↻ Réessayer avec ${escapeHtml(m.split('/').pop())}</button>`
+        ).join('');
+        banner.innerHTML = `
+            <strong>⚠️ Le modèle choisi a échoué :</strong> ${escapeHtml(provider)} / ${escapeHtml(model || '(non défini)')}<br>
+            <span style="color:#fca5a5;">${escapeHtml(String(errorText).slice(0, 400))}</span>
+            ${buttonsHtml ? `<div class="suggestions">${buttonsHtml}</div>` : '<div style="margin-top:8px;font-size:12px;">Change de modèle dans le sélecteur ci-dessus pour réessayer.</div>'}
+        `;
+        assistantDiv.appendChild(banner);
+    }
+
+    window.switchModelAndRetry = function(provider, model) {
+        if (DOM.providerSelect) DOM.providerSelect.value = provider;
+        state.currentProvider = provider;
+        updateModelSelect();
+        if (DOM.modelSelect) DOM.modelSelect.value = model;
+        state.currentModel = model;
+        if (DOM.modelBadge) DOM.modelBadge.innerText = `● ${provider.toUpperCase()} / ${model.split('/').pop()}`;
+        // Relance le dernier message utilisateur
+        const lastUser = [...state.messageHistory].reverse().find(m => m.role === 'user');
+        if (lastUser && DOM.userInput) {
+            DOM.userInput.value = lastUser.content;
+            sendMessage();
+        }
+    };
+
     async function sendMessage() {
         if (!DOM.userInput || !DOM.sendBtn || !DOM.chatBox) return;
         const text = DOM.userInput.value.trim();
         if (!text && state.attachedFiles.length === 0) return;
+
+        // ★ FIX : on refuse d'envoyer si aucun modèle n'est sélectionné (comme Claude/Codex)
+        if (!state.currentModel || !state.currentProvider) {
+            alert("⚠️ Aucun modèle sélectionné. Choisis un provider + modèle dans la barre du haut avant d'envoyer.");
+            return;
+        }
 
         let fullTextContent = text;
         let filesForBrain = [];
@@ -575,6 +659,10 @@ import { API_BASE, DOM, state } from './ui/state.js';
 
         const assistantDiv = appendAssistantMessage(''); assistantDiv.innerHTML = '<span class="gemini-cursor"></span>'; let fullResponse = '';
 
+        // ★ FIX : on capture le modèle utilisé pour cette requête
+        const usedProvider = state.currentProvider;
+        const usedModel = state.currentModel;
+
         try {
             if (state.isBrainMode) {
                 const resp = await fetch(`${API_BASE}/api/brain/chat`, {
@@ -583,51 +671,107 @@ import { API_BASE, DOM, state } from './ui/state.js';
                     body: JSON.stringify({ 
                         query: fullTextContent, 
                         files: filesForBrain,
-                        provider: state.currentProvider, 
-                        model: state.currentModel        
+                        provider: usedProvider, 
+                        model: usedModel        
                     })
                 });
                 const data = await resp.json();
+
+                // ★ FIX : détection d'erreur LLM côté backend → bannière "change de modèle"
+                if (!resp.ok || data.status === 'error') {
+                    const errMsg = data.error || data.message || data.response || `HTTP ${resp.status}`;
+                    const errStr = typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg);
+                    assistantDiv.innerHTML = '';
+                    renderModelErrorBanner(assistantDiv, errStr, usedProvider, usedModel);
+                    state.isStreaming = false; state.activeController = null;
+                    DOM.sendBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`;
+                    return;
+                }
+
                 let brainRespText = "";
                 if (typeof data.response === "string") { brainRespText = data.response; }
                 else if (data.response) { brainRespText = JSON.stringify(data.response, null, 2); }
                 else { brainRespText = "⚠️ Réponse vide du brain"; }
 
-                const intent = data.intent || "?";
-                const bricks = Array.isArray(data.bricks_used) ? data.bricks_used.join(", ") : "?";
-                fullResponse = brainRespText + `\n\n_🤖 Intent: ${intent} • Brique: ${bricks}_`;
-                
-                assistantDiv.innerHTML = formatMarkdown(fullResponse);
-                renderMermaidIn(assistantDiv);
-                if (window.hljs) { assistantDiv.querySelectorAll('pre code').forEach(el => { if (!el.classList.contains('language-mermaid') && !el.classList.contains('lang-mermaid')) { try { hljs.highlightElement(el); } catch (e) {} } }); }
+                // ★ FIX : si la réponse contient un marqueur d'erreur LLM, afficher la bannière
+                const lower = brainRespText.toLowerCase();
+                const looksLikeLlmError = lower.includes("codexagent a échoué") ||
+                                          lower.includes("chaîne épuisée") ||
+                                          lower.includes("tous les providers ont échoué") ||
+                                          lower.includes("quota atteint") ||
+                                          lower.startsWith("[erreur") ||
+                                          lower.includes("timeout");
+                if (looksLikeLlmError) {
+                    assistantDiv.innerHTML = '';
+                    renderModelErrorBanner(assistantDiv, brainRespText, usedProvider, usedModel);
+                } else {
+                    const intent = data.intent || "?";
+                    const bricks = Array.isArray(data.bricks_used) ? data.bricks_used.join(", ") : "?";
+                    fullResponse = brainRespText + `\n\n_🤖 Intent: ${intent} • Brique: ${bricks} • Modèle: ${usedProvider}/${usedModel.split('/').pop()}_`;
+
+                    assistantDiv.innerHTML = formatMarkdown(fullResponse);
+                    renderMermaidIn(assistantDiv);
+                    if (window.hljs) { assistantDiv.querySelectorAll('pre code').forEach(el => { if (!el.classList.contains('language-mermaid') && !el.classList.contains('lang-mermaid')) { try { hljs.highlightElement(el); } catch (e) {} } }); }
+                }
             } 
             else {
                 const resp = await fetch(`${API_BASE}/api/chat`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json; charset=utf-8' },
-                    body: JSON.stringify({ messages: state.messageHistory, provider: state.currentProvider, model: state.currentModel, use_memory: true, use_reflection: true }),
+                    body: JSON.stringify({ messages: state.messageHistory, provider: usedProvider, model: usedModel, use_memory: true, use_reflection: true }),
                     signal: state.activeController.signal
                 });
+
+                // ★ FIX : si le backend refuse la requête (400/500), on affiche la bannière
+                if (!resp.ok) {
+                    let errText = `HTTP ${resp.status}`;
+                    try { const j = await resp.json(); errText = j.error || j.message || errText; } catch (e) {}
+                    assistantDiv.innerHTML = '';
+                    renderModelErrorBanner(assistantDiv, errText, usedProvider, usedModel);
+                    state.isStreaming = false; state.activeController = null;
+                    DOM.sendBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`;
+                    return;
+                }
+
                 const reader = resp.body.getReader(); const decoder = new TextDecoder('utf-8'); let buffer = '';
+                let streamHadError = false;
                 while (true) {
                     const { done, value } = await reader.read(); if (done) break;
                     buffer += decoder.decode(value, { stream: true }); const lines = buffer.split('\n'); buffer = lines.pop();
                     for (const line of lines) {
                         if (!line.startsWith('data: ')) continue;
                         const dataStr = line.slice(6).trim(); if (!dataStr || dataStr === '[DONE]') continue;
-                        try { const data = JSON.parse(dataStr); if (data.chunk) { fullResponse += data.chunk; assistantDiv.textContent = fullResponse; DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight; } } catch (err) {}
+                        try {
+                            const data = JSON.parse(dataStr);
+                            if (data.chunk) { fullResponse += data.chunk; assistantDiv.textContent = fullResponse; DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight; }
+                            // ★ FIX : détecter un event d'erreur en cours de stream
+                            if (data.error) {
+                                streamHadError = true;
+                                renderModelErrorBanner(assistantDiv, data.error, usedProvider, usedModel);
+                            }
+                        } catch (err) {}
                     }
+                }
+                // Si le stream n'a produit aucun texte et qu'il y a eu une erreur → bannière
+                if (!fullResponse && streamHadError) {
+                    assistantDiv.innerHTML = '';
+                    renderModelErrorBanner(assistantDiv, "Erreur LLM pendant le streaming", usedProvider, usedModel);
                 }
             }
             if (fullResponse) { state.messageHistory.push({ role: 'assistant', content: fullResponse }); saveCurrentConversation(); }
         } catch (err) {
-            if (err.name !== 'AbortError') assistantDiv.innerHTML = `<span style="color:#ff4a4a;">Erreur : ${err.message}</span>`;
+            if (err.name !== 'AbortError') {
+                assistantDiv.innerHTML = '';
+                renderModelErrorBanner(assistantDiv, err.message || String(err), usedProvider, usedModel);
+            }
         } finally {
             state.isStreaming = false; state.activeController = null;
             if (fullResponse) {
                 assistantDiv.innerHTML = formatMarkdown(fullResponse);
                 renderMermaidIn(assistantDiv);
                 if (window.hljs) { assistantDiv.querySelectorAll('pre code').forEach(el => { if (!el.classList.contains('language-mermaid') && !el.classList.contains('lang-mermaid')) { try { hljs.highlightElement(el); } catch (e) {} } }); }
-            } else { assistantDiv.innerHTML = '<span style="color:#ff6b6b;">⚠️ Réponse vide</span>'; }
+            } else if (!assistantDiv.querySelector('.model-error-banner')) {
+                assistantDiv.innerHTML = '<span style="color:#ff6b6b;">⚠️ Réponse vide</span>';
+            }
             await injectNewMediaFiles(assistantDiv, filesBefore, fullResponse);
             if (window.loadFilesList) { try { await window.loadFilesList(); } catch (e) {} }
             DOM.chatBox.scrollTop = DOM.chatBox.scrollHeight;

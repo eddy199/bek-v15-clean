@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# BEK Hermes Core v19.28 — corrections approbation, erreurs, parallélisme et DAG.
+# BEK Hermes Core v19.29 — corrections approbation, erreurs, parallélisme et DAG.
+# ★ v19.29 (2026-11-06) : PowerBridge intégré (GA + Skills + Guardian dans dispatch)
 from __future__ import annotations
 import concurrent.futures
 import copy
@@ -218,6 +219,97 @@ class HermesCore:
         if missing: return "Arguments obligatoires manquants : " + ", ".join(missing)
         return None
 
+    # ══════════════════════════════════════════════════════════════════════════
+    # ★ POWER BRIDGE (v19.29) — Méthodes privées d'enrichissement
+    # ══════════════════════════════════════════════════════════════════════════
+
+    def _enrich_with_ga(self, tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+        """★ BEK-GA : Enrichit les args avec le prompt évolutif (si l'outil en a besoin)."""
+        GA_AWARE_TOOLS = {
+            "codex_agent", "codex_loop", "codex_editor",
+            "web_sync", "web_search", "web_search_docs",
+            "generate_image", "generate_video",
+        }
+        if tool_name not in GA_AWARE_TOOLS:
+            return args
+
+        try:
+            from nerves.ga_nerves import get_ga_engine
+            best_gene = get_ga_engine().select_best_gene()
+            enriched = dict(args)
+            prefix = f"{best_gene.prompt_template}\n\n"
+            if "prompt" in enriched and enriched["prompt"]:
+                enriched["prompt"] = prefix + str(enriched["prompt"])
+            elif "query" in enriched and enriched["query"]:
+                enriched["query"] = prefix + str(enriched["query"])
+            elif "task_description" in enriched and enriched["task_description"]:
+                enriched["task_description"] = prefix + str(enriched["task_description"])
+            else:
+                return args
+            logger.debug("[PowerBridge] GA enrichi pour %s", tool_name)
+            return enriched
+        except Exception as exc:
+            logger.debug("[PowerBridge] GA indisponible : %s", exc)
+            return args
+
+    def _enrich_with_skills(self, tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+        """★ BEK-Skills : Injecte les compétences pertinentes dans le contexte."""
+        SKILL_AWARE_TOOLS = {"codex_agent", "codex_loop", "codex_editor", "web_sync"}
+        if tool_name not in SKILL_AWARE_TOOLS:
+            return args
+
+        query = args.get("query") or args.get("task_description") or ""
+        if not query:
+            return args
+
+        try:
+            from core.brain import SkillAgent
+            sa = SkillAgent()
+            plan = sa.get_action_plan(str(query))
+            if plan.get("skills"):
+                skills_block = "\n\n=== COMPÉTENCES BEK APPLICABLES ===\n"
+                for s in plan["skills"]:
+                    skills_block += f"- {s['name']} : {s.get('description', '')}\n"
+                enriched = dict(args)
+                if "prompt" in enriched and enriched["prompt"]:
+                    enriched["prompt"] = str(enriched["prompt"]) + skills_block
+                elif "query" in enriched and enriched["query"]:
+                    enriched["query"] = str(enriched["query"]) + skills_block
+                elif "task_description" in enriched and enriched["task_description"]:
+                    enriched["task_description"] = str(enriched["task_description"]) + skills_block
+                else:
+                    return args
+                logger.debug("[PowerBridge] Skills injectées pour %s", tool_name)
+                return enriched
+        except Exception as exc:
+            logger.debug("[PowerBridge] Skills indisponibles : %s", exc)
+        return args
+
+    def _audit_with_guardian(self, tool_name: str, args: Dict[str, Any]) -> Tuple[bool, str]:
+        """★ BEK-Guardian : Audite AVANT exécution. Retourne (is_safe, reason)."""
+        tool = self._get_tool(tool_name)
+        if tool is None or tool.risk_level == "L1":
+            return True, "L1 — pas d'audit nécessaire"
+
+        try:
+            from nerves.guardian_nerves import notify_guardian_audit_start
+            cid = notify_guardian_audit_start(task_name=f"pre_audit_{tool_name}")
+
+            cmd = str(args.get("cmd", "") or args.get("command", ""))
+            if any(k in cmd.lower() for k in ("rm -rf", "format c:", "drop database", "del /s /q")):
+                from nerves.guardian_nerves import notify_guardian_audit_error
+                notify_guardian_audit_error(correlation_id=cid, error="Commande destructive détectée")
+                return False, "Commande destructive bloquée par Guardian"
+
+            return True, "Audit Guardian OK"
+        except Exception as exc:
+            logger.debug("[PowerBridge] Guardian indisponible : %s", exc)
+            return True, "Guardian indisponible — exécution autorisée"
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # FIN POWER BRIDGE
+    # ══════════════════════════════════════════════════════════════════════════
+
     def _execute_tool(self, tool: HermesTool, args: Dict[str, Any], task_id: str, trace_id: str) -> ToolResult:
         start = time.monotonic()
         try:
@@ -293,6 +385,15 @@ class HermesCore:
                     return ToolResult(task_id, trace_id, name, False, error="Les arguments diffèrent de ceux approuvés.", error_type="ApprovalArgumentsMismatch", validation_failed=True)
                 record["status"] = "consumed"
                 args = copy.deepcopy(record["args"])
+
+        # ★ POWER BRIDGE : Enrichissement GA + Skills, audit Guardian (v19.29)
+        args = self._enrich_with_ga(tool.name, args)
+        args = self._enrich_with_skills(tool.name, args)
+        is_safe, reason = self._audit_with_guardian(tool.name, args)
+        if not is_safe:
+            return ToolResult(task_id, trace_id, name, False, error=reason, error_type="GuardianBlocked", validation_failed=True)
+        # ★ FIN POWER BRIDGE
+
         try: future = self.executor.submit(self._execute_tool, tool, args, task_id, trace_id)
         except RuntimeError as exc: return ToolResult(task_id, trace_id, name, False, error=str(exc), error_type="ExecutorError")
         try: return future.result(timeout=self.task_timeout)

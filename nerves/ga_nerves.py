@@ -3,16 +3,18 @@
 # NERF 20 — BEK-GA : Moteur génétique auto-évolutif (CPU only, 0 VRAM)
 # ------------------------------------------------------------------------------
 # Ce nerf branche le moteur génétique BEK-GA sur Hermes.
-# Il expose 3 outils :
+# Il expose 3 outils Hermes :
 #   - ga_get_best        : récupère le meilleur gène (prompt/config) actuel
 #   - ga_record_result   : enregistre le résultat d'une exécution (fitness)
 #   - ga_evolve          : déclenche une nouvelle génération (mutation)
+#
+# ★ v2 : 12 gènes + API debug (stats, list)
 # ==============================================================================
 
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from bek_ga_light import BEKGeneticEngineCPU
 
@@ -26,13 +28,63 @@ def get_ga_engine() -> BEKGeneticEngineCPU:
     """Retourne l'instance unique du moteur génétique (lazy init)."""
     global _engine
     if _engine is None:
-        _engine = BEKGeneticEngineCPU(population_size=4, mutation_rate=0.2)
-        logger.info("[Nerf 20] Moteur génétique BEK-GA initialisé.")
+        # ★ v2 : population_size=12 (au lieu de 4) pour les 12 gènes
+        _engine = BEKGeneticEngineCPU(population_size=12, mutation_rate=0.2)
+        logger.info(
+            "[Nerf 20] Moteur génétique BEK-GA initialisé — "
+            "%d gènes, génération %d",
+            len(_engine.population), _engine.generation,
+        )
     return _engine
 
 
 # ------------------------------------------------------------------------------
-# HANDLERS HERMES
+# API COMPATIBLE brain.py (utilisée par _get_ga_prompt / _record_ga_fitness)
+# ------------------------------------------------------------------------------
+
+def select_best_gene():
+    """API brain.py : retourne le meilleur gène."""
+    return get_ga_engine().select_best_gene()
+
+
+def calculate_fitness(gene, success: bool,
+                      execution_time_ms: float, tokens_used: int) -> float:
+    """API brain.py : enregistre un fitness."""
+    return get_ga_engine().calculate_fitness(
+        gene, success, execution_time_ms, tokens_used
+    )
+
+
+def evolve() -> None:
+    """API brain.py : déclenche une nouvelle génération."""
+    get_ga_engine().evolve()
+
+
+# ------------------------------------------------------------------------------
+# API COMPATIBLE PowerBridge (hermes_core._enrich_with_ga)
+# ------------------------------------------------------------------------------
+
+def get_best_prompt_template() -> str:
+    """API PowerBridge : retourne le prompt template du meilleur gène."""
+    return select_best_gene().prompt_template
+
+
+# ------------------------------------------------------------------------------
+# API DEBUG (dashboard)
+# ------------------------------------------------------------------------------
+
+def get_population_stats() -> Dict[str, Any]:
+    """API dashboard : stats de la population."""
+    return get_ga_engine().get_population_stats()
+
+
+def list_genes() -> List[Dict[str, Any]]:
+    """API dashboard : liste tous les gènes."""
+    return get_ga_engine().list_genes()
+
+
+# ------------------------------------------------------------------------------
+# HANDLERS HERMES (conservés à l'identique + population_size=12)
 # ------------------------------------------------------------------------------
 
 def _handler_ga_get_best(**kwargs: Any) -> Dict[str, Any]:
@@ -97,6 +149,7 @@ def _handler_ga_evolve(**kwargs: Any) -> Dict[str, Any]:
             "message": "Nouvelle génération évoluée.",
             "best_gene_id": best.gene_id,
             "best_fitness": best.fitness,
+            "generation": engine.generation,
         }
     except Exception as exc:
         logger.error("[Nerf 20] ga_evolve échoué : %s", exc)
@@ -104,7 +157,7 @@ def _handler_ga_evolve(**kwargs: Any) -> Dict[str, Any]:
 
 
 # ------------------------------------------------------------------------------
-# TABLE DE CORRESPONDANCE
+# TABLE DE CORRESPONDANCE (inchangée)
 # ------------------------------------------------------------------------------
 
 GA_NERVES_TABLE: Dict[str, tuple] = {
@@ -115,7 +168,7 @@ GA_NERVES_TABLE: Dict[str, tuple] = {
 
 
 # ------------------------------------------------------------------------------
-# ACTIVATION
+# ACTIVATION (inchangée)
 # ------------------------------------------------------------------------------
 
 def activate_ga_nerves() -> Dict[str, Any]:
@@ -151,7 +204,41 @@ def activate_ga_nerves() -> Dict[str, Any]:
     }
 
 
+# ------------------------------------------------------------------------------
+# AUTO-TEST (★ v2 : affiche les 12 gènes)
+# ------------------------------------------------------------------------------
+
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+    )
+
+    # 1. Activation du nerf
     result = activate_ga_nerves()
-    print("Résultat activation Nerf 20 :", result)
+    print("\n=== Activation Nerf 20 ===")
+    print(result)
+
+    # 2. Affichage des stats
+    engine = get_ga_engine()
+    stats = engine.get_population_stats()
+    print(f"\n=== Stats Population ===")
+    print(f"  Taille        : {stats['size']}")
+    print(f"  Génération    : {stats['generation']}")
+    print(f"  Meilleur gène : {stats['best_gene_id']}")
+    print(f"  Fitness best  : {stats['best_fitness']}")
+    print(f"  Fitness avg   : {stats['avg_fitness']}")
+    print(f"  Fitness worst : {stats['worst_fitness']}")
+    print(f"  Total execs   : {stats['total_execs']}")
+
+    # 3. Liste des 12 gènes
+    print(f"\n=== Les {len(engine.population)} Gènes ===")
+    for g in engine.list_genes():
+        print(
+            f"  - {g['gene_id']:24s} "
+            f"fitness={g['fitness']:.4f} "
+            f"success={g['success_rate']:.2f} "
+            f"execs={g['exec_count']:3d} "
+            f"temp={g['temperature']:.2f} "
+            f"max_tok={g['max_tokens']}"
+        )
