@@ -1,11 +1,11 @@
 # ==============================================================================
 # BEK-v19 — Requirements pour Render Free (512 Mo RAM)
 # ------------------------------------------------------------------------------
-# Version OPTIMISÉE v6 (2026-10-30) :
-#   - Retiré : duckdb (compilation C++ trop lourde pour Render Free 512 MB)
-#   - Fixé : opentelemetry-instrumentation-* en versions STABLES (==)
+# Version OPTIMISÉE v7 (2026-11-08) :
+#   - Ajout : pandas (requis par DuckDB pour le ReflexLoop)
+#   - Fixé : duckdb en version stable (>=1.1.0,<2.0.0)
 #   - Gardé : networkx (DAG Engine), Playwright (WebAgent), Langchain
-#   - Ajout : ddgs, python-socketio, hindsight-client
+#   - Ajout : supabase (persistance GA)
 # ==============================================================================
 
 # --- Core Web / API ---
@@ -79,5 +79,10 @@ ddgs>=9.0.0
 python-socketio[asyncio]>=5.10.0
 python-engineio>=4.8.0
 mcp
-duckdb
+
+# --- Persistance GA / Supabase ---
 supabase>=2.0.0
+
+# --- DuckDB + pandas (ReflexLoop EpisodeLogger) ---
+duckdb>=1.1.0,<2.0.0
+pandas>=2.0.0,<3.0.0
