@@ -206,4 +206,12 @@ htmlcov/
 # 13. FICHIERS CONFIDENTIELS DÉTECTÉS À LA RACINE (v19.48)
 # ==============================================================================
 audit_logger.py
-example.dbbek_ga_memory.json
+example.db
+bek_ga_memory.json
+
+# ==============================================================================
+# 14. SPÉCIFIQUE GODOT & BACKUPS LOCAUX (Nouveau)
+# ==============================================================================
+.godot/
+backup_bek_*/
+*.uid
