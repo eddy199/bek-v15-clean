@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Streaming : Core (v1.6.26)
+# BEK-v18 — Streaming : Core (v1.6.27)
 # ------------------------------------------------------------------------------
+# ★ v1.6.27 (2026-11-08) — FIX affichage JSON brut des outils
+#   - Correction de l'ordre : format AVANT _apply_post_tool_bricks
+#   - Suppression du doublon res_msg = fmt._format_execution_result(...)
+#   - Ajout de _clean_action_result() pour nettoyer les dicts Python bruts
 # ★ v1.6.26 (2026-11-06) — FIX Rebond analytique post-outil
-#   - Fix #3A : Timeout ajouté dans la boucle follow-up (évite attente infinie)
-#   - Fix #3B : Arrêt propre si le LLM émet [ACTION:...] malgré la consigne
-#   - Fix #3C : Fallback message si le follow-up ne produit aucun chunk
-#   - Compteur _followup_yielded + _followup_aborted_reason pour observabilité
 # ==============================================================================
 from __future__ import annotations
 
@@ -91,10 +91,46 @@ _ORCH_META_KEYWORDS = (
     "réponds à l'utilisateur", "reponds a l'utilisateur",
 )
 
-# ★ FIX #3B : préfixe de détection d'action (utilisé pour buffer anti-faux-positif)
 _ACTION_MARKER = "[ACTION:"
-# Marge de buffer pour rattraper un `[ACTION:` coupé entre 2 chunks
 _FOLLOWUP_BUFFER_MARGIN = 64
+
+
+def _clean_action_result(result: Any) -> str:
+    """
+    ★ v1.6.27 : Nettoie le résultat d'une action.
+    - Si c'est un dict avec 'content', extrait le contenu.
+    - Si c'est un dict avec 'message', extrait le message.
+    - Sinon, convertit en string propre.
+    """
+    if isinstance(result, str):
+        # Si c'est déjà une string contenant un dict Python brut, essaye de l'extraire
+        if result.startswith("{") and ("'status':" in result or "\"status\":" in result):
+            try:
+                import ast
+                parsed = ast.literal_eval(result)
+                if isinstance(parsed, dict):
+                    content = parsed.get("content") or parsed.get("message") or ""
+                    if content:
+                        return str(content).strip()
+            except Exception:
+                pass
+        return result
+
+    if isinstance(result, dict):
+        # Chercher le contenu exploitable
+        for key in ("content", "message", "response", "text", "data", "result"):
+            val = result.get(key)
+            if val and isinstance(val, str) and len(val.strip()) > 10:
+                return val.strip()
+        
+        # Si status=error
+        if result.get("status") == "error":
+            return f"❌ {result.get('message', result.get('error', 'Erreur'))}"
+        
+        # Sinon, pas de contenu exploitable
+        return "✅ Action exécutée."
+
+    return str(result)
 
 
 def _is_orchestrate_goal_empty_or_meta(goal: Any) -> tuple:
@@ -121,13 +157,11 @@ except ImportError:
         return False
 
 
-def _apply_post_tool_bricks(tool_name: str, result: Any) -> Any:
-    """
-    ★ PATCH : Applique LVC, Anti-Hallucination et Mémoire sur le résultat d'un outil.
-    """
+def _apply_post_tool_bricks(tool_name: str, result: Any) -> str:
+    """Applique LVC, Anti-Hallucination et Mémoire sur le résultat (retourne une string)."""
     result_str = str(result) if not isinstance(result, str) else result
 
-    # 1. LVC (Compression BEK-ECO)
+    # 1. LVC
     if len(result_str) > 3000:
         try:
             compressed = result_str[:3000] + "\n...[tronqué par LVC]"
@@ -137,7 +171,7 @@ def _apply_post_tool_bricks(tool_name: str, result: Any) -> Any:
         except Exception as e:
             logger.debug("[LVC] Compression échouée : %s", e)
 
-    # 2. Anti-Hallucination (BEK-STAIR)
+    # 2. Anti-Hallucination
     try:
         from bek_core.stair.toc_builder import BekStair
         stair = BekStair()
@@ -148,7 +182,7 @@ def _apply_post_tool_bricks(tool_name: str, result: Any) -> Any:
     except Exception as e:
         logger.debug("[STAIR] Validation indisponible : %s", e)
 
-    # 3. Mémoire (enregistre l'action)
+    # 3. Mémoire
     try:
         from memory import save_to_memory
         save_to_memory(f"[ACTION] {tool_name} exécuté avec succès: {result_str[:200]}")
@@ -164,7 +198,7 @@ async def stream_chat(
     last_user_query: str,
     provider: str,
     model: str,
-    pre_executed_tools: List[Dict[str, str]] | None = None,  # ★ FIX #3-opt : pont depuis brain
+    pre_executed_tools: List[Dict[str, str]] | None = None,
 ) -> AsyncGenerator[str, None]:
     from provider_manager import provider_manager
 
@@ -182,7 +216,7 @@ async def stream_chat(
     )
     _total_after = sum(len(m.get("content", "")) for m in exec_messages if isinstance(m, dict))
     logger.info(
-        "[Streaming v1.6.26] Requête (%s) : %d messages | %d → %d chars (limite %d)",
+        "[Streaming v1.6.27] Requête (%s) : %d messages | %d → %d chars (limite %d)",
         provider, len(exec_messages), _total_before, _total_after, _max_total,
     )
 
@@ -198,7 +232,7 @@ async def stream_chat(
 
     if _file_attached:
         exec_messages = _add_file_context_guard(exec_messages)
-        logger.info("[Streaming v1.6.26] Guard 'fichier joint' injecté dans le system prompt")
+        logger.info("[Streaming v1.6.27] Guard 'fichier joint' injecté dans le system prompt")
 
     _bypass_blocked_reason = None
     if _user_actions:
@@ -211,7 +245,7 @@ async def stream_chat(
         _bypass_blocked_reason = "multi_intent_detected"
 
     if _bypass_blocked_reason is None:
-        logger.info("[Streaming v1.6.26] 🚀 BYPASS LLM : intention image pure → generate_image direct")
+        logger.info("[Streaming v1.6.27] 🚀 BYPASS LLM : intention image pure → generate_image direct")
         _bypass_intro = "\n\n⚙️ *Génération de l'image en cours...*\n\n"
         yield f"data: {json.dumps({'chunk': _bypass_intro})}\n\n"
 
@@ -222,12 +256,11 @@ async def stream_chat(
                 "generate_image",
                 {"prompt": _bypass_prompt, "provider": "pollinations", "model": "flux"},
             )
-            _bypass_elapsed = (time.monotonic() - _bypass_t0) * 1000
-            _bypass_msg = fmt._format_execution_result("generate_image", _bypass_res)
+            _bypass_msg = _clean_action_result(_bypass_res)
             _bypass_chunk = "\n\n" + str(_bypass_msg) + "\n\n"
             yield f"data: {json.dumps({'chunk': _bypass_chunk}, ensure_ascii=False)}\n\n"
         except Exception as _bypass_err:
-            logger.exception("[Streaming v1.6.26] BYPASS generate_image échouée")
+            logger.exception("[Streaming v1.6.27] BYPASS generate_image échouée")
             _err_chunk = f"\n\n⚠️ Erreur génération image : {_bypass_err}\n\n"
             yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
 
@@ -235,12 +268,12 @@ async def stream_chat(
         return
 
     if _user_img_intent:
-        logger.info("[Streaming v1.6.26] ⏭️ BYPASS SKIP (raison=%s) → LLM va orchestrer", _bypass_blocked_reason)
+        logger.info("[Streaming v1.6.27] ⏭️ BYPASS SKIP (raison=%s) → LLM va orchestrer", _bypass_blocked_reason)
     if _file_attached:
-        logger.info("[Streaming v1.6.26] Fichier joint détecté → bypass image désactivé")
+        logger.info("[Streaming v1.6.27] Fichier joint détecté → bypass image désactivé")
 
     if _user_actions:
-        logger.info("[Streaming v1.6.26] %d action(s) utilisateur — exécution DIRECTE", len(_user_actions))
+        logger.info("[Streaming v1.6.27] %d action(s) utilisateur — exécution DIRECTE", len(_user_actions))
         _direct_msg = "\n\n⚙️ *Exécution directe...*\n\n"
         yield f"data: {json.dumps({'chunk': _direct_msg})}\n\n"
         for _idx, _ua in enumerate(_user_actions, 1):
@@ -253,11 +286,12 @@ async def stream_chat(
             yield f"data: {json.dumps({'chunk': _exec_msg})}\n\n"
             try:
                 _exec_res = act._execute_action_unified(_ua_name, _ua_params)
-                _res_msg = fmt._format_execution_result(_ua_name, _exec_res)
+                # ★ FIX : nettoyer AVANT formatage
+                _res_msg = _clean_action_result(_exec_res)
                 _res_chunk = "\n\n" + str(_res_msg) + "\n\n"
-                yield f"data: {json.dumps({'chunk': _res_chunk})}\n\n"
+                yield f"data: {json.dumps({'chunk': _res_chunk}, ensure_ascii=False)}\n\n"
             except Exception as _err:
-                logger.exception("[Streaming v1.6.26] Action %s échouée", _ua_name)
+                logger.exception("[Streaming v1.6.27] Action %s échouée", _ua_name)
                 _err_chunk = f"\n\n⚠️ Erreur action {_ua_name} : {_err}\n\n"
                 yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
         yield f"data: {json.dumps({'done': True})}\n\n"
@@ -281,8 +315,6 @@ async def stream_chat(
     _cached_response_served: bool = False
     _executed_tool_results: List[Dict[str, str]] = []
 
-    # ★ FIX #3-opt : on pré-remplit avec les outils déjà exécutés par le brain
-    #   (typiquement analyze_repo, codex_loop, etc. qui sont hors du flux streaming)
     if pre_executed_tools:
         for _pre in pre_executed_tools:
             _executed_tool_results.append({
@@ -291,7 +323,7 @@ async def stream_chat(
                 "status": _pre.get("status", "success"),
             })
         logger.info(
-            "[Streaming v1.6.26] 🔗 %d outil(s) pré-exécuté(s) par le brain injecté(s) dans _executed_tool_results",
+            "[Streaming v1.6.27] 🔗 %d outil(s) pré-exécuté(s) par le brain injecté(s)",
             len(pre_executed_tools),
         )
 
@@ -301,9 +333,9 @@ async def stream_chat(
         is_freshness_query = False
     _verification_sensitive = _query_requires_verification(last_user_query, is_freshness_query)
     if is_freshness_query:
-        logger.info("[Streaming v1.6.26] Requête de fraîcheur détectée")
+        logger.info("[Streaming v1.6.27] Requête de fraîcheur détectée")
     if _verification_sensitive:
-        logger.info("[Streaming v1.6.26] Requête vérifiable : cache et mémoire non fiables désactivés")
+        logger.info("[Streaming v1.6.27] Requête vérifiable : cache et mémoire non fiables désactivés")
         exec_messages = _add_verification_guard(exec_messages)
 
     _detected_ego = rt._bek_rex_detect_alter_ego(last_user_query)
@@ -319,11 +351,11 @@ async def stream_chat(
         try:
             _routing_result = rt._bek_rex_route(last_user_query)
             logger.info(
-                "[Streaming v1.6.26] BEK-REX tier=%s conf=%.2f",
+                "[Streaming v1.6.27] BEK-REX tier=%s conf=%.2f",
                 _routing_result.get("tier"), _routing_result.get("confidence", 0.0),
             )
         except Exception as _rex_err:
-            logger.warning("[Streaming v1.6.26] BEK-REX échec : %s", _rex_err)
+            logger.warning("[Streaming v1.6.27] BEK-REX échec : %s", _rex_err)
             _routing_result = {"tier": "TIER_3", "confidence": 0.5}
 
         _tier = _routing_result.get("tier", "TIER_3")
@@ -343,9 +375,9 @@ async def stream_chat(
                         yield f"data: {json.dumps({'done': True})}\n\n"
                         return
                     else:
-                        logger.warning("[Streaming v1.6.26] Cache HIT mais réponse polluée → SKIP")
+                        logger.warning("[Streaming v1.6.27] Cache HIT mais réponse polluée → SKIP")
             except Exception as _eco_err:
-                logger.warning("[Streaming v1.6.26] BEK-ECO échec : %s", _eco_err)
+                logger.warning("[Streaming v1.6.27] BEK-ECO échec : %s", _eco_err)
 
         for item in provider_manager.execute_chat_stream(
             messages=exec_messages,
@@ -441,11 +473,11 @@ async def stream_chat(
                         "headless_search",
                     )
                     if _file_attached and act_name in _FILE_ATTACHED_ACTIONS_BLOCKED:
-                        logger.warning("[Streaming v1.6.26] 🚫 Action '%s' bloquée : fichier joint déjà dans le contexte", act_name)
+                        logger.warning("[Streaming v1.6.27] 🚫 Action '%s' bloquée : fichier joint", act_name)
                         processed_actions.add(end_pos)
                         continue
 
-                    logger.info("[Streaming v1.6.26] 🎯 Action %d : %s", total_actions_executed + 1, act_name)
+                    logger.info("[Streaming v1.6.27] 🎯 Action %d : %s", total_actions_executed + 1, act_name)
                     if act_name == "headless_search":
                         try:
                             if rt._bek_rex_should_use_web_sync(last_user_query, _routing_result):
@@ -466,7 +498,7 @@ async def stream_chat(
                         )
                         _invalid, _reason = _is_orchestrate_goal_empty_or_meta(_pre_goal)
                         if _invalid:
-                            logger.warning("[Streaming v1.6.26] 🛡️ orchestrate SKIP (%s) : goal=%r", _reason, _pre_goal[:120] if isinstance(_pre_goal, str) else _pre_goal)
+                            logger.warning("[Streaming v1.6.27] 🛡️ orchestrate SKIP (%s) : goal=%r", _reason, _pre_goal[:120] if isinstance(_pre_goal, str) else _pre_goal)
                             _skip_user_msg = "\n\n⚠️ *L'action `orchestrate` a été ignorée (objectif vide ou trop vague). Je réponds directement.*\n\n"
                             yield f"data: {json.dumps({'chunk': _skip_user_msg}, ensure_ascii=False)}\n\n"
                             _executed_tool_results.append({
@@ -488,23 +520,28 @@ async def stream_chat(
                     _action_start = time.monotonic()
                     try:
                         exec_res = act._execute_action_unified(act_name, params)
-                        exec_res = _apply_post_tool_bricks(act_name, exec_res)
+                        
+                        # ★ v1.6.27 : NETTOYER AVANT formatage (évite JSON brut)
+                        cleaned_result = _clean_action_result(exec_res)
+                        
+                        # Appliquer les briques sur la version nettoyée
+                        final_result = _apply_post_tool_bricks(act_name, cleaned_result)
+                        
                         _action_elapsed_ms = (time.monotonic() - _action_start) * 1000
-                        res_msg = fmt._format_execution_result(act_name, exec_res)
-                        res_msg = fmt._format_execution_result(act_name, exec_res)
-                        res_chunk = "\n\n" + str(res_msg) + "\n\n"
+                        res_chunk = "\n\n" + str(final_result) + "\n\n"
                         yield f"data: {json.dumps({'chunk': res_chunk}, ensure_ascii=False)}\n\n"
+                        
                         total_actions_executed += 1
                         processed_actions.add(end_pos)
                         _last_action_end_pos = end_pos
                         _executed_tool_results.append({
                             "name": act_name,
-                            "output": str(res_msg),
+                            "output": str(final_result),
                             "status": exec_res.get("status", "success") if isinstance(exec_res, dict) else "success",
                         })
-                        logger.info("[Streaming v1.6.26] ✅ Action %s terminée (%.0fms)", act_name, _action_elapsed_ms)
+                        logger.info("[Streaming v1.6.27] ✅ Action %s terminée (%.0fms)", act_name, _action_elapsed_ms)
                     except Exception as _act_err:
-                        logger.exception("[Streaming v1.6.26] Action %s échouée", act_name)
+                        logger.exception("[Streaming v1.6.27] Action %s échouée", act_name)
                         err_chunk = f"\n\n⚠️ Erreur action {act_name} : {_act_err}\n\n"
                         yield f"data: {json.dumps({'chunk': err_chunk})}\n\n"
                         processed_actions.add(end_pos)
@@ -519,7 +556,7 @@ async def stream_chat(
             "read_file", "analyze_image", "analyze_zip_content",
             "search_memory", "hindsight_query", "hindsight_recall",
             "headless_scrape", "execute_command", "run_script", "neon_audit",
-            "python_save_report", "analyze_architecture",  # ★ FIX #3-opt
+            "python_save_report", "analyze_architecture",
         ))
         _needs_followup = False
         for _tr in _executed_tool_results:
@@ -530,15 +567,9 @@ async def stream_chat(
                 _needs_followup = True
                 break
 
-        # ══════════════════════════════════════════════════════════════════════
-        # ★ FIX #3 : Rebond analytique post-outil (v1.6.26)
-        #   - 3A : timeout dans la boucle
-        #   - 3B : arrêt propre si [ACTION:...] malgré la consigne
-        #   - 3C : fallback si 0 chunk yieldé
-        # ══════════════════════════════════════════════════════════════════════
         if BEK_FOLLOWUP_AFTER_TOOL and _needs_followup:
             logger.info(
-                "[Streaming v1.6.26] 🔄 Rebond analytique post-outil activé (%d résultat(s))",
+                "[Streaming v1.6.27] 🔄 Rebond analytique post-outil activé (%d résultat(s))",
                 len(_executed_tool_results),
             )
             _tool_context_parts = [
@@ -574,17 +605,16 @@ async def stream_chat(
                     temperature=0.5,
                     max_tokens=BEK_MAX_TOKENS,
                 ):
-                    # ★ FIX #3A : timeout DANS la boucle follow-up
                     _fu_elapsed = time.monotonic() - _followup_start
                     if MAX_STREAM_DURATION_SEC and _fu_elapsed > MAX_STREAM_DURATION_SEC:
-                        logger.warning("[Streaming v1.6.26] Follow-up timeout après %.1fs", _fu_elapsed)
+                        logger.warning("[Streaming v1.6.27] Follow-up timeout après %.1fs", _fu_elapsed)
                         _followup_aborted_reason = "followup_timeout"
                         yield f"data: {json.dumps({'chunk': _MSG_TIMEOUT_DUR})}\n\n"
                         break
 
                     if "error" in f_item:
                         logger.warning(
-                            "[Streaming v1.6.26] Follow-up erreur provider : %s",
+                            "[Streaming v1.6.27] Follow-up erreur provider : %s",
                             f_item.get("error"),
                         )
                         _followup_aborted_reason = "followup_provider_error"
@@ -597,13 +627,12 @@ async def stream_chat(
                     if not f_chunk:
                         continue
 
-                    # ★ FIX #3B : buffer glissant pour rattraper `[ACTION:` coupé
                     _followup_buffer.append(f_chunk)
                     _combined = "".join(_followup_buffer)
 
                     if _ACTION_MARKER in _combined:
                         logger.warning(
-                            "[Streaming v1.6.26] Follow-up : LLM a émis une action malgré la consigne → arrêt propre"
+                            "[Streaming v1.6.27] Follow-up : LLM a émis une action malgré la consigne → arrêt propre"
                         )
                         _followup_aborted_reason = "followup_llm_rebel"
                         _action_pos = _combined.find(_ACTION_MARKER)
@@ -614,27 +643,23 @@ async def stream_chat(
                             _followup_yielded += 1
                         break
 
-                    # On yield f_chunk, mais on garde les N derniers chars
-                    # pour pouvoir détecter un `[ACTION:` qui chevauche la frontière
                     full_text_accumulated.append(f_chunk)
                     yield f"data: {json.dumps({'chunk': f_chunk}, ensure_ascii=False)}\n\n"
                     _followup_yielded += 1
 
-                    # Garde un buffer glissant borné
                     if len(_followup_buffer) > 4:
                         _followup_buffer = _followup_buffer[-4:]
 
             except Exception as _fu_err:
                 logger.error(
-                    "[Streaming v1.6.26] Follow-up exception : %s",
+                    "[Streaming v1.6.27] Follow-up exception : %s",
                     _fu_err, exc_info=True,
                 )
                 _followup_aborted_reason = f"followup_exception:{type(_fu_err).__name__}"
 
-            # ★ FIX #3C : fallback si aucun chunk yieldé
             if _followup_yielded == 0 and not _followup_aborted_reason:
                 logger.warning(
-                    "[Streaming v1.6.26] Follow-up terminé sans aucun chunk — fallback message"
+                    "[Streaming v1.6.27] Follow-up terminé sans aucun chunk — fallback message"
                 )
                 _fallback_msg = (
                     "\n\n⚠️ *Le rebond analytique n'a produit aucune réponse textuelle. "
@@ -646,17 +671,17 @@ async def stream_chat(
 
             if _followup_aborted_reason:
                 logger.info(
-                    "[Streaming v1.6.26] Follow-up terminé (%s) — %d chunk(s) yieldé(s)",
+                    "[Streaming v1.6.27] Follow-up terminé (%s) — %d chunk(s) yieldé(s)",
                     _followup_aborted_reason, _followup_yielded,
                 )
             else:
                 logger.info(
-                    "[Streaming v1.6.26] Follow-up terminé normalement — %d chunk(s) yieldé(s)",
+                    "[Streaming v1.6.27] Follow-up terminé normalement — %d chunk(s) yieldé(s)",
                     _followup_yielded,
                 )
 
     except Exception as stream_err:
-        logger.error("[Streaming v1.6.26] Erreur : %s", stream_err, exc_info=True)
+        logger.error("[Streaming v1.6.27] Erreur : %s", stream_err, exc_info=True)
         _err_text = "\n\n⚠️ Flux Error : " + str(stream_err) + "\n"
         yield f"data: {json.dumps({'chunk': _err_text})}\n\n"
         _success = False
@@ -673,7 +698,7 @@ async def stream_chat(
         _llm_refused = _llm_refused_to_generate(full_response, _file_attached_final)
 
         logger.info(
-            "[Streaming v1.6.26] FORCE-CHECK : user_wants_image=%s | llm_refused=%s | "
+            "[Streaming v1.6.27] FORCE-CHECK : user_wants_image=%s | llm_refused=%s | "
             "no_action=%s | file_attached=%s | multi_intent=%s",
             _user_wants_img, _llm_refused, _no_action_executed,
             _file_attached_final, _multi_intent_final,
@@ -688,7 +713,7 @@ async def stream_chat(
         )
 
         if _should_force_analyze:
-            logger.warning("[Streaming v1.6.26] 🚨 FORÇAGE analyze_image : fichier joint + intention d'analyse, LLM n'a appelé aucun outil → correction")
+            logger.warning("[Streaming v1.6.27] 🚨 FORÇAGE analyze_image : fichier joint + intention d'analyse")
 
             _m = re.search(r"\[Fichiers joints\s*:\s*([^\]]+)\]", last_user_query or "", re.IGNORECASE)
             _fname = _m.group(1).strip().split(",")[0].strip() if _m else ""
@@ -702,7 +727,7 @@ async def stream_chat(
                 try:
                     yield f"data: {json.dumps({'chunk': _analyze_msg}, ensure_ascii=False)}\n\n"
                 except GeneratorExit:
-                    logger.debug("[Streaming v1.6.26] Client a coupé (analyze_msg) — abandon")
+                    logger.debug("[Streaming v1.6.27] Client a coupé (analyze_msg) — abandon")
                     raise
 
                 try:
@@ -710,7 +735,7 @@ async def stream_chat(
                         "analyze_image",
                         {"image_path": _full_path, "prompt": "Décris cette image en détail."},
                     )
-                    _analyze_formatted = fmt._format_execution_result("analyze_image", _analyze_res)
+                    _analyze_formatted = _clean_action_result(_analyze_res)
                     _analyze_chunk = "\n\n" + str(_analyze_formatted) + "\n\n"
                     try:
                         yield f"data: {json.dumps({'chunk': _analyze_chunk}, ensure_ascii=False)}\n\n"
@@ -724,16 +749,16 @@ async def stream_chat(
                         "output": str(_analyze_formatted),
                         "status": "success",
                     })
-                    logger.info("[Streaming v1.6.26] ✅ Forçage analyze_image terminé (%s)", _fname)
+                    logger.info("[Streaming v1.6.27] ✅ Forçage analyze_image terminé (%s)", _fname)
                 except Exception as _analyze_err:
-                    logger.exception("[Streaming v1.6.26] Forçage analyze_image échoué")
+                    logger.exception("[Streaming v1.6.27] Forçage analyze_image échoué")
                     _err_chunk = f"\n\n⚠️ Erreur analyse image : {_analyze_err}\n\n"
                     try:
                         yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
                     except GeneratorExit:
                         raise
             else:
-                logger.warning("[Streaming v1.6.26] Forçage analyze_image SKIP : nom de fichier introuvable dans la query")
+                logger.warning("[Streaming v1.6.27] Forçage analyze_image SKIP : nom de fichier introuvable")
 
         _should_force = (
             BEK_FORCE_IMAGE_ON_INTENT
@@ -744,13 +769,13 @@ async def stream_chat(
         )
 
         if _should_force:
-            logger.warning("[Streaming v1.6.26] 🚨 FORÇAGE INCONDITIONNEL : utilisateur veut image + aucune action → generate_image")
+            logger.warning("[Streaming v1.6.27] 🚨 FORÇAGE INCONDITIONNEL : utilisateur veut image + aucune action")
 
             _force_msg = "\n\n---\n\n⚙️ *BEK prend le relais — génération de l'image...*\n\n"
             try:
                 yield f"data: {json.dumps({'chunk': _force_msg}, ensure_ascii=False)}\n\n"
             except GeneratorExit:
-                logger.debug("[Streaming v1.6.26] Client a coupé (force_msg) — abandon propre")
+                logger.debug("[Streaming v1.6.27] Client a coupé (force_msg) — abandon propre")
                 raise
 
             _forced_prompt = _extract_image_subject(last_user_query)
@@ -760,8 +785,7 @@ async def stream_chat(
                     "generate_image",
                     {"prompt": _forced_prompt, "provider": "pollinations", "model": "flux"},
                 )
-                _force_elapsed = (time.monotonic() - _force_t0) * 1000
-                _forced_msg = fmt._format_execution_result("generate_image", _forced_res)
+                _forced_msg = _clean_action_result(_forced_res)
                 _forced_chunk = "\n\n" + str(_forced_msg) + "\n\n"
                 try:
                     yield f"data: {json.dumps({'chunk': _forced_chunk}, ensure_ascii=False)}\n\n"
@@ -796,7 +820,7 @@ async def stream_chat(
             _should_have_action = _user_wants_image(last_user_query)
             _is_hallucination = _should_have_action and not action_detected
             if _is_hallucination:
-                logger.warning("[Streaming v1.6.26] ⚠️ Hallucination détectée. Cache SKIP.")
+                logger.warning("[Streaming v1.6.27] ⚠️ Hallucination détectée. Cache SKIP.")
 
             if (
                 BEK_ECO_CACHE_ENABLED
@@ -853,19 +877,21 @@ async def stream_chat(
                     pass
 
         except Exception as _loop_err:
-            logger.debug("[Streaming v1.6.26] Erreur finally : %s", _loop_err)
+            logger.debug("[Streaming v1.6.27] Erreur finally : %s", _loop_err)
 
         try:
             yield f"data: {json.dumps({'done': True})}\n\n"
         except GeneratorExit:
-            logger.debug("[Streaming v1.6.26] Client a coupé la connexion — abandon propre")
+            logger.debug("[Streaming v1.6.27] Client a coupé la connexion — abandon propre")
             raise
 
 
 def get_streaming_summary() -> dict:
     return {
-        "version": "1.6.26",
+        "version": "1.6.27",
         "features": {
+            "clean_action_result": True,
+            "fix_json_brut": True,
             "multi_actions": BEK_MULTI_ACTIONS_ENABLED,
             "closing_tag_tolerant": True,
             "llm_string_normalization": True,
@@ -891,11 +917,11 @@ def get_streaming_summary() -> dict:
             "analyze_image_unblocked_v1623": True,
             "force_analyze_image_on_llm_muet_v1624": True,
             "skip_loop_detector_on_file_attached_v1625": True,
-            # ★ FIX #3 : Rebond analytique robuste
             "followup_timeout_v1626": True,
             "followup_rebel_action_guard_v1626": True,
             "followup_empty_fallback_v1626": True,
             "followup_pre_executed_tools_v1626": True,
+            "clean_action_result_v1627": True,
             "max_tokens": BEK_MAX_TOKENS,
         },
     }
