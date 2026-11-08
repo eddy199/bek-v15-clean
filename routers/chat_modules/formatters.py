@@ -6,12 +6,13 @@
 # 📄 Doc : docs/BEK_LVC.md
 # ------------------------------------------------------------------------------
 # Auteur : BEK Project
-# Version : 1.3
-# Date : 2026-10-04
+# Version : 1.4
+# Date : 2026-11-08
 # ------------------------------------------------------------------------------
-# ★ v1.1 — FIX web_sync : cherche le contenu dans plusieurs clés possibles
-# ★ v1.2 — Compteur de sources + avertissement si < 3 sources
+# ★ v1.4 — FIX web_sync : nettoyage + formatage Markdown propre des sources
 # ★ v1.3 — Log amélioré : affiche TOUTES les clés disponibles si rien trouvé
+# ★ v1.2 — Compteur de sources + avertissement si < 3 sources
+# ★ v1.1 — FIX web_sync : cherche le contenu dans plusieurs clés possibles
 # ==============================================================================
 
 from __future__ import annotations
@@ -100,7 +101,6 @@ def _extract_web_sync_content(exec_res: dict) -> str:
             best_key, len(best_content),
         )
     else:
-        # ★ v1.3 — Log TOUTES les clés pour debug
         logger.warning(
             "[Formatter web_sync] Aucun contenu trouvé. "
             "Clés disponibles : %s | Types : %s",
@@ -131,9 +131,7 @@ _MIN_SOURCES_RECOMMENDED = 3
 
 
 def _extract_sources_from_report(report_str: str) -> List[Tuple[str, str]]:
-    """
-    Extrait les URLs et leurs descriptions depuis le rapport web_sync.
-    """
+    """Extrait les URLs et leurs descriptions depuis le rapport web_sync."""
     if not report_str:
         return []
 
@@ -204,6 +202,55 @@ def _build_sources_header(nb_sources: int, has_freshness: bool) -> str:
         f"({nb_sources} source{'s' if nb_sources != 1 else ''} analysée"
         f"{'s' if nb_sources != 1 else ''}) {freshness_icon}\n\n"
     )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v1.4 — NETTOYAGE DU BRUIT HTML
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _clean_snippet(text: str) -> str:
+    """
+    ★ v1.4 — Nettoie le bruit HTML/navigation des snippets web.
+    Enlève : [Skip to content], [Reload], liens Markdown, URLs brutes.
+    """
+    if not text:
+        return ""
+
+    # 1. Enlever le bruit de navigation GitHub/Reddit
+    noise_patterns = [
+        r"\[?Skip to content\]?\([^)]*\)",
+        r"You signed in with another tab or window\.?",
+        r"\[?Reload\]?\([^)]*\) to refresh your session\.?",
+        r"You signed out in another tab or window\.?",
+        r"You switched accounts on another tab or window\.?",
+        r"Dismiss alert \{\{ message \}\}",
+        r"\[?\*\*\d+\*\* (Branches|Tags|Stars|Forks)\]?\([^)]*\)",
+        r"\[?Go to (Branches|Tags|file|repository) page\]?\([^)]*\)",
+        r"\[?Go to file\]?",
+        r"\[?Code\]?",
+        r"Open more actions menu",
+        r"\[?Search or jump to\.?\.?\.?\]?",
+        r"\[?Sign in\]?\([^)]*\)",
+        r"\[?Sign up\]?\([^)]*\)",
+    ]
+    for pat in noise_patterns:
+        text = re.sub(pat, "", text, flags=re.IGNORECASE)
+
+    # 2. Nettoyer les liens Markdown [text](url) → garder juste text
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+
+    # 3. Nettoyer les URLs brutes (sauf si c'est une source explicite)
+    text = re.sub(r"https?://\S+", "", text)
+
+    # 4. Enlever les caractères de contrôle
+    text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", text)
+
+    # 5. Normaliser les espaces
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    text = text.strip()
+
+    return text
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -392,11 +439,16 @@ def _format_headless_search(exec_res: dict) -> str:
     return "\n".join(lines)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ v1.4 — FORMAT WEB_SYNC PROPRE
+# ══════════════════════════════════════════════════════════════════════════════
+
 def _format_web_sync(exec_res: dict) -> str:
     """
-    Formate le résultat de web_sync (WebAgent profond).
-
-    ★ v1.3 — Log amélioré + fallback étendu
+    ★ v1.4 — Formate proprement le résultat de web_sync.
+    - Extrait les sources structurées
+    - Nettoie le bruit HTML
+    - Formate en liste Markdown propre
     """
     if not isinstance(exec_res, dict):
         return f"Résultat brut : {exec_res}"
@@ -404,42 +456,71 @@ def _format_web_sync(exec_res: dict) -> str:
     if exec_res.get("status") != "success":
         return exec_res.get("message", "❌ web_sync a échoué")
 
-    # Extraction tolérante du contenu
+    # 1. Extraire le contenu
     report_str = _extract_web_sync_content(exec_res)
 
-    if not report_str or len(report_str) < 100:
-        # ★ v1.3 — Log TOUTES les clés pour debug
+    if not report_str or len(report_str) < 50:
         logger.warning(
-            "[Formatter web_sync] Contenu insuffisant (%d chars). "
-            "Clés : %s",
+            "[Formatter web_sync] Contenu insuffisant (%d chars). Clés : %s",
             len(report_str), list(exec_res.keys()),
         )
         return (
             "⚠️ **Veille web sans résultat exploitable**\n\n"
-            "→ Le pipeline WebAgent n'a pas pu extraire de contenu.\n"
-            "→ Dis HONNÊTEMENT à l'utilisateur qu'aucune source n'a été "
-            "trouvée et propose de reformuler.\n"
-            "→ N'INVENTE AUCUNE actualité."
+            "→ Aucune source n'a été trouvée. Reformule ta demande."
         )
 
-    # Analyser les sources
-    sources = _extract_sources_from_report(report_str)
-    nb_sources = len(sources)
-    has_freshness = _has_freshness_indicators(report_str)
+    # 2. Nettoyer le contenu brut
+    cleaned = _clean_snippet(report_str)
 
-    logger.info(
-        "[Formatter web_sync] Analyse : %d sources | fraîcheur=%s | %d chars",
-        nb_sources, has_freshness, len(report_str),
+    if not cleaned or len(cleaned) < 50:
+        return (
+            "⚠️ **Veille web : contenu illisible**\n\n"
+            "→ Le pipeline n'a pas pu extraire un contenu exploitable.\n"
+            "→ Reformule ta demande."
+        )
+
+    # 3. Formater en Markdown propre
+    return _format_sources_as_markdown(cleaned)
+
+
+def _format_sources_as_markdown(text: str) -> str:
+    """
+    ★ v1.4 — Formate un texte nettoyé en Markdown structuré.
+    - Détecte les patterns "Source N" ou "Titre :"
+    - Crée des sections propres
+    """
+    lines = []
+
+    # Chercher les sections "Source N" ou "Titre :"
+    source_pattern = re.compile(
+        r"(?:\[?Source\s+\d+\]?|Titre\s*:)\s*([^\n]+)",
+        re.IGNORECASE,
     )
 
-    # Construire la réponse avec header + avertissements
-    header = _build_sources_header(nb_sources, has_freshness)
-    warning = _build_sources_warning(nb_sources, has_freshness)
+    sources_found = source_pattern.findall(text)
 
-    # Corps du rapport (tronqué à 5000 chars)
-    body = report_str[:5000]
+    if sources_found and len(sources_found) >= 1:
+        lines.append("## 🌐 Sources trouvées\n")
+        for i, src in enumerate(sources_found[:10], 1):
+            src = src.strip()
+            # Tronquer si trop long
+            if len(src) > 200:
+                src = src[:200].rsplit(" ", 1)[0] + "…"
+            lines.append(f"### {i}. {src}\n")
+    else:
+        # Fallback : juste formater le texte en paragraphes
+        lines.append("## 🌐 Résultat de la veille web\n")
 
-    return f"{header}{body}{warning}"
+        # Découper en paragraphes de max 500 chars
+        paragraphs = text.split("\n\n")
+        for para in paragraphs[:15]:
+            para = para.strip()
+            if len(para) > 20:
+                if len(para) > 500:
+                    para = para[:500].rsplit(" ", 1)[0] + "…"
+                lines.append(para + "\n")
+
+    return "\n".join(lines)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -448,7 +529,7 @@ def _format_web_sync(exec_res: dict) -> str:
 
 def get_formatters_summary() -> dict:
     return {
-        "version": "1.3",
+        "version": "1.4",
         "functions": [
             "_is_poor_result",
             "_extract_web_sync_content",
@@ -456,6 +537,8 @@ def get_formatters_summary() -> dict:
             "_has_freshness_indicators",
             "_build_sources_warning",
             "_build_sources_header",
+            "_clean_snippet",
+            "_format_sources_as_markdown",
             "_format_execution_result",
             "_format_subtitles",
             "_format_burned_subtitles",
