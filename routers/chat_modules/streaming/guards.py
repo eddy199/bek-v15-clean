@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Streaming : Garde-fous (v1.6.23)
+# BEK-v18 — Streaming : Garde-fous (v1.6.24)
 # ------------------------------------------------------------------------------
-# ★ v1.6.23 (2026-10-20) — FIX ANALYZE_IMAGE GUARD
-#   - Modification de _add_file_context_guard pour autoriser analyze_image
+# ★ v1.6.24 (2026-11-08) — FIX REFUS DÉTECTÉ
+#   - Ne considère plus une longue réponse texte comme un "refus"
+#   - Détecte UNIQUEMENT les refus explicites (mots-clés "je ne peux pas", etc.)
 # ==============================================================================
 from __future__ import annotations
 
@@ -145,7 +146,7 @@ def _add_verification_guard(messages: List[Dict[str, Any]]) -> List[Dict[str, An
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ FIX v1.6.23 — GARDE-FOU FICHIERS JOINTS
+# GARDE-FOU FICHIERS JOINTS
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _add_file_context_guard(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -168,28 +169,64 @@ def _add_file_context_guard(messages: List[Dict[str, Any]]) -> List[Dict[str, An
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# DÉTECTION REFUS LLM
+# ★ v1.6.24 — DÉTECTION REFUS LLM (CORRIGÉE)
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _llm_refused_to_generate(full_response: str, file_attached: bool = False) -> bool:
+    """
+    Détecte si le LLM a REFUSÉ de générer (pas s'il a juste écrit du texte long).
+    
+    ★ v1.6.24 : Une longue réponse texte n'est PLUS considérée comme un refus.
+    Seuls les VRAIS refus explicites (mots-clés "je ne peux pas", etc.) sont détectés.
+    """
     if not full_response:
         return False
+
+    # 1. Détection par regex de refus (déjà définie dans constants)
     if _LLM_REFUSAL_RE.search(full_response):
+        logger.info(
+            "[Streaming v1.6.24] Refus explicite (regex) détecté : %d chars",
+            len(full_response),
+        )
         return True
-    if "<svg" in full_response.lower() or "<html" in full_response.lower():
+
+    # 2. Détection par mots-clés de refus typiques
+    response_lower = full_response.lower()
+    refusal_keywords = (
+        "je ne peux pas vous aider",
+        "je ne suis pas autorisé",
+        "je ne suis pas capable de",
+        "désolé, je ne peux pas",
+        "i cannot help with",
+        "i can't help with",
+        "i'm sorry, but i can't",
+        "as an ai, i cannot",
+        "en tant qu'ia, je ne peux pas",
+        "en tant qu'assistant, je ne peux pas",
+    )
+    if any(k in response_lower for k in refusal_keywords):
+        logger.info(
+            "[Streaming v1.6.24] Refus explicite (keywords) détecté : %d chars",
+            len(full_response),
+        )
         return True
+
+    # 3. Si un fichier est joint, ce n'est jamais un refus (l'utilisateur sait ce qu'il fait)
     if file_attached:
         return False
-    if len(full_response) > 500:
+
+    # 4. ★ CORRECTION : On ne rejette PLUS les longues réponses texte.
+    # On log juste un avertissement pour information, mais on accepte.
+    if len(full_response) > 2000:
         has_action = "[ACTION:" in full_response
         has_image = "![" in full_response
         has_file = "[FILE:" in full_response
         if not (has_action or has_image or has_file):
-            logger.info(
-                "[Streaming v1.6.23] Refus détecté (règle longueur) : %d chars sans action/image",
+            logger.warning(
+                "[Streaming v1.6.24] Longue réponse texte (%d chars) sans action — ACCEPTÉE (pas un refus)",
                 len(full_response),
             )
-            return True
+
     return False
 
 
@@ -206,7 +243,7 @@ def _extract_image_subject(user_query: str) -> str:
     visual_match = _VISUAL_TRIGGER_RE.search(q)
     if visual_match:
         q = q[visual_match.start():]
-        logger.debug("[Streaming v1.6.23] Sujet extrait après trigger visuel : %r", q[:120])
+        logger.debug("[Streaming v1.6.24] Sujet extrait après trigger visuel : %r", q[:120])
 
     q = _NARRATIVE_PREFIX_RE.sub("", q)
 
