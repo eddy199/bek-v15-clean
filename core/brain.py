@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.56 (Formatage humain universel + SSE)
+# BEK Hybrid Agent v19 — core/brain.py — v19.57 (Fix Render + Chemins dynamiques)
 # ==============================================================================
 from __future__ import annotations
 import asyncio
@@ -262,7 +262,12 @@ def _format_human_response(response: Any, context: str = "action") -> str:
 
 class SkillAgent:
     def __init__(self, index_paths: List[str] = None):
-        self.index_paths = index_paths or [r"F:\workspacekimi\skills_index.json"]
+        # CORRECTION RENDER : utilise le dossier courant (workspace) au lieu de F:\
+        if index_paths is None:
+            base_dir = Path(__file__).resolve().parent.parent
+            default_path = base_dir / "skills_index.json"
+            index_paths = [str(default_path)]
+        self.index_paths = index_paths
         self.skills_db = self._load_index()
 
     def _load_index(self) -> List[Dict[str, Any]]:
@@ -481,7 +486,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.56 (Formatage humain universel)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.57 (Fix Render + Chemins dynamiques)")
 
     async def shutdown(self):
         try:
@@ -525,12 +530,10 @@ class BEKBrain:
         except Exception as e: logger.error("[Brain] Erreur fix_self : %s", e)
         return self._wrap("⚠️ Module d'auto-réparation indisponible ou non configuré.", "fix_self", ["hermes.codex_loop"])
 
-    # ★ NOUVEAU : ajout du paramètre on_status
     async def process(self, query: str, provider: Optional[str] = None, model: Optional[str] = None, files: Optional[list] = None, session_id: str = "default", on_status: Optional[Callable[[str, str], None]] = None) -> Dict[str, Any]:
         start_time = time.perf_counter()
         if not self._initialized: await self.boot()
 
-        # ★ NOUVEAU : callback de statut
         def _status(text: str, type_: str = "thinking"):
             if on_status:
                 try:
@@ -1095,7 +1098,16 @@ class BEKBrain:
             ga_prompt = self._get_ga_prompt()
 
             system_extra = f"{ga_prompt}\n\n=== OUTILS DISPONIBLES (à utiliser AVANT de générer du code) ===\n{tools_prompt}\n\nRÈGLE ABSOLUE : si l'utilisateur nomme un outil (ex: rea_analyze_javascript, mcp_rea_*), APPELLE l'outil via [ACTION:nom_outil]{{...}}[/ACTION] et NE GÉNÈRE PAS de code Python/JS à la place. Pour rea_analyze_javascript, le JSON doit contenir {{\"path\": \"<chemin absolu>\"}}."
-            port = os.environ.get("PORT", "3001"); url = f"http://127.0.0.1:{port}/api/chat"
+
+            # ==================================================================
+            # ★ CORRECTION RENDER : Utilisation de l'URL interne
+            # ==================================================================
+            if os.environ.get("RENDER"):
+                port = os.environ.get("PORT", "10000")
+                url = f"http://127.0.0.1:{port}/api/chat"
+            else:
+                port = os.environ.get("PORT", "3001")
+                url = f"http://127.0.0.1:{port}/api/chat"
 
             payload = {
                 "messages": [
@@ -1163,7 +1175,7 @@ class BEKBrain:
         }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.56 (Formatage humain universel)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
+        return {"app": "BEK Hybrid Agent v19.57 (Fix Render + Chemins dynamiques)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
 
 _brain_instance: Optional[BEKBrain] = None
 
