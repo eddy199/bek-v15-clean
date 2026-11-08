@@ -117,9 +117,9 @@ Format EXCLUSIF :
 ## 📊 ÉTAT RÉEL DU SYSTÈME (généré automatiquement)
 ═══════════════════════════════════════════════════════════════════════════════
 
-> *Dernière synchronisation : 2026-11-06 14:28:22 UTC*
-> *Version BEK : **19.11***
-> *State hash : `59ed162c8b78`*
+> *Dernière synchronisation : 2026-11-08 10:50:07 UTC*
+> *Version BEK : **19.15***
+> *State hash : `34e529a033a2`*
 > *Boot phase : **complete***
 
 ═══════════════════════════════════════════════════════════════════════════════
@@ -238,7 +238,7 @@ Format EXCLUSIF :
 | Composant | Statut | Détail |
 |---|---|---|
 | `playwright` | 💤 **lazy** | ~200 MB économisés au boot |
-| `chromadb` | 💤 **lazy** | ~80 MB économisés au boot |
+| `chromadb` | ✅ **loaded** | Chargé à la demande |
 | `duckdb_episode` | ✅ **duckdb** | Backend : duckdb |
 | `lancedb` | 💤 **lazy** | Chargé à la demande |
 | `duckdb_analytics` | 💤 **lazy** | Chargé à la demande |
@@ -403,7 +403,7 @@ Format EXCLUSIF :
 - `routers/memory.py`
 - `routers/openai_compat.py`
 
-### CPU Logique Virtuel (18)
+### CPU Logique Virtuel (19)
 
 - `bek_core/__init__.py`
 - `bek_core/cpu.py`
@@ -411,6 +411,7 @@ Format EXCLUSIF :
 - `bek_core/eco/optimizer.py`
 - `bek_core/flux/__init__.py`
 - `bek_core/flux/executor.py`
+- `bek_core/genes/gene_manager.py`
 - `bek_core/loop/__init__.py`
 - `bek_core/loop/recorder.py`
 - `bek_core/mem/__init__.py`

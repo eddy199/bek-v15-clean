@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   BEK-v15 Hybrid — Mode Plein Écran Centré & Typographie Pro (Type Gemini)
+   BEK-v15 Hybrid — Mode Plein Écran Centré & Typographie Pro
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
@@ -418,6 +418,7 @@ think { display: none !important; }
   .header { padding: 10px 14px; gap: 8px; }
   .header h2 { font-size: 14px; }
   .select, .model-select { max-width: 140px; font-size: 11px; padding: 6px 8px; }
+  #modelBadge { font-size: 10px !important; padding: 4px 8px !important; }
   .messages { padding: 14px 12px 8px !important; gap: 14px; width: 100% !important; max-width: 100% !important; }
   .msg-bubble { padding: 14px 16px !important; font-size: 15px !important; line-height: 1.65 !important; }
   .message.user .msg-bubble { max-width: 88% !important; }
@@ -454,4 +455,142 @@ think { display: none !important; }
     color: #000;
     border-color: #00e5ff;
     box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+/* ★ Badge de statut dans le header (à côté du sélecteur de modèle) */
+#modelBadge {
+    transition: all 0.25s ease;
+}
+
+/* ============================================================================
+   ★ CARTE DE STATUT ANIMÉE (style Claude Code / Gemini)
+   Affichée DANS le flux du chat, au-dessus de la barre de saisie
+   ============================================================================ */
+
+.bek-status-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    margin: 10px auto;
+    width: 100%;
+    max-width: 1150px;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border: 1px solid rgba(92, 156, 230, 0.3);
+    border-left: 4px solid #5c9ce6;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(92, 156, 230, 0.15);
+    font-size: 14px;
+    color: #e2e8f0;
+    animation: bek-status-slide-in 0.3s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes bek-status-slide-in {
+    from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.bek-status-card.fade-out {
+    animation: bek-status-fade-out 0.3s ease-out forwards;
+}
+
+@keyframes bek-status-fade-out {
+    to { opacity: 0; transform: translateY(-8px) scale(0.98); }
+}
+
+.bek-status-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(92, 156, 230, 0.25);
+    border-top-color: #5c9ce6;
+    border-right-color: #5c9ce6;
+    border-radius: 50%;
+    animation: bek-status-spin 0.9s linear infinite;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px rgba(92, 156, 230, 0.4);
+}
+
+@keyframes bek-status-spin { to { transform: rotate(360deg); } }
+
+.bek-status-text {
+    flex: 1;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Ubuntu', 'Inter', sans-serif;
+    letter-spacing: 0.01em;
+}
+
+.bek-status-icon {
+    font-size: 16px;
+    display: inline-block;
+    animation: bek-status-bounce 1.2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes bek-status-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.bek-status-text.pulse { animation: bek-status-pulse 0.4s ease-out; }
+
+@keyframes bek-status-pulse {
+    0% { opacity: 0.5; transform: translateX(-2px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+.bek-status-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, #5c9ce6, transparent);
+    animation: bek-status-progress 2s ease-in-out infinite;
+}
+
+@keyframes bek-status-progress {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.bek-status-card[data-type="search"] {
+    border-left-color: #4ade80;
+    background: linear-gradient(135deg, rgba(20, 83, 45, 0.4) 0%, rgba(15, 23, 42, 0.9) 100%);
+}
+.bek-status-card[data-type="search"] .bek-status-spinner {
+    border-top-color: #4ade80;
+    border-right-color: #4ade80;
+}
+
+.bek-status-card[data-type="code"],
+.bek-status-card[data-type="write"] {
+    border-left-color: #f5a623;
+    background: linear-gradient(135deg, rgba(120, 53, 15, 0.4) 0%, rgba(15, 23, 42, 0.9) 100%);
+}
+.bek-status-card[data-type="code"] .bek-status-spinner,
+.bek-status-card[data-type="write"] .bek-status-spinner {
+    border-top-color: #f5a623;
+    border-right-color: #f5a623;
+}
+
+.bek-status-card[data-type="analyze"] {
+    border-left-color: #a78bfa;
+    background: linear-gradient(135deg, rgba(76, 29, 149, 0.4) 0%, rgba(15, 23, 42, 0.9) 100%);
+}
+.bek-status-card[data-type="analyze"] .bek-status-spinner {
+    border-top-color: #a78bfa;
+    border-right-color: #a78bfa;
+}
+
+.bek-status-card[data-type="done"] {
+    border-left-color: #4ade80;
+    background: linear-gradient(135deg, rgba(20, 83, 45, 0.3) 0%, rgba(15, 23, 42, 0.9) 100%);
+}
+.bek-status-card[data-type="done"] .bek-status-spinner {
+    display: none;
 }

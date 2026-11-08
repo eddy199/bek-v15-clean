@@ -29,7 +29,7 @@
   .nav-item svg { stroke: currentColor !important; }
   textarea#user-input { background-color: rgba(0, 0, 0, 0.4) !important; color: var(--text-main) !important; border: 1px solid var(--border-color) !important; border-radius: 24px !important; font-family: 'Ubuntu', sans-serif !important; padding: 12px 20px !important; min-height: 48px !important; font-size: 15px !important; resize: vertical !important; }
   .send-btn { background-color: var(--accent-blue) !important; border-radius: 14px !important; border: none !important; width: 40px !important; height: 40px !important; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; }
-  #modelBadge { background-color: rgba(92, 156, 230, 0.15) !important; color: var(--accent-blue) !important; padding: 4px 12px !important; border-radius: 12px !important; font-family: 'Ubuntu Mono', monospace !important; font-size: 12px !important; display: inline-block; }
+  #modelBadge { background-color: rgba(92, 156, 230, 0.15) !important; color: var(--accent-blue) !important; padding: 6px 12px !important; border-radius: 12px !important; font-family: 'Ubuntu Mono', monospace !important; font-size: 11.5px !important; display: inline-flex !important; align-items: center !important; gap: 6px !important; white-space: nowrap !important; transition: all 0.2s ease !important; }
   .matrix-widget { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; }
   .matrix-terminal { background: rgba(10, 10, 12, 0.9); color: #e0e0e0; font-family: 'Ubuntu Mono', monospace; padding: 16px; border-radius: 8px; border: 1px solid #3e3e42; font-size: 13.5px; }
   .mermaid-wrapper { background: #14181d; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 18px; margin: 18px 0; overflow-x: auto; text-align: center; }
@@ -63,7 +63,6 @@
   .reflex-stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 18px; text-align: center; }
   .reflex-stat-value { font-size: 24px; font-weight: 700; color: #f8fafc; font-family: 'Ubuntu Mono', monospace; }
   .reflex-stat-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
-  /* ★ Filtre Reflex (ancien crm-tab-btn, renommé) */
   .filter-tab-btn { padding: 8px 16px; border-radius: 6px; color: var(--text-dim); font-size: 13px; cursor: pointer; background: none; border: none; transition: 0.15s; }
   .filter-tab-btn.active { background: rgba(92, 156, 230, 0.2); color: var(--accent-blue); font-weight: bold; }
 </style>
@@ -75,15 +74,10 @@
     
     <!-- ★ ZONE LOGO / PHOTO ★ -->
     <div class="sb-brand" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 8px 20px;">
-      
-      <!-- Logo BEK agrandi (180px de large) -->
       <img src="bek-logo-v19.png" alt="BEK Hybrid v19" style="width: 180px; max-height: 85px; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
-      
-      <!-- Conteneur Photo (avec bordure en dégradé) -->
       <div style="width: 76px; height: 76px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, #00e5ff, #7c5cf7); flex-shrink: 0; box-shadow: 0 4px 12px rgba(0, 229, 255, 0.2);">
         <img src="creator.png" alt="Med BEKKARA" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #0b0d0f;" onerror="this.style.display='none'">
       </div>
-
     </div>
 
     <button class="new-chat" id="newChatBtn" style="background-color: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border-color); border-radius: 8px;">
@@ -128,7 +122,6 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
         <span>Connecteurs</span>
       </button>
-      
     </nav>
 
     <!-- ★ SIGNATURE ★ -->
@@ -151,6 +144,8 @@
           <select id="modelSelect" class="select model-select">
             <option value="glm-5.3-flash">glm-5.3-flash</option>
           </select>
+          <!-- ★ NOUVEAU : modelBadge déplacé ici, à côté des sélecteurs -->
+          <span id="modelBadge">— Initialisation</span>
         </div>
         <div class="header-right" style="position: relative;">
           <button id="brainToggleBtn" class="btn-brain" style="margin-right: 8px;">🤖 Brain OFF</button>
@@ -192,7 +187,7 @@
             </button>
           </div>
           <div class="input-hint" style="color:var(--text-dim); margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
-            <span id="modelBadge">— Initialisation</span>
+            <!-- ★ SUPPRIMÉ : modelBadge n'est plus ici -->
             <span>Support complet : Fichiers, Archives ZIP (Tmux/Hermes), Images & Audio</span>
           </div>
         </div>

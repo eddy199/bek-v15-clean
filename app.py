@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v19 HYBRID — SERVEUR PRINCIPAL FASTAPI (v19.12 — RENDER READY)
+# BEK-v19 HYBRID — SERVEUR PRINCIPAL FASTAPI (v19.15 — SSE Brain + Statuts)
 # ==============================================================================
 from __future__ import annotations
 import os as _os
 import sys as _sys
 import asyncio
 import socketio
+import json
+import re
 
 _ROUTERS_DIR = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "routers")
 if _ROUTERS_DIR not in _sys.path: _sys.path.append(_ROUTERS_DIR)
@@ -42,7 +44,7 @@ from logging.handlers import RotatingFileHandler
 
 from fastapi import FastAPI, HTTPException, Request, Body, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 
 from context_loader import load_project_documentation
 from core.logger import setup_json_logging
@@ -297,19 +299,15 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         cognitive_nerves.activate_cognitive_nerves()
         router_nerves.activate_router_nerves()
         coder_nerves.activate_coder_nerves()
-        # ★ NERF 20 — BEK-GA (Moteur Génétique)
         from nerves.ga_nerves import activate_ga_nerves
         activate_ga_nerves()
         
-        # ★ v19.1 : Initialiser les clients mémoire au boot
         try:
             from memory import get_pinecone_index, _init_pg_pool
             _ = get_pinecone_index()
             _ = _init_pg_pool()
-            # ★ AJOUT : Pré-initialisation de Hindsight
             from hindsight_memory import _get_client as _get_hindsight_client
             _ = _get_hindsight_client()
-            # ★ AJOUT : Pré-initialisation de ChromaDB (évite 1.6s de lazy load au 1er chat)
             try:
                 from memory import _get_chroma_collection
                 _ = _get_chroma_collection()
@@ -322,13 +320,11 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         project_creator_nerves.activate_project_creator_nerves()
     except Exception as _nerves_err: logger.error("❌ Activation des nerfs échouée : %s", _nerves_err)
 
-    # ★ AJOUT 2 : Connecteur REA-Agents (Reverse Engineering)
     try:
         from mcp_gateway import mcp_gateway
         from rea_agents_bridge import sync_call_rea_agents_tool
         from nerves.mcp_nerves import register_mcp_tool_into_hermes
 
-        # Outil 1 : Analyse de binaires natifs
         mcp_gateway.register_mcp_tool(
             name="rea_analyze_binary",
             description="Analyse un fichier binaire local (exe, dll, so, elf) avec REA.",
@@ -339,7 +335,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
             )
         )
 
-        # Outil 2 : Analyse JavaScript/Electron
         mcp_gateway.register_mcp_tool(
             name="rea_analyze_javascript",
             description="Analyse une application JavaScript/Electron locale avec REA. Paramètre obligatoire : input_path (chemin absolu vers le fichier ou dossier).",
@@ -357,7 +352,6 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
     except Exception as _rea_agents_err:
         logger.warning("⚠️ [REA-Agents] Connecteur indisponible : %s", _rea_agents_err)
 
-    # ★ AJOUT 3 : Connecteur Python (analyse de code source)
     try:
         from mcp_gateway import mcp_gateway
         from python_bridge import sync_call_python_tool
@@ -384,25 +378,19 @@ if not _BEK_ALREADY_BOOTSTRAPPED:
         )
 
         def _python_save_report_handler(dir_path=None, path=None, output_name=None, **kwargs):
-            """Génère le rapport ET force l'analyse par le LLM."""
             from python_bridge import sync_call_python_tool
             result = sync_call_python_tool(
                 "save_python_analysis_report",
                 {"dir_path": dir_path or path or "", "output_name": output_name or ""}
             )
-            
-            # Ajoute une instruction pour forcer l'interprétation
             try:
-                import json
                 res_data = json.loads(result)
                 if res_data.get("status") == "success":
                     md_path = res_data.get("markdown")
                     if md_path:
-                        # On ajoute une directive explicite
                         return f"{result}\n\nINSTRUCTION: Tu DOIS maintenant lire le fichier '{md_path}' avec l'outil 'read_file' et ensuite m'expliquer les problèmes de structure détectés (fichiers trop gros, classes trop longues, etc.) et proposer des solutions."
             except Exception:
                 pass
-            
             return result
         
         mcp_gateway.register_mcp_tool(
@@ -491,7 +479,7 @@ async def lifespan(app: FastAPI):
     except Exception: pass
 
 
-app = FastAPI(title="BEK Hybrid Agent v19", description="Créé par BEKKARA Mohamed — Oran, DZ", version="19.11", lifespan=lifespan)
+app = FastAPI(title="BEK Hybrid Agent v19", description="Créé par BEKKARA Mohamed — Oran, DZ", version="19.15", lifespan=lifespan)
 
 CORS_ORIGINS = os.environ.get("BEK_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,http://localhost:8765,http://127.0.0.1:8765,http://localhost:3001,http://127.0.0.1:3001,http://localhost:5173,http://127.0.0.1:5173")
 cors_origins = [origin.strip() for origin in CORS_ORIGINS.split(",") if origin.strip()]
@@ -527,20 +515,66 @@ async def audio_unduck():
 
 @app.get("/api/branding")
 async def branding():
-    return {"title": "BEK Hybrid Agent v19", "version": "19.11", "creator": "BEKKARA Mohamed", "location": "Oran, DZ", "date": "Oct 2026", "workspace": "workspacekimi"}
+    return {"title": "BEK Hybrid Agent v19", "version": "19.15", "creator": "BEKKARA Mohamed", "location": "Oran, DZ", "date": "Oct 2026", "workspace": "workspacekimi"}
 
+# ★ NOUVELLE ROUTE /api/brain/chat EN SSE
 @app.post("/api/brain/chat")
 async def brain_chat(data: dict = Body(...)):
     try:
         brain = get_brain()
         session_id = data.get("conv_id") or data.get("session_id") or "default"
+        query = data.get("query", data.get("message", ""))
+        provider = data.get("provider")
+        model = data.get("model")
+        files = data.get("files", [])
 
-        return await brain.process(
-            query=data.get("query", data.get("message", "")),
-            provider=data.get("provider"),
-            model=data.get("model"),
-            files=data.get("files", []),
-            session_id=session_id
+        async def event_generator():
+            import queue
+            status_queue: "queue.Queue[tuple[str, str]]" = queue.Queue()
+
+            def on_status(text: str, type_: str):
+                status_queue.put((text, type_))
+
+            # Lancer brain.process dans un thread (car il est bloquant pour certaines parties)
+            loop = asyncio.get_event_loop()
+            task = loop.run_in_executor(
+                None,
+                lambda: asyncio.run(brain.process(
+                    query=query,
+                    provider=provider,
+                    model=model,
+                    files=files,
+                    session_id=session_id,
+                    on_status=on_status,
+                )),
+            )
+
+            # Consommer la queue de statuts jusqu'à la fin
+            while not task.done() or not status_queue.empty():
+                try:
+                    text, type_ = status_queue.get_nowait()
+                    yield f"data: {json.dumps({'status': text, 'type': type_})}\n\n"
+                except queue.Empty:
+                    await asyncio.sleep(0.1)
+
+            try:
+                result = await task
+            except Exception as e:
+                yield f"data: {json.dumps({'chunk': f'### ⚠️ Erreur : {e}'})}\n\n"
+                yield "data: [DONE]\n\n"
+                return
+
+            response_text = result.get("response", "")
+            yield f"data: {json.dumps({'chunk': response_text})}\n\n"
+            yield "data: [DONE]\n\n"
+
+        return StreamingResponse(
+            event_generator(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no",
+            },
         )
     except Exception as exc:
         logger.error("[brain/chat] %s", exc, exc_info=True)

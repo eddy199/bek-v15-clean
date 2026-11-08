@@ -1,10 +1,7 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.55 (respect strict du modèle user + routage codex_loop auto)
-# ★ FIX v19.54 : propagation garantie du provider/model choisi par l'utilisateur
-# ★ FIX v19.55 : Routage codex_loop : si pas de plan explicite, force "auto"
+# BEK Hybrid Agent v19 — core/brain.py — v19.56 (Formatage humain universel + SSE)
 # ==============================================================================
 from __future__ import annotations
-
 import asyncio
 from functools import lru_cache
 import logging
@@ -12,7 +9,8 @@ import os
 import re
 from pathlib import Path
 import time
-from typing import Any, Dict, List, Optional, Tuple
+import json
+from typing import Any, Dict, List, Optional, Tuple, Callable
 
 logger = logging.getLogger("bek.brain")
 
@@ -164,17 +162,102 @@ def _detect_intent(query: str) -> str:
 
 def _detect_phase(query: str) -> tuple:
     q = query.lower()
-    # ★ FIX v19.55 : Si "plan" est présent, on le détecte. Sinon, si "boucle" ou "auto" est présent, on force "auto".
     if any(k in q for k in _PHASE_PLAN_KEYWORDS): return "plan", 0
     m = _STEP_NUM_RE.search(q)
     if m: return "step", max(0, int(m.group(1)) - 1)
     if any(k in q for k in _PHASE_STEP_KEYWORDS): return "step", -1
-    
-    # Si on utilise codex_loop (boucle autonome), on force "auto" (pas de plan mémoire)
     if any(k in q for k in ["codex_loop", "boucle autonome", "agent autonome"]):
         return "auto", 0
-        
     return "auto", 0
+
+# ==============================================================================
+# ★ FORMATAGE HUMAIN UNIVERSEL
+# ==============================================================================
+def _format_human_response(response: Any, context: str = "action") -> str:
+    if isinstance(response, str):
+        stripped = response.strip()
+        if stripped.startswith("{") and stripped.endswith("}"):
+            try:
+                return _format_human_response(json.loads(stripped), context)
+            except Exception:
+                pass
+        return response
+    
+    if isinstance(response, dict):
+        status = str(response.get("status", "")).lower()
+        message = str(response.get("message", ""))
+        
+        if status == "error" or "error" in status:
+            lines = [
+                "### ⚠️ J'ai rencontré un problème",
+                "",
+                f"**Ce qui s'est passé :** {message or 'Une erreur est survenue pendant l\'exécution.'}",
+                "",
+                "**Ce que je propose :**",
+                "1. Vérifie que le fichier ou le dossier existe et que tu as les permissions.",
+                "2. Si le problème persiste, essaie de reformuler ta demande plus simplement.",
+                "3. Tu peux aussi demander : *« Explique-moi l'erreur en détail »*.",
+            ]
+            return "\n".join(lines)
+        
+        if "history" in response and status == "success":
+            history = response.get("history", [])
+            lines = [
+                "### ✅ Tâche accomplie",
+                "",
+                f"**{message or 'J\'ai terminé ce que tu m\'as demandé.'}**",
+                "",
+            ]
+            if history:
+                lines.append("**Fichiers créés ou modifiés :**")
+                for item in history[:10]:
+                    try:
+                        res = json.loads(item.get("result", "{}"))
+                        path = res.get("path", "")
+                        chars = res.get("chars", 0)
+                        syntax = res.get("syntax_check", "")
+                        if path:
+                            filename = path.split("\\")[-1].split("/")[-1]
+                            badge = f" ✓" if syntax == "OK" else ""
+                            lines.append(f"- `{filename}` ({chars} caractères){badge}")
+                    except Exception:
+                        pass
+            lines.append("")
+            lines.append("**Prochaine étape :**")
+            lines.append("Tu peux tester le résultat, ou me demander d'ajouter d'autres fonctionnalités.")
+            return "\n".join(lines)
+        
+        if "results" in response or "data" in response:
+            results = response.get("results") or response.get("data") or []
+            if isinstance(results, list) and results:
+                lines = [f"### 🔍 J'ai trouvé {len(results)} résultat(s)", ""]
+                for i, r in enumerate(results[:5], 1):
+                    if isinstance(r, dict):
+                        title = r.get("title", r.get("name", "Sans titre"))
+                        url = r.get("url", r.get("link", ""))
+                        snippet = (r.get("snippet", r.get("content", "")) or "")[:150]
+                        lines.append(f"**{i}. {title}**")
+                        if url: lines.append(f"   🔗 {url}")
+                        if snippet: lines.append(f"   _{snippet}..._")
+                        lines.append("")
+                return "\n".join(lines)
+        
+        for key in ("text", "content", "response", "result", "formatted_text"):
+            if key in response and response[key]:
+                return str(response[key])
+        
+        if message:
+            return message
+        
+        return f"### 📋 Résultat\n\n```\n{json.dumps(response, indent=2, ensure_ascii=False)[:1500]}\n```"
+    
+    if isinstance(response, list):
+        lines = [f"### 📋 J'ai {len(response)} élément(s)", ""]
+        for item in response[:10]:
+            lines.append(f"- {str(item)[:200]}")
+        return "\n".join(lines)
+    
+    return f"### 📋 Réponse\n\n```\n{str(response)[:1500]}\n```"
 
 
 class SkillAgent:
@@ -187,7 +270,6 @@ class SkillAgent:
         for p in self.index_paths:
             if os.path.exists(p):
                 try:
-                    import json
                     with open(p, "r", encoding="utf-8") as f:
                         data = json.load(f)
                         all_skills.extend(data)
@@ -216,82 +298,45 @@ class SkillAgent:
         return {"skills": [m[1] for m in matched[:3]]}
 
     def get_available_tools_prompt(self, intent: str, query: str = "") -> str:
-        """Retourne le prompt complet des outils, groupés par catégorie."""
         try:
             from hermes_core import hermes
         except Exception:
             return "Liste des outils indisponible."
 
         TOOL_DESCRIPTIONS = {
-            "read_file":            ("Lire un fichier (avec start_line/end_line)", "FILE"),
-            "read_file_map":        ("Retourne la carte (classes/fonctions) d'un fichier", "FILE"),
-            "write_file":           ("Écrire/écraser un fichier complet (param: path, content)", "FILE"),
-            "append_file":          ("Ajouter du contenu à la fin d'un fichier (param: path, content)", "FILE"),
-            "edit_file":            ("Remplacer old_string par new_string (toutes occurrences)", "FILE"),
-            "create_dir":           ("Créer un dossier (param: path)", "FILE"),
-            "grep":                 ("Chercher une regex dans les fichiers (param: pattern, path)", "FILE"),
-            "glob_files":           ("Lister les fichiers par motif (param: pattern)", "FILE"),
-            "ls":                   ("Lister le contenu d'un dossier (param: path)", "FILE"),
-            "bash":                 ("Exécuter une commande autorisée (python, pytest, git...) (param: cmd)", "FILE"),
-            "search_skills":        ("Chercher dans les 329 skills (param: query)", "SKILLS"),
-            "git_clone":            ("Cloner un dépôt GitHub dans le workspace (param: url)", "FILE"),
-            "analyze_architecture": ("Analyser l'architecture d'un projet (param: dir_path)", "ANALYZE"),
-            "python_analyze_file":      ("Analyser l'AST d'un fichier .py (param: file_path)", "ANALYZE"),
-            "python_analyze_directory": ("Analyser tous les .py d'un dossier (param: dir_path)", "ANALYZE"),
-            "python_save_report":       ("Générer un rapport d'audit Markdown dans generated/ (param: dir_path, output_name)", "ANALYZE"),
-            "rea_analyze_binary":       ("Analyser un binaire .exe/.dll/.so/.elf (param: path)", "REA"),
-            "rea_analyze_javascript":   ("Analyser un dossier JS/Electron (param: path)", "REA"),
-            "web_search":           ("Recherche web avec nettoyage LVC (param: query)", "WEB"),
-            "web_search_docs":      ("Recherche documentation technique (param: query)", "WEB"),
-            "web_agent_scrape":     ("Scraper une URL (param: url)", "WEB"),
-            "web_agent_traced":     ("Pipeline web complet (search + scrape + synthèse) (param: query)", "WEB"),
-            "headless_render":      ("Rendre une page avec JS (Playwright) (param: url)", "WEB"),
-            "headless_scrape":      ("Scraper après exécution JS (param: url)", "WEB"),
-            "headless_search":      ("Recherche headless (param: query)", "WEB"),
-            "ga_get_best":          ("Récupérer le meilleur gène (prompt + config)", "GA"),
-            "ga_record_result":     ("Enregistrer un fitness (succès/échec) (param: success, score, feedback)", "GA"),
-            "ga_evolve":            ("Forcer une nouvelle génération GA", "GA"),
-            "cognitive_critique":   ("Critiquer un draft de réponse (param: draft)", "COGNITIVE"),
-            "cognitive_ground":     ("Vérifier les faits (grounding) (param: text)", "COGNITIVE"),
-            "guardian_status":      ("Statut du gardien système", "SECURITY"),
-            "guardian_audit_log":   ("Logs d'audit sécurité", "SECURITY"),
-            "router_route":         ("Router une requête vers un tier BEK-REX (param: query)", "ROUTER"),
-            "mcp_list_tools":       ("Lister tous les outils MCP disponibles", "MCP"),
-            "mcp_execute":          ("Exécuter un outil MCP par nom (param: tool_name, args)", "MCP"),
-            "generate_image":       ("Générer une image (param: prompt)", "VISION"),
-            "edit_image":           ("Éditer une image existante (param: image_paths, user_prompt)", "VISION"),
-            "generate_video":       ("Générer une vidéo (param: prompt)", "VISION"),
-            "edit_video":           ("Éditer une vidéo (param: video_paths, user_prompt)", "VISION"),
-            "extend_video":         ("Étendre une vidéo (param: prompt)", "VISION"),
-            "extend_video_multiple":("Étendre en plusieurs clips (param: prompts)", "VISION"),
-            "generate_subtitles":   ("Générer des sous-titres (Whisper) (param: video_path)", "VISION"),
-            "burn_subtitles":       ("Incruster les sous-titres dans la vidéo (param: video_path, srt_path)", "VISION"),
-            "save_memory":          ("Mémoriser une information (param: content)", "MEMORY"),
-            "hindsight_query":      ("Interroger Hindsight (réflexion) (param: query)", "MEMORY"),
-            "hindsight_recall":     ("Récupérer des souvenirs bruts (param: query)", "MEMORY"),
-            "submit_feedback":      ("Enregistrer une correction utilisateur (param: user_query, correction)", "MEMORY"),
-            "codex_agent":          ("Générer du code (1 passe) (param: task_description)", "CODEX"),
-            "codex_editor":         ("Corriger un fichier ciblé (param: task_description, target_file)", "CODEX"),
-            "codex_loop":           ("Boucle autonome multi-étapes (param: task_description, max_steps)", "CODEX"),
-            "orchestrate":          ("Orchestrer plusieurs agents (param: goal)", "ORCH"),
-            "tmux_start_task":      ("Lancer une tâche en arrière-plan (param: command)", "ORCH"),
+            "read_file": ("Lire un fichier", "FILE"), "write_file": ("Écrire un fichier", "FILE"),
+            "append_file": ("Ajouter du contenu", "FILE"), "edit_file": ("Éditer un fichier", "FILE"),
+            "create_dir": ("Créer un dossier", "FILE"), "grep": ("Chercher une regex", "FILE"),
+            "glob_files": ("Lister par motif", "FILE"), "ls": ("Lister un dossier", "FILE"),
+            "bash": ("Exécuter une commande", "FILE"), "search_skills": ("Chercher dans les skills", "SKILLS"),
+            "git_clone": ("Cloner un dépôt", "FILE"), "analyze_architecture": ("Analyser l'architecture", "ANALYZE"),
+            "python_analyze_file": ("Analyser un fichier .py", "ANALYZE"), "python_analyze_directory": ("Analyser un dossier .py", "ANALYZE"),
+            "python_save_report": ("Générer un rapport Markdown", "ANALYZE"), "rea_analyze_binary": ("Analyser un binaire", "REA"),
+            "rea_analyze_javascript": ("Analyser du JS", "REA"), "web_search": ("Recherche web", "WEB"),
+            "web_search_docs": ("Recherche docs", "WEB"), "web_agent_scrape": ("Scraper une URL", "WEB"),
+            "web_agent_traced": ("Pipeline web", "WEB"), "headless_render": ("Rendre avec JS", "WEB"),
+            "headless_scrape": ("Scraper après JS", "WEB"), "headless_search": ("Recherche headless", "WEB"),
+            "ga_get_best": ("Meilleur gène", "GA"), "ga_record_result": ("Enregistrer fitness", "GA"),
+            "ga_evolve": ("Forcer évolution", "GA"), "cognitive_critique": ("Critiquer", "COGNITIVE"),
+            "cognitive_ground": ("Vérifier faits", "COGNITIVE"), "guardian_status": ("Statut guardian", "SECURITY"),
+            "guardian_audit_log": ("Logs sécurité", "SECURITY"), "router_route": ("Router requête", "ROUTER"),
+            "mcp_list_tools": ("Lister MCP", "MCP"), "mcp_execute": ("Exécuter MCP", "MCP"),
+            "generate_image": ("Générer image", "VISION"), "edit_image": ("Éditer image", "VISION"),
+            "generate_video": ("Générer vidéo", "VISION"), "edit_video": ("Éditer vidéo", "VISION"),
+            "extend_video": ("Étendre vidéo", "VISION"), "extend_video_multiple": ("Étendre en clips", "VISION"),
+            "generate_subtitles": ("Générer sous-titres", "VISION"), "burn_subtitles": ("Incruster sous-titres", "VISION"),
+            "save_memory": ("Mémoriser", "MEMORY"), "hindsight_query": ("Interroger Hindsight", "MEMORY"),
+            "hindsight_recall": ("Récupérer souvenirs", "MEMORY"), "submit_feedback": ("Enregistrer feedback", "MEMORY"),
+            "codex_agent": ("Générer code (1 passe)", "CODEX"), "codex_editor": ("Corriger fichier", "CODEX"),
+            "codex_loop": ("Boucle multi-étapes", "CODEX"), "orchestrate": ("Orchestrer agents", "ORCH"),
+            "tmux_start_task": ("Lancer tâche background", "ORCH"),
         }
 
         CATEGORY_LABELS = {
-            "FILE":      "🗂️ FICHIERS & CODE",
-            "ANALYZE":   "🐍 ANALYSE PYTHON",
-            "REA":       "🔍 REVERSE ENGINEERING",
-            "WEB":       "🌐 WEB",
-            "SKILLS":    "📚 SKILLS",
-            "GA":        "🧬 BEK-GA (MOTEUR GÉNÉTIQUE)",
-            "COGNITIVE": "🛡️ COGNITIF / ANTI-HALLUCINATION",
-            "SECURITY":  "🔒 SÉCURITÉ",
-            "ROUTER":    "🔀 ROUTER",
-            "MCP":       "🔌 MCP GATEWAY",
-            "VISION":    "🎨 VISION / GÉNÉRATION",
-            "MEMORY":    "🧠 MÉMOIRE",
-            "CODEX":     "🤖 CODEX AGENTS",
-            "ORCH":      "🎼 ORCHESTRATION",
+            "FILE": "🗂️ FICHIERS & CODE", "ANALYZE": "🐍 ANALYSE PYTHON", "REA": "🔍 REVERSE ENGINEERING",
+            "WEB": "🌐 WEB", "SKILLS": "📚 SKILLS", "GA": "🧬 BEK-GA", "COGNITIVE": "🛡️ COGNITIF",
+            "SECURITY": "🔒 SÉCURITÉ", "ROUTER": "🔀 ROUTER", "MCP": "🔌 MCP", "VISION": "🎨 VISION",
+            "MEMORY": "🧠 MÉMOIRE", "CODEX": "🤖 CODEX", "ORCH": "🎼 ORCHESTRATION",
         }
 
         available = set(hermes.tools.keys())
@@ -306,21 +351,15 @@ class SkillAgent:
                 grouped[cat].append(f"  - `{name}` (risque:{risk}) : {desc}")
             else:
                 risk = getattr(hermes.tools[name], "risk_level", "L1")
-                grouped.setdefault("OTHER", []).append(
-                    f"  - `{name}` (risque:{risk}) : (outil branché, pas de description)"
-                )
+                grouped.setdefault("OTHER", []).append(f"  - `{name}` (risque:{risk}) : (outil branché, pas de description)")
 
-        lines = [
-            "=== ⚠️ OUTILS DISPONIBLES — TU DOIS LES UTILISER POUR AGIR ⚠️ ===",
-            "",
-            "RÈGLE ABSOLUE :",
-            "1. Si l'utilisateur demande une action (analyser, lire, écrire, chercher, générer),",
-            "   tu DOIS appeler l'outil correspondant. NE JAMAIS inventer de nom d'outil.",
-            "2. Format d'appel STRICT :",
-            '   [ACTION:nom_exact_de_l_outil]{"param1": "valeur1", "param2": "valeur2"}[/ACTION]',
-            "3. Si aucun outil ne correspond, réponds en texte naturel sans inventer.",
-            "",
-        ]
+        lines = ["=== ⚠️ OUTILS DISPONIBLES — TU DOIS LES UTILISER POUR AGIR ⚠️ ===", "",
+                 "RÈGLE ABSOLUE :",
+                 "1. Si l'utilisateur demande une action (analyser, lire, écrire, chercher, générer),",
+                 "   tu DOIS appeler l'outil correspondant. NE JAMAIS inventer de nom d'outil.",
+                 "2. Format d'appel STRICT :",
+                 '   [ACTION:nom_exact_de_l_outil]{"param1": "valeur1", "param2": "valeur2"}[/ACTION]',
+                 "3. Si aucun outil ne correspond, réponds en texte naturel sans inventer.", ""]
 
         for cat, label in CATEGORY_LABELS.items():
             tools = grouped.get(cat, [])
@@ -339,9 +378,7 @@ class SkillAgent:
         if intent == "coder":
             lines.append("- Pour écrire du code : `codex_agent` ou `codex_loop`")
             lines.append("- Pour corriger un fichier : `edit_file` ou `codex_editor`")
-        elif any(k in q_lower for k in ("analyse mon repo", "analyse mon dépôt", "analyse mon projet",
-                                          "analyse le repo", "audit mon code", "audit du repo",
-                                          "structure de mon projet")):
+        elif any(k in q_lower for k in ("analyse mon repo", "analyse mon dépôt", "analyse mon projet", "analyse le repo", "audit mon code", "audit du repo", "structure de mon projet")):
             lines.append("- Pour analyser le repo : `python_save_report` avec dir_path")
         elif intent == "web":
             lines.append("- Pour chercher sur le web : `web_search` ou `web_agent_traced`")
@@ -355,14 +392,9 @@ class SkillAgent:
 
 
 def _normalize_github_repo(owner: str, repo_raw: str) -> Tuple[str, str]:
-    """
-    Nettoie le nom de repo retourné par une regex LLM.
-    Ex: 'bek-v15-clean.' → ('eddy199', 'bek-v15-clean')
-    """
     repo_name = (repo_raw or "").strip().strip('.').strip()
     repo_name = re.sub(r'[^A-Za-z0-9._-]', '-', repo_name).strip('.-_')
-    if not repo_name:
-        repo_name = "repo"
+    if not repo_name: repo_name = "repo"
     return owner, repo_name
 
 
@@ -449,8 +481,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.55 (respect strict du modèle user + routage codex_loop auto)")
-        logger.info("[BEK Brain] Analyse : %s/%s (fallback: %s/%s)", ANALYSIS_PROVIDER, ANALYSIS_MODEL, FALLBACK_PROVIDER, FALLBACK_MODEL)
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.56 (Formatage humain universel)")
 
     async def shutdown(self):
         try:
@@ -494,11 +525,23 @@ class BEKBrain:
         except Exception as e: logger.error("[Brain] Erreur fix_self : %s", e)
         return self._wrap("⚠️ Module d'auto-réparation indisponible ou non configuré.", "fix_self", ["hermes.codex_loop"])
 
-    async def process(self, query: str, provider: Optional[str] = None, model: Optional[str] = None, files: Optional[list] = None, session_id: str = "default") -> Dict[str, Any]:
+    # ★ NOUVEAU : ajout du paramètre on_status
+    async def process(self, query: str, provider: Optional[str] = None, model: Optional[str] = None, files: Optional[list] = None, session_id: str = "default", on_status: Optional[Callable[[str, str], None]] = None) -> Dict[str, Any]:
         start_time = time.perf_counter()
         if not self._initialized: await self.boot()
 
+        # ★ NOUVEAU : callback de statut
+        def _status(text: str, type_: str = "thinking"):
+            if on_status:
+                try:
+                    on_status(text, type_)
+                except Exception:
+                    pass
+
+        _status("🤔 Réflexion en cours...", "thinking")
+
         if files and len(files) > 0:
+            _status("📂 Analyse des fichiers...", "analyze")
             res = await self._process_files(query, files, provider, model)
             elapsed = (time.perf_counter() - start_time) * 1000
             res["latency_ms"] = round(elapsed, 2)
@@ -519,6 +562,7 @@ class BEKBrain:
 
         cached_response = self._observe_economics(query, intent)
         if cached_response:
+            _status("💾 Réponse depuis le cache...", "done")
             res = self._wrap(cached_response, intent, ["bek_eco_cache"])
             res["latency_ms"] = round((time.perf_counter() - start_time) * 1000, 2)
             res["cached"] = True
@@ -532,6 +576,7 @@ class BEKBrain:
             "analyse mon code", "audit mon code", "structure de mon projet",
             "audit de mon projet", "audit du repo",
         ]):
+            _status("📊 Analyse du repo en cours...", "analyze")
             if self._hermes and "python_save_report" in self._hermes.tools:
                 logger.info("[Brain] 🎯 Demande d'analyse de repo détectée → python_save_report")
                 path_match = re.search(r'([A-Za-z]:\\[^\s"\']+|/[\w/]+)', query)
@@ -597,6 +642,7 @@ class BEKBrain:
                     [],
                 )
         elif _GITHUB_URL_RE.search(query):
+            _status("🐙 Clonage du repo GitHub...", "tool")
             github_url_match = _GITHUB_URL_RE.search(query)
             owner_raw = github_url_match.group(1)
             repo_raw = github_url_match.group(2)
@@ -700,21 +746,29 @@ class BEKBrain:
                 logger.error("[Brain] Erreur analyse GitHub : %s", e)
                 res = self._wrap(f"❌ Erreur : {e}", "analyze_repo", ["git_clone"])
         elif intent == "fix_self":
+            _status("🔧 Auto-réparation en cours...", "tool")
             res = await self._handle_fix_self()
         elif intent == "analyze_image":
+            _status("🖼️ Analyse de l'image...", "analyze")
             res = await self._process_analyze_without_attachment(query, provider, model)
         elif intent == "generate_image" and self._hermes:
+            _status("🎨 Génération de l'image...", "tool")
             refined_prompt = await self._refine_image_prompt(query)
             res = self._wrap(self._call_hermes_tool("generate_image", {"prompt": refined_prompt}), "vision_generate", ["hermes.generate_image", "prompt_refiner"])
         elif intent == "coder" and self._hermes:
+            _status("⚙️ Génération de code en cours...", "code")
             res = await asyncio.to_thread(self._handle_coder_intent, query, provider, model, session_id)
         elif intent == "web" and self._web_agent:
+            _status("🌐 Recherche web en cours...", "search")
             res = self._wrap(self._web_agent.run_pipeline(query), "web", ["web_agent"])
         elif intent == "orchestrate" and self._orchestrator:
+            _status("🎼 Orchestration des agents...", "tool")
             res = self._wrap(self._orchestrator.run(query), "orchestrate", ["bek_orchestrator"])
         elif intent == "memory":
+            _status("🧠 Recherche en mémoire...", "analyze")
             res = self._wrap(await self._handle_memory(query), "memory", ["hindsight_memory"])
         else:
+            _status("💬 Traitement de la requête...", "thinking")
             explicit = _detect_explicit_tool(query)
             if explicit and self._hermes:
                 tool_name, path = explicit
@@ -728,6 +782,7 @@ class BEKBrain:
                     available = [n for n in self._hermes.tools.keys() if n.startswith(("mcp_", "rea_", "python_"))]
                     res = self._wrap(f"❌ Outil '{tool_name}' introuvable dans Hermes.\nOutils MCP disponibles : {', '.join(available) if available else 'aucun'}", "chat", ["hermes.dispatch"])
                 else:
+                    _status(f"⚙️ Appel de l'outil {tool_name}...", "tool")
                     args = _tool_args_for(tool_name, path)
                     if not args:
                         res = self._wrap(f"⚠️ Aucun chemin détecté dans la requête pour {tool_name}. Exemple : 'Utilise {tool_name} sur F:\\dossier\\fichier.js'", "chat", [f"hermes.{tool_name}"])
@@ -741,7 +796,6 @@ class BEKBrain:
                                 md_path = None
                                 if isinstance(result, dict) and "result" in result:
                                     try:
-                                        import json
                                         raw_json = result["result"]
                                         start_idx = raw_json.find('{')
                                         end_idx = raw_json.rfind('}')
@@ -817,12 +871,11 @@ class BEKBrain:
             else:
                 official = {}
                 try:
-                    import json as _json
                     if isinstance(source, str):
                         start = source.find('{')
                         end = source.rfind('}')
                         if start != -1 and end != -1:
-                            parsed = _json.loads(source[start:end+1])
+                            parsed = json.loads(source[start:end+1])
                             if isinstance(parsed, dict):
                                 official = {
                                     "files_analyzed": parsed.get("files_analyzed", 0),
@@ -856,10 +909,8 @@ class BEKBrain:
         state = self._get_session_state(session_id)
         if phase == "step" and step_num == -1: step_num = state["step"]
 
-        # ★ FIX v19.55 : Correction du routage codex_loop
         if phase in ("plan", "step"):
             tool_to_use = "codex_loop"
-            # Si on est en mode "plan" mais qu'on n'a pas demandé explicitement un plan, on force "auto"
             forced_phase = phase
             if phase == "plan" and not any(k in q_lower for k in ["fais un plan", "mode plan", "structure du plan", "commence par un plan"]):
                 forced_phase = "auto"
@@ -871,7 +922,6 @@ class BEKBrain:
             elif forced_phase == "step":
                 if state["completed"]: return self._wrap({"status": "error", "message": "✅ Ce plan est déjà terminé. Lance un nouveau plan."}, "coder", ["hermes.codex_loop"])
                 if not state["plan"]: 
-                    # Si aucun plan en mémoire, on force "auto" pour ne pas bloquer
                     logger.warning("[Brain/Coder] ⚠️ Aucun plan en mémoire. Bascule forcée en mode 'auto'.")
                     params["phase"] = "auto"
                 else:
@@ -879,25 +929,18 @@ class BEKBrain:
         elif "codex_editor" in q_lower or "corrige" in q_lower or "modifie" in q_lower:
             tool_to_use = "codex_editor"; params = {"task_description": query, "target_file": target_file}
         else:
-            # ★ FORCE CODEX_LOOP : On utilise le mode autonome (LVC + GA + ReflexLoop) pour TOUTE création de code
             tool_to_use = "codex_loop"; params = {"task_description": query, "max_steps": 25, "phase": "auto"}
 
-        # ★ FIX v19.54 : propager EXPLICITEMENT le provider/model choisi par l'utilisateur.
         user_provider = provider
         user_model = model
         if user_model and not user_provider and "/" in user_model:
             user_provider = user_model.split("/", 1)[0]
 
-        if user_provider:
-            params["provider"] = user_provider
-        if user_model:
-            params["model"] = user_model
+        if user_provider: params["provider"] = user_provider
+        if user_model: params["model"] = user_model
 
         if user_provider or user_model:
-            logger.info(
-                "[Brain/Coder] 🎯 LLM choisi par l'utilisateur : provider=%s model=%s (outil=%s)",
-                user_provider or "auto", user_model or "auto", tool_to_use
-            )
+            logger.info("[Brain/Coder] 🎯 LLM choisi par l'utilisateur : provider=%s model=%s (outil=%s)", user_provider or "auto", user_model or "auto", tool_to_use)
         else:
             logger.info("[Brain/Coder] ⚠️ Aucun LLM fourni par l'utilisateur, codex_loop utilisera ses défauts historiques.")
 
@@ -1038,7 +1081,6 @@ class BEKBrain:
         return self._wrap(response_text, "files", bricks_used)
 
     async def _call_chat_pipeline(self, query: str, provider: Optional[str], model: Optional[str], files: Optional[list]) -> str:
-        import json
         import httpx
         try:
             is_analysis = _is_analysis_query(query)
@@ -1046,7 +1088,6 @@ class BEKBrain:
             elif is_analysis: prov = provider or ANALYSIS_PROVIDER; mdl = ANALYSIS_MODEL
             else: prov = provider or DEFAULT_CHAT_PROVIDER; mdl = DEFAULT_CHAT_MODEL
 
-            # ★ FIX v19.54 : tracer explicitement le modèle cible
             logger.info("[Brain/ChatPipeline] 🎯 LLM cible : provider=%s model=%s (choix user=%s)",
                         prov, mdl, "explicite" if model else "défaut")
 
@@ -1113,10 +1154,16 @@ class BEKBrain:
         return str(results)
 
     def _wrap(self, response: Any, intent: str, bricks: list) -> Dict[str, Any]:
-        return {"status": "ok", "intent": intent, "bricks_used": bricks, "response": response}
+        human_response = _format_human_response(response, context=intent)
+        return {
+            "status": "ok",
+            "intent": intent,
+            "bricks_used": bricks,
+            "response": human_response,
+        }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.55 (respect strict du modèle user + routage codex_loop auto)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
+        return {"app": "BEK Hybrid Agent v19.56 (Formatage humain universel)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
 
 _brain_instance: Optional[BEKBrain] = None
 

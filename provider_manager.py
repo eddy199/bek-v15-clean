@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK-v19 HYBRID — Provider Manager — v21.3 (Modèles NVIDIA actifs ajoutés)
+# BEK-v19 HYBRID — Provider Manager — v21.4 (Modèles NVIDIA 2026 complets)
 # ==============================================================================
 from __future__ import annotations
 
@@ -24,7 +24,6 @@ for _ in range(6):
 BEK_APP_TITLE = "BEK Hybrid Agent v19"
 BEK_APP_CREATOR = "BEKKARA Mohamed"
 
-# ★ On garde tous les providers tool-capable (mais fallback limité plus bas)
 _DEFAULT_TOOL_CAPABLE_PROVIDERS = (
     "groq", "nvidia", "gemini", "openrouter",
     "kimi", "ollama_cloud", "mistral", "cohere",
@@ -109,6 +108,9 @@ class ProviderManager:
     AGNES_FLASH_MIN_SECONDS: int = 4
     AGNES_FLASH_MAX_SECONDS: int = 12
 
+    # ══════════════════════════════════════════════════════════════════════════
+    # ★ v21.4 — PROVIDER_MODELS enrichi avec les 33 modèles NVIDIA 2026
+    # ══════════════════════════════════════════════════════════════════════════
     PROVIDER_MODELS: Dict[str, List[str]] = {
         "groq": [
             "openai/gpt-oss-20b",
@@ -117,18 +119,55 @@ class ProviderManager:
             "qwen/qwen3.8-27b",
         ],
         "nvidia": [
-            # ★ AJOUTS — Modèles NVIDIA confirmés ACTIFS via /v1/models
-            "nvidia/nemotron-3.5-lightning-30b-a3b",   # ⭐ PRIORITÉ 1
-            "nvidia/nemotron-3-ultra-550b-a55b",       # ⭐ PRIORITÉ 2
-            "nvidia/nemotron-3.5-bolt-e4b",            # fallback léger
-            # ANCIENS MODÈLES — CONSERVÉS
-            "nvidia/nemotron-3.5-super-vl-120b-a12b",
+            # ═══ 🥇 TIER 1 : LLM généralistes performants (chat + tools) ═══
+            "moonshotai/kimi-k3.1-pro",                        # 1
+            "mistralai/mistral-large-4",                       # 2
+            "nvidia/nemotron-3-ultra-550b-a55b",               # 20
+            "nvidia/nemotron-3.5-lightning-30b-a3b",           # 16
+            "nvidia/nemotron-3.5-bolt-e4b",                    # 4
+            "deepseek-ai/deepseek-v4.1-flash",                 # 13
+            "z-ai/glm-5-3-flash",                              # 15
+            "minimaxai/minimax-m3.1-flash",                    # 5
+            "stepfun-ai/step-5-preview",                       # 9
+            "meta/muse-glimmer-30b",                           # 17
+            "openai/gpt-oss-20b",                              # 32
+
+            # ═══ 🥈 TIER 2 : Multimodal / Vision ═══
+            "nvidia/nemotron-3.5-super-vl-120b-a12b",          # 10
+            "meta/llama-3.2-90b-vision-instruct",              # 33
+            "nvidia/nemotron-3.5-parse",                       # 3
+            "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",   # 24
+
+            # ═══ 🥉 TIER 3 : Embeddings / Rerank ═══
+            "nvidia/nemotron-3.5-embed-1b",                    # 6
+            "nvidia/nemotron-3.5-rerank-8b",                   # 7
+
+            # ═══ 🛡️ TIER 4 : Sécurité / Guardrails ═══
+            "nvidia/nemotron-3.5-content-safety",              # 23
+            "meta/llama-guard-4-12b",                          # 31
+            "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",    # 28
+
+            # ═══ 🎯 TIER 5 : Spécialisés (hors chat direct) ═══
+            "nvidia/riva-translate-4b-instruct-v2",            # 18 (traduction)
+            "nvidia/ising-calibration-1.5-31b",                # 19 (calibration)
+            "nvidia/magpie-tts-zeroshot",                      # 29 (TTS)
+            "nvidia/background-noise-removal",                 # 30 (audio)
+            "nvidia/nemotron-voicechat",                       # 26 (voice chat)
+            "nvidia/streampetr",                               # 27 (perception 3D)
+            "nvidia/3d-body-pose",                             # 12 (pose)
+            "ipd/rfd4-proteina",                               # 11 (protéine)
+            "nvidia/kumo-tabular",                             # 8  (tabulaire)
+            "nvidia/kumo-relational",                          # 14 (relationnel)
+            "nvidia/synthetic-video-detector",                 # 25 (détection vidéo)
+            "nvidia/cosmos3-nano-reasoner",                    # 21
+            "nvidia/cosmos3-nano",                             # 22
+
+            # ═══ 📦 ANCIENS MODÈLES — CONSERVÉS pour compat ═══
             "nvidia/nemotron-3-super-120b-a12b",
             "meta/llama-3.3-70b-instruct",
             "meta/llama-3.1-70b-instruct",
             "meta/llama-3.1-8b-instruct",
             "meta/llama-3.2-11b-vision-instruct",
-            "meta/llama-3.2-90b-vision-instruct",
             "nvidia/llama-3.3-nemotron-super-49b-v1",
             "nvidia/llama-3.3-nemotron-super-49b-v1.5",
             "nvidia/nemotron-nano-12b-v2-vl",
@@ -198,8 +237,8 @@ class ProviderManager:
         "local": ["qwen2.5-coder-3b", "qwen2.5-coder-7b", "phi3.5", "llama3.2-3b"],
     }
 
-    # ★ Fallback limité aux 2 providers qui répondent chez toi
-    FALLBACK_ORDER: List[str] = ["nvidia", "groq"]
+    # ★ Fallback étendu : NVIDIA + Groq + Gemini + OpenRouter + Mistral
+    FALLBACK_ORDER: List[str] = ["nvidia", "groq", "gemini", "openrouter", "mistral"]
 
     PROVIDER_KEY_MAP: Dict[str, str] = {
         "kimi": "MOONSHOT_API_KEY", "aisa": "AISA_API_KEY", "b_ai": "B_AI_API_KEY",

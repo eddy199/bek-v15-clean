@@ -15,6 +15,7 @@ import json
 import logging
 import re
 import time
+from bek_core.genes.gene_manager import gene_manager
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -729,16 +730,23 @@ def _run_plan_phase(goal: str, prov: str, mdl: str, ego_prompt: str,
     skills = _load_relevant_skills_lvc(goal, b)
     lessons = _fetch_lessons_from_memory(goal)
 
-    sys_prompt = (PLAN_SYSTEM_PROMPT
+    # ★ NOUVEAU : Récupération du Gène (Godot, Pygame, etc.)
+    engine_type = "godot" if "godot" in goal.lower() else "pygame" if "pygame" in goal.lower() else "generic"
+    best_gene_prompt = gene_manager.get_best_gene_with_rules(engine_type)
+    logger.info(f"[Codex Loop] 🧬 Gène injecté : {engine_type}")
+
+    # On combine le gène avec les prompts existants
+    sys_prompt = (best_gene_prompt 
+                  + f"\n\n{PLAN_SYSTEM_PROMPT}"
                   + (f"\n\n{ego_prompt}" if ego_prompt else "")
                   + (f"\n\n{skills}" if skills else "")
                   + lessons
                   + (f"\n\nMÉMOIRE:\n{mem}" if mem else ""))
+    
     messages = [
         {"role": "system", "content": sys_prompt},
         {"role": "user", "content": f"OBJECTIF : {goal}\n\nProduis un PLAN JSON granulaire (1 étape = 1 fichier)."},
     ]
-
     for attempt in range(1, 3):
         fallback_plan = [("groq", "openai/gpt-oss-20b")]
         raw, err = _call_llm_safe(messages, prov, mdl,
@@ -794,8 +802,13 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
         or step.get("action", "Étape " + str(step_num + 1))
     )
 
+     # ★ NOUVEAU : Récupération du Gène pour l'étape en cours
+    engine_type = "godot" if "godot" in goal.lower() else "pygame" if "pygame" in goal.lower() else "generic"
+    best_gene_prompt = gene_manager.get_best_gene_with_rules(engine_type)
+
     sys_prompt = (
-        BASE_SYSTEM_PROMPT
+        best_gene_prompt
+        + f"\n\n{BASE_SYSTEM_PROMPT}"
         + (f"\n\n{ego_prompt}" if ego_prompt else "")
         + (f"\n\n{skills}" if skills else "")
         + (f"\n\nMÉMOIRE:\n{mem}" if mem else "")
