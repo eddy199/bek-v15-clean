@@ -1,22 +1,64 @@
 # -*- coding: utf-8 -*-
 """
-BEK-GA (BEK Genetic Algorithm) - v2 - 12 gènes stratégiques
+BEK-GA (BEK Genetic Algorithm) - v3 - Persistance Supabase
 Optimisé CPU & Low-RAM (4GB RAM)
-★ FIX v2 :
-  - Recharge exec_count / success_count (préserve l'historique fitness)
-  - Population max 20 (au lieu de 6) → 12 gènes + marge d'évolution
-  - Tournoi sur 3 parents (au lieu de 2) → vraie diversité génétique
-  - Fitness normalisée 0-1 (au lieu du lissage buggé à 77)
+★ v3 (2026-11-08) :
+  - Persistance sur Supabase (table bek_ga_population + bek_ga_meta)
+  - Fallback sur fichier JSON local si Supabase indisponible
+  - Sauvegarde asynchrone non-bloquante pour ne pas ralentir le chat
 """
+from __future__ import annotations
 
 import json
 import random
 import time
 import os
 import logging
+import threading
 from typing import List, Dict, Any, Optional
 
 logger = logging.getLogger("bek.ga")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CLIENT SUPABASE (lazy init + singleton)
+# ══════════════════════════════════════════════════════════════════════════════
+_supabase_client = None
+_supabase_lock = threading.Lock()
+_supabase_disabled = False
+
+
+def _get_supabase():
+    """Retourne le client Supabase (singleton). None si indisponible."""
+    global _supabase_client, _supabase_disabled
+    if _supabase_disabled:
+        return None
+    if _supabase_client is not None:
+        return _supabase_client
+
+    with _supabase_lock:
+        if _supabase_client is not None:
+            return _supabase_client
+
+        url = os.getenv("SUPABASE_URL")
+        key = os.getenv("SUPABASE_KEY")
+        if not url or not key:
+            logger.info("[BEK-GA] Supabase non configuré (SUPABASE_URL/KEY manquants) → fallback JSON local")
+            _supabase_disabled = True
+            return None
+
+        try:
+            from supabase import create_client
+            _supabase_client = create_client(url, key)
+            logger.info("[BEK-GA] ✅ Client Supabase initialisé")
+            return _supabase_client
+        except ImportError:
+            logger.warning("[BEK-GA] Package 'supabase' non installé → fallback JSON. Fais: pip install supabase")
+            _supabase_disabled = True
+            return None
+        except Exception as exc:
+            logger.error("[BEK-GA] Échec init Supabase : %s → fallback JSON", exc)
+            _supabase_disabled = True
+            return None
 
 
 class NeuroneGene:
@@ -44,6 +86,18 @@ class NeuroneGene:
             "success_count": self.success_count,
         }
 
+    def to_supabase_row(self) -> Dict[str, Any]:
+        """Format pour l'upsert Supabase."""
+        return {
+            "gene_id": self.gene_id,
+            "prompt_template": self.prompt_template,
+            "max_tokens": self.max_tokens,
+            "temperature": self.temperature,
+            "fitness": round(self.fitness, 4),
+            "exec_count": self.exec_count,
+            "success_count": self.success_count,
+        }
+
     @classmethod
     def from_dict(cls, item: Dict[str, Any]) -> "NeuroneGene":
         g = cls(
@@ -57,11 +111,14 @@ class NeuroneGene:
         g.success_count = int(item.get("success_count", 0))
         return g
 
+    @classmethod
+    def from_supabase_row(cls, row: Dict[str, Any]) -> "NeuroneGene":
+        return cls.from_dict(row)
+
 
 class BEKGeneticEngineCPU:
-    """Moteur génétique léger adapté aux contraintes 4 Go RAM / CPU."""
+    """Moteur génétique avec persistance Supabase (fallback JSON)."""
 
-    # ★ FIX v2 : 20 gènes max (au lieu de 6) pour accueillir les 12 + mutations
     MAX_POP_SIZE = 20
     MIN_POP_SIZE = 2
 
@@ -77,28 +134,64 @@ class BEKGeneticEngineCPU:
         self._load_or_init_population()
 
     # ══════════════════════════════════════════════════════════════════════════
-    # CHARGEMENT / SAUVEGARDE
+    # CHARGEMENT
     # ══════════════════════════════════════════════════════════════════════════
     def _load_or_init_population(self):
-        """Charge la mémoire évolutive ou initialise la première génération."""
-        if os.path.exists(self.db_path):
-            try:
-                with open(self.db_path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    # ★ FIX v2 : recharge exec_count + success_count
-                    for item in data.get("population", []):
-                        self.population.append(NeuroneGene.from_dict(item))
-                    self.generation = int(data.get("generation", 1))
-                    self.best_gene_id = data.get("best_gene_id", self.best_gene_id)
-                logger.info(
-                    f"[BEK-GA] Population chargée ({len(self.population)} gènes, "
-                    f"génération {self.generation})."
-                )
-                return
-            except Exception as e:
-                logger.warning(f"[BEK-GA] Erreur chargement mémoire, réinitialisation: {e}")
+        """Charge depuis Supabase, sinon JSON, sinon population par défaut."""
+        if self._load_from_supabase():
+            return
+        if self._load_from_json():
+            self._save_to_supabase()
+            return
+        self._init_default_population()
+        self._save_population()
+        logger.info(f"[BEK-GA] Population initialisée ({len(self.population)} gènes).")
 
-        # Population de base (Génération 0) — 12 gènes
+    def _load_from_supabase(self) -> bool:
+        client = _get_supabase()
+        if client is None:
+            return False
+        try:
+            res = client.table("bek_ga_population").select("*").execute()
+            rows = res.data or []
+            if not rows:
+                logger.info("[BEK-GA] Table Supabase vide → chargement JSON ou init")
+                return False
+            self.population = [NeuroneGene.from_supabase_row(r) for r in rows]
+            meta_res = client.table("bek_ga_meta").select("*").eq("id", 1).execute()
+            if meta_res.data:
+                meta = meta_res.data[0]
+                self.generation = int(meta.get("generation", 1))
+                self.best_gene_id = meta.get("best_gene_id") or self.best_gene_id
+            logger.info(
+                f"[BEK-GA] ✅ Population chargée depuis Supabase "
+                f"({len(self.population)} gènes, génération {self.generation})."
+            )
+            return True
+        except Exception as exc:
+            logger.warning("[BEK-GA] Échec chargement Supabase : %s → fallback JSON", exc)
+            return False
+
+    def _load_from_json(self) -> bool:
+        if not os.path.exists(self.db_path):
+            return False
+        try:
+            with open(self.db_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            for item in data.get("population", []):
+                self.population.append(NeuroneGene.from_dict(item))
+            self.generation = int(data.get("generation", 1))
+            self.best_gene_id = data.get("best_gene_id", self.best_gene_id)
+            logger.info(
+                f"[BEK-GA] Population chargée depuis JSON local "
+                f"({len(self.population)} gènes, génération {self.generation})."
+            )
+            return True
+        except Exception as exc:
+            logger.warning(f"[BEK-GA] Erreur chargement JSON : {exc}")
+            return False
+
+    def _init_default_population(self):
         self.population = [
             NeuroneGene("gene_architect_v1",
                         "Tu es un architecte logiciel senior. Structure ta réponse en : "
@@ -149,51 +242,77 @@ class BEKGeneticEngineCPU:
                         "propose des améliorations concrètes via edit_file.",
                         max_tokens=384, temperature=0.2),
         ]
-        self._save_population()
-        logger.info(f"[BEK-GA] Population initialisée ({len(self.population)} gènes).")
 
+    # ══════════════════════════════════════════════════════════════════════════
+    # SAUVEGARDE
+    # ══════════════════════════════════════════════════════════════════════════
     def _save_population(self):
-        """Sauvegarde l'état des gènes sur disque."""
+        if self.population:
+            best = max(self.population, key=lambda g: g.fitness)
+            self.best_gene_id = best.gene_id
+        self._save_to_supabase()
+        self._save_to_json()
+
+    def _save_to_supabase(self) -> bool:
+        client = _get_supabase()
+        if client is None:
+            return False
         try:
-            # Met à jour le best_gene_id avant sauvegarde
-            if self.population:
-                best = max(self.population, key=lambda g: g.fitness)
-                self.best_gene_id = best.gene_id
+            rows = [g.to_supabase_row() for g in self.population]
+            if rows:
+                client.table("bek_ga_population").upsert(
+                    rows, on_conflict="gene_id"
+                ).execute()
+            client.table("bek_ga_meta").upsert(
+                {
+                    "id": 1,
+                    "generation": self.generation,
+                    "best_gene_id": self.best_gene_id,
+                },
+                on_conflict="id",
+            ).execute()
+            logger.debug(
+                f"[BEK-GA] 💾 Supabase synchronisé "
+                f"({len(rows)} gènes, génération {self.generation})."
+            )
+            return True
+        except Exception as exc:
+            logger.warning("[BEK-GA] Échec sauvegarde Supabase : %s", exc)
+            return False
+
+    def _save_to_json(self):
+        try:
             with open(self.db_path, "w", encoding="utf-8") as f:
                 json.dump({
                     "generation": self.generation,
                     "best_gene_id": self.best_gene_id,
                     "population": [g.to_dict() for g in self.population],
                 }, f, indent=2, ensure_ascii=False)
-        except Exception as e:
-            logger.error(f"[BEK-GA] Erreur sauvegarde: {e}")
+        except Exception as exc:
+            logger.error(f"[BEK-GA] Erreur sauvegarde JSON : {exc}")
+
+    def _save_population_async(self):
+        def _worker():
+            try:
+                self._save_population()
+            except Exception as exc:
+                logger.debug("[BEK-GA] Erreur sauvegarde async : %s", exc)
+        threading.Thread(target=_worker, daemon=True).start()
 
     # ══════════════════════════════════════════════════════════════════════════
     # FITNESS
     # ══════════════════════════════════════════════════════════════════════════
     def calculate_fitness(self, gene: NeuroneGene, success: bool,
                           execution_time_ms: float, tokens_used: int) -> float:
-        """
-        ★ FIX v2 : Fitness normalisée 0-1 (au lieu du lissage buggé à 77).
-        Formule :
-          - base = 1.0 si succès, 0.0 sinon
-          - pénalité temps : min(exec_s, 20) / 20 * 0.3  (max 0.3)
-          - pénalité tokens : min(tokens, 10000) / 10000 * 0.2  (max 0.2)
-          - fitness_instantanée = base - pénalités (clamp 0-1)
-          - fitness_finale = 0.7 * ancienne + 0.3 * instantanée
-        """
         gene.exec_count += 1
         if success:
             gene.success_count += 1
-
         base = 1.0 if success else 0.0
         time_penalty = min(execution_time_ms / 1000.0, 20.0) / 20.0 * 0.3
         token_penalty = min(tokens_used, 10000) / 10000.0 * 0.2
-
         instant_fitness = max(0.0, min(1.0, base - time_penalty - token_penalty))
         gene.fitness = round((gene.fitness * 0.7) + (instant_fitness * 0.3), 4)
-
-        self._save_population()
+        self._save_population_async()
         logger.debug(
             f"[BEK-GA] Fitness {gene.gene_id} : {gene.fitness:.4f} "
             f"(instantanée {instant_fitness:.4f})"
@@ -201,42 +320,24 @@ class BEKGeneticEngineCPU:
         return gene.fitness
 
     # ══════════════════════════════════════════════════════════════════════════
-    # SÉLECTION
+    # SÉLECTION & ÉVOLUTION
     # ══════════════════════════════════════════════════════════════════════════
     def select_best_gene(self) -> NeuroneGene:
-        """Sélectionne le meilleur individu (Élitisme)."""
         if not self.population:
             self._load_or_init_population()
         return max(self.population, key=lambda g: g.fitness)
 
     def _tournament_select(self, k: int = 3) -> NeuroneGene:
-        """★ FIX v2 : Tournoi sur 3 parents (au lieu de 2) pour plus de diversité."""
         candidates = random.sample(self.population, min(k, len(self.population)))
         return max(candidates, key=lambda g: g.fitness)
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # ÉVOLUTION
-    # ══════════════════════════════════════════════════════════════════════════
     def evolve(self):
-        """
-        ★ FIX v2 : Boucle de mutation/croisement avec tournoi sur 3 parents.
-        - Conserve les 3 meilleurs (élitisme renforcé)
-        - Crossover par tournoi (3 parents)
-        - Mutation contrôlée (5 patterns différents)
-        - Nouvelle génération = population_size
-        """
         if len(self.population) < 2:
             logger.warning("[BEK-GA] Population trop petite pour évoluer.")
             return
-
         sorted_pop = sorted(self.population, key=lambda g: g.fitness, reverse=True)
-
-        # Élitisme : garde les 3 meilleurs
         new_pop = sorted_pop[:3]
-
         gen_counter = int(time.time()) % 10000
-
-        # ★ FIX v2 : 5 patterns de mutation (au lieu de 3)
         mutation_patterns = [
             " Réponds sous forme d'action directe JSON.",
             " Valide chaque étape avant d'émettre le résultat.",
@@ -244,20 +345,12 @@ class BEKGeneticEngineCPU:
             " Si erreur, utilise edit_file (jamais write_file complet).",
             " Découpe les fichiers > 3000 chars en append_file successifs.",
         ]
-
         while len(new_pop) < self.pop_size:
-            # Tournoi sur 3 parents
             p1 = self._tournament_select(3)
             p2 = self._tournament_select(3)
-
-            # Crossover : choix aléatoire du parent pour le prompt
             child_prompt = p1.prompt_template if random.random() > 0.5 else p2.prompt_template
-
-            # Mutation contrôlée
             if random.random() < self.mutation_rate:
                 child_prompt += random.choice(mutation_patterns)
-
-            # Temperature interpolée + bruit
             child_temp = round(
                 min(0.7, max(0.0,
                     (p1.temperature + p2.temperature) / 2.0
@@ -265,7 +358,6 @@ class BEKGeneticEngineCPU:
                 )),
                 2
             )
-
             child = NeuroneGene(
                 gene_id=f"gene_mut_{gen_counter}_{len(new_pop)}",
                 prompt_template=child_prompt,
@@ -273,7 +365,6 @@ class BEKGeneticEngineCPU:
                 temperature=child_temp,
             )
             new_pop.append(child)
-
         self.population = new_pop
         self.generation += 1
         self._save_population()
@@ -286,7 +377,6 @@ class BEKGeneticEngineCPU:
     # UTILITAIRES
     # ══════════════════════════════════════════════════════════════════════════
     def get_population_stats(self) -> Dict[str, Any]:
-        """Retourne les stats de la population (debug/dashboard)."""
         if not self.population:
             return {"size": 0, "generation": self.generation}
         fitnesses = [g.fitness for g in self.population]
@@ -298,8 +388,8 @@ class BEKGeneticEngineCPU:
             "avg_fitness": round(sum(fitnesses) / len(fitnesses), 4),
             "worst_fitness": round(min(fitnesses), 4),
             "total_execs": sum(g.exec_count for g in self.population),
+            "supabase_connected": _get_supabase() is not None,
         }
 
     def list_genes(self) -> List[Dict[str, Any]]:
-        """Retourne tous les gènes (debug/dashboard)."""
         return [g.to_dict() for g in self.population]

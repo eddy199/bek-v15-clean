@@ -80,3 +80,4 @@ python-socketio[asyncio]>=5.10.0
 python-engineio>=4.8.0
 mcp
 duckdb
+supabase>=2.0.0
