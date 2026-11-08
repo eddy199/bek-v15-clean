@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.57 (Fix Render + Chemins dynamiques)
+# BEK Hybrid Agent v19 — core/brain.py — v19.58 (Fix Render: Appel direct Provider)
 # ==============================================================================
 from __future__ import annotations
 import asyncio
@@ -262,7 +262,7 @@ def _format_human_response(response: Any, context: str = "action") -> str:
 
 class SkillAgent:
     def __init__(self, index_paths: List[str] = None):
-        # CORRECTION RENDER : utilise le dossier courant (workspace) au lieu de F:\
+        # CORRECTION RENDER : Chemin dynamique (pas de F:\ codé en dur)
         if index_paths is None:
             base_dir = Path(__file__).resolve().parent.parent
             default_path = base_dir / "skills_index.json"
@@ -486,7 +486,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.57 (Fix Render + Chemins dynamiques)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.58 (Fix Render: Appel direct Provider)")
 
     async def shutdown(self):
         try:
@@ -1084,7 +1084,6 @@ class BEKBrain:
         return self._wrap(response_text, "files", bricks_used)
 
     async def _call_chat_pipeline(self, query: str, provider: Optional[str], model: Optional[str], files: Optional[list]) -> str:
-        import httpx
         try:
             is_analysis = _is_analysis_query(query)
             if model: prov = provider or DEFAULT_CHAT_PROVIDER; mdl = model
@@ -1100,43 +1099,35 @@ class BEKBrain:
             system_extra = f"{ga_prompt}\n\n=== OUTILS DISPONIBLES (à utiliser AVANT de générer du code) ===\n{tools_prompt}\n\nRÈGLE ABSOLUE : si l'utilisateur nomme un outil (ex: rea_analyze_javascript, mcp_rea_*), APPELLE l'outil via [ACTION:nom_outil]{{...}}[/ACTION] et NE GÉNÈRE PAS de code Python/JS à la place. Pour rea_analyze_javascript, le JSON doit contenir {{\"path\": \"<chemin absolu>\"}}."
 
             # ==================================================================
-            # ★ CORRECTION RENDER : Utilisation de l'URL interne
+            # ★ CORRECTION DÉFINITIVE RENDER : Appel direct au ProviderManager
             # ==================================================================
-            if os.environ.get("RENDER"):
-                port = os.environ.get("PORT", "10000")
-                url = f"http://127.0.0.1:{port}/api/chat"
-            else:
-                port = os.environ.get("PORT", "3001")
-                url = f"http://127.0.0.1:{port}/api/chat"
-
-            payload = {
-                "messages": [
+            pm = self._provider_manager
+            if not pm:
+                return "Erreur: ProviderManager non initialisé."
+            
+            def _sync_generate() -> str:
+                messages = [
                     {"role": "system", "content": system_extra},
-                    {"role": "user", "content": query},
-                ],
-                "provider": prov,
-                "model": mdl,
-                "use_memory": False,
-                "use_reflection": False,
-                "use_brain": False,
-                "max_tokens": 8192,
-            }
-            async with httpx.AsyncClient(timeout=REA_TIMEOUT_SEC + 300) as client:
-                async with client.stream("POST", url, json=payload, headers={"Content-Type": "application/json"}) as resp:
-                    if resp.status_code != 200: return f"[Erreur pipeline HTTP {resp.status_code}]"
-                    full_text = ""
-                    async for line in resp.aiter_lines():
-                        if not line or not line.startswith("data: "): continue
-                        data_str = line[6:].strip()
-                        if data_str in ("[DONE]", ""): break
-                        try:
-                            data = json.loads(data_str)
-                            if "chunk" in data: full_text += data["chunk"]
-                            elif "error" in data: full_text += f"\n[Erreur: {data['error']}]"
-                        except json.JSONDecodeError: continue
-                    return full_text or "Réponse vide"
-        except httpx.TimeoutException: return "⏱️ Délai dépassé."
-        except Exception as e: return f"Erreur pipeline chat : {repr(e)}"
+                    {"role": "user", "content": query}
+                ]
+                chunks = []
+                for item in pm.execute_chat_stream(
+                    messages=messages, 
+                    provider=prov, 
+                    model=mdl, 
+                    disable_internal_fallback=True, 
+                    max_tokens=8192
+                ):
+                    if "chunk" in item: 
+                        chunks.append(item["chunk"])
+                    elif "error" in item: 
+                        return f"[Erreur LLM: {item['error']}]"
+                return "".join(chunks) or "Réponse vide"
+
+            return await asyncio.to_thread(_sync_generate)
+            
+        except Exception as e: 
+            return f"Erreur pipeline chat : {repr(e)}"
 
     def _call_hermes_tool(self, tool_name: str, params: Dict) -> Any:
         try:
@@ -1175,7 +1166,7 @@ class BEKBrain:
         }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.57 (Fix Render + Chemins dynamiques)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
+        return {"app": "BEK Hybrid Agent v19.58 (Fix Render: Appel direct Provider)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
 
 _brain_instance: Optional[BEKBrain] = None
 
