@@ -1,5 +1,10 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.58 (Fix Render: Appel direct Provider)
+# BEK Hybrid Agent v19 — core/brain.py — v19.59
+# ★ v19.59 (2026-11-08) — Pipeline web : GA + Hermes + Anti-Hallucination
+#   - Injection du gène BEK-GA dans la requête web
+#   - Appel via Hermes web_sync (anti-hallu + guardian)
+#   - Fallback WebAgent direct si Hermes indisponible
+#   - Ajout de l'anti-hallucination dans _call_chat_pipeline
 # ==============================================================================
 from __future__ import annotations
 import asyncio
@@ -43,6 +48,19 @@ RETRY_BASE_SLEEP_SEC = float(os.getenv("BEK_RETRY_BASE_SLEEP_SEC", "5.0"))
 
 CIRCUIT_BREAKER_THRESHOLD = int(os.getenv("BEK_CIRCUIT_BREAKER_THRESHOLD", "2"))
 CIRCUIT_BREAKER_COOLDOWN_SEC = float(os.getenv("BEK_CIRCUIT_BREAKER_COOLDOWN_SEC", "300"))
+
+# ★ Anti-hallucination prompt (utilisé dans _call_chat_pipeline)
+_ANTI_HALLU_PROMPT = """
+## 🛡️ RÈGLES ANTI-HALLUCINATION (CRITIQUE)
+- Si tu ne sais pas, dis "Je ne sais pas".
+- N'invente JAMAIS de chiffres, dates ou URLs.
+- Base-toi UNIQUEMENT sur le contexte fourni.
+- Si tu cites un chiffre (nombre de fichiers, lignes, etc.), il DOIT
+  provenir d'un outil ou d'un contexte fourni explicitement.
+- Pour les recherches web : cite UNIQUEMENT les URLs réellement présentes
+  dans le contexte. Ne fabrique pas de sources.
+- Si tu n'as pas de source vérifiée, dis-le clairement.
+"""
 
 _PROVIDER_HEALTH: Dict[str, Dict[str, Any]] = {}
 
@@ -262,7 +280,6 @@ def _format_human_response(response: Any, context: str = "action") -> str:
 
 class SkillAgent:
     def __init__(self, index_paths: List[str] = None):
-        # CORRECTION RENDER : Chemin dynamique (pas de F:\ codé en dur)
         if index_paths is None:
             base_dir = Path(__file__).resolve().parent.parent
             default_path = base_dir / "skills_index.json"
@@ -486,7 +503,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.58 (Fix Render: Appel direct Provider)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.59 (Pipeline web : GA + Hermes + Anti-Hallu)")
 
     async def shutdown(self):
         try:
@@ -761,9 +778,60 @@ class BEKBrain:
         elif intent == "coder" and self._hermes:
             _status("⚙️ Génération de code en cours...", "code")
             res = await asyncio.to_thread(self._handle_coder_intent, query, provider, model, session_id)
-        elif intent == "web" and self._web_agent:
+
+        # ★ v19.59 — PIPELINE WEB AMÉLIORÉ (GA + Hermes + Anti-Hallu)
+        elif intent == "web":
             _status("🌐 Recherche web en cours...", "search")
-            res = self._wrap(self._web_agent.run_pipeline(query), "web", ["web_agent"])
+            
+            # 1. Injecter le gène BEK-GA dans la requête
+            try:
+                ga_prompt = self._get_ga_prompt()
+                query_with_gene = f"{query}\n\n[INSTRUCTION DE RECHERCHE — Gène BEK-GA]\n{ga_prompt}"
+            except Exception:
+                query_with_gene = query
+            
+            # 2. Essayer Hermes web_sync (bénéficie de l'anti-hallu + guardian)
+            if self._hermes and "web_sync" in self._hermes.tools:
+                try:
+                    logger.info("[Brain/Web] 🔍 web_sync via Hermes (gène BEK-GA injecté)")
+                    web_result = await asyncio.to_thread(
+                        self._call_hermes_tool,
+                        "web_sync",
+                        {"query": query_with_gene}
+                    )
+                    res = self._wrap(
+                        web_result,
+                        "web",
+                        ["web_agent", "bek_ga", "hermes", "anti_hallucination"]
+                    )
+                except Exception as e:
+                    logger.warning("[Brain/Web] Hermes web_sync échoué : %s → fallback WebAgent", e)
+                    if self._web_agent:
+                        res = self._wrap(
+                            self._web_agent.run_pipeline(query_with_gene),
+                            "web",
+                            ["web_agent", "bek_ga"]
+                        )
+                    else:
+                        res = self._wrap(
+                            "⚠️ Aucun agent web disponible.",
+                            "web",
+                            []
+                        )
+            elif self._web_agent:
+                logger.info("[Brain/Web] 🔍 web_sync via WebAgent direct (gène BEK-GA injecté)")
+                res = self._wrap(
+                    self._web_agent.run_pipeline(query_with_gene),
+                    "web",
+                    ["web_agent", "bek_ga"]
+                )
+            else:
+                res = self._wrap(
+                    "⚠️ Aucun agent web disponible. Vérifie la configuration.",
+                    "web",
+                    []
+                )
+        
         elif intent == "orchestrate" and self._orchestrator:
             _status("🎼 Orchestration des agents...", "tool")
             res = self._wrap(self._orchestrator.run(query), "orchestrate", ["bek_orchestrator"])
@@ -793,48 +861,7 @@ class BEKBrain:
                         logger.info("[Brain] 🎯 Appel DIRECT outil MCP : %s args=%s", tool_name, args)
                         try:
                             result = await asyncio.to_thread(self._call_hermes_tool, tool_name, args)
-                            result_str = str(result)
-                            if "INSTRUCTION:" in result_str or "INSTRUCTION :" in result_str:
-                                logger.info("[Brain] 🔁 Boucle d'outils : lecture du rapport généré...")
-                                md_path = None
-                                if isinstance(result, dict) and "result" in result:
-                                    try:
-                                        raw_json = result["result"]
-                                        start_idx = raw_json.find('{')
-                                        end_idx = raw_json.rfind('}')
-                                        if start_idx != -1 and end_idx != -1:
-                                            inner_data = json.loads(raw_json[start_idx:end_idx+1])
-                                            md_path = inner_data.get("markdown")
-                                    except Exception: pass
-                                if not md_path:
-                                    md_match = re.search(r'([A-Za-z]:\\[^"\']+?\.md)', result_str)
-                                    if md_match: md_path = md_match.group(1)
-                                if md_path:
-                                    md_path = md_path.replace("\\\\", "\\")
-                                    logger.info("[Brain] 📄 Lecture automatique de : %s", md_path)
-                                    if os.path.exists(md_path):
-                                        try:
-                                            def _read_sync():
-                                                with open(md_path, "r", encoding="utf-8") as f: return f.read()
-                                            content = await asyncio.to_thread(_read_sync)
-                                            logger.info("[BEK-LVC] ⏳ Pause de 3s pour réguler la consommation de tokens...")
-                                            await asyncio.sleep(3.0)
-                                            synthesis_prompt = f"""
-                                            Tu es BEK, un architecte logiciel senior.
-                                            === RAPPORT BRUT ===
-                                            {content}
-                                            === DEMANDE INITIALE ===
-                                            {query}
-                                            === CONSIGNES ===
-                                            Propose des solutions robustes.
-                                            """
-                                            synthesis = await self._call_with_fallback(synthesis_prompt, provider or DEFAULT_CHAT_PROVIDER, model or DEFAULT_CHAT_MODEL)
-                                            result = f"=== RAPPORT BRUT ===\n{content}\n\n=== SYNTHÈSE ===\n{synthesis}"
-                                        except Exception as e:
-                                            result = f"{result_str}\n\n⚠️ Impossible d'analyser le fichier : {e}"
-                                    else:
-                                        result = f"{result_str}\n\n⚠️ Le fichier {md_path} n'existe pas."
-                            res = self._wrap(result, "chat", [f"hermes.{tool_name}", "cognitive_synthesis"])
+                            res = self._wrap(result, "chat", [f"hermes.{tool_name}"])
                         except Exception as e:
                             logger.error("[Brain] Erreur appel direct %s : %s", tool_name, e, exc_info=True)
                             res = self._wrap({"status": "error", "message": f"{type(e).__name__}: {e}"}, "chat", [f"hermes.{tool_name}"])
@@ -1096,11 +1123,16 @@ class BEKBrain:
             tools_prompt = self.skill_agent.get_available_tools_prompt(_detect_intent(query), query=query)
             ga_prompt = self._get_ga_prompt()
 
-            system_extra = f"{ga_prompt}\n\n=== OUTILS DISPONIBLES (à utiliser AVANT de générer du code) ===\n{tools_prompt}\n\nRÈGLE ABSOLUE : si l'utilisateur nomme un outil (ex: rea_analyze_javascript, mcp_rea_*), APPELLE l'outil via [ACTION:nom_outil]{{...}}[/ACTION] et NE GÉNÈRE PAS de code Python/JS à la place. Pour rea_analyze_javascript, le JSON doit contenir {{\"path\": \"<chemin absolu>\"}}."
+            # ★ v19.59 : Ajout anti-hallucination
+            system_extra = (
+                f"{ga_prompt}\n\n"
+                f"{_ANTI_HALLU_PROMPT}\n\n"
+                f"=== OUTILS DISPONIBLES (à utiliser AVANT de générer du code) ===\n{tools_prompt}\n\n"
+                f"RÈGLE ABSOLUE : si l'utilisateur nomme un outil "
+                f"(ex: rea_analyze_javascript, mcp_rea_*), APPELLE l'outil via "
+                f"[ACTION:nom_outil]{{...}}[/ACTION] et NE GÉNÈRE PAS de code Python/JS à la place."
+            )
 
-            # ==================================================================
-            # ★ CORRECTION DÉFINITIVE RENDER : Appel direct au ProviderManager
-            # ==================================================================
             pm = self._provider_manager
             if not pm:
                 return "Erreur: ProviderManager non initialisé."
@@ -1166,7 +1198,7 @@ class BEKBrain:
         }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.58 (Fix Render: Appel direct Provider)", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
+        return {"app": "BEK Hybrid Agent v19.59", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "nerfs": self._nerfs_status, "initialized": self._initialized, "active_sessions": len(self._session_states)}
 
 _brain_instance: Optional[BEKBrain] = None
 

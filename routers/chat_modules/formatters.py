@@ -2,13 +2,10 @@
 # ==============================================================================
 # BEK-v18 — Chat Module : Formatters
 # ------------------------------------------------------------------------------
-# 🏛️ Rôle : Formatage des résultats d'action pour le LLM
-# 📄 Doc : docs/BEK_LVC.md
-# ------------------------------------------------------------------------------
-# Auteur : BEK Project
-# Version : 1.4
-# Date : 2026-11-08
-# ------------------------------------------------------------------------------
+# ★ v1.5 — FIX pipeline web : séparation stricte "données brutes" / "analyse"
+#   - _format_web_sync sépare explicitement les deux sections
+#   - Ajout d'une instruction de formatage claire pour le LLM
+#   - Meilleure détection des sources structurées
 # ★ v1.4 — FIX web_sync : nettoyage + formatage Markdown propre des sources
 # ★ v1.3 — Log amélioré : affiche TOUTES les clés disponibles si rien trouvé
 # ★ v1.2 — Compteur de sources + avertissement si < 3 sources
@@ -31,7 +28,6 @@ logger = logging.getLogger("BEKApp")
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _is_poor_result(exec_res: Optional[dict], act_name: str) -> bool:
-    """Détecte si un résultat est "pauvre" (nécessite un fallback)."""
     if not isinstance(exec_res, dict):
         return True
     if exec_res.get("status") != "success":
@@ -65,14 +61,12 @@ _WEB_SYNC_CONTENT_KEYS = (
 
 
 def _extract_web_sync_content(exec_res: dict) -> str:
-    """Extrait le contenu exploitable d'un résultat web_sync."""
     if not isinstance(exec_res, dict):
         return ""
 
     best_content = ""
     best_key = ""
 
-    # 1. Chercher dans les clés connues
     for key in _WEB_SYNC_CONTENT_KEYS:
         val = exec_res.get(key)
         if val is None:
@@ -82,12 +76,10 @@ def _extract_web_sync_content(exec_res: dict) -> str:
             best_content = val_str
             best_key = key
 
-    # 2. Fallback : chercher dans TOUTES les valeurs
     if not best_content or len(best_content) < 100:
         for key, val in exec_res.items():
             if val is None:
                 continue
-            # Ignorer les clés de métadonnées
             if key in ("status", "error", "error_type", "duration_ms", "elapsed"):
                 continue
             val_str = str(val).strip()
@@ -102,10 +94,8 @@ def _extract_web_sync_content(exec_res: dict) -> str:
         )
     else:
         logger.warning(
-            "[Formatter web_sync] Aucun contenu trouvé. "
-            "Clés disponibles : %s | Types : %s",
+            "[Formatter web_sync] Aucun contenu trouvé. Clés : %s",
             list(exec_res.keys()),
-            {k: type(v).__name__ for k, v in exec_res.items()},
         )
 
     return best_content
@@ -115,29 +105,24 @@ def _extract_web_sync_content(exec_res: dict) -> str:
 # ANALYSE DES SOURCES
 # ══════════════════════════════════════════════════════════════════════════════
 
-# Regex pour détecter les URLs dans le rapport web_sync
 _URL_REGEX = re.compile(r"<(https?://[^\s>]+)>", re.IGNORECASE)
 _URL_RAW_REGEX = re.compile(r"https?://[^\s\)\]\>]+", re.IGNORECASE)
 
-# Mots-clés de fraîcheur
 _FRESHNESS_KEYWORDS = (
     "aujourd'hui", "aujourd", "récent", "récente",
     "2026", "2025", "ce matin", "cette semaine",
     "il y a", "dernière", "dernier", "actuel",
 )
 
-# Seuil minimum de sources recommandé
 _MIN_SOURCES_RECOMMENDED = 3
 
 
 def _extract_sources_from_report(report_str: str) -> List[Tuple[str, str]]:
-    """Extrait les URLs et leurs descriptions depuis le rapport web_sync."""
     if not report_str:
         return []
 
     sources: List[Tuple[str, str]] = []
 
-    # Chercher les URLs au format <https://...>
     for match in _URL_REGEX.finditer(report_str):
         url = match.group(1).strip()
         start = max(0, match.start() - 100)
@@ -145,7 +130,6 @@ def _extract_sources_from_report(report_str: str) -> List[Tuple[str, str]]:
         context = report_str[start:end].replace("\n", " ").strip()
         sources.append((url, context))
 
-    # Fallback : chercher les URLs brutes
     if not sources:
         for match in _URL_RAW_REGEX.finditer(report_str):
             url = match.group(0).strip()
@@ -154,7 +138,6 @@ def _extract_sources_from_report(report_str: str) -> List[Tuple[str, str]]:
             context = report_str[start:end].replace("\n", " ").strip()
             sources.append((url, context))
 
-    # Dédupliquer par URL
     seen = set()
     unique_sources = []
     for url, desc in sources:
@@ -166,7 +149,6 @@ def _extract_sources_from_report(report_str: str) -> List[Tuple[str, str]]:
 
 
 def _has_freshness_indicators(text: str) -> bool:
-    """Détecte si le texte contient des indicateurs de fraîcheur."""
     if not text:
         return False
     text_lower = text.lower()
@@ -174,7 +156,6 @@ def _has_freshness_indicators(text: str) -> bool:
 
 
 def _build_sources_warning(nb_sources: int, has_freshness: bool) -> str:
-    """Construit un avertissement si le nombre de sources est faible."""
     if nb_sources >= _MIN_SOURCES_RECOMMENDED:
         return ""
 
@@ -195,7 +176,6 @@ def _build_sources_warning(nb_sources: int, has_freshness: bool) -> str:
 
 
 def _build_sources_header(nb_sources: int, has_freshness: bool) -> str:
-    """Construit l'en-tête avec le compteur de sources."""
     freshness_icon = "🟢" if has_freshness else "🟡"
     return (
         f"🌐 **Veille web approfondie** "
@@ -205,18 +185,13 @@ def _build_sources_header(nb_sources: int, has_freshness: bool) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.4 — NETTOYAGE DU BRUIT HTML
+# NETTOYAGE DU BRUIT HTML
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _clean_snippet(text: str) -> str:
-    """
-    ★ v1.4 — Nettoie le bruit HTML/navigation des snippets web.
-    Enlève : [Skip to content], [Reload], liens Markdown, URLs brutes.
-    """
     if not text:
         return ""
 
-    # 1. Enlever le bruit de navigation GitHub/Reddit
     noise_patterns = [
         r"\[?Skip to content\]?\([^)]*\)",
         r"You signed in with another tab or window\.?",
@@ -236,16 +211,9 @@ def _clean_snippet(text: str) -> str:
     for pat in noise_patterns:
         text = re.sub(pat, "", text, flags=re.IGNORECASE)
 
-    # 2. Nettoyer les liens Markdown [text](url) → garder juste text
     text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
-
-    # 3. Nettoyer les URLs brutes (sauf si c'est une source explicite)
     text = re.sub(r"https?://\S+", "", text)
-
-    # 4. Enlever les caractères de contrôle
     text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", text)
-
-    # 5. Normaliser les espaces
     text = re.sub(r"[ \t]+", " ", text)
     text = re.sub(r"\n{3,}", "\n\n", text)
     text = text.strip()
@@ -258,7 +226,6 @@ def _clean_snippet(text: str) -> str:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _format_execution_result(act_name: str, exec_res: dict) -> str:
-    """Formate le résultat d'une action pour injection dans le prompt."""
     if not isinstance(exec_res, dict):
         return str(exec_res)
 
@@ -339,28 +306,18 @@ def _format_video(exec_res: dict, act_name: str, fn: str) -> str:
 
     if is_extension:
         info_lines = [f"🎬 **Vidéo étendue !**" + (f" (+{extended_by}s)" if extended_by else "")]
-        if mode_used:
-            info_lines.append(f"- Mode continuité : `{mode_used}`")
-        if source_video:
-            info_lines.append(f"- Source : `{source_video}`")
-        if with_audio:
-            info_lines.append(f"- Audio : ✅")
-        if duration:
-            info_lines.append(f"- Durée totale : **{duration}s**")
-        if clips and len(clips) > 1:
-            info_lines.append(f"- Multi : `{len(clips)}` clips")
+        if mode_used: info_lines.append(f"- Mode continuité : `{mode_used}`")
+        if source_video: info_lines.append(f"- Source : `{source_video}`")
+        if with_audio: info_lines.append(f"- Audio : ✅")
+        if duration: info_lines.append(f"- Durée totale : **{duration}s**")
+        if clips and len(clips) > 1: info_lines.append(f"- Multi : `{len(clips)}` clips")
     else:
         info_lines = [f"🎬 **Vidéo générée !**"]
-        if duration:
-            info_lines.append(f"- Durée : **{duration}s**")
-        if provider:
-            info_lines.append(f"- Provider : `{provider}`")
-        if model:
-            info_lines.append(f"- Modèle : `{model}`")
-        if with_audio:
-            info_lines.append(f"- Audio : ✅")
-        if stitched and clips:
-            info_lines.append(f"- Multi-clips : `{clips}`")
+        if duration: info_lines.append(f"- Durée : **{duration}s**")
+        if provider: info_lines.append(f"- Provider : `{provider}`")
+        if model: info_lines.append(f"- Modèle : `{model}`")
+        if with_audio: info_lines.append(f"- Audio : ✅")
+        if stitched and clips: info_lines.append(f"- Multi-clips : `{clips}`")
 
     info = "\n".join(info_lines)
     video_player = (
@@ -440,15 +397,14 @@ def _format_headless_search(exec_res: dict) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v1.4 — FORMAT WEB_SYNC PROPRE
+# ★ v1.5 — FORMAT WEB_SYNC PROPRE + SÉPARATION BRUTE/ANALYSE
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _format_web_sync(exec_res: dict) -> str:
     """
-    ★ v1.4 — Formate proprement le résultat de web_sync.
-    - Extrait les sources structurées
-    - Nettoie le bruit HTML
-    - Formate en liste Markdown propre
+    ★ v1.5 — Formate web_sync avec séparation stricte :
+    1. Sources brutes (données extraites)
+    2. Instruction pour le LLM (analyse)
     """
     if not isinstance(exec_res, dict):
         return f"Résultat brut : {exec_res}"
@@ -469,56 +425,68 @@ def _format_web_sync(exec_res: dict) -> str:
             "→ Aucune source n'a été trouvée. Reformule ta demande."
         )
 
-    # 2. Nettoyer le contenu brut
+    # 2. Extraire les sources structurées (URLs)
+    sources = _extract_sources_from_report(report_str)
+    nb_sources = len(sources)
+    has_freshness = _has_freshness_indicators(report_str)
+
+    # 3. Nettoyer le contenu brut
     cleaned = _clean_snippet(report_str)
 
-    if not cleaned or len(cleaned) < 50:
-        return (
-            "⚠️ **Veille web : contenu illisible**\n\n"
-            "→ Le pipeline n'a pas pu extraire un contenu exploitable.\n"
-            "→ Reformule ta demande."
-        )
-
-    # 3. Formater en Markdown propre
-    return _format_sources_as_markdown(cleaned)
-
-
-def _format_sources_as_markdown(text: str) -> str:
-    """
-    ★ v1.4 — Formate un texte nettoyé en Markdown structuré.
-    - Détecte les patterns "Source N" ou "Titre :"
-    - Crée des sections propres
-    """
+    # 4. Construire les sections séparées
     lines = []
 
-    # Chercher les sections "Source N" ou "Titre :"
-    source_pattern = re.compile(
-        r"(?:\[?Source\s+\d+\]?|Titre\s*:)\s*([^\n]+)",
-        re.IGNORECASE,
-    )
-
-    sources_found = source_pattern.findall(text)
-
-    if sources_found and len(sources_found) >= 1:
-        lines.append("## 🌐 Sources trouvées\n")
-        for i, src in enumerate(sources_found[:10], 1):
-            src = src.strip()
-            # Tronquer si trop long
-            if len(src) > 200:
-                src = src[:200].rsplit(" ", 1)[0] + "…"
-            lines.append(f"### {i}. {src}\n")
+    # ─── Section 1 : Sources brutes ───
+    lines.append("## 📊 Données brutes extraites\n")
+    if sources:
+        lines.append(f"**{nb_sources} source(s) trouvée(s)** :\n")
+        for i, (url, _ctx) in enumerate(sources[:10], 1):
+            lines.append(f"{i}. {url}")
+        lines.append("")
     else:
-        # Fallback : juste formater le texte en paragraphes
-        lines.append("## 🌐 Résultat de la veille web\n")
+        lines.append("_Aucune URL structurée détectée dans le rapport._\n")
 
-        # Découper en paragraphes de max 500 chars
-        paragraphs = text.split("\n\n")
-        for para in paragraphs[:15]:
+    # ─── Section 2 : Contenu nettoyé ───
+    if cleaned and len(cleaned) > 50:
+        lines.append("## 📄 Contenu extrait\n")
+        # Découper en paragraphes de max 400 chars
+        paragraphs = cleaned.split("\n\n")
+        for para in paragraphs[:10]:
             para = para.strip()
             if len(para) > 20:
-                if len(para) > 500:
-                    para = para[:500].rsplit(" ", 1)[0] + "…"
+                if len(para) > 400:
+                    para = para[:400].rsplit(" ", 1)[0] + "…"
                 lines.append(para + "\n")
+
+    # ─── Section 3 : Instruction LLM ───
+    lines.append("\n---\n")
+    lines.append("## 🎯 INSTRUCTION POUR LE LLM (à NE PAS afficher tel quel)\n")
+    lines.append(
+        "Structure ta réponse finale OBLIGATOIREMENT en 3 sections distinctes :\n"
+    )
+    lines.append(
+        "### 1. 📊 Données brutes\n"
+        "Reprends les faits, chiffres et URLs extraits ci-dessus sous forme de tableau "
+        "ou liste à puces. N'invente RIEN.\n"
+    )
+    lines.append(
+        "### 2. 💡 Analyse\n"
+        "Interprète les données, identifie les points clés, mets en perspective. "
+        "Base-toi UNIQUEMENT sur les sources ci-dessus.\n"
+    )
+    lines.append(
+        "### 3. 📚 Sources\n"
+        "Liste les URLs réellement citées dans ta réponse, au format Markdown "
+        "`[Titre](URL)`. N'invente AUCUNE URL.\n"
+    )
+
+    lines.append("")
+    lines.append(
+        f"⚠️ **Rappel anti-hallucination** : "
+        f"Tu as {nb_sources} source(s) vérifiée(s) au-dessus. "
+        f"Si tu ne trouves pas l'info dedans, dis-le clairement. "
+        f"N'invente ni URL, ni chiffre, ni date."
+    )
 
     return "\n".join(lines)
 
@@ -529,7 +497,7 @@ def _format_sources_as_markdown(text: str) -> str:
 
 def get_formatters_summary() -> dict:
     return {
-        "version": "1.4",
+        "version": "1.5",
         "functions": [
             "_is_poor_result",
             "_extract_web_sync_content",
