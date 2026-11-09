@@ -1,9 +1,9 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.61
-# ★ v19.61 (2026-11-09) — FIX pipeline web + questions méta + JSON
-#   - FIX 1 : Ne PLUS injecter le gène GA dans la requête web_sync
-#   - FIX 2 : Détecter les questions méta ("est-ce que X est puissant ?")
-#   - FIX 3 : _format_human_response gère les fallbacks
+# BEK Hybrid Agent v19 — core/brain.py — v19.62
+# ★ v19.62 (2026-11-09) — FIX pipeline web + image (UNIQUEMENT 2 branches)
+#   - Branche web : 2ème passe LLM pour synthèse finale propre
+#   - Branche image : même chemin que Brain OFF (pollinations/pepiine)
+#   - TOUT LE RESTE EST IDENTIQUE À LA v19.61
 # ==============================================================================
 from __future__ import annotations
 import asyncio
@@ -177,7 +177,6 @@ def _detect_intent(query: str) -> str:
     if any(k in q for k in ["cherche", "recherche", "news", "actualité", "scrape"]) or "web" in q.split(): return "web"
     if any(k in q for k in ["mémoire", "souviens", "rappelle", "recall"]): return "memory"
 
-    # ★ FIX 2 : Détecter les questions méta sur un projet
     meta_keywords = ("puissant", "efficace", "performant", "bon", "mauvais", "utile", "fiable", "sérieux")
     project_keywords = ("projet", "repo", "dépôt", "agent", "hermes", "bek", "système", "framework", "outil")
     has_meta = any(k in q for k in meta_keywords)
@@ -488,7 +487,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.61 (FIX web + méta + JSON)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.62 (FIX web + image)")
 
     async def shutdown(self):
         try:
@@ -568,13 +567,11 @@ class BEKBrain:
         res = {}
 
         # ============================================================
-        # ★ v19.61 — PIPELINE WEB : requête PURE (sans gène GA)
+        # ★ v19.62 — PIPELINE WEB : 2ème passe LLM pour synthèse propre
         # ============================================================
         if intent == "web":
             _status("🌐 Recherche web en cours...", "search")
             
-            # ★ FIX 1 : NE PAS injecter le gène GA dans la requête
-            # La requête utilisateur est déjà propre
             query_for_web = query
             
             if self._hermes and "web_sync" in self._hermes.tools:
@@ -587,14 +584,46 @@ class BEKBrain:
                     )
                     
                     if _format_web_sync_fn and isinstance(web_result, dict):
-                        formatted = _format_web_sync_fn(web_result)
-                        logger.info("[Brain/Web] ✅ Résultat formaté par _format_web_sync (%d chars)", len(formatted))
-                        res = {
-                            "status": "ok",
-                            "intent": "web",
-                            "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters"],
-                            "response": formatted,
-                        }
+                        formatted_raw = _format_web_sync_fn(web_result)
+                        logger.info("[Brain/Web] 📋 Contenu brut formaté (%d chars) → 2ème passe LLM", len(formatted_raw))
+                        
+                        # ★ 2ème passe LLM pour synthèse finale propre
+                        _status("🧠 Synthèse de la recherche...", "thinking")
+                        synthesis_prompt = (
+                            f"Voici les données brutes extraites du web sur la requête : \"{query_for_web}\"\n\n"
+                            f"=== DONNÉES BRUTES ===\n{formatted_raw}\n\n"
+                            f"=== TA MISSION ===\n"
+                            f"Structure ta réponse finale en 3 sections distinctes :\n\n"
+                            f"### 1. 📊 Données brutes\n"
+                            f"Présente les faits et URLs sous forme de tableau Markdown ou liste à puces. "
+                            f"N'invente RIEN. Cite UNIQUEMENT les URLs présentes dans les données brutes.\n\n"
+                            f"### 2. 💡 Analyse\n"
+                            f"Interprète les données, identifie les points clés, mets en perspective. "
+                            f"Base-toi UNIQUEMENT sur les sources ci-dessus.\n\n"
+                            f"### 3. 📚 Sources\n"
+                            f"Liste les URLs réellement citées, au format `[Titre](URL)`. N'invente AUCUNE URL.\n\n"
+                            f"⚠️ N'affiche JAMAIS les instructions internes, le texte \"INSTRUCTION POUR LE LLM\", "
+                            f"ou les notes anti-hallucination. Réponds directement à l'utilisateur."
+                        )
+                        try:
+                            final_synthesis = await self._call_chat_pipeline(
+                                synthesis_prompt, provider, model, None
+                            )
+                            logger.info("[Brain/Web] ✅ Synthèse finale générée (%d chars)", len(final_synthesis))
+                            res = {
+                                "status": "ok",
+                                "intent": "web",
+                                "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters", "llm_synthesis"],
+                                "response": final_synthesis,
+                            }
+                        except Exception as _synth_err:
+                            logger.warning("[Brain/Web] Synthèse LLM échouée : %s → fallback texte brut", _synth_err)
+                            res = {
+                                "status": "ok",
+                                "intent": "web",
+                                "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters"],
+                                "response": formatted_raw,
+                            }
                     else:
                         res = self._wrap(web_result, "web", ["web_agent", "hermes"])
                 except Exception as e:
@@ -623,9 +652,21 @@ class BEKBrain:
             _status("🔧 Auto-réparation...", "tool")
             res = await self._handle_fix_self()
         elif intent == "generate_image" and self._hermes:
+            # ★ v19.62 : MÊME chemin que Brain OFF (streaming/core.py)
+            # Appel direct à act._execute_action_unified avec pollinations
             _status("🎨 Génération de l'image...", "tool")
             refined_prompt = await self._refine_image_prompt(query)
-            res = self._wrap(self._call_hermes_tool("generate_image", {"prompt": refined_prompt}), "vision_generate", ["hermes.generate_image"])
+            try:
+                from routers.chat_modules import actions as act
+                _img_res = await asyncio.to_thread(
+                    act._execute_action_unified,
+                    "generate_image",
+                    {"prompt": refined_prompt, "provider": "pollinations", "model": "flux"}
+                )
+                res = self._wrap(_img_res, "vision_generate", ["generate_image", "pollinations", "pepiine"])
+            except Exception as _img_err:
+                logger.error("[Brain/Image] Erreur : %s", _img_err)
+                res = self._wrap(f"⚠️ Erreur génération image : {_img_err}", "vision_generate", ["generate_image"])
         elif intent == "coder" and self._hermes:
             _status("⚙️ Génération de code...", "code")
             res = await asyncio.to_thread(self._handle_coder_intent, query, provider, model, session_id)
@@ -758,7 +799,7 @@ class BEKBrain:
         }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.61", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
+        return {"app": "BEK Hybrid Agent v19.62", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
 
 _brain_instance: Optional[BEKBrain] = None
 
