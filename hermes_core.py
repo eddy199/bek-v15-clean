@@ -228,7 +228,6 @@ class HermesCore:
         GA_AWARE_TOOLS = {
             "codex_agent", "codex_loop", "codex_editor",
             "web_sync", "web_search", "web_search_docs",
-            "generate_image", "generate_video",
         }
         if tool_name not in GA_AWARE_TOOLS:
             return args
