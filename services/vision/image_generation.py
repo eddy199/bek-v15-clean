@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v19 — Image Generation (v6.3 — Lazy Import Prompt Optimizer)
+# BEK-v19 — Image Generation (v6.4 — Fallback Placeholder)
+# ------------------------------------------------------------------------------
+# ★ v6.4 (2026-11-09) — FIX : Fallback placeholder si tous les providers échouent
+#   - Si pollinations + huggingface + gemini échouent → génère une image locale
+#   - Utilise Pillow pour créer une image avec le prompt écrit dessus
+# ★ v6.3 — Lazy Import Prompt Optimizer
 # ==============================================================================
 from __future__ import annotations
 
@@ -172,6 +177,75 @@ def _try_beatapi(prompt: str, save_path: str, output_filename: str, **kwargs) ->
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# ★ v6.4 — FALLBACK PLACEHOLDER (si tous les providers échouent)
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _generate_placeholder_image(prompt: str, output_filename: str = "") -> Dict[str, Any]:
+    """
+    ★ v6.4 — Génère une image placeholder locale si tous les providers sont HS.
+    Utilise Pillow pour créer une image 1024x1024 avec le prompt écrit dessus.
+    """
+    try:
+        from PIL import Image, ImageDraw
+        
+        if not output_filename:
+            output_filename = f"placeholder_{uuid.uuid4().hex[:8]}.png"
+        
+        save_path = os.path.abspath(os.path.join(GENERATED_DIR, secure_filename(output_filename)))
+        
+        # Créer l'image 1024x1024 avec fond gris foncé
+        img = Image.new("RGB", (1024, 1024), color=(30, 30, 40))
+        draw = ImageDraw.Draw(img)
+        
+        # Titre
+        draw.text((50, 200), "🖼️ IMAGE PLACEHOLDER", fill=(100, 200, 255))
+        
+        # Prompt en plusieurs lignes (max 60 chars par ligne)
+        prompt_clean = _clean_prompt_for_image(prompt)
+        lines = []
+        current = ""
+        for word in prompt_clean.split():
+            if len(current) + len(word) + 1 > 60:
+                lines.append(current)
+                current = word
+            else:
+                current = (current + " " + word).strip()
+        if current:
+            lines.append(current)
+        
+        # Écrire le prompt
+        y = 300
+        for line in lines[:15]:
+            draw.text((50, y), f"Prompt : {line}" if y == 300 else line, fill=(220, 220, 220))
+            y += 30
+        
+        # Note explicative
+        draw.text((50, 900), "⚠️ Tous les providers d'image sont indisponibles.", fill=(255, 180, 100))
+        draw.text((50, 930), "Cette image est un placeholder généré localement.", fill=(180, 180, 180))
+        
+        # Sauvegarder
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        img.save(save_path, "PNG")
+        
+        logger.info("[Vision/Fallback] ✅ Placeholder généré : %s", output_filename)
+        return {
+            "status": "success",
+            "filename": output_filename,
+            "filepath": save_path,
+            "provider": "placeholder",
+            "model_id": "pillow-fallback",
+            "message": "Image placeholder générée (providers indisponibles). Configure un provider pour de vraies images.",
+        }
+    except Exception as e:
+        logger.error("[Vision/Fallback] Échec placeholder : %s", e)
+        return {
+            "status": "error",
+            "message": f"Impossible de générer même un placeholder : {e}",
+            "provider": "placeholder",
+        }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # FONCTION PRINCIPALE AVEC CASCADE
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -218,9 +292,25 @@ def generate_image_with_provider(prompt: str, provider: str = "pollinations", mo
         errors[prov] = result.get("message", "inconnu")
         logger.warning("[image_generation] ❌ %s échoué : %s", prov, errors[prov])
 
+    # ★ v6.4 : Fallback placeholder si TOUS les providers échouent
+    logger.warning("[image_generation] ⚠️ Tous les providers ont échoué → fallback placeholder")
+    placeholder_result = _generate_placeholder_image(prompt, output_filename)
+    
+    if placeholder_result.get("status") == "success":
+        placeholder_result["provider_errors"] = errors
+        placeholder_result["message"] = (
+            "⚠️ Tous les providers d'image ont échoué. "
+            "Un placeholder local a été généré à la place.\n\n"
+            "**Providers testés :**\n" 
+            + "\n".join(f"  • {p}: {e}" for p, e in errors.items())
+        )
+        return placeholder_result
+    
+    # Si même le placeholder échoue, on retourne l'erreur finale
     return {
         "status": "error",
-        "message": "Tous les providers d'image ont échoué.\n" + "\n".join(f"  • {p}: {e}" for p, e in errors.items()),
+        "message": "Tous les providers d'image ont échoué ET le placeholder n'a pas pu être généré.\n" 
+                   + "\n".join(f"  • {p}: {e}" for p, e in errors.items()),
         "provider_errors": errors,
     }
 
