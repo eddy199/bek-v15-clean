@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# BEK Hermes Core v19.29 — corrections approbation, erreurs, parallélisme et DAG.
+# BEK Hermes Core v19.30 — corrections approbation, erreurs, parallélisme et DAG.
+# ★ v19.30 (2026-11-09) : FIX GA_AWARE_TOOLS — retrait web_sync/web_search/web_search_docs
 # ★ v19.29 (2026-11-06) : PowerBridge intégré (GA + Skills + Guardian dans dispatch)
 from __future__ import annotations
 import concurrent.futures
@@ -73,7 +74,6 @@ class HermesCore:
         self._tool_lock = threading.RLock()
         self.security_guard = security_guard or SecurityGuard()
         self.max_workers, self.task_timeout = max_workers, task_timeout
-        # Pools séparés: les tâches d'orchestration ne bloquent pas les workers d'outils.
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="bek-hermes-tool")
         self._dispatch_executor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="bek-hermes-dispatch")
         self.dag_orchestrator = HermesDAGOrchestrator(max_workers=max_workers)
@@ -86,7 +86,6 @@ class HermesCore:
         self._pre_plan_hooks: List[PrePlanHook] = []
         self._step_hooks: List[StepHook] = []
         self._post_plan_hooks: List[PostPlanHook] = []
-        # Les clés consommées sont conservées pour empêcher le rejeu d'une approbation.
         self._pending_approvals: Dict[str, Dict[str, Any]] = {}
         self._approval_lock = threading.RLock()
         logger.info("Hermes initialized | workers=%s | timeout=%ss | security_guard=%s", max_workers, task_timeout, self.security_guard is not None)
@@ -220,14 +219,20 @@ class HermesCore:
         return None
 
     # ══════════════════════════════════════════════════════════════════════════
-    # ★ POWER BRIDGE (v19.29) — Méthodes privées d'enrichissement
+    # ★ POWER BRIDGE (v19.30) — Méthodes privées d'enrichissement
     # ══════════════════════════════════════════════════════════════════════════
 
     def _enrich_with_ga(self, tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
-        """★ BEK-GA : Enrichit les args avec le prompt évolutif (si l'outil en a besoin)."""
+        """★ BEK-GA : Enrichit les args avec le prompt évolutif (si l'outil en a besoin).
+
+        ★ v19.30 : Retrait de web_sync, web_search, web_search_docs.
+        Le gène GA est un prompt de CODE (JSON strict, 1 fichier = 1 étape).
+        Il n'a AUCUN sens dans une requête de recherche web.
+        Le retirer permet à web_sync de recevoir la vraie requête utilisateur.
+        """
         GA_AWARE_TOOLS = {
             "codex_agent", "codex_loop", "codex_editor",
-            "web_sync", "web_search", "web_search_docs",
+            # ❌ v19.30 : web_sync, web_search, web_search_docs RETIRÉS
         }
         if tool_name not in GA_AWARE_TOOLS:
             return args
@@ -252,8 +257,13 @@ class HermesCore:
             return args
 
     def _enrich_with_skills(self, tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
-        """★ BEK-Skills : Injecte les compétences pertinentes dans le contexte."""
-        SKILL_AWARE_TOOLS = {"codex_agent", "codex_loop", "codex_editor", "web_sync"}
+        """★ BEK-Skills : Injecte les compétences pertinentes dans le contexte.
+
+        ★ v19.30 : Retrait de web_sync.
+        Les skills sont des prompts de CODE (reviewer, tdd-guide, etc.).
+        Elles n'ont AUCUN sens dans une requête de recherche web.
+        """
+        SKILL_AWARE_TOOLS = {"codex_agent", "codex_loop", "codex_editor"}
         if tool_name not in SKILL_AWARE_TOOLS:
             return args
 
@@ -385,7 +395,7 @@ class HermesCore:
                 record["status"] = "consumed"
                 args = copy.deepcopy(record["args"])
 
-        # ★ POWER BRIDGE : Enrichissement GA + Skills, audit Guardian (v19.29)
+        # ★ POWER BRIDGE : Enrichissement GA + Skills, audit Guardian (v19.30)
         args = self._enrich_with_ga(tool.name, args)
         args = self._enrich_with_skills(tool.name, args)
         is_safe, reason = self._audit_with_guardian(tool.name, args)
