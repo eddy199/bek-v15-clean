@@ -1,10 +1,9 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.60
-# ★ v19.60 (2026-11-08) — FIX pipeline web + nettoyage JSON
-#   - Import de _format_web_sync depuis routers/chat_modules/formatters
-#   - Utilisation de _format_web_sync dans la branche intent == "web"
-#   - _format_human_response extrait le "thought" des JSON bruts
-# ★ v19.59 (2026-11-08) — Pipeline web : GA + Hermes + Anti-Hallucination
+# BEK Hybrid Agent v19 — core/brain.py — v19.61
+# ★ v19.61 (2026-11-09) — FIX pipeline web + questions méta + JSON
+#   - FIX 1 : Ne PLUS injecter le gène GA dans la requête web_sync
+#   - FIX 2 : Détecter les questions méta ("est-ce que X est puissant ?")
+#   - FIX 3 : _format_human_response gère les fallbacks
 # ==============================================================================
 from __future__ import annotations
 import asyncio
@@ -19,7 +18,6 @@ from typing import Any, Dict, List, Optional, Tuple, Callable
 
 logger = logging.getLogger("bek.brain")
 
-# ★ Import du formatter web_sync (patch v19.60)
 try:
     from routers.chat_modules.formatters import _format_web_sync as _format_web_sync_fn
     logger.info("[Brain] ✅ _format_web_sync importé")
@@ -178,6 +176,16 @@ def _detect_intent(query: str) -> str:
     if any(k in q for k in ["orchestre", "multi-étapes", "exécute le plan complexe"]): return "orchestrate"
     if any(k in q for k in ["cherche", "recherche", "news", "actualité", "scrape"]) or "web" in q.split(): return "web"
     if any(k in q for k in ["mémoire", "souviens", "rappelle", "recall"]): return "memory"
+
+    # ★ FIX 2 : Détecter les questions méta sur un projet
+    meta_keywords = ("puissant", "efficace", "performant", "bon", "mauvais", "utile", "fiable", "sérieux")
+    project_keywords = ("projet", "repo", "dépôt", "agent", "hermes", "bek", "système", "framework", "outil")
+    has_meta = any(k in q for k in meta_keywords)
+    has_project = any(k in q for k in project_keywords)
+    if has_meta and has_project:
+        logger.info("[Brain] 🎯 Question méta sur un projet → intent web")
+        return "web"
+
     return "chat"
 
 def _detect_phase(query: str) -> tuple:
@@ -191,11 +199,7 @@ def _detect_phase(query: str) -> tuple:
     return "auto", 0
 
 
-# ==============================================================================
-# ★ v19.60 — FORMATAGE HUMAIN (avec extraction du "thought")
-# ==============================================================================
 def _format_human_response(response: Any, context: str = "action") -> str:
-    # ★ NOUVEAU : détecter et extraire le "thought" des JSON bruts
     if isinstance(response, str):
         stripped = response.strip()
         if stripped.startswith("{") and stripped.endswith("}"):
@@ -204,7 +208,6 @@ def _format_human_response(response: Any, context: str = "action") -> str:
                 if isinstance(parsed, dict) and "thought" in parsed:
                     thought = parsed.get("thought", "")
                     tool = parsed.get("tool", "")
-                    # Si le tool est vide ou default_llm, c'est juste une réflexion
                     if not tool or tool in ("default_llm", "none", ""):
                         if thought:
                             return str(thought).strip()
@@ -485,7 +488,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.60 (FIX pipeline web + JSON)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.61 (FIX web + méta + JSON)")
 
     async def shutdown(self):
         try:
@@ -565,48 +568,45 @@ class BEKBrain:
         res = {}
 
         # ============================================================
-        # ★ v19.60 — PIPELINE WEB AMÉLIORÉ avec _format_web_sync
+        # ★ v19.61 — PIPELINE WEB : requête PURE (sans gène GA)
         # ============================================================
         if intent == "web":
             _status("🌐 Recherche web en cours...", "search")
             
-            try:
-                ga_prompt = self._get_ga_prompt()
-                query_with_gene = f"{query}\n\n[INSTRUCTION DE RECHERCHE]\n{ga_prompt}"
-            except Exception:
-                query_with_gene = query
+            # ★ FIX 1 : NE PAS injecter le gène GA dans la requête
+            # La requête utilisateur est déjà propre
+            query_for_web = query
             
             if self._hermes and "web_sync" in self._hermes.tools:
                 try:
-                    logger.info("[Brain/Web] 🔍 web_sync via Hermes")
+                    logger.info("[Brain/Web] 🔍 web_sync avec requête pure : %r", query_for_web[:80])
                     web_result = await asyncio.to_thread(
                         self._call_hermes_tool,
                         "web_sync",
-                        {"query": query_with_gene}
+                        {"query": query_for_web}
                     )
                     
-                    # ★ Formater avec _format_web_sync (v1.5)
                     if _format_web_sync_fn and isinstance(web_result, dict):
                         formatted = _format_web_sync_fn(web_result)
                         logger.info("[Brain/Web] ✅ Résultat formaté par _format_web_sync (%d chars)", len(formatted))
                         res = {
                             "status": "ok",
                             "intent": "web",
-                            "bricks_used": ["web_agent", "bek_ga", "hermes", "anti_hallucination", "formatters"],
+                            "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters"],
                             "response": formatted,
                         }
                     else:
-                        res = self._wrap(web_result, "web", ["web_agent", "bek_ga", "hermes"])
+                        res = self._wrap(web_result, "web", ["web_agent", "hermes"])
                 except Exception as e:
                     logger.warning("[Brain/Web] Hermes web_sync échoué : %s", e)
                     if self._web_agent:
-                        raw = self._web_agent.run_pipeline(query_with_gene)
-                        res = self._wrap(raw, "web", ["web_agent", "bek_ga"])
+                        raw = self._web_agent.run_pipeline(query_for_web)
+                        res = self._wrap(raw, "web", ["web_agent"])
                     else:
                         res = self._wrap("⚠️ Aucun agent web disponible.", "web", [])
             elif self._web_agent:
-                raw = self._web_agent.run_pipeline(query_with_gene)
-                res = self._wrap(raw, "web", ["web_agent", "bek_ga"])
+                raw = self._web_agent.run_pipeline(query_for_web)
+                res = self._wrap(raw, "web", ["web_agent"])
             else:
                 res = self._wrap("⚠️ Aucun agent web disponible.", "web", [])
         
@@ -636,7 +636,6 @@ class BEKBrain:
             _status("💬 Traitement de la requête...", "thinking")
             res = self._wrap(await self._call_chat_pipeline(query, provider, model, None), "chat", ["pipeline_chat"])
 
-        # Cache
         if intent != "web":
             try:
                 from bek_core.eco.optimizer import BekEcoOptimizer
@@ -759,7 +758,7 @@ class BEKBrain:
         }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.60", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
+        return {"app": "BEK Hybrid Agent v19.61", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
 
 _brain_instance: Optional[BEKBrain] = None
 
