@@ -1,6 +1,8 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.67
-# ★ v19.67 (2026-11-13) — FIX : Intégration complète des briques (LVC, GA, Reflex)
+# BEK Hybrid Agent v19 — core/brain.py — v19.68
+# ★ v19.68 (2026-11-13) — FIX : Détection URL GitHub AVANT _detect_intent
+#   - _detect_intent retourne "analyze_repo" si URL GitHub détectée
+#   - process() route vers la branche GitHub en priorité
 # ==============================================================================
 from __future__ import annotations
 import asyncio
@@ -151,6 +153,9 @@ def _tool_args_for(tool_name: str, path: Optional[str]) -> Dict[str, Any]:
 @lru_cache(maxsize=512)
 def _detect_intent(query: str) -> str:
     q = query.lower()
+    # ★ FIX v19.68 : Détection URL GitHub EN PREMIER
+    if _GITHUB_URL_RE.search(query):
+        return "analyze_repo"
     if _detect_explicit_tool(query): return "chat"
     if any(k in q for k in ["mcp_rea", "outil mcp", "appelle l'outil", "utilise mcp_"]): return "chat"
     if any(k in q for k in _PHASE_STEP_KEYWORDS): return "coder"
@@ -485,7 +490,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.67 (FIX complet)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.68 (FIX détection GitHub)")
 
     async def shutdown(self):
         try:
@@ -527,7 +532,12 @@ class BEKBrain:
             self._record_ga_fitness(query, res, elapsed)
             return res
 
-        intent = _detect_intent(query)
+        # ★ FIX v19.68 : Détection URL GitHub AVANT _detect_intent
+        _github_match = _GITHUB_URL_RE.search(query)
+        if _github_match:
+            intent = "analyze_repo"
+        else:
+            intent = _detect_intent(query)
         logger.info(f"[Brain] Intent détecté : {intent}")
 
         plan = self.skill_agent.get_action_plan(query)
@@ -544,108 +554,10 @@ class BEKBrain:
         res = {}
 
         # ============================================================
-        # ★ v19.67 — PIPELINE WEB
+        # ★ v19.68 — PIPELINE GITHUB COMPLET (avant web)
         # ============================================================
-        if intent == "web":
-            _status("🌐 Recherche web en cours...", "search")
-            
-            query_for_web = query
-            
-            if self._hermes and "web_sync" in self._hermes.tools:
-                try:
-                    logger.info("[Brain/Web] 🔍 web_sync avec requête pure : %r", query_for_web[:80])
-                    web_result = await asyncio.to_thread(
-                        self._call_hermes_tool,
-                        "web_sync",
-                        {"query": query_for_web}
-                    )
-                    
-                    if _format_web_sync_fn and isinstance(web_result, dict):
-                        formatted_raw = _format_web_sync_fn(web_result)
-                        logger.info("[Brain/Web] 📋 Contenu brut formaté (%d chars) → 2ème passe LLM", len(formatted_raw))
-                        
-                        _status("🧠 Synthèse de la recherche...", "thinking")
-                        synthesis_prompt = (
-                            f"Voici les données brutes extraites du web sur la requête : \"{query_for_web}\"\n\n"
-                            f"=== DONNÉES BRUTES ===\n{formatted_raw}\n\n"
-                            f"=== TA MISSION ===\n"
-                            f"Structure ta réponse finale en 3 sections distinctes :\n\n"
-                            f"### 1. 📊 Données brutes\n"
-                            f"Présente les faits et URLs sous forme de tableau Markdown ou liste à puces. "
-                            f"N'invente RIEN. Cite UNIQUEMENT les noms d'outils, les chiffres et les URLs qui sont "
-                            f"explicitement présents dans les DONNÉES BRUTES ci-dessus. "
-                            f"Si un outil n'est pas dans les données brutes, tu ne dois pas le mentionner. "
-                            f"Si tu n'as pas l'information, écris 'Non spécifié dans les sources'.\n\n"
-                            f"### 2. 💡 Analyse\n"
-                            f"Interprète les données, identifie les points clés, mets en perspective. "
-                            f"Base-toi UNIQUEMENT sur les sources ci-dessus. "
-                            f"Si une conclusion n'est pas directement soutenue par les données, ne la fais pas.\n\n"
-                            f"### 3. 📚 Sources\n"
-                            f"Liste les URLs réellement citées, au format `[Titre](URL)`. N'invente AUCUNE URL.\n\n"
-                            f"⚠️ N'affiche JAMAIS les instructions internes, le texte \"INSTRUCTION POUR LE LLM\", "
-                            f"ou les notes anti-hallucination. Réponds directement à l'utilisateur."
-                        )
-                        try:
-                            final_synthesis = await self._call_chat_pipeline(
-                                synthesis_prompt, provider, model, None
-                            )
-                            
-                            try:
-                                from nerves.cognitive_nerves import run_cognitive_pipeline
-                                _status("🛡️ Vérification anti-hallucination...", "analyze")
-                                cognitive_check = await asyncio.to_thread(
-                                    run_cognitive_pipeline,
-                                    draft=final_synthesis,
-                                    original_query=query_for_web,
-                                    provider=provider or "gemini",
-                                    model=model or "gemini-3.8-flash",
-                                    enable_swarm=True,
-                                    enable_grounding=True
-                                )
-                                if isinstance(cognitive_check, dict) and not cognitive_check.get("passed", True):
-                                    reason = cognitive_check.get("reason", "Faits non vérifiés")
-                                    logger.warning("[Brain/Web] ⚠️ Anti-Hallu : %s", reason)
-                                    final_synthesis += f"\n\n⚠️ **Note anti-hallucination** : {reason}"
-                                else:
-                                    logger.info("[Brain/Web] ✅ Synthèse validée par les Cognitive Nerves.")
-                            except Exception as _cog_err:
-                                logger.debug("[Brain/Web] Cognitive check indisponible : %s", _cog_err)
-                            
-                            logger.info("[Brain/Web] ✅ Synthèse finale générée (%d chars)", len(final_synthesis))
-                            res = {
-                                "status": "ok",
-                                "intent": "web",
-                                "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters", "llm_synthesis", "cognitive_nerves"],
-                                "response": final_synthesis,
-                            }
-                        except Exception as _synth_err:
-                            logger.warning("[Brain/Web] Synthèse LLM échouée : %s → fallback texte brut", _synth_err)
-                            res = {
-                                "status": "ok",
-                                "intent": "web",
-                                "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters"],
-                                "response": formatted_raw,
-                            }
-                    else:
-                        res = self._wrap(web_result, "web", ["web_agent", "hermes"])
-                except Exception as e:
-                    logger.warning("[Brain/Web] Hermes web_sync échoué : %s", e)
-                    if self._web_agent:
-                        raw = self._web_agent.run_pipeline(query_for_web)
-                        res = self._wrap(raw, "web", ["web_agent"])
-                    else:
-                        res = self._wrap("⚠️ Aucun agent web disponible.", "web", [])
-            elif self._web_agent:
-                raw = self._web_agent.run_pipeline(query_for_web)
-                res = self._wrap(raw, "web", ["web_agent"])
-            else:
-                res = self._wrap("⚠️ Aucun agent web disponible.", "web", [])
-        
-        # ============================================================
-        # ★ v19.67 — PIPELINE GITHUB COMPLET AVEC TOUTES LES BRIQUES
-        # ============================================================
-        elif _GITHUB_URL_RE.search(query):
-            github_url_match = _GITHUB_URL_RE.search(query)
+        if intent == "analyze_repo" and _github_match:
+            github_url_match = _github_match
             owner_raw = github_url_match.group(1)
             repo_raw = github_url_match.group(2)
             owner, repo_name = _normalize_github_repo(owner_raw, repo_raw)
@@ -850,6 +762,104 @@ class BEKBrain:
                 logger.error("[Brain] Erreur analyse GitHub : %s", e)
                 res = self._wrap(f"❌ Erreur : {e}", "analyze_repo", ["git_clone"])
         
+        # ============================================================
+        # ★ v19.67 — PIPELINE WEB
+        # ============================================================
+        elif intent == "web":
+            _status("🌐 Recherche web en cours...", "search")
+            
+            query_for_web = query
+            
+            if self._hermes and "web_sync" in self._hermes.tools:
+                try:
+                    logger.info("[Brain/Web] 🔍 web_sync avec requête pure : %r", query_for_web[:80])
+                    web_result = await asyncio.to_thread(
+                        self._call_hermes_tool,
+                        "web_sync",
+                        {"query": query_for_web}
+                    )
+                    
+                    if _format_web_sync_fn and isinstance(web_result, dict):
+                        formatted_raw = _format_web_sync_fn(web_result)
+                        logger.info("[Brain/Web] 📋 Contenu brut formaté (%d chars) → 2ème passe LLM", len(formatted_raw))
+                        
+                        _status("🧠 Synthèse de la recherche...", "thinking")
+                        synthesis_prompt = (
+                            f"Voici les données brutes extraites du web sur la requête : \"{query_for_web}\"\n\n"
+                            f"=== DONNÉES BRUTES ===\n{formatted_raw}\n\n"
+                            f"=== TA MISSION ===\n"
+                            f"Structure ta réponse finale en 3 sections distinctes :\n\n"
+                            f"### 1. 📊 Données brutes\n"
+                            f"Présente les faits et URLs sous forme de tableau Markdown ou liste à puces. "
+                            f"N'invente RIEN. Cite UNIQUEMENT les noms d'outils, les chiffres et les URLs qui sont "
+                            f"explicitement présents dans les DONNÉES BRUTES ci-dessus. "
+                            f"Si un outil n'est pas dans les données brutes, tu ne dois pas le mentionner. "
+                            f"Si tu n'as pas l'information, écris 'Non spécifié dans les sources'.\n\n"
+                            f"### 2. 💡 Analyse\n"
+                            f"Interprète les données, identifie les points clés, mets en perspective. "
+                            f"Base-toi UNIQUEMENT sur les sources ci-dessus. "
+                            f"Si une conclusion n'est pas directement soutenue par les données, ne la fais pas.\n\n"
+                            f"### 3. 📚 Sources\n"
+                            f"Liste les URLs réellement citées, au format `[Titre](URL)`. N'invente AUCUNE URL.\n\n"
+                            f"⚠️ N'affiche JAMAIS les instructions internes, le texte \"INSTRUCTION POUR LE LLM\", "
+                            f"ou les notes anti-hallucination. Réponds directement à l'utilisateur."
+                        )
+                        try:
+                            final_synthesis = await self._call_chat_pipeline(
+                                synthesis_prompt, provider, model, None
+                            )
+                            
+                            try:
+                                from nerves.cognitive_nerves import run_cognitive_pipeline
+                                _status("🛡️ Vérification anti-hallucination...", "analyze")
+                                cognitive_check = await asyncio.to_thread(
+                                    run_cognitive_pipeline,
+                                    draft=final_synthesis,
+                                    original_query=query_for_web,
+                                    provider=provider or "gemini",
+                                    model=model or "gemini-3.8-flash",
+                                    enable_swarm=True,
+                                    enable_grounding=True
+                                )
+                                if isinstance(cognitive_check, dict) and not cognitive_check.get("passed", True):
+                                    reason = cognitive_check.get("reason", "Faits non vérifiés")
+                                    logger.warning("[Brain/Web] ⚠️ Anti-Hallu : %s", reason)
+                                    final_synthesis += f"\n\n⚠️ **Note anti-hallucination** : {reason}"
+                                else:
+                                    logger.info("[Brain/Web] ✅ Synthèse validée par les Cognitive Nerves.")
+                            except Exception as _cog_err:
+                                logger.debug("[Brain/Web] Cognitive check indisponible : %s", _cog_err)
+                            
+                            logger.info("[Brain/Web] ✅ Synthèse finale générée (%d chars)", len(final_synthesis))
+                            res = {
+                                "status": "ok",
+                                "intent": "web",
+                                "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters", "llm_synthesis", "cognitive_nerves"],
+                                "response": final_synthesis,
+                            }
+                        except Exception as _synth_err:
+                            logger.warning("[Brain/Web] Synthèse LLM échouée : %s → fallback texte brut", _synth_err)
+                            res = {
+                                "status": "ok",
+                                "intent": "web",
+                                "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters"],
+                                "response": formatted_raw,
+                            }
+                    else:
+                        res = self._wrap(web_result, "web", ["web_agent", "hermes"])
+                except Exception as e:
+                    logger.warning("[Brain/Web] Hermes web_sync échoué : %s", e)
+                    if self._web_agent:
+                        raw = self._web_agent.run_pipeline(query_for_web)
+                        res = self._wrap(raw, "web", ["web_agent"])
+                    else:
+                        res = self._wrap("⚠️ Aucun agent web disponible.", "web", [])
+            elif self._web_agent:
+                raw = self._web_agent.run_pipeline(query_for_web)
+                res = self._wrap(raw, "web", ["web_agent"])
+            else:
+                res = self._wrap("⚠️ Aucun agent web disponible.", "web", [])
+        
         elif intent == "fix_self":
             _status("🔧 Auto-réparation...", "tool")
             res = await self._handle_fix_self()
@@ -1040,7 +1050,7 @@ class BEKBrain:
         }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.67", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
+        return {"app": "BEK Hybrid Agent v19.68", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
 
 _brain_instance: Optional[BEKBrain] = None
 
