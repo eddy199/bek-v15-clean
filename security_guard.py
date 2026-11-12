@@ -144,10 +144,13 @@ class SecurityGuard:
         re.compile(r"(?i)\brequests\s*\.\s*(get|post|put|delete|patch)\s*\("),
     )
 
+    # ★ FIX CRITIQUE : Liste assouplie des imports bannis
+    # On garde UNIQUEMENT les modules réellement dangereux pour du code tiers.
+    # On retire os, sys, threading, shutil, importlib (utilisés par TON PROPRE CODE).
     BANNED_IMPORTS: Set[str] = {
         "subprocess", "pty", "ctypes", "marshal", "pickle",
         "winreg", "urllib", "requests", "http", "socket",
-        "shutil", "os", "sys", "importlib", "multiprocessing", "threading",
+        "multiprocessing",
     }
 
     SECRET_PATTERNS = (

@@ -1,6 +1,6 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.66
-# ★ v19.66 (2026-11-12) — FIX : Suppression du elif en double (erreur de syntaxe)
+# BEK Hybrid Agent v19 — core/brain.py — v19.67
+# ★ v19.67 (2026-11-13) — FIX : Intégration complète des briques (LVC, GA, Reflex)
 # ==============================================================================
 from __future__ import annotations
 import asyncio
@@ -485,7 +485,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.66 (FIX syntaxe)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.67 (FIX complet)")
 
     async def shutdown(self):
         try:
@@ -498,10 +498,6 @@ class BEKBrain:
         except Exception: pass
 
     async def _refine_image_prompt(self, user_query: str) -> str:
-        """
-        ★ v19.66 : On ne réécrit plus le prompt de l'utilisateur.
-        On garde son prompt original tel quel pour préserver sa demande exacte.
-        """
         return user_query.strip()
 
     async def _handle_fix_self(self) -> Dict[str, Any]:
@@ -548,7 +544,7 @@ class BEKBrain:
         res = {}
 
         # ============================================================
-        # ★ v19.66 — PIPELINE WEB : 2ème passe LLM pour synthèse propre
+        # ★ v19.67 — PIPELINE WEB
         # ============================================================
         if intent == "web":
             _status("🌐 Recherche web en cours...", "search")
@@ -645,7 +641,9 @@ class BEKBrain:
             else:
                 res = self._wrap("⚠️ Aucun agent web disponible.", "web", [])
         
-        # ★ FIX v19.66 : Restauration du pipeline complet d'analyse GitHub
+        # ============================================================
+        # ★ v19.67 — PIPELINE GITHUB COMPLET AVEC TOUTES LES BRIQUES
+        # ============================================================
         elif _GITHUB_URL_RE.search(query):
             github_url_match = _GITHUB_URL_RE.search(query)
             owner_raw = github_url_match.group(1)
@@ -656,6 +654,16 @@ class BEKBrain:
             _status(f"🐙 Clonage de {repo_name}...", "tool")
 
             try:
+                # ★ 1. BEK-REX : Routage
+                try:
+                    from bek_core import BekCPU
+                    route_info = BekCPU.execute("BEK-REX", "bek_rex_route", query=f"analyse repo {repo_name}")
+                    logger.info("[Brain/GitHub] 🏛️ BEK-REX routé : %s (conf: %.2f)",
+                                route_info.get("tier"), route_info.get("confidence", 0))
+                except Exception as e:
+                    logger.debug("[Brain/GitHub] BEK-REX indisponible : %s", e)
+
+                # ★ 2. Clone
                 clone_result = await asyncio.to_thread(
                     self._call_hermes_tool, "git_clone", {"url": repo_url}
                 )
@@ -677,22 +685,25 @@ class BEKBrain:
 
                 full_repo_path = os.path.join(str(WORKSPACE_DIR), repo_dir)
 
-                if os.path.exists(full_repo_path):
+                if not os.path.exists(full_repo_path):
+                    logger.warning("[Brain] Échec : dossier %s absent", repo_dir)
+                    res = self._wrap(f"⚠️ Le dépôt n'a pas pu être cloné : {clone_str}", "analyze_repo", ["git_clone"])
+                else:
                     logger.info("[Brain] 📂 Repo trouvé : %s", repo_dir)
                     _status("📊 Génération du rapport technique...", "analyze")
 
+                    # ★ 3. Rapport technique + archi
                     report_result = await asyncio.to_thread(
                         self._call_hermes_tool, "mcp_python_save_report",
                         {"dir_path": repo_dir, "output_name": f"audit_{repo_name}"}
                     )
-
                     _status("🏛️ Analyse architecturale...", "analyze")
-
                     arch_result = await asyncio.to_thread(
                         self._call_hermes_tool, "analyze_architecture",
                         {"dir_path": repo_dir}
                     )
 
+                    # ★ 4. Extraction chiffres officiels
                     audit_numbers_block = ""
                     audit_numbers_dict = {}
                     try:
@@ -717,12 +728,37 @@ class BEKBrain:
                     except Exception as _ne:
                         logger.debug("[Brain] Extraction chiffres audit échouée : %s", _ne)
 
-                    _status("🧠 Synthèse LLM de l'audit...", "thinking")
+                    # ★ 5. BEK-LVC : Compression du rapport
+                    _status("🗜️ Compression LVC du rapport...", "analyze")
+                    report_str = str(report_result)
+                    arch_str = str(arch_result)
+                    report_compressed = report_str
+                    arch_compressed = arch_str
+                    try:
+                        from bek_core.eco.optimizer import BekEcoOptimizer
+                        optimizer = BekEcoOptimizer()
+                        if hasattr(optimizer, "compress_text"):
+                            report_compressed = optimizer.compress_text(report_str, max_chars=8000)
+                            arch_compressed = optimizer.compress_text(arch_str, max_chars=4000)
+                        else:
+                            if len(report_str) > 8000:
+                                report_compressed = report_str[:8000] + "\n...[tronqué par LVC]"
+                            if len(arch_str) > 4000:
+                                arch_compressed = arch_str[:4000] + "\n...[tronqué par LVC]"
+                        logger.info(
+                            "[Brain/GitHub] 🗜️ BEK-LVC : rapport %d → %d chars | archi %d → %d chars",
+                            len(report_str), len(report_compressed),
+                            len(arch_str), len(arch_compressed),
+                        )
+                    except Exception as _lvc_err:
+                        logger.warning("[Brain/GitHub] BEK-LVC échoué : %s", _lvc_err)
 
+                    # ★ 6. Synthèse LLM
+                    _status("🧠 Synthèse LLM de l'audit...", "thinking")
                     synthesis_prompt = (
                         f"Tu es BEK, un architecte logiciel senior. Voici les données d'analyse du repo {repo_url} :\n\n"
-                        f"=== RAPPORT TECHNIQUE ===\n{report_result}\n\n"
-                        f"=== RAPPORT STRATÉGIQUE ===\n{arch_result}\n\n"
+                        f"=== RAPPORT TECHNIQUE (compressé par LVC) ===\n{report_compressed}\n\n"
+                        f"=== RAPPORT STRATÉGIQUE ===\n{arch_compressed}\n\n"
                         f"{audit_numbers_block}\n"
                         f"=== TA MISSION ===\n"
                         f"Fais-moi une synthèse structurée avec :\n"
@@ -739,18 +775,77 @@ class BEKBrain:
                         synthesis_prompt, provider, model, None
                     )
 
+                    # ★ 7. Validation chiffrée (bek_eval_guard)
                     synthesis = self._validate_synthesis_numbers(synthesis, audit_numbers_dict)
+
+                    # ★ 8. Cognitive Nerves (Anti-hallu)
+                    try:
+                        from nerves.cognitive_nerves import run_cognitive_pipeline
+                        _status("🛡️ Vérification anti-hallucination...", "analyze")
+                        cognitive_check = await asyncio.to_thread(
+                            run_cognitive_pipeline,
+                            draft=synthesis,
+                            original_query=query,
+                            provider=provider or "gemini",
+                            model=model or "gemini-3.8-flash",
+                            enable_swarm=True,
+                            enable_grounding=True,
+                        )
+                        if isinstance(cognitive_check, dict):
+                            if not cognitive_check.get("passed", True):
+                                reason = cognitive_check.get("reason", "Faits non vérifiés")
+                                logger.warning("[Brain/GitHub] ⚠️ Anti-Hallu : %s", reason)
+                                synthesis += f"\n\n⚠️ **Note anti-hallucination** : {reason}"
+                            else:
+                                logger.info("[Brain/GitHub] ✅ Synthèse validée par les Cognitive Nerves.")
+                    except Exception as _cog_err:
+                        logger.warning("[Brain/GitHub] Cognitive check échoué : %s", _cog_err)
+
+                    # ★ 9. BEK-GA : Fitness
+                    try:
+                        from nerves.ga_nerves import get_ga_engine
+                        engine = get_ga_engine()
+                        best_gene = engine.select_best_gene()
+                        elapsed_ms = (time.perf_counter() - start_time) * 1000
+                        tokens_est = len(synthesis) // 4
+                        engine.calculate_fitness(best_gene, True, elapsed_ms, tokens_est)
+                        logger.info("[Brain/GitHub] 🧬 BEK-GA : fitness enregistré pour %s", best_gene.gene_id)
+                    except Exception as _ga_err:
+                        logger.debug("[Brain/GitHub] BEK-GA indisponible : %s", _ga_err)
+
+                    # ★ 10. ReflexLoop : Épisode
+                    try:
+                        from services.episode_logger import log_episode as _log_ep
+                        _log_ep(
+                            action="analyze_repo",
+                            parameters={"repo": repo_name, "url": repo_url, "provider": provider},
+                            status="success",
+                            message=f"Analyse réussie: {len(synthesis)} chars | LVC: {len(report_str)}→{len(report_compressed)}",
+                            latency_ms=(time.perf_counter() - start_time) * 1000,
+                            source="brain_github",
+                        )
+                        logger.info("[Brain/GitHub] 🔁 ReflexLoop : épisode enregistré")
+                    except Exception as _reflex_err:
+                        logger.debug("[Brain/GitHub] ReflexLoop indisponible : %s", _reflex_err)
+
+                    # ★ 11. BEK-ECO : Cache
+                    try:
+                        from bek_core.eco.optimizer import BekEcoOptimizer
+                        optimizer = BekEcoOptimizer()
+                        cache_key = optimizer._cache_key(query)
+                        if len(synthesis) > 100:
+                            optimizer.cache_set(cache_key, synthesis, query=query)
+                            logger.info("[Brain/GitHub] 💾 BEK-ECO : synthèse cachée")
+                    except Exception:
+                        pass
 
                     res = self._wrap(
                         f"📊 **Analyse Stratégique du Repo**\n\n{synthesis}",
                         "analyze_repo",
                         ["git_clone", "python_save_report", "analyze_architecture",
-                         "provider_manager", "bek_ga", "bek_lvc", "skill_agent",
-                         "cognitive_nerves", "bek_eval_guard"]
+                         "bek_rex", "bek_lvc", "bek_ga", "bek_eco",
+                         "provider_manager", "cognitive_nerves", "reflex_loop", "bek_eval_guard"]
                     )
-                else:
-                    logger.warning("[Brain] Échec : dossier %s absent", repo_dir)
-                    res = self._wrap(f"⚠️ Le dépôt n'a pas pu être cloné : {clone_str}", "analyze_repo", ["git_clone"])
             except Exception as e:
                 logger.error("[Brain] Erreur analyse GitHub : %s", e)
                 res = self._wrap(f"❌ Erreur : {e}", "analyze_repo", ["git_clone"])
@@ -759,7 +854,6 @@ class BEKBrain:
             _status("🔧 Auto-réparation...", "tool")
             res = await self._handle_fix_self()
         
-        # ★ FIX v19.66 : Branche image STABLE (prompt original préservé)
         elif intent == "generate_image" and self._hermes:
             _status("🎨 Génération de l'image...", "tool")
             refined_prompt = await self._refine_image_prompt(query)
@@ -802,7 +896,6 @@ class BEKBrain:
         return res
 
     def _validate_synthesis_numbers(self, synthesis: str, source: Any) -> str:
-        """Vérifie que les entiers cités dans la synthèse existent dans les chiffres officiels."""
         try:
             from bek_eval_guard import evaluate_response_quality, validate_cited_numbers
         except ImportError:
@@ -947,7 +1040,7 @@ class BEKBrain:
         }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.66", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
+        return {"app": "BEK Hybrid Agent v19.67", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
 
 _brain_instance: Optional[BEKBrain] = None
 
