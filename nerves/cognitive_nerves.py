@@ -320,9 +320,11 @@ def run_critique_swarm(
     swarm = None
     try:
         from meta_cortex_swarm import ReflexionSwarm
+        # ★ FIX : Ajout de strict_provider=True pour empêcher le basculement
         swarm = ReflexionSwarm(
             llm_provider=llm_provider,
             llm_model=llm_model or None,
+            strict_provider=True, 
         )
         consensus = swarm.critique(draft=draft, original_query=original_query)
 

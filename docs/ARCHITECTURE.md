@@ -117,9 +117,9 @@ Format EXCLUSIF :
 ## 📊 ÉTAT RÉEL DU SYSTÈME (généré automatiquement)
 ═══════════════════════════════════════════════════════════════════════════════
 
-> *Dernière synchronisation : 2026-11-08 10:50:07 UTC*
+> *Dernière synchronisation : 2026-11-10 12:55:21 UTC*
 > *Version BEK : **19.15***
-> *State hash : `34e529a033a2`*
+> *State hash : `0d0777eed88e`*
 > *Boot phase : **complete***
 
 ═══════════════════════════════════════════════════════════════════════════════
@@ -238,7 +238,7 @@ Format EXCLUSIF :
 | Composant | Statut | Détail |
 |---|---|---|
 | `playwright` | 💤 **lazy** | ~200 MB économisés au boot |
-| `chromadb` | ✅ **loaded** | Chargé à la demande |
+| `chromadb` | 💤 **lazy** | ~80 MB économisés au boot |
 | `duckdb_episode` | ✅ **duckdb** | Backend : duckdb |
 | `lancedb` | 💤 **lazy** | Chargé à la demande |
 | `duckdb_analytics` | 💤 **lazy** | Chargé à la demande |
@@ -253,9 +253,10 @@ Format EXCLUSIF :
 - **Skills chargés :** 329
 - **Alter Egos (6) :** atlas, belfort, mentor, nova, oracle, suntzu
 
-### 🌐 Providers LLM disponibles (17)
+### 🌐 Providers LLM disponibles (18)
 
 - `groq`
+- `apinex`
 - `nvidia`
 - `gemini`
 - `openrouter`

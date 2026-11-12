@@ -1,10 +1,9 @@
 """
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║  REFLEXION-SWARM v1.0 — Critique Parallèle Multi-Angle pour BEK-v15.2       ║
+║  REFLEXION-SWARM v1.1 — Critique Parallèle Multi-Angle pour BEK-v15.2       ║
 ║  Fichier : meta_cortex_swarm.py                                              ║
-║  Rôle    : Lance 3 critiques spécialisées en parallèle, agrège par vote     ║
-║            Intègre le protocole de raisonnement profond et filtrage social. ║
-║            Supporte le Post-Plan Evaluation Hook pour Hermes Core V2.       ║
+║  ★ FIX v1.1 : Ajout du paramètre strict_provider pour respecter le choix    ║
+║                de l'utilisateur (plus de basculement silencieux sur Groq).   ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 """
 
@@ -159,7 +158,9 @@ class CriticAgent:
 
 
 class ReflexionSwarm:
-    def __init__(self, llm_provider: str = "groq", llm_model: str = None):
+    # ★ FIX : Ajout de strict_provider dans le constructeur
+    def __init__(self, llm_provider: str = "groq", llm_model: str = None, strict_provider: bool = True):
+        self.strict_provider = strict_provider
         self.llm = self._init_llm(llm_provider, llm_model)
         self.critics = {role: CriticAgent(role, self.llm) for role in CriticRole}
         self.executor = ThreadPoolExecutor(max_workers=3)

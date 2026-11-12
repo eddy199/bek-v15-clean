@@ -2,7 +2,8 @@
 # ==============================================================================
 # BEK Prompt Optimizer — Réécriture artistique haute précision
 # ------------------------------------------------------------------------------
-# v26 (2026-10-06) : FIX CONTRADICTIONS + 3D DÉTECTION
+# ★ v27 (2026-11-11) — FIX : Désactivation de l'auto-détection de style.
+#   Si l'utilisateur ne demande pas de style explicite, le prompt n'est PAS modifié.
 # ==============================================================================
 from __future__ import annotations
 
@@ -177,20 +178,31 @@ STYLE_KEYWORDS = {
 }
 
 def detect_style_from_prompt(prompt: str) -> Optional[str]:
-    if not prompt: return None
+    """
+    ★ v27 : Détection de style désactivée par défaut.
+    On ne renvoie un style QUE si l'utilisateur a explicitement demandé
+    un style (ex: "logo", "cartoon", "pixel art").
+    """
+    if not prompt: 
+        return None
+        
     prompt_lower = prompt.lower()
-    logo_keywords = ["logo", "icône", "icone", "icon", "symbole", "symbol", "monogramme", "monogram", "marque", "brand", "mobile app", "mobileapp", "app", "ios", "android"]
+    
+    # Si l'utilisateur demande explicitement un logo ou un style vectoriel
+    logo_keywords = ["logo", "logotype", "logomark", "icône", "icone", "icon", "symbole", "symbol", "monogramme", "monogram", "marque", "brand"]
     if any(kw in prompt_lower for kw in logo_keywords):
         if "moderne" in prompt_lower or "modern" in prompt_lower:
             return "logo_modern"
         return "flat_vector"
-    keywords_3d = ["3d animated", "3danimated", "3d animation", "3d scene", "3d render", "pixar", "dreamworks", "3d cartoon", "3d style", "3d movie", "3d character", "3d personnage", "scène 3d", "scene 3d", "render 3d"]
-    if any(kw in prompt_lower for kw in keywords_3d):
-        return "pixar_3d"
+        
+    # Si l'utilisateur demande explicitement un style (parmi les mots-clés)
     for style, keywords in STYLE_KEYWORDS.items():
-        if style in ("flat_vector", "logo_modern", "pixar_3d"): continue
+        if style in ("flat_vector", "logo_modern"): 
+            continue
         if any(kw in prompt_lower for kw in keywords):
             return style
+            
+    # ★ FIX v27 : Aucun style détecté → On ne touche pas au prompt.
     return None
 
 def _resolve_style_signature(style_preset: str) -> str:
@@ -229,19 +241,33 @@ def suggest_agnes_mode(num_images: int) -> str:
 
 def optimize_prompt_for_media(raw_prompt: str, media_type: str = "image", style_preset: str = "auto", preserve_faces: bool = False, image_count: int = 0) -> str:
     clean_raw = (raw_prompt or "").strip()
-    if not clean_raw: return clean_raw
+    if not clean_raw: 
+        return clean_raw
 
+    # ★ FIX v27 : Si l'utilisateur n'a pas demandé de style explicite, on ne touche à RIEN.
+    # On ajoute juste le suffixe de qualité.
     if style_preset in (None, "", "auto"):
         detected = detect_style_from_prompt(clean_raw)
         if detected:
             style_preset = detected
-            logger.info("[PromptOptimizer] Style auto-détecté : %s", style_preset)
+            logger.info("[PromptOptimizer] Style explicite détecté : %s", style_preset)
         else:
-            style_preset = "flat_vector" if media_type == "image" else "pixar_3d"
-            logger.info("[PromptOptimizer] Aucun style détecté → défaut %s", style_preset)
+            # Aucun style détecté → On garde le prompt original tel quel
+            style_preset = None
+            logger.info("[PromptOptimizer] Aucun style explicite → prompt préservé")
 
+    # Si aucun style n'a été détecté, on ajoute juste le suffixe de qualité
+    if not style_preset:
+        if media_type == "image":
+            return f"{clean_raw}. {IMAGE_STYLE_SUFFIX}"
+        else:
+            parts = [clean_raw, VIDEO_STYLE_SUFFIX, VIDEO_TECH_SUFFIX]
+            return " ".join(p for p in parts if p)
+
+    # Si un style a été détecté ou demandé explicitement, on l'applique
     preset_text = _resolve_style_signature(style_preset)
-    if not preset_text: preset_text = STYLE_PRESETS["flat_vector"]
+    if not preset_text: 
+        preset_text = STYLE_PRESETS["flat_vector"]
 
     face_suffix = ""
     if preserve_faces and image_count > 0:

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v19 — Image Generation (v6.4 — Fallback Placeholder)
+# BEK-v19 — Image Generation (v6.5 — Fix Modèles + Fallback Placeholder)
 # ------------------------------------------------------------------------------
-# ★ v6.4 (2026-11-09) — FIX : Fallback placeholder si tous les providers échouent
-#   - Si pollinations + huggingface + gemini échouent → génère une image locale
-#   - Utilise Pillow pour créer une image avec le prompt écrit dessus
-# ★ v6.3 — Lazy Import Prompt Optimizer
+# ★ v6.5 (2026-11-11) — FIX : Modèle HuggingFace déprécié + Gemini stable
+#   - HuggingFace : "hf-flux-schnell" → "black-forest-labs/FLUX.1-schnell"
+#   - Gemini : vérification du modèle "gemini-2.5-flash-image"
+#   - Fallback placeholder : toujours présent si tout échoue
 # ==============================================================================
 from __future__ import annotations
 
@@ -81,7 +81,8 @@ def _try_huggingface(prompt: str, save_path: str, output_filename: str, **kwargs
     try:
         from services.vision.huggingface_client import generate_image_with_huggingface
         clean_prompt = _clean_prompt_for_image(prompt)
-        hf_model = kwargs.get("hf_model", "hf-flux-schnell")
+        # ★ FIX v6.5 : Remplacement du modèle déprécié par le vrai identifiant
+        hf_model = kwargs.get("hf_model", "black-forest-labs/FLUX.1-schnell")
         logger.info("[huggingface] Génération : %d chars | model=%s", len(clean_prompt), hf_model)
         return generate_image_with_huggingface(
             prompt=clean_prompt, model=hf_model, output_filename=output_filename,
@@ -97,16 +98,20 @@ def _try_gemini(prompt: str, save_path: str, output_filename: str, **kwargs) -> 
     api_key = _get_api_key("GEMINI_API_KEY")
     if not api_key:
         return {"status": "error", "message": "GEMINI_API_KEY manquante", "provider": "gemini"}
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key={api_key}"
+    
+    # ★ FIX v6.5 : Utilisation du bon modèle Gemini Image
+    model_id = kwargs.get("model", "gemini-2.5-flash-image")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_id}:generateContent?key={api_key}"
+    
     payload = {
         "contents": [{"parts": [{"text": _clean_prompt_for_image(prompt)}]}],
         "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]},
     }
     try:
-        logger.info("[gemini] Génération : %d chars", len(prompt))
+        logger.info("[gemini] Génération : %d chars | model=%s", len(prompt), model_id)
         res = requests.post(url, json=payload, timeout=60)
         if res.status_code != 200:
-            return {"status": "error", "message": f"Gemini HTTP {res.status_code}", "provider": "gemini"}
+            return {"status": "error", "message": f"Gemini HTTP {res.status_code} - {res.text[:200]}", "provider": "gemini"}
         data = res.json()
         parts = data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
         for part in parts:

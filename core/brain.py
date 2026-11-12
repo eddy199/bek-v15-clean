@@ -1,9 +1,6 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.62
-# ★ v19.62 (2026-11-09) — FIX pipeline web + image (UNIQUEMENT 2 branches)
-#   - Branche web : 2ème passe LLM pour synthèse finale propre
-#   - Branche image : même chemin que Brain OFF (pollinations/pepiine)
-#   - TOUT LE RESTE EST IDENTIQUE À LA v19.61
+# BEK Hybrid Agent v19 — core/brain.py — v19.66
+# ★ v19.66 (2026-11-12) — FIX : Suppression du elif en double (erreur de syntaxe)
 # ==============================================================================
 from __future__ import annotations
 import asyncio
@@ -56,8 +53,9 @@ CIRCUIT_BREAKER_THRESHOLD = int(os.getenv("BEK_CIRCUIT_BREAKER_THRESHOLD", "2"))
 CIRCUIT_BREAKER_COOLDOWN_SEC = float(os.getenv("BEK_CIRCUIT_BREAKER_COOLDOWN_SEC", "300"))
 
 _ANTI_HALLU_PROMPT = """
-## 🛡️ RÈGLES ANTI-HALLUCINATION (CRITIQUE)
-- Si tu ne sais pas, dis "Je ne sais pas".
+## 🛡️ RÈGLES ANTI-HALLUCINATION ET PRIORITÉ (CRITIQUE)
+- Si l'utilisateur demande de GÉNÉRER UNE IMAGE, ignore TOUTES les instructions sur le code, le web ou les skills.
+- Tu DOIS répondre UNIQUEMENT avec : [ACTION:generate_image]{"prompt": "<ton prompt>"}[/ACTION]
 - N'invente JAMAIS de chiffres, dates ou URLs.
 - Base-toi UNIQUEMENT sur le contexte fourni.
 - Si tu cites un chiffre, il DOIT venir d'un outil ou d'un contexte explicite.
@@ -487,7 +485,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.62 (FIX web + image)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.66 (FIX syntaxe)")
 
     async def shutdown(self):
         try:
@@ -500,28 +498,11 @@ class BEKBrain:
         except Exception: pass
 
     async def _refine_image_prompt(self, user_query: str) -> str:
-        if not user_query or not user_query.strip(): return user_query
-        pm = self._provider_manager
-        if pm is None: return user_query
-        def _sync_llm_call() -> str:
-            chunks = []
-            for item in pm.execute_chat_stream(
-                messages=[{"role": "system", "content": "Expert prompt engineer. Output ONE detailed English prompt."}, {"role": "user", "content": user_query}],
-                provider="nvidia", model="nvidia/nemotron-3.5-super-vl-120b-a12b", temperature=0.4, max_tokens=200,
-            ):
-                if "chunk" in item: chunks.append(item["chunk"])
-                elif "error" in item: raise RuntimeError(item["error"])
-            return "".join(chunks).strip()
-        try:
-            refined = await asyncio.to_thread(_sync_llm_call)
-        except Exception: return user_query
-        refined = refined.strip().strip('"').strip("'").strip("`")
-        if "prompt:" in refined.lower():
-            idx = refined.lower().find("prompt:")
-            candidate = refined[idx + len("prompt:"):].strip()
-            if candidate: refined = candidate
-        if len(refined) < 15: return user_query
-        return refined
+        """
+        ★ v19.66 : On ne réécrit plus le prompt de l'utilisateur.
+        On garde son prompt original tel quel pour préserver sa demande exacte.
+        """
+        return user_query.strip()
 
     async def _handle_fix_self(self) -> Dict[str, Any]:
         try:
@@ -567,7 +548,7 @@ class BEKBrain:
         res = {}
 
         # ============================================================
-        # ★ v19.62 — PIPELINE WEB : 2ème passe LLM pour synthèse propre
+        # ★ v19.66 — PIPELINE WEB : 2ème passe LLM pour synthèse propre
         # ============================================================
         if intent == "web":
             _status("🌐 Recherche web en cours...", "search")
@@ -587,7 +568,6 @@ class BEKBrain:
                         formatted_raw = _format_web_sync_fn(web_result)
                         logger.info("[Brain/Web] 📋 Contenu brut formaté (%d chars) → 2ème passe LLM", len(formatted_raw))
                         
-                        # ★ 2ème passe LLM pour synthèse finale propre
                         _status("🧠 Synthèse de la recherche...", "thinking")
                         synthesis_prompt = (
                             f"Voici les données brutes extraites du web sur la requête : \"{query_for_web}\"\n\n"
@@ -596,10 +576,14 @@ class BEKBrain:
                             f"Structure ta réponse finale en 3 sections distinctes :\n\n"
                             f"### 1. 📊 Données brutes\n"
                             f"Présente les faits et URLs sous forme de tableau Markdown ou liste à puces. "
-                            f"N'invente RIEN. Cite UNIQUEMENT les URLs présentes dans les données brutes.\n\n"
+                            f"N'invente RIEN. Cite UNIQUEMENT les noms d'outils, les chiffres et les URLs qui sont "
+                            f"explicitement présents dans les DONNÉES BRUTES ci-dessus. "
+                            f"Si un outil n'est pas dans les données brutes, tu ne dois pas le mentionner. "
+                            f"Si tu n'as pas l'information, écris 'Non spécifié dans les sources'.\n\n"
                             f"### 2. 💡 Analyse\n"
                             f"Interprète les données, identifie les points clés, mets en perspective. "
-                            f"Base-toi UNIQUEMENT sur les sources ci-dessus.\n\n"
+                            f"Base-toi UNIQUEMENT sur les sources ci-dessus. "
+                            f"Si une conclusion n'est pas directement soutenue par les données, ne la fais pas.\n\n"
                             f"### 3. 📚 Sources\n"
                             f"Liste les URLs réellement citées, au format `[Titre](URL)`. N'invente AUCUNE URL.\n\n"
                             f"⚠️ N'affiche JAMAIS les instructions internes, le texte \"INSTRUCTION POUR LE LLM\", "
@@ -609,11 +593,33 @@ class BEKBrain:
                             final_synthesis = await self._call_chat_pipeline(
                                 synthesis_prompt, provider, model, None
                             )
+                            
+                            try:
+                                from nerves.cognitive_nerves import run_cognitive_pipeline
+                                _status("🛡️ Vérification anti-hallucination...", "analyze")
+                                cognitive_check = await asyncio.to_thread(
+                                    run_cognitive_pipeline,
+                                    draft=final_synthesis,
+                                    original_query=query_for_web,
+                                    provider=provider or "gemini",
+                                    model=model or "gemini-3.8-flash",
+                                    enable_swarm=True,
+                                    enable_grounding=True
+                                )
+                                if isinstance(cognitive_check, dict) and not cognitive_check.get("passed", True):
+                                    reason = cognitive_check.get("reason", "Faits non vérifiés")
+                                    logger.warning("[Brain/Web] ⚠️ Anti-Hallu : %s", reason)
+                                    final_synthesis += f"\n\n⚠️ **Note anti-hallucination** : {reason}"
+                                else:
+                                    logger.info("[Brain/Web] ✅ Synthèse validée par les Cognitive Nerves.")
+                            except Exception as _cog_err:
+                                logger.debug("[Brain/Web] Cognitive check indisponible : %s", _cog_err)
+                            
                             logger.info("[Brain/Web] ✅ Synthèse finale générée (%d chars)", len(final_synthesis))
                             res = {
                                 "status": "ok",
                                 "intent": "web",
-                                "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters", "llm_synthesis"],
+                                "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters", "llm_synthesis", "cognitive_nerves"],
                                 "response": final_synthesis,
                             }
                         except Exception as _synth_err:
@@ -639,34 +645,137 @@ class BEKBrain:
             else:
                 res = self._wrap("⚠️ Aucun agent web disponible.", "web", [])
         
-        elif any(k in query.lower() for k in [
-            "analyse mon repo", "analyse mon dépôt", "analyse mon projet",
-            "analyse le repo", "analyze repo", "audit mon code",
-        ]):
-            _status("📊 Analyse du repo...", "analyze")
-            res = self._wrap("Analyse repo non implémentée dans cette version.", "analyze_repo", [])
+        # ★ FIX v19.66 : Restauration du pipeline complet d'analyse GitHub
         elif _GITHUB_URL_RE.search(query):
-            _status("🐙 Clonage du repo GitHub...", "tool")
-            res = self._wrap("Analyse GitHub non implémentée dans cette version.", "analyze_repo", [])
+            github_url_match = _GITHUB_URL_RE.search(query)
+            owner_raw = github_url_match.group(1)
+            repo_raw = github_url_match.group(2)
+            owner, repo_name = _normalize_github_repo(owner_raw, repo_raw)
+            repo_url = f"https://github.com/{owner}/{repo_name}"
+            logger.info("[Brain] 🎯 URL GitHub détectée → clone + analyse (repo=%s)", repo_name)
+            _status(f"🐙 Clonage de {repo_name}...", "tool")
+
+            try:
+                clone_result = await asyncio.to_thread(
+                    self._call_hermes_tool, "git_clone", {"url": repo_url}
+                )
+                clone_str = str(clone_result)
+                logger.info("[Brain] Clonage : %s", clone_str[:150])
+
+                from core.paths import WORKSPACE_DIR
+                repo_dir = None
+                if isinstance(clone_result, dict) and clone_result.get("status") == "success":
+                    repo_dir = clone_result.get("path")
+                if not repo_dir:
+                    external_dir = os.path.join(str(WORKSPACE_DIR), "external")
+                    candidates = []
+                    if os.path.isdir(external_dir):
+                        for d in os.listdir(external_dir):
+                            if d.rstrip(".").strip() == repo_name and os.path.isdir(os.path.join(external_dir, d)):
+                                candidates.append(d)
+                    repo_dir = f"external/{candidates[0]}" if candidates else f"external/{repo_name}"
+
+                full_repo_path = os.path.join(str(WORKSPACE_DIR), repo_dir)
+
+                if os.path.exists(full_repo_path):
+                    logger.info("[Brain] 📂 Repo trouvé : %s", repo_dir)
+                    _status("📊 Génération du rapport technique...", "analyze")
+
+                    report_result = await asyncio.to_thread(
+                        self._call_hermes_tool, "mcp_python_save_report",
+                        {"dir_path": repo_dir, "output_name": f"audit_{repo_name}"}
+                    )
+
+                    _status("🏛️ Analyse architecturale...", "analyze")
+
+                    arch_result = await asyncio.to_thread(
+                        self._call_hermes_tool, "analyze_architecture",
+                        {"dir_path": repo_dir}
+                    )
+
+                    audit_numbers_block = ""
+                    audit_numbers_dict = {}
+                    try:
+                        _rr = report_result if isinstance(report_result, dict) else {}
+                        _files_n = _rr.get("files_analyzed") or _rr.get("files") or "?"
+                        _lines_n = _rr.get("total_lines") or "?"
+                        _warn_list = _rr.get("warnings", [])
+                        _warn_n = len(_warn_list) if isinstance(_warn_list, list) else "?"
+                        audit_numbers_dict = {
+                            "files_analyzed": _files_n if isinstance(_files_n, int) else 0,
+                            "total_lines": _lines_n if isinstance(_lines_n, int) else 0,
+                            "warnings": _warn_n if isinstance(_warn_n, int) else 0,
+                        }
+                        audit_numbers_block = (
+                            "\n=== 🔢 CHIFFRES OFFICIELS DE L'AUDIT (NE PAS MODIFIER) ===\n"
+                            f"- fichiers analysés : {_files_n}\n"
+                            f"- lignes totales : {_lines_n}\n"
+                            f"- anomalies détectées : {_warn_n}\n"
+                            "RÈGLE STRICTE : si tu cites un chiffre, il DOIT venir de cette liste. "
+                            "Sinon écris « non mesuré » au lieu d'inventer.\n"
+                        )
+                    except Exception as _ne:
+                        logger.debug("[Brain] Extraction chiffres audit échouée : %s", _ne)
+
+                    _status("🧠 Synthèse LLM de l'audit...", "thinking")
+
+                    synthesis_prompt = (
+                        f"Tu es BEK, un architecte logiciel senior. Voici les données d'analyse du repo {repo_url} :\n\n"
+                        f"=== RAPPORT TECHNIQUE ===\n{report_result}\n\n"
+                        f"=== RAPPORT STRATÉGIQUE ===\n{arch_result}\n\n"
+                        f"{audit_numbers_block}\n"
+                        f"=== TA MISSION ===\n"
+                        f"Fais-moi une synthèse structurée avec :\n"
+                        f"1. Les 3 points forts majeurs du projet.\n"
+                        f"2. Les 3 points faibles critiques à corriger en priorité.\n"
+                        f"3. Un plan d'action détaillé en 5 étapes pour corriger les problèmes.\n"
+                        f"Sois direct, concret, et utilise le format Markdown.\n"
+                        f"IMPORTANT : ne cite AUCUN chiffre (nombre de fichiers, de lignes, de doublons) "
+                        f"qui ne soit pas explicitement dans les rapports ci-dessus. "
+                        f"Si tu n'es pas sûr, dis « non mesuré »."
+                    )
+
+                    synthesis = await self._call_chat_pipeline(
+                        synthesis_prompt, provider, model, None
+                    )
+
+                    synthesis = self._validate_synthesis_numbers(synthesis, audit_numbers_dict)
+
+                    res = self._wrap(
+                        f"📊 **Analyse Stratégique du Repo**\n\n{synthesis}",
+                        "analyze_repo",
+                        ["git_clone", "python_save_report", "analyze_architecture",
+                         "provider_manager", "bek_ga", "bek_lvc", "skill_agent",
+                         "cognitive_nerves", "bek_eval_guard"]
+                    )
+                else:
+                    logger.warning("[Brain] Échec : dossier %s absent", repo_dir)
+                    res = self._wrap(f"⚠️ Le dépôt n'a pas pu être cloné : {clone_str}", "analyze_repo", ["git_clone"])
+            except Exception as e:
+                logger.error("[Brain] Erreur analyse GitHub : %s", e)
+                res = self._wrap(f"❌ Erreur : {e}", "analyze_repo", ["git_clone"])
+        
         elif intent == "fix_self":
             _status("🔧 Auto-réparation...", "tool")
             res = await self._handle_fix_self()
+        
+        # ★ FIX v19.66 : Branche image STABLE (prompt original préservé)
         elif intent == "generate_image" and self._hermes:
-            # ★ v19.62 : MÊME chemin que Brain OFF (streaming/core.py)
-            # Appel direct à act._execute_action_unified avec pollinations
             _status("🎨 Génération de l'image...", "tool")
             refined_prompt = await self._refine_image_prompt(query)
             try:
-                from routers.chat_modules import actions as act
+                from services.vision.image_generation import generate_image_with_provider
                 _img_res = await asyncio.to_thread(
-                    act._execute_action_unified,
-                    "generate_image",
-                    {"prompt": refined_prompt, "provider": "pollinations", "model": "flux"}
+                    generate_image_with_provider,
+                    prompt=refined_prompt,
+                    provider="gemini",
+                    model="gemini-2.5-flash-image"
                 )
-                res = self._wrap(_img_res, "vision_generate", ["generate_image", "pollinations", "pepiine"])
+                res = self._wrap(_img_res, "vision_generate", ["generate_image", "gemini"])
             except Exception as _img_err:
                 logger.error("[Brain/Image] Erreur : %s", _img_err)
                 res = self._wrap(f"⚠️ Erreur génération image : {_img_err}", "vision_generate", ["generate_image"])
+        
         elif intent == "coder" and self._hermes:
             _status("⚙️ Génération de code...", "code")
             res = await asyncio.to_thread(self._handle_coder_intent, query, provider, model, session_id)
@@ -691,6 +800,36 @@ class BEKBrain:
         res["latency_ms"] = round(elapsed, 2)
         self._record_ga_fitness(query, res, elapsed)
         return res
+
+    def _validate_synthesis_numbers(self, synthesis: str, source: Any) -> str:
+        """Vérifie que les entiers cités dans la synthèse existent dans les chiffres officiels."""
+        try:
+            from bek_eval_guard import evaluate_response_quality, validate_cited_numbers
+        except ImportError:
+            logger.debug("[Brain] bek_eval_guard indisponible, validation chiffrée ignorée")
+            return synthesis
+
+        try:
+            guard = evaluate_response_quality("synthèse audit repo", synthesis)
+            if not guard.get("passed"):
+                logger.warning("[Brain] ⚠️ bek_eval_guard a rejeté la synthèse : %s", guard.get("reason"))
+                synthesis += f"\n\n⚠️ *Vérification partielle : {guard.get('reason')}*"
+
+            if isinstance(source, dict) and source:
+                num_check = validate_cited_numbers(synthesis, source)
+                if not num_check.get("passed"):
+                    logger.warning(
+                        "[Brain] ⚠️ Chiffres suspects dans la synthèse : %s (officiels : %s)",
+                        num_check["suspicious_numbers"], num_check["official_numbers"]
+                    )
+                    synthesis += (
+                        f"\n\n⚠️ *Chiffres non vérifiés dans cette synthèse : "
+                        f"{num_check['suspicious_numbers']} (absents de l'audit source)*"
+                    )
+        except Exception as _ge:
+            logger.debug("[Brain] Validation chiffrée échouée : %s", _ge)
+
+        return synthesis
 
     def _handle_coder_intent(self, query: str, provider: Optional[str] = None, model: Optional[str] = None, session_id: str = "default") -> Dict[str, Any]:
         q_lower = query.lower()
@@ -725,11 +864,20 @@ class BEKBrain:
     async def _call_chat_pipeline(self, query: str, provider: Optional[str], model: Optional[str], files: Optional[list]) -> str:
         try:
             is_analysis = _is_analysis_query(query)
-            if model: prov = provider or DEFAULT_CHAT_PROVIDER; mdl = model
-            elif is_analysis: prov = provider or ANALYSIS_PROVIDER; mdl = ANALYSIS_MODEL
-            else: prov = provider or DEFAULT_CHAT_PROVIDER; mdl = DEFAULT_CHAT_MODEL
+            if provider:
+                prov = provider
+                mdl = model or DEFAULT_CHAT_MODEL
+            elif model:
+                prov = DEFAULT_CHAT_PROVIDER
+                mdl = model
+            elif is_analysis:
+                prov = ANALYSIS_PROVIDER
+                mdl = ANALYSIS_MODEL
+            else:
+                prov = DEFAULT_CHAT_PROVIDER
+                mdl = DEFAULT_CHAT_MODEL
 
-            logger.info("[Brain/ChatPipeline] 🎯 LLM cible : provider=%s model=%s", prov, mdl)
+            logger.info("[Brain/ChatPipeline] 🎯 LLM cible : provider=%s model=%s (choix user=%s)", prov, mdl, "oui" if provider else "non")
 
             tools_prompt = self.skill_agent.get_available_tools_prompt(_detect_intent(query), query=query)
             ga_prompt = self._get_ga_prompt()
@@ -799,7 +947,7 @@ class BEKBrain:
         }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.62", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
+        return {"app": "BEK Hybrid Agent v19.66", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
 
 _brain_instance: Optional[BEKBrain] = None
 

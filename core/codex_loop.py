@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v19 — CODEX LOOP (v7.28 — Workflow Claude Code / Codex + Plan tolérant)
-# ★ FIX v7.24 : propagation du provider/model choisi par l'utilisateur
-# ★ FIX v7.25 : auto-correction JSON renforcée (6 tentatives + feedback ciblé)
-# ★ ADD v7.26 : validation syntaxique multi-langages (Python + Godot .gd/.tscn)
-# ★ ADD v7.27 : Workflow étape-par-étape (1 fichier = 1 étape + pause 6s)
-# ★ ADD v7.28 : Extraction tolérante des étapes du plan (_extract_plan_steps)
-#               - Accepte : args.steps, steps, plan, etapes, actions
-#               - Prompt PLAN plus strict sur le format
+# BEK-v19 — CODEX LOOP (v7.29 — Respect Strict du Provider + Fix ReflexLoop)
+# ★ FIX v7.29 : 
+#   - Suppression du fallback forcé sur Groq (fallback_chain) quand l'utilisateur 
+#     a explicitement choisi un provider (ex: Gemini).
+#   - Correction de _fetch_lessons_from_memory pour lire correctement la mémoire.
 # ==============================================================================
 from __future__ import annotations
 
@@ -198,17 +195,18 @@ def _load_relevant_skills_lvc(goal: str, budget: Dict[str, int]) -> str:
         logger.info("[Codex Loop] 📚 LVC-Skills chargés : %d chars (~%d tokens)", len(text), len(text)//3)
     return text
 
-# ★ ReflexLoop — lecture des leçons gravées en mémoire
+# ★ FIX ReflexLoop — lecture des leçons gravées en mémoire
 def _fetch_lessons_from_memory(goal: str) -> str:
     """Interroge la mémoire vectorielle pour récupérer les erreurs passées liées à cet objectif."""
     try:
         from memory import search_memory
+        # ★ FIX : On utilise le bon paramètre attendu par search_memory
         results = search_memory(f"[LECON CODEX] {goal}", top_k=3)
         if results:
             logger.info("[Codex Loop] 🧠 Leçons passées trouvées en mémoire (ReflexLoop)")
             return f"\n\n=== LEÇONS DU PASSÉ (REFLEX LOOP) ===\n{results}\nÉvite de refaire ces erreurs.\n"
     except Exception as e:
-        logger.debug(f"Impossible de lire la mémoire: {e}")
+        logger.warning(f"[Codex Loop] Impossible de lire la mémoire: {e}") # Passé en warning pour que tu le vois
     return ""
 
 # ==============================================================================
@@ -239,10 +237,8 @@ BEK_LVC_TOOLS = set(BEK_TO_HERMES.keys())
 TERMINAL_ACTIONS = {"done", "none", "finish", "complete", "terminate", "end", "d1"}
 
 MAX_TOKENS_LLM = 8192
-# ★ FIX v7.27 : 5 actions max par étape (1 fichier = 1 étape)
 MAX_ACTIONS_PER_STEP = 5
 MAX_RESULT_CHARS = 4000
-# ★ FIX v7.25 : 6 tentatives au lieu de 3
 MAX_INVALID_JSON_STREAK = 6
 
 PATH_ALIASES = ("path", "file", "filename", "target_file", "name", "f")
@@ -278,7 +274,6 @@ TOOL_ARG_SCHEMA: Dict[str, Tuple[Tuple[str, Tuple[str, ...]], ...]] = {
     "bek-search.web": (("query", ("query", "search", "text", "prompt", "q")),),
 }
 
-# ★ FIX v7.28 : Prompt PLAN encore plus strict sur le format
 PLAN_SYSTEM_PROMPT = """Tu es BEK Codex, un Agent de Développement Autonome Senior.
 
 === MODE PLAN (WORKFLOW CLAUDE CODE / CODEX) ===
@@ -421,33 +416,19 @@ def _missing_required(tool: str, args: Dict[str, Any]) -> List[str]:
         or (isinstance(args.get(canonical), str) and not args.get(canonical).strip())
     ]
 
-# ==============================================================================
-# ★ NOUVEAU v7.28 : Extraction tolérante des étapes du plan
-# Accepte : args.steps, steps, plan, etapes, actions (quel que soit le format du LLM)
-# ==============================================================================
 def _extract_plan_steps(parsed: dict) -> List[Dict[str, Any]]:
-    """
-    Extrait les étapes du plan quel que soit le format du LLM.
-    Accepte : args.steps, steps, plan, etapes, actions.
-    Retourne une liste de dicts (vide si rien trouvé).
-    """
     if not isinstance(parsed, dict):
         return []
-
-    # Format 1 : {"tool":"plan","args":{"steps":[...]}}
     args = parsed.get("args", {})
     if isinstance(args, dict):
         for key in ("steps", "plan", "etapes", "actions", "taches"):
             steps = args.get(key)
             if isinstance(steps, list) and len(steps) > 0:
                 return [s for s in steps if isinstance(s, dict)]
-
-    # Format 2 : {"steps":[...]} (sans args)
     for key in ("steps", "plan", "etapes", "actions", "taches"):
         steps = parsed.get(key)
         if isinstance(steps, list) and len(steps) > 0:
             return [s for s in steps if isinstance(s, dict)]
-
     return []
 
 # ==============================================================================
@@ -514,9 +495,6 @@ def _diagnose_json_failure(raw: str) -> str:
         "Aucun texte avant ou après le JSON."
     )
 
-# ==============================================================================
-# ★ NOUVEAU v7.26 : validation syntaxique multi-langages (Python + Godot)
-# ==============================================================================
 def _validate_syntax(file_path: str, content: str) -> Tuple[bool, str]:
     path = Path(file_path)
     ext = path.suffix.lower()
@@ -533,22 +511,18 @@ def _validate_syntax(file_path: str, content: str) -> Tuple[bool, str]:
         stripped = content.strip()
         if not stripped:
             return True, "Fichier GDScript vide"
-        
         first_lines = stripped.split("\n")[:5]
         has_extends = any(l.strip().startswith(("extends ", "class_name ")) for l in first_lines)
         if not has_extends:
             return False, "GDScript invalide : le fichier doit commencer par 'extends' ou 'class_name'"
-        
         open_braces = content.count("{")
         close_braces = content.count("}")
         open_parens = content.count("(")
         close_parens = content.count(")")
-        
         if open_braces != close_braces:
             return False, f"GDScript invalide : accolades déséquilibrées ({open_braces} vs {close_braces})"
         if open_parens != close_parens:
             return False, f"GDScript invalide : parenthèses déséquilibrées ({open_parens} vs {close_parens})"
-        
         return True, "Syntaxe GDScript validée (basique)"
 
     elif ext == ".tscn":
@@ -557,12 +531,10 @@ def _validate_syntax(file_path: str, content: str) -> Tuple[bool, str]:
             return False, "Fichier .tscn vide"
         if not (stripped.startswith("[gd_scene") or stripped.startswith("[gd_resource")):
             return False, "Fichier .tscn invalide : doit commencer par [gd_scene ...] ou [gd_resource ...]"
-        
         open_brackets = content.count("[")
         close_brackets = content.count("]")
         if open_brackets != close_brackets:
             return False, f"Fichier .tscn invalide : crochets déséquilibrés"
-        
         return True, "Syntaxe .tscn validée (basique)"
 
     elif ext == ".json":
@@ -587,7 +559,10 @@ def _call_llm_safe(messages: List[Dict[str, Any]], provider: str, model: str,
         return None, "provider_manager introuvable"
 
     providers_to_try = [(provider, model)]
-    if fallback_chain:
+    
+    # ★ FIX v7.29 : Si l'utilisateur a choisi un provider explicite (provider n'est pas None/vide),
+    # on ignore totalement la fallback_chain pour ne pas basculer sur Groq.
+    if fallback_chain and provider in (None, "", "default"):
         providers_to_try.extend(fallback_chain)
 
     last_err_msg = ""
@@ -730,12 +705,10 @@ def _run_plan_phase(goal: str, prov: str, mdl: str, ego_prompt: str,
     skills = _load_relevant_skills_lvc(goal, b)
     lessons = _fetch_lessons_from_memory(goal)
 
-    # ★ NOUVEAU : Récupération du Gène (Godot, Pygame, etc.)
     engine_type = "godot" if "godot" in goal.lower() else "pygame" if "pygame" in goal.lower() else "generic"
     best_gene_prompt = gene_manager.get_best_gene_with_rules(engine_type)
     logger.info(f"[Codex Loop] 🧬 Gène injecté : {engine_type}")
 
-    # On combine le gène avec les prompts existants
     sys_prompt = (best_gene_prompt 
                   + f"\n\n{PLAN_SYSTEM_PROMPT}"
                   + (f"\n\n{ego_prompt}" if ego_prompt else "")
@@ -748,15 +721,13 @@ def _run_plan_phase(goal: str, prov: str, mdl: str, ego_prompt: str,
         {"role": "user", "content": f"OBJECTIF : {goal}\n\nProduis un PLAN JSON granulaire (1 étape = 1 fichier)."},
     ]
     for attempt in range(1, 3):
-        fallback_plan = [("groq", "openai/gpt-oss-20b")]
+        # ★ FIX : On ne passe plus de fallback forcé sur Groq
         raw, err = _call_llm_safe(messages, prov, mdl,
-                                  max_tokens=b["max_tokens_llm"],
-                                  fallback_chain=fallback_plan)
+                                  max_tokens=b["max_tokens_llm"])
         if err:
             return {"status": "error", "phase": "plan", "message": err}
 
         parsed = _extract_json(raw or "")
-        # ★ FIX v7.28 : extraction tolérante des étapes
         raw_steps = _extract_plan_steps(parsed)
 
         if raw_steps:
@@ -772,7 +743,6 @@ def _run_plan_phase(goal: str, prov: str, mdl: str, ego_prompt: str,
             }
 
         _LVC_STATS["retries"] += 1
-        # ★ FIX v7.28 : feedback explicite sur le format attendu
         _feedback(
             messages, raw or "",
             "ERR JSON: Tu dois fournir un plan avec une clé 'steps' contenant une LISTE d'objets. "
@@ -802,7 +772,6 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
         or step.get("action", "Étape " + str(step_num + 1))
     )
 
-     # ★ NOUVEAU : Récupération du Gène pour l'étape en cours
     engine_type = "godot" if "godot" in goal.lower() else "pygame" if "pygame" in goal.lower() else "generic"
     best_gene_prompt = gene_manager.get_best_gene_with_rules(engine_type)
 
@@ -834,9 +803,9 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
             return {"status": "error", "phase": "step", "step_num": step_num,
                     "message": "Timeout budget.", "history": history}
 
+        # ★ FIX : On ne passe plus de fallback forcé sur Groq
         raw, err = _call_llm_safe(messages, prov, mdl,
-                                  max_tokens=b["max_tokens_llm"],
-                                  fallback_chain=fallback_chain)
+                                  max_tokens=b["max_tokens_llm"])
         if err:
             _log_lvc_stats(f"STEP {step_num + 1} (ERR)")
             return {"status": "error", "phase": "step", "step_num": step_num,
@@ -1045,7 +1014,8 @@ def run_codex_loop(
         logger.info("[Codex Loop] 📋 Plan de %d étapes.", len(plan_steps))
 
         all_history = []
-        step_fallback = [("groq", "openai/gpt-oss-20b")]
+        # ★ FIX : On ne passe plus de fallback forcé, on laisse vide.
+        step_fallback = []
         for i in range(len(plan_steps)):
             step_res = _run_step_phase(
                 skill_goal, plan_steps, i,
@@ -1062,7 +1032,6 @@ def run_codex_loop(
                         "message": f"Étape {i+1} échouée : {step_res.get('message')}",
                         "history": all_history}
             
-            # ★ FIX v7.27 : Pause de 6s entre chaque étape (repos CPU/RAM)
             logger.info("[Codex Loop] ✅ Étape %d/%d terminée. Fichier sur le disque. Pause de 6s...", 
                         i+1, len(plan_steps))
             time.sleep(6.0)
@@ -1093,7 +1062,7 @@ def run_codex_loop(
             skill_goal, plan, int(step_num),
             target_provider, target_model,
             _get_ego_prompt(alter_ego), int(time_budget_s),
-            [("groq", "openai/gpt-oss-20b")],
+            [], # ★ FIX : plus de fallback forcé ici
             memory_context
         )
 

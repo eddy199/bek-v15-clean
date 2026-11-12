@@ -1,5 +1,5 @@
 # ==============================================================================
-# BEK-v19 HYBRID — Provider Manager — v21.4 (Modèles NVIDIA 2026 complets)
+# BEK-v19 HYBRID — Provider Manager — v21.7 (Mode Manuel Strict Forcé)
 # ==============================================================================
 from __future__ import annotations
 
@@ -24,10 +24,11 @@ for _ in range(6):
 BEK_APP_TITLE = "BEK Hybrid Agent v19"
 BEK_APP_CREATOR = "BEKKARA Mohamed"
 
+# Liste des providers capables de faire du tool calling
 _DEFAULT_TOOL_CAPABLE_PROVIDERS = (
     "groq", "nvidia", "gemini", "openrouter",
     "kimi", "ollama_cloud", "mistral", "cohere",
-    "huggingface", "b_ai", "beatapi",
+    "huggingface", "b_ai", "beatapi", "apinex",
     "local",
 )
 
@@ -108,9 +109,6 @@ class ProviderManager:
     AGNES_FLASH_MIN_SECONDS: int = 4
     AGNES_FLASH_MAX_SECONDS: int = 12
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # ★ v21.4 — PROVIDER_MODELS enrichi avec les 33 modèles NVIDIA 2026
-    # ══════════════════════════════════════════════════════════════════════════
     PROVIDER_MODELS: Dict[str, List[str]] = {
         "groq": [
             "openai/gpt-oss-20b",
@@ -118,51 +116,47 @@ class ProviderManager:
             "llama-3.3-70b-versatile",
             "qwen/qwen3.8-27b",
         ],
+        "apinex": [
+            "free/qwen-3.8-max",
+            "free/deepseek-v4.1-flash",
+            "free/glm-5.3-flash",
+            "free/gemini-3.8-flash",
+            "free/kimi-k3",
+            "free/minimax-m3.1-flash",
+            "free/gpt-6-luna"
+        ],
         "nvidia": [
-            # ═══ 🥇 TIER 1 : LLM généralistes performants (chat + tools) ═══
-            "moonshotai/kimi-k3.1-pro",                        # 1
-            "mistralai/mistral-large-4",                       # 2
-            "nvidia/nemotron-3-ultra-550b-a55b",               # 20
-            "nvidia/nemotron-3.5-lightning-30b-a3b",           # 16
-            "nvidia/nemotron-3.5-bolt-e4b",                    # 4
-            "deepseek-ai/deepseek-v4.1-flash",                 # 13
-            "z-ai/glm-5-3-flash",                              # 15
-            "minimaxai/minimax-m3.1-flash",                    # 5
-            "stepfun-ai/step-5-preview",                       # 9
-            "meta/muse-glimmer-30b",                           # 17
-            "openai/gpt-oss-20b",                              # 32
-
-            # ═══ 🥈 TIER 2 : Multimodal / Vision ═══
-            "nvidia/nemotron-3.5-super-vl-120b-a12b",          # 10
-            "meta/llama-3.2-90b-vision-instruct",              # 33
-            "nvidia/nemotron-3.5-parse",                       # 3
-            "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",   # 24
-
-            # ═══ 🥉 TIER 3 : Embeddings / Rerank ═══
-            "nvidia/nemotron-3.5-embed-1b",                    # 6
-            "nvidia/nemotron-3.5-rerank-8b",                   # 7
-
-            # ═══ 🛡️ TIER 4 : Sécurité / Guardrails ═══
-            "nvidia/nemotron-3.5-content-safety",              # 23
-            "meta/llama-guard-4-12b",                          # 31
-            "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",    # 28
-
-            # ═══ 🎯 TIER 5 : Spécialisés (hors chat direct) ═══
-            "nvidia/riva-translate-4b-instruct-v2",            # 18 (traduction)
-            "nvidia/ising-calibration-1.5-31b",                # 19 (calibration)
-            "nvidia/magpie-tts-zeroshot",                      # 29 (TTS)
-            "nvidia/background-noise-removal",                 # 30 (audio)
-            "nvidia/nemotron-voicechat",                       # 26 (voice chat)
-            "nvidia/streampetr",                               # 27 (perception 3D)
-            "nvidia/3d-body-pose",                             # 12 (pose)
-            "ipd/rfd4-proteina",                               # 11 (protéine)
-            "nvidia/kumo-tabular",                             # 8  (tabulaire)
-            "nvidia/kumo-relational",                          # 14 (relationnel)
-            "nvidia/synthetic-video-detector",                 # 25 (détection vidéo)
-            "nvidia/cosmos3-nano-reasoner",                    # 21
-            "nvidia/cosmos3-nano",                             # 22
-
-            # ═══ 📦 ANCIENS MODÈLES — CONSERVÉS pour compat ═══
+            "nvidia/nemotron-3-ultra-550b-a55b",
+            "nvidia/nemotron-3.5-lightning-30b-a3b",
+            "nvidia/nemotron-3.5-bolt-e4b",
+            "deepseek-ai/deepseek-v4.1-flash",
+            "z-ai/glm-5-3-flash",
+            "minimaxai/minimax-m3.1-flash",
+            "stepfun-ai/step-5-preview",
+            "meta/muse-glimmer-30b",
+            "openai/gpt-oss-20b",
+            "nvidia/nemotron-3.5-super-vl-120b-a12b",
+            "meta/llama-3.2-90b-vision-instruct",
+            "nvidia/nemotron-3.5-parse",
+            "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+            "nvidia/nemotron-3.5-embed-1b",
+            "nvidia/nemotron-3.5-rerank-8b",
+            "nvidia/nemotron-3.5-content-safety",
+            "meta/llama-guard-4-12b",
+            "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",
+            "nvidia/riva-translate-4b-instruct-v2",
+            "nvidia/ising-calibration-1.5-31b",
+            "nvidia/magpie-tts-zeroshot",
+            "nvidia/background-noise-removal",
+            "nvidia/nemotron-voicechat",
+            "nvidia/streampetr",
+            "nvidia/3d-body-pose",
+            "ipd/rfd4-proteina",
+            "nvidia/kumo-tabular",
+            "nvidia/kumo-relational",
+            "nvidia/synthetic-video-detector",
+            "nvidia/cosmos3-nano-reasoner",
+            "nvidia/cosmos3-nano",
             "nvidia/nemotron-3-super-120b-a12b",
             "meta/llama-3.3-70b-instruct",
             "meta/llama-3.1-70b-instruct",
@@ -237,8 +231,7 @@ class ProviderManager:
         "local": ["qwen2.5-coder-3b", "qwen2.5-coder-7b", "phi3.5", "llama3.2-3b"],
     }
 
-    # ★ Fallback étendu : NVIDIA + Groq + Gemini + OpenRouter + Mistral
-    FALLBACK_ORDER: List[str] = ["nvidia", "groq", "gemini", "openrouter", "mistral"]
+    FALLBACK_ORDER: List[str] = ["nvidia", "groq", "gemini", "openrouter", "mistral", "apinex"]
 
     PROVIDER_KEY_MAP: Dict[str, str] = {
         "kimi": "MOONSHOT_API_KEY", "aisa": "AISA_API_KEY", "b_ai": "B_AI_API_KEY",
@@ -246,7 +239,7 @@ class ProviderManager:
         "gemini": "GEMINI_API_KEY", "openrouter": "OPENROUTER_API_KEY", "mistral": "MISTRAL_API_KEY",
         "cohere": "COHERE_API_KEY", "aionlabs": "AIONLABS_API_KEY", "zhipu": "ZHIPU_API_KEY",
         "siliconflow": "SILICONFLOW_API_KEY", "huggingface": "HUGGINGFACE_API_KEY",
-        "ollama_cloud": "OLLAMA_API_KEY", "agnes": "AGNES_API_KEY",
+        "ollama_cloud": "OLLAMA_API_KEY", "agnes": "AGNES_API_KEY", "apinex": "APINEX_API_KEY",
     }
 
     def __init__(self) -> None:
@@ -326,7 +319,10 @@ class ProviderManager:
         p = provider.lower().strip()
         if p == "local":
             return "local", "none", "in-process://llama-cpp"
-        if p in ["b.ai", "b_ai", "bai"]: return "b_ai", self.get_api_key("B_AI_API_KEY"), "https://api.b.ai/v1/chat/completions"
+        elif p == "apinex": 
+            base = self.get_api_key("APINEX_BASE_URL") or "https://api.apinex.bond/v1"
+            return "apinex", self.get_api_key("APINEX_API_KEY"), f"{base.rstrip('/')}/chat/completions"
+        elif p in ["b.ai", "b_ai", "bai"]: return "b_ai", self.get_api_key("B_AI_API_KEY"), "https://api.b.ai/v1/chat/completions"
         elif p in ["beatapi", "beatapi.io"]: return "beatapi", self.get_api_key("BEATAPI_API_KEY"), "https://api.beatapi.io/v1/chat/completions"
         elif p in ["kimi", "moonshot", "moonshot_ai"]: return "kimi", self.get_api_key("MOONSHOT_API_KEY") or self.get_api_key("KIMI_API_KEY"), (self.get_api_key("MOONSHOT_BASE_URL") or "https://api.moonshot.cn/v1").rstrip("/") + "/chat/completions"
         elif p == "aisa": return "aisa", self.get_api_key("AISA_API_KEY"), "https://api.aisa.one/v1/chat/completions"
@@ -531,7 +527,12 @@ class ProviderManager:
         top_p: float = 0.9,
         disable_internal_fallback: bool = False,
         skip_tpm_guard: bool = False,
+        strict_provider: bool = True,  # ★ MODIFIÉ : True par défaut
     ) -> Generator[Dict[str, Any], None, None]:
+        
+        # ★ FIX : On force le mode strict à True pour respecter le choix de l'utilisateur
+        strict_provider = True 
+
         clean_msgs = self.format_messages(messages)
         if not clean_msgs:
             yield {"error": "Aucun message valide à envoyer."}
@@ -572,10 +573,15 @@ class ProviderManager:
         else:
             clean_msgs, total_chars = self._apply_tpm_guard(clean_msgs, total_chars)
 
+        # ★ GESTION DU MODE STRICT ★
         attempt_providers = [selected_provider]
-        for fb in self.FALLBACK_ORDER:
-            if fb not in attempt_providers:
-                attempt_providers.append(fb)
+        
+        if strict_provider:
+            logger.info("[ProviderManager] 🛑 Mode STRICT activé : seul le provider '%s' sera essayé.", selected_provider)
+        else:
+            for fb in self.FALLBACK_ORDER:
+                if fb not in attempt_providers:
+                    attempt_providers.append(fb)
 
         last_error_message = ""
 
@@ -659,9 +665,12 @@ class ProviderManager:
 
             if provider_attempted:
                 self._cb_record_failure(current_prov)
-                logger.info("[ProviderManager] 🔄 Passage au provider suivant dans la chaîne...")
+                if not strict_provider:
+                    logger.info("[ProviderManager] 🔄 Passage au provider suivant dans la chaîne...")
+                else:
+                    logger.warning("[ProviderManager] 🛑 Mode STRICT : arrêt des tentatives car '%s' a échoué.", current_prov)
 
-        yield {"error": f"Tous les providers ont échoué. Dernière erreur : {last_error_message}"}
+        yield {"error": f"Échec du provider '{selected_provider}'. Dernière erreur : {last_error_message}"}
 
 
 provider_manager = ProviderManager()

@@ -1,9 +1,9 @@
 """
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║  GROUNDING-VALIDATOR v1.1 — Vérification Factuelle Avancée pour BEK-v15.3   ║
+║  GROUNDING-VALIDATOR v1.2 — Vérification Factuelle Avancée pour BEK-v15.3   ║
 ║  Fichier : meta_cortex_grounding.py                                          ║
-║  Rôle    : Génère et exécute des requêtes SQL de vérification automatique   ║
-║            sur Neon PostgreSQL pour valider chaque claim du draft           ║
+║  ★ FIX v1.2 : Ajout du pattern "quantité" pour vérifier les chiffres         ║
+║                génériques (fichiers, lignes, warnings, etc.).                ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 """
 
@@ -32,7 +32,7 @@ class Severity(str, Enum):
 class Claim:
     claim_id: str
     claim_text: str
-    claim_type: str  # 'numeric', 'entity', 'date', 'count', 'aggregate'
+    claim_type: str  # 'numeric', 'entity', 'date', 'count', 'aggregate', 'quantity'
     context: str
     source_table: Optional[str] = None
     source_column: Optional[str] = None
@@ -84,6 +84,9 @@ class ClaimExtractor:
         "email": re.compile(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'),
         "societe": re.compile(r'(?:société|entreprise|company|client)\s+["\']?([^"\']{2,50})["\']?', re.IGNORECASE),
         "statut": re.compile(r'(?:statut|status|étape|stage)\s+(?:est|de|du|en)\s+["\']?([^"\']+)["\']?', re.IGNORECASE),
+        # ★ FIX v1.2 : Pattern pour capturer les quantités génériques
+        # Ex: "297 fichiers", "93368 lignes", "93 warnings", "14 doublons"
+        "quantity": re.compile(r'(\d{2,6})\s+(fichiers?|lignes?|warnings?|anomalies?|doublons?|groupes?|classes?|méthodes?|fonctions?|outils?|skills?|erreurs?)', re.IGNORECASE),
     }
 
     AGGREGATE_KEYWORDS = ["total", "somme", "montant total", "chiffre d'affaires", "revenu", "nombre de", "count", "combien"]
@@ -104,6 +107,10 @@ class ClaimExtractor:
                 claims.append(Claim(f"company_{i}_{match.start()}", match.group(1), "entity", context, "companies", "name"))
             for match in self.PATTERNS["email"].finditer(line):
                 claims.append(Claim(f"email_{i}_{match.start()}", match.group(0), "entity", context, "contacts", "email"))
+            # ★ FIX v1.2 : Ajout des claims "quantity"
+            for match in self.PATTERNS["quantity"].finditer(line):
+                claims.append(Claim(f"quantity_{i}_{match.start()}", match.group(0), "quantity", context))
+            
             if any(kw in line.lower() for kw in self.AGGREGATE_KEYWORDS):
                 claims.append(Claim(f"aggregate_{i}", line.strip(), "aggregate", context, "opportunities", "amount"))
 
@@ -140,6 +147,10 @@ class SQLQueryGenerator:
             query = f"SELECT {col} as actual_value FROM {table} WHERE {col} ILIKE '%{val}%' LIMIT 5"
         elif claim.claim_type == "aggregate":
             query = f"SELECT COALESCE(SUM({col}), 0) as aggregate_value, COUNT(*) as count_val FROM {table}"
+        elif claim.claim_type == "quantity":
+            # Pour les quantités génériques, on ne peut pas vérifier via SQL (on n'a pas la table)
+            # On renvoie None pour indiquer que c'est "UNVERIFIABLE" par SQL
+            return None
         else:
             return None
 
@@ -215,6 +226,8 @@ class GroundingValidator:
         for claim in claims:
             sql = self.generator.generate_query(claim)
             if not sql:
+                # ★ FIX v1.2 : Pour les "quantity", on ne peut pas vérifier via SQL.
+                # On les marque comme UNVERIFIABLE (mais on les remonte quand même)
                 results.append(GroundingResult(claim, True, "", "UNVERIFIABLE", claim.claim_text, None, 0))
                 continue
             success, data, err = self.executor.execute(sql)
