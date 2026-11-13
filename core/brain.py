@@ -1,8 +1,8 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.68
-# ★ v19.68 (2026-11-13) — FIX : Détection URL GitHub AVANT _detect_intent
-#   - _detect_intent retourne "analyze_repo" si URL GitHub détectée
-#   - process() route vers la branche GitHub en priorité
+# BEK Hybrid Agent v19 — core/brain.py — v19.69
+# ★ v19.69 (2026-11-13) — FIX : Application des briques à TOUTES les actions
+#   - Ajout de _apply_all_bricks() appelée à la fin de process()
+#   - Couvre chat, web, coder, memory, image, analyze_repo, etc.
 # ==============================================================================
 from __future__ import annotations
 import asyncio
@@ -153,7 +153,6 @@ def _tool_args_for(tool_name: str, path: Optional[str]) -> Dict[str, Any]:
 @lru_cache(maxsize=512)
 def _detect_intent(query: str) -> str:
     q = query.lower()
-    # ★ FIX v19.68 : Détection URL GitHub EN PREMIER
     if _GITHUB_URL_RE.search(query):
         return "analyze_repo"
     if _detect_explicit_tool(query): return "chat"
@@ -423,6 +422,145 @@ class BEKBrain:
         self._session_states: Dict[str, Dict[str, Any]] = {}
         self.skill_agent = SkillAgent()
 
+    # ══════════════════════════════════════════════════════════════════════
+    # ★ v19.69 : Wrapper universel pour appliquer les briques à toutes les actions
+    # ══════════════════════════════════════════════════════════════════════
+    async def _apply_all_bricks(
+        self,
+        res: Dict[str, Any],
+        query: str,
+        intent: str,
+        provider: Optional[str],
+        model: Optional[str],
+        start_time: float,
+        audit_numbers: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Applique les briques BEK à n'importe quel résultat (chat, web, code, image, etc.).
+        Chaque brique est isolée dans un try/except pour ne jamais casser le flux.
+        """
+        if not isinstance(res, dict):
+            return res
+
+        response_text = str(res.get("response", "") or "")
+        if not response_text.strip():
+            return res
+
+        # ─── 1. BEK-LVC : compression du résultat (si > 6000 chars) ───
+        if len(response_text) > 6000:
+            try:
+                from bek_core.eco.optimizer import BekEcoOptimizer
+                optimizer = BekEcoOptimizer()
+                if hasattr(optimizer, "compress_text"):
+                    compressed = optimizer.compress_text(response_text, max_chars=6000)
+                    if len(compressed) < len(response_text):
+                        logger.info(
+                            "[Bricks/LVC] 🗜️ %s : %d → %d chars",
+                            intent, len(response_text), len(compressed),
+                        )
+                        response_text = compressed
+                        res["response"] = compressed
+            except Exception as e:
+                logger.debug("[Bricks/LVC] indisponible : %s", e)
+
+        # ─── 2. Security Guard (si action sensible) ───
+        try:
+            from security_guard import security_guard
+            _guard_result = security_guard.sanitize_secrets(response_text)
+            if _guard_result != response_text:
+                logger.warning("[Bricks/Security] 🔒 Secrets détectés dans la réponse → redacted")
+                response_text = _guard_result
+                res["response"] = _guard_result
+        except Exception as e:
+            logger.debug("[Bricks/Security] indisponible : %s", e)
+
+        # ─── 3. Cognitive Nerves (anti-hallucination Swarm + Grounding) ───
+        if len(response_text) > 100 and not _is_analysis_query(response_text):
+            try:
+                from nerves.cognitive_nerves import run_cognitive_pipeline
+                logger.info("[Bricks/Cognitive] 🛡️ Vérification anti-hallucination pour %s", intent)
+                cognitive_check = await asyncio.to_thread(
+                    run_cognitive_pipeline,
+                    draft=response_text,
+                    original_query=query,
+                    provider=provider or "gemini",
+                    model=model or "gemini-3.8-flash",
+                    enable_swarm=True,
+                    enable_grounding=True,
+                )
+                if isinstance(cognitive_check, dict):
+                    if not cognitive_check.get("passed", True):
+                        reason = cognitive_check.get("reason", "Faits non vérifiés")
+                        logger.warning("[Bricks/Cognitive] ⚠️ %s : %s", intent, reason)
+                        response_text += f"\n\n⚠️ **Note anti-hallucination** : {reason}"
+                        res["response"] = response_text
+                    else:
+                        logger.info("[Bricks/Cognitive] ✅ %s validé par les Cognitive Nerves", intent)
+            except Exception as e:
+                logger.warning("[Bricks/Cognitive] échoué pour %s : %s", intent, e)
+
+        # ─── 4. Validation chiffrée (si audit_numbers fourni) ───
+        if audit_numbers:
+            try:
+                from bek_eval_guard import validate_cited_numbers
+                num_check = validate_cited_numbers(response_text, audit_numbers)
+                if not num_check.get("passed"):
+                    logger.warning(
+                        "[Bricks/EvalGuard] ⚠️ Chiffres suspects pour %s : %s",
+                        intent, num_check["suspicious_numbers"]
+                    )
+                    response_text += (
+                        f"\n\n⚠️ *Chiffres non vérifiés : "
+                        f"{num_check['suspicious_numbers']} (absents de l'audit source)*"
+                    )
+                    res["response"] = response_text
+            except Exception as e:
+                logger.debug("[Bricks/EvalGuard] indisponible : %s", e)
+
+        # ─── 5. BEK-GA : fitness ───
+        try:
+            from nerves.ga_nerves import get_ga_engine
+            engine = get_ga_engine()
+            best_gene = engine.select_best_gene()
+            elapsed_ms = (time.perf_counter() - start_time) * 1000
+            tokens_est = len(response_text) // 4
+            engine.calculate_fitness(best_gene, True, elapsed_ms, tokens_est)
+            logger.info("[Bricks/GA] 🧬 fitness enregistré pour %s", best_gene.gene_id)
+        except Exception as e:
+            logger.debug("[Bricks/GA] indisponible : %s", e)
+
+        # ─── 6. ReflexLoop : enregistrer l'épisode ───
+        try:
+            from services.episode_logger import log_episode as _log_ep
+            _log_ep(
+                action=intent,
+                parameters={"query": query, "provider": provider},
+                status="success",
+                message=f"Bricks appliquées: {len(response_text)} chars",
+                latency_ms=(time.perf_counter() - start_time) * 1000,
+                source="brain_bricks",
+            )
+            logger.info("[Bricks/Reflex] 🔁 épisode enregistré pour %s", intent)
+        except Exception as e:
+            logger.debug("[Bricks/Reflex] indisponible : %s", e)
+
+        # ─── 7. BEK-ECO : cache ───
+        try:
+            from bek_core.eco.optimizer import BekEcoOptimizer
+            optimizer = BekEcoOptimizer()
+            cache_key = optimizer._cache_key(query)
+            if len(response_text) > 100:
+                optimizer.cache_set(cache_key, response_text, query=query)
+                logger.info("[Bricks/ECO] 💾 synthèse cachée pour %s", intent)
+        except Exception as e:
+            logger.debug("[Bricks/ECO] indisponible : %s", e)
+
+        res["bricks_applied"] = [
+            "lvc", "security_guard", "cognitive_nerves",
+            "bek_eval_guard", "ga", "reflex_loop", "bek_eco",
+        ]
+        return res
+
     def _get_ga_prompt(self) -> str:
         try:
             from nerves.ga_nerves import get_ga_engine
@@ -490,7 +628,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.68 (FIX détection GitHub)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.69 (FIX briques universelles)")
 
     async def shutdown(self):
         try:
@@ -530,9 +668,10 @@ class BEKBrain:
             elapsed = (time.perf_counter() - start_time) * 1000
             res["latency_ms"] = round(elapsed, 2)
             self._record_ga_fitness(query, res, elapsed)
+            # ★ v19.69 : briques universelles
+            res = await self._apply_all_bricks(res, query, "files", provider, model, start_time)
             return res
 
-        # ★ FIX v19.68 : Détection URL GitHub AVANT _detect_intent
         _github_match = _GITHUB_URL_RE.search(query)
         if _github_match:
             intent = "analyze_repo"
@@ -553,9 +692,6 @@ class BEKBrain:
 
         res = {}
 
-        # ============================================================
-        # ★ v19.68 — PIPELINE GITHUB COMPLET (avant web)
-        # ============================================================
         if intent == "analyze_repo" and _github_match:
             github_url_match = _github_match
             owner_raw = github_url_match.group(1)
@@ -566,7 +702,6 @@ class BEKBrain:
             _status(f"🐙 Clonage de {repo_name}...", "tool")
 
             try:
-                # ★ 1. BEK-REX : Routage
                 try:
                     from bek_core import BekCPU
                     route_info = BekCPU.execute("BEK-REX", "bek_rex_route", query=f"analyse repo {repo_name}")
@@ -575,7 +710,6 @@ class BEKBrain:
                 except Exception as e:
                     logger.debug("[Brain/GitHub] BEK-REX indisponible : %s", e)
 
-                # ★ 2. Clone
                 clone_result = await asyncio.to_thread(
                     self._call_hermes_tool, "git_clone", {"url": repo_url}
                 )
@@ -604,7 +738,6 @@ class BEKBrain:
                     logger.info("[Brain] 📂 Repo trouvé : %s", repo_dir)
                     _status("📊 Génération du rapport technique...", "analyze")
 
-                    # ★ 3. Rapport technique + archi
                     report_result = await asyncio.to_thread(
                         self._call_hermes_tool, "mcp_python_save_report",
                         {"dir_path": repo_dir, "output_name": f"audit_{repo_name}"}
@@ -615,7 +748,6 @@ class BEKBrain:
                         {"dir_path": repo_dir}
                     )
 
-                    # ★ 4. Extraction chiffres officiels
                     audit_numbers_block = ""
                     audit_numbers_dict = {}
                     try:
@@ -640,7 +772,6 @@ class BEKBrain:
                     except Exception as _ne:
                         logger.debug("[Brain] Extraction chiffres audit échouée : %s", _ne)
 
-                    # ★ 5. BEK-LVC : Compression du rapport
                     _status("🗜️ Compression LVC du rapport...", "analyze")
                     report_str = str(report_result)
                     arch_str = str(arch_result)
@@ -665,7 +796,6 @@ class BEKBrain:
                     except Exception as _lvc_err:
                         logger.warning("[Brain/GitHub] BEK-LVC échoué : %s", _lvc_err)
 
-                    # ★ 6. Synthèse LLM
                     _status("🧠 Synthèse LLM de l'audit...", "thinking")
                     synthesis_prompt = (
                         f"Tu es BEK, un architecte logiciel senior. Voici les données d'analyse du repo {repo_url} :\n\n"
@@ -687,69 +817,7 @@ class BEKBrain:
                         synthesis_prompt, provider, model, None
                     )
 
-                    # ★ 7. Validation chiffrée (bek_eval_guard)
                     synthesis = self._validate_synthesis_numbers(synthesis, audit_numbers_dict)
-
-                    # ★ 8. Cognitive Nerves (Anti-hallu)
-                    try:
-                        from nerves.cognitive_nerves import run_cognitive_pipeline
-                        _status("🛡️ Vérification anti-hallucination...", "analyze")
-                        cognitive_check = await asyncio.to_thread(
-                            run_cognitive_pipeline,
-                            draft=synthesis,
-                            original_query=query,
-                            provider=provider or "gemini",
-                            model=model or "gemini-3.8-flash",
-                            enable_swarm=True,
-                            enable_grounding=True,
-                        )
-                        if isinstance(cognitive_check, dict):
-                            if not cognitive_check.get("passed", True):
-                                reason = cognitive_check.get("reason", "Faits non vérifiés")
-                                logger.warning("[Brain/GitHub] ⚠️ Anti-Hallu : %s", reason)
-                                synthesis += f"\n\n⚠️ **Note anti-hallucination** : {reason}"
-                            else:
-                                logger.info("[Brain/GitHub] ✅ Synthèse validée par les Cognitive Nerves.")
-                    except Exception as _cog_err:
-                        logger.warning("[Brain/GitHub] Cognitive check échoué : %s", _cog_err)
-
-                    # ★ 9. BEK-GA : Fitness
-                    try:
-                        from nerves.ga_nerves import get_ga_engine
-                        engine = get_ga_engine()
-                        best_gene = engine.select_best_gene()
-                        elapsed_ms = (time.perf_counter() - start_time) * 1000
-                        tokens_est = len(synthesis) // 4
-                        engine.calculate_fitness(best_gene, True, elapsed_ms, tokens_est)
-                        logger.info("[Brain/GitHub] 🧬 BEK-GA : fitness enregistré pour %s", best_gene.gene_id)
-                    except Exception as _ga_err:
-                        logger.debug("[Brain/GitHub] BEK-GA indisponible : %s", _ga_err)
-
-                    # ★ 10. ReflexLoop : Épisode
-                    try:
-                        from services.episode_logger import log_episode as _log_ep
-                        _log_ep(
-                            action="analyze_repo",
-                            parameters={"repo": repo_name, "url": repo_url, "provider": provider},
-                            status="success",
-                            message=f"Analyse réussie: {len(synthesis)} chars | LVC: {len(report_str)}→{len(report_compressed)}",
-                            latency_ms=(time.perf_counter() - start_time) * 1000,
-                            source="brain_github",
-                        )
-                        logger.info("[Brain/GitHub] 🔁 ReflexLoop : épisode enregistré")
-                    except Exception as _reflex_err:
-                        logger.debug("[Brain/GitHub] ReflexLoop indisponible : %s", _reflex_err)
-
-                    # ★ 11. BEK-ECO : Cache
-                    try:
-                        from bek_core.eco.optimizer import BekEcoOptimizer
-                        optimizer = BekEcoOptimizer()
-                        cache_key = optimizer._cache_key(query)
-                        if len(synthesis) > 100:
-                            optimizer.cache_set(cache_key, synthesis, query=query)
-                            logger.info("[Brain/GitHub] 💾 BEK-ECO : synthèse cachée")
-                    except Exception:
-                        pass
 
                     res = self._wrap(
                         f"📊 **Analyse Stratégique du Repo**\n\n{synthesis}",
@@ -758,16 +826,17 @@ class BEKBrain:
                          "bek_rex", "bek_lvc", "bek_ga", "bek_eco",
                          "provider_manager", "cognitive_nerves", "reflex_loop", "bek_eval_guard"]
                     )
+                    # ★ v19.69 : on appelle _apply_all_bricks (couvre Cognitive, GA, Reflex, etc.)
+                    res = await self._apply_all_bricks(
+                        res, query, "analyze_repo", provider, model, start_time,
+                        audit_numbers=audit_numbers_dict,
+                    )
             except Exception as e:
                 logger.error("[Brain] Erreur analyse GitHub : %s", e)
                 res = self._wrap(f"❌ Erreur : {e}", "analyze_repo", ["git_clone"])
         
-        # ============================================================
-        # ★ v19.67 — PIPELINE WEB
-        # ============================================================
         elif intent == "web":
             _status("🌐 Recherche web en cours...", "search")
-            
             query_for_web = query
             
             if self._hermes and "web_sync" in self._hermes.tools:
@@ -808,33 +877,11 @@ class BEKBrain:
                             final_synthesis = await self._call_chat_pipeline(
                                 synthesis_prompt, provider, model, None
                             )
-                            
-                            try:
-                                from nerves.cognitive_nerves import run_cognitive_pipeline
-                                _status("🛡️ Vérification anti-hallucination...", "analyze")
-                                cognitive_check = await asyncio.to_thread(
-                                    run_cognitive_pipeline,
-                                    draft=final_synthesis,
-                                    original_query=query_for_web,
-                                    provider=provider or "gemini",
-                                    model=model or "gemini-3.8-flash",
-                                    enable_swarm=True,
-                                    enable_grounding=True
-                                )
-                                if isinstance(cognitive_check, dict) and not cognitive_check.get("passed", True):
-                                    reason = cognitive_check.get("reason", "Faits non vérifiés")
-                                    logger.warning("[Brain/Web] ⚠️ Anti-Hallu : %s", reason)
-                                    final_synthesis += f"\n\n⚠️ **Note anti-hallucination** : {reason}"
-                                else:
-                                    logger.info("[Brain/Web] ✅ Synthèse validée par les Cognitive Nerves.")
-                            except Exception as _cog_err:
-                                logger.debug("[Brain/Web] Cognitive check indisponible : %s", _cog_err)
-                            
                             logger.info("[Brain/Web] ✅ Synthèse finale générée (%d chars)", len(final_synthesis))
                             res = {
                                 "status": "ok",
                                 "intent": "web",
-                                "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters", "llm_synthesis", "cognitive_nerves"],
+                                "bricks_used": ["web_agent", "hermes", "formatters", "llm_synthesis"],
                                 "response": final_synthesis,
                             }
                         except Exception as _synth_err:
@@ -842,7 +889,7 @@ class BEKBrain:
                             res = {
                                 "status": "ok",
                                 "intent": "web",
-                                "bricks_used": ["web_agent", "hermes", "anti_hallucination", "formatters"],
+                                "bricks_used": ["web_agent", "hermes", "formatters"],
                                 "response": formatted_raw,
                             }
                     else:
@@ -859,10 +906,14 @@ class BEKBrain:
                 res = self._wrap(raw, "web", ["web_agent"])
             else:
                 res = self._wrap("⚠️ Aucun agent web disponible.", "web", [])
+            
+            # ★ v19.69 : briques universelles
+            res = await self._apply_all_bricks(res, query, "web", provider, model, start_time)
         
         elif intent == "fix_self":
             _status("🔧 Auto-réparation...", "tool")
             res = await self._handle_fix_self()
+            res = await self._apply_all_bricks(res, query, "fix_self", provider, model, start_time)
         
         elif intent == "generate_image" and self._hermes:
             _status("🎨 Génération de l'image...", "tool")
@@ -879,16 +930,22 @@ class BEKBrain:
             except Exception as _img_err:
                 logger.error("[Brain/Image] Erreur : %s", _img_err)
                 res = self._wrap(f"⚠️ Erreur génération image : {_img_err}", "vision_generate", ["generate_image"])
+            # ★ v19.69 : briques universelles
+            res = await self._apply_all_bricks(res, query, "generate_image", provider, model, start_time)
         
         elif intent == "coder" and self._hermes:
             _status("⚙️ Génération de code...", "code")
             res = await asyncio.to_thread(self._handle_coder_intent, query, provider, model, session_id)
+            res = await self._apply_all_bricks(res, query, "coder", provider, model, start_time)
         elif intent == "memory":
             _status("🧠 Recherche en mémoire...", "analyze")
             res = self._wrap(await self._handle_memory(query), "memory", ["hindsight_memory"])
+            res = await self._apply_all_bricks(res, query, "memory", provider, model, start_time)
         else:
             _status("💬 Traitement de la requête...", "thinking")
             res = self._wrap(await self._call_chat_pipeline(query, provider, model, None), "chat", ["pipeline_chat"])
+            # ★ v19.69 : briques universelles pour le chat
+            res = await self._apply_all_bricks(res, query, "chat", provider, model, start_time)
 
         if intent != "web":
             try:
@@ -1050,7 +1107,7 @@ class BEKBrain:
         }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.68", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
+        return {"app": "BEK Hybrid Agent v19.69", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
 
 _brain_instance: Optional[BEKBrain] = None
 
