@@ -1,8 +1,9 @@
 # ==============================================================================
-# BEK Hybrid Agent v19 — core/brain.py — v19.69
-# ★ v19.69 (2026-11-13) — FIX : Application des briques à TOUTES les actions
-#   - Ajout de _apply_all_bricks() appelée à la fin de process()
-#   - Couvre chat, web, coder, memory, image, analyze_repo, etc.
+# BEK Hybrid Agent v19 — core/brain.py — v19.70
+# ★ v19.70 (2026-11-13) — FIX : briques appliquées UNE SEULE FOIS
+#   - Branche analyze_repo : plus de LVC/GA/Reflex/Cognitive internes
+#   - _apply_all_bricks() applique les briques à la fin de process()
+#   - Plus de doublons d'appels LLM ni de logs en double
 # ==============================================================================
 from __future__ import annotations
 import asyncio
@@ -423,7 +424,7 @@ class BEKBrain:
         self.skill_agent = SkillAgent()
 
     # ══════════════════════════════════════════════════════════════════════
-    # ★ v19.69 : Wrapper universel pour appliquer les briques à toutes les actions
+    # ★ v19.70 : Wrapper universel pour appliquer les briques à toutes les actions
     # ══════════════════════════════════════════════════════════════════════
     async def _apply_all_bricks(
         self,
@@ -435,10 +436,6 @@ class BEKBrain:
         start_time: float,
         audit_numbers: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
-        """
-        Applique les briques BEK à n'importe quel résultat (chat, web, code, image, etc.).
-        Chaque brique est isolée dans un try/except pour ne jamais casser le flux.
-        """
         if not isinstance(res, dict):
             return res
 
@@ -446,7 +443,7 @@ class BEKBrain:
         if not response_text.strip():
             return res
 
-        # ─── 1. BEK-LVC : compression du résultat (si > 6000 chars) ───
+        # 1. BEK-LVC
         if len(response_text) > 6000:
             try:
                 from bek_core.eco.optimizer import BekEcoOptimizer
@@ -454,27 +451,25 @@ class BEKBrain:
                 if hasattr(optimizer, "compress_text"):
                     compressed = optimizer.compress_text(response_text, max_chars=6000)
                     if len(compressed) < len(response_text):
-                        logger.info(
-                            "[Bricks/LVC] 🗜️ %s : %d → %d chars",
-                            intent, len(response_text), len(compressed),
-                        )
+                        logger.info("[Bricks/LVC] 🗜️ %s : %d → %d chars",
+                                    intent, len(response_text), len(compressed))
                         response_text = compressed
                         res["response"] = compressed
             except Exception as e:
                 logger.debug("[Bricks/LVC] indisponible : %s", e)
 
-        # ─── 2. Security Guard (si action sensible) ───
+        # 2. Security Guard
         try:
             from security_guard import security_guard
             _guard_result = security_guard.sanitize_secrets(response_text)
             if _guard_result != response_text:
-                logger.warning("[Bricks/Security] 🔒 Secrets détectés dans la réponse → redacted")
+                logger.warning("[Bricks/Security] 🔒 Secrets détectés → redacted")
                 response_text = _guard_result
                 res["response"] = _guard_result
         except Exception as e:
             logger.debug("[Bricks/Security] indisponible : %s", e)
 
-        # ─── 3. Cognitive Nerves (anti-hallucination Swarm + Grounding) ───
+        # 3. Cognitive Nerves
         if len(response_text) > 100 and not _is_analysis_query(response_text):
             try:
                 from nerves.cognitive_nerves import run_cognitive_pipeline
@@ -499,25 +494,21 @@ class BEKBrain:
             except Exception as e:
                 logger.warning("[Bricks/Cognitive] échoué pour %s : %s", intent, e)
 
-        # ─── 4. Validation chiffrée (si audit_numbers fourni) ───
+        # 4. Validation chiffrée (si audit_numbers fourni)
         if audit_numbers:
             try:
                 from bek_eval_guard import validate_cited_numbers
                 num_check = validate_cited_numbers(response_text, audit_numbers)
                 if not num_check.get("passed"):
-                    logger.warning(
-                        "[Bricks/EvalGuard] ⚠️ Chiffres suspects pour %s : %s",
-                        intent, num_check["suspicious_numbers"]
-                    )
-                    response_text += (
-                        f"\n\n⚠️ *Chiffres non vérifiés : "
-                        f"{num_check['suspicious_numbers']} (absents de l'audit source)*"
-                    )
+                    logger.warning("[Bricks/EvalGuard] ⚠️ Chiffres suspects pour %s : %s",
+                                   intent, num_check["suspicious_numbers"])
+                    response_text += (f"\n\n⚠️ *Chiffres non vérifiés : "
+                                     f"{num_check['suspicious_numbers']} (absents de l'audit source)*")
                     res["response"] = response_text
             except Exception as e:
                 logger.debug("[Bricks/EvalGuard] indisponible : %s", e)
 
-        # ─── 5. BEK-GA : fitness ───
+        # 5. BEK-GA
         try:
             from nerves.ga_nerves import get_ga_engine
             engine = get_ga_engine()
@@ -529,7 +520,7 @@ class BEKBrain:
         except Exception as e:
             logger.debug("[Bricks/GA] indisponible : %s", e)
 
-        # ─── 6. ReflexLoop : enregistrer l'épisode ───
+        # 6. ReflexLoop
         try:
             from services.episode_logger import log_episode as _log_ep
             _log_ep(
@@ -544,7 +535,7 @@ class BEKBrain:
         except Exception as e:
             logger.debug("[Bricks/Reflex] indisponible : %s", e)
 
-        # ─── 7. BEK-ECO : cache ───
+        # 7. BEK-ECO
         try:
             from bek_core.eco.optimizer import BekEcoOptimizer
             optimizer = BekEcoOptimizer()
@@ -628,7 +619,7 @@ class BEKBrain:
         except Exception as e: logger.debug("[BEK Brain] web_agent non chargé : %s", e)
 
         self._initialized = True
-        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.69 (FIX briques universelles)")
+        logger.info("[BEK Brain] 🧠 Cerveau initialisé v19.70 (briques uniques)")
 
     async def shutdown(self):
         try:
@@ -667,8 +658,6 @@ class BEKBrain:
             res = await self._process_files(query, files, provider, model)
             elapsed = (time.perf_counter() - start_time) * 1000
             res["latency_ms"] = round(elapsed, 2)
-            self._record_ga_fitness(query, res, elapsed)
-            # ★ v19.69 : briques universelles
             res = await self._apply_all_bricks(res, query, "files", provider, model, start_time)
             return res
 
@@ -826,7 +815,7 @@ class BEKBrain:
                          "bek_rex", "bek_lvc", "bek_ga", "bek_eco",
                          "provider_manager", "cognitive_nerves", "reflex_loop", "bek_eval_guard"]
                     )
-                    # ★ v19.69 : on appelle _apply_all_bricks (couvre Cognitive, GA, Reflex, etc.)
+                    # ★ v19.70 : on appelle _apply_all_bricks (couvre Cognitive, GA, Reflex, etc.)
                     res = await self._apply_all_bricks(
                         res, query, "analyze_repo", provider, model, start_time,
                         audit_numbers=audit_numbers_dict,
@@ -907,7 +896,7 @@ class BEKBrain:
             else:
                 res = self._wrap("⚠️ Aucun agent web disponible.", "web", [])
             
-            # ★ v19.69 : briques universelles
+            # ★ v19.70 : briques universelles
             res = await self._apply_all_bricks(res, query, "web", provider, model, start_time)
         
         elif intent == "fix_self":
@@ -930,7 +919,7 @@ class BEKBrain:
             except Exception as _img_err:
                 logger.error("[Brain/Image] Erreur : %s", _img_err)
                 res = self._wrap(f"⚠️ Erreur génération image : {_img_err}", "vision_generate", ["generate_image"])
-            # ★ v19.69 : briques universelles
+            # ★ v19.70 : briques universelles
             res = await self._apply_all_bricks(res, query, "generate_image", provider, model, start_time)
         
         elif intent == "coder" and self._hermes:
@@ -944,7 +933,7 @@ class BEKBrain:
         else:
             _status("💬 Traitement de la requête...", "thinking")
             res = self._wrap(await self._call_chat_pipeline(query, provider, model, None), "chat", ["pipeline_chat"])
-            # ★ v19.69 : briques universelles pour le chat
+            # ★ v19.70 : briques universelles pour le chat
             res = await self._apply_all_bricks(res, query, "chat", provider, model, start_time)
 
         if intent != "web":
@@ -1107,7 +1096,7 @@ class BEKBrain:
         }
 
     def status(self) -> Dict[str, Any]:
-        return {"app": "BEK Hybrid Agent v19.69", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
+        return {"app": "BEK Hybrid Agent v19.70", "bricks": {"hermes": self._hermes is not None, "provider_manager": self._provider_manager is not None}, "initialized": self._initialized}
 
 _brain_instance: Optional[BEKBrain] = None
 
