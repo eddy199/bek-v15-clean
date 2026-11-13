@@ -2,11 +2,11 @@
 # ==============================================================================
 # BEK-v18 — Chat : Core (dispatcher principal)
 # ------------------------------------------------------------------------------
+# ★ v18.11.3 (2026-11-13) — FIX : désactivation du rebond analytique post-brain
+#   - Quand use_brain=True et que le brain a réussi, on streame directement
+#     sa réponse SANS relancer stream_chat (qui ferait un 2ème appel LLM
+#     inutile et causerait des hallucinations).
 # ★ v18.11.2 (2026-11-06) — FIX réentrance brain (ceinture + bretelles)
-#   - Détection explicite des marqueurs `=== RAPPORT TECHNIQUE ===` et
-#     `=== RAPPORT STRATÉGIQUE ===` → force use_brain=False.
-#   - Empêche le brain de se rappeler lui-même quand il fait un POST /api/chat
-#     interne (en plus du `use_brain: False` envoyé dans le payload).
 # ★ v18.11.1 (2026-11-06) — AUTO-DÉTECTION brain
 # ★ v18.11.0 (2026-11-06) — FIX : pont brain → streaming (rebond analytique)
 # ★ v18.10.7 (2026-10-17) — FIX : Hindsight async natif
@@ -62,19 +62,12 @@ cfg.init_bek_lvc()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ FIX #3-opt : outils dont le résultat déclenche le rebond analytique
+# ★ v18.11.3 : outils dont le résultat déclenche le rebond analytique
+#   ⚠️ DÉSACTIVÉ : le brain a déjà tout fait, inutile de relancer stream_chat
 # ══════════════════════════════════════════════════════════════════════════════
 _ANALYZABLE_BRICKS = frozenset({
-    "python_save_report",
-    "analyze_architecture",
-    "read_file",
-    "read_file_map",
-    "hindsight_query",
-    "hindsight_recall",
-    "search_memory",
-    "headless_scrape",
-    "neon_audit",
-    "git_clone",
+    # Désactivé car le brain produit déjà la synthèse complète.
+    # On garde la liste pour compat future si on veut réactiver.
 })
 
 
@@ -133,7 +126,6 @@ def _should_use_brain(query: str, data: Dict[str, Any]) -> Tuple[bool, str]:
     q_lower = query.lower()
 
     # ★ v18.11.2 : détection de réentrance (le brain s'appelle lui-même via HTTP)
-    #   Ceinture + bretelles avec le `use_brain: False` envoyé dans le payload
     for marker in _BRAIN_REENTRANCE_MARKERS:
         if marker in q_lower:
             return False, "brain_reentrance_detected"
@@ -158,52 +150,15 @@ def _should_use_brain(query: str, data: Dict[str, Any]) -> Tuple[bool, str]:
 
 def _extract_pre_executed_tools(brain_response: Any) -> List[Dict[str, str]]:
     """
-    Extrait les outils réellement exécutés par le brain depuis `bricks_used`.
+    ★ v18.11.3 : DÉSACTIVÉ.
+    Le brain produit déjà la synthèse finale complète (avec LVC, GA, Reflex,
+    Cognitive Nerves). Relancer stream_chat avec pre_executed_tools
+    cause un 2ème appel LLM qui hallucine la synthèse.
 
-    Le brain renvoie un dict `{status, intent, bricks_used: [...], response}`.
-    On ne garde que les bricks qui correspondent à des outils d'analyse
-    (voir `_ANALYZABLE_BRICKS`) — les autres sont de l'infra (ga, lvc, etc.)
-    qui ne doit pas déclencher de rebond analytique.
-
-    Returns:
-        Liste de dicts `{name, output, status}` prêts pour `stream_chat`.
+    Returns toujours [] (liste vide) pour indiquer à stream_chat qu'il ne
+    doit PAS faire de rebond analytique.
     """
-    if not isinstance(brain_response, dict):
-        return []
-
-    bricks = brain_response.get("bricks_used") or []
-    if not isinstance(bricks, list):
-        return []
-
-    response_text = str(brain_response.get("response", ""))[:8000]
-    if not response_text.strip():
-        return []
-
-    out: List[Dict[str, str]] = []
-    seen: set = set()
-    for brick in bricks:
-        if not isinstance(brick, str):
-            continue
-        name = brick.strip()
-        if name.startswith("hermes."):
-            name = name[len("hermes."):]
-        if name.startswith("mcp_"):
-            name = name[len("mcp_"):]
-        # Ignore suffixes du style "provider_manager (map-reduce resilient)"
-        name = name.split(" ", 1)[0]
-
-        if name not in _ANALYZABLE_BRICKS:
-            continue
-        if name in seen:
-            continue
-        seen.add(name)
-        out.append({
-            "name": name,
-            "output": response_text,
-            "status": "success",
-        })
-
-    return out
+    return []
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -442,7 +397,8 @@ async def _chat_impl(request: Request):
             )
 
     # ═══════════════════════════════════════════════════════════════════════════
-    # ★ v18.11.1 : DÉTECTION AUTO-BRAIN (v18.11.2 : + détection réentrance)
+    # ★ v18.11.3 : DÉTECTION AUTO-BRAIN
+    #   → si brain : on streame DIRECTEMENT sa réponse (pas de 2ème appel LLM)
     # ═══════════════════════════════════════════════════════════════════════════
     use_brain, brain_reason = _should_use_brain(last_user_query, data)
     logger.info(
@@ -450,17 +406,13 @@ async def _chat_impl(request: Request):
         use_brain, brain_reason,
     )
 
-    # Si brain → on délègue IMMÉDIATEMENT au brain (pas de stream_chat direct).
-    # Le brain produit une réponse complète, qu'on re-streame en SSE.
     if use_brain:
         try:
             from core.brain import get_brain
             _brain = get_brain()
 
-            # ★ On prévient le client qu'on passe par le brain
             _brain_intro = "\n\n🧠 *Orchestration via cerveau BEK...*\n\n"
 
-            # Streaming de la réponse brain (qui peut être longue)
             async def _brain_stream():
                 yield f"data: {json.dumps({'chunk': _brain_intro}, ensure_ascii=False)}\n\n"
                 try:
@@ -476,36 +428,15 @@ async def _chat_impl(request: Request):
                     else:
                         _response_text = str(_res)
 
-                    # Stream par petits chunks pour un rendu fluide côté client
+                    # ★ v18.11.3 : on streame DIRECTEMENT la réponse du brain.
+                    # Aucun rebond analytique (pas d'appel à st.stream_chat).
                     _CHUNK_SIZE = 120
                     for _i in range(0, len(_response_text), _CHUNK_SIZE):
                         _piece = _response_text[_i:_i + _CHUNK_SIZE]
                         yield f"data: {json.dumps({'chunk': _piece}, ensure_ascii=False)}\n\n"
-                        await asyncio.sleep(0)  # laisse respirer l'event loop
+                        await asyncio.sleep(0)
 
-                    # ─── Rebond analytique post-brain (déclenche stream_chat
-                    #      avec pre_executed_tools si des outils ont été exécutés)
-                    _pre_tools = _extract_pre_executed_tools(_res)
-                    if _pre_tools:
-                        logger.info(
-                            "[Chat] 🔄 Rebond analytique post-brain (%d outil(s))",
-                            len(_pre_tools),
-                        )
-                        # Construit les messages pour le rebond (comme stream_chat)
-                        _followup_messages = [
-                            {"role": "user", "content": last_user_query},
-                        ]
-                        async for _sse in st.stream_chat(
-                            exec_messages=_followup_messages,
-                            trimmed_messages=trimmed_messages,
-                            last_user_query=last_user_query,
-                            provider=provider,
-                            model=model,
-                            pre_executed_tools=_pre_tools,
-                        ):
-                            yield _sse
-                    else:
-                        yield f"data: {json.dumps({'done': True})}\n\n"
+                    yield f"data: {json.dumps({'done': True})}\n\n"
                 except Exception as _be:
                     logger.exception("[Chat] Erreur brain.stream")
                     _err = f"\n\n⚠️ Erreur d'orchestration : {_be}\n\n"
