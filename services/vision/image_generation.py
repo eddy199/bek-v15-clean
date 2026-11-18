@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v19 — Image Generation (v6.5 — Fix Modèles + Fallback Placeholder)
+# BEK-v19 — Image Generation (v6.6 — Fix Pollinations & Cascade Intacte)
 # ------------------------------------------------------------------------------
+# ★ v6.6 (2026-11-18) — FIX : Retrait de optimize_prompt obsolète sur Pollinations
 # ★ v6.5 (2026-11-11) — FIX : Modèle HuggingFace déprécié + Gemini stable
-#   - HuggingFace : "hf-flux-schnell" → "black-forest-labs/FLUX.1-schnell"
-#   - Gemini : vérification du modèle "gemini-2.5-flash-image"
-#   - Fallback placeholder : toujours présent si tout échoue
 # ==============================================================================
 from __future__ import annotations
 
@@ -56,7 +54,7 @@ def _clean_prompt_for_image(prompt: str) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# PROVIDERS INDIVIDUELS
+# PROVIDERS INDIVidUELS
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _try_pollinations(prompt: str, save_path: str, output_filename: str, **kwargs) -> Dict[str, Any]:
@@ -64,10 +62,10 @@ def _try_pollinations(prompt: str, save_path: str, output_filename: str, **kwarg
         from services.vision.pollinations_client import generate_image_with_pollinations
         clean_prompt = _clean_prompt_for_image(prompt)
         logger.info("[pollinations] Génération (5 retries robustes)")
+        # ★ FIX v6.6 : Suppression de l'argument non supporté optimize_prompt
         return generate_image_with_pollinations(
             prompt=clean_prompt, model="flux", output_filename=output_filename,
             width=kwargs.get("width", 1024), height=kwargs.get("height", 1024),
-            optimize_prompt=False,
         )
     except Exception as e:
         logger.warning("[pollinations] Erreur : %s", e)
@@ -81,7 +79,6 @@ def _try_huggingface(prompt: str, save_path: str, output_filename: str, **kwargs
     try:
         from services.vision.huggingface_client import generate_image_with_huggingface
         clean_prompt = _clean_prompt_for_image(prompt)
-        # ★ FIX v6.5 : Remplacement du modèle déprécié par le vrai identifiant
         hf_model = kwargs.get("hf_model", "black-forest-labs/FLUX.1-schnell")
         logger.info("[huggingface] Génération : %d chars | model=%s", len(clean_prompt), hf_model)
         return generate_image_with_huggingface(
@@ -99,7 +96,6 @@ def _try_gemini(prompt: str, save_path: str, output_filename: str, **kwargs) -> 
     if not api_key:
         return {"status": "error", "message": "GEMINI_API_KEY manquante", "provider": "gemini"}
     
-    # ★ FIX v6.5 : Utilisation du bon modèle Gemini Image
     model_id = kwargs.get("model", "gemini-2.5-flash-image")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_id}:generateContent?key={api_key}"
     
@@ -182,14 +178,10 @@ def _try_beatapi(prompt: str, save_path: str, output_filename: str, **kwargs) ->
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v6.4 — FALLBACK PLACEHOLDER (si tous les providers échouent)
+# FALLBACK PLACEHOLDER
 # ══════════════════════════════════════════════════════════════════════════════
 
 def _generate_placeholder_image(prompt: str, output_filename: str = "") -> Dict[str, Any]:
-    """
-    ★ v6.4 — Génère une image placeholder locale si tous les providers sont HS.
-    Utilise Pillow pour créer une image 1024x1024 avec le prompt écrit dessus.
-    """
     try:
         from PIL import Image, ImageDraw
         
@@ -198,14 +190,11 @@ def _generate_placeholder_image(prompt: str, output_filename: str = "") -> Dict[
         
         save_path = os.path.abspath(os.path.join(GENERATED_DIR, secure_filename(output_filename)))
         
-        # Créer l'image 1024x1024 avec fond gris foncé
         img = Image.new("RGB", (1024, 1024), color=(30, 30, 40))
         draw = ImageDraw.Draw(img)
         
-        # Titre
         draw.text((50, 200), "🖼️ IMAGE PLACEHOLDER", fill=(100, 200, 255))
         
-        # Prompt en plusieurs lignes (max 60 chars par ligne)
         prompt_clean = _clean_prompt_for_image(prompt)
         lines = []
         current = ""
@@ -218,17 +207,14 @@ def _generate_placeholder_image(prompt: str, output_filename: str = "") -> Dict[
         if current:
             lines.append(current)
         
-        # Écrire le prompt
         y = 300
         for line in lines[:15]:
             draw.text((50, y), f"Prompt : {line}" if y == 300 else line, fill=(220, 220, 220))
             y += 30
         
-        # Note explicative
         draw.text((50, 900), "⚠️ Tous les providers d'image sont indisponibles.", fill=(255, 180, 100))
         draw.text((50, 930), "Cette image est un placeholder généré localement.", fill=(180, 180, 180))
         
-        # Sauvegarder
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         img.save(save_path, "PNG")
         
@@ -239,7 +225,7 @@ def _generate_placeholder_image(prompt: str, output_filename: str = "") -> Dict[
             "filepath": save_path,
             "provider": "placeholder",
             "model_id": "pillow-fallback",
-            "message": "Image placeholder générée (providers indisponibles). Configure un provider pour de vraies images.",
+            "message": "Image placeholder générée (providers indisponibles).",
         }
     except Exception as e:
         logger.error("[Vision/Fallback] Échec placeholder : %s", e)
@@ -271,7 +257,6 @@ def generate_image_with_provider(prompt: str, provider: str = "pollinations", mo
     if not output_filename:
         output_filename = f"gen_image_{uuid.uuid4().hex[:8]}.png"
 
-    # ★ FIX v6.3 : Lazy import pour casser l'import circulaire
     try:
         from services.prompt_optimizer import optimize_prompt_for_media
         prompt = optimize_prompt_for_media(prompt, media_type="image")
@@ -297,7 +282,6 @@ def generate_image_with_provider(prompt: str, provider: str = "pollinations", mo
         errors[prov] = result.get("message", "inconnu")
         logger.warning("[image_generation] ❌ %s échoué : %s", prov, errors[prov])
 
-    # ★ v6.4 : Fallback placeholder si TOUS les providers échouent
     logger.warning("[image_generation] ⚠️ Tous les providers ont échoué → fallback placeholder")
     placeholder_result = _generate_placeholder_image(prompt, output_filename)
     
@@ -311,7 +295,6 @@ def generate_image_with_provider(prompt: str, provider: str = "pollinations", mo
         )
         return placeholder_result
     
-    # Si même le placeholder échoue, on retourne l'erreur finale
     return {
         "status": "error",
         "message": "Tous les providers d'image ont échoué ET le placeholder n'a pas pu être généré.\n" 

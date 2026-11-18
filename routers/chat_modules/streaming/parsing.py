@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v18 — Streaming : Parsing (v1.6.19)
+# BEK-v18 — Streaming : Parsing (v1.6.20)
 # ------------------------------------------------------------------------------
+# ★ v1.6.20 (2026-11-13) — FIX : ajout de start_pos dans _find_all_complete_actions
 # ★ v1.6.19 : extraction du monolithe streaming.py → package modulaire
 #   - Parsing des blocs [ACTION:...]
 #   - Normalisation des params (camelCase, accents)
@@ -53,7 +54,8 @@ def _find_all_complete_actions(text: str) -> List[Dict[str, Any]]:
     for match in _ACTION_FULL_RE.finditer(text):
         act_name = act._resolve_action_alias(match.group(1))
         raw_payload = match.group(2).strip()
-        end_pos = match.end()
+        start_pos = match.start()   # ★ v1.6.20 : position de début de l'action
+        end_pos = match.end()       # position de fin de l'action
         params: Dict[str, Any] = {}
         parsed_ok = False
         if raw_payload:
@@ -74,7 +76,12 @@ def _find_all_complete_actions(text: str) -> List[Dict[str, Any]]:
                 default_key = act._RAW_PAYLOAD_DEFAULT_KEY.get(act_name, "query")
                 params = {default_key: raw_payload.strip('"\'')}
         params = act._clean_action_params(params)
-        results.append({"name": act_name, "params": params, "end_pos": end_pos})
+        results.append({
+            "name": act_name,
+            "params": params,
+            "start_pos": start_pos,   # ★ v1.6.20
+            "end_pos": end_pos,
+        })
     return results
 
 

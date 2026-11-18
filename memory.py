@@ -9,6 +9,10 @@ v19.1 (2026-11-05) — OPTIMISATION MAJEURE :
   - Pinecone ET ChromaDB en parallèle (au lieu de séquentiel)
   - search_memory() devient search_memory_async() pour la parallélisation
   - Compatibilité 100% conservée (search_memory sync toujours disponible)
+★ v19.2 (2026-11-17) — FIX ROOT CAUSE :
+  - Ajout de l'écriture dans Supabase (table sync_log) dans save_to_memory()
+  - Gestion des textes bruts (pas seulement des conversations)
+  - Parallélisation des 3 écritures (Pinecone, ChromaDB, Supabase)
 """
 from __future__ import annotations
 
@@ -778,6 +782,7 @@ def search_memory(
 
 # ==========================================
 # MEMORY SAVE (★ v19.1 : Pinecone ET ChromaDB en parallèle)
+# ★ v19.2 : AJOUT DE SUPABASE (sync_log)
 # ==========================================
 
 def save_to_memory(
@@ -809,6 +814,7 @@ def save_to_memory(
 
     saved_pinecone = False
     saved_chroma = False
+    saved_supabase = False
 
     # ★ v19.1 : Parallélisation des upserts
     def _upsert_pinecone():
@@ -844,9 +850,50 @@ def save_to_memory(
             logger.warning("Échec sauvegarde ChromaDB : %s", exc)
             return False
 
-    with ThreadPoolExecutor(max_workers=2) as executor:
+    # ★ v19.2 : AJOUT DE L'ÉCRITURE DANS SUPABASE (sync_log)
+    def _upsert_supabase():
+        conn = get_db_connection()
+        if not conn:
+            logger.debug("[Supabase] Pas de connexion DB disponible.")
+            return False
+        cur = None
+        try:
+            init_sync_log_table()
+            cur = conn.cursor()
+            cur.execute(
+                """
+                INSERT INTO sync_log (id, content, status, retry_count, updated_at)
+                VALUES (%s, %s, 'SYNCED', 0, CURRENT_TIMESTAMP)
+                ON CONFLICT (id) DO UPDATE
+                SET content = EXCLUDED.content,
+                    status = 'SYNCED',
+                    updated_at = CURRENT_TIMESTAMP;
+                """,
+                (record_id, combined_text),
+            )
+            conn.commit()
+            logger.info("Interaction enregistrée dans Supabase sync_log | id=%s", record_id)
+            return True
+        except Exception as exc:
+            logger.warning("Échec sauvegarde Supabase : %s", exc)
+            if conn:
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
+            return False
+        finally:
+            if cur:
+                try:
+                    cur.close()
+                except Exception:
+                    pass
+            _release_db_connection(conn)
+
+    with ThreadPoolExecutor(max_workers=3) as executor:
         f_pine = executor.submit(_upsert_pinecone)
         f_chroma = executor.submit(_upsert_chroma)
+        f_supa = executor.submit(_upsert_supabase)
         try:
             saved_pinecone = f_pine.result(timeout=PINECONE_TIMEOUT_SECONDS + 2)
         except Exception:
@@ -855,8 +902,13 @@ def save_to_memory(
             saved_chroma = f_chroma.result(timeout=5)
         except Exception:
             pass
+        try:
+            saved_supabase = f_supa.result(timeout=DATABASE_CONNECT_TIMEOUT_SECONDS + 2)
+        except Exception:
+            pass
 
-    return saved_pinecone or saved_chroma
+    # ★ v19.2 : Retourne True si AU MOINS une base a réussi
+    return saved_pinecone or saved_chroma or saved_supabase
 
 
 # ==========================================

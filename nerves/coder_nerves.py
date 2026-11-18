@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
 # NERF 18 — AGENT DE CODAGE UNIVERSEL (nerves/coder_nerves.py)
-# ★ v19.26 (2026-10-30) — Fix summary None + step_description/total_steps/verify
-#   → codex_loop.py v7.11 fournit maintenant total_steps, next_step, verify,
-#     step_description. Le wrapper les lit correctement.
-# ★ v19.25 : Manifeste enrichi avec les skills ECC et les règles
-# ★ v19.24 : Fix cascade de retries (disable_internal_fallback=True)
 # ==============================================================================
 from __future__ import annotations
 
@@ -167,9 +162,6 @@ def _resolve_output_filename(task_description: str, target_file: Optional[str], 
     return f"codex_{ext}_{uuid.uuid4().hex[:6]}.{ext}"
 
 
-# ==============================================================================
-# HANDLER 1 : codex_agent (création de fichier unique)
-# ==============================================================================
 def _handler_codex_agent(
     task_description: str,
     target_file: Optional[str] = None,
@@ -188,10 +180,12 @@ def _handler_codex_agent(
         return {"status": "error", "message": "provider_manager introuvable."}
 
     ego_prompt = _get_alter_ego_prompt(alter_ego)
+    system_prompt = kwargs.get("system_prompt", BEK_TOOLS_MANIFEST)
+
     current_prompt = (
         f"{ego_prompt}\n"
         f"Tu es un expert développeur universel travaillant sur l'architecture BEK.\n"
-        f"{BEK_TOOLS_MANIFEST}\n"
+        f"{system_prompt}\n"
         f"TÂCHE : {task_description}\n\n"
         f"RÈGLES :\n"
         f"1. Détecte le langage demandé et écris le code correspondant.\n"
@@ -200,7 +194,6 @@ def _handler_codex_agent(
     )
 
     for attempt in range(1, max_retries + 1):
-        logger.info(f"🤖 [CodexAgent] Tentative {attempt}/{max_retries} (AlterEgo: {alter_ego or 'default'})...")
         messages = [{"role": "user", "content": current_prompt}]
         raw_response = ""
 
@@ -217,7 +210,6 @@ def _handler_codex_agent(
                 if "chunk" in item:
                     raw_response += item["chunk"]
                 elif "error" in item:
-                    logger.warning(f"[CodexAgent] Erreur provider : {item['error']}. Retry...")
                     break
         except Exception as e:
             return {"status": "error", "message": f"Exception LLM : {e}"}
@@ -236,7 +228,6 @@ def _handler_codex_agent(
 
             is_valid, syntax_err = _validate_python_syntax(code)
             if not is_valid:
-                logger.warning(f"[CodexAgent] AST invalide : {syntax_err}")
                 current_prompt = f"{ego_prompt}\nLe code précédent a une erreur de syntaxe :\n{syntax_err}\n\nCorrige le code et réponds UNIQUEMENT avec le code Python complet corrigé."
                 continue
 
@@ -264,10 +255,6 @@ def _handler_codex_agent(
                 current_prompt = f"{ego_prompt}\nLe code précédent a généré cette erreur Python :\n{result['stderr']}\n\nCorrige le code et réponds UNIQUEMENT avec le code Python complet corrigé."
                 continue
         else:
-            if lang in ("java", "cpp", "c", "javascript") and code.count("{") != code.count("}"):
-                current_prompt += "\n\nErreur de syntaxe : accolades manquantes. Corrige."
-                continue
-
             os.makedirs(GENERATED_DIR, exist_ok=True)
             filepath = os.path.join(GENERATED_DIR, filename)
             with open(filepath, "w", encoding="utf-8") as f:
@@ -284,9 +271,6 @@ def _handler_codex_agent(
     return {"status": "error", "message": f"Échec après {max_retries} tentatives."}
 
 
-# ==============================================================================
-# HANDLER 2 : codex_editor (modification ciblée)
-# ==============================================================================
 def _handler_codex_editor(
     task_description: str,
     target_file: str,
@@ -317,7 +301,6 @@ def _handler_codex_editor(
                 original_code = f.read()
             backup_path = target_path.with_suffix(target_path.suffix + ".bak")
             shutil.copy2(target_path, backup_path)
-            logger.info(f"💾 Backup créé : {backup_path.name}")
         from provider_manager import provider_manager
     except Exception as e:
         return {"status": "error", "message": f"Erreur préparation : {e}"}
@@ -335,7 +318,6 @@ def _handler_codex_editor(
     )
 
     for attempt in range(1, max_retries + 1):
-        logger.info(f"🤖 [CodexEditor] Tentative {attempt}/{max_retries} sur {target_path.name}...")
         messages = [{"role": "user", "content": current_prompt}]
         raw_response = ""
 
@@ -370,10 +352,6 @@ def _handler_codex_editor(
             if not result["success"]:
                 current_prompt = f"Erreur Python :\n{result['stderr']}\nCorrige le code et renvoie le fichier complet."
                 continue
-        else:
-            if lang in ("java", "cpp", "c", "javascript") and new_code.count("{") != new_code.count("}"):
-                current_prompt = "Erreur de syntaxe : accolades manquantes. Corrige."
-                continue
 
         with open(target_path, "w", encoding="utf-8") as f:
             f.write(new_code)
@@ -390,10 +368,6 @@ def _handler_codex_editor(
     return {"status": "error", "message": f"Échec après {max_retries} tentatives. Fichier restauré."}
 
 
-# ==============================================================================
-# HANDLER 3 : codex_loop (boucle autonome + phases plan/step/auto)
-# ★ v19.26 — Fix summary None + lit total_steps/next_step/verify/step_description
-# ==============================================================================
 def _handler_codex_loop(
     task_description: str,
     max_steps: int = 20,
@@ -411,6 +385,7 @@ def _handler_codex_loop(
         return {"status": "error", "message": "Description de la tâche vide."}
 
     actual_goal = goal_context or task_description
+    system_prompt = kwargs.get("system_prompt")  # 👈 Récupération du prompt d'élite
 
     try:
         from core.codex_loop import run_codex_loop
@@ -424,6 +399,7 @@ def _handler_codex_loop(
             provider=provider,
             model=model,
             memory_context=kwargs.get("memory_context"),
+            system_prompt=system_prompt,  # 👈 Propagation vers codex_loop.py
         )
 
         status = result.get("status", "error")
@@ -518,9 +494,6 @@ def _handler_codex_loop(
         return {"status": "error", "message": str(e)}
 
 
-# ==============================================================================
-# ACTIVATION
-# ==============================================================================
 CODER_NERVES_TABLE = {
     "codex_agent": (_handler_codex_agent, "L2"),
     "codex_editor": (_handler_codex_editor, "L3"),
@@ -544,7 +517,6 @@ def activate_coder_nerves() -> Dict[str, Any]:
         try:
             hermes.register_tool(tool_name, handler, risk_level=risk_level)
             activated.append(tool_name)
-            logger.info("🧠 [Nerf 18] Outil Codex branché : %s (risk=%s)", tool_name, risk_level)
         except Exception as exc:
             failed.append({"tool": tool_name, "error": str(exc)})
 
@@ -553,9 +525,7 @@ def activate_coder_nerves() -> Dict[str, Any]:
         code_tools_res = register_code_tools(hermes)
         if code_tools_res.get("status") == "ok":
             activated.extend(code_tools_res.get("activated", []))
-            logger.info("✅ [Nerf 18] Code Tools branchés avec succès.")
     except Exception as exc:
-        logger.error("❌ [Nerf 18] Impossible d'activer Code Tools : %s", exc)
         failed.append({"tool": "code_tools", "error": str(exc)})
 
     return {

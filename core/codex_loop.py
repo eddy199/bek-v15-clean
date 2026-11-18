@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# BEK-v19 — CODEX LOOP (v7.29 — Respect Strict du Provider + Fix ReflexLoop)
-# ★ FIX v7.29 : 
-#   - Suppression du fallback forcé sur Groq (fallback_chain) quand l'utilisateur 
-#     a explicitement choisi un provider (ex: Gemini).
-#   - Correction de _fetch_lessons_from_memory pour lire correctement la mémoire.
+# BEK-v19 — CODEX LOOP (v7.30 — Support System Prompt Dynamique + Fix ReflexLoop)
 # ==============================================================================
 from __future__ import annotations
 
@@ -47,7 +43,6 @@ def _log_lvc_stats(label: str) -> None:
     )
 
 def _log_facture(label: str) -> None:
-    """★ FACTURE LVC : log systématique (PLAN, STEP, AUTO)."""
     in_tok = _LVC_STATS["in_tok"]
     lvc_calls = _LVC_STATS["lvc_calls"]
     if in_tok > 0:
@@ -195,23 +190,17 @@ def _load_relevant_skills_lvc(goal: str, budget: Dict[str, int]) -> str:
         logger.info("[Codex Loop] 📚 LVC-Skills chargés : %d chars (~%d tokens)", len(text), len(text)//3)
     return text
 
-# ★ FIX ReflexLoop — lecture des leçons gravées en mémoire
 def _fetch_lessons_from_memory(goal: str) -> str:
-    """Interroge la mémoire vectorielle pour récupérer les erreurs passées liées à cet objectif."""
     try:
         from memory import search_memory
-        # ★ FIX : On utilise le bon paramètre attendu par search_memory
         results = search_memory(f"[LECON CODEX] {goal}", top_k=3)
         if results:
             logger.info("[Codex Loop] 🧠 Leçons passées trouvées en mémoire (ReflexLoop)")
             return f"\n\n=== LEÇONS DU PASSÉ (REFLEX LOOP) ===\n{results}\nÉvite de refaire ces erreurs.\n"
     except Exception as e:
-        logger.warning(f"[Codex Loop] Impossible de lire la mémoire: {e}") # Passé en warning pour que tu le vois
+        logger.warning(f"[Codex Loop] Impossible de lire la mémoire: {e}")
     return ""
 
-# ==============================================================================
-# CONSTANTES
-# ==============================================================================
 LOCAL_TOOLS = {
     "read_file": read_file, "read_file_map": read_file_map, "edit_file": edit_file, "write_file": write_file,
     "append_file": append_file, "create_dir": create_dir, "bash": bash,
@@ -321,9 +310,6 @@ d=create_dir g=grep f=glob_files ls=ls b=bash sw=web_search hs=headless_scrape
 - NE LANCE JAMAIS pytest sur un jeu.
 """
 
-# ==============================================================================
-# ★ NOUVEAU : résolution du provider/model — RESPECTE le choix utilisateur
-# ==============================================================================
 _DEFAULT_PROVIDER = "nvidia"
 _DEFAULT_PLAN_MODEL = "nvidia/nemotron-3.5-super-vl-120b-a12b"
 _DEFAULT_STEP_MODEL = "nvidia/nemotron-3.5-super-vl-120b-a12b"
@@ -338,9 +324,6 @@ def _resolve_target(provider: Optional[str], model: Optional[str]) -> Tuple[str,
             prov = _DEFAULT_PROVIDER
     return prov, mdl
 
-# ==============================================================================
-# BUDGET PAR PROVIDER (Memory Shield inclus)
-# ==============================================================================
 def _budget(provider: Optional[str]) -> Dict[str, int]:
     p = (provider or "").lower()
     if p in ("groq", "ovh_anonymous", "llm7_anonymous", "beatapi", "kilo_anonymous"):
@@ -364,9 +347,6 @@ def _estimate_tokens(text: str) -> int:
 def _estimate_request_tokens(messages: List[Dict[str, Any]]) -> int:
     return sum(_estimate_tokens(m.get("content", "")) for m in messages)
 
-# ==============================================================================
-# PARSING
-# ==============================================================================
 def _extract_json(text: str) -> dict:
     if not isinstance(text, str): return {}
     text = text.strip()
@@ -431,9 +411,6 @@ def _extract_plan_steps(parsed: dict) -> List[Dict[str, Any]]:
             return [s for s in steps if isinstance(s, dict)]
     return []
 
-# ==============================================================================
-# ★ NOUVEAU v7.25 : détection du type d'erreur JSON pour feedback ciblé
-# ==============================================================================
 def _diagnose_json_failure(raw: str) -> str:
     if not raw or not raw.strip():
         return (
@@ -501,7 +478,6 @@ def _validate_syntax(file_path: str, content: str) -> Tuple[bool, str]:
 
     if ext == ".py":
         try:
-            import ast
             ast.parse(content)
             return True, "Syntaxe Python validée"
         except SyntaxError as e:
@@ -546,9 +522,6 @@ def _validate_syntax(file_path: str, content: str) -> Tuple[bool, str]:
 
     return True, ""
 
-# ==============================================================================
-# APPEL LLM
-# ==============================================================================
 def _call_llm_safe(messages: List[Dict[str, Any]], provider: str, model: str,
                    max_tokens: Optional[int] = None,
                    fallback_chain: Optional[List[Tuple[str, str]]] = None
@@ -559,9 +532,6 @@ def _call_llm_safe(messages: List[Dict[str, Any]], provider: str, model: str,
         return None, "provider_manager introuvable"
 
     providers_to_try = [(provider, model)]
-    
-    # ★ FIX v7.29 : Si l'utilisateur a choisi un provider explicite (provider n'est pas None/vide),
-    # on ignore totalement la fallback_chain pour ne pas basculer sur Groq.
     if fallback_chain and provider in (None, "", "default"):
         providers_to_try.extend(fallback_chain)
 
@@ -632,9 +602,6 @@ def _call_llm_safe(messages: List[Dict[str, Any]], provider: str, model: str,
 
     return None, f"Chaîne épuisée. Dernière erreur : {last_err_msg}"
 
-# ==============================================================================
-# DISPATCH TOOL (Avec LVC-Test & LVC-Web Interceptor)
-# ==============================================================================
 def _dispatch_tool(tool: str, args: Dict[str, Any]) -> Dict[str, Any]:
     tool_lower = tool.lower()
     native_tool = BEK_TO_HERMES.get(tool_lower, tool_lower)
@@ -696,10 +663,11 @@ def _prune_history_for_json_retry(messages, max_kept=4):
     return [system_msg] + tail
 
 # ==============================================================================
-# PHASES
+# PHASES (avec intégration de system_prompt)
 # ==============================================================================
 def _run_plan_phase(goal: str, prov: str, mdl: str, ego_prompt: str,
-                    memory_context: Optional[str] = None) -> Dict[str, Any]:
+                    memory_context: Optional[str] = None,
+                    system_prompt: Optional[str] = None) -> Dict[str, Any]:
     b = _budget(prov)
     mem = (memory_context or "")[:b["memory_chars"]]
     skills = _load_relevant_skills_lvc(goal, b)
@@ -709,8 +677,11 @@ def _run_plan_phase(goal: str, prov: str, mdl: str, ego_prompt: str,
     best_gene_prompt = gene_manager.get_best_gene_with_rules(engine_type)
     logger.info(f"[Codex Loop] 🧬 Gène injecté : {engine_type}")
 
+    # Priorité au system_prompt d'élite s'il est fourni, sinon PLAN_SYSTEM_PROMPT
+    base_sys = system_prompt if system_prompt else PLAN_SYSTEM_PROMPT
+
     sys_prompt = (best_gene_prompt 
-                  + f"\n\n{PLAN_SYSTEM_PROMPT}"
+                  + f"\n\n{base_sys}"
                   + (f"\n\n{ego_prompt}" if ego_prompt else "")
                   + (f"\n\n{skills}" if skills else "")
                   + lessons
@@ -721,7 +692,6 @@ def _run_plan_phase(goal: str, prov: str, mdl: str, ego_prompt: str,
         {"role": "user", "content": f"OBJECTIF : {goal}\n\nProduis un PLAN JSON granulaire (1 étape = 1 fichier)."},
     ]
     for attempt in range(1, 3):
-        # ★ FIX : On ne passe plus de fallback forcé sur Groq
         raw, err = _call_llm_safe(messages, prov, mdl,
                                   max_tokens=b["max_tokens_llm"])
         if err:
@@ -757,7 +727,8 @@ def _run_plan_phase(goal: str, prov: str, mdl: str, ego_prompt: str,
 def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
                     prov: str, mdl: str, ego_prompt: str, budget_s: int,
                     fallback_chain: List[Tuple[str, str]],
-                    memory_context: Optional[str] = None) -> Dict[str, Any]:
+                    memory_context: Optional[str] = None,
+                    system_prompt: Optional[str] = None) -> Dict[str, Any]:
     if step_num >= len(plan):
         return {"status": "done", "phase": "step", "message": "Plan terminé."}
 
@@ -775,9 +746,12 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
     engine_type = "godot" if "godot" in goal.lower() else "pygame" if "pygame" in goal.lower() else "generic"
     best_gene_prompt = gene_manager.get_best_gene_with_rules(engine_type)
 
+    # Priorité au system_prompt d'élite s'il est fourni, sinon BASE_SYSTEM_PROMPT
+    base_sys = system_prompt if system_prompt else BASE_SYSTEM_PROMPT
+
     sys_prompt = (
         best_gene_prompt
-        + f"\n\n{BASE_SYSTEM_PROMPT}"
+        + f"\n\n{base_sys}"
         + (f"\n\n{ego_prompt}" if ego_prompt else "")
         + (f"\n\n{skills}" if skills else "")
         + (f"\n\nMÉMOIRE:\n{mem}" if mem else "")
@@ -803,7 +777,6 @@ def _run_step_phase(goal: str, plan: List[Dict[str, Any]], step_num: int,
             return {"status": "error", "phase": "step", "step_num": step_num,
                     "message": "Timeout budget.", "history": history}
 
-        # ★ FIX : On ne passe plus de fallback forcé sur Groq
         raw, err = _call_llm_safe(messages, prov, mdl,
                                   max_tokens=b["max_tokens_llm"])
         if err:
@@ -945,6 +918,7 @@ def run_codex_loop(
     provider: Optional[str] = None, model: Optional[str] = None,
     time_budget_s: int = 400, goal_context: Optional[str] = None,
     memory_context: Optional[str] = None,
+    system_prompt: Optional[str] = None,  # 👈 Reçoit le prompt d'élite
 ) -> Dict[str, Any]:
 
     skill_goal = goal_context or goal
@@ -974,10 +948,6 @@ def run_codex_loop(
                 )
             if mem_obj is not None and getattr(mem_obj, "context", None):
                 memory_context = mem_obj.context
-                logger.info(
-                    "[Codex Loop] 🧠 Mémoire coordonnée : %d faits, sources=%s",
-                    len(mem_obj.facts), mem_obj.sources_used,
-                )
         except Exception as e:
             logger.debug("[Codex Loop] Coordinator indisponible : %s", e)
 
@@ -987,12 +957,8 @@ def run_codex_loop(
         try:
             route_info = BekCPU.execute("BEK-REX", "bek_rex_route", query=skill_goal)
             tier = route_info.get("tier", "TIER_1")
-            logger.info("[Codex Loop] 🏛️ BEK-REX a routé vers : %s (conf: %.2f)",
-                        tier, route_info.get("confidence", 0))
-
             eco_info = BekCPU.execute("BEK-ECO", "bek_eco_optimize", tier=tier, query=skill_goal)
             if eco_info.get("decision") == "cached":
-                logger.info("[Codex Loop] ⚡ BEK-ECO : cache hit.")
                 return {"status": "success", "message": "Réponse depuis le cache BEK-ECO",
                         "data": eco_info.get("cached_value")}
         except Exception as e:
@@ -1004,17 +970,15 @@ def run_codex_loop(
         res_plan = _run_plan_phase(
             skill_goal,
             target_provider, target_model,
-            _get_ego_prompt(alter_ego), memory_context
+            _get_ego_prompt(alter_ego), memory_context,
+            system_prompt=system_prompt  # 👈 Transmis ici
         )
         if res_plan.get("status") != "plan_ready":
             _log_lvc_stats("AUTO (plan failed)")
             return res_plan
 
         plan_steps = res_plan["plan"]
-        logger.info("[Codex Loop] 📋 Plan de %d étapes.", len(plan_steps))
-
         all_history = []
-        # ★ FIX : On ne passe plus de fallback forcé, on laisse vide.
         step_fallback = []
         for i in range(len(plan_steps)):
             step_res = _run_step_phase(
@@ -1022,7 +986,8 @@ def run_codex_loop(
                 target_provider, target_model,
                 _get_ego_prompt(alter_ego), time_budget_s,
                 step_fallback,
-                memory_context
+                memory_context,
+                system_prompt=system_prompt  # 👈 Transmis ici
             )
             all_history.extend(step_res.get("history", []))
             
@@ -1032,8 +997,6 @@ def run_codex_loop(
                         "message": f"Étape {i+1} échouée : {step_res.get('message')}",
                         "history": all_history}
             
-            logger.info("[Codex Loop] ✅ Étape %d/%d terminée. Fichier sur le disque. Pause de 6s...", 
-                        i+1, len(plan_steps))
             time.sleep(6.0)
 
         _log_lvc_stats("AUTO TOTAL")
@@ -1047,23 +1010,23 @@ def run_codex_loop(
         }
 
     if phase == "plan":
-        logger.info("[Codex Loop] 🧠 Planification.")
         return _run_plan_phase(
             skill_goal,
             target_provider, target_model,
-            _get_ego_prompt(alter_ego), memory_context
+            _get_ego_prompt(alter_ego), memory_context,
+            system_prompt=system_prompt
         )
 
     if phase == "step":
         if not plan or not isinstance(plan, list):
             return {"status": "error", "message": "Plan manquant."}
-        logger.info("[Codex Loop] ⚡ Exécution.")
         return _run_step_phase(
             skill_goal, plan, int(step_num),
             target_provider, target_model,
             _get_ego_prompt(alter_ego), int(time_budget_s),
-            [], # ★ FIX : plus de fallback forcé ici
-            memory_context
+            [],
+            memory_context,
+            system_prompt=system_prompt
         )
 
     return {"status": "error", "message": f"Phase inconnue : {phase}"}

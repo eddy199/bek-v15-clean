@@ -2,7 +2,7 @@
 # ==============================================================================
 # NERF 1 — HERMES → ORGANES RÉELS (nerves/hermes_nerves.py)
 # ------------------------------------------------------------------------------
-# ★ AJOUT v3 : Prise en charge de save_memory (gestion des dictionnaires)
+# ★ v3.1 : save_memory écrit dans Pinecone + Supabase + ChromaDB + Hindsight
 # ==============================================================================
 
 from __future__ import annotations
@@ -135,15 +135,14 @@ def _handler_headless_scrape(url: str = "", **kwargs: Any) -> Dict[str, Any]:
         return {"status": "error", "message": f"headless_scrape échoué : {exc}"}
 
 
-# ★ NOUVEAU : Handler de mémoire robuste (accepte strings et dictionnaires)
+# ★ v3.1 : Handler de mémoire robuste qui écrit dans TOUTES les bases
 def _handler_save_memory(content: Any = None, text: Any = None, data: Any = None, **kwargs: Any) -> Dict[str, Any]:
     """
-    Nerf : Hermes.save_memory → memory.save_to_memory.
-    Gère les dictionnaires malformés du LLM en les convertissant en texte brut.
+    Nerf : Hermes.save_memory → memory.save_to_memory + hindsight_retain.
+    ★ v3.1 : Écrit dans Pinecone, Supabase, ChromaDB ET Hindsight.
     """
     raw = content or text or data
     if not raw and kwargs:
-        # Si le LLM a envoyé {"name": "Mohamed", "project": "BEK-v19"}
         raw = kwargs
 
     if not raw:
@@ -160,13 +159,34 @@ def _handler_save_memory(content: Any = None, text: Any = None, data: Any = None
     if not text_to_save:
         return {"status": "error", "message": "Le contenu à mémoriser ne peut pas être vide."}
 
+    saved_sources = []
+
+    # 1. Écriture dans Pinecone, Supabase et ChromaDB (via memory.save_to_memory)
     try:
         from memory import save_to_memory
-        save_to_memory(text_to_save)
-        return {"status": "success", "message": f"✅ Mémorisé : {text_to_save}"}
+        ok = save_to_memory(text_to_save)
+        if ok:
+            saved_sources.append("Pinecone/Supabase/ChromaDB")
     except Exception as exc:
-        logger.error("[Nerf save_memory] Erreur : %s", exc)
-        return {"status": "error", "message": f"save_memory échoué : {exc}"}
+        logger.warning("[Nerf save_memory] Erreur save_to_memory : %s", exc)
+
+    # 2. Écriture dans Hindsight
+    try:
+        from hindsight_memory import hindsight_retain_async
+        ok_hindsight = run_async_safely(hindsight_retain_async(text_to_save, context="user_memory"))
+        if ok_hindsight:
+            saved_sources.append("Hindsight")
+    except Exception as exc:
+        logger.debug("[Nerf save_memory] Hindsight indisponible : %s", exc)
+
+    if saved_sources:
+        return {
+            "status": "success",
+            "message": f"✅ Mémorisé dans : {', '.join(saved_sources)}",
+            "content": text_to_save,
+        }
+    else:
+        return {"status": "error", "message": "Aucune base de mémoire n'a pu être écrite."}
 
 
 # ------------------------------------------------------------------------------
@@ -182,7 +202,6 @@ NERVES_TABLE: Dict[str, tuple] = {
     "generate_video":  (_handler_generate_video,  "L1"),
     "edit_video":      (_handler_edit_video,      "L1"),
     "headless_scrape": (_handler_headless_scrape, "L2"),
-    # ★ AJOUT : On branche save_memory ici
     "save_memory":     (_handler_save_memory,     "L1"),
 }
 

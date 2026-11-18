@@ -2,16 +2,17 @@
 # ==============================================================================
 # BEK-v18 — Chat : Core (dispatcher principal)
 # ------------------------------------------------------------------------------
-# ★ v18.11.2 (2026-11-06) — FIX réentrance brain (ceinture + bretelles)
-# ★ v18.11.1 (2026-11-06) — AUTO-DÉTECTION brain
-# ★ v18.11.0 (2026-11-06) — FIX : pont brain → streaming (rebond analytique)
-# ★ v18.10.7 (2026-10-17) — FIX : Hindsight async natif
+# ★ v18.11.6 (2026-11-13) — FIX : HERMES_PLANNER_TIMEOUT_SEC défini localement
+# ★ v18.11.5 (2026-11-13) — FIX : imports parsing corrigés + exécution actions brain
+# ★ v18.11.4 (2026-11-13) — FIX : exécution des actions dans la réponse du brain
+# ★ v18.11.3 (2026-11-13) — FIX : questions simples → brain (fallback)
 # ==============================================================================
 from __future__ import annotations
 
 import asyncio
 import json
 import logging
+import os
 import re
 from typing import Any, Dict, List, Tuple
 
@@ -25,9 +26,10 @@ from .. import config as cfg
 from .. import prompts as pr
 from .. import validation as val
 from .. import streaming as st
+from .. import actions as act
+from ..streaming.parsing import _find_all_complete_actions, _normalize_action_params
 
 from .constants import (
-    HERMES_PLANNER_TIMEOUT_SEC,
     MAX_INPUT_MESSAGES,
     MAX_MEMORY_CHARS,
     MAX_REQUEST_BYTES,
@@ -53,11 +55,11 @@ from .slash import _dispatch_slash, _stream_slash_output
 
 logger = logging.getLogger("BEKApp")
 
+HERMES_PLANNER_TIMEOUT_SEC = int(os.getenv("BEK_HERMES_PLANNER_TIMEOUT_SEC", "10"))
+
 cfg.init_bek_lvc()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ★ v18.11.2 : outils dont le résultat déclenche le rebond analytique
 # ══════════════════════════════════════════════════════════════════════════════
 _ANALYZABLE_BRICKS = frozenset({
     "python_save_report",
@@ -74,9 +76,6 @@ _ANALYZABLE_BRICKS = frozenset({
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ v18.11.1 : DÉTECTION AUTO-BRAIN
-# ══════════════════════════════════════════════════════════════════════════════
-
 _GITHUB_URL_RE = re.compile(
     r'https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+?)(?=[\s.,;:!?"\'<>]|$)'
 )
@@ -130,6 +129,9 @@ def _should_use_brain(query: str, data: Dict[str, Any]) -> Tuple[bool, str]:
         if kw in q_lower:
             return True, f"coding_keyword:{kw}"
 
+    if len(query) < 100 and not any(k in q_lower for k in ["code", "web", "image", "fichier", "repo"]):
+        return True, "simple_question_brain_for_fallback"
+
     return False, "default_streaming"
 
 
@@ -172,17 +174,11 @@ def _extract_pre_executed_tools(brain_response: Any) -> List[Dict[str, str]]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ROUTER FASTAPI
-# ══════════════════════════════════════════════════════════════════════════════
-
 router = APIRouter(tags=["Chat"])
 router.include_router(debug_router)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# HELPERS MÉMOIRE / PLAN
-# ══════════════════════════════════════════════════════════════════════════════
-
 async def _fetch_memory_context(query: str) -> str:
     context_parts: List[str] = []
 
@@ -277,9 +273,6 @@ async def _fetch_hermes_plan(query: str) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ROUTE CHAT
-# ══════════════════════════════════════════════════════════════════════════════
-
 @router.post("/api/chat")
 async def chat(request: Request):
     try:
@@ -290,9 +283,6 @@ async def chat(request: Request):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# IMPLÉMENTATION PRINCIPALE
-# ══════════════════════════════════════════════════════════════════════════════
-
 async def _chat_impl(request: Request):
     content_length = request.headers.get("content-length")
     if content_length:
@@ -368,9 +358,6 @@ async def _chat_impl(request: Request):
         except Exception as exc:
             logger.warning("[SlashCommand] Échec de commande (%s)", type(exc).__name__)
 
-    # ═══════════════════════════════════════════════════════════════════════════
-    # ★ DÉTECTION AUTO-BRAIN
-    # ═══════════════════════════════════════════════════════════════════════════
     use_brain, brain_reason = _should_use_brain(last_user_query, data)
     logger.info(
         "[Chat] 🧭 Détection : use_brain=%s (raison=%s)",
@@ -399,11 +386,68 @@ async def _chat_impl(request: Request):
                     else:
                         _response_text = str(_res)
 
-                    _CHUNK_SIZE = 120
-                    for _i in range(0, len(_response_text), _CHUNK_SIZE):
-                        _piece = _response_text[_i:_i + _CHUNK_SIZE]
-                        yield f"data: {json.dumps({'chunk': _piece}, ensure_ascii=False)}\n\n"
-                        await asyncio.sleep(0)
+                    _brain_actions = _find_all_complete_actions(_response_text)
+
+                    if _brain_actions:
+                        logger.info(
+                            "[Chat] 🎯 %d action(s) détectée(s) dans la réponse du brain",
+                            len(_brain_actions),
+                        )
+
+                        _first_action_start = _brain_actions[0].get("start_pos", 0)
+                        if _first_action_start > 0:
+                            _pre_text = _response_text[:_first_action_start]
+                            if _pre_text.strip():
+                                for _i in range(0, len(_pre_text), 120):
+                                    yield f"data: {json.dumps({'chunk': _pre_text[_i:_i+120]}, ensure_ascii=False)}\n\n"
+                                    await asyncio.sleep(0)
+
+                        for _idx, _action in enumerate(_brain_actions, 1):
+                            _act_name = _action["name"]
+                            _act_params = _normalize_action_params(_action["params"])
+
+                            if _act_name not in cfg.MULTIMEDIA_ACTIONS:
+                                _act_params["provider"] = provider
+                                _act_params["model"] = model
+
+                            _exec_msg = f"\n\n⚙️ *Exécution {_idx} (`{_act_name}`)...*\n"
+                            yield f"data: {json.dumps({'chunk': _exec_msg})}\n\n"
+
+                            try:
+                                _exec_res = act._execute_action_unified(_act_name, _act_params)
+
+                                if isinstance(_exec_res, dict):
+                                    _content = (
+                                        _exec_res.get("content")
+                                        or _exec_res.get("message")
+                                        or _exec_res.get("response")
+                                        or str(_exec_res)
+                                    )
+                                else:
+                                    _content = str(_exec_res)
+
+                                _res_chunk = "\n\n" + _content + "\n\n"
+                                yield f"data: {json.dumps({'chunk': _res_chunk}, ensure_ascii=False)}\n\n"
+
+                                logger.info("[Chat] ✅ Action %s exécutée avec succès", _act_name)
+                            except Exception as _act_err:
+                                logger.exception("[Chat] Action %s échouée", _act_name)
+                                _err_chunk = f"\n\n⚠️ Erreur action {_act_name} : {_act_err}\n\n"
+                                yield f"data: {json.dumps({'chunk': _err_chunk})}\n\n"
+
+                        _last_action_end = _brain_actions[-1].get("end_pos", len(_response_text))
+                        if _last_action_end < len(_response_text):
+                            _post_text = _response_text[_last_action_end:]
+                            if _post_text.strip():
+                                for _i in range(0, len(_post_text), 120):
+                                    yield f"data: {json.dumps({'chunk': _post_text[_i:_i+120]}, ensure_ascii=False)}\n\n"
+                                    await asyncio.sleep(0)
+                    else:
+                        _CHUNK_SIZE = 120
+                        for _i in range(0, len(_response_text), _CHUNK_SIZE):
+                            _piece = _response_text[_i:_i + _CHUNK_SIZE]
+                            yield f"data: {json.dumps({'chunk': _piece}, ensure_ascii=False)}\n\n"
+                            await asyncio.sleep(0)
 
                     _pre_tools = _extract_pre_executed_tools(_res)
                     if _pre_tools:
@@ -439,9 +483,6 @@ async def _chat_impl(request: Request):
         except Exception as exc:
             logger.exception("[Chat] Impossible d'utiliser le brain (%s) → fallback stream_chat", type(exc).__name__)
 
-    # ═══════════════════════════════════════════════════════════════════════════
-    # SYSTEM PROMPT (chemin stream_chat direct)
-    # ═══════════════════════════════════════════════════════════════════════════
     dynamic_system_prompt = pr.BEK_GOLDEN_RULES.strip()
 
     try:
